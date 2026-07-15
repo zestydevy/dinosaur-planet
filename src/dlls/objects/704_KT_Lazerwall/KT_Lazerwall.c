@@ -36,7 +36,7 @@ void dll_704_dtor(void *dll) { }
 void dll_704_setup(Object* self, KT_Lazerwall_Setup* setup, s32 arg2) {
     KT_Lazerwall_Data* objdata = (KT_Lazerwall_Data*)self->data;
 
-    _data_0 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_170, 1);
+    _data_0 = (DLL_IModgfx*)dllLoad(DLL_ID_170, 1);
     self->srt.yaw = setup->unk18 << 8;
     objdata->unk10 = 0.0f;
 }
@@ -53,13 +53,13 @@ void dll_704_control(Object* self) {
     objsetup = (KT_Lazerwall_Setup*)self->setup;
     objdata->unk1 = objdata->unk0;
     objdata->unk0 &= ~0x3;
-    temp_v0_2 = main_get_bits(objsetup->unk1A);
+    temp_v0_2 = mainGetBits(objsetup->unk1A);
     if (temp_v0_2 >= objsetup->unk1C) {
         objdata->unk0 |= 0x4;
     } else {
         objdata->unk0 &= ~0x4;
 
-        if (main_get_bits(objsetup->unk1E) == 0) {
+        if (mainGetBits(objsetup->unk1E) == 0) {
             return;
         }
     }
@@ -67,7 +67,7 @@ void dll_704_control(Object* self) {
     self->srt.roll += 0x38E;
     if (temp_v0_2 >= 0xF) {
         if (objdata->unkC <= 0.0f) {
-            main_set_bits(objsetup->unk1E, 1);
+            mainSetBits(objsetup->unk1E, 1);
             objdata->unk0 |= 9;
         }
         objdata->unkC = 120.0f;
@@ -75,7 +75,7 @@ void dll_704_control(Object* self) {
     if (objdata->unkC > 0.0f) {
         objdata->unkC -= gUpdateRateF;
         if (objdata->unkC <= 0.0f) {
-            main_set_bits(objsetup->unk1E, 0);
+            mainSetBits(objsetup->unk1E, 0);
             objdata->unk0 &= ~0x8;
         }
     }
@@ -91,7 +91,7 @@ void dll_704_control(Object* self) {
             sp44 = 2;
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         }
-        objdata->unk10 = (f32) rand_next(1, 0x3C);
+        objdata->unk10 = (f32) mathRnd(1, 0x3C);
     }
     if (objdata->unk0 & 4) {
         sp44 = 0;
@@ -99,8 +99,8 @@ void dll_704_control(Object* self) {
         sp44 = 1;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
         if (!(objdata->unk1 & 4)) {
-            objdata->unk8 = gDLL_6_AMSFX->vtbl->play(self, SOUND_694_KT_Laserwall_PowerUp, MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk8, (((f32) objsetup->unk1C / 15.0f) * 0.5f) + 1.0f);
+            objdata->unk8 = dll_amSfx->Play(self, SOUND_694_KT_Laserwall_PowerUp, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->SetPitch(objdata->unk8, (((f32) objsetup->unk1C / 15.0f) * 0.5f) + 1.0f);
         }
     }
     if (objdata->unk0 & 8) {
@@ -110,12 +110,12 @@ void dll_704_control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_48C, NULL, PARTFXFLAG_2, -1, &sp44);
     }
     if (!(objdata->unk0 & 8) && (objdata->unk1 & 8)) {
-        objdata->unk4 = gDLL_6_AMSFX->vtbl->play(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk4 = dll_amSfx->Play(self, SOUND_696_KT_Laserwall_PowerDown, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (objdata->unk10 > 0.0f) {
         objdata->unk10 -= gUpdateRateF;
         if (objdata->unk10 <= 0.0f) {
-            objdata->unk4 = gDLL_6_AMSFX->vtbl->play(self, SOUND_695_KT_Laserwall_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk4 = dll_amSfx->Play(self, SOUND_695_KT_Laserwall_Zap, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10 = 0.0f;
         }
     }
@@ -132,13 +132,13 @@ void dll_704_free(Object* self, s32 a1) {
     KT_Lazerwall_Data* objdata = (KT_Lazerwall_Data*)self->data;
     
     if (objdata->unk4 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk4);
+        dll_amSfx->Stop(objdata->unk4);
     }
     if (objdata->unk8 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
+        dll_amSfx->Stop(objdata->unk8);
     }
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(_data_0);
+    dllFree(_data_0);
 }
 
 // offset: 0x73C | func: 5 | export: 5

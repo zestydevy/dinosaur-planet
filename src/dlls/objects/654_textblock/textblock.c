@@ -50,7 +50,7 @@ void Textblock_setup(Object* self, Textblock_Setup* objSetup, s32 arg2) {
     objData->gamebitInteractable = objSetup->gamebitInteractable;
     objData->textureBlend = 0;
     objData->textureBlendSpeed = 4;
-    modGfxDLL = dll_load_deferred(DLL_ID_107, 1);
+    modGfxDLL = dllLoad(DLL_ID_107, 1);
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
@@ -69,7 +69,7 @@ void Textblock_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 // offset: 0x138 | func: 4 | export: 4
 void Textblock_free(Object* self, s32 arg1) {
     if (modGfxDLL != NULL) {
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
     }
     gDLL_13_Expgfx->vtbl->func5(self);
 }
@@ -97,9 +97,9 @@ void Textblock_tick(Object* self) {
 
     //Check gamebits to tell if textblock is switched on, and whether it's been translated
     if (objData->gamebitInteractable != NO_GAMEBIT) {
-        interactable = main_get_bits(objData->gamebitInteractable);
+        interactable = mainGetBits(objData->gamebitInteractable);
     }
-    translatorUsed = main_get_bits(objData->gamebitTranslated);
+    translatorUsed = mainGetBits(objData->gamebitTranslated);
 
     if (translatorUsed || !interactable) {
         return;
@@ -109,7 +109,7 @@ void Textblock_tick(Object* self) {
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
     //Glow effect: ping-pong blend between texture frames 0 and 1
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         objData->textureBlend += objData->textureBlendSpeed * (s16) gUpdateRateF;
 
@@ -132,8 +132,8 @@ void Textblock_tick(Object* self) {
     }
     
     //Set gamebit after using Krazoa Translator on textblock
-    if ((objData->activated) && (main_get_bits(objData->gamebitTranslated) == 0)) {
-        main_set_bits(objData->gamebitTranslated, 1);
+    if ((objData->activated) && (mainGetBits(objData->gamebitTranslated) == 0)) {
+        mainSetBits(objData->gamebitTranslated, 1);
     }
 }
 

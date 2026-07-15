@@ -5,9 +5,9 @@
 #include "game/objects/object_id.h"
 #include "libnaudio/n_libaudio.h"
 #include "sys/audio/amAudio.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "dll.h"
@@ -106,34 +106,34 @@ void amseq_ctor(void* dll) {
     bzero(sSeqPlayers, sizeof(AMSEQPlayer*) * 4);
     sBankFiles = mmAlloc(sizeof(ALBankFile*) * 2, ALLOC_TAG_SEQ_COL, NULL);
     bzero(sBankFiles, sizeof(ALBankFile*) * 2);
-    queue_alloc_load_file((void**)&tab, AMBIENT_TAB);
+    assetRomLoad((void**)&tab, AMBIENT_TAB);
     sp44 = tab[0];
     sp48 = tab[1] - sp44;
     if (sp48 != 0) {
         sBankFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sBankFiles[0], AMBIENT_BIN, sp44, sp48);
-        alBnkfNew(sBankFiles[0], (u8*)file_get_romaddr(AMBIENT_BIN, tab[1]));
+        assetRomLoadSection((void**)sBankFiles[0], AMBIENT_BIN, sp44, sp48);
+        alBnkfNew(sBankFiles[0], (u8*)piRomGetSectionPtr(AMBIENT_BIN, tab[1]));
     }
     mmFree(tab);
-    queue_alloc_load_file((void**)&tab, MUSIC_TAB);
+    assetRomLoad((void**)&tab, MUSIC_TAB);
     sp44 = tab[0];
     sp48 = tab[1] - sp44;
     if (sp48 != 0) {
         sBankFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sBankFiles[1], MUSIC_BIN, sp44, sp48);
-        alBnkfNew(sBankFiles[1], (u8*)file_get_romaddr(MUSIC_BIN, tab[1]));
+        assetRomLoadSection((void**)sBankFiles[1], MUSIC_BIN, sp44, sp48);
+        alBnkfNew(sBankFiles[1], (u8*)piRomGetSectionPtr(MUSIC_BIN, tab[1]));
     }
     mmFree(tab);
-    queue_alloc_load_file((void**)&tab, AUDIO_TAB);
+    assetRomLoad((void**)&tab, AUDIO_TAB);
     sp44 = tab[2];
     if (tab[3] != sp44) {
         sSeqFiles[0] = mmAlloc(4, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[0], AUDIO_BIN, sp44, 4);
+        assetRomLoadSection((void** ) sSeqFiles[0], AUDIO_BIN, sp44, 4);
         sp48 = (sSeqFiles[0]->seqCount * 8) + 4;
         mmFree(sSeqFiles[0]);
         sSeqFiles[0] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[0], AUDIO_BIN, sp44, sp48);
-        alSeqFileNew(sSeqFiles[0], (u8*)file_get_romaddr(AUDIO_BIN, sp44));
+        assetRomLoadSection((void** ) sSeqFiles[0], AUDIO_BIN, sp44, sp48);
+        alSeqFileNew(sSeqFiles[0], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[0]->seqCount; sp40++) {
             if (sSeqFiles[0]->seqArray[sp40].len & 1) {
                 sSeqFiles[0]->seqArray[sp40].len++;
@@ -143,12 +143,12 @@ void amseq_ctor(void* dll) {
     sp44 = tab[1];
     if (tab[2] != sp44) {
         sSeqFiles[1] = mmAlloc(4, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void** ) sSeqFiles[1], AUDIO_BIN, sp44, 4);
+        assetRomLoadSection((void** ) sSeqFiles[1], AUDIO_BIN, sp44, 4);
         sp48 = (sSeqFiles[1]->seqCount * 8) + 4;
         mmFree(sSeqFiles[1]);
         sSeqFiles[1] = mmAlloc(sp48, ALLOC_TAG_SEQ_COL, NULL);
-        queue_load_file_region_to_ptr((void**)sSeqFiles[1], AUDIO_BIN, sp44, sp48);
-        alSeqFileNew(sSeqFiles[1], (u8*)file_get_romaddr(AUDIO_BIN, sp44));
+        assetRomLoadSection((void**)sSeqFiles[1], AUDIO_BIN, sp44, sp48);
+        alSeqFileNew(sSeqFiles[1], (u8*)piRomGetSectionPtr(AUDIO_BIN, sp44));
         for (sp40 = 0; sp40 < sSeqFiles[1]->seqCount; sp40++) {
             if (sSeqFiles[1]->seqArray[sp40].len & 1) {
                 sSeqFiles[1]->seqArray[sp40].len++;
@@ -214,7 +214,7 @@ s32 amseq_set(Object *obj, u16 actionNo, const char *filename, s32 lineNo, const
         return -1;
     }
     // "music %08x,%d\n"
-    queue_load_file_region_to_ptr((void** ) sMusicAction, MUSICACTIONS_BIN, (actionNo - 1) * sizeof(MusicAction), sizeof(MusicAction));
+    assetRomLoadSection((void** ) sMusicAction, MUSICACTIONS_BIN, (actionNo - 1) * sizeof(MusicAction), sizeof(MusicAction));
     if (obj != NULL && (sMusicAction->unk18 & sMusicAction->unk1A) != 0) {
         // "object+fade\n"
         temp_v1 = sMusicAction->unk18 & sMusicAction->unk1A;
@@ -422,7 +422,7 @@ void amseq_func_1170(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1) {
 void amseq_tick(void) {
     s32 i;
 
-    if (audio_func_80012348() != 0) {
+    if (am_func_80012348() != 0) {
         for (i = 0; i < 4; i++) {
             amseq_start_next_sequence(i);
             amseq_update_fade(i);
@@ -585,7 +585,7 @@ void amseq_start_next_sequence(u8 playerNo) {
         player->unk0 &= ~0x1;
         return;
     }
-    if (((playerNo == 2) || (playerNo == 3)) && (main_get_bits(BIT_DisableMusic) != 0)) {
+    if (((playerNo == 2) || (playerNo == 3)) && (mainGetBits(BIT_DisableMusic) != 0)) {
         player->currentSeqID = 0;
         player->unk0 &= ~0x1;
         return;
@@ -599,14 +599,14 @@ void amseq_start_next_sequence(u8 playerNo) {
         seqFileIdx = 0;
     }
     idx = player->currentSeqID - 1;
-    offset = sSeqFiles[seqFileIdx]->seqArray[idx].offset - (u8*)file_get_romaddr(AUDIO_BIN, 0);
+    offset = sSeqFiles[seqFileIdx]->seqArray[idx].offset - (u8*)piRomGetSectionPtr(AUDIO_BIN, 0);
     if (player->midiData != NULL) {
         mmFree(player->midiData);
     }
     player->midiData = mmAlloc(sSeqFiles[seqFileIdx]->seqArray[idx].len, ALLOC_TAG_SEQ_COL, NULL);
     if (player->midiData != NULL) {
         // "download sequence %d:%d\n"
-        queue_load_file_region_to_ptr(player->midiData, AUDIO_BIN, offset, sSeqFiles[seqFileIdx]->seqArray[idx].len);
+        assetRomLoadSection(player->midiData, AUDIO_BIN, offset, sSeqFiles[seqFileIdx]->seqArray[idx].len);
         n_alCSeqNew(&player->seq, (u8* ) player->midiData);
         n_alCSPSetSeq(seqp, &player->seq);
         n_alCSPPlay(seqp);
@@ -950,8 +950,8 @@ void amseq_update_dist_falloff(void) {
     }
 
     if (focus == NULL) {
-        camera = get_camera_array();
-        update_camera_for_object(camera);
+        camera = camGetCameraArray();
+        camUpdateCameraForObject(camera);
         focusX = camera->tx;
         focusY = camera->ty;
         focusZ = camera->tz;
@@ -1235,7 +1235,7 @@ ALMicroTime amseq_updateOscMain(void *oscState_, f32* updateVal) {
         break;
     case 8:
     case 9:
-        sp28 = (fsin16_precise(sp28 * 65536.0f) * var_fa0) + oscState->unk10;
+        sp28 = (mathSinfInterp(sp28 * 65536.0f) * var_fa0) + oscState->unk10;
         break;
     case 10:
     case 11:
@@ -1257,7 +1257,7 @@ ALMicroTime amseq_updateOscMain(void *oscState_, f32* updateVal) {
         }
         sp24 = oscState->unk10 + sp28;
         sp28 = (f32)oscState->unk14 / (f32)oscState->unk16;
-        sp28 = fsin16_precise(sp28 * 65536.0f) * var_fa0 + oscState->unk10;
+        sp28 = mathSinfInterp(sp28 * 65536.0f) * var_fa0 + oscState->unk10;
         sp28 += sp24;
         sp28 /= 2.0f;
         break;

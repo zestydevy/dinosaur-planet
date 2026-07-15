@@ -43,8 +43,8 @@ static Texture *sTexRarewareGlow;
 void rareware_ctor(void *dll) {
     u8 dColourUnused[4] = {0xe4, 0x9c, 0x44, 0xff};
 
-    rcp_set_border_color(0, 0, 0);
-    func_80010018(0);
+    rcpSetBorderColour(0, 0, 0);
+    menu_func_80010018(0);
 
     dFrame = 0;
     dState = Rareware_STATE_Initial;
@@ -52,17 +52,17 @@ void rareware_ctor(void *dll) {
     sFadeOutTimer = 0;
     sCutToNextScreen = FALSE;
 
-    sTexRareLogo     = tex_load_deferred(TEXTABLE_2D6_RareLogo);
-    sTexRareLogoGlow = tex_load_deferred(TEXTABLE_2D7_RareLogo_Shadow);
-    sTexRareware     = tex_load_deferred(TEXTABLE_2D4_RarewareTextLogo);
-    sTexRarewareGlow = tex_load_deferred(TEXTABLE_2D5_RarewareTextLogo_Shadow);
+    sTexRareLogo     = texLoadTexture(TEXTABLE_2D6_RareLogo);
+    sTexRareLogoGlow = texLoadTexture(TEXTABLE_2D7_RareLogo_Shadow);
+    sTexRareware     = texLoadTexture(TEXTABLE_2D4_RarewareTextLogo);
+    sTexRarewareGlow = texLoadTexture(TEXTABLE_2D5_RarewareTextLogo_Shadow);
 }
 
 void rareware_dtor(void *dll) {
-    tex_free(sTexRareLogo);
-    tex_free(sTexRareLogoGlow);
-    tex_free(sTexRareware);
-    tex_free(sTexRarewareGlow);
+    texFreeTexture(sTexRareLogo);
+    texFreeTexture(sTexRareLogoGlow);
+    texFreeTexture(sTexRareware);
+    texFreeTexture(sTexRarewareGlow);
 }
 
 s32 rareware_update1(void) {
@@ -81,9 +81,9 @@ s32 rareware_update1(void) {
 
     //End of shot
     if (sCutToNextScreen) {
-        main_set_bits(BIT_Menus_Selection_Blocked, FALSE);
+        mainSetBits(BIT_Menus_Selection_Blocked, FALSE);
         //@bug? Skips directly to Game Select screen, likely for developer convenience
-        menu_set(MENU_GAME_SELECT);
+        menuSet(MENU_GAME_SELECT);
     }
 
     dFrame += gUpdateRate;
@@ -121,7 +121,7 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         return;
     }
 
-    rcp_clear_screen(gdl, mtxs, 1);
+    rcpClearScreen(gdl, mtxs, 1);
     gDLL_76->vtbl->func2(gdl, mtxs);
 
     //Handle key frames
@@ -157,8 +157,8 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             A = 1.0f;
         }
 
-        rcp_screen_full_write(gdl, sTexRareLogoGlow, 165, 148, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
-        rcp_screen_full_write(gdl, sTexRarewareGlow, 102, 250, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareLogoGlow, 165, 148, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRarewareGlow, 102, 250, 0, 0, (s16)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
     }
 
     //Draw Rare logo and Rareware text (fade in, hold for a while, then fade out)
@@ -177,7 +177,7 @@ void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
             A = 1.0f;
         }
 
-        rcp_screen_full_write(gdl, sTexRareLogo, 165, 148, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
-        rcp_screen_full_write(gdl, sTexRareware, 102, 250, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareLogo, 165, 148, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sTexRareware, 102, 250, 0, 0, (u8)(255.0f * A), SCREEN_WRITE_TRANSLUCENT);
     }
 }

@@ -179,25 +179,25 @@ extern struct mp3vars g_Mp3Vars; // 0x800bff00
 extern struct mp3decfourbytes* D_800C01C0; // sizeof 0xA410
 extern f32 *D_800C01C4;
 
-s32 mp3_dec_init(void);
+s32 mp3DecInit(void);
 
-u32 mp3_main_init(void);
-struct asistream* mp3_main_func_80072380(s32 arg0, mp3_dmafunc dmafunc, s32 filesize);
-s32 mp3_main_func_8007245c(struct asistream* stream, u16** arg1, s32* arg2);
-s32 mp3_main_func_80071cf0(struct asistream* stream);
+u32 mp3MainInit(void);
+struct asistream* mp3MainFunc80072380(s32 arg0, mp3_dmafunc dmafunc, s32 filesize);
+s32 mp3MainFunc8007245c(struct asistream* stream, u16** arg1, s32* arg2);
+s32 mp3MainFunc80071cf0(struct asistream* stream);
 
-s32 mp3_dec_set_side_info(struct asistream* stream);
-s32 mp3_dec_decode_frame(struct asistream* stream);
+s32 mp3DecSetSideInfo(struct asistream* stream);
+s32 mp3DecDecodeFrame(struct asistream* stream);
 
-f32 mp3_func_8007BEB0(f32 arg0);
-f32 mp3_func_8007C080(f32 param1);
-f32 mp3_func_80077900(f32 arg0, f32 arg1);
+f32 mp3Func8007BEB0(f32 arg0);
+f32 mp3Func8007C080(f32 param1);
+f32 mp3Func80077900(f32 arg0, f32 arg1);
 
-s32 mp3_util_func_80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
-s32 mp3_util_func_80077ED0(void*, void*, s32, s32, s32, void**, void**);
-s32 mp3util_get_bits(u8 *buffer, s32 *offset, s32 numbits);
+s32 mp3UtilFunc80077D20(void*, void*, s32, s32, s32, s32, void**, void**);
+s32 mp3UtilFunc80077ED0(void*, void*, s32, s32, s32, void**, void**);
+s32 mp3UtilGetBits(u8 *buffer, s32 *offset, s32 numbits);
 
-void mp3_func_80078070(struct asistream_4f64 *arg0, s32 arg1, struct asistream_4f64 *arg2, struct asistream_4f64 *arg3, void *arg4);
-void mp3_func_80078F70(void*, s32, void*, void*);
+void mp3Func80078070(struct asistream_4f64 *arg0, s32 arg1, struct asistream_4f64 *arg2, struct asistream_4f64 *arg3, void *arg4);
+void mp3Func80078F70(void*, s32, void*, void*);
 
 #endif

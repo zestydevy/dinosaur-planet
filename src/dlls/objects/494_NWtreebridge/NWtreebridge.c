@@ -34,12 +34,12 @@ void NWtreebridge_setup(Object* self, NWtreebridge_Setup* objSetup, s32 arg2) {
     NWtreebridge_Data* objdata;
 
     objdata = self->data;
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = (void*)&NWtreebridge_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
     objdata->sequenceIndex = objSetup->sequenceIndex;
     objdata->gamebit = objSetup->gamebit;
-    if (main_get_bits(objdata->gamebit)) {
+    if (mainGetBits(objdata->gamebit)) {
         objdata->seqValue = 380;
     }
     objdata->searchAttempts = 4;
@@ -54,7 +54,7 @@ void NWtreebridge_control(Object* self) {
     objdata = self->data;
     distance = 100.0f;
     if (objdata->searchAttempts) {
-        objdata->unkObj = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
+        objdata->unkObj = objGetNearestTypeTo(OBJTYPE_Collectable, self, &distance);
         if (objdata->unkObj) {
             objdata->searchAttempts = 0;
             return;
@@ -84,10 +84,10 @@ void NWtreebridge_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
     objdata = self->data;
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
     if (objdata->unkObj) {
-        func_80031F6C(self, 0, &x, &y, &z, 0);
+        objGetAttachPointWorldSpace(self, 0, &x, &y, &z, 0);
         objdata->unkObj->srt.transl.x = x;
         objdata->unkObj->srt.transl.y = y;
         objdata->unkObj->srt.transl.z = z;
@@ -118,7 +118,7 @@ s32 NWtreebridge_anim_callback(Object* self, Object* arg1, AnimObj_Data* arg2) {
     objdata = self->data;
     arg2->unk62 = 0;
     if (objdata->felled == FALSE) {
-        if (main_get_bits(objdata->gamebit)) {
+        if (mainGetBits(objdata->gamebit)) {
             objdata->felled = TRUE;
         } else {
             return 1;

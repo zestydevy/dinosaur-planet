@@ -14,7 +14,7 @@ void DFdockpoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DFdockpoint_setup(Object *self, DFdockpoint_Setup *objsetup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_Dockpoint);
+    objAddObjectType(self, OBJTYPE_Dockpoint);
     self->srt.yaw = (objsetup->yaw & 0xFF) << 8;
 }
 
@@ -34,9 +34,9 @@ void DFdockpoint_control(Object *self) {
     //Create a log if none exists
     /* @bug: doesn't first check if player's outside the log's unload distance, 
        so a log will be rapidly created/deleted until the player comes into the log's load range */
-    obj_get_all_of_type(OBJTYPE_Vehicle, &logCount);
+    objGetAllOfType(OBJTYPE_Vehicle, &logCount);
     if (logCount == 0) {
-        logsetup = obj_alloc_setup(sizeof(BWLog_Setup), OBJ_BWLog);
+        logsetup = objAllocSetup(sizeof(BWLog_Setup), OBJ_BWLog);
         logsetup->base.quarterSize = sizeof(BWLog_Setup)/4;
         logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
         logsetup->base.loadDistance = 50;
@@ -46,7 +46,7 @@ void DFdockpoint_control(Object *self) {
         logsetup->base.y = self->srt.transl.y;
         logsetup->base.z = self->srt.transl.z;
         logsetup->yaw = setup->yaw;
-        obj_create((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+        objSetupObject((ObjSetup*)logsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     }
 }
 
@@ -56,13 +56,13 @@ void DFdockpoint_update(Object *self) { }
 // offset: 0x178 | func: 3 | export: 3
 void DFdockpoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1CC | func: 4 | export: 4
 void DFdockpoint_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_Dockpoint);
+    objFreeObjectType(self, OBJTYPE_Dockpoint);
 }
 
 // offset: 0x20C | func: 5 | export: 5

@@ -1,7 +1,7 @@
 /** Filesystem and ROM access
  */
-#ifndef _SYS_FS_H
-#define _SYS_FS_H
+#ifndef _SYS_PI_H
+#define _SYS_PI_H
 
 #include "PR/ultratypes.h"
 
@@ -84,16 +84,11 @@ typedef enum {
 /*4A*/    NUM_FILES
 } EFile;
 
-typedef struct { 
-    u32 fileCount;
-    u32 offsets[NUM_FILES];
-} Fs;
+void piInit(void);
+void *piRomLoad(u32 id, u32 a1);
+s32 piRomLoadToDest(u32 id, void *dest);
+s32 piRomLoadSection(u32 id, void *dst, u32 offset, s32 size);
+u32 piRomGetSectionPtr(u32 id, s32 offset);
+s32 piRomGetFileSize(u32 id);
 
-void init_filesystem(void);
-void *read_alloc_file(u32 id, u32 a1);
-s32 read_file(u32 id, void *dest);
-s32 read_file_region(u32 id, void *dst, u32 offset, s32 size);
-s32 file_get_romaddr(u32 id, s32 offset);
-s32 get_file_size(u32 id);
-
-#endif //_SYS_FS_H
+#endif

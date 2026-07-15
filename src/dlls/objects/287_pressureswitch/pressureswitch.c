@@ -51,12 +51,12 @@ void pressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2) {
         STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", setup->base.objId);
     }
 
-    if (main_get_bits(setup->gameBitPressed)) {
+    if (mainGetBits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - setup->yOffsetAnimation;
         objdata->pressed = 30;
     }
 
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
@@ -79,7 +79,7 @@ void pressureswitch_control(Object* self) {
     objdata = self->data;
 
     //Bail if switch deactivated
-    if (setup->gameBitActivated > 0 && !main_get_bits(setup->gameBitActivated)){
+    if (setup->gameBitActivated > 0 && !mainGetBits(setup->gameBitActivated)){
         return;
     }
 
@@ -114,12 +114,12 @@ void pressureswitch_control(Object* self) {
             if (deltaY < self->srt.transl.y) {
                 self->srt.transl.y = deltaY;
             }
-            main_set_bits(setup->gameBitPressed, 1);
+            mainSetBits(setup->gameBitPressed, 1);
         } else {
             self->srt.transl.y -= 0.125f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                main_set_bits(setup->gameBitPressed, 1);
+                mainSetBits(setup->gameBitPressed, 1);
             } else {
                 playSound = 1;
             }
@@ -129,7 +129,7 @@ void pressureswitch_control(Object* self) {
 
         if (setup->base.y < self->srt.transl.y) {
             self->srt.transl.y = setup->base.y;
-            main_set_bits(setup->gameBitPressed, 0);
+            mainSetBits(setup->gameBitPressed, 0);
         } else {
             playSound = 1;
         }
@@ -138,21 +138,21 @@ void pressureswitch_control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+            dll_amSfx->Stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
 
     //Show Guard command option when player close to switch
-    if (!main_get_bits(setup->gameBitPressed) && setup->distanceGuardCommand) {
-        player = get_player();
-        sidekick = get_sidekick();
+    if (!mainGetBits(setup->gameBitPressed) && setup->distanceGuardCommand) {
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
         if (sidekick) {
-            if (vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
+            if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_3_Guard);
             }
         }
@@ -165,7 +165,7 @@ void pressureswitch_update(Object* dll){ }
 // offset: 0x530 | func: 3 | export: 3
 void pressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
@@ -174,9 +174,9 @@ void pressureswitch_free(Object* self, s32 arg1) {
     PressureSwitch_Data* objdata = self->data;
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
     }
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x604 | func: 5 | export: 5
@@ -250,7 +250,7 @@ static int pressureswitch_anim_callback(Object* self, Object* animObj, AnimObj_D
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
-        main_set_bits(setup->gameBitPressed, 0);
+        mainSetBits(setup->gameBitPressed, 0);
         animObjData->lastMessage = 0;
     }
 

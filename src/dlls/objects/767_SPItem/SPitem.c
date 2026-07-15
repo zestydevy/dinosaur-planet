@@ -53,13 +53,13 @@ void SPItem_control(Object* self) {
     f32 distance;
 
     objSetup = (SPItem_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     distance = 10000.0f;
 
     //Get SPShop object
     if (objData->shop == NULL) {
-        objData->shop = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance);
+        objData->shop = objGetNearestTypeTo(OBJTYPE_LevelControl, self, &distance);
         if (objData->shop) {
             //Hide item if not in stock or already purchased
             if (((DLL_768_SPShop*)objData->shop->dll)->vtbl->is_item_shown(objData->shop, objSetup->itemIndex) == FALSE || 
@@ -90,10 +90,10 @@ void SPItem_control(Object* self) {
         } else {
             gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         }
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
     }
 
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
 }
 
 // offset: 0x350 | func: 2 | export: 2
@@ -120,7 +120,7 @@ void SPItem_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_136, &trans, PARTFXFLAG_4, -1, NULL);
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 

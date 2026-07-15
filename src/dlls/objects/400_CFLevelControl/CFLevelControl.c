@@ -176,10 +176,10 @@ void CFLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     objdata->flags = CFLEVELCONTROL_FLAG_1;
-    sTriggerPassed = main_get_bits(BIT_CF_Entrance_Trigger_Passed);
+    sTriggerPassed = mainGetBits(BIT_CF_Entrance_Trigger_Passed);
     CFLevelControl_func_67C(self, _data_D0, _data_110);
-    sDLL190 = dll_load_deferred(DLL_ID_190, 1);
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    sDLL190 = dllLoad(DLL_ID_190, 1);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0xCC | func: 1 | export: 1
@@ -193,19 +193,19 @@ void CFLevelControl_control(Object *self) {
     }
     CFLevelControl_func_3F0(self, _data_D0, _data_110);
     if (CFLevelControl_func_82C(BIT_30A, _data_20, GAMEBITS_COUNT(_data_20))) {
-        main_set_bits(BIT_33D, 1);
+        mainSetBits(BIT_33D, 1);
     }
     CFLevelControl_func_82C(BIT_4BE, _data_34, GAMEBITS_COUNT(_data_34));
     CFLevelControl_func_82C(BIT_4DD, _data_2C, GAMEBITS_COUNT(_data_2C));
     CFLevelControl_func_914();
     CFLevelControl_func_9EC(_data_54, DATA_54_COUNT);
     CFLevelControl_func_BB8(_data_6C, DATA_6C_COUNT);
-    if (!main_get_bits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
+    if (!mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
         CFLevelControl_func_AE8(_data_114, DATA_114_COUNT);
     }
     CFLevelControl_func_10BC(self);
     CFLevelControl_func_1000();
-    diPrintf(" Layer NO %i : ", map_get_layer());
+    diPrintf(" Layer NO %i : ", mapGetLayer());
 }
 
 // offset: 0x2B4 | func: 2 | export: 2
@@ -214,15 +214,15 @@ void CFLevelControl_update(Object *self) { }
 // offset: 0x2C0 | func: 3 | export: 3
 void CFLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x314 | func: 4 | export: 4
 void CFLevelControl_free(Object *self, s32 a1) {
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
     if (sDLL190) {
-        dll_unload(sDLL190);
+        dllFree(sDLL190);
     }
 }
 
@@ -245,7 +245,7 @@ u32 CFLevelControl_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x39C | func: 7
 s32 CFLevelControl_func_39C(s16 gamebit, s32 objgroup) {
-    return (main_get_bits(gamebit) >> objgroup) & 1;
+    return (mainGetBits(gamebit) >> objgroup) & 1;
 }
 
 // offset: 0x3F0 | func: 8
@@ -265,7 +265,7 @@ void CFLevelControl_func_3F0(Object *self, DataD0 *data, s32 count) {
             if (gamebits[j] == NO_GAMEBIT) {
                 continue;
             }
-            if (main_get_bits(gamebits[j])) {
+            if (mainGetBits(gamebits[j])) {
                 gamebits[j] = NO_GAMEBIT;
                 dothing1 = TRUE;
             }
@@ -311,7 +311,7 @@ void CFLevelControl_func_67C(Object *self, DataD0 *data, s32 count) {
         for (j = 0; j < d->gamebitCount; j++) {
             if (gamebits[j] == NO_GAMEBIT) {
                 continue;
-            } else if (main_get_bits(gamebits[j])) {
+            } else if (mainGetBits(gamebits[j])) {
                 gamebits[j] = NO_GAMEBIT;
                 delta++;
             }
@@ -322,7 +322,7 @@ void CFLevelControl_func_67C(Object *self, DataD0 *data, s32 count) {
         for (j = 0; j < d->gamebitCount; j++) {
             if (gamebits[j] == NO_GAMEBIT) {
                 continue;
-            } else if (main_get_bits(gamebits[j])) {
+            } else if (mainGetBits(gamebits[j])) {
                 gamebits[j] = NO_GAMEBIT;
                 delta--;
             }
@@ -339,20 +339,20 @@ s32 CFLevelControl_func_82C(s16 gamebit, s16 *gamebits, s32 gamebitsCount) {
     s32 count;
 
     count = 0;
-    if (main_get_bits(gamebit)) {
+    if (mainGetBits(gamebit)) {
         return 1;
     }
     for (i = 0; i < gamebitsCount; i++) {
-        if (!main_get_bits(*gamebits)) {
+        if (!mainGetBits(*gamebits)) {
             return 0;
         }
         count++;
         if (1) {}
-        main_get_bits(*gamebits);
+        mainGetBits(*gamebits);
         gamebits++;
     }
     if (gamebitsCount == count) {
-        main_set_bits(gamebit, 1);
+        mainSetBits(gamebit, 1);
         return 1;
     }
     return 0;
@@ -360,14 +360,14 @@ s32 CFLevelControl_func_82C(s16 gamebit, s16 *gamebits, s32 gamebitsCount) {
 
 // offset: 0x914 | func: 11
 void CFLevelControl_func_914(void) {
-    if (main_get_bits(BIT_Played_Seq_0041_Scales_Kills_The_Queen) && !main_get_bits(BIT_CF_Floor_Destroyed)) {
-        if (main_get_bits(BIT_Kyte_Flight_Curve) != 0x11) {
-            main_set_bits(BIT_Kyte_Flight_Curve, 0x11);
-            main_set_bits(BIT_454, 1);
+    if (mainGetBits(BIT_Played_Seq_0041_Scales_Kills_The_Queen) && !mainGetBits(BIT_CF_Floor_Destroyed)) {
+        if (mainGetBits(BIT_Kyte_Flight_Curve) != 0x11) {
+            mainSetBits(BIT_Kyte_Flight_Curve, 0x11);
+            mainSetBits(BIT_454, 1);
             STUBBED_PRINTF(" KYTE TRAPPED \n ");
         }
-    } else if (main_get_bits(BIT_454)) {
-        main_set_bits(BIT_454, 0);
+    } else if (mainGetBits(BIT_454)) {
+        mainSetBits(BIT_454, 0);
         STUBBED_PRINTF(" KYTE ESCAPPED \n ");
     }
 }
@@ -388,12 +388,12 @@ void CFLevelControl_func_9EC(Data54 *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        if (main_get_bits(data->gamebit)) {
-            cloudbaby = func_800211B4(data->uID);
+        if (mainGetBits(data->gamebit)) {
+            cloudbaby = objGetObjectByUID(data->uID);
             if (cloudbaby && (((DLL_373_CFCloudBaby*)cloudbaby->dll)->vtbl->func7(cloudbaby))) {
                 STUBBED_PRINTF(" Freeing Baby ");
                 gDLL_29_Gplay->vtbl->set_obj_group_status(cloudbaby->mapID, data->objgroup, 0);
-                main_set_bits(data->gamebit, 0);
+                mainSetBits(data->gamebit, 0);
             }
         }
         data++;
@@ -404,9 +404,9 @@ void CFLevelControl_func_9EC(Data54 *data, s32 count) {
 void CFLevelControl_func_AE8(Data114 *data, s32 count) {
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        if (main_get_bits(data->gamebit1) && !main_get_bits(data->gamebit2)) {
+        if (mainGetBits(data->gamebit1) && !mainGetBits(data->gamebit2)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, data->objgroup, 1);
-            main_set_bits(data->gamebit1, 0);
+            mainSetBits(data->gamebit1, 0);
         }
         data++;
     }
@@ -420,18 +420,18 @@ void CFLevelControl_func_BB8(Data6C *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        if ((data->gamebit2 == NO_GAMEBIT) || (main_get_bits(data->gamebit2))) {
+        if ((data->gamebit2 == NO_GAMEBIT) || (mainGetBits(data->gamebit2))) {
             objPos = CFLevelControl_get_position_of_saved_obj(data->uID);
             if (objPos) {
-                distance = camera_get_distance_to_point(objPos->x, objPos->y, objPos->z);
-                obj_get_nearest_type(OBJTYPE_CFTreasRobo, objPos, &distance);
-                chestOrGuardian = func_800211B4(data->uID);
+                distance = camDistance(objPos->x, objPos->y, objPos->z);
+                objGetNearestType(OBJTYPE_CFTreasRobo, objPos, &distance);
+                chestOrGuardian = objGetObjectByUID(data->uID);
                 if (chestOrGuardian) {
-                    if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!main_get_bits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {
+                    if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!mainGetBits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {
                         data->status = 0;
                         gDLL_29_Gplay->vtbl->set_obj_group_status(chestOrGuardian->mapID, data->objgroup, data->status);
                     }
-                } else if (distance < data->distance || ((data->gamebit1 != NO_GAMEBIT) && (main_get_bits(data->gamebit1)))) {
+                } else if (distance < data->distance || ((data->gamebit1 != NO_GAMEBIT) && (mainGetBits(data->gamebit1)))) {
                     if (!data->status) {}
                     data->status = 1;
                     gDLL_29_Gplay->vtbl->set_obj_group_status(data->mapID, data->objgroup, data->status);
@@ -449,7 +449,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
 
     while (count--) {
         STUBBED_PRINTF(" CRAP IS BOLLOX ");
-        setup = map_find_obj_setup(data->uID, NULL, NULL, NULL, NULL);
+        setup = mapFindObjSetup(data->uID, NULL, NULL, NULL, NULL);
         if (setup) {
             if (data->unk12) {
                 ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
@@ -457,7 +457,7 @@ void CFLevelControl_func_DC0(Data6C *data, s32 count) {
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;
             }
-            map_save_object(setup, data->mapID, setup->x, setup->y, setup->z);
+            mapSaveObject(setup, data->mapID, setup->x, setup->y, setup->z);
         }
         data++;
     }
@@ -482,8 +482,8 @@ Vec3f *CFLevelControl_get_position_of_saved_obj(s32 uID) {
 
 // offset: 0x1000 | func: 17
 void CFLevelControl_func_1000(void) {
-    diPrintf(" STart Seq Val %i ", main_get_bits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left));
-    if (gDLL_29_Gplay->vtbl->get_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, 23) && main_get_bits(BIT_CF_Free_Cloudrunner_From_Chest)) {
+    diPrintf(" STart Seq Val %i ", mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left));
+    if (gDLL_29_Gplay->vtbl->get_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, 23) && mainGetBits(BIT_CF_Free_Cloudrunner_From_Chest)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, 23, 0);
     }
 }
@@ -503,19 +503,19 @@ s32 CFLevelControl_func_10BC(Object *self) {
     transform.transl.y = -100.0f;
     transform.transl.z = 0.0f;
     transform.scale = 2.0f;
-    if (main_get_bits(BIT_CF_Entrance_Trigger_Passed) != sTriggerPassed) {
+    if (mainGetBits(BIT_CF_Entrance_Trigger_Passed) != sTriggerPassed) {
         gDLL_28_ScreenFade->vtbl->func3(10, SCREEN_FADE_WHITE, 0.3f);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" you have Passed ");
-        sTriggerPassed = main_get_bits(BIT_CF_Entrance_Trigger_Passed);
-    } else if ((rand_next(0, 100) == 0) && (main_get_bits(BIT_577))) {
-        rand = rand_next(5, 10);
+        sTriggerPassed = mainGetBits(BIT_CF_Entrance_Trigger_Passed);
+    } else if ((mathRnd(0, 100) == 0) && (mainGetBits(BIT_577))) {
+        rand = mathRnd(5, 10);
         gDLL_28_ScreenFade->vtbl->func3(rand, SCREEN_FADE_WHITE, 0.1f + rand * 0.05f);
         sDLL190->vtbl->func0(self, 2, NULL, 1, -1, 4, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" Lighting Flash ");
     }
     return 1;

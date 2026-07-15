@@ -90,7 +90,7 @@ void Chuka_setup(Object* self, Chuka_Setup* setup, s32 reset) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
     objData->gamebitDead = setup->gamebitDead;
-    if ((objData->gamebitDead != NO_GAMEBIT) && main_get_bits( objData->gamebitDead)) {
+    if ((objData->gamebitDead != NO_GAMEBIT) && mainGetBits( objData->gamebitDead)) {
         Chuka_die(self, objData);
         return;
     }
@@ -127,7 +127,7 @@ void Chuka_control(Object* self) {
     }
 
     //Handle blinking
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (objData->blinkTimer < 16) {
         if ((s32)objData->blinkTimer == 10) {
             objData->flags |= Chuka_FLAG_1_Player_In_Range;
@@ -137,7 +137,7 @@ void Chuka_control(Object* self) {
 
         objData->blinkTimer++; //@framerate-dependent
         if (objData->blinkTimer == 16) {
-            objData->blinkTimer = rand_next(16, 245);
+            objData->blinkTimer = mathRnd(16, 245);
         }
     } else {
         if (gUpdateRateF <= (255.0f - objData->blinkTimer)) {
@@ -150,7 +150,7 @@ void Chuka_control(Object* self) {
     
     //Handle attacking/playing sounds when the player is in range
     {
-        player = get_player();
+        player = objGetPlayer();
         dx = player->srt.transl.x - self->srt.transl.x;
         dz = player->srt.transl.z - self->srt.transl.z;
         distance2D = sqrtf(SQ(dx) + SQ(dz));
@@ -164,21 +164,21 @@ void Chuka_control(Object* self) {
             if (objData->flags & (Chuka_FLAG_1_Player_In_Range | Chuka_FLAG_4_Do_Chuck)) {
                 //Get vector to player, and angle to player
                 VECTOR_SUBTRACT(player->globalPosition, self->globalPosition, vPlayer); 
-                angle = arctan2_f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
+                angle = mathAtan2f(vPlayer.f[0], vPlayer.f[2]) - (self->srt.yaw & 0xFFFF);
                 CIRCLE_WRAP(angle);
                 if (((u16)angle < objData->angularRange) || (((M_360_DEGREES - 1 - objData->angularRange) & 0xFFFF) < (u16)angle)) {
-                    if ((rand_next(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
-                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    if ((mathRnd(0, 99) < objData->chuckProbability) || (objData->flags & Chuka_FLAG_4_Do_Chuck)) {
+                        dll_amSfx->Play(self, dSoundIDs.attack, MAX_VOLUME, NULL, NULL, 0, NULL);
                         Chuka_chuck(self);
                     } else {
-                        gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
-                    gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             }
         } else if (objData->flags & Chuka_FLAG_1_Player_In_Range) {
-            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dSoundIDs.idle, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         
         objData->prevPlayerDistance2D = distance2D;
@@ -190,8 +190,8 @@ void Chuka_control(Object* self) {
         if (objData->health <= 0) {
             Chuka_die(self, objData);
             gDLL_33_BaddieControl->vtbl->drop_collectable(self, objData->droppedItemIdx, NO_GAMEBIT, TRUE);
-            gDLL_6_AMSFX->vtbl->play(self, dSoundIDs.die, MAX_VOLUME, NULL, NULL, 0, NULL);
-            main_set_bits(objData->gamebitDead, TRUE);
+            dll_amSfx->Play(self, dSoundIDs.die, MAX_VOLUME, NULL, NULL, 0, NULL);
+            mainSetBits(objData->gamebitDead, TRUE);
         }
     }
 
@@ -205,7 +205,7 @@ void Chuka_update(Object *self) { }
 // offset: 0x67C | func: 3 | export: 3
 void Chuka_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -229,7 +229,7 @@ u32 Chuka_get_data_size(Object *self, u32 offsetAddr) {
 void Chuka_receive_message(Object* self, u8 message) {
     switch (message) {
     case 0x80:
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_492, MAX_VOLUME, NULL, NULL, 0, NULL);
         break;
     default:
         STUBBED_PRINTF("BADDIE:Chuka Unknown message [%d]\n", message);
@@ -248,17 +248,17 @@ static void Chuka_chuck(Object* self) {
     Object* player;
 
     objData = self->data;
-    chuckSetup = obj_alloc_setup(sizeof(ChukaChuck_Setup), OBJ_ChukaChuck);
+    chuckSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_ChukaChuck);
     chuckSetup->base.x = self->srt.transl.x;
     chuckSetup->base.y = self->srt.transl.y;
     chuckSetup->base.z = self->srt.transl.z;
     chuckSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     chuckSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
     chuckSetup->base.fadeDistance = 0xFF;
-    chuck = obj_create(&chuckSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);;
+    chuck = objSetupObject(&chuckSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);;
     
     if (chuck != NULL) {
-        player = get_player();
+        player = objGetPlayer();
         chuck->velocity.x = (player->srt.transl.x - self->srt.transl.x) / CHUCK_DURATION;
         chuck->velocity.y = ((player->srt.transl.y + objData->playerAimOffsetY) - self->srt.transl.y) / CHUCK_DURATION;
         chuck->velocity.z = (player->srt.transl.z - self->srt.transl.z) / CHUCK_DURATION;

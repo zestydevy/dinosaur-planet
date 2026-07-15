@@ -120,8 +120,8 @@ void SPShop_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SPShop_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_LevelControl);
-    main_set_bits(BIT_SP_Exiting_Shop, 0);
+    objAddObjectType(self, OBJTYPE_LevelControl);
+    mainSetBits(BIT_SP_Exiting_Shop, 0);
     SPShop_set_random_prices();
 }
 
@@ -129,7 +129,7 @@ void SPShop_setup(Object* self, ObjSetup* setup, s32 arg2) {
 void SPShop_control(Object* self) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     if (self->unkDC == 0) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 0, 1);
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 5, 1);
@@ -144,17 +144,17 @@ void SPShop_control(Object* self) {
         func_80000860(self, self, 0x1CB, 0);
         func_80000450(self, self, 0x22F, 0, 0, 0);
         func_80000450(self, self, 0x231, 0, 0, 0);
-        main_set_bits(BIT_SP_Entered_Shop, 1);
+        mainSetBits(BIT_SP_Entered_Shop, 1);
         gDLL_5_AMSEQ2->vtbl->set(NULL, 0xF3, 0, 0, 0);
         func_8001EBD0(1);
         self->unkDC = 1;
     }
 
-    if (main_get_bits(BIT_SP_Exiting_Shop)) {
+    if (mainGetBits(BIT_SP_Exiting_Shop)) {
         if (player->id == OBJ_Sabre) {
-            warpPlayer(WARP_SH_ROCKY_PODIUM, FALSE);
+            mapWarpPlayer(WARP_SH_ROCKY_PODIUM, FALSE);
         } else {
-            warpPlayer(WARP_SC_RUBBLE_PODIUM, FALSE);
+            mapWarpPlayer(WARP_SC_RUBBLE_PODIUM, FALSE);
         }
     }
 }
@@ -165,13 +165,13 @@ void SPShop_update(Object *self) { }
 // offset: 0x2E0 | func: 3 | export: 3
 void SPShop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x334 | func: 4 | export: 4
 void SPShop_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_LevelControl);
+    objFreeObjectType(self, OBJTYPE_LevelControl);
 }
 
 // offset: 0x374 | func: 5 | export: 5
@@ -214,12 +214,12 @@ int SPShop_is_item_shown(Object* self, s32 itemIndex) {
 
     item = &shopItemData[itemIndex];
     
-    if (get_player()->id == OBJ_Sabre){
+    if (objGetPlayer()->id == OBJ_Sabre){
         gamebitID = item->sabre.show;
-        return !(gamebitID + 1) || main_get_bits(gamebitID);
+        return !(gamebitID + 1) || mainGetBits(gamebitID);
     } else {
         gamebitID = item->krystal.show;
-        return !(gamebitID + 1) || main_get_bits(gamebitID);
+        return !(gamebitID + 1) || mainGetBits(gamebitID);
     }
 }
 
@@ -237,12 +237,12 @@ int SPShop_is_item_hidden(Object* self, s32 itemIndex) {
 
     item = &shopItemData[itemIndex];
     
-    if (get_player()->id == OBJ_Sabre){
+    if (objGetPlayer()->id == OBJ_Sabre){
         gamebitID = item->sabre.hide;
-        return (gamebitID + 1) && main_get_bits(gamebitID);
+        return (gamebitID + 1) && mainGetBits(gamebitID);
     } else {
         gamebitID = item->krystal.hide;
-        return (gamebitID + 1) && main_get_bits(gamebitID);
+        return (gamebitID + 1) && mainGetBits(gamebitID);
     }
 }
 
@@ -296,7 +296,7 @@ u8 SPShop_get_current_item_index(Object* self) {
 
 // offset: 0x6D4 | func: 17 | export: 17
 void SPShop_buy_item(Object* self, s32 cost) {
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     SPShop_Data* objData;
     s32 itemIndex;
 
@@ -337,7 +337,7 @@ void SPShop_buy_item(Object* self, s32 cost) {
     
     //If specified, set the gamebit to hide the item after purchase
     if (itemIndex != -1) {
-        main_set_bits(itemIndex, 1);
+        mainSetBits(itemIndex, 1);
     }
 }
 
@@ -376,6 +376,6 @@ void SPShop_set_random_prices(void) {
     shopItem = shopItemData;
 
     for (index = 0; index < TOTAL_ITEMS; index++){
-        shopItem[index].price.initial = shopItem[index].price.possibilities[rand_next(0, 2)];
+        shopItem[index].price.initial = shopItem[index].price.possibilities[mathRnd(0, 2)];
     }
 }

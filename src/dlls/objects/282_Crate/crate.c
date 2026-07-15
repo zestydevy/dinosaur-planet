@@ -47,12 +47,12 @@ void crate_setup(Object* self, Crate_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    obj_add_object_type(self, OBJTYPE_63);
+    objAddObjectType(self, OBJTYPE_63);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     
-    dModGfxDLLDestroyed = dll_load(DLL_ID_107, 1, 0);
-    dModGfxDLLDamaged = dll_load(DLL_ID_106, 1, 0);
+    dModGfxDLLDestroyed = dllLoadActual(DLL_ID_107, 1, 0);
+    dModGfxDLLDamaged = dllLoadActual(DLL_ID_106, 1, 0);
     
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -108,10 +108,10 @@ void crate_control(Object* self) {
     if (func_8002601C(self, NULL, NULL, &hitDamage, (f32*)&srt.transl.x, (f32*)&srt.transl.y, (f32*)&srt.transl.z) != 0) {
         objData->health -= hitDamage;
         if (objData->health > 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Change model index (increase index to look more and more damaged)
-            obj_set_model(self, CRATE_HIT_POINTS - objData->health);
+            objSetModel(self, CRATE_HIT_POINTS - objData->health);
 
             //Flash after being hit
             objData->flash = 1.0f;
@@ -139,18 +139,18 @@ void crate_control(Object* self) {
         objData->isDestroyed = TRUE;
         objData->isRespawned = FALSE;
 
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
         
         self->objhitInfo->unk58 &= ~1;
 
         //Set a gamebit (NOTE: not checked during setup, so crate still comes back)
         if (objSetup->gamebitDestroyed != NO_GAMEBIT) {
-            main_set_bits(objSetup->gamebitDestroyed, 1);
+            mainSetBits(objSetup->gamebitDestroyed, 1);
         }
         
         //Create an Energy Egg
         if (objData->useNearbyCollectable == FALSE) {
-            foodSetup = (Collectable_Setup*)obj_alloc_setup(
+            foodSetup = (Collectable_Setup*)objAllocSetup(
                 sizeof(Collectable_Setup), 
                 OBJ_meatPickup
             );
@@ -161,7 +161,7 @@ void crate_control(Object* self) {
             foodSetup->objHitsValue = 3;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitSecondary = NO_GAMEBIT;
-            obj_create(
+            objSetupObject(
                 (ObjSetup*)foodSetup, 
                 5, 
                 self->mapID, 
@@ -172,7 +172,7 @@ void crate_control(Object* self) {
         //Or reposition a nearby Collectable
         } else {
             distance = 50.0f;
-            obj = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
+            obj = objGetNearestTypeTo(OBJTYPE_Collectable, self, &distance);
             if (obj != NULL) {
                 obj->srt.transl.x = obj->globalPosition.x = self->srt.transl.x;
                 obj->srt.transl.y = obj->globalPosition.y = self->srt.transl.y + 10.0f;
@@ -207,18 +207,18 @@ void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **
     if ((objData->isDestroyed == 0) && visibility) {
         //Flash red after being struck
         if (objData->flash) {
-            func_80036FBC(0xC8, 0, 0, objData->flash);
+            objprintSetBlendColor(0xC8, 0, 0, objData->flash);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x728 | func: 4 | export: 4
 void crate_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(dModGfxDLLDestroyed);
-    dll_unload(dModGfxDLLDamaged);
-    obj_free_object_type(self, OBJTYPE_63);
+    dllFree(dModGfxDLLDestroyed);
+    dllFree(dModGfxDLLDamaged);
+    objFreeObjectType(self, OBJTYPE_63);
 }
 
 // offset: 0x7B8 | func: 5 | export: 5

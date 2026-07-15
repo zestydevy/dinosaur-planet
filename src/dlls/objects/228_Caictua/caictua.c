@@ -89,11 +89,11 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     bzero(objData, sizeof(DLL228_DataActual));
     
     objData->unk4 = objSetup->unk2C * 60.0f;
-    objData->unk8 = rand_next(0xA, 0x12C);
+    objData->unk8 = mathRnd(0xA, 0x12C);
     objData->unk10 = 0;
     objData->unk12 = 0;
     
-    func_80023D30(self, 0, 0.0f, 0);
+    objAnimSet(self, 0, 0.0f, 0);
     
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
@@ -173,9 +173,9 @@ void dll_228_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     objData = baddie->objdata;
     
     if (visibility && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, &objData->unk20.x, &objData->unk20.y, &objData->unk20.z, 0);
-        func_80031F6C(self, 1, &objData->unk38.x, &objData->unk38.y, &objData->unk38.z, 0);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objGetAttachPointWorldSpace(self, 0, &objData->unk20.x, &objData->unk20.y, &objData->unk20.z, 0);
+        objGetAttachPointWorldSpace(self, 1, &objData->unk38.x, &objData->unk38.y, &objData->unk38.z, 0);
     }
 }
 
@@ -183,10 +183,10 @@ void dll_228_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void dll_228_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     
@@ -229,7 +229,7 @@ void dll_228_func_5E8(Object* self, u8 message, s32 unused) {
 #else
 void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 /*0x0*/ static SRT bss_0;
-    Object* player = get_player(); //6C
+    Object* player = objGetPlayer(); //6C
 /*0x8C*/ s16 data_8C[] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //64, 66, 68, 6A
     Vec3f sp58; //58, 5C, 60
     s32 count;
@@ -373,7 +373,7 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
                 if (dx < 0.0f) {
                     var_fa1 = -var_fa1;
                 }
-                sp7C[idx] = arctan2_f(((dy / dx) * var_fa1) - ((arg7 * dx) / (2.0f * var_fa1)), var_fa1);
+                sp7C[idx] = mathAtan2f(((dy / dx) * var_fa1) - ((arg7 * dx) / (2.0f * var_fa1)), var_fa1);
                 idx++;
             }
         }
@@ -413,10 +413,10 @@ void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     f32 dx;
     f32 dz;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = baddie->objdata;
 
-    angle = (u16)arctan2_f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.z - player->srt.transl.z);
+    angle = (u16)mathAtan2f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.z - player->srt.transl.z);
     yawDiff = angle - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(yawDiff);
     
@@ -475,7 +475,7 @@ static void dll_228_func_1394(Object* self) {
     Object* obj;
     Object** objects;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         obj = objects[index];
         if ((self != obj) && (obj->id == OBJ_Caictua)) {
             ((DLL_Unknown*)obj->dll)->vtbl->func[8].withThreeArgsS32(obj, 0x81, 0);
@@ -513,10 +513,10 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->unk12 -= gUpdateRate;
     } else {
         //Check if the caictua has line-of-sight to the player
-        player = get_player();
+        player = objGetPlayer();
         
         //Get yaw diff
-        angle = (u16)arctan2_f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.f[2] - player->srt.transl.f[2]);
+        angle = (u16)mathAtan2f(self->srt.transl.x - player->srt.transl.x, self->srt.transl.f[2] - player->srt.transl.f[2]);
         yawDiff = angle - (self->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(yawDiff);
         
@@ -525,15 +525,15 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             v.f[0] = self->srt.transl.x; 
             v.f[1] = self->srt.transl.y + 55.0f; 
             v.f[2] = self->srt.transl.z; 
-            func_80007EE0(&v, &vCactus16);
+            vox_func_80007EE0(&v, &vCactus16);
 
             v.f[0] = player->srt.transl.x;
             v.f[1] = player->srt.transl.y + 25.0f; 
             v.f[2] = player->srt.transl.z; 
-            func_80007EE0(&v, &vPlayer16);
+            vox_func_80007EE0(&v, &vPlayer16);
 
-            if (func_80008048(&vPlayer16, &vCactus16, NULL, &sp37, 0) || (sp37 == 1)) {
-                objData->unk12 = rand_next(120, 240);
+            if (vox_func_80008048(&vPlayer16, &vCactus16, NULL, &sp37, 0) || (sp37 == 1)) {
+                objData->unk12 = mathRnd(120, 240);
                 return 2;
             }
         }
@@ -550,7 +550,7 @@ s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk341 = 3;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -558,7 +558,7 @@ s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->enteredAnimState) {
         dll_228_func_1394(self);
-        gDLL_6_AMSFX->vtbl->play(self, 0x720, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0x720, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     return 0;
@@ -580,12 +580,12 @@ s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk33D = 0;
         self->unkAF |= 8;
         gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
-        gDLL_6_AMSFX->vtbl->play(self, 0x723, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0x723, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
     }
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -599,9 +599,9 @@ s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->unk33A && (self->opacity == 0) && (objData->unk0 == 0.0f)) {
         objData->unk0 = 1.0f;
-        main_set_bits(baddie->unk39E, 0);
-        main_set_bits(baddie->unk39C, 1);
-        func_80023D30(self, 0, 0.0f, 0);
+        mainSetBits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39C, 1);
+        objAnimSet(self, 0, 0.0f, 0);
         baddie->unk3B6 = 0;
         fsa->animState = 0;
     }
@@ -647,10 +647,10 @@ s32 dll_228_func_1AF0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->unk8 = 0.0f;
         fsa->animState = 3;
     } else if (fsa->unk33A) {
-        obj_send_mesg_many(0, 3, self, 0xE0000, self);
+        objSendMesgMany(0, 3, self, 0xE0000, self);
         
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
 
         return 4;

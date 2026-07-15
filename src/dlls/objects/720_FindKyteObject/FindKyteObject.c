@@ -34,7 +34,7 @@ void FindKyteObject_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     objdata->state = 0;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x64 | func: 1 | export: 1
@@ -59,19 +59,19 @@ void FindKyteObject_control(Object *self) {
         break;
     case 1:
         gamebit = objdata->curveSetup->type22.usedBit;
-        if ((gamebit != NO_GAMEBIT) && (main_get_bits(gamebit))) {
-            main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
+        if ((gamebit != NO_GAMEBIT) && (mainGetBits(gamebit))) {
+            mainSetBits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             objdata->state = 0;
             break;
         }
 
-        kyte = get_sidekick();
+        kyte = objGetSidekick();
         if (kyte) {
-            player = get_player();
+            player = objGetPlayer();
             if (setup->checkDistance2D) {
-                dist = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition);
+                dist = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition);
             } else {
-                dist = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
+                dist = vec3DistanceSquared(&player->globalPosition, &self->globalPosition);
             }
 
             if (dist <= SQ(setup->findRange * 2)) {
@@ -80,10 +80,10 @@ void FindKyteObject_control(Object *self) {
 
                 //Check if Find command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
-                    objdata->flightCurve = main_get_bits(BIT_Kyte_Flight_Curve);
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
+                    objdata->flightCurve = mainGetBits(BIT_Kyte_Flight_Curve);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
                     if (setup->kyteTalkSeq != 0) {
-                        main_set_bits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
+                        mainSetBits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
                     }
                     
                     objdata->timer = setup->timerSeconds * 60.0f;
@@ -94,13 +94,13 @@ void FindKyteObject_control(Object *self) {
         break;
     case 2:
         objdata->timer -= gUpdateRateF;
-        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && (main_get_bits(gamebit)))) {
+        if ((objdata->timer <= 0.0f) || ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && (mainGetBits(gamebit)))) {
             if (setup->kyteTalkSeq != 0) {
-                main_set_bits(BIT_Kyte_Flight_Talk_Sequence, -1);
+                mainSetBits(BIT_Kyte_Flight_Talk_Sequence, -1);
             }
             objdata->state = 1;
-            if (main_get_bits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
-                main_set_bits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
+            if (mainGetBits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
+                mainSetBits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             }
         }
         break;
@@ -127,7 +127,7 @@ s32 FindKyteObject_func_3E4(s32 arg0, s32 arg1, s32 arg2) {
 
 // offset: 0x3FC | func: 6 | export: 4
 void FindKyteObject_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x43C | func: 7 | export: 5

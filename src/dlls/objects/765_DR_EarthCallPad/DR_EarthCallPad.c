@@ -30,7 +30,7 @@ void DR_EarthCallPad_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DR_EarthCallPad_setup(Object* self, DR_EarthCallPad_Setup* setup, s32 reset) {
-    obj_add_object_type(self, OBJTYPE_DinoCallSpot);
+    objAddObjectType(self, OBJTYPE_DinoCallSpot);
     self->srt.yaw = setup->rotation << 8;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
@@ -48,9 +48,9 @@ void DR_EarthCallPad_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 void DR_EarthCallPad_free(Object* self, s32 onlySelf) {
     DR_EarthCallPad_Data* objdata = self->data;
     if (objdata->fxemit != NULL) {
-        obj_destroy_object(objdata->fxemit);
+        objFreeObject(objdata->fxemit);
     }
-    obj_free_object_type(self, OBJTYPE_DinoCallSpot);
+    objFreeObjectType(self, OBJTYPE_DinoCallSpot);
 }
 
 // offset: 0x120 | func: 5 | export: 5
@@ -70,7 +70,7 @@ s32 DR_EarthCallPad_call(Object* self) {
 
     STUBBED_PRINTF(" Playing Sequence for Calling Dino ");
 
-    if (main_get_bits(setup->gamebitEnabled) == 0) {
+    if (mainGetBits(setup->gamebitEnabled) == 0) {
         return 1;
     } else {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_DRAGON_ROCK_BOTTOM, 2, 1);
@@ -88,7 +88,7 @@ static Object* DR_EarthCallPad_create_fx(Object* self, s32 partID) {
 
     STUBBED_PRINTF(" Creating Effect Emitter ");
 
-    fxSetup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    fxSetup = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     fxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     fxSetup->base.x = self->srt.transl.x;
     fxSetup->base.y = self->srt.transl.y;
@@ -96,5 +96,5 @@ static Object* DR_EarthCallPad_create_fx(Object* self, s32 partID) {
     fxSetup->indexInBank = partID;
     fxSetup->fxRate = 0;
     fxSetup->toggleGamebit = -1;
-    return obj_create((ObjSetup*)fxSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)fxSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

@@ -71,7 +71,7 @@ void dll_517_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
     sp38 = baddie->objdata;
-    sp38->unk8 = rand_next(0, 1);
+    sp38->unk8 = mathRnd(0, 1);
     if (self->shadow != NULL) {
         self->shadow->distFadeMaxOpacity = 0x64;
         self->shadow->distFadeMinOpacity = 0x96;
@@ -96,7 +96,7 @@ void dll_517_update(Object *self) { }
 // offset: 0x208 | func: 4 | export: 3
 void dll_517_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -105,7 +105,7 @@ void dll_517_free(Object* self, s32 arg1) {
     void* sp24;
 
     sp24 = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, (Baddie* ) sp24, 0x20U);
 }
 
@@ -135,11 +135,11 @@ static int dll_517_func_2FC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 a
 static void dll_517_func_334(Object* arg0, Baddie* baddie, ObjFSA_Data* arg2) {
     DLL517_Data* sp2C = baddie->objdata;
 
-    gDLL_33_BaddieControl->vtbl->func4(arg0, get_player(), 0x10U, &sp2C->unk0, &sp2C->unk2, &sp2C->unk4);
+    gDLL_33_BaddieControl->vtbl->func4(arg0, objGetPlayer(), 0x10U, &sp2C->unk0, &sp2C->unk2, &sp2C->unk4);
 
     arg2->targetDist = sp2C->unk4;
-    func_80032A08(arg0, &baddie -> unk3BC);
-    arg2->target = get_player();
+    objExprEyeIdle(arg0, &baddie -> unk3BC);
+    arg2->target = objGetPlayer();
     gDLL_33_BaddieControl->vtbl->func10(arg0, arg2, 0.17f, 1);
     baddie->unk3AC = (Object* ) arg0->animObj;
     arg0->animObj = NULL;
@@ -156,12 +156,12 @@ static s32 dll_517_func_4AC(Object* self, ObjFSA_Data* arg1, f32 arg2) {
 
     sp24 = arg1->target;
     if (sp24 != NULL) {
-        func_80032C0C(self, sp24, &baddie -> unk3BC, 0x19);
+        objExpr_func_80032C0C(self, sp24, &baddie -> unk3BC, 0x19);
     }
     sp28 = baddie->objdata;
     if ((arg1->enteredAnimState != 0) || (arg1->unk33A != 0)) {
-        sp28->unk6 = rand_next(0, 6);
-        func_80023D30(self, _data_8[sp28->unk6], 0.0f, 0U);
+        sp28->unk6 = mathRnd(0, 6);
+        objAnimSet(self, _data_8[sp28->unk6], 0.0f, 0U);
     }
     if (((s32) sp28->unk4 < (s32) baddie->unk3E2) && (arg1->logicState != 0)) {
         arg1->animTickDelta = ( f32) _data_18[sp28->unk6] * 5.0f;
@@ -184,15 +184,15 @@ static s32 dll_517_func_628(Object* arg0, ObjFSA_Data* FSAData, f32 arg2) {
 
     sp2C = FSAData->target;
     if (sp2C != NULL) {
-        func_80032C0C(arg0, sp2C, &baddie -> unk3BC, 0x19);
+        objExpr_func_80032C0C(arg0, sp2C, &baddie -> unk3BC, 0x19);
     }
     d517Data = baddie->objdata;
     sp36 = d517Data->unk2;
     if ((FSAData->enteredAnimState != 0) || (FSAData->unk33A != 0)) {
         if (sp36 < 0x7FFF) {
-            func_80023D30(arg0, 0xE, 0.0f, 0U);
+            objAnimSet(arg0, 0xE, 0.0f, 0U);
         } else {
-            func_80023D30(arg0, 0xD, 0.0f, 0U);
+            objAnimSet(arg0, 0xD, 0.0f, 0U);
         }
     
     }
@@ -225,7 +225,7 @@ static s32 dll_517_func_7C4(Object* self, ObjFSA_Data* arg1, f32 arg2) {
         }
 
         if (sp20 < 0x1770 && (self->unkAF & 1)) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             gDLL_3_Animation->vtbl->start_obj_sequence((s32) sp28->unk8, self, -1);
             sp28->unk8++;
             if (sp28->unk8 >= 2) {

@@ -40,39 +40,39 @@ extern u8 alSynFlag;
 extern void *gTempDLLInsts[3];
 
 
-void mainproc(void *arg);
+void mainThreadEntry(void *arg);
 
-void func_80013FB4(void);
+void main_func_80013FB4(void);
 
-void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID);
-void func_800142A0(f32 arg0, f32 arg1, f32 arg2);
-void main_start_game(f32 x, f32 y, f32 z, s32 playerno);
-void func_800143A4(void);
+void mainChangeMap(s32 mapID, s32 setupID, s32 playerno, s32 menuID);
+void main_func_800142A0(f32 arg0, f32 arg1, f32 arg2);
+void mainStartGame(f32 x, f32 y, f32 z, s32 playerno);
+void main_func_800143A4(void);
 
-s8 get_pause_state(void);
-void unpause();
-void set_pause_state(s32 state);
+s8 mainGetPauseState(void);
+void mainUnpause();
+void mainSetPauseState(s32 state);
 
-void func_80014508(s8 arg0);
+void main_func_80014508(s8 arg0);
 
-s32 ret1_8001454c(void);
+s32 main_ret1_8001454c(void);
 
-OSSched *get_ossched(void);
+OSSched *mainGetScheduler(void);
 
-void main_set_bits(s32 entry, u32 value);
-u32 main_get_bits(s32 entry);
-s32 main_increment_bits(s32 entry);
-s32 main_decrement_bits(s32 entry);
-s32 create_temp_dll(s32 id);
-s32 remove_temp_dll(s32 id);
-void main_load_frontend(void);
-void main_unload_frontend(void);
-void main_demo_reset(void);
-void main_demo_start(f32 x, f32 y, f32 z, s32 playerno);
-s32 main_demo_next(void);
-u8 main_demo_state(void);
-u8 main_demo_finished(void);
-void func_80014D34(f32 param1, f32 *outX, f32 *outY, f32 *outZ);
-void func_800143A4(void);
+void mainSetBits(s32 entry, u32 value);
+u32 mainGetBits(s32 entry);
+s32 mainIncrementBits(s32 entry);
+s32 mainDecrementBits(s32 entry);
+s32 mainCreateTempDLL(s32 id);
+s32 mainRemoveTempDLL(s32 id);
+void mainLoadFrontend(void);
+void mainUnloadFrontend(void);
+void mainDemoReset(void);
+void mainDemoStart(f32 x, f32 y, f32 z, s32 playerno);
+s32 mainDemoNext(void);
+u8 mainDemoState(void);
+u8 mainDemoFinished(void);
+void mainGetBufferedPlayerPos(f32 param1, f32 *outX, f32 *outY, f32 *outZ);
+void main_func_800143A4(void);
 
 #endif

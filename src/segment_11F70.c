@@ -41,7 +41,7 @@ UnkOSPifRam* D_800A8640;
 UnkOSPifRam D_800A8648;
 /* -------- .bss end 800a8690 -------- */
 
-void controller_querey(OSMesgQueue* arg0, ContQueryStruct* arg1) {
+void unkControllerQuery(OSMesgQueue* arg0, ContQueryStruct* arg1) {
     s32 i;
     OSContStatus sp24[4];
 

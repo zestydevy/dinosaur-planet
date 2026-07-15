@@ -10,7 +10,7 @@ void dll_385_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_385_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = dll_385_func_110;
 }
 
@@ -23,7 +23,7 @@ void dll_385_update(Object *self) { }
 // offset: 0x88 | func: 3 | export: 3
 void dll_385_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

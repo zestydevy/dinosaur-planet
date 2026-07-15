@@ -39,15 +39,15 @@ void WMPlanets_setup(Object* self, WMPlanets_Setup* objsetup, s32 arg2) {
         objdata->orbitRadius = 0.0f;
     }
 
-    objdata->orbitSpeed = rand_next(100, 200);
-    objdata->spinSpeed = rand_next(200, 400);
+    objdata->orbitSpeed = mathRnd(100, 200);
+    objdata->spinSpeed = mathRnd(200, 400);
     objdata->orbitYaw = 0;
-    objdata->inclination = rand_next(0, 2400);
+    objdata->inclination = mathRnd(0, 2400);
     objdata->orbitOrigin.x = self->srt.transl.x;
     objdata->orbitOrigin.y = self->srt.transl.y;
     objdata->orbitOrigin.z = self->srt.transl.z;
 
-    obj_set_model(self, objsetup->modelIdx);
+    objSetModel(self, objsetup->modelIdx);
     self->srt.transl.z = objsetup->base.z + objdata->orbitRadius;
 }
 
@@ -68,7 +68,7 @@ void WMPlanets_control(Object* self) {
     srt.roll = 0;
     srt.pitch = 0;
     srt.yaw = objdata->orbitYaw;
-    rotate_vec3(&srt, v.f);
+    mathRotateRPY(&srt, v.f);
 
     //Apply orbital inclination (pitch of orbital plane)
     srt.transl.x = 0.0f;
@@ -78,7 +78,7 @@ void WMPlanets_control(Object* self) {
     srt.roll = 0;
     srt.pitch = objdata->inclination;
     srt.yaw = 0;
-    rotate_vec3(&srt, v.f);
+    mathRotateRPY(&srt, v.f);
 
     //Set planet's coords in world
     VECTOR_ADD(v, objdata->orbitOrigin, self->srt.transl);
@@ -93,7 +93,7 @@ void WMPlanets_update(Object *self) { }
 // offset: 0x2D0 | func: 3 | export: 3
 void WMPlanets_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

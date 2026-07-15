@@ -49,15 +49,15 @@ void WGSH_ObjCreator_control(Object *self) {
 
     setup = (WGSH_ObjCreator_Setup*)self->setup;
     objdata = self->data;
-    if ((self->unkE0 != 0) && (main_get_bits(BIT_1D4) != 0)) {
+    if ((self->unkE0 != 0) && (mainGetBits(BIT_1D4) != 0)) {
         self->unkE0 = 0;
     }
-    if ((self->unkE0 == 0) && (main_get_bits(BIT_1D3) != 0)) {
-        sp38 = dll_load_deferred(DLL_ID_146, 1);
+    if ((self->unkE0 == 0) && (mainGetBits(BIT_1D3) != 0)) {
+        sp38 = dllLoad(DLL_ID_146, 1);
         sp38->vtbl->func0(self, 0, 0, 1, -1, 0);
         sp38->vtbl->func0(self, 1, 0, 1, -1, 0);
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
-        dll_unload(sp38);
+        dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dllFree(sp38);
         objdata->countdownRate = 1;
         self->unkE0 = 1;
     }
@@ -66,7 +66,7 @@ void WGSH_ObjCreator_control(Object *self) {
     }
     if ((objdata->timer <= 0) && !setup->disableSpawner) {
         // @bug: Does not allocate enough bytes for flybaddie setup (should be 0x1C bytes)
-        flybaddieSetup = obj_alloc_setup(0x18, OBJ_WGSH_flybaddie);
+        flybaddieSetup = objAllocSetup(0x18, OBJ_WGSH_flybaddie);
         flybaddieSetup->x = setup->base.x;
         flybaddieSetup->y = setup->base.y + 50.0f;
         flybaddieSetup->z = setup->base.z;
@@ -76,7 +76,7 @@ void WGSH_ObjCreator_control(Object *self) {
         flybaddieSetup->byte5 = setup->base.byte5;
         flybaddieSetup->byte6 = setup->base.byte6;
         flybaddieSetup->fadeDistance = setup->base.fadeDistance;
-        obj_create(flybaddieSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+        objSetupObject(flybaddieSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         objdata->timer = 100;
         objdata->countdownRate = 0;
     }
@@ -88,7 +88,7 @@ void WGSH_ObjCreator_update(Object *self) { }
 // offset: 0x2A0 | func: 3 | export: 3
 void WGSH_ObjCreator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

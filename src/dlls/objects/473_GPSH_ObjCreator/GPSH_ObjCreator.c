@@ -74,7 +74,7 @@ void GPSH_ObjCreator_control(Object* self) {
 
     setup = (GPSH_ObjCreator_Setup*)self->setup;
     objdata = self->data;
-    if (main_get_bits(BIT_5AF) != 0) {
+    if (mainGetBits(BIT_5AF) != 0) {
         // Reset
         self->unkE0 = 0;
         objdata->timer = 100;
@@ -84,22 +84,22 @@ void GPSH_ObjCreator_control(Object* self) {
         self->opacity = 0xFF;
     }
     if (!objdata->spawned) {
-        if ((objdata->type == 6) && (self->unkE0 == 0) && (main_get_bits(BIT_5AC) != 0)) {
+        if ((objdata->type == 6) && (self->unkE0 == 0) && (mainGetBits(BIT_5AC) != 0)) {
             // Start flybaddie spawn
-            modgfx = dll_load_deferred(DLL_ID_146, 1);
+            modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
-            dll_unload(modgfx);
+            dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dllFree(modgfx);
             objdata->timerRate = 1;
             self->unkE0 = 1;
-        } else if ((self->unkE0 == 0) && (main_get_bits(BIT_148) != 0)) {
+        } else if ((self->unkE0 == 0) && (mainGetBits(BIT_148) != 0)) {
             // Start pickup spawn
-            modgfx = dll_load_deferred(DLL_ID_146, 1);
+            modgfx = dllLoad(DLL_ID_146, 1);
             modgfx->vtbl->func0(self, 3, 0, 1, -1, 0);
             modgfx->vtbl->func0(self, 4, 0, 1, -1, 0);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
-            dll_unload(modgfx);
+            dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dllFree(modgfx);
             objdata->timerRate = 1;
             self->unkE0 = 1;
         }
@@ -109,7 +109,7 @@ void GPSH_ObjCreator_control(Object* self) {
         if (objdata->type != 6) {
             if (objdata->timer <= 0) {
                 // Spawn pickup
-                pickObjSetup = obj_alloc_setup(sizeof(GPSH_PickObj_Setup), objdata->type + OBJ_GPSHpickobjroot);
+                pickObjSetup = objAllocSetup(sizeof(GPSH_PickObj_Setup), objdata->type + OBJ_GPSHpickobjroot);
                 objdata->spawned = TRUE;
                 pickObjSetup->base.fadeDistance = 0xFF;
                 pickObjSetup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
@@ -120,7 +120,7 @@ void GPSH_ObjCreator_control(Object* self) {
                 pickObjSetup->base.objId = objdata->type + OBJ_GPSHpickobjroot;
                 pickObjSetup->unk18 = (s8) (self->srt.yaw >> 8);
                 pickObjSetup->unk1A = data_0[objdata->type];
-                obj_create((ObjSetup*)pickObjSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
+                objSetupObject((ObjSetup*)pickObjSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
                     ->modelInstIdx = 0;
                 objdata->timer = 100;
                 objdata->timerRate = 0;
@@ -128,7 +128,7 @@ void GPSH_ObjCreator_control(Object* self) {
         } else {
             if (objdata->timer <= 0) {
                 // Spawn flybaddie
-                flybaddieSetup = obj_alloc_setup(sizeof(GPSH_flybaddie_Setup), OBJ_GPSH_flybaddie);
+                flybaddieSetup = objAllocSetup(sizeof(GPSH_flybaddie_Setup), OBJ_GPSH_flybaddie);
                 flybaddieSetup->base.x = setup->base.x;
                 flybaddieSetup->base.y = setup->base.y + 50.0f;
                 flybaddieSetup->base.z = setup->base.z;
@@ -139,7 +139,7 @@ void GPSH_ObjCreator_control(Object* self) {
                 flybaddieSetup->base.byte6 = setup->base.byte6;
                 flybaddieSetup->base.fadeDistance = setup->base.fadeDistance;
                 flybaddieSetup->unk1A = -0x3C;
-                obj_create((ObjSetup*)flybaddieSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+                objSetupObject((ObjSetup*)flybaddieSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
                 objdata->timer = 100;
                 objdata->timerRate = 0;
             }
@@ -153,7 +153,7 @@ void GPSH_ObjCreator_update(Object* self) { }
 // offset: 0x4A0 | func: 3 | export: 3
 void GPSH_ObjCreator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

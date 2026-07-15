@@ -19,14 +19,14 @@ void dll_762_control(Object *self) {
     Object *player;
     Object *obj;
 
-    player = get_player();
+    player = objGetPlayer();
     obj = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
     if ((obj) && (obj->id == OBJ_DR_CloudRunner)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 9, 1);
     } else {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 9, 0);
-        if ((!main_get_bits(BIT_7C8)) && (main_get_bits(BIT_667)) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
-            main_set_bits(BIT_7C7, 1);
+        if ((!mainGetBits(BIT_7C8)) && (mainGetBits(BIT_667)) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
+            mainSetBits(BIT_7C7, 1);
         }
     }
 }
@@ -37,7 +37,7 @@ void dll_762_update(Object *self) { }
 // offset: 0x180 | func: 3 | export: 3
 void dll_762_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -56,14 +56,14 @@ void WLWorm_control(Object* self) {
     Vec3f vUnused;
     
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     if (!player){
         return;
     }
     
     //Return home when player not near object's initial position
-    if (vec3_distance_xz(&player->globalPosition, (Vec3f*)&self->setup->x) > 440.0f){
+    if (vec3DistanceXZ(&player->globalPosition, (Vec3f*)&self->setup->x) > 440.0f){
         self->srt.transl.f[0] = objData->home.f[0];
         self->srt.transl.f[1] = objData->home.f[1];
         self->srt.transl.f[2] = objData->home.f[2];

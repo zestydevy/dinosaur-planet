@@ -20,7 +20,7 @@ void DIMExplosion_setup(Object* self, DIMExplosion_Setup* objSetup, s32 arg2) {
     
     objData->initialScale = 0.01f;
     self->srt.scale = 0.01f;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_389_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_389_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -29,7 +29,7 @@ void DIMExplosion_control(Object* self) {
     TextureAnimator* texAnim;
 
     //Scroll texture
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->positionV -= 0x80;
         if (texAnim->positionV < -0x3E0) {
@@ -40,7 +40,7 @@ void DIMExplosion_control(Object* self) {
     //Scale up, destroying self after a while
     self->srt.scale += 0.008f * gUpdateRateF;
     if (self->srt.scale > 0.6f) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     //Spin
@@ -90,7 +90,7 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             self->opacityWithFade = 0xFF;
         }
         
-        draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
     }
     
     //Draw model 0 (outer explosion)
@@ -104,7 +104,7 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             modelInstance->displayList[dlInfo->idx] = mode;
         }
         
-        draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
     }
 }
 

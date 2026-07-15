@@ -3,7 +3,7 @@
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 
-s32 func_80024108(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
+s32 objAnimAdvance(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
 
 typedef struct {
     ObjSetup base;
@@ -60,7 +60,7 @@ void CCcage_setup(Object* self, CCcage_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
     
     //Handle initial state
-    if (main_get_bits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
+    if (mainGetBits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
         objData->state = STATE_Already_On_Ground;
     } else {
         objData->state = STATE_Dangling;
@@ -86,7 +86,7 @@ void CCcage_control(Object* self) {
     
     //Look for nearby CClightfoot
     if (objData->children[0] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(OBJTYPE_40, self, &searchDistance);
+        nearbyObject = objGetNearestTypeTo(OBJTYPE_40, self, &searchDistance);
         objData->children[0] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n");
@@ -99,7 +99,7 @@ void CCcage_control(Object* self) {
 
     //Look for nearby CCspellpage
     if (objData->children[1] == NULL) {
-        nearbyObject = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &searchDistance);
+        nearbyObject = objGetNearestTypeTo(OBJTYPE_Collectable, self, &searchDistance);
         objData->children[1] = nearbyObject;
         if (!nearbyObject) {
             STUBBED_PRINTF("can't find lightfoot\n"); //might've meant to say "SpellPage"
@@ -117,7 +117,7 @@ void CCcage_control(Object* self) {
     case STATE_Already_On_Ground:
         CCcage_hit_ground(self);
         objData->unk3C = 1.0f;
-        if (main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage) == FALSE) {
+        if (mainGetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage) == FALSE) {
             for (index = 0; index < 2; index++){
                 CCcage_transform_child(self, index);
             }
@@ -183,7 +183,7 @@ void CCcage_control(Object* self) {
         
         //Check for Projectile Spell collision
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_LightFoot_Shout, MAX_VOLUME, NULL, NULL, 0, NULL);
             if (objData->timesHit != 0) {
                 objData->fallDuration = 35.355f;
                 objData->fallTimer = 0;
@@ -211,7 +211,7 @@ void CCcage_control(Object* self) {
             }
             
             //Play sequence: cage door opening and LightFoot hopping out
-            main_set_bits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
+            mainSetBits(BIT_CC_Shot_Down_Lightfoot_Cage, TRUE);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, objData->children[0], -1);
             objData->state = STATE_Finished;
         } else {
@@ -228,7 +228,7 @@ void CCcage_control(Object* self) {
         break;
     }
 
-    func_80024108(self, objData->unk3C, gUpdateRateF, 0);
+    objAnimAdvance(self, objData->unk3C, gUpdateRateF, 0);
 }
 
 // offset: 0x8A4 | func: 2 | export: 2
@@ -237,7 +237,7 @@ void CCcage_update(Object *self) { }
 // offset: 0x8B0 | func: 3 | export: 3
 void CCcage_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -270,7 +270,7 @@ void CCcage_transform_child(Object* self, s32 index) {
     position[1] = objData->childPositions[index].y;
     position[2] = objData->childPositions[index].z;
     
-    rotate_vec_inv((SRT*)&transform, (Vec3f*)&position);
+    mathRotateYPR((SRT*)&transform, (Vec3f*)&position);
     
     objData->children[index]->srt.transl.x = position[0] + self->srt.transl.x;
     objData->children[index]->srt.transl.y = position[1] + self->srt.transl.y;
@@ -312,7 +312,7 @@ void CCcage_impact_sway(Object* self) {
     CCcage_Data *objData;
     Object *player;
     
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     
     positionDelta[0] = player->srt.transl.x - self->srt.transl.x;

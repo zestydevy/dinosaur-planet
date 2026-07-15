@@ -16,7 +16,7 @@ u64 gEntrypointThreadStack[STACKSIZE(0x50)];
 void idle(void* arg);
 
 // official name: boot
-void bootproc(void) {
+void boot(void) {
     osInitialize();
     // @bug: The idle thread stack size was shrunk but the call to osCreateThread was not adjusted!
     osCreateThread(&gIdleThread, IDLE_THREAD_ID, &idle, NULL, 
@@ -25,7 +25,7 @@ void bootproc(void) {
 }
 
 void idle(void* arg) {
-    osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainproc, NULL, 
+    osCreateThread(&gMainThread, MAIN_THREAD_ID, &mainThreadEntry, NULL, 
         &gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)], MAIN_THREAD_PRIORITY);
 
     gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)] = 0;
@@ -38,7 +38,7 @@ void idle(void* arg) {
 }
 
 // official name: bootCheckStack
-void thread_timer_tick(void) {
+void bootCheckStack(void) {
     gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)]++;
     gMainThreadStack[0]++;
     if (gMainThreadStack[STACKSIZE(MAIN_THREAD_SIZE)] != gMainThreadStack[0]) {

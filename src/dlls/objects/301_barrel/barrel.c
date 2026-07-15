@@ -54,16 +54,16 @@ void Barrel_control(Object* self) {
         //Explode when damaged
         if (func_80025F40(self, NULL, NULL, &hitDamage) != 0) {
             gDLL_54_pickup->vtbl->drop(self, pickup);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
             func_80026940(self, 40);
             func_80026128(self, Damage_Type_Explosion, 4, 0);
             
             //Create an explosion
-            explosionSetup = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explosionSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
             explosionSetup->base.x = self->srt.transl.x;
             explosionSetup->base.y = self->srt.transl.y;
             explosionSetup->base.z = self->srt.transl.z;
-            obj_create((ObjSetup*)explosionSetup, 5, self->mapID, -1, self->parent);
+            objSetupObject((ObjSetup*)explosionSetup, 5, self->mapID, -1, self->parent);
             
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
@@ -87,7 +87,7 @@ void Barrel_control(Object* self) {
         objData->timer += gUpdateRateF;
         
         //Reappear when timer has reached threshold and barrel is off-screen
-        if ((objData->timer > 300.0f) && (is_sphere_in_frustum(&self->srt.transl, self->visRadius) == FALSE)) {
+        if ((objData->timer > 300.0f) && (trackIsSphereInFrustum(&self->srt.transl, self->visRadius) == FALSE)) {
             func_8002674C(self);
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
             objData->state = Barrel_STATE_0_Main;
@@ -104,7 +104,7 @@ void Barrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
     Barrel_Data* objData = self->data;
     
     if ((objData->state == Barrel_STATE_0_Main) && (gDLL_54_pickup->vtbl->should_print(self, visibility))) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

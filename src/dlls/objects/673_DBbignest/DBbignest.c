@@ -59,7 +59,7 @@ void DBBigNest_setup(Object* self, DBBigNest_Setup* objSetup, s32 reset) {
 
     //Restore state
     if (objSetup->gamebitRestoreState != NO_GAMEBIT) {
-        objData->state = main_get_bits(objSetup->gamebitRestoreState);
+        objData->state = mainGetBits(objSetup->gamebitRestoreState);
     } else {
         objData->state = DBBigNest_STATE_0;
         self->opacity = 0;
@@ -92,7 +92,7 @@ void DBBigNest_control(Object* self) {
         }
     }
 
-    if (main_get_bits(BIT_DB_Nest_Added_All_Eggs) == FALSE) {
+    if (mainGetBits(BIT_DB_Nest_Added_All_Eggs) == FALSE) {
         DBBigNest_handle_eggs(self, &objData->eggsPlaced, 2);
     }
 }
@@ -103,7 +103,7 @@ void DBBigNest_update(Object* self) { }
 // offset: 0x244 | func: 3 | export: 3
 void DBBigNest_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -129,13 +129,13 @@ int DBBigNest_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* ani
     objSetup = (DBBigNest_Setup*)self->setup;
     
     if (objData->state == DBBigNest_STATE_0) {
-        if (main_get_bits(objSetup->gamebitB) && 
-            ((objSetup->gamebitC == NO_GAMEBIT) || main_get_bits(objSetup->gamebitC))
+        if (mainGetBits(objSetup->gamebitB) && 
+            ((objSetup->gamebitC == NO_GAMEBIT) || mainGetBits(objSetup->gamebitC))
         ) {
             objData->state = DBBigNest_STATE_2;
         }
     } else if (objData->state == DBBigNest_STATE_1) {
-        if (main_get_bits(objSetup->gamebitB) == 0) {
+        if (mainGetBits(objSetup->gamebitB) == 0) {
             objData->state = DBBigNest_STATE_3;
             objData->eggsPlaced = 0;
         }
@@ -145,19 +145,19 @@ int DBBigNest_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* ani
         if (animData->lastMessage == 2) {
             objData->state = DBBigNest_STATE_1;
             if (objSetup->gamebitRestoreState != NO_GAMEBIT) {
-                main_set_bits(objSetup->gamebitRestoreState, DBBigNest_STATE_1);
+                mainSetBits(objSetup->gamebitRestoreState, DBBigNest_STATE_1);
             } 
         }
     } else if (objData->state == DBBigNest_STATE_3) {
         if (animData->lastMessage == 1) {
             objData->state = DBBigNest_STATE_0;
             if (objSetup->gamebitRestoreState != 1) { //@bug: should this be -1 (NO_GAMEBIT)?
-                main_set_bits(objSetup->gamebitRestoreState, DBBigNest_STATE_0);
+                mainSetBits(objSetup->gamebitRestoreState, DBBigNest_STATE_0);
             } 
         }  
     } 
     
-    if (main_get_bits(BIT_DB_Nest_Added_All_Eggs) == FALSE) {
+    if (mainGetBits(BIT_DB_Nest_Added_All_Eggs) == FALSE) {
         DBBigNest_handle_eggs(self, &objData->eggsPlaced, 2);
     }
 
@@ -174,10 +174,10 @@ void DBBigNest_handle_eggs(Object* self, u8* eggsPlaced, u8 maxEggs) {
     s32 matches;
 
     matches = 0;
-    objects = obj_get_all_of_type(OBJTYPE_38, &count);
+    objects = objGetAllOfType(OBJTYPE_38, &count);
     
     for (i = 0; i < count; i++) {
-        distance = vec3_distance_xz(&self->globalPosition, &objects[i]->globalPosition);
+        distance = vec3DistanceXZ(&self->globalPosition, &objects[i]->globalPosition);
         if (distance < 45.0f) {
             if (objects[i]->srt.transl.y < self->srt.transl.y) {
                 matches++;
@@ -192,7 +192,7 @@ void DBBigNest_handle_eggs(Object* self, u8* eggsPlaced, u8 maxEggs) {
     
     if ((u8)matches > *eggsPlaced) {
         STUBBED_PRINTF(" Egg Added ");
-        main_set_bits(BIT_DB_Nest_Egg_Added, TRUE);
+        mainSetBits(BIT_DB_Nest_Egg_Added, TRUE);
         *eggsPlaced += 1;
     } 
     
@@ -204,7 +204,7 @@ void DBBigNest_handle_eggs(Object* self, u8* eggsPlaced, u8 maxEggs) {
 
     if (maxEggs == matches) {
         STUBBED_PRINTF(" Have Dropped off All the eggs ");
-        main_set_bits(BIT_DB_Nest_Added_All_Eggs, TRUE);
+        mainSetBits(BIT_DB_Nest_Added_All_Eggs, TRUE);
     }
     
     *eggsPlaced = matches;

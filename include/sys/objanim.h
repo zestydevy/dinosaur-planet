@@ -27,20 +27,24 @@ typedef struct {
   s8 unk1B; // current length of unk13
 } UnkFunc_80024108Struct;
 
-s32 func_80023D30(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3);
-s32 func_800240BC(Object* object, f32 progress);
-s32 func_80024108(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
-s32 func_8002493C(Object*, f32, f32*);
-void func_80024D74(Object* object, s32 arg1);
-void func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3);
-s16 func_80024E2C(Object* arg0);
-s32 func_80024E50(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3);
-s32 func_800250F4(Object* object, f32 progress);
-void func_80025540(Object* object, s32 modAnimBankAndIndex, s32 arg2);
-void func_8002559C(Object* object, s32 modAnimBankAndIndex, s32 arg2);
-void func_800255F8(Model* model, AnimState* animState, s32 modanimIndex, s16 arg3);
-void func_80025780(Object*, f32 updateRate, UnkFunc_80024108Struct*, u16);
-u8 func_80025CD4(s32 arg0);
-s32 func_80025140(Object*, f32, f32, UnkFunc_80024108Struct*);
+s32 objAnimSet(Object* object, s32 modAnimIndex, f32 animProgress, u8 arg3);
+s32 objAnimSetProgress(Object* object, f32 progress);
+s32 objAnimAdvance(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
+
+s32 objGetAnimChange(Object* obj, f32 dist, f32* change);
+
+void objAnim_func_80024D74(Object* object, s32 arg1);
+void objAnim_func_80024DD0(Object* arg0, s32 animStateLayer, s16 arg2, s16 arg3);
+s16 objAnim_func_80024E2C(Object* arg0);
+
+s32 objAnimSetLayered(Object* object, s32 modanimIndex, f32 animProgress, u8 arg3);
+s32 objAnimSetLayeredProgress(Object* object, f32 progress);
+s32 objAnimAdvanceLayered(Object*, f32, f32, UnkFunc_80024108Struct*);
+
+void objAnimSetBlend(Object* object, s32 modAnimBankAndIndex, s32 arg2);
+void objAnimSetBlendLayered(Object* object, s32 modAnimBankAndIndex, s32 arg2);
+
+void objAnim_func_80025780(Object*, f32 updateRate, UnkFunc_80024108Struct*, u16);
+u8 objAnim_func_80025CD4(s32 arg0);
 
 #endif

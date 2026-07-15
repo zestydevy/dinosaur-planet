@@ -17,8 +17,6 @@
 #include "sys/segment_1050.h"
 #include "types.h"
 
-void func_80034FF0(MtxF* arg0);
-
 // This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
 
 typedef struct {
@@ -58,7 +56,7 @@ void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
     self->animCallback = kyteCage_anim_callback;
     self->srt.yaw = setup->yaw << 8;
     data->createLightning = 0;
-    if (!main_get_bits(BIT_SB_Battle_Started)) {
+    if (!mainGetBits(BIT_SB_Battle_Started)) {
         func_80000450(self, self, 0x58, 0, 0, 0);
         func_80000450(self, self, 0x6D, 0, 0, 0);
     }
@@ -75,7 +73,7 @@ void kyteCage_control(Object* self) {
 
     objData = self->data;
     if (!objData->kyte) {
-        objects = get_world_objects(&index, &count);
+        objects = objGetObjects(&index, &count);
 
         for (index = 0; index < count; index++){
             if (objects[index]->id == OBJ_SB_CageKyte){
@@ -91,17 +89,17 @@ void kyteCage_control(Object* self) {
 
     if (self->parent) {
         parentDC = self->parent->unkDC;
-        rotate = (BoneRotation*)func_80034804(self, 0);
+        rotate = (BoneRotation*)objExpr_func_80034804(self, 0);
         if ((parentDC < 9) && (self->curModAnimId != 5)) {
             rotate->z = self->parent->srt.roll;
-            func_80023D30(self, 5, 0, 0);
+            objAnimSet(self, 5, 0, 0);
         } else if ((parentDC >= 9) && (self->curModAnimId != 9)) {
             rotate->z = 0;
-            func_80023D30(self, 9, 0, 0);
+            objAnimSet(self, 9, 0, 0);
         }
     }
 
-    func_80024108(self, 0.004, gUpdateRate, 0);
+    objAnimAdvance(self, 0.004, gUpdateRate, 0);
 }
 
 // offset: 0x298 | func: 2 | export: 2
@@ -122,11 +120,11 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
     void** dll;
     ObjDef* objDef;
 
-    if (!visibility ||  main_get_bits(BIT_WM_Played_Randorn_First_Meeting)) {
+    if (!visibility ||  mainGetBits(BIT_WM_Played_Randorn_First_Meeting)) {
         return;
     }
 
-    draw_object(self, gfx, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtxs, vtxs, pols, 1.0f);
 
     objData = self->data;
     if (objData != NULL) {
@@ -152,11 +150,11 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.yaw = kyte->srt.yaw - self->srt.yaw;
                     boneTransform.pitch = 0;
                     boneTransform.roll = 0;
-                    matrix_from_srt(&resultMatrix, &boneTransform);
-                    matrix_concat_4x3(&resultMatrix, boneMatrix, &resultMatrix);
-                    func_80034FF0(&resultMatrix);
-                    draw_object(kyte, gfx, mtxs, vtxs, pols, 1.0f);
-                    func_80034FF0(NULL);
+                    mathYprXyzMtx(&resultMatrix, &boneTransform);
+                    mathMtxCat4x3F(&resultMatrix, boneMatrix, &resultMatrix);
+                    objprintSetModelMatrixOverride(&resultMatrix);
+                    objprintDrawModel(kyte, gfx, mtxs, vtxs, pols, 1.0f);
+                    objprintSetModelMatrixOverride(NULL);
                 }
                 kyte->unkDC = 2;
             }
@@ -180,10 +178,10 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 boneTransform.transl.x = self->def->pAttachPoints->pos.x;
                 boneTransform.transl.y = self->def->pAttachPoints->pos.y;
                 boneTransform.transl.z = self->def->pAttachPoints->pos.z;
-                vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
+                mathMtxXFMF(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
+                    mathRotateRPY(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
@@ -192,9 +190,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.transl.z += gWorldZ;
                 }
                 objData->createLightning = 0;
-                dll = dll_load_deferred(0x200D, 1);
+                dll = dllLoad(0x200D, 1);
                 ((DLL_Unknown*)dll)->vtbl->func[0].withSevenArgs((s32)self, 0, (s32)&boneTransform, 1, -1, 0xD, 0);
-                dll_unload(dll);
+                dllFree(dll);
 
             //Create a lightning trail across deck (at a random angle)
             } else if (objData->createLightningU == 2) {
@@ -216,10 +214,10 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                 boneTransform.transl.y = self->def->pAttachPoints->pos.y;
                 boneTransform.transl.z = self->def->pAttachPoints->pos.z;
 
-                vec3_transform(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
+                mathMtxXFMF(boneMatrix, boneTransform.transl.x, boneTransform.transl.y, boneTransform.transl.z, &boneTransform.transl.x, &boneTransform.transl.y, &boneTransform.transl.z);
                 if (self->parent) {
                     galleonTransform.yaw = self->parent->srt.yaw;
-                    rotate_vec3(&galleonTransform, boneTransform.transl.f);
+                    mathRotateRPY(&galleonTransform, boneTransform.transl.f);
                     boneTransform.transl.x += self->parent->srt.transl.x;
                     boneTransform.transl.y += self->parent->srt.transl.y;
                     boneTransform.transl.z += self->parent->srt.transl.z;
@@ -228,9 +226,9 @@ void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle
                     boneTransform.transl.z += gWorldZ;
                 }
                 objData->createLightning = 0;
-                dll = dll_load_deferred(0x200F, 1);
+                dll = dllLoad(0x200F, 1);
                 ((DLL_Unknown*)dll)->vtbl->func[0].withSevenArgs((s32)self, 0, (s32)&boneTransform, 1, -1, 0xF, 0);
-                dll_unload(dll);
+                dllFree(dll);
             }
         }
     }

@@ -56,7 +56,7 @@ void Spirit_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
         id == OBJ_CCSH_SpiritPriz || 
         id == OBJ_WGSH_SpiritPriz || 
         id == OBJ_NWSH_SpiritPriz) {   
-        data_modGfx = dll_load_deferred(0x102D, 1);
+        data_modGfx = dllLoad(0x102D, 1);
     }
 }
 
@@ -92,7 +92,7 @@ void Spirit_control(Object* self) {
         searchValue = temp->seqSlot;
 
         matchObject = NULL;
-        objects = get_world_objects(&index, &numObjects);
+        objects = objGetObjects(&index, &numObjects);
         otherMatchCount = 0;
 
         for (index = 0; index < numObjects; index++){
@@ -114,11 +114,11 @@ void Spirit_control(Object* self) {
             gDLL_3_Animation->vtbl->end_obj_sequence(searchValue);
         }
         self->seqSlot = SEQSLOT_NONE;
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     if ((objData->lastMessage == 1) || (objData->lastMessage == 3)) {
-        lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+        lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
         lfxSetup->base.loadDistance = 0xFF;
         lfxSetup->base.fadeDistance = 0xFF;
         lfxSetup->base.x = self->srt.transl.x;
@@ -137,11 +137,11 @@ void Spirit_control(Object* self) {
         lfxSetup->unk1A = 0;
         lfxSetup->unk1C = 0;
         lfxSetup->unk24 = 0;
-        data_lfxEmitter = obj_create((ObjSetup *) lfxSetup, 5, self->mapID, -1, self->parent);
+        data_lfxEmitter = objSetupObject((ObjSetup *) lfxSetup, 5, self->mapID, -1, self->parent);
         objData->lastMessage = 0;
     } else if (objData->lastMessage == 2) {
         if (data_lfxEmitter) {
-            obj_destroy_object(data_lfxEmitter);
+            objFreeObject(data_lfxEmitter);
             data_lfxEmitter = NULL;
         }
         objData->lastMessage = 0;
@@ -176,29 +176,29 @@ void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     s16 id;
     Camera *camera;
 
-    camera = get_camera();
+    camera = camGet();
     if (self->id == OBJ_ECSH_SpiritCup && camera) {
         self->srt.yaw = 0xFFFF - camera->srt.yaw;
     }
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (self->opacity) {
             id = self->id;
             if (id == OBJ_DFSH_SpiritPriz || id == OBJ_CCSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 0, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_MMSH_SpiritPriz || id == OBJ_WGSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 1, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_ECSH_SpiritPriz || id == OBJ_GPSH_SpiritPriz) {
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 2, 0, 4, -1, 0);
                 }
             } else if (id == OBJ_DBSH_SpiritPriz || id == OBJ_NWSH_SpiritPriz){
-                if ((s16)rand_next(0, 1)) {
+                if ((s16)mathRnd(0, 1)) {
                     data_modGfx->vtbl->func[0].withSixArgs((s32)self, 3, 0, 4, -1, 0);
                 }
             }
@@ -221,10 +221,10 @@ void Spirit_free(Object* self, s32 arg1) {
         id == OBJ_CCSH_SpiritPriz || 
         id == OBJ_WGSH_SpiritPriz || 
         id == OBJ_NWSH_SpiritPriz) {
-        dll_unload(data_modGfx);
+        dllFree(data_modGfx);
     }
     if ((arg1 == 0) && data_lfxEmitter) {
-        obj_destroy_object(data_lfxEmitter);
+        objFreeObject(data_lfxEmitter);
         data_lfxEmitter = NULL;
     }
 }

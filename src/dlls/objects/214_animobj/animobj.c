@@ -19,7 +19,7 @@ void animobj_dtor(void *dll) { }
 void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     AnimObj_Data *objdata;
 
-    obj_set_update_priority(self, OBJPRIORITY_ANIM);
+    objSetPriority(self, OBJPRIORITY_ANIM);
     objdata = self->data;
     if (!setup->sequenceIdBitfield){
     }
@@ -73,7 +73,7 @@ void animobj_control(Object *self) {
     objdata = self->data;
     new_var = objdata->seqSlot;
     matchObject = 0;
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
     matches = 0;
     for (index = 0; index < count; index++) {
         object = objects[index];
@@ -102,7 +102,7 @@ void animobj_update(Object *self) { }
 // offset: 0x324 | func: 3 | export: 3
 void animobj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -115,13 +115,13 @@ void animobj_free(Object *self, s32 arg1) {
     gDLL_3_Animation->vtbl->free_curve(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->sfxHandles[i]){
-            gDLL_6_AMSFX->vtbl->stop(objdata->sfxHandles[i]);
+            dll_amSfx->Stop(objdata->sfxHandles[i]);
         }
     }
 
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     if (objdata->unk30 != 0){
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk30);
+        dll_amSfx->Stop(objdata->unk30);
     }
 }
 

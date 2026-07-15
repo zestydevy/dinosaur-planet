@@ -54,7 +54,7 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     
     //Set a flag based on a common gamebit
     //Does nothing, but maybe intended to put out fire under certain global conditions like rain?
-    if (main_get_bits(BIT_8C)) {
+    if (mainGetBits(BIT_8C)) {
         objData->flags |= CampFire_FLAG_1;
     }
     
@@ -62,7 +62,7 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     //Does nothing, but maybe intended to track whether fire is lit/extinguished?
     objData->gamebitID = objSetup->gamebitID;
     if (objData->gamebitID != NO_GAMEBIT) {
-        if (main_get_bits(objData->gamebitID)) {
+        if (mainGetBits(objData->gamebitID)) {
             objData->flags |= CampFire_FLAG_4;
         }
     }
@@ -79,8 +79,8 @@ void campfire_setup(Object* self, CampFire_Setup* objSetup, s32 arg2) {
     }
     
     //Start fire sound loops
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop,  MAX_VOLUME, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_50a_Fire_Burning_Low_Loop,  MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0x210 | func: 1 | export: 1
@@ -96,7 +96,7 @@ void campfire_control(Object* self) {
     DLL_IModgfx* modGfxDLL;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (CampFire_Setup*)self->setup;
 
     //Set up the fire so it hurts the player on contact
@@ -106,7 +106,7 @@ void campfire_control(Object* self) {
     if (self->unkE0 == FALSE) {
         gDLL_14_Modgfx->vtbl->func10(self);
         
-        modGfxDLL = dll_load_deferred(DLL_ID_116, 1);
+        modGfxDLL = dllLoad(DLL_ID_116, 1);
         
         if (objSetup->modGfxArg) {
             modGfxArg = 1;
@@ -115,27 +115,27 @@ void campfire_control(Object* self) {
         }
         
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         
-        modGfxDLL = dll_load_deferred(DLL_ID_115, 1);
+        modGfxDLL = dllLoad(DLL_ID_115, 1);
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         
-        modGfxDLL = dll_load_deferred(DLL_ID_114, 1);
+        modGfxDLL = dllLoad(DLL_ID_114, 1);
         modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         
         self->unkE0 = TRUE;
     }
     
     //Get player distance
-    distance = vec3_distance(&player->globalPosition, &self->globalPosition);
+    distance = vec3Distance(&player->globalPosition, &self->globalPosition);
 
     //Handle creating/unloading the fire's LFXEmitter when needed
     if (objData->light != NULL) {
         //Unload the light if the player's too far away
         if ((objSetup->alwaysIlluminates == FALSE) && (distance > 110.0f)) {
-            obj_destroy_object(objData->light);
+            objFreeObject(objData->light);
             objData->light = NULL;
         }
     } else {
@@ -151,12 +151,12 @@ void campfire_control(Object* self) {
 
         //Create the LFXEmitter when needed
         if (createLight) {
-            lfxSetup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+            lfxSetup = (LFXEmitter_Setup*)objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
             campSetup = self->setup;
             lfxSetup->base.loadFlags = campSetup->loadFlags;
             lfxSetup->base.byte6 = campSetup->byte6;
             lfxSetup->base.x = self->srt.transl.x;
-            lfxSetup->base.y = self->srt.transl.y + rand_next(0, 30);
+            lfxSetup->base.y = self->srt.transl.y + mathRnd(0, 30);
             lfxSetup->base.z = self->srt.transl.z;
             lfxSetup->unk1E = objSetup->lfxUnk1E;
             if (lfxSetup->unk1E == 0) {
@@ -166,7 +166,7 @@ void campfire_control(Object* self) {
             lfxSetup->unk18 = 2400;
             lfxSetup->unk1A = 2400;
             lfxSetup->unk1C = 200;
-            objData->light = obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+            objData->light = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
         }
     }
 }
@@ -177,7 +177,7 @@ void campfire_update(Object *self) { }
 // offset: 0x58C | func: 3 | export: 3
 void campfire_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

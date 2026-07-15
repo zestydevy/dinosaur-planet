@@ -51,13 +51,13 @@ static const char str_8009ace0[] = "320 by 240 Anti-aliased, Non interlaced.\n";
 static const char str_8009ad0c[] = "640 by 480 Anti-aliased, Interlaced, De-flickered.\n";
 static const char str_8009ad40[] = "vi sizes %d %d %d %d  w %d h %d\n";
 
-void vi_reset_update_rate(void);
-void vi_set_mode(s32 mode);
-void vi_init_framebuffers(int someBool, s32 width, s32 height);
-void vi_swap_buffers(void);
-void vi_update_mode(void);
-void vi_calc_obj_depths(void);
-int vi_contains_point(s32 x, s32 y);
+void viResetUpdateRate(void);
+void viSetMode(s32 mode);
+void viInitFramebuffers(int someBool, s32 width, s32 height);
+void viSwapBuffers(void);
+void viUpdateMode(void);
+void viCalcObjDepths(void);
+int viContainsPoint(s32 x, s32 y);
 
 extern OSDevMgr __osViDevMgr;
 
@@ -132,7 +132,7 @@ OSScClient gVideoSched;
 //static u8 _bss_pad[0x10];
 /* -------- .bss end 800bce70 -------- */
 
-void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
+void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
     int i;
     u32 width;
     u32 height;
@@ -157,9 +157,9 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
         }
     }
 
-    vi_reset_update_rate();
+    viResetUpdateRate();
 
-    vi_set_mode(videoMode);
+    viSetMode(videoMode);
 
     gFramebufferPointers[0] = NULL;
     gFramebufferPointers[1] = NULL;
@@ -177,12 +177,12 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
         height = HIGH_RES_SCREEN_HEIGHT;
     }
 
-    vi_init_framebuffers(someBool, width, height);
+    viInitFramebuffers(someBool, width, height);
 
     gCurrFramebufferIdx = 1;
 
-    vi_swap_buffers();
-    vi_update_mode();
+    viSwapBuffers();
+    viUpdateMode();
 
     gViBlackTimer = 0xc;
 
@@ -207,18 +207,18 @@ void vi_init(s32 videoMode, OSSched* scheduler, s32 someBool) {
 /**
  * Sets gVideoMode.
  */
-void vi_set_mode(s32 mode) {
+void viSetMode(s32 mode) {
     gVideoMode = mode;
 }
 
 /**
  * Returns gVideoMode.
  */
-s32 vi_get_mode() {
+s32 viGetMode(void) {
     return gVideoMode;
 }
 
-OSMesgQueue *vi_get_mesg_queue() {
+OSMesgQueue *viGetMesgQueue(void) {
     return &gVideoMesgQueue;
 }
 
@@ -226,7 +226,7 @@ OSMesgQueue *vi_get_mesg_queue() {
  * Sets gCurrentResolution*[framebufferIndex] to the resolution
  * specified by gVideoMode from gResolutionArray.
  */
-void vi_update_fb_size_from_current_mode(int framebufferIndex) {
+void viUpdateFbSizeFromCurrentMode(int framebufferIndex) {
     // Note: framebufferIndex was decided on because another function calls this
     //       with gCurrFramebufferIdx (which is either 0 or 1 presumably) and
     //       gCurrentResolutionH and gCurrentResolutionV both conveniently contain
@@ -235,11 +235,11 @@ void vi_update_fb_size_from_current_mode(int framebufferIndex) {
     gCurrentResolutionV[framebufferIndex] = gResolutionArray[gVideoMode & 7].v;
 }
 
-u32 vi_get_current_size(void) {
+u32 viGetCurrentSize(void) {
     s32 shadowTexWidth;
     s32 shadowTexActive;
 
-    shadowTexActive = shadowtex_get_status(&shadowTexWidth);
+    shadowTexActive = shadowtexGetStatus(&shadowTexWidth);
 
     if (shadowTexActive == FALSE) {
         return (gCurrentResolutionV[gCurrFramebufferIdx] << 0x10) |
@@ -254,12 +254,12 @@ u32 vi_get_current_size(void) {
  *
  * Note: The resolution is found by gCurrentResolution*[gCurrFramebufferIdx < 1]
  */
-u32 vi_get_backbuffer_size(void) {
+u32 viGetBackbufferSize(void) {
     return (gCurrentResolutionV[gCurrFramebufferIdx < 1] << 0x10) |
             gCurrentResolutionH[gCurrFramebufferIdx < 1];
 }
 
-void vi_update_mode(void) {
+void viUpdateMode(void) {
     u8 viModeTableIndex;
     OSViMode *viMode;
 
@@ -306,7 +306,7 @@ void vi_update_mode(void) {
     osViSetSpecialFeatures(OS_VI_GAMMA_OFF);
 }
 
-void vi_init_framebuffers(int someBool, s32 width, s32 height) {
+void viInitFramebuffers(int someBool, s32 width, s32 height) {
     VideoResolution *resPtr;
     u32 hRes;
     u32 vRes;
@@ -347,17 +347,17 @@ void vi_init_framebuffers(int someBool, s32 width, s32 height) {
     }
 }
 
-void vi_reset_update_rate(void) {
+void viResetUpdateRate(void) {
     D_800BCE58 = 0;
     gViUpdateRate = 2;
     gViUpdateRateTarget = 1;
 }
 
-void vi_set_update_rate_target(u32 target) {
+void viSetUpdateRateTarget(u32 target) {
     gViUpdateRateTarget = target;
 }
 
-s32 vi_frame_sync(s32 param1) {
+s32 viFrameSync(s32 param1) {
     s32 updateRate;
     s32 vidMode;
 
@@ -372,7 +372,7 @@ s32 vi_frame_sync(s32 param1) {
     }
 
     if (param1 != 8) {
-        vi_swap_buffers();
+        viSwapBuffers();
     }
 
     while (osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_NOBLOCK) != -1) {
@@ -391,14 +391,14 @@ s32 vi_frame_sync(s32 param1) {
     }
 
     if (D_80093060 != 0) {
-        vidMode = vi_get_mode();
+        vidMode = viGetMode();
 
         if (D_80093060 == 3) {
-            vi_set_mode(vidMode);
-            vi_update_fb_size_from_current_mode(gCurrFramebufferIdx);
+            viSetMode(vidMode);
+            viUpdateFbSizeFromCurrentMode(gCurrFramebufferIdx);
             osViSwapBuffer(gFrontFramebuffer);
         } else if (D_80093060 == 2) {
-            vi_update_fb_size_from_current_mode(gCurrFramebufferIdx);
+            viUpdateFbSizeFromCurrentMode(gCurrFramebufferIdx);
             osViSwapBuffer(gFrontFramebuffer);
         } else {
             D_800BCC90.hdr.type = 0x11;
@@ -410,17 +410,17 @@ s32 vi_frame_sync(s32 param1) {
 
         D_80093060 -= 1;
     } else {
-        if (get_pause_state() == 1) {
+        if (mainGetPauseState() == 1) {
             // Create pause screen screenshot
-            set_pause_state(2);
+            mainSetPauseState(2);
             bcopy(gBackFramebuffer, gFramebufferEnd, (320 * 240 * sizeof(u16)));
         } else {
             osViSwapBuffer(gFrontFramebuffer);
         }
     }
 
-    joy_read_nonblocking();
-    vi_calc_obj_depths();
+    joyReadNonblocking();
+    viCalcObjDepths();
     osRecvMesg(&gVideoMesgQueue, NULL, OS_MESG_BLOCK);
 
     return updateRate;
@@ -430,11 +430,11 @@ void vi_func_8005DC68(void) {}
 
 void vi_func_8005DC70(int _) {}
 
-s32 vi_get_current_frame_rate(void) {
+s32 viGetCurrentFrameRate(void) {
     return (s32)((f32)gDisplayHertz / (f32)gViUpdateRate);
 }
 
-void vi_swap_buffers(void) {
+void viSwapBuffers(void) {
     gFrontFramebuffer = gFramebufferPointers[gCurrFramebufferIdx];
     gFrontDepthBuffer = gDepthBuffer;
 
@@ -444,18 +444,18 @@ void vi_swap_buffers(void) {
     gBackDepthBuffer = gDepthBuffer;
 }
 
-u16 *vi_get_depth_buffer() {
+u16 *viGetDepthBuffer(void) {
     return gDepthBuffer;
 }
 
 /**
  * Returns gFramebufferEnd.
  */
-u16 *vi_get_framebuffer_end() {
+u16 *viGetFramebufferEnd(void) {
     return gFramebufferEnd;
 }
 
-s32 vi_obj_depth(s32 x, s32 y, Object *obj) {
+s32 viObjDepth(s32 x, s32 y, Object *obj) {
     s32 zvalue;
     s32 i;
     ViObjDepth* list;
@@ -478,7 +478,7 @@ s32 vi_obj_depth(s32 x, s32 y, Object *obj) {
     list = gViObjDepthLists[currListIdx];
     list[gViObjDepthListLens[currListIdx]].obj = obj;
     list[gViObjDepthListLens[currListIdx]].zValue = 0;
-    if (vi_contains_point(x, y) == 0) {
+    if (viContainsPoint(x, y) == 0) {
         i = -1;
     } else {
         i = (gCurrentResolutionH[gCurrFramebufferIdx] * y) + x;
@@ -492,14 +492,14 @@ s32 vi_obj_depth(s32 x, s32 y, Object *obj) {
 /**
  * Whether a 2D point is within the current framebuffer's bounds.
  */
-int vi_contains_point(s32 x, s32 y) {
+int viContainsPoint(s32 x, s32 y) {
     return x >= 0
         && (u32)x < gCurrentResolutionH[gCurrFramebufferIdx]
         && y >= 0
         && (u32)y < gCurrentResolutionV[gCurrFramebufferIdx];
 }
 
-void vi_calc_obj_depths(void) {
+void viCalcObjDepths(void) {
     s32 i;
     u8 listIdx;
     s32 idx;
@@ -531,21 +531,21 @@ void vi_calc_obj_depths(void) {
 /**
  * Note: param1 is most likely a boolean
  */
-void vi_some_video_setup(s32 param1) {
+void viSomeVideoSetup(s32 param1) {
     if (param1) {
-        vi_set_mode(7);
-        vi_init_framebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
+        viSetMode(7);
+        viInitFramebuffers(1, gResolutionArray[7].h, gResolutionArray[7].v);
 
-        vi_update_mode();
+        viUpdateMode();
         gViBlackTimer = 12;
         osViBlack(TRUE);
         D_800BCE58 = 0;
         D_800BCE2C = 0x5;
     } else {
-        vi_set_mode(1);
-        vi_init_framebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
+        viSetMode(1);
+        viInitFramebuffers(1, gResolutionArray[0].h, gResolutionArray[0].v);
 
-        vi_update_mode();
+        viUpdateMode();
         gViBlackTimer = 12;
         osViBlack(TRUE);
         D_800BCE58 = 0;
@@ -553,7 +553,7 @@ void vi_some_video_setup(s32 param1) {
     }
 }
 
-void vi_set_modifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod) {
+void viSetModifiers(u8 updateViMode, s8 hStartMod, s8 vScaleMod) {
     u8 viModeTableIndex;
     OSViMode *viMode;
 

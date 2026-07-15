@@ -22,7 +22,7 @@ void DFcavedoor_setup(Object* self, DFcavedoor_Setup* setup, s32 reset) {
 
 // offset: 0x48 | func: 1 | export: 1
 void DFcavedoor_control(Object* self) {
-    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (main_get_bits(BIT_DF_Cave_Door_Hidden))) {
+    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (mainGetBits(BIT_DF_Cave_Door_Hidden))) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
     }
 }
@@ -33,7 +33,7 @@ void DFcavedoor_update(Object *self) { }
 // offset: 0xBC | func: 3 | export: 3
 void DFcavedoor_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

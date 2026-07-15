@@ -30,9 +30,9 @@ void camdrop_func_98(Cam* cam) {
         sState->unk0 = 20.0f;
     }
 
-    cam->srt.transl.x = sp24->srt.transl.x - (fsin16_precise(sp24->srt.yaw) * 5.0f);
+    cam->srt.transl.x = sp24->srt.transl.x - (mathSinfInterp(sp24->srt.yaw) * 5.0f);
     cam->srt.transl.y = sState->unk4;
-    cam->srt.transl.z = sp24->srt.transl.z - (fcos16_precise(sp24->srt.yaw) * 5.0f);
+    cam->srt.transl.z = sp24->srt.transl.z - (mathCosfInterp(sp24->srt.yaw) * 5.0f);
     cam->srt.yaw = 0;
     cam->srt.pitch = -0x4000;
     cam->srt.roll = 0;

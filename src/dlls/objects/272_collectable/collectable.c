@@ -75,8 +75,8 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     Collectable_Data* objData;
 
     objData = self->data;
-    obj_add_object_type(self, OBJTYPE_Collectable);
-    obj_init_mesg_queue(self, 2);
+    objAddObjectType(self, OBJTYPE_Collectable);
+    objInitMesgQueue(self, 2);
 
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = objSetup->pitch << 8;
@@ -103,13 +103,13 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 
     //Check if hidden via gamebit
     if (objData->gamebitShow != NO_GAMEBIT) {
-        objData->isHidden = main_get_bits(objData->gamebitShow) == 0;
+        objData->isHidden = mainGetBits(objData->gamebitShow) == 0;
     }
 
     //Check if already collected
     objData->gamebitCollected = objSetup->gamebitCollected;
     if (objData->gamebitCollected != NO_GAMEBIT) {
-        self->unkDC = main_get_bits(objData->gamebitCollected);
+        self->unkDC = mainGetBits(objData->gamebitCollected);
     } else {
         self->unkDC = 0;
     }
@@ -122,7 +122,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     collectableDef = self->def->collectableDef;
     if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
         if (arg2 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         for (index = 10; index > 0; index--){
@@ -214,7 +214,7 @@ void collectable_control(Object* self) {
     if (objdata->timerDestroy != 0.0f) {
         objdata->timerDestroy -= gUpdateRateF;
         if (objdata->timerDestroy <= 0.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             objdata->timerDestroy = 0.0f;
         }
         return;
@@ -223,7 +223,7 @@ void collectable_control(Object* self) {
     gDLL_7_Newday->vtbl->func5(&newdayValue);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (objdata->gamebitShow != NO_GAMEBIT) {
-        objdata->isHidden = main_get_bits(objdata->gamebitShow) == 0;
+        objdata->isHidden = mainGetBits(objdata->gamebitShow) == 0;
     }
 
     //End early if hidden/paused
@@ -235,7 +235,7 @@ void collectable_control(Object* self) {
     if (self->unkE0) {
         self->unkE0 -= (s16)(gUpdateRateF * 3.0f);
         if (self->unkE0 <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
     }
@@ -247,7 +247,7 @@ void collectable_control(Object* self) {
     }
 
     //Check for collection message
-    while (obj_recv_mesg(self, &outMessage, &messageSender, 0)) {
+    while (objRecvMesg(self, &outMessage, &messageSender, 0)) {
         if (outMessage == 0x7000B) {
             objdata->timerDestroy = 180.0f;
             collectable_collect(self);
@@ -280,7 +280,7 @@ void collectable_control(Object* self) {
 
         //Check if collection gamebit was reset
         if ((objdata->gamebitCollected != NO_GAMEBIT) && 
-            (main_get_bits(objdata->gamebitCollected) == FALSE)
+            (mainGetBits(objdata->gamebitCollected) == FALSE)
         ) {
             self->unkDC = 0;
         }
@@ -296,7 +296,7 @@ void collectable_control(Object* self) {
     }
 
     //Return early if no player interaction can happen
-    player = get_player();
+    player = objGetPlayer();
     if (!player || 
         objdata->interactFlags & Collectable_FLAG_Interaction_Off || 
         !self->def->collectableDef
@@ -306,7 +306,7 @@ void collectable_control(Object* self) {
 
     //Handle collection when close enough 
     //(either automatically or via target arrow, depending on objectID)
-    distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
+    distance = vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
     if ((distance < objdata->interactionRadius) && (objdata->delayCollect == 0)) {
         switch (self->id) {
         case OBJ_meatPickup:
@@ -317,16 +317,16 @@ void collectable_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_549, 0, 1, -1, 0);
             }
 
-            if (main_get_bits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
+            if (mainGetBits(BIT_Tutorial_Collected_Energy_Egg) == 0) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 outMessage = 0;
-                obj_send_mesg(
+                objSendMesg(
                     player, 
                     0x7000A, 
                     self, 
                     0
                 );
-                main_set_bits(BIT_Tutorial_Collected_Energy_Egg, 1);
+                mainSetBits(BIT_Tutorial_Collected_Energy_Egg, 1);
             } else {
                 objdata->timerDestroy = 180.0f;
                 collectable_collect(self);
@@ -345,7 +345,7 @@ void collectable_control(Object* self) {
             messageArg = objsetup->animMessage;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
-                obj_send_mesg(
+                objSendMesg(
                     player,
                     0x7000A,
                     self,
@@ -371,18 +371,18 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
         if (0) { }
 
         if ((self->def->flags & OBJDEF_SKY_LIT) && objdata->useColourMultiplier) {
-            func_80036F6C(objdata->multiplyR, objdata->multiplyG, objdata->multiplyB);
+            objprintSetMultiplierColor(objdata->multiplyR, objdata->multiplyG, objdata->multiplyB);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xA88 | func: 4 | export: 4
 void collectable_free(Object* self, s32 arg1) {
     Collectable_Data* objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_Collectable);
+    objFreeObjectType(self, OBJTYPE_Collectable);
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
         objdata->soundHandle = 0;
     }
 }
@@ -404,8 +404,8 @@ int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animO
 
     animObjData->unk62 = 0;
     if (animObjData->lastMessage == 1) {
-        sin = fsin16_precise(0x6900);
-        cos = fcos16_precise(0x6900);
+        sin = mathSinfInterp(0x6900);
+        cos = mathCosfInterp(0x6900);
         collectable_set_speed(self, sin * 8.0f, 2, cos * 8.0f);
         collectable_set_speed(self, 4.0f, 2, 0.0f);
         animObjData->lastMessage = 0;
@@ -458,13 +458,13 @@ void collectable_handle_animation_and_fx(Object* self) {
                     opacity = OBJECT_OPACITY_MAX;
                 }
                 objdata->shadowOpacity = opacity;
-                temp = shadows_calc_opacity(self, shadow);
+                temp = shadowsCalcOpacity(self, shadow);
                 shadow->opacity = (temp * (opacity + 1)) >> 8;
             }
         }
 
         //Sparkles
-        if (rand_next(0, 80) == 0) {
+        if (mathRnd(0, 80) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_47, 0, 4, -1, 0);
         }
     }
@@ -475,9 +475,9 @@ void collectable_handle_animation_and_fx(Object* self) {
         //Play rattle sound when random timer runs out
         objdata->soundTimer -= gUpdateRate;
         if (objdata->soundTimer <= 0) {
-            objdata->pitchAnimate = rand_next(600, 800);
-            objdata->soundTimer = rand_next(180, 240);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
+            objdata->pitchAnimate = mathRnd(600, 800);
+            objdata->soundTimer = mathRnd(180, 240);
+            dll_amSfx->Play(self, SOUND_8FC_Egg_Rattle, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rapidly oscillate rotational pitch for a basic rattle animation
@@ -497,7 +497,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         return;
     case OBJ_SC_golden_nugge:
         if (objdata->distanceToPlayer < 200.0f) {
-            if (rand_next(0, 10) == 0) {
+            if (mathRnd(0, 10) == 0) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_423, 0, 2, -1, 0);
             }
             self->srt.yaw += (s16) (182.0f * gUpdateRateF);
@@ -506,7 +506,7 @@ void collectable_handle_animation_and_fx(Object* self) {
         break;
     case OBJ_WCTrexTooth:
         if (objdata->distanceToPlayer < 200.0f) {
-            if (rand_next(0, 10) == 0) {
+            if (mathRnd(0, 10) == 0) {
                 if (self->modelInstIdx == 0) {
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_73D, 0, 2, -1, 0);
                 } else {
@@ -561,7 +561,7 @@ void collectable_handle_motion(Object* self) {
     }
 
     dt = (f32) gUpdateRate;
-    obj_move(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
+    objMove(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
 }
 
 // offset: 0x1304 | func: 10
@@ -579,8 +579,8 @@ void collectable_collect(Object* self) {
 
     objdata = self->data;
     objsetup = (Collectable_Setup*)self->setup;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     collectableDef = (CollectableDef*)self->def->collectableDef;
 
     if (collectableDef == NULL) {
@@ -589,12 +589,12 @@ void collectable_collect(Object* self) {
 
     //Set the collection gamebit (usually for making sure the object doesn't reappear)
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        main_set_bits(objdata->gamebitCollected, TRUE);
+        mainSetBits(objdata->gamebitCollected, TRUE);
     }
 
     //Increment the counter gamebit (if one is being used)
     if (objsetup->gamebitCount > 0) {
-        main_increment_bits(objsetup->gamebitCount);
+        mainIncrementBits(objsetup->gamebitCount);
     }
 
     switch (collectableDef->type) {
@@ -605,8 +605,8 @@ void collectable_collect(Object* self) {
         default:
             break;
         case OBJ_DIMAlpineRoot2: 
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
-            main_set_bits(BIT_3E9, 1);
+            dll_amSfx->Play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
+            mainSetBits(BIT_3E9, 1);
             self->unkDC = 1;
             objdata->rootTimer = 1200;
             return;
@@ -624,12 +624,12 @@ void collectable_collect(Object* self) {
         switch (id) {  
         case OBJ_meatPickup:      
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Dino_Egg);
-            obj_free_object_type(self, OBJTYPE_Collectable);
+            objFreeObjectType(self, OBJTYPE_Collectable);
             return;
         case OBJ_applePickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Red_Apple);
-            obj_free_object_type(self, OBJTYPE_Collectable);
-            obj_destroy_object(self);
+            objFreeObjectType(self, OBJTYPE_Collectable);
+            objFreeObject(self);
             return;
         case OBJ_beanPickup:
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Blue_Bean);
@@ -637,18 +637,18 @@ void collectable_collect(Object* self) {
         }
         break;
     case Collectable_Type_SidekickA:
-        obj_send_mesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_SidekickB:
-        obj_send_mesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_Magic:
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
         gDLL_13_Expgfx->vtbl->func5(self);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
     case Collectable_Type_Upgrade:
-        obj_send_mesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     }
 
@@ -684,7 +684,7 @@ s32 collectable_get_area_value(Object* self) {
 
     objdata = self->data;
     if (objdata->areaValue == -2) {
-        objdata->areaValue = func_80031BBC(
+        objdata->areaValue = objGetAreaValueAtPoint(
             self->globalPosition.x, 
             self->globalPosition.y, 
             self->globalPosition.z
@@ -724,7 +724,7 @@ void collectable_save_position(Object* self, f32 x, f32 y, f32 z) {
         objdata->savedPosition.y = y;
         self->srt.transl.z = z;
         objdata->savedPosition.z = z;
-        map_save_object(
+        mapSaveObject(
             self->setup, self->mapID, 
             self->srt.transl.x,
             self->srt.transl.y,

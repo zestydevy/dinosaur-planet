@@ -23,7 +23,7 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     u8 colliderArg = 5;
 
     bzero(objdata, sizeof(SidekickToy_Data));
-    player = get_player();
+    player = objGetPlayer();
 
     objdata->state = TOY_STATE_0_Carried;
     objdata->timer = 0.0f;
@@ -39,8 +39,8 @@ void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
     gDLL_27->vtbl->setup_terrain_collider(&objdata->collision, 1, &data_collisionPoint, &objdata->collisionRadius, &colliderArg);
     func_800267A4(self);
     objdata->collision.mode = 0;
-    obj_init_mesg_queue(self, 1);
-    main_set_bits(BIT_Tricky_Ball_Unlocked, 0);
+    objInitMesgQueue(self, 1);
+    mainSetBits(BIT_Tricky_Ball_Unlocked, 0);
 }
 
 // offset: 0x1A4 | func: 1
@@ -62,7 +62,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
     objdata = self->data;
 
     self->velocity.y -= 0.05f * gUpdateRateF;
-    obj_move(self,
+    objMove(self,
         self->velocity.x * gUpdateRateF,
         self->velocity.y * gUpdateRateF,
         self->velocity.z * gUpdateRateF
@@ -83,7 +83,7 @@ static s32 SidekickToy_tick_flight(Object* self) {
             if (volume > 2.0f) {
                 volume = 2.0f;
             }
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_161_Toy_Squeak, volume * 32.0f, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_161_Toy_Squeak, volume * 32.0f, 0, 0, 0, 0);
         }
 
         //Get velocity unit vector
@@ -149,7 +149,7 @@ void SidekickToy_control(Object* self) {
     }
     
     //Check for message from player DLL, sent when ball collected
-    while (obj_recv_mesg(self, &receivedMessage, 0, 0)){
+    while (objRecvMesg(self, &receivedMessage, 0, 0)){
         if (receivedMessage == 0x7000B) {
             objdata->timer = 0.0f;
             objdata->state = TOY_STATE_4_Vanish;
@@ -175,7 +175,7 @@ void SidekickToy_control(Object* self) {
         }
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             ((DLL_Unknown*)gDLL_3_Animation)->vtbl->func[30].withThreeArgs(0x5BA, 0, 0);
-            obj_send_mesg(get_player(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+            objSendMesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
             objdata->state = TOY_STATE_3_Collected;
         }
         break;
@@ -184,7 +184,7 @@ void SidekickToy_control(Object* self) {
     case TOY_STATE_4_Vanish:
         objdata->timer += gUpdateRateF;
         if (objdata->timer >= 60.0f) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         } else {
             self->opacity = 0xFF - (s32) ((objdata->timer * 255.0f) / 60.0f);
             break;
@@ -203,7 +203,7 @@ void SidekickToy_update(Object *self) { }
 // offset: 0x960 | func: 5 | export: 3
 void SidekickToy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -214,14 +214,14 @@ void SidekickToy_free(Object* self, s32 arg1) {
 
     STUBBED_PRINTF("the side kick toy is unloading\n");
     
-    player = get_player();
+    player = objGetPlayer();
     if (player) {
         ((DLL_210_Player*)player->dll)->vtbl->func8(player, &collectedObject);
         if (collectedObject == self) {
             ((DLL_210_Player*)player->dll)->vtbl->func9(player, 0);
         }
     }
-    main_set_bits(BIT_Tricky_Ball_Unlocked, 1);
+    mainSetBits(BIT_Tricky_Ball_Unlocked, 1);
 }
 
 // offset: 0xA64 | func: 7 | export: 5

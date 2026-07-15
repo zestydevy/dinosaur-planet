@@ -11,18 +11,18 @@
 CurveSetup* D_800B4920;
 // -------- .bss end 800b4930 -------- //
 
-void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx);
-void route_add_neighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve);
-void route_clear(Route* route);
-void route_heap_insert(RouteHeapElement* heap, s16* heapLengthPtr, u16 pointIdx, u32 dist);
-void route_heap_change_priority(RouteHeapElement* heap, s32 heapLength, u16 pointIdx, u32 newPriority);
-s32 route_heap_extract(RouteHeapElement* heap, s16* heapLengthPtr);
-RoutePoint* route_add_point(Route* route, CurveSetup *curve, u32 dist, u16 prevPointIdx);
-s32 route_find_point(Route* route, CurveSetup* curve, s32* outVisited);
-s32 route_is_goal(Route* route, RoutePoint* point);
+void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx);
+void routeAddNeighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve);
+void routeClear(Route* route);
+void routeHeapInsert(RouteHeapElement* heap, s16* heapLengthPtr, u16 pointIdx, u32 dist);
+void routeHeapChangePriority(RouteHeapElement* heap, s32 heapLength, u16 pointIdx, u32 newPriority);
+s32 routeHeapExtract(RouteHeapElement* heap, s16* heapLengthPtr);
+RoutePoint* routeAddPoint(Route* route, CurveSetup *curve, u32 dist, u16 prevPointIdx);
+s32 routeFindPoint(Route* route, CurveSetup* curve, s32* outVisited);
+s32 routeIsGoal(Route* route, RoutePoint* point);
 
 // public
-void route_init(Route *route) {
+void routeInit(Route *route) {
     route->routePoints = (RoutePoint*)mmAlloc(
         (sizeof(RoutePoint) * ROUTE_HEAP_CAPACITY) + (sizeof(RouteHeapElement) * ROUTE_HEAP_CAPACITY) + (sizeof(CurveSetup*) * ROUTE_MAX_LENGTH), 
         ALLOC_TAG_VOX_COL, 
@@ -32,7 +32,7 @@ void route_init(Route *route) {
 }
 
 // public
-void route_free(Route *route) {
+void routeFree(Route *route) {
     if (route->routePoints != NULL) {
         mmFree(route->routePoints);
         route->routePoints = NULL;
@@ -40,24 +40,24 @@ void route_free(Route *route) {
 }
 
 // public
-s32 route_setup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal, s32 arg5) {
+s32 routeSetup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal, s32 arg5) {
     RoutePoint* startPoint;
 
-    route_clear(route);
+    routeClear(route);
     route->startCurve = startCurve;
     route->goalPos = goalPos;
     route->goal = goal;
     route->unk28 = arg5 & 1;
     route->unk24 = 10000;
-    startPoint = route_add_point(route, startCurve, 0, 0xFF);
-    route_heap_insert(route->heap, &route->heapLength, (route->routePointsLength - 1), startPoint->goalDist + startPoint->netDist);
+    startPoint = routeAddPoint(route, startCurve, 0, 0xFF);
+    routeHeapInsert(route->heap, &route->heapLength, (route->routePointsLength - 1), startPoint->goalDist + startPoint->netDist);
     return 0;
 }
 
 static const char str_80099db0[] = "****** GOAL FOUND Iterations=%d ******\n";
 
 // public
-s32 route_find(Route* route, s32 maxIterations) {
+s32 routeFind(Route* route, s32 maxIterations) {
     RoutePoint* point;
     s32 pointIdx;
     s32 done;
@@ -67,17 +67,17 @@ s32 route_find(Route* route, s32 maxIterations) {
     result = 0;
     while ((done == 0) && (maxIterations != 0)) {
         // get next point from priority queue
-        pointIdx = route_heap_extract(route->heap, &route->heapLength);
+        pointIdx = routeHeapExtract(route->heap, &route->heapLength);
         if (pointIdx >= 0) {
             route->lastPointIdx = pointIdx;
             point = &route->routePoints[pointIdx];
-            if (route_is_goal(route, point) != 0) {
+            if (routeIsGoal(route, point) != 0) {
                 // goal found?
                 done = 1;
                 result = 1;
             } else {
                 point->visited = TRUE;
-                route_scan_neighbors(route, point, pointIdx);
+                routeScanNeighbors(route, point, pointIdx);
             }
         } else {
             done = 1;
@@ -89,7 +89,7 @@ s32 route_find(Route* route, s32 maxIterations) {
 }
 
 // public
-s32 route_reconstruct(Route* route) {
+s32 routeReconstruct(Route* route) {
     CurveSetup** temp_t6;
     RoutePoint* var_v1;
     RoutePoint* var_v1_2;
@@ -134,16 +134,16 @@ static const char str_80099e14[] = " Curve Node %i \n";
 static const char str_80099e28[] = " Curve Node %i \n";
 
 // public
-CurveSetup* route_next(Route* route) {
+CurveSetup* routeNext(Route* route) {
     if (route->routeCurrIdx < route->routeLength) {
         return route->route[route->routeCurrIdx++];
     }
     return NULL;
 }
 
-s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
-    if ((arg0->type22.unk30 == -1 || main_get_bits(arg0->type22.unk30) != 0) && 
-        (arg0->type22.usedBit == -1 || main_get_bits(arg0->type22.usedBit) == 0)) {
+s32 routeIsAllowedKyteCurve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
+    if ((arg0->type22.unk30 == -1 || mainGetBits(arg0->type22.unk30) != 0) && 
+        (arg0->type22.usedBit == -1 || mainGetBits(arg0->type22.usedBit) == 0)) {
         if (arg0->base_type22.unk4 == arg1->unk0) {
             return TRUE;
         }
@@ -162,10 +162,10 @@ s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
     } else {
         /* default.dol
         // "bit test on kyteai node failed\n"
-        if ((arg0->type22.unk30 > -1 && main_get_bits(arg0->type22.unk30) == 0)) {
+        if ((arg0->type22.unk30 > -1 && mainGetBits(arg0->type22.unk30) == 0)) {
             // "node is not active yet\n"
         }
-        if ((arg0->type22.usedBit > -1 || main_get_bits(arg0->type22.usedBit) != 0)) {
+        if ((arg0->type22.usedBit > -1 || mainGetBits(arg0->type22.usedBit) != 0)) {
             // "node is has been used\n"
         }
         */
@@ -173,7 +173,7 @@ s32 route_is_allowed_kyte_curve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
     return FALSE;
 }
 
-void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
+void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
     CurveSetup* base;
     CurveSetup* neighbor;
     s32 neighborCurveUID;
@@ -194,18 +194,18 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
             if (neighbor != NULL) {
                 switch (neighbor->curveType) {
                 case 0x22: // Kyte
-                    if (route_is_allowed_kyte_curve(neighbor, (UnkVoxmap2Struct*)route->goal) != 0) {
-                        route_add_neighbor(route, basePoint, baseCurveIdx, 
-                            (u32) (vec3_distance_squared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
+                    if (routeIsAllowedKyteCurve(neighbor, (UnkVoxmap2Struct*)route->goal) != 0) {
+                        routeAddNeighbor(route, basePoint, baseCurveIdx, 
+                            (u32) (vec3DistanceSquared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);
                     }
                     break;
                 case 0x24: // Tricky
-                    main_get_bits(BIT_Tricky_Talk_Sequence);
-                    if ((neighbor->type22.unk30 == -1 || main_get_bits(neighbor->type22.unk30) != 0) &&
-                           (neighbor->type22.usedBit == -1 || main_get_bits(neighbor->type22.usedBit) == 0)) {
-                        route_add_neighbor(route, basePoint, baseCurveIdx, 
-                            (u32) (vec3_distance_squared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
+                    mainGetBits(BIT_Tricky_Talk_Sequence);
+                    if ((neighbor->type22.unk30 == -1 || mainGetBits(neighbor->type22.unk30) != 0) &&
+                           (neighbor->type22.usedBit == -1 || mainGetBits(neighbor->type22.usedBit) == 0)) {
+                        routeAddNeighbor(route, basePoint, baseCurveIdx, 
+                            (u32) (vec3DistanceSquared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);
                     }
                     break;
@@ -222,43 +222,43 @@ void route_scan_neighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx)
 static const char str_80099e7c[] = "**** HEAP INSERT ****\n";
 static const char str_80099e94[] = "**** NODE FIND ****\n";
 
-void route_add_neighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve) {
+void routeAddNeighbor(Route* route, RoutePoint* prevPoint, s32 prevPointIdx, u32 dist, CurveSetup* curve) {
     s32 visited;
     s32 pointIdx;
     s32 _pad;
     RoutePoint* point;
 
-    if (route_is_goal(route, prevPoint) != 0) {
+    if (routeIsGoal(route, prevPoint) != 0) {
         pointIdx = route->routePointsLength;
-        route_add_point(route, curve, dist, (u16) prevPointIdx);
-        route_heap_insert(route->heap, &route->heapLength, pointIdx, 1);
+        routeAddPoint(route, curve, dist, (u16) prevPointIdx);
+        routeHeapInsert(route->heap, &route->heapLength, pointIdx, 1);
     }
-    pointIdx = route_find_point(route, curve, &visited);
+    pointIdx = routeFindPoint(route, curve, &visited);
     if ((pointIdx >= 0) && (visited == FALSE)) {
         point = &route->routePoints[pointIdx];
         if (dist < point->netDist) {
             // Better route found
             point->prevPointIdx = (u8) prevPointIdx;
             point->netDist = dist;
-            route_heap_change_priority(route->heap, route->heapLength, pointIdx, point->goalDist + dist);
+            routeHeapChangePriority(route->heap, route->heapLength, pointIdx, point->goalDist + dist);
         }
     } else if (pointIdx < 0) {
         pointIdx = route->routePointsLength;
-        point = route_add_point(route, curve, dist, (u16) prevPointIdx);
+        point = routeAddPoint(route, curve, dist, (u16) prevPointIdx);
         if (point != NULL) {
             if (route->unk24 < point->goalDist) {
-                route_heap_insert(route->heap, &route->heapLength, pointIdx, point->goalDist + point->netDist);
+                routeHeapInsert(route->heap, &route->heapLength, pointIdx, point->goalDist + point->netDist);
             } else {
                 if (point->goalDist < route->unk24) {
                     route->unk24 = point->goalDist;
                 }
-                route_heap_insert(route->heap, &route->heapLength, pointIdx, point->goalDist + point->netDist);
+                routeHeapInsert(route->heap, &route->heapLength, pointIdx, point->goalDist + point->netDist);
             }
         }
     }
 }
 
-void route_clear(Route* route) {
+void routeClear(Route* route) {
     s32 i;
 
     route->heapLength = 0;
@@ -269,7 +269,7 @@ void route_clear(Route* route) {
     }
 }
 
-void route_up_heap(RouteHeapElement* heap, s32 idx) {
+void routeUpHeap(RouteHeapElement* heap, s32 idx) {
     u32 priority;
     s32 parent;
     s32 pointIdx;
@@ -288,7 +288,7 @@ void route_up_heap(RouteHeapElement* heap, s32 idx) {
     heap[idx].pointIdx = pointIdx;
 }
 
-void route_down_heap(RouteHeapElement* heap, s32 heapLength, s32 idx) {
+void routeDownHeap(RouteHeapElement* heap, s32 heapLength, s32 idx) {
     s32 var_t1;
     s32 pointIdx;
     u32 priority;
@@ -317,15 +317,15 @@ void route_down_heap(RouteHeapElement* heap, s32 heapLength, s32 idx) {
 }
 
 // insert curve into priority queue
-void route_heap_insert(RouteHeapElement* heap, s16* heapLengthPtr, u16 pointIdx, u32 dist) {
+void routeHeapInsert(RouteHeapElement* heap, s16* heapLengthPtr, u16 pointIdx, u32 dist) {
     *heapLengthPtr += 1;
     heap[*heapLengthPtr].pointIdx = pointIdx;
     // invert the dist. this is a max-heap, so smaller distances should be higher priority
     heap[*heapLengthPtr].priority = -1 - dist;
-    route_up_heap(heap, *heapLengthPtr);
+    routeUpHeap(heap, *heapLengthPtr);
 }
 
-void route_heap_change_priority(RouteHeapElement* heap, s32 heapLength, u16 pointIdx, u32 newPriority) {
+void routeHeapChangePriority(RouteHeapElement* heap, s32 heapLength, u16 pointIdx, u32 newPriority) {
     s32 idx;
     s32 i;
     u32 prevPriority;
@@ -342,13 +342,13 @@ void route_heap_change_priority(RouteHeapElement* heap, s32 heapLength, u16 poin
     heap[idx].priority = newPriority;
     // fix heap
     if (newPriority < prevPriority) {
-        route_down_heap(heap, heapLength, idx);
+        routeDownHeap(heap, heapLength, idx);
     } else if (prevPriority < newPriority) {
-        route_up_heap(heap, idx);
+        routeUpHeap(heap, idx);
     }
 }
 
-s32 route_heap_extract(RouteHeapElement* heap, s16* heapLengthPtr) {
+s32 routeHeapExtract(RouteHeapElement* heap, s16* heapLengthPtr) {
     u16 pointIdx;
     
     if (*heapLengthPtr == 0) {
@@ -359,11 +359,11 @@ s32 route_heap_extract(RouteHeapElement* heap, s16* heapLengthPtr) {
     heap[1].priority = heap[*heapLengthPtr].priority;
     heap[1].pointIdx = heap[*heapLengthPtr].pointIdx;
     *heapLengthPtr -= 1;
-    route_down_heap(heap, *heapLengthPtr, 1);
+    routeDownHeap(heap, *heapLengthPtr, 1);
     return (s32) pointIdx;
 }
 
-RoutePoint* route_add_point(Route* route, CurveSetup *curve, u32 dist, u16 prevPointIdx) {
+RoutePoint* routeAddPoint(Route* route, CurveSetup *curve, u32 dist, u16 prevPointIdx) {
     RoutePoint* point;
 
     if (route->routePointsLength == ROUTE_HEAP_CAPACITY) {
@@ -374,11 +374,11 @@ RoutePoint* route_add_point(Route* route, CurveSetup *curve, u32 dist, u16 prevP
     point->curve = curve;
     point->netDist = dist;
     point->prevPointIdx = (u8) prevPointIdx;
-    point->goalDist = (u32) vec3_distance_squared(&curve->pos, route->goalPos);
+    point->goalDist = (u32) vec3DistanceSquared(&curve->pos, route->goalPos);
     return point;
 }
 
-s32 route_find_point(Route* route, CurveSetup* curve, s32* outVisited) {
+s32 routeFindPoint(Route* route, CurveSetup* curve, s32* outVisited) {
     RoutePoint* point;
     s32 i;
 
@@ -392,7 +392,7 @@ s32 route_find_point(Route* route, CurveSetup* curve, s32* outVisited) {
     return -1;
 }
 
-s32 route_is_goal(Route* route, RoutePoint* point) {
+s32 routeIsGoal(Route* route, RoutePoint* point) {
     UnkVoxmap2Struct *new_var;
     CurveSetup* temp_a1;
     void *temp_v0;

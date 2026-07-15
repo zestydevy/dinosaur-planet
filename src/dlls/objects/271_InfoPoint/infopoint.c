@@ -59,8 +59,8 @@ void InfoPoint_setup(Object* self, InfoPoint_Setup* objSetup, s32 arg2) {
 
     objData = self->data;
     
-    font_load(FONT_SUBTITLE_FONT);
-    font_load(FONT_DINO_SUBTITLE_FONT_1);
+    fontLoad(FONT_SUBTITLE_FONT);
+    fontLoad(FONT_DINO_SUBTITLE_FONT_1);
     
     self->animCallback = InfoPoint_anim_callback;
     objData->textWindowCoords = dTextWindowCoords;
@@ -82,7 +82,7 @@ void InfoPoint_setup(Object* self, InfoPoint_Setup* objSetup, s32 arg2) {
 // offset: 0x134 | func: 1 | export: 1
 void InfoPoint_control(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
 }
@@ -106,7 +106,7 @@ void InfoPoint_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         return;
     }
         
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     
     if (objData->textOpacity != 0) {
         InfoPoint_tex_anim(self, 1, &objData->texAnimSpeed);
@@ -117,20 +117,20 @@ void InfoPoint_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         }
         
         gametext = objData->gametext;
-        font_window_set_coords(6, coords->xMin, coords->yMin, coords->xMax, coords->yMax);
-        font_window_use_font(6, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_flush_strings(6);
-        font_window_set_text_colour(6, 0, 0xFF, 0xFF, 0xFF, objData->textOpacity);
-        font_window_draw(gdl, mtxs, vtxs, 6);
+        fontWindowSetCoords(6, coords->xMin, coords->yMin, coords->xMax, coords->yMax);
+        fontWindowUseFont(6, FONT_DINO_SUBTITLE_FONT_1);
+        fontWindowFlushStrings(6);
+        fontWindowSetTextColour(6, 0, 0xFF, 0xFF, 0xFF, objData->textOpacity);
+        fontWindowDraw(gdl, mtxs, vtxs, 6);
         
         //Print gametext strings
         for (i = 0; i < gametext->count; i++, y += 18) {
-            font_window_add_string_xy(6, -0x8000, y, gametext->strings[i], 1, ALIGN_TOP_CENTER);
-            font_window_use_font(6, FONT_DINO_SUBTITLE_FONT_1);
-            font_window_set_text_colour(6, 0xFF, 0xFF, 0xFF, 0xFF, objData->textOpacity);
+            fontWindowAddStringXY(6, -0x8000, y, gametext->strings[i], 1, ALIGN_TOP_CENTER);
+            fontWindowUseFont(6, FONT_DINO_SUBTITLE_FONT_1);
+            fontWindowSetTextColour(6, 0xFF, 0xFF, 0xFF, 0xFF, objData->textOpacity);
         }
         
-        font_window_draw(gdl, mtxs, vtxs, 6);
+        fontWindowDraw(gdl, mtxs, vtxs, 6);
     }
 }
 
@@ -138,8 +138,8 @@ void InfoPoint_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
 void InfoPoint_free(Object* self, s32 arg1) {
     InfoPoint_Data* objData = self->data;
 
-    font_unload(FONT_DINO_SUBTITLE_FONT_1);
-    font_unload(FONT_SUBTITLE_FONT);
+    fontUnload(FONT_DINO_SUBTITLE_FONT_1);
+    fontUnload(FONT_SUBTITLE_FONT);
     mmFree(objData->gametext);
 }
 
@@ -187,7 +187,7 @@ void InfoPoint_tex_anim(Object* self, s32 animIndex, s32* animSpeed) {
     TextureAnimator* texAnim;
     s32 frameValue;
 
-    texAnim = func_800348A0(self, animIndex - 1, 0);
+    texAnim = objExprGetTexAnimator(self, animIndex - 1, 0);
     if (texAnim == NULL) {
         return;
     }

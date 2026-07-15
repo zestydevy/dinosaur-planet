@@ -372,7 +372,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
     ktdata = (KTrex_Data*)baddie->objdata;
-    ktdata->stateStack = generic_stack_new(4, sizeof(s32));
+    ktdata->stateStack = genericStackNew(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
         curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCW[i]);
@@ -402,7 +402,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     ktdata->segB_Y = ktdata->segEndCW_Y;
     ktdata->segB_Z = ktdata->segEndCW_Z;
     ktdata->health = 4;
-    _data_E4 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_106, 1);
+    _data_E4 = (DLL_IModgfx*)dllLoad(DLL_ID_106, 1);
 }
 #endif
 
@@ -416,14 +416,14 @@ void dll_702_control(Object* self) {
         sBaddie = baddie;
         sKTData = sBaddie->objdata;
         func_80028D2C(self);
-        baddie->fsa.target = get_player();
+        baddie->fsa.target = objGetPlayer();
         if (baddie->fsa.target != NULL) {
             vec[0] = baddie->fsa.target->globalPosition.x - self->globalPosition.x;
             vec[1] = baddie->fsa.target->globalPosition.y - self->globalPosition.y;
             vec[2] = baddie->fsa.target->globalPosition.z - self->globalPosition.z;
             baddie->fsa.targetDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
         }
-        func_80032A08(self, &sBaddie->unk3BC);
+        objExprEyeIdle(self, &sBaddie->unk3BC);
         sKTData->playerSegmentBitfield = dll_702_get_player_segment_bitfield();
         sKTData->playerSegmentPos = dll_702_get_obj_segment_pos(baddie->fsa.target, sKTData);
         sKTData->selfSegmentBitfield = dll_702_get_self_segment_bitfield(sKTData->flags);
@@ -454,21 +454,21 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     sBaddie = (Baddie* ) self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
         if (sBaddie->unk3E8 != 0.0f) {
-            func_80036FBC(0xC8, 0, 0, sBaddie->unk3E8);
+            objprintSetBlendColor(0xC8, 0, 0, sBaddie->unk3E8);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
-        func_80031F6C(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
-        func_80031F6C(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
-        func_80031F6C(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
-        memcpy(&sp48, func_80032170(self, 4), sizeof(MtxF));
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objGetAttachPointWorldSpace(self, 1, &sKTData->unk124.transl.x, &sKTData->unk124.transl.y, &sKTData->unk124.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 2, &sKTData->unk13C.transl.x, &sKTData->unk13C.transl.y, &sKTData->unk13C.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 3, &sKTData->unk154.transl.x, &sKTData->unk154.transl.y, &sKTData->unk154.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 0, &sKTData->unk10C.transl.x, &sKTData->unk10C.transl.y, &sKTData->unk10C.transl.z, 0);
+        memcpy(&sp48, objGetAttachPointBoneMatrix(self, 4), sizeof(MtxF));
         sp48.m[3][1] = 0.0f;
         sp48.m[3][0] = 0.0f;
         sp48.m[3][2] = 0.0f;
-        sKTData->unk16C.x = (f32) ((f32) rand_next(-0x32, 0x32) * 0.1f);
-        sKTData->unk16C.y = (f32) ((f32) rand_next(0x3C, 0x78) * 0.1f);
-        sKTData->unk16C.z = (f32) ((f32) rand_next(0x64, 0x96) * -0.25f);
-        vec3_transform(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
+        sKTData->unk16C.x = (f32) ((f32) mathRnd(-0x32, 0x32) * 0.1f);
+        sKTData->unk16C.y = (f32) ((f32) mathRnd(0x3C, 0x78) * 0.1f);
+        sKTData->unk16C.z = (f32) ((f32) mathRnd(0x64, 0x96) * -0.25f);
+        mathMtxXFMF(&sp48, sKTData->unk16C.x, sKTData->unk16C.y, sKTData->unk16C.z, &sKTData->unk16C.x, &sKTData->unk16C.y, &sKTData->unk16C.z);
         sKTData->fxFlags |= KTFX_EnablePartFx;
     }
 }
@@ -477,11 +477,11 @@ void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 void dll_702_free(Object* self, s32 a1) {
     sBaddie = (Baddie* ) self->data;
     sKTData = sBaddie->objdata;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     gDLL_33_BaddieControl->vtbl->free(self, sBaddie, 0);
-    generic_stack_free(sKTData->stateStack);
+    genericStackFree(sKTData->stateStack);
     if (_data_E4 != NULL) {
-        dll_unload(_data_E4);
+        dllFree(_data_E4);
     }
     _data_E4 = NULL;
 }
@@ -516,7 +516,7 @@ static s32 dll_702_get_player_segment_bitfield(void) {
 
     var_s2 = 0;
     for (i = 0;  i < 4; i++) {
-        if (main_get_bits(sPlayerSegmentGamebits[i]) != 0) {
+        if (mainGetBits(sPlayerSegmentGamebits[i]) != 0) {
             var_s2 |= (1 << i);
         }
     }
@@ -562,7 +562,7 @@ static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield) {
     
     for (i = 0; i < 4; i++) {
         mask = 1 << i;
-        if ((segmentBitfield & mask) && (main_get_bits(sLaserWallGamebits[i]) != 0)) {
+        if ((segmentBitfield & mask) && (mainGetBits(sLaserWallGamebits[i]) != 0)) {
             var_s2 |= mask;
         }
     }
@@ -571,8 +571,8 @@ static s32 dll_702_get_laser_wall_bitfield(u8 segmentBitfield) {
 
 // offset: 0xE24 | func: 14
 static void dll_702_push_state(s32 state) {
-    if (!generic_stack_is_full(sKTData->stateStack)) {
-        generic_stack_push(sKTData->stateStack, &state);
+    if (!genericStackIsFull(sKTData->stateStack)) {
+        genericStackPush(sKTData->stateStack, &state);
     }
 }
 
@@ -581,8 +581,8 @@ static s32 dll_702_pop_state(void) {
     s32 state;
 
     state = 0;
-    if (!generic_stack_is_empty(sKTData->stateStack)) {
-        generic_stack_pop(sKTData->stateStack, &state);
+    if (!genericStackIsEmpty(sKTData->stateStack)) {
+        genericStackPop(sKTData->stateStack, &state);
     }
     return state;
 }
@@ -718,80 +718,80 @@ static void dll_702_fx_tick(Object *self) {
     }
     if (sKTData->fxFlags & KTFX_Sound_68E) {
         // the little sound he makes turning a corner
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68E_KT_Rex_Noise, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_BigRoar) {
         // the big roar
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68F_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_IntroRoar) {
         // intro cutscene roar
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_690_KT_Rex_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_ChargeEndRoar) {
         // unused roar on "charge end" anim
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68D_KT_Rex_Roar_Kinda, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_WallSlam) {
         // wall slam on charge turn
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6FC_KT_Rex_Slam, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_GroundScrape) {
         // scraping ground, while knocked over
-        gDLL_6_AMSFX->vtbl->play(self, sSndScrapeGround[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndScrapeGround[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_PainRoar) {
         // roar from getting zapped
-        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Sound_FlailRoar) {
         // roar, flailing on ground
-        gDLL_6_AMSFX->vtbl->play(self, sSndRoars[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, sSndRoars[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     if (sKTData->fxFlags & KTFX_Spit_Partfx_Disable) {
         sKTData->fxFlags = sKTData->fxFlags & ~(KTFX_Spit_Partfx_Disable | KTFX_Spit_Partfx);
     }
     if (sKTData->fxFlags & KTFX_Sound_Explosion) {
         // explosion sound, when he falls on the ground. also during intro
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-        camera_enable_y_offset();
-        camera_set_shake_offset(2.0f * sp48);
+        dll_amSfx->Play(self, SOUND_6F9_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+        camUseShake();
+        camSetShakeOffset(2.0f * sp48);
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing1) {
         // breathing
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68B_KT_Rex_Breathing1, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68B_KT_Rex_Breathing1, MAX_VOLUME, NULL, NULL, 0, NULL);
         sKTData->breathingSfxIndex ^= 1;
     }
     if (sKTData->fxFlags & KTFX_Sound_Breathing2) {
         // more breathing
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68C_KT_Rex_Breathing2, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68C_KT_Rex_Breathing2, MAX_VOLUME, NULL, NULL, 0, NULL);
         sKTData->breathingSfxIndex ^= 1;
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right1 | KTFX_Footfall_Left1)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_688_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(sp48);
-            main_set_bits(BIT_554, 1);
+            camUseShake();
+            camSetShakeOffset(sp48);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right2 | KTFX_Footfall_Left2)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_689_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(2.0f * sp48);
-            main_set_bits(BIT_554, 1);
+            camUseShake();
+            camSetShakeOffset(2.0f * sp48);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (sKTData->fxFlags & (KTFX_Footfall_Right3 | KTFX_Footfall_Left3)) {
         // footfall
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_68A_KT_Rex_Stomp, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp48 > 0.1f) {
-            camera_enable_y_offset();
-            camera_set_shake_offset(3.0f * sp48);
-            main_set_bits(BIT_554, 1);
+            camUseShake();
+            camSetShakeOffset(3.0f * sp48);
+            mainSetBits(BIT_554, 1);
         }
     }
     if (!(sKTData->fxFlags & KTFX_EnablePartFx)) {
@@ -893,8 +893,8 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[hitSphereID][2];
             _bss_60.transl.z = temp_v1->m[hitSphereID][3] + gWorldZ;
-            gDLL_6_AMSFX->vtbl->play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, sSndRoars[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_693_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_2_Camera->vtbl->change_mode(2, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B2, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4B3, &_bss_60, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
@@ -903,7 +903,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             fsa->lastHitType = (s8) damageType;
             fsa->hitpoints -= 1;
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, sSndDeflectAttack[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, sSndDeflectAttack[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
             temp_v1 = modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
@@ -917,21 +917,21 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.yaw = 0;
             _bss_60.pitch = 0;
             _bss_60.roll = 0;
-            sp3C[1] += rand_next(0, 0x9B);
-            sp3C[2] += rand_next(0, 0x9B);
+            sp3C[1] += mathRnd(0, 0x9B);
+            sp3C[2] += mathRnd(0, 0x9B);
             _data_E4->vtbl->func0(self, 0, &_bss_60, 1, -1, &sp3C);
         }
         if (fsa->hitpoints <= 0) {
             fsa->hitpoints = 0;
         }
-        obj_send_mesg(hitBy, 0xE0001, self, NULL);
+        objSendMesg(hitBy, 0xE0001, self, NULL);
     }
 }
 
 // offset: 0x23EC | func: 22
 static s32 dll_702_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_Idle, 0.0f, 0);
+        objAnimSet(self, KTANIM_Idle, 0.0f, 0);
     }
     fsa->animTickDelta = 0.01f;
     return 0;
@@ -945,7 +945,7 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     s32 speakFxFlags;
 
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sWalkModAnims[sKTData->anger], 0.0f, 0);
+        objAnimSet(self, sWalkModAnims[sKTData->anger], 0.0f, 0);
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
     }
@@ -959,7 +959,7 @@ static s32 dll_702_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, speakFxFlags); // on event 0 -> breathing sfx
     temp_fv0 = (sKTData->pos.x - self->srt.transl.x) * gUpdateRateInverseF;
     temp_fa1 = (sKTData->pos.z - self->srt.transl.z) * gUpdateRateInverseF;
-    func_8002493C(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
+    objGetAnimChange(self, sqrtf(SQ(temp_fv0) + SQ(temp_fa1)), &fsa->animTickDelta);
     self->srt.transl.x = sKTData->pos.x;
     self->srt.transl.z = sKTData->pos.z;
     return 0;
@@ -975,7 +975,7 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sTurn90ModAnims[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
+        objAnimSet(self, sTurn90ModAnims[sKTData->anger & 0xFFFF][reversed], 0.0f, 0);
         fsa->animTickDelta = sTurn90AnimTickDeltas[sKTData->anger];
         sKTData->turnStartYaw = self->srt.yaw;
     }
@@ -992,8 +992,8 @@ static s32 dll_702_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     tempSRT.transl.y = 0.0f;
     tempSRT.transl.z = 0.0f;
     tempSRT.scale = 1.0f;
-    matrix_from_srt(&tempMtx, &tempSRT);
-    vec3_transform(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
+    mathYprXyzMtx(&tempMtx, &tempSRT);
+    mathMtxXFMF(&tempMtx, fsa->unk27C, 0.0f, -fsa->unk278, &self->velocity.x, &tempY, &self->velocity.z);
     if (reversed) {
         self->srt.yaw = sKTData->turnStartYaw + (M_90_DEGREES * self->animProgress);
     } else {
@@ -1009,7 +1009,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_Turn_180, 0.0f, 0);
+        objAnimSet(self, KTANIM_Turn_180, 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1027,7 +1027,7 @@ static s32 dll_702_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Roar, standing in place. */
 static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sRoarModAnims[sKTData->roarType], 0.0f, 0);
+        objAnimSet(self, sRoarModAnims[sKTData->roarType], 0.0f, 0);
         fsa->animTickDelta = sRoarAnimTickDeltas[sKTData->roarType];
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1042,7 +1042,7 @@ static s32 dll_702_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Roar, after completing a charge. */
 static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, sChargeEndModAnims[sKTData->anger], 0.0f, 0);
+        objAnimSet(self, sChargeEndModAnims[sKTData->anger], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1057,7 +1057,7 @@ static s32 dll_702_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Zapped, fall down. */
 static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_FallDown, 0.0f, 0);
+        objAnimSet(self, KTANIM_FallDown, 0.0f, 0);
         fsa->animTickDelta = 0.006f;
         fsa->unk278 = 0.0f;
         fsa->unk27C = 0.0f;
@@ -1071,7 +1071,7 @@ static s32 dll_702_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Knocked over on the ground. */
 static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_FlailOnGround, 0.0f, 0);
+        objAnimSet(self, KTANIM_FlailOnGround, 0.0f, 0);
         fsa->animTickDelta = 0.01f;
     }
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);
@@ -1083,7 +1083,7 @@ static s32 dll_702_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 /** Standing back up, after being zapped and knocked down. */
 static s32 dll_702_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
-        func_80023D30(self, KTANIM_GetBackUp, 0.0f, 0);
+        objAnimSet(self, KTANIM_GetBackUp, 0.0f, 0);
         fsa->animTickDelta = 0.0017f;
     }
     dll_702_anim_event_to_fx(KTANIM_EVT_0_Speak, KTFX_Sound_FlailRoar);
@@ -1100,11 +1100,11 @@ static s32 dll_702_logic_state_0(Object *self, ObjFSA_Data* fsa, f32 updateRate)
 static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_28_ScreenFade->vtbl->fade(30, SCREEN_FADE_BLACK);
-        func_80013FB4();
+        main_func_80013FB4();
         self->unkAF |= 8;
         fsa->unk33D = 0;
         fsa->unk4.mode = 0;
-        obj_send_mesg(get_player(), 0xE0000, self, NULL);
+        objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
     }
     return 0;
 }
@@ -1133,13 +1133,13 @@ static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         if ((sKTData->fightProgress >= 2) && !(sKTData->flags & KTFLAG_ROLLED_CHANCE) && 
                 ((!reversed && sKTData->segmentPos >= 0.7f) || (reversed && sKTData->segmentPos <= 0.3f))) {
             chanceIdx = sKTData->fightProgress >> 1;
-            if (rand_next(0, 100) <= objsetup->chargeChance[chanceIdx]) {
+            if (mathRnd(0, 100) <= objsetup->chargeChance[chanceIdx]) {
                 sKTData->chargeCounter = 2;
                 dll_702_push_state(KT_LSTATE_5_CHARGE);
                 sKTData->roarType = 1;
                 return KT_LSTATE_4_ROAR + 1;
             }
-            if (rand_next(0, 100) <= objsetup->reverseChance[chanceIdx]) {
+            if (mathRnd(0, 100) <= objsetup->reverseChance[chanceIdx]) {
                 sKTData->roarType = 0;
                 dll_702_push_state(KT_LSTATE_11_REVERSE);
                 return KT_LSTATE_4_ROAR + 1;
@@ -1283,7 +1283,7 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate)
     } else if (fsa->unk33A != 0) {
         if (sKTData->flags & KTFLAG_DAMAGED) {
             sKTData->fightProgress += 1;
-            main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
+            mainSetBits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         }
         ktflags = sKTData->flags;
         sKTData->standingUpSegment = KTFLAG_GET_SEGMENT(ktflags);
@@ -1328,7 +1328,7 @@ static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate
             dll_702_push_state(KT_LSTATE_2_WALK);
         }
         gDLL_2_Camera->vtbl->change_mode(3, 0);
-        main_set_bits(BIT_572_KT_FightProgress, sKTData->fightProgress);
+        mainSetBits(BIT_572_KT_FightProgress, sKTData->fightProgress);
         return KT_LSTATE_6_CHARGE_END + 1;
     }
     return 0;

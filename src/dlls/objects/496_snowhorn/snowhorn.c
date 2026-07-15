@@ -253,7 +253,7 @@ void dll_496_setup(Object* snowhorn, SnowHorn_Setup* mapsObj, s32 arg2) {
     snowhorn->animCallback = dll_496_func_84C;
     
     if (arg2 == 0) {
-        obj_add_object_type(snowhorn, OBJTYPE_SnowHorn);
+        objAddObjectType(snowhorn, OBJTYPE_SnowHorn);
         objdata->unk50 = 0.005f;
         objdata->unkRadius = mapsObj->unkRadius;
         objdata->unk6 = mapsObj->unk1A * 0x3C;
@@ -299,9 +299,9 @@ void dll_496_control(Object* snowhorn) {
 
     objdata = snowhorn->data;
     mapsObj = (SnowHorn_Setup*)snowhorn->setup;
-    player = get_player();
+    player = objGetPlayer();
 
-    if (vec3_distance_xz_squared(&snowhorn->globalPosition, &player->globalPosition) 
+    if (vec3DistanceXZSquared(&snowhorn->globalPosition, &player->globalPosition) 
             < 2.0f * (objdata->unkRadius * objdata->unkRadius)) {
         if (!(objdata->unk424 & 0x80)) {
             objdata->unk424 |= 0x80;
@@ -314,9 +314,9 @@ void dll_496_control(Object* snowhorn) {
     
    if (objdata->unk424 & 0x40) {
         dll_496_func_CC4(snowhorn, objdata->unk424 & 4);
-        func_800328F0(snowhorn, &objdata->lookAtUnk, objdata->walkSpeed);
+        objExpr_func_800328F0(snowhorn, &objdata->lookAtUnk, objdata->walkSpeed);
     }
-    func_80032A08(snowhorn, &objdata->lookAtUnk);
+    objExprEyeIdle(snowhorn, &objdata->lookAtUnk);
 
     if (func_80026DF4(snowhorn, _data_0, 0x1C, (objdata->flags & 0x4000 ? 1 : 0), 
                       &objdata->unk54) != 0) {
@@ -332,7 +332,7 @@ void dll_496_control(Object* snowhorn) {
         return;
     }
 
-    objdata->distanceFromPlayer = vec3_distance(&snowhorn->globalPosition, &player->globalPosition);
+    objdata->distanceFromPlayer = vec3Distance(&snowhorn->globalPosition, &player->globalPosition);
     switch (mapsObj->unk1D) {
         case 0:
             dll_496_func_D80(snowhorn, objdata, mapsObj);
@@ -361,24 +361,24 @@ void dll_496_control(Object* snowhorn) {
     if (objdata->someAnimIDList) {
         animIndex = objdata->flags & ~0x8000;
         if (snowhorn->curModAnimId != objdata->someAnimIDList[animIndex]) {
-            func_80023D30(snowhorn, objdata->someAnimIDList[animIndex], 0.0f, 0);
+            objAnimSet(snowhorn, objdata->someAnimIDList[animIndex], 0.0f, 0);
 
             if (objdata->unk48[animIndex] >= 0.0f) {
                 objdata->unk50 = objdata->unk48[animIndex];
             }
             objdata->unk424 &= ~8;
         }
-        if (func_80024108(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
+        if (objAnimAdvance(snowhorn, objdata->unk50, gUpdateRateF, &sp44) != 0) {
             objdata->unk424 |= 8;
         } else {
             objdata->unk424 &= ~8;
         }
-        func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
+        objAnim_func_80025780(snowhorn, gUpdateRateF, &sp44, 0);
     }
 
     if ((objdata->chatSequenceList != 0) && (snowhorn->unkAF & 1)) {
         if (objdata->unk424 & 0x20) {
-            seqIndex = rand_next(0, objdata->unk426 - 1);
+            seqIndex = mathRnd(0, objdata->unk426 - 1);
         } else {
             seqIndex = objdata->unk425;
         }
@@ -387,7 +387,7 @@ void dll_496_control(Object* snowhorn) {
             objdata->unk425 = 0;
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->chatSequenceList[seqIndex], snowhorn, -1);
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
     }
 
 }
@@ -400,8 +400,8 @@ void dll_496_print(Object* self, Gfx **gfx, Mtx **mtx, Vertex **vtx, Triangle **
 
     objdata = self->data;
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
-        func_80031F6C(self, 1, &objdata->playerPositionCopy.x, &objdata->playerPositionCopy.y, &objdata->playerPositionCopy.z, 0);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
+        objGetAttachPointWorldSpace(self, 1, &objdata->playerPositionCopy.x, &objdata->playerPositionCopy.y, &objdata->playerPositionCopy.z, 0);
     }
 }
 
@@ -424,7 +424,7 @@ static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* 
 
     objdata = self->data;
     if (arg3 != 0) {
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     }
     if (objdata->unk424 & 1) {
         gDLL_27->vtbl->reset(self, &objdata->unk170);
@@ -434,7 +434,7 @@ static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* 
 
     for (i = 0; i < animObjdata->messageCount; i++){
         if (animObjdata->messages[i] == 3) {
-            main_set_bits(BIT_Map_SW, 1);
+            mainSetBits(BIT_Map_SW, 1);
             continue;
         }        
     }
@@ -453,7 +453,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
     s32 playSound; //toggles between 0 and 1 (when ready to play sound another time)
 
     objdata = (SnowHorn_Data*)snowhorn->data;
-    animIsFinished = func_80024108(snowhorn, 0.006f, gUpdateRateF, &sp4c);
+    animIsFinished = objAnimAdvance(snowhorn, 0.006f, gUpdateRateF, &sp4c);
     
     if (sp4c.unk1B != 0) {
         playSound = sp4c.unk13[0] == 0;
@@ -461,33 +461,33 @@ static s32 dll_496_func_980(Object* snowhorn) {
         playSound = 0;
     }
     
-    temp1 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep, 0);
-    temp2 = func_800348A0(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
+    temp1 = objExprGetTexAnimator(snowhorn, MODANIM_SnowHorn_Sleep, 0);
+    temp2 = objExprGetTexAnimator(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0);
     snowhorn->unkAF |= 8;    
     
     switch (snowhorn->curModAnimId) {
         case MODANIM_SnowHorn_Sleep_Intro:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Sleep, 0.0f, 0); //play next animation
                 if (temp1 != NULL) {
                     temp1->frame = 0x200;
                 }
                 if (temp2 != NULL) {
                     temp2->frame = 0x200;
                 }
-                objdata->sleepTimer = rand_next(0, 300);
+                objdata->sleepTimer = mathRnd(0, 300);
             }
             break;
         case MODANIM_SnowHorn_Sleep:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
             }
             objdata->sleepTimer-= gUpdateRate;
             if ((_data_270 == 0) && objdata->sleepTimer <= 0) {  //if daytime rolls around
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Wake_Up, 0.0f, 0); //play wake-up animation
                 if (temp1 != NULL) {
                     temp1->frame = 0;
                 }
@@ -498,10 +498,10 @@ static s32 dll_496_func_980(Object* snowhorn) {
             break;
         case MODANIM_SnowHorn_Wake_Up:
             if (playSound) {
-                gDLL_6_AMSFX->vtbl->play(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(snowhorn, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
             }
             if (animIsFinished) {
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
                 objdata->flags &= ~0x8000;
                 snowhorn->unkAF &= ~8;
                 return 0;
@@ -510,7 +510,7 @@ static s32 dll_496_func_980(Object* snowhorn) {
         default:
             objdata->sleepTimer -= gUpdateRate;
             if (objdata->sleepTimer <= 0) { //Go back to sleep if interrupted (by flinch anim etc.)
-                func_80023D30(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
+                objAnimSet(snowhorn, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
                 objdata->walkSpeed = 0.0f;
             }
             break;
@@ -524,7 +524,7 @@ static void dll_496_func_CC4(Object *snowHorn, s32 lookAt){
     Object *player;
       
     objdata = snowHorn->data;
-    player = get_player();
+    player = objGetPlayer();
       
     if (lookAt && player && objdata->distanceFromPlayer < 200.0f){
       objdata->lookAtUnk.aimIsActive = 1;
@@ -548,7 +548,7 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     Object* player;
 
     if (_data_270 != 0) {
-        objdata->sleepTimer = rand_next(0, 300);
+        objdata->sleepTimer = mathRnd(0, 300);
         objdata->flags |= 0x8000;
 
         snowhorn->unkAF |= 8;
@@ -558,19 +558,19 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     
     objdata->flags &= ~0x8000;
     if (snowhorn->curModAnimId != 0) {
-        func_80023D30(snowhorn, 0, 0.0f, 0);
+        objAnimSet(snowhorn, 0, 0.0f, 0);
     }
 
-    func_80024108(snowhorn, objdata->unk50, gUpdateRate, NULL);
-    player = get_player();
+    objAnimAdvance(snowhorn, objdata->unk50, gUpdateRate, NULL);
+    player = objGetPlayer();
     if (!player) 
         return;
     
-    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3_distance_squared(&snowhorn->globalPosition, &player->globalPosition)) {
+    if ((f32)objdata->unkRadius*objdata->unkRadius < vec3DistanceSquared(&snowhorn->globalPosition, &player->globalPosition)) {
         objdata->sleepTimer += gUpdateRate;
         if (objdata->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->start_obj_sequence(7, snowhorn, -1); //play seq 7?
-            objdata->sleepTimer = (s16) -rand_next(0, 50);
+            objdata->sleepTimer = (s16) -mathRnd(0, 50);
         }
         return;
     } 
@@ -581,16 +581,16 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
     switch (objdata->flags) {
         u32 rootsEaten;
         case 0:
-            if (main_get_bits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
+            if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
                 objdata->flags = 1;
             }
             break;    
         case 1:
-            rootsEaten = main_get_bits(BIT_SnowHorn_Tutorial_NumRootsFed);
+            rootsEaten = mainGetBits(BIT_SnowHorn_Tutorial_NumRootsFed);
             switch (rootsEaten) {
                 case 0:
-                    if (main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
-                        main_get_bits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
+                    if (mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
+                        mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
                     {
                         objdata->flags = 2;
                     }
@@ -605,8 +605,8 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
             break;
         case 2:
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
-                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
-                main_decrement_bits(BIT_SW_Alpine_Roots);
+                mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
+                mainDecrementBits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, snowhorn, -1);
                 objdata->flags = 4;
                 return;
@@ -614,8 +614,8 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
             break;
         case 4:
             if ((snowhorn->unkAF & 4) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
-                main_set_bits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
-                main_decrement_bits(BIT_SW_Alpine_Roots);
+                mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
+                mainDecrementBits(BIT_SW_Alpine_Roots);
                 gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, snowhorn, -1);
                 objdata->flags = 6;
                 return;
@@ -630,7 +630,7 @@ static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_
         snowhorn->unkAF &= ~1;
         if (objdata->flags < 7) {
             gDLL_3_Animation->vtbl->start_obj_sequence(objdata->flags, snowhorn, -1);
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     }
 
@@ -655,7 +655,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
 
     objdata = self->data;
     
-    temp_v0 = func_80024108(self, 0.005f, gUpdateRate, NULL);
+    temp_v0 = objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     questValue = objdata->flags;
 
     switch (questValue) {
@@ -670,7 +670,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, v.f);
+            mathRotateRPY(&srt, v.f);
             srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
             srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
             srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
@@ -689,7 +689,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, v.f);
+                mathRotateRPY(&srt, v.f);
                 srt.transl.f[0] = objdata->playerPositionCopy.f[0] + v.f[0];
                 srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
                 srt.transl.f[2] = objdata->playerPositionCopy.f[2] + v.f[2];
@@ -709,7 +709,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 srt.pitch = 0;
                 srt.yaw = objdata->unkE;
                 srt.scale = 0.0f;
-                rotate_vec3(&srt, v.f);
+                mathRotateRPY(&srt, v.f);
                 f2 = self->globalPosition.x;
                 f12 = self->globalPosition.y;
                 f14 = self->globalPosition.z;
@@ -736,7 +736,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             srt.pitch = 0;
             srt.yaw = objdata->unkE;
             srt.scale = 0.0f;
-            rotate_vec3(&srt, v.f);
+            mathRotateRPY(&srt, v.f);
 
             f2 = self->globalPosition.x;
             f12 = self->globalPosition.y;
@@ -754,7 +754,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             break;
         case 4:
             if (temp_v0 != 0) {
-                func_80023D30(self, 0, 0.0f, 0);
+                objAnimSet(self, 0, 0.0f, 0);
                 objdata->flags = 5;
             }
             break;
@@ -769,15 +769,15 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             objdata->unk8 = (s16) (objdata->unk8 + gUpdateRate);
             if (objdata->unk6 < objdata->unk8) {
                 objdata->unk8 = 0;
-                temp_v0_2 = func_80034804(self, 0);
+                temp_v0_2 = objExpr_func_80034804(self, 0);
 
                 objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
-                player = get_player();
+                player = objGetPlayer();
                 
-                var_v1 = (arctan2_f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
+                var_v1 = (mathAtan2f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)
                 
-                func_80023D30(self, 1, 0.0f, 0);
+                objAnimSet(self, 1, 0.0f, 0);
                 if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
                     objdata->unk38 = player->srt.transl.x;
                     objdata->unk3C = player->srt.transl.y;
@@ -786,9 +786,9 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
                 } else {
                     temp = &self->srt.yaw;
                     seqBoneAngle = temp_v0_2[1] + *temp;
-                    objdata->unk38 = self->srt.transl.x - (fsin16_precise(seqBoneAngle) * 250.0f);
+                    objdata->unk38 = self->srt.transl.x - (mathSinfInterp(seqBoneAngle) * 250.0f);
                     objdata->unk3C = self->srt.transl.y;
-                    objdata->unk40 = self->srt.transl.z - (fcos16_precise(seqBoneAngle) * 250.0f);
+                    objdata->unk40 = self->srt.transl.z - (mathCosfInterp(seqBoneAngle) * 250.0f);
                     objdata->unk2C = 0;
                 }
                 objdata->flags = 0;
@@ -821,13 +821,13 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     }
 
     if (setup->unk1D == new_var){
-        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
+        if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E8;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_DIM)){
+        } else if (mainGetBits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2DC;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
+        } else if (mainGetBits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D4;
             objdata->unk426 = 1.0f;
         } else {
@@ -835,13 +835,13 @@ static void dll_496_func_174C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
             objdata->unk426 = 2.0f;
         }
     } else {
-        if (main_get_bits(BIT_SpellStone_DIM_Activated)){
+        if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             objdata->chatSequenceList = _data_2E0;
             objdata->unk426 = 2.0f;
-        } else if (main_get_bits(BIT_SpellStone_DIM)){
+        } else if (mainGetBits(BIT_SpellStone_DIM)){
             objdata->chatSequenceList = _data_2D8;
             objdata->unk426 = 1.0f;
-        } else if (main_get_bits(BIT_Tricky_Learned_Distract)){
+        } else if (mainGetBits(BIT_Tricky_Learned_Distract)){
             objdata->chatSequenceList = _data_2D0;
             objdata->unk426 = 1.0f;
         } else {
@@ -865,7 +865,7 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
         } else {
             objdata->flags |= 0x8000;
             objdata->walkSpeed = 0.0f;
-            objdata->sleepTimer = rand_next(0, 300);
+            objdata->sleepTimer = mathRnd(0, 300);
             return;
         }
     } else if (snowhorn->unkAF & 4 || objdata->distanceFromPlayer < 80.0f) {
@@ -881,7 +881,7 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
     }
     
     if (_data_274[0] != 0 && 
-        func_80031BBC(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
+        objGetAreaValueAtPoint(snowhorn->globalPosition.x, snowhorn->globalPosition.y, snowhorn->globalPosition.z) == 0xA){
         gDLL_3_Animation->vtbl->start_obj_sequence(0x10, snowhorn, -1); //setAnimation?
         return;
     }
@@ -899,10 +899,10 @@ static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn
         dx = curveStruct->unk0.unk68.x - snowhorn->srt.transl.x;
         dz = curveStruct->unk0.unk68.z - snowhorn->srt.transl.z;
 
-        //a1 for func_8002493C seems to be speed (obtained by dividing magnitude of dPos by dt)!
+        //a1 for objGetAnimChange seems to be speed (obtained by dividing magnitude of dPos by dt)!
         speed = sqrtf(SQ(dx) + SQ(dz)) * gUpdateRateInverseF;
-        func_8002493C(snowhorn, speed, &objdata->unk50);
-        snowhorn->srt.yaw = arctan2_f(curveStruct->unk0.unk74, curveStruct->unk0.unk7C) + 0x8000;
+        objGetAnimChange(snowhorn, speed, &objdata->unk50);
+        snowhorn->srt.yaw = mathAtan2f(curveStruct->unk0.unk74, curveStruct->unk0.unk7C) + 0x8000;
         snowhorn->srt.transl.x = curveStruct->unk0.unk68.x;
         snowhorn->srt.transl.z = curveStruct->unk0.unk68.z;
         objdata->unk424 &= ~0x4;
@@ -923,18 +923,18 @@ static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
     u16 questValue;
     u16 questEnd = 6;
 
-    questValue = (objdata->flags = main_get_bits(BIT_Garunda_Te_Quest_Progress));
+    questValue = (objdata->flags = mainGetBits(BIT_Garunda_Te_Quest_Progress));
     
     /** If the 1st SpellStone is activated, makes sure Garunda Te's flags are in their end state */
-    if (questValue < questEnd && main_get_bits(BIT_SpellStone_DIM)){
+    if (questValue < questEnd && mainGetBits(BIT_SpellStone_DIM)){
         objdata->flags = questEnd;
         questValue = objdata->flags;
-        main_set_bits(BIT_Garunda_Te_Quest_Progress, questValue);
+        mainSetBits(BIT_Garunda_Te_Quest_Progress, questValue);
     }
     
     objdata->someAnimIDList = _data_288;
     objdata->unk48 = _data_298;
-    objdata->garundaTe_weedsEaten = main_get_bits(BIT_Garunda_Te_Weeds_Eaten);
+    objdata->garundaTe_weedsEaten = mainGetBits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
 static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Setup* setup) {
@@ -947,7 +947,7 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             //Calling out to the player periodically
             objdata->unk8 += gUpdateRate;
             if (objdata->unk8 > 1000) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here, MAX_VOLUME, 0, 0, 0, 0);
                 gDLL_22_Subtitles->vtbl->func_368(0xA);
                 objdata->unk8 = 0;
             }
@@ -956,21 +956,21 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             }
             break;
         case 1:
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->flags = 2;
-                main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }
             break;
         case 2:
             //Eating FrostWeeds?
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             
-            frostWeed = obj_get_nearest_type_to(OBJTYPE_Baddie, self, 0);
+            frostWeed = objGetNearestTypeTo(OBJTYPE_Baddie, self, 0);
             setup = (SnowHorn_Setup*)self->setup;
-            if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3_distance_xz_squared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
+            if (frostWeed && frostWeed->id == OBJ_Tumbleweed2 && vec3DistanceXZSquared(&self->globalPosition, &frostWeed->globalPosition) < SQ(setup->unkRadius)) {
                 if (!((DLL_227_Tumbleweed*)frostWeed->dll)->vtbl->is_gravitating(frostWeed)) {
                     ((DLL_227_Tumbleweed*)(frostWeed->dll))->vtbl->gravitate_towards_point(frostWeed, &objdata->playerPositionCopy);
                     objdata->frostWeed = frostWeed;
@@ -981,13 +981,13 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
                     if (objdata->garundaTe_weedsEaten > GARUNDA_TE_WEEDS_NEEDED) {
                         objdata->garundaTe_weedsEaten = GARUNDA_TE_WEEDS_NEEDED;
                     }
-                    main_set_bits(BIT_Garunda_Te_Weeds_Eaten, objdata->garundaTe_weedsEaten);
+                    mainSetBits(BIT_Garunda_Te_Weeds_Eaten, objdata->garundaTe_weedsEaten);
                     objdata->flags = 3;
                 }
             }
             break;
         case 3:
-            if (vec3_distance_xz_squared(&objdata->playerPositionCopy, &objdata->frostWeed->globalPosition) < 6.25f) {
+            if (vec3DistanceXZSquared(&objdata->playerPositionCopy, &objdata->frostWeed->globalPosition) < 6.25f) {
                 objdata->flags = 4;
             }
             break;
@@ -995,20 +995,20 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             if (objdata->unk424 & 8) {
                 weeds = objdata->garundaTe_weedsEaten;
                 if (weeds >= GARUNDA_TE_WEEDS_NEEDED) {
-                    main_set_bits(BIT_Garunda_Te_Fed, 1);
+                    mainSetBits(BIT_Garunda_Te_Fed, 1);
                     objdata->flags = 5;
-                    main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                    mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
                     break;
                 }
                 if (weeds % 3 == 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(self, SOUND_74B_Garunda_Te_That_tastes_great_Hurry_up_boy, MAX_VOLUME, 0, 0, 0, 0);
                     gDLL_22_Subtitles->vtbl->func_368(2);
                 }
                 objdata->flags = 2;
             }
             break;
         case 5:
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 if (objdata->unk425 % 2) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                 } else {
@@ -1019,12 +1019,12 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objdata, SnowHorn_Set
             break;
         case 6:
             //SpellStone activation
-            if (func_80032538(self)) {
+            if (objCheckPlayerInteract(self)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_DIM)) {
-                main_set_bits(BIT_SpellStone_DIM_Activated, 1);
+                mainSetBits(BIT_SpellStone_DIM_Activated, 1);
                 objdata->flags = 7;
-                main_set_bits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
+                mainSetBits(BIT_Garunda_Te_Quest_Progress, objdata->flags);
             }
             break;
         case 7:

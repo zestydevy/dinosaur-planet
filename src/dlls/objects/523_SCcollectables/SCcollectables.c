@@ -42,8 +42,8 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
 
     objdata = self->data;
 
-    obj_add_object_type(self, OBJTYPE_Collectable);
-    obj_init_mesg_queue(self, 2);
+    objAddObjectType(self, OBJTYPE_Collectable);
+    objInitMesgQueue(self, 2);
 
     self->srt.yaw = objsetup->yaw << 8;
     self->srt.pitch = objsetup->pitch << 8;
@@ -62,7 +62,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
 
     //Check if already knocked out of tree
     if (objdata->gamebitFall != NO_GAMEBIT) {
-        if (main_get_bits(objdata->gamebitFall)) {
+        if (mainGetBits(objdata->gamebitFall)) {
             SCcollectables_handle_motion(self, TRUE);
         }
     } else {
@@ -72,7 +72,7 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     //Check if already collected
     objdata->gamebitCollected = objsetup->gamebitCollected;
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        self->unkDC = main_get_bits(objdata->gamebitCollected);
+        self->unkDC = mainGetBits(objdata->gamebitCollected);
     } else {
         self->unkDC = 0;
     }
@@ -115,7 +115,7 @@ void SCcollectables_control(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
     //Check if should fall from tree
-    if (objdata->gamebitFall != NO_GAMEBIT && main_get_bits(objdata->gamebitFall)) {
+    if (objdata->gamebitFall != NO_GAMEBIT && mainGetBits(objdata->gamebitFall)) {
         objdata->fallFlags |= FLAG_Fall_Start;
     }
     
@@ -126,7 +126,7 @@ void SCcollectables_control(Object* self) {
     }
     
     //Check for collection message (set gamebits and hide self)
-    while (obj_recv_mesg(self, &outMessage, &messageSender, 0)){
+    while (objRecvMesg(self, &outMessage, &messageSender, 0)){
         if (outMessage == 0x7000B) {
             SCcollectables_collect(self);
         }
@@ -146,7 +146,7 @@ void SCcollectables_control(Object* self) {
 
         //Check if collection gamebit was reset
         if ((objdata->gamebitCollected != NO_GAMEBIT) && 
-            (main_get_bits(objdata->gamebitCollected) == FALSE)
+            (mainGetBits(objdata->gamebitCollected) == FALSE)
         ) {
             self->unkDC = 0;
         }
@@ -166,18 +166,18 @@ void SCcollectables_control(Object* self) {
     }
     
     //Handle player pressing A when arrow over collectable
-    player = get_player();
+    player = objGetPlayer();
     if (player) {
         collectableDef = self->def->collectableDef;
         if (!collectableDef) {
             return;
         }
         
-        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &player->globalPosition);
         if ((distance < objdata->interactionRadius) && (objdata->delayInteractionTimer == 0)) {
             outMessage = collectableDef->collectMessage << 0x10;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                obj_send_mesg(player, 0x7000A, self, (void*)outMessage);
+                objSendMesg(player, 0x7000A, self, (void*)outMessage);
             }
         }
         objdata->distanceToPlayer = distance;
@@ -188,7 +188,7 @@ void SCcollectables_control(Object* self) {
         for (index = 20; index > 0; index--){
             gDLL_17_partfx->vtbl->spawn(self, 0x424, 0, 2, -1, 0);
         }
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_613_Gold_Bounce, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_613_Gold_Bounce, MAX_VOLUME, 0, 0, 0, 0);
     }
 }
 
@@ -204,11 +204,11 @@ void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
         return;
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
     //Handle Gold Nugget's sparkles and gradual rotation
     if (self->def->collectableDef && (self->id == OBJ_SC_golden_nugge) && (objdata->distanceToPlayer < 250.0f)) {
-        if (rand_next(0, 10) == 0) {
+        if (mathRnd(0, 10) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, 0x423, 0, 2, -1, 0);
         }
         self->srt.yaw += (s16)(182.0f * gUpdateRateF);
@@ -217,7 +217,7 @@ void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x684 | func: 4 | export: 4
 void SCcollectables_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_Collectable);
+    objFreeObjectType(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x6C4 | func: 5 | export: 5
@@ -290,12 +290,12 @@ void SCcollectables_handle_motion(Object* self, u8 alreadyOnGround) {
                 if (vol > MAX_VOLUME){ 
                     vol = MAX_VOLUME; 
                 }
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_613_Gold_Bounce, vol, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_613_Gold_Bounce, vol, 0, 0, 0, 0);
             }
         }
     }
     
-    obj_move(self, 0.0f, self->velocity.y * gUpdateRateF, 0.0f);
+    objMove(self, 0.0f, self->velocity.y * gUpdateRateF, 0.0f);
 }
 
 // offset: 0xA2C | func: 8
@@ -310,12 +310,12 @@ void SCcollectables_collect(Object* self) {
     
     //Set collection gamebit (if it's in use)
     if (objdata->gamebitCollected != NO_GAMEBIT) {
-        main_set_bits(objdata->gamebitCollected, 1);
+        mainSetBits(objdata->gamebitCollected, 1);
     }
 
     //Increment counter gamebit (if it's in use)
     if (objsetup->gamebitCount > 0) {
-        main_set_bits(objsetup->gamebitCount, main_get_bits(objsetup->gamebitCount) + 1);
+        mainSetBits(objsetup->gamebitCount, mainGetBits(objsetup->gamebitCount) + 1);
     }
     
     //Hide self

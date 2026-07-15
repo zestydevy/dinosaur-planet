@@ -45,7 +45,7 @@ void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
 
     objData = self->data;
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dll_load_deferred(DLL_ID_56, 10);
+    objData->dllPutdown = dllLoad(DLL_ID_56, 10);
     objData->placedObjects.nextIndex = 0;
     
     for (index = 0; index < 20; index++){
@@ -65,8 +65,8 @@ void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     
     objData->capacity = 0;
     objData->bagSlots = gDLL_29_Gplay->vtbl->get_dino_foodbag();
-    main_set_bits(BIT_Dino_Foodbag_Place, TRUE);
-    main_set_bits(BIT_Dino_Foodbag_Give, TRUE);
+    mainSetBits(BIT_Dino_Foodbag_Place, TRUE);
+    mainSetBits(BIT_Dino_Foodbag_Give, TRUE);
     objData->dllPutdown->vtbl->update_food_quantity_gamebits(objData->bagSlots, dino_foodbag_items);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -131,7 +131,7 @@ void SideFoodbag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 // offset: 0x3B0 | func: 4 | export: 4
 void SideFoodbag_free(Object* self, s32 arg1) {
     SideFoodbag_Data *objData = self->data;
-    dll_unload(objData->dllPutdown);
+    dllFree(objData->dllPutdown);
 }
 
 // offset: 0x3F8 | func: 5 | export: 5

@@ -20,9 +20,9 @@ typedef struct {
 /*0x18*/ ACacheCallback loadCallback;
 } ACache;
 
-ACache* acache_init(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, ACacheCallback loadCallback);
-void acache_free(ACache *cache);
-void acache_flush(ACache *cache);
-void *acache_get(ACache *cache, s32 recordIndex);
+ACache* acacheInit(u8 fileID, u8 recordsPerLoad, u8 recordSize, u8 slotCount, ACacheCallback loadCallback);
+void acacheFree(ACache *cache);
+void acacheFlush(ACache *cache);
+void *acacheGet(ACache *cache, s32 recordIndex);
 
 #endif //_SYS_ACACHE_H

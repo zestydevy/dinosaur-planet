@@ -64,11 +64,11 @@ static int dll_420_func_AD8(Object* self, Object* overrideObj, AnimObj_Data* ani
 
 void dll_420_setup(Object* self, DLL420_Setup* arg1, s32 reset) {
     if (data_4 == 0) {
-        data_0 = tex_load_deferred(TEXTABLE_3CA);
+        data_0 = texLoadTexture(TEXTABLE_3CA);
     }
     data_4++;
     
-    obj_add_object_type(self, OBJTYPE_RopeNode);
+    objAddObjectType(self, OBJTYPE_RopeNode);
     self->animCallback = dll_420_func_AD8;
 }
 #endif
@@ -98,10 +98,10 @@ void dll_420_free(Object* self, s32 onlySelf) {
 
     data_4--;
     if (data_4 == 0) {
-        tex_free(data_0);
+        texFreeTexture(data_0);
     }
     
-    obj_free_object_type(self, OBJTYPE_RopeNode);
+    objFreeObjectType(self, OBJTYPE_RopeNode);
     if (objSetup->unk18 & 1) {
         dll_420_func_18BC(objData->unk2C);
     }
@@ -111,7 +111,7 @@ void dll_420_free(Object* self, s32 onlySelf) {
         return;
     }
     
-    objects = obj_get_all_of_type(0x19, &count);
+    objects = objGetAllOfType(0x19, &count);
     for (i = 0; i < count; i++) {
         if (otherNode == objects[i]) {
             ((DLL_Unknown*)otherNode->dll)->vtbl->func[16].withOneArg(otherNode);

@@ -76,7 +76,7 @@ void TumbleweedBush_setup(Object* self, TumbleweedBush_Setup* objSetup, s32 arg2
             objData->heldWeedCoords[i].x *= self->srt.scale;
             objData->heldWeedCoords[i].y *= self->srt.scale;
             objData->heldWeedCoords[i].z *= self->srt.scale;
-            rotate_vec3(&self->srt, (f32*)&objData->heldWeedCoords[i]);
+            mathRotateRPY(&self->srt, (f32*)&objData->heldWeedCoords[i]);
         }
     }
 }
@@ -95,7 +95,7 @@ void TumbleweedBush_control(Object* self) {
     Object* weed;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     //Check for attack collisions
     if (func_80025F40(self, &hitBy, &hitSphere, &hitDamage)) {
@@ -108,7 +108,7 @@ void TumbleweedBush_control(Object* self) {
             }
         }
         
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_544_Wood_Struck, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_544_Wood_Struck, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     //Get player distance
@@ -140,8 +140,8 @@ void TumbleweedBush_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
     
     if (visibility) {
         //Tint the tree using a colour multiplier
-        func_80036F6C(objSetup->multiplyColourR, objSetup->multiplyColourG, objSetup->multiplyColourB);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintSetMultiplierColor(objSetup->multiplyColourR, objSetup->multiplyColourG, objSetup->multiplyColourB);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -229,7 +229,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }
     
     //Count existing tumbleweeds in world
-    for (objects = get_world_objects(&i, &objCount), existingTumbleweedCount = 0; i < objCount;) {
+    for (objects = objGetObjects(&i, &objCount), existingTumbleweedCount = 0; i < objCount;) {
         if (objID == objects[i++]->id) { 
             existingTumbleweedCount++;
         }
@@ -239,7 +239,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
     }    
 
     //Create a Tumbleweed
-    weedSetup = (Tumbleweed_Setup*)obj_alloc_setup(sizeof(Tumbleweed_Setup), objID);
+    weedSetup = (Tumbleweed_Setup*)objAllocSetup(sizeof(Tumbleweed_Setup), objID);
     weedSetup->base.x = objData->heldWeedCoords[weedIdx].x + self->srt.transl.x;
     weedSetup->base.y = objData->heldWeedCoords[weedIdx].y + self->srt.transl.y;
     weedSetup->base.z = objData->heldWeedCoords[weedIdx].z + self->srt.transl.z;
@@ -255,7 +255,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
         if ((objSetup->base.uID == 0x292C) && (objData->tumbleweedsGrown == 6)) {
             weedSetup->carryingGold = 1;
 
-            for (objects = get_world_objects(&i, &objCount); i < objCount; i++) {
+            for (objects = objGetObjects(&i, &objCount); i < objCount; i++) {
                 if (objects[i]->id == OBJ_SC_golden_nugge) {
                     weedSetup->base.x = objects[i]->srt.transl.x;
                     weedSetup->base.y = objects[i]->srt.transl.y;
@@ -268,7 +268,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
         }
     }
     
-    objData->heldWeeds[weedIdx] = obj_create((ObjSetup*)weedSetup, 5, self->mapID, -1, self->parent);
+    objData->heldWeeds[weedIdx] = objSetupObject((ObjSetup*)weedSetup, 5, self->mapID, -1, self->parent);
     ((DLL_227_Tumbleweed*)objData->heldWeeds[weedIdx]->dll)->vtbl->set_home(objData->heldWeeds[weedIdx], self->srt.transl.x, self->srt.transl.z);
     objData->tumbleweedsGrown++;
     return weedIdx;

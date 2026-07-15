@@ -10,13 +10,13 @@ void CFAttractor_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void CFAttractor_setup(Object* self, CFAttractor_Setup* objSetup, s32 reset) {
-    obj_add_object_type(self, OBJTYPE_32);
+    objAddObjectType(self, OBJTYPE_32);
     self->srt.yaw = objSetup->yaw << 8;
 }
 
 // offset: 0x74 | func: 1 | export: 1
 void CFAttractor_control(Object* self) {
-    map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
 }
 
 // offset: 0xCC | func: 2 | export: 2
@@ -25,13 +25,13 @@ void CFAttractor_update(Object* self) { }
 // offset: 0xD8 | func: 3 | export: 3
 void CFAttractor_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x12C | func: 4 | export: 4
 void CFAttractor_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_32);
+    objFreeObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x16C | func: 5 | export: 5
@@ -73,10 +73,10 @@ void CFAttractor_func_1B4(Object* self, Object** outObj) {
         obj = self;
         break;
     case 2:
-        player = get_player();
+        player = objGetPlayer();
         dx = player->srt.transl.x - self->srt.transl.x;
         dz = player->srt.transl.z - self->srt.transl.z;
-        self->srt.yaw = arctan2s(dx, dz) + M_180_DEGREES;
+        self->srt.yaw = mathAtan2(dx, dz) + M_180_DEGREES;
         obj = self;
         break;
     }

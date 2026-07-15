@@ -70,12 +70,12 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata->unk10 = 0;
     objdata->unk2 = 0;
     self->animCallback = dll_466_func_C50;
-    obj_init_mesg_queue(self, 4);
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-    main_set_bits(BIT_Test_of_Fear_Particles, 0);
+    objInitMesgQueue(self, 4);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_Test_of_Fear_Particles, 0);
     objdata->unk4 = 0xC;
     objdata->unk8 = 0x1E;
     objdata->unk2 = 0xC8;
@@ -83,10 +83,10 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata->unkA = 0;
     objdata->unk12 = 0;
     objdata->unk13 = 0;
-    temp_v0_2 = dll_load_deferred(DLL_ID_122, 1);
+    temp_v0_2 = dllLoad(DLL_ID_122, 1);
     objdata->unkC = temp_v0_2->vtbl->func0(self, 1, 0, 0x402, -1, 0);
-    dll_unload(temp_v0_2);
-    main_set_bits(BIT_Spell_Illusion, 1);
+    dllFree(temp_v0_2);
+    mainSetBits(BIT_Spell_Illusion, 1);
 }
 
 // offset: 0x1BC | func: 1 | export: 1
@@ -100,14 +100,14 @@ void MMshrine_control(Object *self) {
     f32 var_fv0;
 
     objdata = (MMShrine_Data*)self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp3C = 1000.0f;
     if (_data_4 != 0) {
         self->globalPosition.x = self->srt.transl.x;
         self->globalPosition.y = self->srt.transl.y;
         self->globalPosition.z = self->srt.transl.z;
         gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
-        main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 1);
         _data_4 = 0;
     }
     MMshrine_func_1140(self);
@@ -146,7 +146,7 @@ void MMshrine_control(Object *self) {
             objdata->unk13 = 1;
         }
     } else {
-        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp3C);
+        temp_v0_4 = objGetNearestTypeTo(OBJTYPE_Door, player, &sp3C);
         if ((temp_v0_4 != NULL) && (sp3C < 300.0f) && (sp3C > 100.0f)) {
             var_fv0 = temp_v0_4->srt.transl.z - player->srt.transl.z;
             if (var_fv0 <= 0.0f) {
@@ -170,18 +170,18 @@ void MMshrine_control(Object *self) {
         }
         switch (objdata->unkF) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unkF = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMSEQ, 0, 0, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                temp_v0_5 = dll_load_deferred(DLL_ID_147, 1);
+                temp_v0_5 = dllLoad(DLL_ID_147, 1);
                 temp_v0_5->vtbl->func0(self, 1, 0, 1, -1, 0);
-                dll_unload(temp_v0_5);
-                temp_v0_5 = dll_load_deferred(DLL_ID_148, 1);
+                dllFree(temp_v0_5);
+                temp_v0_5 = dllLoad(DLL_ID_148, 1);
                 temp_v0_5->vtbl->func0(self, 0, 0, 1, -1, 0);
-                dll_unload(temp_v0_5);
-                main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+                dllFree(temp_v0_5);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
             }
             break;
@@ -207,42 +207,42 @@ void MMshrine_control(Object *self) {
             objdata->unkA = 1;
             break;
         case 4:
-            if (main_get_bits(BIT_SP_Map_MMP) != 0) {
+            if (mainGetBits(BIT_SP_Map_MMP) != 0) {
                 objdata->unk8 = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->unkF = 6;
             } else {
-                main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             }
             break;
         case 5:
-            if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-                main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+            if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+                mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
             }
-            main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             objdata->unkF = 6;
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_SP_Map_MMP, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_SP_Map_MMP, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 4);
             break;
         case 9:
             objdata->unkF = 0;
             objdata->unk10 = 0;
             objdata->unk2 = 0x190;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-            main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-            temp_v0_5 = dll_load_deferred(DLL_ID_122, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+            temp_v0_5 = dllLoad(DLL_ID_122, 1);
             objdata->unkC = temp_v0_5->vtbl->func0(self, 0, 0, 0x402, -1, 0);
-            dll_unload(temp_v0_5);
+            dllFree(temp_v0_5);
             break;
         }
     }
@@ -254,7 +254,7 @@ void MMshrine_update(Object *self) { }
 // offset: 0xB48 | func: 3 | export: 3
 void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -283,7 +283,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
     u8 temp;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     arg2->unk7A = -1;
     arg2->unk62 = 0;
@@ -323,26 +323,26 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                 case 5:
                     objdata->unkF = 5;
                     objdata->unk10 = 2;
-                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                     break;
                 case 6:
                     objdata->unk10 = 3;
-                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                     break;
                 case 7:
-                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
+                    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
                     break;
                 case 8:
-                    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+                    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
                     objdata->unkA = -3;
                     break;
                 case 10:
-                    main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                    mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                     if (_data_0 == NULL)
-                        _data_0 = block_texanim_get_tex(1);
+                        _data_0 = blockTexanimGetTex(1);
                     break;
                 case 9:
-                    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
                     break;
                 case 11:
                     objdata->unk8 = 0x64;
@@ -350,8 +350,8 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                     break;
                 case 12:
                     func_80000860(self, self, 0xCE, 0);
-                    main_set_bits(BIT_Test_of_Fear_Particles, 1);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
+                    mainSetBits(BIT_Test_of_Fear_Particles, 1);
+                    dll_amSfx->Play(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
                     break;
                 case 13:
                     if (D_80092A7C[0] == -1) {
@@ -359,7 +359,7 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                     } else {
                         func_80000860(self, self, D_80092A7C[0], 0);
                     }
-                    main_set_bits(BIT_Test_of_Fear_Particles, 0);
+                    mainSetBits(BIT_Test_of_Fear_Particles, 0);
                     break;
             }
         }
@@ -367,10 +367,10 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
     }
     
     if (objdata->unkF == 8) {
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) > 10.0f) {
             gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
-        } else if (joy_get_buttons(0)) {
+        } else if (joyGetButtons(0)) {
             gDLL_3_Animation->vtbl->end_obj_sequence(arg2->seqSlot);
             objdata->unkF = 7;
         }
@@ -389,7 +389,7 @@ static void MMshrine_func_1140(Object *self) {
     objdata = self->data;
     outMesgArg = 0;
 
-    while (obj_recv_mesg(self, &message, &sp54, &outMesgArg)){
+    while (objRecvMesg(self, &message, &sp54, &outMesgArg)){
         switch (message) {
             case 0x30005:
                 objdata->unk6 = -3;

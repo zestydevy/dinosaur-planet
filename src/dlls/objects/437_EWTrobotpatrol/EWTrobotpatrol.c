@@ -150,11 +150,11 @@ void dll_437_ctor(void *dll) { }
 // offset: 0xC | dtor
 void dll_437_dtor(void* dll) {
     if (bss_0 != NULL) {
-        tex_free(bss_0);
+        texFreeTexture(bss_0);
         bss_0 = NULL;
     }
     if (bss_4 != NULL) {
-        tex_free(bss_4);
+        texFreeTexture(bss_4);
         bss_4 = NULL;
     }
 }
@@ -168,16 +168,16 @@ void dll_437_setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
     EWTrobotpatrol_Data* temp_s0;
 
     if (bss_0 == NULL) {
-        bss_0 = tex_load_deferred(0x127);
+        bss_0 = texLoadTexture(0x127);
     }
     if (bss_4 == NULL) {
-        bss_4 = tex_load_deferred(0x16F);
+        bss_4 = texLoadTexture(0x16F);
     }
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
     temp_s0 = self->data;
     self->animCallback = dll_437_func_3AC8;
     bzero(temp_s0, sizeof(EWTrobotpatrol_Data));
-    func_80008DC0(&temp_s0->unk24);
+    vox_func_80008DC0(&temp_s0->unk24);
     temp_s0->unk1CC = 1;
     temp_s0->unk1C8 = -0.02f;
     dll_437_func_139C(self, temp_s0, (u8*)temp_s0 + 0x90);
@@ -220,17 +220,17 @@ void dll_437_control(Object* self) {
         sp40.transl.y = 0.0f;
         sp40.transl.z = 0.0f;
         sp40.scale = 1.0f;
-        matrix_from_srt(&sp5C, &sp40);
-        vec3_transform(&sp5C, temp_s1->unk3C, 0.0f, temp_s1->unk44, &self->velocity.x, &sp58, &self->velocity.z);
-        self->srt.transl.y = (fsin16_precise(temp_s1->unk8C) * temp_s1->unk88) + temp_s1->unk84;
+        mathYprXyzMtx(&sp5C, &sp40);
+        mathMtxXFMF(&sp5C, temp_s1->unk3C, 0.0f, temp_s1->unk44, &self->velocity.x, &sp58, &self->velocity.z);
+        self->srt.transl.y = (mathSinfInterp(temp_s1->unk8C) * temp_s1->unk88) + temp_s1->unk84;
         sp3C = (u16) temp_s1->unk8C + (gUpdateRate << 8);
         if (sp3C >= 0x10000) {
-            temp_s1->unk88 = (f32) ((f32) rand_next(0xF, 0x23) * 0.1f);
+            temp_s1->unk88 = (f32) ((f32) mathRnd(0xF, 0x23) * 0.1f);
         }
         temp_s1->unk8C = (s16) sp3C;
         self->velocity.x *= 1.0666667f;
         self->velocity.z *= 1.0666667f;
-        obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         dll_437_func_1C74(self, temp_s2, (u8*)temp_s2 + 0x120);
         dll_437_func_3454(self, temp_s2, (u8*)temp_s2 + 0x1A8);
         dll_437_func_208C(self, temp_s2, (u8*)temp_s2 + 0x154);
@@ -264,9 +264,9 @@ void dll_437_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 void dll_437_free(Object* self, s32 onlySelf) {
     EWTrobotpatrol_Data* objdata;
 
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     objdata = self->data;
-    func_80008E08(&objdata->unk24);
+    vox_func_80008E08(&objdata->unk24);
     gDLL_13_Expgfx->vtbl->func5(self);
     dll_437_func_380C(self, objdata, (u8*)objdata + 0x1A8, onlySelf);
 }
@@ -296,15 +296,15 @@ void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Da
     Vec3s16 sp40;
 
     sp60 = arg0->data;
-    sp64 = get_player();
+    sp64 = objGetPlayer();
     sp50[0] = arg0->srt.transl.x - sp64->srt.transl.x;
     sp50[1] = arg0->srt.transl.y - sp64->srt.transl.y;
     sp50[2] = arg0->srt.transl.z - sp64->srt.transl.z;
     sp5C = sqrtf(SQ(sp50[0]) + SQ(sp50[1]) + SQ(sp50[2]));
-    func_80007EE0(&sp64->srt.transl, &sp48);
+    vox_func_80007EE0(&sp64->srt.transl, &sp48);
     sp48.s[1] += 2;
-    func_80007EE0(&arg0->srt.transl, &sp40);
-    arg1->unk21 = func_80008048(&sp48, &sp40, NULL, NULL, 0U);
+    vox_func_80007EE0(&arg0->srt.transl, &sp40);
+    arg1->unk21 = vox_func_80008048(&sp48, &sp40, NULL, NULL, 0U);
     if ((arg1->unk1F != 0) && (arg1->unk1F == 2)) {
         arg1->unk78(arg1->unk74, arg0, 1, 0);
         switch (arg1->unk20) {
@@ -366,7 +366,7 @@ void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Da
         }
         dll_437_func_1164(arg0, arg1);
         if (arg1->unk1E == 2) {
-            gDLL_6_AMSFX->vtbl->play(arg0, 0x112, 0x7F, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(arg0, 0x112, 0x7F, NULL, NULL, 0, NULL);
             if (sp60){} // @fake
             sp60->unk198 = 0.02f;
             sp60->unk1C4 = 0;
@@ -524,18 +524,18 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     ObjectShadow* beamShadow;
     Object* beam;
 
-    beamSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_RobotBeam);
+    beamSetup = objAllocSetup(sizeof(ObjSetup), OBJ_RobotBeam);
     beamSetup->loadFlags = 8;
     beamSetup->byte5 = 4;
     beamSetup->byte6 = 0x78;
     beamSetup->fadeDistance = 0x78;
     beamSetup->quarterSize = 0x18;
     beamSetup->objId = OBJ_RobotBeam;
-    beam = obj_create(beamSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
+    beam = objSetupObject(beamSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
     beam->srt.transl.x = self->srt.transl.x;
     beam->srt.transl.y = self->srt.transl.y;
     beam->srt.transl.z = self->srt.transl.z;
-    get_object_child_position(beam, 
+    camGetObjectChildPosition(beam, 
         &beam->globalPosition.x, 
         &beam->globalPosition.y, 
         &beam->globalPosition.z);
@@ -545,7 +545,7 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     a2->unk8.x = 0.0f;
     a2->unk8.y = 1.0f;
     a2->unk8.z = 0.0f;
-    rotate_vec3(&sp64, a2->unk8.f);
+    mathRotateRPY(&sp64, a2->unk8.f);
     beamShadow = beam->shadow;
     if (beamShadow != NULL) {
         beamShadow->flags |= 0x170;
@@ -596,7 +596,7 @@ static void dll_437_func_380C(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotp
     gDLL_11_Newlfx->vtbl->func0(arg0, arg0, &laction, 0, 0, 0);
     if (arg3 == 0) {
         if (arg2->unk4 != NULL) {
-            obj_destroy_object(arg2->unk4);
+            objFreeObject(arg2->unk4);
             arg2->unk4 = NULL;
         }
     }
@@ -645,7 +645,7 @@ static void dll_437_func_3B70(Object* arg0, EWTrobotpatrol_Data_1D0* arg1, f32 a
     if ((arg2 != 0.0f) || (arg3 != 0.0f) || (arg4 != 0.0f)) {
         guNormalize(&arg2, &arg3, &arg4);
     }
-    arg1->unk36 = rand_next(8, 12);
+    arg1->unk36 = mathRnd(8, 12);
     dll_437_func_4004(arg2, arg3, arg4, &arg1->unk6[0], &arg1->unk1E[0]);
     var_v1 = 1;
     while (var_v1 < arg1->unk36) {
@@ -690,10 +690,10 @@ void dll_437_func_3D04(Object* arg0, EWTrobotpatrol_Data_1D0* arg1) {
                 dll_437_func_40A0(arg1->unk6[var_s1], arg1->unk1E[var_s1], &sp80.transl, arg1->unk0);
                 gDLL_17_partfx->vtbl->spawn(arg0, (var_s1 % 2) + 0x35C, &sp80, 0, -1, NULL);
                 temp_s2 = ((0xFFFF / (s16) arg1->unk36) * var_s1) + arg1->unk38;
-                temp_fs0 = fsin16_precise(temp_s2);
-                temp_s3 = (s16) (s32) (((f32) rand_next(0, 0x600) + (temp_fs0 * 1792.0f)) - 768.0f);
-                temp_fs0 = fcos16_precise(temp_s2);
-                temp_ft0 = rand_next(0, 0x600);
+                temp_fs0 = mathSinfInterp(temp_s2);
+                temp_s3 = (s16) (s32) (((f32) mathRnd(0, 0x600) + (temp_fs0 * 1792.0f)) - 768.0f);
+                temp_fs0 = mathCosfInterp(temp_s2);
+                temp_ft0 = mathRnd(0, 0x600);
                 arg1->unk6[var_s1] += temp_s3;
                 temp_s3 = (s32) (((f32) temp_ft0 + (temp_fs0 * 1792.0f)) - 768.0f);
                 arg1->unk1E[var_s1] += temp_s3;
@@ -709,13 +709,13 @@ void dll_437_func_3D04(Object* arg0, EWTrobotpatrol_Data_1D0* arg1) {
 // offset: 0x4004 | func: 34
 static void dll_437_func_4004(f32 arg0, f32 arg1, f32 arg2, s16* arg3, s16* arg4) {
     f32 sp24 = sqrtf(SQ(arg0) + SQ(arg2));
-    *arg3 = arctan2_f(arg2, arg0);
-    *arg4 = arctan2_f(sp24, arg1);
+    *arg3 = mathAtan2f(arg2, arg0);
+    *arg4 = mathAtan2f(sp24, arg1);
 }
 
 // offset: 0x40A0 | func: 35
 static void dll_437_func_40A0(s16 arg0, s16 arg1, Vec3f* arg2, f32 arg3) {
-    arg2->x = (fsin16_precise(arg1) * fcos16_precise(arg0) * arg3);
-    arg2->y = (fcos16_precise(arg1) * arg3) + 3.0f;
-    arg2->z = (fsin16_precise(arg1) * fsin16_precise(arg0) * arg3);
+    arg2->x = (mathSinfInterp(arg1) * mathCosfInterp(arg0) * arg3);
+    arg2->y = (mathCosfInterp(arg1) * arg3) + 3.0f;
+    arg2->z = (mathSinfInterp(arg1) * mathSinfInterp(arg0) * arg3);
 }

@@ -24,18 +24,18 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     DLL_IModgfx* dll133;
 
     self->unkDC = 180;
-    rand = rand_next(20, 40);
+    rand = mathRnd(20, 40);
     self->velocity.x = -((rand * 0.01f) + 0.8f);
     self->velocity.y = 0.0f;
     self->velocity.z = -0.3f;
     self->srt.scale *= 0.8f;
-    dll133 = dll_load_deferred(DLL_ID_133, 1);
+    dll133 = dllLoad(DLL_ID_133, 1);
     ((DLL_IModgfx*)dll133)->vtbl->func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
     _data_0[0]++;
     if (_data_0[0] > 3) {
         _data_0[0] = 1;
     }
-    dll_unload(dll133);
+    dllFree(dll133);
 }
 
 // offset: 0x148 | func: 1 | export: 1
@@ -74,7 +74,7 @@ void SB_MiniFire_control(Object *self) {
     self->srt.pitch += gUpdateRate * 0x12C;
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -84,9 +84,9 @@ void SB_MiniFire_update(Object *self) { }
 // offset: 0x3E8 | func: 3 | export: 3
 void SB_MiniFire_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        tex_disable_modes(RENDER_FOG_ACTIVE);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        tex_enable_modes(RENDER_FOG_ACTIVE);
+        texDisableModes(RENDER_FOG_ACTIVE);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        texEnableModes(RENDER_FOG_ACTIVE);
     }
 }
 

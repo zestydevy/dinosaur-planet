@@ -26,7 +26,7 @@ void EffectBox_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void EffectBox_setup(Object *self, EffectBox_Setup *setup, s32 reset) {
     if (self->unkDC == 0) {
-        obj_add_effect_box(self);
+        objAddEffectBox(self);
     }
     self->unkDC = 1;
     if (setup->gamebit >= 0) {
@@ -58,17 +58,17 @@ void EffectBox_control(Object *self) {
     f32 var_fs5;
 
     setup = (EffectBox_Setup*)self->setup;
-    if ((self->unkE0 < 0) || (main_get_bits(self->unkE0) != setup->gamebitDisableValue)) {
-        temp_fs4 = fcos16_precise(-(setup->unk18 * 256));
-        temp_fs0 = fsin16_precise(-(setup->unk18 * 256));
-        temp_fs1 = fcos16_precise(-(setup->unk19 * 256));
-        temp_fs2 = fsin16_precise(-(setup->unk19 * 256));
+    if ((self->unkE0 < 0) || (mainGetBits(self->unkE0) != setup->gamebitDisableValue)) {
+        temp_fs4 = mathCosfInterp(-(setup->unk18 * 256));
+        temp_fs0 = mathSinfInterp(-(setup->unk18 * 256));
+        temp_fs1 = mathCosfInterp(-(setup->unk19 * 256));
+        temp_fs2 = mathSinfInterp(-(setup->unk19 * 256));
         var_fs5 = (f32) setup->unk1A;
         sp90 = (f32) (setup->unk1B * 2);
         var_fs3 = (f32) setup->unk1C;
         switch (setup->target) {
         case 0:
-            spB0 = get_player();
+            spB0 = objGetPlayer();
             if (spB0 != NULL) {
                 objList = &spB0;
                 numObjs = 1;
@@ -76,7 +76,7 @@ void EffectBox_control(Object *self) {
             }
             return;
         case 1:
-            spB0 = get_sidekick();
+            spB0 = objGetSidekick();
             if (spB0 != NULL) {
                 objList = &spB0;
                 numObjs = 1;
@@ -84,7 +84,7 @@ void EffectBox_control(Object *self) {
             }
             return;
         case 2:
-            objList = obj_get_all_of_type(OBJTYPE_PushBlock, &numObjs);
+            objList = objGetAllOfType(OBJTYPE_PushBlock, &numObjs);
             if (objList != NULL) {
                 break;
             }
@@ -129,13 +129,13 @@ void EffectBox_update(Object *self) { }
 // offset: 0x468 | func: 3 | export: 3
 void EffectBox_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x4BC | func: 4 | export: 4
 void EffectBox_free(Object *self, s32 onlySelf) {
-    obj_free_effect_box(self);
+    objFreeEffectBox(self);
 }
 
 // offset: 0x4F8 | func: 5 | export: 5

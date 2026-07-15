@@ -1,6 +1,6 @@
 #include "PR/os_internal.h"
 #include "sys/audio.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/print.h"
@@ -150,7 +150,7 @@ void __scMain(void *arg) {
                 break;
 
             case UNK_MSG:
-                sc_signal_do_audio(sc);
+                scSignalDoAudio(sc);
                 break;
 
             case PRE_NMI_MSG:
@@ -172,7 +172,7 @@ void __scMain(void *arg) {
     }
 }
 
-void sc_signal_do_audio(OSSched *sc) {
+void scSignalDoAudio(OSSched *sc) {
     s32 state;
     OSScTask *sp = NULL, *dp = NULL;
 
@@ -191,7 +191,7 @@ void sc_signal_do_audio(OSSched *sc) {
     }
 }
 
-char *sc_get_task_type_string(u32 taskType) {
+char *scGetTaskTypeString(u32 taskType) {
     switch (taskType) {
         case OS_SC_TASK_AUDIO:
             return "(Audio task)";
@@ -206,7 +206,7 @@ char *sc_get_task_type_string(u32 taskType) {
     }
 }
 
-// the following are probably part of some_dummied_task_func
+// the following are probably part of scSomeDummiedTaskFunc
 static const char str_8009a078[] = "\nRCP TASK INFO\n";
 static const char str_8009a088[] = "-------------\n";
 static const char str_8009a098[] = "\ttype\t\t= %u\n";
@@ -230,7 +230,7 @@ static const char str_8009a210[] = "No traces available\n";
 static const char str_8009a228[] = "scheduler: Looks like the SP has crashed %s";
 static const char str_8009a254[] = "scheduler: Looks like the DP has crashed %s";
 
-void some_dummied_task_func(OSScTask *task) { }
+void scSomeDummiedTaskFunc(OSScTask *task) { }
 
 Gfx *sc_func_8003BAD0(OSSched *sc, 
     const char **retFile, u32 *retunkC, Gfx **retunk10,
@@ -259,7 +259,7 @@ Gfx *sc_func_8003BAD0(OSSched *sc,
     done = FALSE;
 
     // Stop audio thread
-    stop_audio_thread();
+    amStop();
 
     task = &sc->curRSPTask->list;
     cmdIndex = task->t.data_size / 2;
@@ -357,7 +357,7 @@ Gfx *sc_func_8003BAD0(OSSched *sc,
         *retFile_2 = NULL;
         *retFile = NULL;
 
-        dl_get_debug_info2(displayListPtr,
+        diRcpTraceGetInfo2(displayListPtr,
             &dldi_unk4, &dldi_file, &dldi_unkC, &dldi_unk10,
             &dldi_unk4_2, &dldi_file_2, &dldi_unkC_2, &dldi_unk10_2);
         
@@ -419,8 +419,8 @@ void __scHandleRetrace(OSSched *sc) {
 
     if ((gCurRSPTaskCounter > 10) && (sc->curRSPTask)) {
         if (gCurRSPTaskIsSet) {
-            sc_get_task_type_string(sc->curRSPTask->taskType);
-            some_dummied_task_func(sc->curRSPTask);
+            scGetTaskTypeString(sc->curRSPTask->taskType);
+            scSomeDummiedTaskFunc(sc->curRSPTask);
 
             if (sc->curRSPTask->list.t.type == OS_SC_TASK_AUDIO) {
                 displayListPtr1 = sc_func_8003BAD0(sc, 
@@ -447,8 +447,8 @@ void __scHandleRetrace(OSSched *sc) {
         }
 
         if (gCurRDPTaskIsSet) {
-            sc_get_task_type_string(sc->curRDPTask->taskType);
-            some_dummied_task_func(sc->curRDPTask);
+            scGetTaskTypeString(sc->curRDPTask->taskType);
+            scSomeDummiedTaskFunc(sc->curRDPTask);
 
             if (sc->curRDPTask->list.t.type == OS_SC_TASK_AUDIO) {
                 displayListPtr2 = sc_func_8003BAD0(sc, 
@@ -483,10 +483,10 @@ void __scHandleRetrace(OSSched *sc) {
         unkTask2 = sc->curRSPTask != NULL ? sc->curRSPTask : sc->curRDPTask;
         taskDataPtr = unkTask2->list.t.data_ptr;
 
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_MAIN, (void*)0);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-        rsp_segment((Gfx**)&taskDataPtr, SEGMENT_4, gBackFramebuffer - 0x280);
+        segSetBase((Gfx**)&taskDataPtr, SEGMENT_MAIN, (void*)0);
+        segSetBase((Gfx**)&taskDataPtr, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+        segSetBase((Gfx**)&taskDataPtr, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+        segSetBase((Gfx**)&taskDataPtr, SEGMENT_4, gBackFramebuffer - 0x280);
 
         diPrintfSetBG(0, 0, 0, 128);
 
@@ -593,7 +593,7 @@ void __scHandleRetrace(OSSched *sc) {
             if (gRetraceCounter64 % 2 == 0) {
                 osSendMesg(client->msgQ, sc, OS_MESG_NOBLOCK);
                 if (sc->audioListHead) {
-                    sc_signal_do_audio(sc);
+                    scSignalDoAudio(sc);
                 }
             }
         } else if (client->id == OS_SC_ID_VIDEO) {

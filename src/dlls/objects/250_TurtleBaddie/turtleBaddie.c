@@ -61,7 +61,7 @@ void dll_250_setup(Object* self, DLL250_Setup* setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, objdata->unk20, _data_0, -1) == 0) {
             objdata->flags = (u8) (objdata->flags | 1);
         }
-        objdata->unk24 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk24 = dll_amSfx->Play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -89,8 +89,8 @@ void dll_250_control(Object* self) {
             self->opacity = 0xFF;
             self->unkAF &= 0xFFF7;
             objdata->flags = (u8) (objdata->flags | 8);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objdata->unk24 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk24 = dll_amSfx->Play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->unk18 > 0.0f) {
@@ -107,15 +107,15 @@ void dll_250_control(Object* self) {
         } else {
             if (func_8002601C(self, &sp60, &sp40, &sp3C, &sp50, &sp4C, &sp48) != 0) {
                 if (objdata->unk24 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->unk24);
+                    dll_amSfx->Stop(objdata->unk24);
                     objdata->unk24 = 0U;
                 }
                 objdata->flags = (u8) (objdata->flags | 0x30);
                 objdata->unk18 = 1.0f;
                 self->unkAF |= 8;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, 2, -1, NULL);
                 gDLL_33_BaddieControl->vtbl->drop_collectable(self, (s32) setup->unk18, -1, 0U);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, (f32) (setup->unk1C * 0x3C));
@@ -125,10 +125,10 @@ void dll_250_control(Object* self) {
             objdata->unk1C = (f32) (objdata->unk1C - gUpdateRateF);
             if (objdata->unk1C < 0.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Green_Slime_Drop, NULL, 2, -1, NULL);
-                objdata->unk1C = (f32) rand_next(0x1E, 0x78);
+                objdata->unk1C = (f32) mathRnd(0x1E, 0x78);
             }
         }
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         if (objdata->player != NULL) {
             sp54.f[0] = objdata->player->globalPosition.f[0] - self->globalPosition.f[0];
             sp54.f[1] = objdata->player->globalPosition.f[1] - self->globalPosition.f[1];
@@ -168,7 +168,7 @@ void dll_250_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     objdata = self->data;
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objdata->flags & 0x30) {
             if (objdata->flags & 0x10) {
                 gDLL_32->vtbl->func2(self, 0x330, &objdata->unk18);
@@ -191,14 +191,14 @@ void dll_250_free(Object* self, s32 arg1) {
     void* temp_a0;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     temp_a0 = objdata->unk0;
     if (temp_a0 != NULL) {
         mmFree(temp_a0);
         objdata->unk0 = NULL;
     }
     if (objdata->unk24 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk24);
+        dll_amSfx->Stop(objdata->unk24);
     }
 }
 
@@ -232,8 +232,8 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
     objdata->unk28 += (u16)(128.0f * gUpdateRateF);
     objdata->unk2A += (u16) (256.0f * gUpdateRateF);
     objdata->unk2C += (u16) (512.0f * gUpdateRateF);
-    self->srt.roll = (s16) (s32) ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 1000.0f);
-    self->srt.pitch = (s16) (s32) ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2C)) * 1000.0f);
+    self->srt.roll = (s16) (s32) ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2A)) * 1000.0f);
+    self->srt.pitch = (s16) (s32) ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2C)) * 1000.0f);
     if (objdata->flags & 2) {
         self->velocity.f[0] += (objdata->player->srt.transl.f[0] - self->srt.transl.f[0]) * 0.001f;
         self->velocity.f[1] += ((objdata->player->srt.transl.f[1] + 60.0f) - self->srt.transl.f[1]) * 0.001f;
@@ -244,7 +244,7 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
         self->velocity.f[2] += (temp_s2->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     } else {
         self->velocity.f[0] += (temp_s2->unk0.unk68.f[0] - self->srt.transl.f[0]) * 0.001f;
-        self->velocity.f[1] += ((temp_s2->unk0.unk68.f[1] + ((fsin16_precise((s16) objdata->unk28) + fsin16_precise((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
+        self->velocity.f[1] += ((temp_s2->unk0.unk68.f[1] + ((mathSinfInterp((s16) objdata->unk28) + mathSinfInterp((s16) objdata->unk2A)) * 10.0f)) - self->srt.transl.f[1]) * 0.001f;
         self->velocity.f[2] += (temp_s2->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.001f;
     }
     self->velocity.f[0] *= 0.9f;
@@ -268,9 +268,9 @@ static void dll_250_func_A5C(Object* self, DLL250_Data* objdata) {
     if (self->velocity.f[2] < -0.5f) {
         self->velocity.f[2] = -0.5f;
     }
-    obj_move(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
-    func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
-    var_v1 = arctan2_f(self->globalPosition.f[0] - objdata->player->globalPosition.f[0], self->globalPosition.f[2] - objdata->player->globalPosition.f[2]) - (self->srt.yaw & 0xFFFF);
+    objMove(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
+    objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
+    var_v1 = mathAtan2f(self->globalPosition.f[0] - objdata->player->globalPosition.f[0], self->globalPosition.f[2] - objdata->player->globalPosition.f[2]) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     self->srt.yaw = self->srt.yaw + (s32) (((f32) var_v1 * gUpdateRateF) / 12.0f);
 }

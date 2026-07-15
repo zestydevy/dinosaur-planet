@@ -36,13 +36,13 @@ void flameblast_control(Object* self) {
     FlameBlast_Data* objdata;
     SRT sp30;
 
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     objdata = self->data;
     if (!sidekick)
         return;
 
     if (objdata->sound == 0)
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_304_Burning_Loop, 0x7F, &objdata->sound, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_304_Burning_Loop, 0x7F, &objdata->sound, 0, 0, 0);
 
     objdata->timer -= (s16) gUpdateRateF;
     if (objdata->timer <= 0) {
@@ -60,7 +60,7 @@ void flameblast_control(Object* self) {
         sp30.pitch = sidekick->srt.pitch;
         sp30.yaw = sidekick->srt.yaw;
 
-        rotate_vec3(&sp30, self->velocity.f);
+        mathRotateRPY(&sp30, self->velocity.f);
 
         self->srt.transl.x = sidekick->srt.transl.x;
         self->srt.transl.y = sidekick->srt.transl.y;
@@ -88,7 +88,7 @@ void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle
 void flameblast_free(Object* self, s32 arg1) {
     FlameBlast_Data* objdata = self->data;
 
-    gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+    dll_amSfx->Stop(objdata->sound);
 }
 
 // offset: 0x2EC | func: 5 | export: 5

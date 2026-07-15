@@ -72,9 +72,9 @@ void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     pickup = self->data;
     pickup->flags |= PICKUPFLAG_NoGravity;
     gDLL_54_pickup->vtbl->setup(self, pickup, 90);
-    obj_add_object_type(self, OBJTYPE_Barrel);
-    obj_add_object_type(self, OBJTYPE_24);
-    obj_init_mesg_queue(self, 4);
+    objAddObjectType(self, OBJTYPE_Barrel);
+    objAddObjectType(self, OBJTYPE_24);
+    objInitMesgQueue(self, 4);
     self->srt.yaw = setup->unk18 << 8;
     self->unkE0 = 0;
     objdata->unk38 = 0;
@@ -95,7 +95,7 @@ void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     self->objhitInfo->unk58 = self->objhitInfo->unk58;
     func_8002674C(self);
     objdata->unk24 = (f32) self->objhitInfo->unk52;
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0x190 | func: 1 | export: 1
@@ -116,7 +116,7 @@ void CFbarrel_control(Object* self) {
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
-        if (map_world_coords_to_block_index(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z) != -1) {
+        if (mapWorldCoordsToBlockIndex(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z) != -1) {
             if (objdata->unk13 != 0) {
                 objdata->unk13 = objdata->unk13 + gUpdateRate;
                 objdata->unk24 = (objdata->unk2C * (f32) objdata->unk13) + 1.0f;
@@ -129,17 +129,17 @@ void CFbarrel_control(Object* self) {
                     // Move to "create point" node
                     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0x1A, &self->srt);
                     STUBBED_PRINTF(" Should has Set position  %i %f %f \n", 0x1A, &self->srt.transl.x, &self->srt.transl.z);
-                    self->srt.transl.x += (f32) rand_next(-30, 30) * 0.1f;
-                    self->srt.transl.z += (f32) rand_next(-30, 30) * 0.1f;
+                    self->srt.transl.x += (f32) mathRnd(-30, 30) * 0.1f;
+                    self->srt.transl.z += (f32) mathRnd(-30, 30) * 0.1f;
                     bzero(&objdata->unk18, sizeof(Vec3f));
                     bzero(&self->velocity, sizeof(Vec3f));
                     if (objdata->unk3C_0) {
-                        map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+                        mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
                         objdata->unk14 = 0x258;
                         func_80026160(self);
                         func_8002683C(self, 8, -2, 0x19);
                     } else {
-                        obj_free_tick(self);
+                        objDisable(self);
                         func_800267A4(self);
                         self->srt.flags |= OBJSTATE_PRINT_DISABLED;
                     }
@@ -147,7 +147,7 @@ void CFbarrel_control(Object* self) {
             } else {
                 if (gDLL_54_pickup->vtbl->control(self, &objdata->pickup) == 0) {
                     if (objdata->unk11 != 0) {
-                        obj_add_object_type(self, OBJTYPE_24);
+                        objAddObjectType(self, OBJTYPE_24);
                     }
                     objdata->unk11 = 0;
                     func_8002674C(self);
@@ -172,7 +172,7 @@ void CFbarrel_control(Object* self) {
                     }
                 }
                 if (objdata->unk3C_0) {
-                    map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+                    mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
                 }
             }
         }
@@ -236,7 +236,7 @@ void CFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
             self->srt.pitch = 0;
         }
         if (gDLL_54_pickup->vtbl->should_print(self, visibility) != 0) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -245,12 +245,12 @@ void CFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void CFbarrel_free(Object* self, s32 onlySelf) {
     CFbarrel_Data* objdata = self->data;
     gDLL_54_pickup->vtbl->free(self);
-    obj_free_object_type(self, OBJTYPE_Barrel);
-    obj_free_object_type(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_Barrel);
+    objFreeObjectType(self, OBJTYPE_24);
     if (objdata->unk13 != 0) {
         gDLL_13_Expgfx->vtbl->func5(self);
     }
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0xAB0 | func: 5 | export: 5
@@ -297,15 +297,15 @@ static void CFbarrel_func_AD4(Object* self) {
         self->velocity.x = objdata->unk18.x * gUpdateRateF;
         self->velocity.y = objdata->unk18.y * gUpdateRateF;
         self->velocity.z = objdata->unk18.z * gUpdateRateF;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
         self->srt.roll += (objdata->unk18.y * 500.0f);
         return;
     }
     spAC = 0.0f;
     for (var_s3 = 0; var_s3 < 4; var_s3++) {
-        spB8 =  (10.0f * fsin16_precise(var_s2)) * fcos16_precise(self->srt.roll);
-        spB0 = (10.0f * fcos16_precise(var_s2)) * fcos16_precise(self->srt.pitch);
-        temp = ((10.0f * fsin16_precise(self->srt.roll)) * fsin16_precise(var_s2)) + (10.0f * fsin16_precise(self->srt.pitch) * fcos16_precise(var_s2));
+        spB8 =  (10.0f * mathSinfInterp(var_s2)) * mathCosfInterp(self->srt.roll);
+        spB0 = (10.0f * mathCosfInterp(var_s2)) * mathCosfInterp(self->srt.pitch);
+        temp = ((10.0f * mathSinfInterp(self->srt.roll)) * mathSinfInterp(var_s2)) + (10.0f * mathSinfInterp(self->srt.pitch) * mathCosfInterp(var_s2));
 
         var_s2 += 0x3FD2;
 
@@ -374,7 +374,7 @@ static void CFbarrel_func_AD4(Object* self) {
     if ((objdata->unk3E_0) && (var_s4 == 4)) {
         CFbarrel_func_1948(self, 0);
     }
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 }
 
 // offset: 0x1214 | func: 8
@@ -400,13 +400,13 @@ static void CFbarrel_func_1214(Object* self) {
             self->objhitInfo->unk58 |= 1;
             self->objhitInfo->unk52 = 0x14;
             self->visRadius = 100.0f;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
             self->srt.transl.y += 10.0f;
-            explSetup = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
             explSetup->base.x = self->srt.transl.x;
             explSetup->base.y = self->srt.transl.y;
             explSetup->base.z = self->srt.transl.z;
-            obj_create((ObjSetup*)explSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+            objSetupObject((ObjSetup*)explSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             objdata->unk13 = 1;
             if (self->parent != NULL) {
                 objdata->unk2C = 3.5f;
@@ -416,7 +416,7 @@ static void CFbarrel_func_1214(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 }
@@ -434,8 +434,8 @@ static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
     s32 pad[2];
 
     sp44 = 300.0f;
-    player = get_player();
-    sp5C = obj_get_nearest_type_to(OBJTYPE_32, self, &sp44);
+    player = objGetPlayer();
+    sp5C = objGetNearestTypeTo(OBJTYPE_32, self, &sp44);
     if (sp5C == NULL) {
         return;
     }
@@ -462,7 +462,7 @@ static void CFbarrel_func_14A0(Object* self, s16 arg1, s16 arg2) {
     }
     if (var_fv1 >= 1.0f) {
         STUBBED_PRINTF(" landed ");
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8E2, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8E2, MAX_VOLUME, NULL, NULL, 0, NULL);
         arg1 = 0;
         arg2 = 0;
         var_fv1 = 1.0f;
@@ -520,7 +520,7 @@ static void CFbarrel_func_1848(Object* self) {
 
     mesgID = 0;
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, NULL, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
         case 15:
             CFbarrel_func_1948(self, 1);
@@ -549,7 +549,7 @@ static void CFbarrel_func_1948(Object* self, u8 a1) {
         // Disable push
         hit->unk5B = self->def->unk91;
         hit->unk5C = self->def->unk92;
-        obj_free_object_type(self, OBJTYPE_24);
+        objFreeObjectType(self, OBJTYPE_24);
         STUBBED_PRINTF("Out of ELEVATOR");
         objdata->unk3E_0 = 0;
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;

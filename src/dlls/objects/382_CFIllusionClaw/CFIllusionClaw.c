@@ -17,9 +17,9 @@ void dll_382_control(Object* self) {
     s32 var_v0; 
     Object* temp_v0;
 
-    temp_v0 = get_player();
+    temp_v0 = objGetPlayer();
     if (self->curModAnimId == 0) {
-        func_80024108(self, 0.01f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.01f, gUpdateRateF, NULL);
     }
     var_v0 = self->srt.yaw - (temp_v0->srt.yaw & 0xFFFF);
     

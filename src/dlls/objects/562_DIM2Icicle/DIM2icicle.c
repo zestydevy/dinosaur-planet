@@ -39,7 +39,7 @@ void DIM2Icicle_dtor(void *dll) { }
 void DIM2Icicle_setup(Object* self, DIM2Icicle_Setup* setup, s32 arg2) {
     DIM2Icicle_Data* objdata = self->data;
     
-    if (main_get_bits(setup->gamebitFell)) {
+    if (mainGetBits(setup->gamebitFell)) {
         objdata->state = DIM2Icicle_STATE_Fall_Finished;
         self->opacity = 0;
     } else {
@@ -69,10 +69,10 @@ void DIM2Icicle_control(Object* self) {
     case DIM2Icicle_STATE_Dangling:
         //React to Projectile Spell collisions
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            objData->pitch = rand_next(800, 1200);
+            objData->pitch = mathRnd(800, 1200);
             objData->state = DIM2Icicle_STATE_Damaged;
             self->objhitInfo->unk58 &= ~1;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
         return;
@@ -109,7 +109,7 @@ void DIM2Icicle_control(Object* self) {
         if (objData->soundTimer > 0) {
             objData->soundTimer -= gUpdateRate;
             if (objData->soundTimer <= 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
 
@@ -122,11 +122,11 @@ void DIM2Icicle_control(Object* self) {
 
         //Check for when icicle reaches ground
         if (self->srt.transl.y < objData->groundHeight) {
-            main_set_bits(objSetup->gamebitFell, 1);
+            mainSetBits(objSetup->gamebitFell, 1);
             objData->state = DIM2Icicle_STATE_Fall_Finished;
             gDLL_24_Waterfx->vtbl->spawn_splash(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 10.0f);
             gDLL_24_Waterfx->vtbl->spawn_circular_ripple(self->srt.transl.x, objData->groundHeight, self->srt.transl.z, 0, 0.0f, 2);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundTimer = 150;
             return;
         }
@@ -138,7 +138,7 @@ void DIM2Icicle_control(Object* self) {
         if (objData->soundTimer > 0) {
             objData->soundTimer -= gUpdateRate;
             if (objData->soundTimer <= 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_3E3_Ice_Cracking, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_3E3_Ice_Cracking, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         
@@ -163,7 +163,7 @@ void DIM2Icicle_update(Object *self) { }
 // offset: 0x544 | func: 3 | export: 3
 void DIM2Icicle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

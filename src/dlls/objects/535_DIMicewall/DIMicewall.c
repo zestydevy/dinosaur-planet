@@ -31,8 +31,8 @@ void dll_535_setup(Object* self, DLL535_Setup* setup, s32 arg2) {
     DLL535data->unk2 = (s8) setup->unk1A;
     DLL535data->unk4 = (s8) setup->unk1C;
     DLL535data->unk0 = (s16) setup->unk1E;
-    obj_add_object_type(self, OBJTYPE_DIMIceWall);
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_DIMIceWall);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
@@ -47,13 +47,13 @@ void dll_535_control(Object* self) {
         if ((DLL535data->unk2 <= 0) && (DLL535data->unk3 == 0)) {
             temp_a0 = DLL535data->unk0;
             if (temp_a0 != -1) {
-                main_set_bits((s32) temp_a0, 1U);
+                mainSetBits((s32) temp_a0, 1U);
                 DLL535data->unk3 = 1;
             }
         } else {
-            sp20 = get_sidekick();
+            sp20 = objGetSidekick();
             if (sp20 != NULL) {
-                if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
+                if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
                     ((DLL_ISidekick*)sp20->dll)->vtbl->enable_command(sp20, Sidekick_Command_INDEX_4_Flame);
                 }
             }
@@ -69,8 +69,8 @@ void dll_535_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x1F4 | func: 4 | export: 4
 void dll_535_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_DIMIceWall);
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_DIMIceWall);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x254 | func: 5 | export: 5

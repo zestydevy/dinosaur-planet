@@ -45,9 +45,9 @@ void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
 #else
     self->animCallback = CClightfoot_anim_callback;
 #endif
-    objdata->spokeToPlayer = main_get_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
+    objdata->spokeToPlayer = mainGetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage);
     self->srt.yaw = setup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_40);
+    objAddObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0xAC | func: 1 | export: 1
@@ -56,22 +56,22 @@ void CClightfoot_control(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (!objdata->spokeToPlayer) {
         objdata->unk4.headAimX = player->srt.transl.x;
         objdata->unk4.headAimY = player->srt.transl.y;
         objdata->unk4.headAimZ = player->srt.transl.z;
         objdata->unk4.aimIsActive = 1;
-        func_800328F0(self, &objdata->unk4, 0.0f);
-        func_80032A08(self, &objdata->unk4);
+        objExpr_func_800328F0(self, &objdata->unk4, 0.0f);
+        objExprEyeIdle(self, &objdata->unk4);
         if (self->curModAnimId != 10) {
-            func_80023D30(self, 10, 0.0f, 0);
+            objAnimSet(self, 10, 0.0f, 0);
         }
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
-        if (main_get_bits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
+        if (mainGetBits(BIT_CC_Shot_Down_Lightfoot_Cage)) {
             self->unkAF &= ~0x8;
             if (self->unkAF & 1) {
-                main_set_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
+                mainSetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
                 objdata->spokeToPlayer = TRUE;
             }
         }
@@ -84,13 +84,13 @@ void CClightfoot_update(Object *self) { }
 // offset: 0x200 | func: 3 | export: 3
 void CClightfoot_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x254 | func: 4 | export: 4
 void CClightfoot_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_40);
+    objFreeObjectType(self, OBJTYPE_40);
 }
 
 // offset: 0x294 | func: 5 | export: 5
@@ -112,8 +112,8 @@ static int CClightfoot_anim_callback(Object *self, Object *animObj, AnimObj_Data
     CClightfoot_Data *objdata = self->data;
     if (self->unkAF & 1) {
         gDLL_3_Animation->vtbl->end_obj_sequence(animObjData->seqSlot);
-        main_set_bits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Play_Seq_022F_CC_Lightfoot_Gives_Spellpage, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         objdata->spokeToPlayer = TRUE;
     } else {
         self->unkAF &= ~1;

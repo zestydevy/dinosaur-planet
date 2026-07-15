@@ -90,7 +90,7 @@ void SHrocketmushroom_setup(Object* self, SHrocketmushroom_Setup* objSetup, s32 
     objData->scaleInitial = self->srt.scale;
     
     if (reset == FALSE) {
-        if ((objSetup->gamebitGrow != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitGrow) == FALSE)) {
+        if ((objSetup->gamebitGrow != NO_GAMEBIT) && (mainGetBits(objSetup->gamebitGrow) == FALSE)) {
             //If the plant only grows when a gamebit is set, start out hidden
             SHrocketmushroom_reset(self, objData, TRUE);
             objData->state = STATE_1_Hidden;
@@ -140,7 +140,7 @@ void SHrocketmushroom_control(Object* self) {
         func_80025F40(self, &hitBy, &hitSphereID, &hitDamage) && 
         (hitDamage != 0)
     ) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
         SHrocketmushroom_set_state(objData, STATE_4_Damaged);
 
         //Create big explosion effect
@@ -151,8 +151,8 @@ void SHrocketmushroom_control(Object* self) {
         srt.transl.y = 0.0f;
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
-        matrix_from_srt(&mtx, &srt);
-        vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
+        mathYprXyzMtx(&mtx, &srt);
+        mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
         srt.transl.x = self->srt.transl.x + (offset.x * 23.0f);
         srt.transl.y = self->srt.transl.y + (offset.y * 23.0f);
         srt.transl.z = self->srt.transl.z + (offset.z * 23.0f);
@@ -204,11 +204,11 @@ void SHrocketmushroom_control(Object* self) {
     
     //Change modAnim when needed
     if (self->curModAnimId != animData->modAnimID) {
-        func_80023D30(self, animData->modAnimID, 0.0f, 0);
+        objAnimSet(self, animData->modAnimID, 0.0f, 0);
     }
     
     //Track when the current animation is finished
-    if (func_80024108(self, animData->animSpeed, gUpdateRateF, NULL) != 0) {
+    if (objAnimAdvance(self, animData->animSpeed, gUpdateRateF, NULL) != 0) {
         objData->flags |= FLAG_Animation_Finished;
     } else {
         objData->flags &= ~FLAG_Animation_Finished;
@@ -227,7 +227,7 @@ void SHrocketmushroom_handle_state_1_hidden(Object* self, SHrocketmushroom_AnimD
 
     //If the plant uses a gamebit, don't start growing until that gamebit is set (and the player is far away)
     if (objSetup->gamebitGrow != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitGrow) && SHrocketmushroom_is_player_far_away(self)) {
+        if (mainGetBits(objSetup->gamebitGrow) && SHrocketmushroom_is_player_far_away(self)) {
             SHrocketmushroom_set_state(objData, STATE_2_Growing);
         }
         return;
@@ -247,7 +247,7 @@ void SHrocketmushroom_handle_state_1_hidden(Object* self, SHrocketmushroom_AnimD
 void SHrocketmushroom_handle_state_2_growing(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
     //When entering state, play growing sound and initialise transform-related values
     if (objData->flags & FLAG_State_Entered) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8A3_Rocket_Mushroom_Grow, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8A3_Rocket_Mushroom_Grow, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->flags &= ~FLAG_State_Entered;
         SHrocketmushroom_reset(self, objData, TRUE);
     }
@@ -278,7 +278,7 @@ void SHrocketmushroom_handle_state_3_launch_spore(Object* self, SHrocketmushroom
     
     //Launch a spore
     if ((self->animProgress > 0.5f) && !(objData->flags & FLAG_Spore_Launched)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8A1_Spore_Launched, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8A1_Spore_Launched, MAX_VOLUME, NULL, NULL, 0, NULL);
         SHrocketmushroom_create_spore(self, objData);
         objData->flags |= FLAG_Spore_Launched;
     }
@@ -292,13 +292,13 @@ void SHrocketmushroom_handle_state_3_launch_spore(Object* self, SHrocketmushroom
 void SHrocketmushroom_handle_state_4_damaged(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
     SHrocketmushroom_Setup* objSetup = (SHrocketmushroom_Setup*)self->setup;
     
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_8A0_Deflate_Honk, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_8A0_Deflate_Honk, MAX_VOLUME, NULL, NULL, 0, NULL);
     SHrocketmushroom_explode(self, objData);
     SHrocketmushroom_set_state(objData, STATE_1_Hidden);
 
     //If the plant only grows when a gamebit is set, switch off that gamebit when the plant's destroyed
     if (objSetup->gamebitGrow != NO_GAMEBIT) {
-        main_set_bits(objSetup->gamebitGrow, FALSE);
+        mainSetBits(objSetup->gamebitGrow, FALSE);
     }
 }
 
@@ -309,7 +309,7 @@ void SHrocketmushroom_handle_state_0_idle(Object* self, SHrocketmushroom_AnimDat
     //Set up countdown to launching a spore
     if (objData->flags & FLAG_State_Entered) {
         objData->flags &= ~FLAG_State_Entered;
-        objData->timer = rand_next(-50, 50) + objSetup->sporeLaunchInterval;
+        objData->timer = mathRnd(-50, 50) + objSetup->sporeLaunchInterval;
     }
     
     //When timer runs out, change to spore launching state
@@ -353,7 +353,7 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     SHrocketmushroom_Setup* objSetup;
 
     objSetup = (SHrocketmushroom_Setup*)self->setup;
-    sporeSetup = obj_alloc_setup(sizeof(SHSpore_Setup), OBJ_SHspore);
+    sporeSetup = objAllocSetup(sizeof(SHSpore_Setup), OBJ_SHspore);
 
     //Calculate initial coordinate
     srt.yaw = self->srt.yaw;
@@ -363,8 +363,8 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.f[0], &offset.f[1], &offset.f[2]);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.f[0], &offset.f[1], &offset.f[2]);
     srt.transl.x = offset.f[0] * 26.0f;
     srt.transl.y = offset.f[1] * 26.0f;
     srt.transl.z = offset.f[2] * 26.0f;
@@ -376,7 +376,7 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     sporeSetup->base.loadFlags = 2;
     sporeSetup->angularRange = objSetup->sporeAngularRange << 8;
     sporeSetup->windAngle = self->srt.yaw;
-    obj_create((ObjSetup*)sporeSetup, 5, -1, -1, NULL);
+    objSetupObject((ObjSetup*)sporeSetup, 5, -1, -1, NULL);
 }
 
 // offset: 0xCF8 | func: 14
@@ -397,8 +397,8 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 1.0f, 0.0f, &offset.x, &offset.y, &offset.z);
     srt.transl.x = offset.x * 23.0f;
     srt.transl.y = offset.y * 23.0f;
     srt.transl.z = offset.z * 23.0f;
@@ -406,7 +406,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
 
     //Create debris
     for (i = 0; i < 5; i++) {
-        debrisSetup = obj_alloc_setup(sizeof(Debris_Setup), OBJ_SHmushroombit);
+        debrisSetup = objAllocSetup(sizeof(Debris_Setup), OBJ_SHmushroombit);
         debrisSetup->base.byte5 = 1;
         debrisSetup->base.loadFlags = 2;
         debrisSetup->base.x = self->srt.transl.x + srt.transl.x;
@@ -419,26 +419,26 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
         debrisSetup->unk1A = self->srt.yaw;
         debrisSetup->unk1C = self->srt.pitch;
         debrisSetup->unk1E = self->srt.roll;
-        debrisSetup->unk20 = rand_next(200, 300);
+        debrisSetup->unk20 = mathRnd(200, 300);
         debrisSetup->unk28 = -50;
-        debrisSetup->unk2E = rand_next(1200, 2000);
-        debrisSetup->unk30 = rand_next(1200, 2000);
+        debrisSetup->unk2E = mathRnd(1200, 2000);
+        debrisSetup->unk30 = mathRnd(1200, 2000);
         debrisSetup->unk38 = 200;
         debrisSetup->unk3A = 150;
         debrisSetup->unk3C = 7;
         debrisSetup->unk3E = -1;
         debrisSetup->unk40 = -1;
-        obj_create((ObjSetup*)debrisSetup, 5, -1, -1, NULL);
+        objSetupObject((ObjSetup*)debrisSetup, 5, -1, -1, NULL);
     }
     
     self->objhitInfo->unk58 |= 0x40;
     
     //Set nearby ExplodeAnimator's gamebit (when used to blast open walls)
-    obj = obj_get_nearest_type_to(OBJTYPE_ExplodeAnimator, self, &distance);
+    obj = objGetNearestTypeTo(OBJTYPE_ExplodeAnimator, self, &distance);
     if (obj != NULL) {
         exploderSetup = (ExplodeAnimator_Setup*)obj->setup;
         if (exploderSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
-            main_set_bits(exploderSetup->gamebitExplodeTrigger, 1);
+            mainSetBits(exploderSetup->gamebitExplodeTrigger, 1);
         }
     }
 }
@@ -448,8 +448,8 @@ void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int st
     SHrocketmushroom_Setup* objSetup;
 
     objSetup = (SHrocketmushroom_Setup*)self->setup;
-    self->srt.roll = rand_next(-1500, 1500);
-    self->srt.pitch = rand_next(-1500, 1500);
+    self->srt.roll = mathRnd(-1500, 1500);
+    self->srt.pitch = mathRnd(-1500, 1500);
     self->opacity = OBJECT_OPACITY_MAX;
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
     self->srt.transl.x = objSetup->base.x;
@@ -470,5 +470,5 @@ void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int st
 // offset: 0x114C | func: 16
 /** Checks whether the player is more than 80 units away. */
 int SHrocketmushroom_is_player_far_away(Object* self) {
-    return (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) > SQ(80));
+    return (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) > SQ(80));
 }

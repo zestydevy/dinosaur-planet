@@ -44,8 +44,8 @@ void dll_787_setup(Object *self, WCApertureSymbol_Setup *setup, s32 arg2) {
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
-    if (main_get_bits(setup->unk20) != 0) {
-        if (main_get_bits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->unk20) != 0) {
+        if (mainGetBits(setup->unk1E) != 0) {
             objdata->state = 2;
         } else {
             objdata->state = 1;
@@ -65,7 +65,7 @@ void dll_787_control(Object *self) {
 
     setup = (WCApertureSymbol_Setup*)self->setup;
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objdata->targetOpacity = 0;
     switch (objdata->state) {
     case 2:
@@ -75,7 +75,7 @@ void dll_787_control(Object *self) {
         break;
     case 1:
         if (gDLL_2_Camera->vtbl->get_dll_ID() == DLL_ID_CAM1STPERSON) {
-            if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 200.0f)) {
+            if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 200.0f)) {
                 gDLL_7_Newday->vtbl->func4(&sp48);
                 if (setup->unk19 == 0) {
                     objdata->targetOpacity = dll_787_func_490(self, objdata, 66000.0f, 74000.0f, sp48);
@@ -83,7 +83,7 @@ void dll_787_control(Object *self) {
                     objdata->targetOpacity = dll_787_func_490(self, objdata, 77000.0f, 81500.0f, sp48);
                 }
                 if (setup->unk1A < (s32) self->opacity) {
-                    main_set_bits(setup->unk1E, 1);
+                    mainSetBits(setup->unk1E, 1);
                     objdata->state = 2;
                     objdata->targetOpacity = OBJECT_OPACITY_MAX;
                 }
@@ -119,7 +119,7 @@ void dll_787_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         objdata->unk3 &= ~0x1;
     }
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -181,15 +181,15 @@ static s16 dll_787_func_490(Object *self, WCApertureSymbol_Data *objdata, f32 ar
     var_fv0_2 = self->srt.transl.x - gWorldX;
     temp_fa0_3 = self->srt.transl.z - gWorldZ;
 
-    camera_project_point(var_fv0_2, self->srt.transl.y, temp_fa0_3, &sp6C, &sp68, &sp64);
-    camera_clip_to_screen(sp6C, sp68, sp64, &sp74, &sp70, NULL);
-    if (vi_contains_point(sp74, sp70) == 0) {
+    camProjectPoint(var_fv0_2, self->srt.transl.y, temp_fa0_3, &sp6C, &sp68, &sp64);
+    camClipToScreen(sp6C, sp68, sp64, &sp74, &sp70, NULL);
+    if (viContainsPoint(sp74, sp70) == 0) {
         return 0;
     }
     if ((arg4 < arg2) || (arg3 < arg4)) {
         return 0;
     }
-    temp_v0 = vi_get_current_size();
+    temp_v0 = viGetCurrentSize();
     temp_v1 = GET_VIDEO_HEIGHT(temp_v0);
     temp_a0 = GET_VIDEO_WIDTH(temp_v0);
     if ((temp_a0 < (u32) sp74) || (sp74 < 0)) {

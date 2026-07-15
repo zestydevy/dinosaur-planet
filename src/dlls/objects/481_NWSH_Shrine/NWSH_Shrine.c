@@ -63,12 +63,12 @@ void dll_481_setup(Object *self, NWSH_Shrine_Setup *setup, s32 arg2) {
     objdata->unk13 = 0;
     objdata->unk2 = 0;
     self->animCallback = dll_481_func_C10;
-    obj_init_mesg_queue(self, 4);
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_15F, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-    main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 0);
+    objInitMesgQueue(self, 4);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_15F, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 0);
     objdata->unk17 = 0;
     objdata->unk4 = 0xC;
     objdata->unk8 = 0x1E;
@@ -80,9 +80,9 @@ void dll_481_setup(Object *self, NWSH_Shrine_Setup *setup, s32 arg2) {
     objdata->unk16 = 0;
     objdata->unkE = 0x12C;
     objdata->unk10 = 0x514;
-    sp30 = dll_load_deferred(DLL_ID_122, 1);
+    sp30 = dllLoad(DLL_ID_122, 1);
     objdata->unkC = sp30->vtbl->func0(self, 3, 0, 0x402, -1, 0);
-    dll_unload(sp30);
+    dllFree(sp30);
 }
 
 // offset: 0x1E8 | func: 1 | export: 1
@@ -95,13 +95,13 @@ void dll_481_control(Object *self) {
     s16 var_v0;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp3C = 1000.0f;
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
     dll_481_func_1084(self);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
     if (objdata->unk6 != 0) {
         objdata->unk4 += objdata->unk6;
         if (objdata->unk4 < 0xD) {
@@ -137,7 +137,7 @@ void dll_481_control(Object *self) {
             objdata->unk16 = 1;
         }
     } else {
-        temp_v0_4 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp3C);
+        temp_v0_4 = objGetNearestTypeTo(OBJTYPE_Door, player, &sp3C);
         if ((temp_v0_4 != NULL) && (sp3C < 300.0f) && (sp3C > 100.0f)) {
             var_fv0 = temp_v0_4->srt.transl.z - player->srt.transl.z;
             if (var_fv0 <= 0.0f) {
@@ -162,26 +162,26 @@ void dll_481_control(Object *self) {
         switch (objdata->unk12) {
         case 0:
             if (objdata->unkE <= 0) {
-                main_set_bits(BIT_176, 1);
-                camera_set_shake_offset(1.0f);
-                objdata->unkE = rand_next(0x64, 0x96);
+                mainSetBits(BIT_176, 1);
+                camSetShakeOffset(1.0f);
+                objdata->unkE = mathRnd(0x64, 0x96);
                 objdata->unk10 = 0x91;
             } else {
                 if (objdata->unk10 != -0x3E7) {
                     if (objdata->unk10 < 0) {
-                        gDLL_6_AMSFX->vtbl->play(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, 0x3B9, 0x46, NULL, NULL, 0, NULL);
                         objdata->unk10 = -0x3E7;
                     } else {
                         objdata->unk10 -= gUpdateRate;
                     }
                 }
-                main_set_bits(BIT_176, 0);
+                mainSetBits(BIT_176, 0);
                 objdata->unkE -= gUpdateRate;
             }
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
-                main_set_bits(BIT_5C6, 1);
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+                mainSetBits(BIT_5C6, 1);
                 objdata->unk12 = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 objdata->unk13 = 1;
                 gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
             }
@@ -203,46 +203,46 @@ void dll_481_control(Object *self) {
         case 8:
             gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (s16) (u8) objdata->unk8, 0);
-            main_set_bits(BIT_15F, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-            main_set_bits(BIT_5BE, 0);
-            main_set_bits(BIT_1CB, 0);
-            main_set_bits(BIT_5C6, 0);
+            mainSetBits(BIT_15F, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_5BE, 0);
+            mainSetBits(BIT_1CB, 0);
+            mainSetBits(BIT_5C6, 0);
             objdata->unk12 = 6;
             return;
         case 4:
-            if (main_get_bits(BIT_SP_Replay_Disk_WM) != 0) {
+            if (mainGetBits(BIT_SP_Replay_Disk_WM) != 0) {
                 objdata->unk8 = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->unk12 = 6;
                 return;
             }
-            main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x34, 0x50, (s16) (u8) objdata->unk8, 0);
             objdata->unkA = 1;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk12 = 5;
             return;
         case 5:
-            if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-                main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+            if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+                mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
             }
-            main_set_bits(BIT_15F, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_15F, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             objdata->unk12 = 6;
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_SP_Replay_Disk_WM, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_SP_Replay_Disk_WM, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 9);
             break;
         case 6:
-            if (main_get_bits(BIT_5C2) == 0) {
-                main_set_bits(BIT_5C2, 1);
+            if (mainGetBits(BIT_5C2) == 0) {
+                mainSetBits(BIT_5C2, 1);
             }
-            main_set_bits(BIT_5C6, 0);
+            mainSetBits(BIT_5C6, 0);
             break;
         }
     }
@@ -253,7 +253,7 @@ void dll_481_update(Object *self) { }
 
 // offset: 0xB14 | func: 3 | export: 3
 void dll_481_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0xB5C | func: 4 | export: 4
@@ -311,28 +311,28 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
         case 5:
             objdata->unk12 = 5;
             objdata->unk13 = 2;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             break;
         case 6:
             objdata->unk12 = 4;
             objdata->unk13 = 3;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             break;
         case 7:
-            main_set_bits(BIT_15F, 1);
+            mainSetBits(BIT_15F, 1);
             break;
         case 8:
-            main_set_bits(BIT_15F, 0);
+            mainSetBits(BIT_15F, 0);
             objdata->unkA = -3;
             break;
         case 10:
-            main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+            mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
             if (_data_0 == NULL) {
-                _data_0 = block_texanim_get_tex(1);
+                _data_0 = blockTexanimGetTex(1);
             }
             break;
         case 9:
-            main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 1);
             break;
         case 11:
             objdata->unk8 = 0x64;
@@ -345,20 +345,20 @@ int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
     }
     a2->lastMessage = 0;
     if (objdata->unk12 == 3) {
-        if (main_get_bits(BIT_5BE) != 0) {
+        if (mainGetBits(BIT_5BE) != 0) {
             objdata->unk12 = 7;
             gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
-        } else if (main_get_bits(BIT_1CB) != 0) {
+        } else if (mainGetBits(BIT_1CB) != 0) {
             objdata->unk12 = 8;
             gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
         } else if (objdata->unkE <= 0) {
-            main_set_bits(BIT_176, 1);
-            main_set_bits(BIT_1CA, 1);
-            camera_set_shake_offset(1.0f);
-            objdata->unkE = rand_next(0xC8, 0xFA);
+            mainSetBits(BIT_176, 1);
+            mainSetBits(BIT_1CA, 1);
+            camSetShakeOffset(1.0f);
+            objdata->unkE = mathRnd(0xC8, 0xFA);
         } else {
-            main_set_bits(BIT_176, 0);
-            main_set_bits(BIT_1CA, 0);
+            mainSetBits(BIT_176, 0);
+            mainSetBits(BIT_1CA, 0);
             objdata->unkE -= gUpdateRate;
         }
     }
@@ -373,7 +373,7 @@ static void dll_481_func_1084(Object* self) {
     NWSH_Shrine_Data* objdata = self->data;
 
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->unk6 = -3;

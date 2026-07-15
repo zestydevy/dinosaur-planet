@@ -14,9 +14,9 @@ void AnimTest_setup(Object *self, ObjSetup *setup, s32 arg2) { }
 
 // offset: 0x2C | func: 1 | export: 1
 void AnimTest_control(Object *self) {
-    gDLL_6_AMSFX->vtbl->water_falls_control();
-    if (!get_sidekick()) {
-        obj_send_mesg_many(OBJCONTROL_SideSetup, 0, self, 0x11, 0);
+    dll_amSfx->WaterFallsControl();
+    if (!objGetSidekick()) {
+        objSendMesgMany(OBJCONTROL_SideSetup, 0, self, 0x11, 0);
     }
 }
 
@@ -26,7 +26,7 @@ void AnimTest_update(Object *self) { }
 // offset: 0xB4 | func: 3 | export: 3
 void AnimTest_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

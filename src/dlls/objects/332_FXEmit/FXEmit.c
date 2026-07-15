@@ -75,7 +75,7 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
         self->unkDC = 0;
     }
 
-    if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+    if (objdata->disableGamebit != NO_GAMEBIT && mainGetBits(objdata->disableGamebit)) {
         objdata->disabled = TRUE;
     }
 
@@ -84,7 +84,7 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     self->srt.roll = setup->roll << 8;
     objdata->intervalTimer = setup->interval * 100;
     objdata->translateX = self->srt.transl.x;
-    objdata->randomDelay = rand_next(0, 10);
+    objdata->randomDelay = mathRnd(0, 10);
     objdata->defaultFXIndex = 0;
 }
 
@@ -112,7 +112,7 @@ void FXEmit_control(Object* self) {
         self->globalPosition.y = self->srt.transl.y;
         self->globalPosition.z = self->srt.transl.z;
 
-        player = get_player();
+        player = objGetPlayer();
         if (!player || !setup) {
             return;
         }
@@ -123,7 +123,7 @@ void FXEmit_control(Object* self) {
                 objdata->disabled = FALSE;
                 objdata->intervalTimer = setup->interval * 100;
                 if (setup->intervalSoundID) {
-                    gDLL_6_AMSFX->vtbl->play(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, setup->intervalSoundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
                 objdata->disabled = TRUE;
@@ -151,13 +151,13 @@ void FXEmit_control(Object* self) {
         }
 
         //Bail if not enabled
-        if (((objdata->toggleGamebit != NO_GAMEBIT) && main_get_bits(objdata->toggleGamebit) == FALSE) 
+        if (((objdata->toggleGamebit != NO_GAMEBIT) && mainGetBits(objdata->toggleGamebit) == FALSE) 
             || objdata->disabled) {
           return;
         }
 
         //Check if should be disabled (@bug?: continues with this tick when disabled, causing 1 frame flash)
-        if (objdata->disableGamebit != NO_GAMEBIT && main_get_bits(objdata->disableGamebit)) {
+        if (objdata->disableGamebit != NO_GAMEBIT && mainGetBits(objdata->disableGamebit)) {
             objdata->disabled = TRUE;
         }
         if (setup->interval == 0xFF) {
@@ -331,7 +331,7 @@ static void FXEmit_emit(Object *self) {
                 gDLL_17_partfx->vtbl->spawn(self, objdata->indexInBank, NULL, flags, -1, NULL);
             }
         } else if (objdata->bank == BANK_ModelFX) {
-            modfxDLL = dll_load_deferred((objdata->indexInBank + 0x1000), 1);
+            modfxDLL = dllLoad((objdata->indexInBank + 0x1000), 1);
             if (objdata->fxRate > 0) {
                 for (i = 0; i < objdata->fxRate; i++) {
                     modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
@@ -339,9 +339,9 @@ static void FXEmit_emit(Object *self) {
             } else {
                 modfxDLL->vtbl->func0(self, 0, 0, flags, -1, 0);
             }
-            dll_unload(modfxDLL);
+            dllFree(modfxDLL);
         } else if (objdata->bank == BANK_ProjectileFX) {
-            projfxDLL = dll_load_deferred((objdata->indexInBank + 0x2000), 1);
+            projfxDLL = dllLoad((objdata->indexInBank + 0x2000), 1);
             if (objdata->fxRate > 0) {
                 for (i = 0; i < objdata->fxRate; i++) {
                     projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);
@@ -349,7 +349,7 @@ static void FXEmit_emit(Object *self) {
             } else {
                 projfxDLL->vtbl->func0(self, 0, 0, flags, -1, objdata->indexInBank, 0);
             }
-            dll_unload(projfxDLL);
+            dllFree(projfxDLL);
         }
     }
 }

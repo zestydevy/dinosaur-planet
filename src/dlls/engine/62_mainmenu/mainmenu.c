@@ -156,8 +156,8 @@ void mainmenu_ctor(void *dll) {
 
     total_strings = 8;
 
-    logoDinosaurPlanet = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
-    rcp_set_border_color(0, 0, 0);
+    logoDinosaurPlanet = texLoadTexture(TEXTABLE_C5_DinosaurPlanetLogo);
+    rcpSetBorderColour(0, 0, 0);
 
     //Set language and get text
     options = gDLL_29_Gplay->vtbl->get_game_options();
@@ -172,7 +172,7 @@ void mainmenu_ctor(void *dll) {
     }
 
     //Hide the DP logo at first when entering from the Rareware screen
-    if (menu_get_previous() == MENU_RAREWARE) {
+    if (menuGetPrevious() == MENU_RAREWARE) {
         gDLL_74_Picmenu->vtbl->set_items(pressStartItem, 1, 0, 0, 0, 0, 0xB7, 0x8B, 0x61, 0xFF, 0xD7, 0x3D);
         showDPLogo = FALSE;
     } else {
@@ -212,15 +212,15 @@ s32 mainmenu_update1(void) {
     if (nextMenuID) {
         if (prevExitTransitionTimer > MENU_TRANSITION_THRESHOLD && sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
             //Change resolution for game select
-            vi_init(14, get_ossched(), FALSE);
+            viInit(14, mainGetScheduler(), FALSE);
             mainmenu_clean_up();
-            track_set_z_buffer_on(FALSE);
-            track_set_sky_on(FALSE);
+            trackSetZBufferOn(FALSE);
+            trackSetSkyOn(FALSE);
             if (nextMenuID == MENU_GAME_SELECT) {
                 gDLL_29_Gplay->vtbl->save_game_options();
             }
         } else if (sExitTransitionTimer < 1) {
-            main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, nextMenuID);
+            mainChangeMap(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, nextMenuID);
         }
 
         if (sExitTransitionTimer <= MENU_TRANSITION_THRESHOLD) {
@@ -283,19 +283,19 @@ void mainmenu_update2(void){ }
 // offset: 0x76C | func: 2 | export: 2
 void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
     if (!nextMenuID || sExitTransitionTimer >= (MENU_TRANSITION_THRESHOLD - 1)) {
-        font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
-        font_window_flush_strings(1);
+        fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(viGetCurrentSize()), GET_VIDEO_HEIGHT(viGetCurrentSize()));
+        fontWindowFlushStrings(1);
         gDLL_74_Picmenu->vtbl->draw(gfx);
-        if (main_demo_finished()) {
-            rcp_screen_full_write(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        if (mainDemoFinished()) {
+            rcpScreenFullWrite(gfx, logoDinosaurPlanet, 50, 50, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
-        font_window_draw(gfx, NULL, NULL, 1);
+        fontWindowDraw(gfx, NULL, NULL, 1);
     }
 }
 
 // offset: 0x8AC | func: 3
 void mainmenu_clean_up(void) {
-    tex_free(logoDinosaurPlanet);
+    texFreeTexture(logoDinosaurPlanet);
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(gametext);
 }

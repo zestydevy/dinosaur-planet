@@ -22,7 +22,7 @@ void TrickyWarp_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void TrickyWarp_setup(Object *self, TrickyWarp_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x6C | func: 1 | export: 1
@@ -32,11 +32,11 @@ void TrickyWarp_control(Object *self) {
 
     setup = (TrickyWarp_Setup*)self->setup;
 
-    if (setup->gamebit == -1 || main_get_bits(setup->gamebit)) {
-        player = get_player();
-        sidekick = get_sidekick();
+    if (setup->gamebit == -1 || mainGetBits(setup->gamebit)) {
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
 
-        if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= SQ(setup->range)) {
+        if (sidekick && vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= SQ(setup->range)) {
             ((DLL_ISidekick*)(sidekick->dll))->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
         }
     }
@@ -48,13 +48,13 @@ void TrickyWarp_update(Object *self) { }
 // offset: 0x170 | func: 3 | export: 3
 void TrickyWarp_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1C4 | func: 4 | export: 4
 void TrickyWarp_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x204 | func: 5 | export: 5

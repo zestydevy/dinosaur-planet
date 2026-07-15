@@ -55,7 +55,7 @@ typedef struct DLLFile
 // Note: A DLL interface IS a pointer to a DLL state vtblPtr field (DLLState.vtblPtr)
 #define DLL_INTERFACE_TO_STATE(interfacePtr) ((DLLState*)((u32)interfacePtr - OFFSETOF(DLLState, vtblPtr)))
 
-void init_dll_system(void);
+void dllInit(void);
 /**
  * Returns the tab index of the DLL that the given program counter is executing within, 
  * or -1 if the PC is not within a DLL.
@@ -63,16 +63,16 @@ void init_dll_system(void);
  * start and end will also be set to pointers to the start and end 
  * of the DLL's body respectively.
  */
-s32 find_executing_dll(u32 pc, void **start, void **end);
-void replace_loaded_dll_list(DLLState list[], s32 count);
-DLLState *get_loaded_dlls(s32 *outLoadedDLLCount);
-void *dll_load_deferred(u16 idOrIdx, u16 exportCount);
+s32 dllFindExecutingDLL(u32 pc, void **start, void **end);
+void dllReplaceLoadedDLLs(DLLState list[], s32 count);
+DLLState *dllGetLoadedDLLs(s32 *outLoadedDLLCount);
+void *dllLoad(u16 idOrIdx, u16 exportCount);
 /**
  * Loads a DLL by ID or tab index and returns a pointer to its loaded interface.
  */
-void *dll_load(u16 idOrIdx, u16 exportCount, s32 bRunConstructor);
-void dll_load_from_bytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize);
-s32 dll_unload(void *dllInterfacePtr);
-s32 dll_throw_fault(void);
+void *dllLoadActual(u16 idOrIdx, u16 exportCount, s32 bRunConstructor);
+void dllLoadFromBytes(u16 tabidx, void *dllBytes, s32 dllBytesSize, s32 bssSize);
+s32 dllFree(void *dllInterfacePtr);
+s32 dllThrowFault(void);
 
 #endif //_SYS_DLL_H

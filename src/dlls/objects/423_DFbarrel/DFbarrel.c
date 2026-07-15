@@ -31,7 +31,7 @@ void DFbarrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void DFbarrel_setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
-    obj_add_object_type(self, OBJTYPE_Barrel);
+    objAddObjectType(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     gDLL_54_pickup->vtbl->setup(self, (Pickup*)self->data, 33);
@@ -42,7 +42,7 @@ void DFbarrel_control(Object* self) {
     DFBarrel_Data* objData = self->data;
     
     //Do nothing if not on a map?
-    if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
+    if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
         return;
     }
     
@@ -62,7 +62,7 @@ void DFbarrel_control(Object* self) {
         objData->framesSinceDetonation++;
         /* fallthrough */
     case 20:
-        obj_destroy_object(self);
+        objFreeObject(self);
         break;
     }
 }
@@ -75,13 +75,13 @@ void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
     DFBarrel_Data* objData = self->data;
     
     if ((objData->framesSinceDetonation == 0) && gDLL_54_pickup->vtbl->should_print(self, visibility)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x278 | func: 4 | export: 4
 void DFbarrel_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_Barrel);
+    objFreeObjectType(self, OBJTYPE_Barrel);
     gDLL_54_pickup->vtbl->free(self);
 }
 
@@ -118,7 +118,7 @@ void DFbarrel_handle_movement(Object* self) {
     {
         objData->accelerationX = objData->accelerationZ = 0.0f;
 
-        for (objects = obj_get_all_of_type(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
+        for (objects = objGetAllOfType(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
             riverFlow = objects[i];
             dy = riverFlow->srt.transl.y - self->srt.transl.y;
             if ((dy <= 200.0f) && (dy >= -200.0f)) {
@@ -131,8 +131,8 @@ void DFbarrel_handle_movement(Object* self) {
                     delta = (range - delta) / range;
                     delta *= riverFlow->srt.scale * 10.0f;
                     
-                    objData->accelerationX += fsin16_precise(riverFlow->srt.yaw) * delta;
-                    objData->accelerationZ += fcos16_precise(riverFlow->srt.yaw) * delta;
+                    objData->accelerationX += mathSinfInterp(riverFlow->srt.yaw) * delta;
+                    objData->accelerationZ += mathCosfInterp(riverFlow->srt.yaw) * delta;
                 }
             }
         }
@@ -199,7 +199,7 @@ void DFbarrel_handle_movement(Object* self) {
     position.y = self->srt.transl.y;
     position.z = self->srt.transl.z;
 
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
     func_80059C40(&position, &self->srt.transl, 10.0f, 0, NULL, self, 8, -1, 0xFF, 0);
 }
@@ -222,7 +222,7 @@ void DFbarrel_handle_damage(Object* self) {
     }
 
     //When damaged, play an impact sound and increase damage counter
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
     objData->damage += hitDamage;
 
     //Return early if the barrel hasn't reached the damage threshold
@@ -235,11 +235,11 @@ void DFbarrel_handle_damage(Object* self) {
         func_80026940(self, 40);
         func_80026128(self, Damage_Type_Explosion, 4, 0);
         
-        explosion = obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+        explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
         explosion->base.x = self->srt.transl.x;
         explosion->base.y = self->srt.transl.y;
         explosion->base.z = self->srt.transl.z;
-        obj_create((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+        objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
         
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
@@ -250,18 +250,18 @@ void DFbarrel_handle_damage(Object* self) {
         distance = 110.0f;
 
         //Debris
-        if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeObj, self, &distance))) {
+        if ((obj = objGetNearestTypeTo(OBJTYPE_ExplodeObj, self, &distance))) {
             debrisSetup = (Debris_Setup*)obj->setup;
             if (debrisSetup->unk40 != NO_GAMEBIT) {
-                main_set_bits(debrisSetup->unk40, 1);
+                mainSetBits(debrisSetup->unk40, 1);
             }
         }
 
         //ExplodeAnimator
-        if ((obj = obj_get_nearest_type_to(OBJTYPE_ExplodeAnimator, self, &distance))) {
+        if ((obj = objGetNearestTypeTo(OBJTYPE_ExplodeAnimator, self, &distance))) {
             explodeAnimSetup = (ExplodeAnimator_Setup*)obj->setup;
             if (explodeAnimSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
-                main_set_bits(explodeAnimSetup->gamebitExplodeTrigger, 1);
+                mainSetBits(explodeAnimSetup->gamebitExplodeTrigger, 1);
             }
         }
     }

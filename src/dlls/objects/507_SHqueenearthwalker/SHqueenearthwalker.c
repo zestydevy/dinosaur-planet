@@ -40,8 +40,8 @@ void SHqueenearthwalker_setup(Object* self, SHqueenearthwalker_Setup* setup, s32
     objdata = self->data;
     self->srt.yaw = setup->unk18 << 8;
     self->animCallback = SHqueenearthwalker_func_4F8;
-    objdata->eatenWhiteMushrooms = main_get_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
-    objdata->questProgress = main_get_bits(BIT_SH_Queen_EW_Quest_Progress);
+    objdata->eatenWhiteMushrooms = mainGetBits(BIT_SH_Queen_EW_White_Mushrooms_Eaten);
+    objdata->questProgress = mainGetBits(BIT_SH_Queen_EW_Quest_Progress);
 }
 
 // offset: 0xA0 | func: 1 | export: 1
@@ -53,9 +53,9 @@ void SHqueenearthwalker_control(Object* self) {
     prevQuestProgress = objdata->questProgress;
     self->unkAF &= ~8;
     if (self->curModAnimId != 1) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     }
-    func_80024108(self, 0.005f, gUpdateRate, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
     switch (objdata->questProgress) {
 
     case 1:
@@ -63,28 +63,28 @@ void SHqueenearthwalker_control(Object* self) {
         break;
     case 2:
         if (self->unkAF & 1) {
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-            main_set_bits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
+            mainSetBits(BIT_SH_Move_Thorntail_Blocking_Hollow_Log, 1);
             objdata->questProgress = 3;
         }
         break;
     case 3:
         if (self->unkAF & 4) {
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_White_Mushrooms) != 0) {
-                joy_disable_buttons(0, A_BUTTON);
-                objdata->eatenWhiteMushrooms += main_get_bits(BIT_Inventory_White_Mushrooms);
+                joyDisableButtons(0, A_BUTTON);
+                objdata->eatenWhiteMushrooms += mainGetBits(BIT_Inventory_White_Mushrooms);
                 if (objdata->eatenWhiteMushrooms <= 0) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                 } else {
                     objdata->questProgress = 4U;
                     gDLL_30_Task->vtbl->mark_task_completed(0xB);
-                    main_set_bits(BIT_SH_Move_Thorntail_Blocking_Swapstone, 1);
+                    mainSetBits(BIT_SH_Move_Thorntail_Blocking_Swapstone, 1);
                 }
-                main_set_bits(BIT_Inventory_White_Mushrooms, 0);
-                main_set_bits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
+                mainSetBits(BIT_Inventory_White_Mushrooms, 0);
+                mainSetBits(BIT_SH_Queen_EW_White_Mushrooms_Eaten, objdata->eatenWhiteMushrooms);
             } else if (self->unkAF & 1) {
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             }
         }
@@ -106,7 +106,7 @@ void SHqueenearthwalker_control(Object* self) {
         break;
     }
     if (prevQuestProgress != objdata->questProgress) {
-        main_set_bits(BIT_SH_Queen_EW_Quest_Progress, objdata->questProgress);
+        mainSetBits(BIT_SH_Queen_EW_Quest_Progress, objdata->questProgress);
     }
 }
 
@@ -116,7 +116,7 @@ void SHqueenearthwalker_update(Object *self) { }
 // offset: 0x470 | func: 3 | export: 3
 void SHqueenearthwalker_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -149,20 +149,20 @@ static int SHqueenearthwalker_func_4F8(Object* a0, Object* a1, AnimObj_Data* a2,
         case 3:
             objdata->questProgress = 5;
             gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
-            main_set_bits(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
-            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
+            mainSetBits(BIT_Play_Seq_0298_Queen_Shows_VFPT, 1);
+            mapWarpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         case 4:
             objdata->questProgress = 6;
             gDLL_29_Gplay->vtbl->set_act(MAP_VOLCANO_FORCE_POINT_TEMPLE, 11);
-            main_set_bits(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
-            warpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
+            mainSetBits(BIT_Play_Seq_0299_Queen_Shows_SpellStones, 1);
+            mapWarpPlayer(WARP_VFP_CALDERA_LOWER, /*fadeToBlack=*/FALSE);
             break;
         }
     }
 
     if (sp40 != objdata->questProgress) {
-        main_set_bits(BIT_SH_Queen_EW_Quest_Progress, objdata->questProgress);
+        mainSetBits(BIT_SH_Queen_EW_Quest_Progress, objdata->questProgress);
     }
     
     return 0;

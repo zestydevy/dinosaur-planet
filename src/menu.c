@@ -63,10 +63,10 @@ char D_800A7D98[8];
 char D_800A7DA0[8];
 /* -------- .bss end 800a7db0 -------- */
 
-void menu_do_menu_swap();
-void func_80010088();
+void menuDoMenuSwap(void);
+void menu_func_80010088(void);
 
-void menu_init() {
+void menuInit(void) {
     gActiveMenuDLL = NULL;
     D_800A7D58 = 0;
     D_800A7D5C = 0;
@@ -83,29 +83,29 @@ void menu_init() {
     D_800A7D7C = 0;
 }
 
-void menu_set(s32 id) {
+void menuSet(s32 id) {
     if (id != gCurrentMenuID) {
         gNextMenuID = id + 1;
 
         if (gActiveMenuDLL == NULL) {
-            menu_do_menu_swap();
+            menuDoMenuSwap();
         }
     }
 }
 
-s32 menu_get_current() {
+s32 menuGetCurrent(void) {
     return gCurrentMenuID;
 }
 
-DLL_IMenu *menu_get_active_dll() {
+DLL_IMenu *menuGetActiveDLL(void) {
     return gActiveMenuDLL;
 }
 
-s32 menu_get_previous() {
+s32 menuGetPrevious(void) {
     return gPreviousMenuID;
 }
 
-void menu_do_menu_swap() {
+void menuDoMenuSwap(void) {
     if (gNextMenuID != 0) {
         gNextMenuID -= 1;
 
@@ -114,18 +114,18 @@ void menu_do_menu_swap() {
         }
 
         if (gCurrentMenuID == MENU_NONE) {
-            font_window_flush_strings(1);
+            fontWindowFlushStrings(1);
         }
 
         gPreviousMenuID = gCurrentMenuID;
 
         if (gActiveMenuDLL != NULL) {
-            dll_unload(gActiveMenuDLL);
+            dllFree(gActiveMenuDLL);
             gActiveMenuDLL = NULL;
         }
 
         if (gMenuDLLIDs[gNextMenuID] != -1) {
-            gActiveMenuDLL = (DLL_IMenu*)dll_load_deferred(gMenuDLLIDs[gNextMenuID], 1);
+            gActiveMenuDLL = (DLL_IMenu*)dllLoad(gMenuDLLIDs[gNextMenuID], 1);
         } else {
             gActiveMenuDLL = NULL;
             gNextMenuID = 0;
@@ -136,42 +136,42 @@ void menu_do_menu_swap() {
     }
 }
 
-s32 menu_update1() {
+s32 menuUpdate1(void) {
     s32 ret;
 
     ret = 0;
 
-    func_80010088();
+    menu_func_80010088();
 
     if (gActiveMenuDLL != NULL) {
         ret = gActiveMenuDLL->vtbl->update1();
     }
 
-    menu_do_menu_swap();
+    menuDoMenuSwap();
 
     return ret;
 }
 
-void menu_update2() {
+void menuUpdate2(void) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->vtbl->update2();
     }
 
-    menu_do_menu_swap();
+    menuDoMenuSwap();
 }
 
-void menu_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void menuDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->vtbl->draw(gdl, mtxs, vtxs);
     }
 }
 
-void func_8000F640(s32 param1) { }
+void menu_func_8000F640(s32 param1) { }
 
 /** 
   * Starts a countdown timer
   */
-void func_8000F64C(s8 param1, s32 seconds) {
+void menu_func_8000F64C(s8 param1, s32 seconds) {
     seconds *= 60;
 
     D_800A7D79 = param1;
@@ -188,7 +188,7 @@ void func_8000F64C(s8 param1, s32 seconds) {
     D_800A7D94 = param1 & 3;
 }
 
-void func_8000F6CC() {
+void menu_func_8000F6CC(void) {
     if (D_800A7D6C == 0) {
         return;
     }
@@ -197,69 +197,69 @@ void func_8000F6CC() {
 
     if ((D_800A7D79 & 4)) {
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+            dll_amSfx->Stop(D_800A7D7C);
         }
 
-        D_800A7D7C = gDLL_6_AMSFX->vtbl->play(0, SOUND_775_Timer_Countdown, MAX_VOLUME, 0, 0, 0, 0);
+        D_800A7D7C = dll_amSfx->Play(0, SOUND_775_Timer_Countdown, MAX_VOLUME, 0, 0, 0, 0);
     } else {
         D_800A7D7C = 0;
     }
 
     if ((D_800A7D79 & 1)) {
-        gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-        gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+        dll_amSfx->SetPitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+        dll_amSfx->SetVol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
     } else {
-        gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-        gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+        dll_amSfx->SetPitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+        dll_amSfx->SetVol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
     }
 }
 
-void func_8000F9DC() {
+void menu_func_8000F9DC(void) {
     D_800A7D6C = 1;
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 }
 
-void func_8000FA2C() {
+void menu_func_8000FA2C(void) {
     D_800A7D94 = 0;
 
     if (D_800A7D79 & 8) {
-        gDLL_6_AMSFX->vtbl->play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
     }
 
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
     D_800A7D79 = 0;
 }
 
-void func_8000FAC8() {
+void menu_func_8000FAC8(void) {
     D_800A7D94 = 0;
     
     if (D_800A7D7C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+        dll_amSfx->Stop(D_800A7D7C);
         D_800A7D7C = 0;
     }
 
     D_800A7D79 = 0;
 }
 
-s32 func_8000FB1C() {
+s32 menu_func_8000FB1C(void) {
     return D_800A7D78;
 }
 
-void func_8000FB2C(Gfx **gdl) {
+void menu_func_8000FB2C(Gfx **gdl) {
     s32 _stackPad[2];
     f32 delay;
     s32 bvar;
 
     delay = gUpdateRateF;
-    if (D_800A7D6C != 0 || get_pause_state() != 0) {
+    if (D_800A7D6C != 0 || mainGetPauseState() != 0) {
         delay = 0.0f;
     }
 
@@ -284,11 +284,11 @@ void func_8000FB2C(Gfx **gdl) {
 
     if (bvar) {
         if (D_800A7D79 & 8) {
-            gDLL_6_AMSFX->vtbl->play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(0, SOUND_242_Failure_Glissando, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         if (D_800A7D7C != 0) {
-            gDLL_6_AMSFX->vtbl->stop(D_800A7D7C);
+            dll_amSfx->Stop(D_800A7D7C);
             D_800A7D7C = 0;
         }
 
@@ -299,63 +299,63 @@ void func_8000FB2C(Gfx **gdl) {
 
     if (D_800A7D7C != 0) {
         if ((D_800A7D79 & 1)) {
-            gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
-            gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
+            dll_amSfx->SetPitch(D_800A7D7C, 1.3f - (D_800A7D70 / D_800A7D74) * 0.6f);
+            dll_amSfx->SetVol(D_800A7D7C, (127 - (u8)((D_800A7D70 / D_800A7D74) * 80.0f)));
         } else {
-            gDLL_6_AMSFX->vtbl->set_pitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
-            gDLL_6_AMSFX->vtbl->set_vol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
+            dll_amSfx->SetPitch(D_800A7D7C, (D_800A7D70 / D_800A7D74) * 0.6f + 0.69999999f);
+            dll_amSfx->SetVol(D_800A7D7C, ((u8)((D_800A7D70 / D_800A7D74) * 80.0f)) + 47);
         }
     }
 
     if (D_800A7D79 & 0x10) {
-        font_window_set_coords(2, 130, 25, 190, 50);
-        font_window_use_font(2, FONT_DINO_SUBTITLE_FONT_1);
-        font_window_set_bg_colour(2, 0, 0, 0, 128);
-        font_window_flush_strings(2);
+        fontWindowSetCoords(2, 130, 25, 190, 50);
+        fontWindowUseFont(2, FONT_DINO_SUBTITLE_FONT_1);
+        fontWindowSetBgColour(2, 0, 0, 0, 128);
+        fontWindowFlushStrings(2);
         sprintf(D_800A7D98, "%d", (int)D_800A7D70 / 60);
-        font_window_add_string_xy(2, 20, 10, D_800A7D98, 1, ALIGN_TOP_RIGHT);
+        fontWindowAddStringXY(2, 20, 10, D_800A7D98, 1, ALIGN_TOP_RIGHT);
         sprintf(D_800A7DA0, ".%02d", (int)D_800A7D70 % 60);
-        font_window_add_string_xy(2, 45, 10, D_800A7DA0, 1, ALIGN_TOP_RIGHT);
-        font_window_draw(gdl, NULL, NULL, 2);
+        fontWindowAddStringXY(2, 45, 10, D_800A7DA0, 1, ALIGN_TOP_RIGHT);
+        fontWindowDraw(gdl, NULL, NULL, 2);
     }
 }
 
-s32 func_80010008() {
+s32 menu_func_80010008(void) {
     return D_8008C888;
 }
 
-void func_80010018(s32 param1) {
+void menu_func_80010018(s32 param1) {
     D_8008C888 = param1;
 }
 
-s32 func_80010028() {
+s32 menu_func_80010028(void) {
     return D_8008C88C;
 }
 
-void func_80010038(s32 param1) {
+void menu_func_80010038(s32 param1) {
     D_8008C88C = param1;
 }
 
-s32 func_80010048() {
+s32 menu_func_80010048(void) {
     return D_8008C890;
 }
 
-void func_80010058(s32 param1) {
+void menu_func_80010058(s32 param1) {
     D_8008C890 = param1;
 }
 
-void set_save_game_idx(s32 idx) {
+void menuSetSaveGameIdx(s32 idx) {
     gSaveGameIdx = idx;
 }
 
-s32 get_save_game_idx() {
+s32 menuGetSaveGameIdx(void) {
     return gSaveGameIdx;
 }
 
-void func_80010088() {
+void menu_func_80010088(void) {
     u32 res;
 
-    res = vi_get_current_size();
+    res = viGetCurrentSize();
     
     D_800A7D8C = GET_VIDEO_WIDTH(res);
     D_800A7D8E = 0;
@@ -364,7 +364,7 @@ void func_80010088() {
     D_800A7D69 = 0;
 }
 
-void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
+void menu_func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
     if (param1 < D_800A7D8C) {
         D_800A7D8C = param1;
     }
@@ -384,14 +384,14 @@ void func_800100D4(s32 param1, s32 param2, s32 param3, s32 param4) {
     D_800A7D69 = 1;
 }
 
-void func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
+void menu_func_80010158(s32 *param1, s32 *param2, s32 *param3, s32 *param4) {
     if (D_800A7D69 != 0) {
         *param1 = D_800A7D8C;
         *param2 = D_800A7D8E;
         *param3 = D_800A7D90;
         *param4 = D_800A7D92;
     } else {
-        u32 res = vi_get_current_size();
+        u32 res = viGetCurrentSize();
 
         *param1 = 0;
         *param2 = GET_VIDEO_WIDTH(res);

@@ -1,12 +1,17 @@
-#include "common.h"
+#include "PR/os.h"
+#include "sys/pi.h"
+#include "sys/memory.h"
 #include "macros.h"
 
-extern s32 __fstAddress;
-extern s32 __file1Address;
+extern u8 __fstAddress[];
+extern u8 __file1Address[];
 
-void read_from_rom(u32 romAddr, u8* dst, s32 size);
+typedef struct { 
+    u32 fileCount;
+    u32 offsets[NUM_FILES];
+} Fs;
 
-extern void * romcopy_dat;
+void romCopy(u32 romAddr, u8* dst, s32 size);
 
 // -------- .bss start 800b2e30 -------- //
 OSIoMesg romcopy_OIMesg;
@@ -18,24 +23,24 @@ Fs *gFST;
 u32 gLastFSTIndex;
 // -------- .bss end 800b2ed0 -------- //
 
-void init_filesystem(void)
-{
+// official name: piInit
+void piInit(void) {
     s32 size;
 
     osCreateMesgQueue(&D_800B2EA8, D_800B2E68, ARRAYCOUNT(D_800B2E68));
     osCreateMesgQueue(&romcopy_mesgq, D_800B2E48, ARRAYCOUNT(D_800B2E48));
 
-    osCreatePiManager(0x96, &D_800B2EA8, D_800B2E68, ARRAYCOUNT(D_800B2E68));
+    osCreatePiManager(OS_PRIORITY_PIMGR, &D_800B2EA8, D_800B2E68, ARRAYCOUNT(D_800B2E68));
 
     // A4AA0 - A4970
-    size = (s32)&__file1Address - (s32)&__fstAddress;
+    size = __file1Address - __fstAddress;
 
     gFST = (Fs *)mmAlloc(size, COLOUR_TAG_GREY, NULL);
-    read_from_rom((u32)&__fstAddress, (u8 *)gFST, size);
+    romCopy((u32)__fstAddress, (u8 *)gFST, size);
 }
 
-void *read_alloc_file(u32 id, u32 a1)
-{
+// official name: piRomLoad
+void *piRomLoad(u32 id, u32 a1) {
     u32 * fstEntry;
     void * data;
     s32 size;
@@ -51,22 +56,23 @@ void *read_alloc_file(u32 id, u32 a1)
     size = fstEntry[1] - offset;
 
     data = mmAlloc(size, COLOUR_TAG_GREY, NULL);
-    if (data == NULL)
+    if (data == NULL) {
         return NULL;
+    }
 
-    read_from_rom((u32)&__file1Address + offset, data, size);
+    romCopy((u32)__file1Address + offset, data, size);
 
     return data;
 }
 
-s32 read_file(u32 id, void *dest)
-{
+s32 piRomLoadToDest(u32 id, void *dest) {
     u32 * fstEntry;
     s32 size;
     u32 offset;
 
-    if (id > gFST->fileCount)
+    if (id > gFST->fileCount) {
         return NULL;
+    }
 
     ++id;
 
@@ -74,13 +80,13 @@ s32 read_file(u32 id, void *dest)
     offset = fstEntry[0];
     size = fstEntry[1] - offset;
 
-    read_from_rom((u32)&__file1Address + offset, dest, size);
+    romCopy((u32)__file1Address + offset, dest, size);
 
     return size;
 }
 
-s32 read_file_region(u32 id, void *dst, u32 offset, s32 size)
-{
+// official name: piRomLoadSection
+s32 piRomLoadSection(u32 id, void *dst, u32 offset, s32 size) {
   s32 fileAddr;
   u32 * tmp;
 
@@ -92,13 +98,13 @@ s32 read_file_region(u32 id, void *dst, u32 offset, s32 size)
 
   gLastFSTIndex = id;
 
-  read_from_rom(fileAddr + (s32)&__file1Address, dst, size);
+  romCopy(fileAddr + (u32)__file1Address, dst, size);
 
   return size;
 }
 
-s32 file_get_romaddr(u32 id, s32 offset)
-{
+// official name: piRomGetSectionPtr
+u32 piRomGetSectionPtr(u32 id, s32 offset) {
     u32 * fstEntry;
     s32 offs;
 
@@ -111,17 +117,17 @@ s32 file_get_romaddr(u32 id, s32 offset)
     fstEntry = id + gFST->offsets - 1;
     offs = *fstEntry + offset;
 
-    return (offs + (u32)&__file1Address);
+    return (offs + (u32)__file1Address);
 }
 
-
-s32 get_file_size(u32 id)
-{
+// official name: piRomGetFileSize
+s32 piRomGetFileSize(u32 id) {
     u32 * fstEntry;
     s32 size;
 
-    if (id > gFST->fileCount)
+    if (id > gFST->fileCount) {
         return NULL;
+    }
 
     ++id;
 
@@ -131,8 +137,8 @@ s32 get_file_size(u32 id)
     return size;
 }
 
-void read_from_rom(u32 romAddr, u8* dst, s32 size)
-{
+// official name: romCopy
+void romCopy(u32 romAddr, u8* dst, s32 size) {
     OSMesg mesg;
     OSMesg mesg2;
     s32 chunkSize;
@@ -140,8 +146,7 @@ void read_from_rom(u32 romAddr, u8* dst, s32 size)
     osInvalDCache(dst, size);
 
     chunkSize = 0x5000;
-    while (size > 0)
-    {
+    while (size > 0) {
         if (size < chunkSize) {
             chunkSize = size;
         }

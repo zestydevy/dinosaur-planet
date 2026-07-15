@@ -1010,7 +1010,7 @@ void __n_CSPHandleMIDIMsg(N_ALCSPlayer *seqp, N_ALEvent *event) {
 			}
 			break;
 		case (AL_MIDI_FX_CTRL_6):
-			mpeg_play(byte2); //snd_start_mp3_by_filenum
+			mpegPlay(byte2); //snd_start_mp3_by_filenum
 			break;
 		case (0x20):
 			seqp->chanState[chan].unk36 = byte2;

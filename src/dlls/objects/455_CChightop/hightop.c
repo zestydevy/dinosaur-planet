@@ -49,8 +49,8 @@ void dll_455_control(Object* self) {
     TextureAnimator* sp38;
 
     HighTopData = self->data;
-    sp3C = func_800348A0(self, 5, 0);
-    sp38 = func_800348A0(self, 4, 0);
+    sp3C = objExprGetTexAnimator(self, 5, 0);
+    sp38 = objExprGetTexAnimator(self, 4, 0);
     switch (HighTopData->unk24) {                             
     case 0:                                        
         switch (HighTopData->unk25) {                          
@@ -58,7 +58,7 @@ void dll_455_control(Object* self) {
             sp3C->frame = 0x200;
             sp38->frame = 0x200;
             HighTopData->unk0.aimIsActive = 0;
-            func_80023D30(self, 0x12, 0.0f, 0);
+            objAnimSet(self, 0x12, 0.0f, 0);
             HighTopData->unk2C = 0.001f;
             HighTopData->unk25 = 1;
             HighTopData->unk26 = 0;
@@ -69,22 +69,22 @@ void dll_455_control(Object* self) {
                 sp3C->frame = 0;
                 sp38->frame = 0;
                 HighTopData->unk28 = 0.0f;
-                func_80023D30(self, 0x10, 0.0f, 0);
+                objAnimSet(self, 0x10, 0.0f, 0);
                 HighTopData->unk2C = 0.005f;
                 HighTopData->unk25 = 2;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_841, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_841, MAX_VOLUME, NULL, NULL, 0, NULL);
                 /* fallthrough */
             } else {
                 HighTopData->unk30 -= gUpdateRateF;
                 if (HighTopData->unk30 <= 0.0f) {
                     if (HighTopData->unk26 == 0) {
                         HighTopData->unk26 = 1U;
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_83F, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_83F, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else {
                         HighTopData->unk26 = 0U;
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_840, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_840, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
-                    HighTopData->unk30 += rand_next(0x12C, 0x190);
+                    HighTopData->unk30 += mathRnd(0x12C, 0x190);
                 }
                 break;
             }
@@ -95,7 +95,7 @@ void dll_455_control(Object* self) {
             }
             if (self->animProgress > 0.95f) {
                 HighTopData->unk0.aimIsActive = 1;
-                func_80023D30(self, 0x11, 0.0f, 0);
+                objAnimSet(self, 0x11, 0.0f, 0);
                 HighTopData->unk2C = 0.005f;
                 HighTopData->unk25 = 3U;
                 HighTopData->unk30 = 0.0f;
@@ -111,23 +111,23 @@ void dll_455_control(Object* self) {
             }
             if (HighTopData->unk28 >= 300.0f) {
                 HighTopData->unk0.aimIsActive = 0;
-                func_80023D30(self, 0x10, 1.0f, 0);
+                objAnimSet(self, 0x10, 1.0f, 0);
                 HighTopData->unk2C = -0.004f;
                 HighTopData->unk25 = 4;
                 /* fallthrough */
             } else {
                 if (HighTopData->unk0.aimIsActive != 0) {
-                    temp_v0 = get_player();
+                    temp_v0 = objGetPlayer();
                     HighTopData->unk0.headAimX = temp_v0->srt.transl.x;
                     HighTopData->unk0.headAimY = temp_v0->srt.transl.y;
                     HighTopData->unk0.headAimZ = temp_v0->srt.transl.z;
                 }
-                func_800328F0(self, &HighTopData->unk0, 0.0f);
-                func_80032A08(self, &HighTopData->unk0);
+                objExpr_func_800328F0(self, &HighTopData->unk0, 0.0f);
+                objExprEyeIdle(self, &HighTopData->unk0);
                 HighTopData->unk30 -= gUpdateRateF;
                 if (HighTopData->unk30 <= 0.0f) {
                     HighTopData->unk30 += 150.0f;
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_842, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_842, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             }
@@ -141,19 +141,19 @@ void dll_455_control(Object* self) {
                 sp3C->frame = 0x200;
                 sp38->frame = 0x200;
                 HighTopData->unk25 = 1;
-                func_80023D30(self, 0x12, 0.0f, 0);
+                objAnimSet(self, 0x12, 0.0f, 0);
                 HighTopData->unk2C = 0.001f;
                 HighTopData->unk26 = 0;
                 HighTopData->unk30 = 0.0f;
             }
-            func_800328F0(self, &HighTopData->unk0, 0.0f);
-            func_80032A08(self, &HighTopData->unk0);
+            objExpr_func_800328F0(self, &HighTopData->unk0, 0.0f);
+            objExprEyeIdle(self, &HighTopData->unk0);
             break;
         }
         if (self->unkAF & 1) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
-        func_80024108(self, HighTopData->unk2C, gUpdateRateF, NULL);
+        objAnimAdvance(self, HighTopData->unk2C, gUpdateRateF, NULL);
         /* fallthrough */
     case 1:                                         
         return;
@@ -166,7 +166,7 @@ void dll_455_update(Object *self) { }
 // offset: 0x634 | func: 3 | export: 3
 void dll_455_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

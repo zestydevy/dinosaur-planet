@@ -764,28 +764,30 @@ enum SoundID {
 
 DLL_INTERFACE(DLL_6_AMSFX) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func_338)(void);
-/*1*/ void (*func_480)(Object *obj);
+/*0*/ void (*Func338)(void);
+/*1*/ void (*Func480)(Object *obj);
 // Play sound using source object for panning and distance falloff
-/*2*/ u32 (*play)(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *filename, s32 lineNo, char *code);
-/*3*/ void (*func_7E4)(u8 arg0);
-/*4*/ void (*set_vol)(u32 soundHandle, u8 volume); //adjust volume
-/*5*/ void (*set_pitch)(u32 soundHandle, f32 pitch); //adjust pitch
-/*6*/ void (*stop)(u32 soundHandle);
-/*7*/ void (*stop_object)(Object *obj);
-/*8*/ s32 (*is_playing)(u32 soundHandle);
-/*9*/ s32 (*find_emitters_in_range)(Object* listener, s32 distance, s32 minVolume, Object **foundObjs, s32 foundObjsMax);
-/*10*/ s32 (*func_DCC)(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3);
-/*11*/ s32 (*get_default)(u16 soundID, SoundDef* soundDef);
-/*12*/ s32 (*flush_cache)(s32 arg0, UNK_TYPE_32 arg1);
-/*13*/ void (*snd_play_ex)(Object* obj, u16 soundID, u32* soundHandle, char *filename, s32 lineNo);
-/*14*/ void (*play2)(Object* obj, u16 soundID, u32* soundHandle);
-/*15*/ void (*play3)(Object* obj, u16 soundID, u8 volume, u32* soundHandle);
-/*16*/ void (*free_object)(Object *obj);
-/*17*/ void (*update_doppler)(s32 soundHandle, Object* emitter, Object* listener, f32 arg3);
-/*18*/ void (*water_falls_control)(void);
-/*19*/ void (*water_falls_set_flags)(u8 flags);
-/*20*/ void (*play_custom)(Object* obj, u16 soundID, f32 pitch, f32 minDist, f32 maxDist, u32* soundHandle);
+/*2*/ u32 (*Play)(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *filename, s32 lineNo, char *code);
+/*3*/ void (*Func7E4)(u8 arg0);
+/*4*/ void (*SetVol)(u32 soundHandle, u8 volume); //adjust volume
+/*5*/ void (*SetPitch)(u32 soundHandle, f32 pitch); //adjust pitch
+/*6*/ void (*Stop)(u32 soundHandle);
+/*7*/ void (*StopObject)(Object *obj);
+/*8*/ s32 (*IsPlaying)(u32 soundHandle);
+/*9*/ s32 (*FindEmittersInRange)(Object* listener, s32 distance, s32 minVolume, Object **foundObjs, s32 foundObjsMax);
+/*10*/ s32 (*FuncDCC)(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3);
+/*11*/ s32 (*GetDefault)(u16 soundID, SoundDef* soundDef);
+/*12*/ s32 (*FlushCache)(s32 arg0, UNK_TYPE_32 arg1);
+/*13*/ void (*SndPlayEx)(Object* obj, u16 soundID, u32* soundHandle, char *filename, s32 lineNo);
+/*14*/ void (*Play2)(Object* obj, u16 soundID, u32* soundHandle);
+/*15*/ void (*Play3)(Object* obj, u16 soundID, u8 volume, u32* soundHandle);
+/*16*/ void (*FreeObject)(Object *obj);
+/*17*/ void (*UpdateDoppler)(s32 soundHandle, Object* emitter, Object* listener, f32 arg3);
+/*18*/ void (*WaterFallsControl)(void);
+/*19*/ void (*WaterFallsSetFlags)(u8 flags);
+/*20*/ void (*PlayCustom)(Object* obj, u16 soundID, f32 pitch, f32 minDist, f32 maxDist, u32* soundHandle);
 };
+
+#define dll_amSfx (gDLL_6_AMSFX->vtbl)
 
 #endif //_DLLS_6_H

@@ -36,32 +36,32 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
-        player = get_player();
-        if (player && (vec3_distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
+        player = objGetPlayer();
+        if (player && (vec3Distance(&player->globalPosition, &self->globalPosition) < 2.5e7f)) {
             objdata->state = STATE_0;
             break;
         }
         
-        if (main_get_bits(BIT_IM_MultiSeq_3)) {
-            if (main_get_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring)) {
+        if (mainGetBits(BIT_IM_MultiSeq_3)) {
+            if (mainGetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring)) {
                 objdata->state = STATE_Race_Won;
             } else {
-                main_set_bits(BIT_IM_MultiSeq_3, 0);
-                main_set_bits(BIT_IM_Race_Ended, 0);
-                main_set_bits(BIT_IM_Race_Started, 0);
-                main_set_bits(BIT_Play_Seq_00EB_IM_Lose_Race, 0);
-                main_set_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 0);
+                mainSetBits(BIT_IM_MultiSeq_3, 0);
+                mainSetBits(BIT_IM_Race_Ended, 0);
+                mainSetBits(BIT_IM_Race_Started, 0);
+                mainSetBits(BIT_Play_Seq_00EB_IM_Lose_Race, 0);
+                mainSetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 0);
                 objdata->state = STATE_Race_Start_Sequence;
             }
         } else {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 1);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 1);
-            if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
+            if (mainGetBits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
                 objdata->state = STATE_Rescue_Tricky;
             } else {
                 gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 1);
                 objdata->state = STATE_Intro_Sequence;
-                main_set_bits(BIT_Play_Seq_0063_IM_Sabre_Intro, 1);
+                mainSetBits(BIT_Play_Seq_0063_IM_Sabre_Intro, 1);
             }
         }
 
@@ -82,7 +82,7 @@ void IMIceMountain_setup(Object *self, ObjSetup *setup, s32 arg2) {
 void IMIceMountain_control(Object *self) {
     IMIceMountain_Data *objdata = self->data;
 
-    vi_set_update_rate_target(1); // 60 FPS
+    viSetUpdateRateTarget(1); // 60 FPS
 
     switch (gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
     case IM_Act1_Rescuing_Tricky:
@@ -108,7 +108,7 @@ void IMIceMountain_update(Object *self) { }
 // offset: 0x450 | func: 3 | export: 3
 void IMIceMountain_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -156,24 +156,24 @@ void IMIceMountain_do_act1(Object *self) {
     objdata = self->data;
     switch (objdata->state) {
     case STATE_Intro_Sequence:
-        if (main_get_bits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
+        if (mainGetBits(BIT_Played_Seq_0063_IM_Sabre_Intro)) {
             objdata->state = STATE_Rescue_Tricky;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup2_AnimSpacecraft, 0);
         }
         break;
     case STATE_Rescue_Tricky:
-        if (main_get_bits(BIT_IM_MultiSeq_2)) {
+        if (mainGetBits(BIT_IM_MultiSeq_2)) {
             objdata->state = STATE_Race_Start_Sequence;
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup6_Track_Icicles, 1);
         }
         break;
     case STATE_Race_Start_Sequence:
-        if (main_get_bits(BIT_IM_MultiSeq_3)) {
+        if (mainGetBits(BIT_IM_MultiSeq_3)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup0_AnimTricky, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, IM_ObjGroup5_Summit_Main, 0);
         }
 
-        if (main_get_bits(BIT_IM_Race_Started)) {
+        if (mainGetBits(BIT_IM_Race_Started)) {
             objdata->state = STATE_Race;
         }
 
@@ -212,7 +212,7 @@ void IMIceMountain_do_act1(Object *self) {
             objdata->warpCounter--;
             if (objdata->warpCounter == 0) {
                 // race will restart after warp
-                warpPlayer(WARP_IM_RACE_START, FALSE);
+                mapWarpPlayer(WARP_IM_RACE_START, FALSE);
             }
         }
         break;
@@ -229,15 +229,15 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
 
     gDLL_1_cmdmenu->vtbl->disable_buttons(L_CBUTTONS | R_CBUTTONS | D_CBUTTONS);
 
-    vi_set_update_rate_target(3); // 20 FPS
+    viSetUpdateRateTarget(3); // 20 FPS
 
-    if (main_get_bits(BIT_IM_Race_Ended)) {
-        main_set_bits(BIT_IM_Race_Ended, 0);
-        main_set_bits(BIT_IM_Race_Started, 0);
-        player = get_player();
+    if (mainGetBits(BIT_IM_Race_Ended)) {
+        mainSetBits(BIT_IM_Race_Ended, 0);
+        mainSetBits(BIT_IM_Race_Started, 0);
+        player = objGetPlayer();
         snowbike = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (snowbike) {
-            racePosition = ((DLL_IVehicle*)snowbike->dll)->vtbl->get_race_position(snowbike);
+            racePosition = dll_vehicle(snowbike)->GetRacePosition(snowbike);
         } else {
             racePosition = 0;
         }
@@ -247,10 +247,10 @@ void IMIceMountain_do_race(Object *self, IMIceMountain_Data *objdata) {
         if (racePosition == 1) {
             gDLL_1_cmdmenu->vtbl->disable_buttons(R_CBUTTONS);
             objdata->state = STATE_Race_Won;
-            main_set_bits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 1);
+            mainSetBits(BIT_Play_Seq_00EA_IM_Sabre_Falls_Into_Hot_Spring, 1);
         } else {
             objdata->state = STATE_Race_Lost;
-            main_set_bits(BIT_Play_Seq_00EB_IM_Lose_Race, 1);
+            mainSetBits(BIT_Play_Seq_00EB_IM_Lose_Race, 1);
         }
     }
 }

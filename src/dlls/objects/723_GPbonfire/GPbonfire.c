@@ -87,7 +87,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     objdata->currentState = 0;
     objdata->soundHandles[0] = 0;
     objdata->soundHandles[1] = 0;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
     objdata->gameBitKindlingPlaced = BIT_GP_Bonfire_Kindling_Placed;
     objdata->gameBitBurning = BIT_GP_Bonfire_Burning;
     objdata->sequenceIndexKindling = 0;
@@ -112,13 +112,13 @@ void GPbonfire_control(Object* self) {
 
     objdata = self->data;
     setup = (GPBonfire_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
 
-    playerIsNearby = vec3_distance_xz_squared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
+    playerIsNearby = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
 
     objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
-        main_set_bits(objdata->gameBitKindlingPlaced, TRUE);
+        mainSetBits(objdata->gameBitKindlingPlaced, TRUE);
         objdata->stateIndex = STATE_2_WAIT_FOR_KYTE;
         objdata->currentState &= ~1;
         self->modelInstIdx = 1;
@@ -127,9 +127,9 @@ void GPbonfire_control(Object* self) {
     if (objdata->updateFireEffect) {
         self->srt.scale = bonfireScaleData[objdata->weedsDeposited];
         gDLL_14_Modgfx->vtbl->func10(self);
-        dll = dll_load_deferred(0x104B, 1);
+        dll = dllLoad(0x104B, 1);
         ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, modgfxScaleData[objdata->weedsDeposited], 0, 0x10004, -1, 0);
-        dll_unload(dll);
+        dllFree(dll);
         objdata->updateFireEffect = FALSE;
     }
 
@@ -137,11 +137,11 @@ void GPbonfire_control(Object* self) {
         case STATE_0_INITIALISE:
             self->modelInstIdx = 0;
             objdata->stateIndex = STATE_1_WAIT_FOR_PLAYER_INTERACTION;
-            if (main_get_bits(objdata->gameBitKindlingPlaced)) {
+            if (mainGetBits(objdata->gameBitKindlingPlaced)) {
                 self->modelInstIdx = 1;
                 objdata->stateIndex = STATE_2_WAIT_FOR_KYTE;
             }
-            if (main_get_bits(objdata->gameBitBurning)) {
+            if (mainGetBits(objdata->gameBitBurning)) {
                 objdata->timer = BONFIRE_DWINDLING_TIMER;
                 GPbonfire_func_A44(self);
             }
@@ -153,16 +153,16 @@ void GPbonfire_control(Object* self) {
             }
             break;
         case STATE_2_WAIT_FOR_KYTE:
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick && playerIsNearby) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-                    main_set_bits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
                 }
             }
             break;
         case STATE_3_START_BURNING:
-            if (vec3_distance_xz_squared(&get_sidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
+            if (vec3DistanceXZSquared(&objGetSidekick()->globalPosition, &self->globalPosition) <= 2500.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, NULL, PARTFXFLAG_2, -1, NULL);
             }
@@ -179,14 +179,14 @@ void GPbonfire_control(Object* self) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
 
             //Handle tumbleweeds (only whole ones, twigs don't count)
-            tumbleweeds = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+            tumbleweeds = objGetAllOfType(OBJTYPE_Baddie, &count);
             for (weedIndex = 0; weedIndex < count; weedIndex++){
                 if (tumbleweeds[weedIndex]->id == OBJ_Tumbleweed3) {
-                    distanceToTumbleweed = vec3_distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
+                    distanceToTumbleweed = vec3Distance(&self->globalPosition, &tumbleweeds[weedIndex]->globalPosition);
 
                     if (distanceToTumbleweed < 40.0f) {
                         if (tumbleweeds[weedIndex]) {} // @fake?
-                        obj_destroy_object(tumbleweeds[weedIndex]);
+                        objFreeObject(tumbleweeds[weedIndex]);
 
                         //Deposit tumbleweed into bonfire
                         if (objdata->weedsDeposited < 4) {
@@ -197,10 +197,10 @@ void GPbonfire_control(Object* self) {
 
                             //Lift up the ChimneySwipe once the fire's roaring
                             if (objdata->weedsDeposited == 4) {
-                                main_set_bits(BIT_GP_ChimneySwipe_Lifted, TRUE);
+                                mainSetBits(BIT_GP_ChimneySwipe_Lifted, TRUE);
                                 //Start a 60 second challenge timer
-                                func_8000F64C(0x15, 60);
-                                func_8000F6CC();
+                                menu_func_8000F64C(0x15, 60);
+                                menu_func_8000F6CC();
                             }
                             objdata->timer = BONFIRE_DWINDLING_TIMER;
                         }
@@ -223,7 +223,7 @@ void GPbonfire_control(Object* self) {
                 } else {
                     for (index = 0; index < 2; index++){
                         if (objdata->soundHandles[index]) {
-                            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[index]);
+                            dll_amSfx->Stop(objdata->soundHandles[index]);
                              objdata->soundHandles[index] = 0;
                         }
                     }
@@ -246,7 +246,7 @@ void GPbonfire_update(Object* self){ }
 // offset: 0x800 | func: 3 | export: 3
 void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility && self->modelInstIdx == 1) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
@@ -254,7 +254,7 @@ void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
 void GPbonfire_free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
     //@bug? doesn't stop soundHandles like other object DLLs do
 }
 
@@ -285,7 +285,7 @@ s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
             returnVal = 1;
         }
 
-        if (main_get_bits(objdata->gameBitKindlingPlaced)) {
+        if (mainGetBits(objdata->gameBitKindlingPlaced)) {
             objdata->timer = BONFIRE_DWINDLING_TIMER;
             GPbonfire_func_A44(self);
         } else {
@@ -321,33 +321,33 @@ void GPbonfire_func_A44(Object* self) {
     objdata = self->data;
     setup = (GPBonfire_Setup*)self->setup;
 
-    if (!main_get_bits(objdata->gameBitKindlingPlaced)) {
+    if (!mainGetBits(objdata->gameBitKindlingPlaced)) {
         return;
     }
 
     //Loop burning sounds
-    objdata->soundHandles[0] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
-    objdata->soundHandles[1] = gDLL_6_AMSFX->vtbl->play(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[0] = dll_amSfx->Play(self, SOUND_50a_Fire_Burning_Low_Loop, 0x7F, NULL, 0, 0, 0);
+    objdata->soundHandles[1] = dll_amSfx->Play(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
     gDLL_14_Modgfx->vtbl->func10(self);
-    dll = dll_load_deferred(0x104B, 1); //modgfx #75?
+    dll = dllLoad(0x104B, 1); //modgfx #75?
     ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, objdata->weedsDeposited, 0, 0x10004, -1, 0);
-    dll_unload(dll);
+    dllFree(dll);
 
     //Add damaging collision?
     self->objhitInfo->unk58 = 0x100;
     self->unkAF |= 8;
 
     //Advance state
-    main_set_bits(objdata->gameBitBurning, TRUE);
+    mainSetBits(objdata->gameBitBurning, TRUE);
     objdata->stateIndex = STATE_4_ADDING_TUMBLEWEEDS;
 
     //Set flag based on Kyte's curve motion
     curves = gDLL_25->vtbl->func_2BC4(self, setup->kyteCurveID);
     objdata->curves = curves;
     if (curves->type22.usedBit != -1) {
-        main_set_bits(curves->type22.usedBit, 1);
+        mainSetBits(curves->type22.usedBit, 1);
     }
 }
 

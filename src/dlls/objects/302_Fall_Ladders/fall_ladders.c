@@ -48,7 +48,7 @@ void Fall_Ladders_setup(Object* self, Fall_Ladders_Setup* objSetup, s32 reset) {
     self->animCallback = Fall_Ladders_anim_callback;
     self->srt.transl.y = objSetup->base.y + objData->raisedOffsetY;
     
-    obj_set_model(self, objSetup->modelIdx);
+    objSetModel(self, objSetup->modelIdx);
     
     objData->state = Fall_Ladders_STATE_0_Raised;
 }
@@ -73,7 +73,7 @@ void Fall_Ladders_control(Object* self) {
         objData->dropTimer -= (s16)gUpdateRateF;
         if (objData->dropTimer <= 0) {
             objData->state = Fall_Ladders_STATE_1_Falling;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6E9_Wooden_Ratcheting, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_6E9_Wooden_Ratcheting, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->dropTimer = 0;
         }
         return;
@@ -81,7 +81,7 @@ void Fall_Ladders_control(Object* self) {
         
     //Check if the ladder should start falling
     if (objData->state == Fall_Ladders_STATE_0_Raised) {
-        if (main_get_bits(objData->gamebitFall)) {
+        if (mainGetBits(objData->gamebitFall)) {
             objData->dropTimer = 10;
         }
     }
@@ -138,12 +138,12 @@ void Fall_Ladders_fall_or_rise_by_sequence(Object* self) {
     Fall_Ladders_Data* objData = self->data;
     
     //Fall
-    if (main_get_bits(objData->gamebitFall) && (main_get_bits(objData->gamebitRaise) == FALSE)) {
+    if (mainGetBits(objData->gamebitFall) && (mainGetBits(objData->gamebitRaise) == FALSE)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
     
     //Rise
-    if ((main_get_bits(objData->gamebitFall) == FALSE) && main_get_bits(objData->gamebitRaise)) {
+    if ((mainGetBits(objData->gamebitFall) == FALSE) && mainGetBits(objData->gamebitRaise)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
     }
 }

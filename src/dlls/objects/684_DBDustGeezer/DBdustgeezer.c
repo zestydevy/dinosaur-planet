@@ -57,7 +57,7 @@ void DBDustGeezer_setup(Object* self, DBDustGeezer_Setup* objSetup, int skipChil
     objData = self->data;
     
     //Hide geyser if its gamebit is set
-    if (main_get_bits(objSetup->gamebitHidden)) {
+    if (mainGetBits(objSetup->gamebitHidden)) {
         objData->state = DBDustGeezer_STATE_Hidden;
     } else {
         objData->state = DBDustGeezer_STATE_Main;
@@ -70,13 +70,13 @@ void DBDustGeezer_setup(Object* self, DBDustGeezer_Setup* objSetup, int skipChil
         }
     }
             
-    obj_add_object_type(self, OBJTYPE_DBDustGeezer);
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_DBDustGeezer);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
     objData->flags = 0;
     objData->soundHandle1 = 0;
     objData->range = objSetup->randomnessRange;
     self->srt.scale = self->def->scale * 0.5f;
-    func_80023D30(self, 0, 0, 0);
+    objAnimSet(self, 0, 0, 0);
 }
 
 // offset: 0x154 | func: 1 | export: 1
@@ -98,34 +98,34 @@ void DBDustGeezer_control(Object* self) {
     case DBDustGeezer_STATE_Main:
         if (objData->flags & DBDustGeezer_FLAG_Dug_Up) {
             //Firing a gem into the air
-            if (rand_next(0, 5) == 0) {
+            if (mathRnd(0, 5) == 0) {
                 STUBBED_PRINTF(" Firing %i ");
                 if (DBDustGeezer_launch_gem(self) == FALSE){
                     STUBBED_PRINTF("WARNING: BoneDust Buffer Full ");
                 }
-                if (gDLL_6_AMSFX->vtbl->is_playing(objData->soundHandle1)) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle1);
+                if (dll_amSfx->IsPlaying(objData->soundHandle1)) {
+                    dll_amSfx->Stop(objData->soundHandle1);
                 }
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_A21_Whoosh_Echoey, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_A21_Whoosh_Echoey, MAX_VOLUME, 0, 0, 0, 0);
 
                 //Advance state when all gems launched
                 objData->gemsToLaunch--;
                 if (objData->gemsToLaunch == 0) {
                     objData->flags &= ~DBDustGeezer_FLAG_Dug_Up;
-                    main_set_bits(objSetup->gamebitHidden, 0);
+                    mainSetBits(objSetup->gamebitHidden, 0);
                     objData->state = DBDustGeezer_STATE_Cooldown;
                     objData->cooldownTimer = objSetup->cooldownDuration;
                 }
             }
-            fxTrans.transl.x = rand_next(-20, 20) * 0.001f;
-            fxTrans.transl.z = rand_next( 20, 80) * 0.01f;
-            fxTrans.transl.y = rand_next(-20, 20) * 0.001f;
+            fxTrans.transl.x = mathRnd(-20, 20) * 0.001f;
+            fxTrans.transl.z = mathRnd( 20, 80) * 0.01f;
+            fxTrans.transl.y = mathRnd(-20, 20) * 0.001f;
             gDLL_17_partfx->vtbl->spawn(self, 0x3C3, &fxTrans, 0, -1, 0);
         } else {
             //Enable "Find" sidekick command when nearby
-            player = get_player();
-            sidekick = get_sidekick();
-            if (sidekick && vec3_distance_squared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
+            player = objGetPlayer();
+            sidekick = objGetSidekick();
+            if (sidekick && vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= 40000.0f) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
         }
@@ -134,7 +134,7 @@ void DBDustGeezer_control(Object* self) {
         //Small delay after launching all gems
         objData->cooldownTimer -= gUpdateRate;
         if (objData->cooldownTimer < 0) {
-            main_set_bits(objSetup->gamebitHidden, 1);
+            mainSetBits(objSetup->gamebitHidden, 1);
             objData->state = DBDustGeezer_STATE_Main;
         }
 
@@ -146,13 +146,13 @@ void DBDustGeezer_control(Object* self) {
         break;
     }
     
-    if (func_80024108(self, 0.012f, gUpdateRateF, 0)) {
+    if (objAnimAdvance(self, 0.012f, gUpdateRateF, 0)) {
         self->srt.scale = self->def->scale * 0.5f;
-        func_80023D30(self, 0, 0, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
+        objAnimSet(self, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_A20_Electric_Surge_Quieter, MAX_VOLUME, 0, 0, 0, 0);
     }
     
-    if (rand_next(0, 10) == 0) {
+    if (mathRnd(0, 10) == 0) {
         STUBBED_PRINTF(" Called Part effect ");
         gDLL_17_partfx->vtbl->spawn(self, 0x3BE, 0, 0, -1, 0);
     }
@@ -167,7 +167,7 @@ void DBDustGeezer_update(Object *self) { }
 void DBDustGeezer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     DBDustGeezer_Data* objData = self->data;
     if (visibility && (objData->state != DBDustGeezer_STATE_Hidden)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -180,25 +180,25 @@ void DBDustGeezer_free(Object* self, int skipChildObjects) {
 
     objData = self->data;
     
-    obj_free_object_type(self, OBJTYPE_DBDustGeezer);
+    objFreeObjectType(self, OBJTYPE_DBDustGeezer);
     
     soundHandle1 = objData->soundHandle1;
     if (soundHandle1) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle1);
+        dll_amSfx->Stop(soundHandle1);
     }
     
     soundHandle2 = objData->soundHandle2;
     if (soundHandle2) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle2);
+        dll_amSfx->Stop(soundHandle2);
     }
 
     if (skipChildObjects == FALSE) {
         for (i = 0; i < 8; i++){ 
-            obj_destroy_object(objData->boneDust[i]); 
+            objFreeObject(objData->boneDust[i]); 
         }
     }
     
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x750 | func: 5 | export: 5
@@ -222,8 +222,8 @@ f32 DBDustGeezer_dug_up(Object* self, s32 arg1) {
     
     if ((objData->gemsToLaunch == 0) && (objData->state != DBDustGeezer_STATE_Cooldown)) {
         objData->flags |= DBDustGeezer_FLAG_Dug_Up;
-        func_80023D30(self, 1, 0.0f, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A22_Electric_Surge, MAX_VOLUME, 0, 0, 0, 0);
+        objAnimSet(self, 1, 0.0f, 0);
+        dll_amSfx->Play(self, SOUND_A22_Electric_Surge, MAX_VOLUME, 0, 0, 0, 0);
         self->srt.scale *= 1.5f;
         objData->gemsToLaunch = objSetup->launchedGemCount;
     }
@@ -270,12 +270,12 @@ int DBDustGeezer_launch_gem(Object* self) {
    
     //Launch the gem
     dust = objData->boneDust[dustIndex];
-    position.x = rand_next(-objData->range, objData->range) + self->srt.transl.x;
+    position.x = mathRnd(-objData->range, objData->range) + self->srt.transl.x;
     position.y = self->srt.transl.y + 20.0f;
-    position.z = rand_next(-objData->range, objData->range) + self->srt.transl.z;
-    speed.x = rand_next(-objData->range, objData->range) * 0.01f;
-    speed.z = rand_next(-objData->range, objData->range) * 0.01f;
-    speed.y = rand_next(50, 100) * 0.025f;
+    position.z = mathRnd(-objData->range, objData->range) + self->srt.transl.z;
+    speed.x = mathRnd(-objData->range, objData->range) * 0.01f;
+    speed.z = mathRnd(-objData->range, objData->range) * 0.01f;
+    speed.y = mathRnd(50, 100) * 0.025f;
     ((DLL_685_DBBoneDust*)dust->dll)->vtbl->launch(dust, &position, &speed, self->srt.transl.y + 15.0f);
     
     //Create effects
@@ -299,7 +299,7 @@ int DBDustGeezer_launch_gem(Object* self) {
 Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     DBBoneDust_Setup* dustSetup;
 
-    dustSetup = (DBBoneDust_Setup*)obj_alloc_setup(sizeof(DBBoneDust_Setup), objectID);
+    dustSetup = (DBBoneDust_Setup*)objAllocSetup(sizeof(DBBoneDust_Setup), objectID);
     dustSetup->unk1E = -1;
     dustSetup->base.x = self->srt.transl.x;
     dustSetup->base.y = self->srt.transl.y - 30.0f;
@@ -310,14 +310,14 @@ Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     dustSetup->base.loadDistance = 0xFF;
     dustSetup->base.fadeDistance = 0xFF;
     
-    return obj_create((ObjSetup*)dustSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)dustSetup, 5, self->mapID, -1, self->parent);
 }
 
 // offset: 0xC40 | func: 12
 void DBDustGeezer_scroll_texture_uvs(Object* self) {
     TextureAnimator* texAnim;
 
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (!texAnim) {
         return;
     }

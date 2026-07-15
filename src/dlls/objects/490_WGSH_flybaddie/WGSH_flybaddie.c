@@ -63,7 +63,7 @@ void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
     Object* player;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         objdata->unk38 = player->srt.transl.x;
         objdata->unk3C = player->srt.transl.y;
@@ -88,11 +88,11 @@ void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
     objdata->curveT = 1.0f;
     objdata->unk51 = 0;
     objdata->unk50 = 0;
-    objdata->unk48 = rand_next(0, 65000);
+    objdata->unk48 = mathRnd(0, 65000);
     objdata->unk4A = 10000;
     objdata->unk53 = 1;
-    objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
-    objdata->unk4E = rand_next(0, 1000);
+    objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
+    objdata->unk4E = mathRnd(0, 1000);
     if (setup->unk1A == 0) {
         objdata->unk44 = -130.0f;
     } else {
@@ -111,21 +111,21 @@ void WGSH_flybaddie_control(Object* self) {
 
     objdata = self->data;
     hitBy = NULL;
-    player = get_player();
+    player = objGetPlayer();
     if ((data_4 != 0) && (player != NULL)) {
         objdata->unk38 = player->srt.transl.x;
         objdata->unk3C = player->srt.transl.y;
         objdata->unk40 = player->srt.transl.z;
         data_4 = 0;
     }
-    if (main_get_bits(BIT_1D4) != 0) {
-        obj_destroy_object(self);
+    if (mainGetBits(BIT_1D4) != 0) {
+        objFreeObject(self);
     } else {
         if (objdata->unk4E > 0) {
             objdata->unk4E -= (s16) gUpdateRateF;
         }
         if ((objdata->unk4E != -999) && (objdata->unk4E <= 0)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
             objdata->unk4E = -999;
         }
         self->srt.yaw += (s16) (objdata->unk48 / 10);
@@ -135,15 +135,15 @@ void WGSH_flybaddie_control(Object* self) {
         }
         if (objdata->unk4C <= 0) {
             WGSH_flybaddie_func_8A4(self);
-            objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
+            objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
         }
         if (objdata->curveT > 1.0f) {
             objdata->curveT -= 1.0f;
             WGSH_flybaddie_func_700(self);
         }
-        self->srt.transl.x = curves_b_spline(objdata->xCurve, objdata->curveT, NULL);
-        self->srt.transl.y = curves_b_spline(objdata->yCurve, objdata->curveT, NULL);
-        self->srt.transl.z = curves_b_spline(objdata->zCurve, objdata->curveT, NULL);
+        self->srt.transl.x = curvesBSpline(objdata->xCurve, objdata->curveT, NULL);
+        self->srt.transl.y = curvesBSpline(objdata->yCurve, objdata->curveT, NULL);
+        self->srt.transl.z = curvesBSpline(objdata->zCurve, objdata->curveT, NULL);
         objdata->curveT += (objdata->unk34 * (f32) (data_0 + 1) * gUpdateRateF);
         gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, 1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, 1, -1, NULL);
@@ -155,13 +155,13 @@ void WGSH_flybaddie_control(Object* self) {
                 objdata->unk52++;
                 objdata->unk34 *= 1.2f;
                 if (objdata->unk52 >= 3) {
-                    obj_destroy_object(self);
+                    objFreeObject(self);
                     data_0++;
                     if (data_0 >= 3) {
-                        main_set_bits(BIT_1D8, 1);
+                        mainSetBits(BIT_1D8, 1);
                     }
                 } else {
-                    obj_set_model(self, self->modelInstIdx + 1);
+                    objSetModel(self, self->modelInstIdx + 1);
                 }
             }
         }
@@ -174,7 +174,7 @@ void WGSH_flybaddie_update(Object *self) { }
 // offset: 0x678 | func: 3 | export: 3
 void WGSH_flybaddie_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -210,11 +210,11 @@ static void WGSH_flybaddie_func_700(Object* self) {
     sp48[0] = 0.0f;
     sp48[1] = 0.0f;
     sp48[2] = objdata->unk44;
-    objdata->unk48 += (s16)rand_next(1000, 2000);
+    objdata->unk48 += (s16)mathRnd(1000, 2000);
     if (((objdata->unk4A < 0xFA1) && (objdata->unk53 == -1)) || ((objdata->unk4A >= 28000) && (objdata->unk53 == 1))) {
         objdata->unk53 = -objdata->unk53;
     }
-    objdata->unk4A += ((s16)rand_next(2000, 3000) * objdata->unk53);
+    objdata->unk4A += ((s16)mathRnd(2000, 3000) * objdata->unk53);
     sp30.roll = 0;
     sp30.transl.x = 0.0f;
     sp30.transl.y = 0.0f;
@@ -222,7 +222,7 @@ static void WGSH_flybaddie_func_700(Object* self) {
     sp30.scale = 1.0f;
     sp30.pitch = objdata->unk4A;
     sp30.yaw = objdata->unk48;
-    rotate_vec3(&sp30, sp48);
+    mathRotateRPY(&sp30, sp48);
     objdata->xCurve[3] = (sp48[0] + objdata->unk38);
     objdata->yCurve[3] = (sp48[1] + (objdata->unk3C + 20.0f));
     objdata->zCurve[3] = (sp48[2] + objdata->unk40);
@@ -236,11 +236,11 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     f32 dirVec[3];
     f32 magnitude;
 
-    player = get_player();
+    player = objGetPlayer();
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
-    projballSetup = obj_alloc_setup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
+    projballSetup = objAllocSetup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
     projballSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     projballSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     projballSetup->loadDistance = 0xFF;
@@ -248,7 +248,7 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     projballSetup->x = self->srt.transl.x;
     projballSetup->y = self->srt.transl.y;
     projballSetup->z = self->srt.transl.z;
-    projball = obj_create(projballSetup, OBJINIT_STANDALONE, -1, -1, NULL);
+    projball = objSetupObject(projballSetup, OBJINIT_STANDALONE, -1, -1, NULL);
     if (projball != NULL) {
         projball->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;
@@ -272,6 +272,6 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
         projball->globalPosition.x = projball->srt.transl.x;
         projball->globalPosition.y = projball->srt.transl.y;
         projball->globalPosition.z = projball->srt.transl.z;
-        gDLL_6_AMSFX->vtbl->play(projball, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(projball, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
     }
 }

@@ -65,8 +65,8 @@ void dll_703_control(Object* self) {
     objsetup = (KT_RexFloorSwitch_Setup*)self->setup;
     objdata = (KT_RexFloorSwitch_Data*)self->data;
     self->unkE0 = self->unkDC;
-    self->unkDC = main_get_bits(objsetup->unk1C);
-    sp3C = func_800348A0(self, 0, 0);
+    self->unkDC = mainGetBits(objsetup->unk1C);
+    sp3C = objExprGetTexAnimator(self, 0, 0);
     if (self->unkDC < 2) {
         sp3C->frame = 0;
         if ((self->unkDC == 0) && (self->unkE0 != 0)) {
@@ -75,7 +75,7 @@ void dll_703_control(Object* self) {
         if ((self->unkDC != 0) && (self->unkE0 == 0)) {
             objdata->unk14 |= 2;
             self->srt.transl.y = objsetup->base.y - (f32) objsetup->unk1F;
-            dll_703_func_A7C(self, main_get_bits(BIT_572_KT_FightProgress) >> 1);
+            dll_703_func_A7C(self, mainGetBits(BIT_572_KT_FightProgress) >> 1);
         }
         if (!(objdata->unk14 & 6)) {
             return;
@@ -87,7 +87,7 @@ void dll_703_control(Object* self) {
         } else {
             objdata->unk14 |= 2;
             self->srt.transl.y = objsetup->base.y - (f32) objsetup->unk1F;
-            dll_703_func_A7C(self, main_get_bits(BIT_572_KT_FightProgress) >> 1);
+            dll_703_func_A7C(self, mainGetBits(BIT_572_KT_FightProgress) >> 1);
         }
     }
     objdata->unk8 -= 1;
@@ -133,9 +133,9 @@ void dll_703_control(Object* self) {
         }
         if (objdata->unkC < 0.0f) {
             objdata->unkC = (f32) objsetup->unk19;
-            temp_v0_3 = main_get_bits(objsetup->unk1A);
+            temp_v0_3 = mainGetBits(objsetup->unk1A);
             if (temp_v0_3 < 0xF) {
-                main_set_bits(objsetup->unk1A, ++temp_v0_3);
+                mainSetBits(objsetup->unk1A, ++temp_v0_3);
             } else {
                 objdata->unk14 |= 9;
             }
@@ -150,26 +150,26 @@ void dll_703_control(Object* self) {
         }
     }
     if (objdata->unk14 & 8) {
-        if (main_get_bits(BIT_55A) != 0) {
-            main_set_bits(BIT_55A, 0);
-            main_set_bits(BIT_55B, 1);
+        if (mainGetBits(BIT_55A) != 0) {
+            mainSetBits(BIT_55A, 0);
+            mainSetBits(BIT_55B, 1);
         } else {
-            main_set_bits(BIT_55A, 1);
-            main_set_bits(BIT_55B, 0);
+            mainSetBits(BIT_55A, 1);
+            mainSetBits(BIT_55B, 0);
         }
-        main_set_bits(BIT_55C, 1);
+        mainSetBits(BIT_55C, 1);
         objdata->unk14 &= ~0x8;
-        main_set_bits(objsetup->unk1A, 0);
+        mainSetBits(objsetup->unk1A, 0);
     } else if (objdata->unk9 != objdata->unk8) {
-        main_set_bits(objsetup->unk1A, 0);
+        mainSetBits(objsetup->unk1A, 0);
     }
     if (sp4B != 0) {
         if (objdata->unk0 == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6E2, MAX_VOLUME, &objdata->unk0, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_6E2, MAX_VOLUME, &objdata->unk0, NULL, 0, NULL);
         }
     } else {
         if (objdata->unk0 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk0);
+            dll_amSfx->Stop(objdata->unk0);
             objdata->unk0 = 0;
         }
     }
@@ -224,8 +224,8 @@ void dll_703_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     KT_RexFloorSwitch_Setup* objsetup = (KT_RexFloorSwitch_Setup*)self->setup;
     
     if (visibility != 0) {
-        func_80036F6C(objsetup->unk20, objsetup->unk21, objsetup->unk22);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintSetMultiplierColor(objsetup->unk20, objsetup->unk21, objsetup->unk22);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -234,7 +234,7 @@ void dll_703_free(Object* self, s32 a1) {
     KT_RexFloorSwitch_Data *objdata = (KT_RexFloorSwitch_Data*)self->data;
     
     if (objdata->unk0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk0);
+        dll_amSfx->Stop(objdata->unk0);
     }
 }
 

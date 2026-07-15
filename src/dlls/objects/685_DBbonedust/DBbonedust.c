@@ -21,7 +21,7 @@ void DBBoneDust_setup(Object* self, DBBoneDust_Setup* objSetup, s32 arg2) {
     self->velocity.x = 0.0f;
     self->velocity.z = 0.0f;
     self->velocity.y = -4.0f;
-    objData->rotation.asWord = rand_next(0, 0xFFFF);
+    objData->rotation.asWord = mathRnd(0, 0xFFFF);
 }
 
 // offset: 0xB0 | func: 1 | export: 1
@@ -37,7 +37,7 @@ void DBBoneDust_control(Object* self) {
     f32 height;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     switch (objData->state) {
     case DBBoneDust_STATE_Hidden:
@@ -64,7 +64,7 @@ void DBBoneDust_control(Object* self) {
 
         //Decelerate
         self->velocity.y += -0.4f;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         fxTrans.roll = 0xFF;
         fxTrans.pitch = 0xFF - (objData->rotation.asWord % 1280);
@@ -73,20 +73,20 @@ void DBBoneDust_control(Object* self) {
         break;
     case DBBoneDust_STATE_Hovering:
         //Oscillating over ground, ready to be collected
-        self->velocity.y = fsin16_precise(objData->rotation.asHalfwords[1]) * 0.3f;
-        obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+        self->velocity.y = mathSinfInterp(objData->rotation.asHalfwords[1]) * 0.3f;
+        objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
         //Check if player is close by
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 100.0f) {
             objData->state = DBBoneDust_STATE_Fly_Towards_Player;
         }
         break;
     case DBBoneDust_STATE_Fly_Towards_Player:
-        distance = vec3_distance_xz(&self->globalPosition, &player->globalPosition);
+        distance = vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
         if (distance < 6.0f) {
             //Collected
             ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 3);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
             objData->state = DBBoneDust_STATE_Hidden;
         } else {
             //Get unit vector pointing towards the player
@@ -103,7 +103,7 @@ void DBBoneDust_control(Object* self) {
             self->velocity.x = uPlayer.z * absoluteSpeed;
             self->velocity.y = uPlayer.y * absoluteSpeed;
             self->velocity.z = uPlayer.x * absoluteSpeed;
-            obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+            objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
             //Motion trail effect
             fxTrans.roll = 0xFF;
@@ -125,7 +125,7 @@ void DBBoneDust_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
     DBBoneDust_Data *objData = self->data;
     
     if (visibility && objData->state != DBBoneDust_STATE_Hidden) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

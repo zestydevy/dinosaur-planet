@@ -115,7 +115,7 @@ void ScorpionRobot_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     objdata->enteredState = 1;
     objdata->spinSpeed = 0x10E1;
 
-    func_80023D30(self, SCORP_ROBO_MODANIM_2_Fold, 1.0f, 0);
+    objAnimSet(self, SCORP_ROBO_MODANIM_2_Fold, 1.0f, 0);
     baddie->fsa.animState = SCORP_ROBO_STATE_0_Spinning;
     baddie->fsa.logicState = 0;
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
@@ -133,7 +133,7 @@ void ScorpionRobot_control(Object* self) {
     Baddie* baddie = self->data;
     ScorpionRobot_Data* objdata = baddie->objdata;
     s32 var_v1;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     f32 sp70[3];
     SRT hitSRT;
     s32 sp54;
@@ -150,7 +150,7 @@ void ScorpionRobot_control(Object* self) {
         }
         if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) != 0) {
             objdata->spin += objdata->spinSpeed;
-            objdata->animFinished = func_80024108(self, objdata->animDelta, gUpdateRateF, NULL);
+            objdata->animFinished = objAnimAdvance(self, objdata->animDelta, gUpdateRateF, NULL);
             if (gUpdateRate < objdata->fireCooldown) {
                 objdata->fireCooldown -= gUpdateRate;
             } else {
@@ -189,12 +189,12 @@ void ScorpionRobot_control(Object* self) {
                     while (sp54--) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &hitSRT, PARTFXFLAG_2, -1, NULL);
                     }
-                    gDLL_6_AMSFX->vtbl->play(self, sHitSounds[rand_next(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, sHitSounds[mathRnd(0, 3)], MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_6E7_ScorpionRobot_Damaged, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
                 if ((baddie->fsa.animState != SCORP_ROBO_STATE_7_Dead) && (baddie->fsa.animState != SCORP_ROBO_STATE_6_Dying)) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_6F8_ScorpionRobot_Destroyed, MAX_VOLUME, NULL, NULL, 0, NULL);
                     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SCORP_ROBO_STATE_6_Dying);
                     objdata->enteredState = 1;
                     baddie->fsa.target = NULL;
@@ -219,9 +219,9 @@ void ScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
     ScorpionRobot_Data* objdata = baddie->objdata;
 
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if ((objdata->fire) && (baddie->fsa.target != NULL)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         objdata->fire = 0;
     }
@@ -231,9 +231,9 @@ void ScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 void ScorpionRobot_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20);
@@ -302,7 +302,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     f32 temp;
     f32 temp_fs0;
     f32 temp_fa1;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     fsa->unk341 = 0;
     if (objdata->enteredState) {
@@ -351,13 +351,13 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
     fsa->flags |= 0x4000;
     temp_fs0 = self->velocity.x - sp50;
     temp_fa1 = self->velocity.z - sp4C;
-    self->srt.yaw = atan2f_to_s(temp_fs0, temp_fa1);
+    self->srt.yaw = Arctanf(temp_fs0, temp_fa1);
     self->srt.pitch = (s16) (sqrtf((temp_fs0 * temp_fs0) + (temp_fa1 * temp_fa1)) * 10000.0f);
     func_80026128(self, 0xA, 1, -1);
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (ScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_2_Unfold);
         objdata->enteredState = 1;
@@ -371,7 +371,7 @@ static s32 ScorpionRobot_state_0_spinning(Object* self, ObjFSA_Data* fsa, f32 up
 static s32 ScorpionRobot_state_1_wait_for_player(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     ScorpionRobot_Data* objdata = baddie->objdata;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     
     fsa->unk341 = 0;
     if (ScorpionRobot_is_obj_in_range(self, player, (f32) baddie->unk3E2) != 0) {
@@ -391,9 +391,9 @@ static s32 ScorpionRobot_state_2_unfold(Object* self, ObjFSA_Data* fsa, f32 upda
     fsa->unk341 = 1;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_0_Unfold, 0.0f, 0);
         objdata->animDelta = 0.02f;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->velocity.x *= 0.97f;
     self->velocity.z *= 0.97f;
@@ -403,7 +403,7 @@ static s32 ScorpionRobot_state_2_unfold(Object* self, ObjFSA_Data* fsa, f32 upda
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_3_Attacking);
         objdata->enteredState = 1;
@@ -432,9 +432,9 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if (objdata->animFinished) {
-        func_80023D30(self, SCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_0_Unfold, 1.0f, 0);
         objdata->animDelta = 0.0f;
     }
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_7_TurnLeft) || (self->curModAnimId == SCORP_ROBO_MODANIM_6_TurnRight)) {
@@ -442,10 +442,10 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
     }
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_0_Unfold) && (self->animProgress == 1.0f)) {
         if (fsa->target != NULL) {
-            temp = (u16)arctan2_f(
+            temp = (u16)mathAtan2f(
                     self->srt.transl.x - fsa->target->srt.transl.x, 
                     self->srt.transl.z - fsa->target->srt.transl.z);
-            temp_v0_4 = (u16)rotation16_sub_wrap(
+            temp_v0_4 = (u16)mathDiffAngle(
                 temp, 
                 self->srt.yaw + objdata->spin);
             if (temp_v0_4 > 0x2000) {
@@ -460,13 +460,13 @@ static s32 ScorpionRobot_state_3_attacking(Object* self, ObjFSA_Data* fsa, f32 u
             if (modanimIdx != -1) {
                 objdata->animDelta = 0.04f;
                 objdata->turnStart = self->srt.yaw;
-                func_80023D30(self, modanimIdx, 0.0f, 0);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objAnimSet(self, modanimIdx, 0.0f, 0);
+                dll_amSfx->Play(self, SOUND_6E5_ScorpionRobot_Moving, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else if (objdata->fireCooldown == 0) {
-                objdata->fireCooldown = rand_next(0x5A, 0xD2);
+                objdata->fireCooldown = mathRnd(0x5A, 0xD2);
                 objdata->fire = 1;
                 objdata->animDelta = 0.04f;
-                func_80023D30(self, SCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);
+                objAnimSet(self, SCORP_ROBO_MODANIM_3_Firing, 0.0f, 0);
             }
         }
     }
@@ -487,9 +487,9 @@ static s32 ScorpionRobot_state_4_fold(Object* self, ObjFSA_Data* fsa, f32 update
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_2_Fold, 0.0f, 0);
         objdata->animDelta = 0.01f;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_6E4_ScorpionRobot_Activate, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->velocity.x *= 0.97f;
     self->velocity.z *= 0.97f;
@@ -499,7 +499,7 @@ static s32 ScorpionRobot_state_4_fold(Object* self, ObjFSA_Data* fsa, f32 update
     self->objhitInfo->unk5D = 0xA;
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_2_Fold) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_0_Spinning);
         objdata->enteredState = 1;
@@ -517,7 +517,7 @@ static s32 ScorpionRobot_state_5_damage_recoil(Object* self, ObjFSA_Data* fsa, f
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_4_DamageRecoil, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_4_DamageRecoil, 0.0f, 0);
         objdata->animDelta = 0.02f;
     }
     func_80026128(self, 0xA, 1, -1);
@@ -540,14 +540,14 @@ static s32 ScorpionRobot_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updat
     fsa->unk341 = 0;
     if (objdata->enteredState) {
         objdata->enteredState = 0;
-        func_80023D30(self, SCORP_ROBO_MODANIM_5_Die, 0.0f, 0);
+        objAnimSet(self, SCORP_ROBO_MODANIM_5_Die, 0.0f, 0);
         objdata->animDelta = 0.0042f;
     }
     self->velocity.x *= 0.97f;
     self->velocity.z *= 0.97f;
     fsa->flags |= OBJSTATE_PRINT_DISABLED;
     self->srt.pitch -= (self->srt.pitch >> 2);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
     if ((self->curModAnimId == SCORP_ROBO_MODANIM_5_Die) && (self->animProgress == 1.0f)) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SCORP_ROBO_STATE_7_Dead);
         objdata->enteredState = 1;
@@ -568,12 +568,12 @@ static s32 ScorpionRobot_state_7_dead(Object* self, ObjFSA_Data* fsa, f32 update
         gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
         gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
         baddie->unk3B4 = 0;
-        main_set_bits(baddie->unk39C, 1);
+        mainSetBits(baddie->unk39C, 1);
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         // Tell player to break z-lock
-        obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
     }
 
     if (self->opacity >= (gUpdateRate * 3)) {

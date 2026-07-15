@@ -50,7 +50,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         self->objhitInfo->unk58 = 0x100;
     } else {
         //If it's collectable, restore state via gamebit
-        objData->state = main_get_bits(objSetup->gamebitCollected);
+        objData->state = mainGetBits(objSetup->gamebitCollected);
     }
     
     //Create light effects and flame objects if the crystal isn't already collected
@@ -64,7 +64,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
     } else {
         lightAction = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
         objData->lightAction = lightAction;
-        queue_load_file_region_to_ptr(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
+        assetRomLoadSection(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
         objData->lightAction->unk10 = ~1;
         gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 64, 0, 24);
@@ -73,7 +73,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->flameObjects[3] = CCfirecrystal_create_flame(self, -56, 64, 24);
     }
     
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -87,11 +87,11 @@ void CCfirecrystal_control(Object* self) {
     objSetup = (CCfirecrystal_Setup*)self->setup;
     objData = self->data;
     
-    self->opacity = rand_next(0, 56) + 100;
+    self->opacity = mathRnd(0, 56) + 100;
     
     switch (objData->state) {
     case FireCrystal_State_3_Collected:
-        while (obj_recv_mesg(self, &message, 0, 0)){
+        while (objRecvMesg(self, &message, 0, 0)){
             switch (message) {
             case 0x7000B:
                 objData->state = FireCrystal_State_1_Finished;
@@ -103,16 +103,16 @@ void CCfirecrystal_control(Object* self) {
         break;
     case FireCrystal_State_0_Collectable:
         //Handle being collected via player interaction
-        if (func_80032538(self)) {
-            main_set_bits(objSetup->gamebitCollected, 1);
-            main_increment_bits(BIT_CC_Fire_Crystal);
+        if (objCheckPlayerInteract(self)) {
+            mainSetBits(objSetup->gamebitCollected, 1);
+            mainIncrementBits(BIT_CC_Fire_Crystal);
             objData->state = FireCrystal_State_3_Collected;
             self->unkAF = ARROW_FLAG_8_No_Targetting;
             self->objhitInfo->unk58 = 0x100;
 
             //Have the player scoop up the item, and play a tutorial cutscene if needed
-            obj_send_mesg(
-                get_player(), 
+            objSendMesg(
+                objGetPlayer(), 
                 0x7000A, 
                 self, 
                 (void*)BIT_Tutorial_Fire_Crystal
@@ -129,7 +129,7 @@ void CCfirecrystal_update(Object *self) { }
 void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     CCfirecrystal_Data* objData = self->data;
     if (visibility && (objData->state != FireCrystal_State_1_Finished)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -144,7 +144,7 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
     if (arg1 == 0){
         for (index = 0; index < 4; index++){
             if (objData->flameObjects[index] != NULL) {
-                obj_destroy_object(objData->flameObjects[index]);
+                objFreeObject(objData->flameObjects[index]);
                 objData->flameObjects[index] = NULL;
             }
         }
@@ -179,7 +179,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
 
     objSetup = (CCfirecrystal_Setup*)self->setup;
 
-    flameSetup = obj_alloc_setup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
+    flameSetup = objAllocSetup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
     flameSetup->base.x = objSetup->base.x;
     flameSetup->base.y = objSetup->base.y;
     flameSetup->base.z = objSetup->base.z;
@@ -191,13 +191,13 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
     flameSetup->rotateSpeed = rotateSpeed; 
     flameSetup->yaw = yaw;
     flameSetup->scrollSpeed = scrollSpeed;
-    return obj_create((ObjSetup*)flameSetup, 5, -1, -1, self->parent);
+    return objSetupObject((ObjSetup*)flameSetup, 5, -1, -1, self->parent);
 }
 
 // offset: 0x614 | func: 8
 /** Randomises opacity */
 s32 CCfirecrystal_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s32 arg3) {
-    self->opacity = rand_next(0, 56) + 100;
+    self->opacity = mathRnd(0, 56) + 100;
     return 0;
 }
 

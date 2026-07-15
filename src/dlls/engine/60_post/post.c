@@ -39,27 +39,27 @@ static Texture *sTexDolbyBig;
 static Texture *sTexDolbySmall;
 
 void dll_60_ctor(void *dll) {
-    font_load(FONT_FUN_FONT);
+    fontLoad(FONT_FUN_FONT);
 
     if (osMemSize != 0x800000) {
         dExpansionPakMissing = TRUE;
-        dTexExpansionPak = tex_load_deferred(TEXTABLE_2DA_ExpansionPak);
+        dTexExpansionPak = texLoadTexture(TEXTABLE_2DA_ExpansionPak);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F3_Expansion_Pak_Needed);
     } else {
         bss_4 = 0;
         bss_0 = 0.0f;
-        font_load(FONT_DINO_MEDIUM_FONT_IN);
-        font_load(FONT_DINO_MEDIUM_FONT_OUT);
-        main_load_frontend();
+        fontLoad(FONT_DINO_MEDIUM_FONT_IN);
+        fontLoad(FONT_DINO_MEDIUM_FONT_OUT);
+        mainLoadFrontend();
         dExpansionPakMissing = FALSE;
-        main_change_map(MAP_FRONT_END2, 0, PLAYER_NONE, -1);
+        mainChangeMap(MAP_FRONT_END2, 0, PLAYER_NONE, -1);
         gDLL_5_AMSEQ->vtbl->set(NULL, 0x20, 0, 0x2f, 0);
-        main_set_bits(BIT_Menus_Selection_Blocked, 1);
+        mainSetBits(BIT_Menus_Selection_Blocked, 1);
         gDLL_2_Camera->vtbl->set_letterbox_goal(30, 1);
-        dTexN64Logo = tex_load_deferred(TEXTABLE_2D2_N64LogoFull);
-        dTexN64LogoShadow = tex_load_deferred(TEXTABLE_2D3_N64LogoFull_Shadow);
-        sTexDolbyBig = tex_load_deferred(TEXTABLE_2DB_DolbySurround);
-        sTexDolbySmall = tex_load_deferred(TEXTABLE_2DC_DolbySurround_SmallLogo);
+        dTexN64Logo = texLoadTexture(TEXTABLE_2D2_N64LogoFull);
+        dTexN64LogoShadow = texLoadTexture(TEXTABLE_2D3_N64LogoFull_Shadow);
+        sTexDolbyBig = texLoadTexture(TEXTABLE_2DB_DolbySurround);
+        sTexDolbySmall = texLoadTexture(TEXTABLE_2DC_DolbySurround_SmallLogo);
         splashGametext = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0F2_Splash_Screen);
         gDLL_29_Gplay->vtbl->get_game_options(); // ignoring return value
     }
@@ -70,12 +70,12 @@ void dll_60_ctor(void *dll) {
 
 void dll_60_dtor(void *dll) {
     if (dExpansionPakMissing == TRUE) {
-        tex_free(dTexExpansionPak);
+        texFreeTexture(dTexExpansionPak);
     } else {
-        tex_free(dTexN64Logo);
-        tex_free(dTexN64LogoShadow);
-        tex_free(sTexDolbyBig);
-        tex_free(sTexDolbySmall);
+        texFreeTexture(dTexN64Logo);
+        texFreeTexture(dTexN64LogoShadow);
+        texFreeTexture(sTexDolbyBig);
+        texFreeTexture(sTexDolbySmall);
     }
 
     mmFree(splashGametext);
@@ -112,7 +112,7 @@ s32 dll_60_update1(void) {
         if (bss_4 != 0) {
             bss_4 = 0;
             bss_0 = 0.0f;
-            menu_set(MENU_RAREWARE);
+            menuSet(MENU_RAREWARE);
         }
 
         return 0;
@@ -127,37 +127,37 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     f32 var5;
     s32 fontYSpacing;
 
-    font_window_set_coords(2, 0, 0, 
-        (GET_VIDEO_WIDTH(vi_get_current_size())) - 50,
-        (GET_VIDEO_HEIGHT(vi_get_current_size())));
+    fontWindowSetCoords(2, 0, 0, 
+        (GET_VIDEO_WIDTH(viGetCurrentSize())) - 50,
+        (GET_VIDEO_HEIGHT(viGetCurrentSize())));
     
-    font_window_flush_strings(2);
-    font_window_use_font(2, FONT_FUN_FONT);
-    rcp_clear_screen(gdl, mtxs, CLEAR_COLOR);
+    fontWindowFlushStrings(2);
+    fontWindowUseFont(2, FONT_FUN_FONT);
+    rcpClearScreen(gdl, mtxs, CLEAR_COLOR);
 
     if (dExpansionPakMissing == TRUE) {
-        fontYSpacing = font_get_y_spacing(FONT_FUN_FONT);
+        fontYSpacing = fontGetYSpacing(FONT_FUN_FONT);
 
-        font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-        font_window_add_string_xy(2, 320, 198,                splashGametext->strings[0], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 272,                splashGametext->strings[1], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
-        rcp_screen_full_write(gdl, dTexExpansionPak, 0xfd, 0x42, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+        fontWindowSetTextColour(2, 183, 139, 97, 255, 255);
+        fontWindowAddStringXY(2, 320, 198,                splashGametext->strings[0], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, 272,                splashGametext->strings[1], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, fontYSpacing + 272, splashGametext->strings[2], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, 356,                splashGametext->strings[3], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(2, 320, fontYSpacing + 356, splashGametext->strings[4], 1, ALIGN_TOP_CENTER);
+        rcpScreenFullWrite(gdl, dTexExpansionPak, 0xfd, 0x42, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
     } else {
         gDLL_76->vtbl->func2(gdl, mtxs);
 
         if (bss_0 < 240.0f) {
-            font_window_enable_wordwrap(2);
-            font_window_set_text_colour(2, 183, 139, 97, 255, 255);
-            font_window_add_string_xy(2, 57, 54,  splashGametext->strings[0], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 179, 88, splashGametext->strings[1], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
-            font_window_add_string_xy(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
-            rcp_screen_full_write(gdl, sTexDolbyBig, 0x3a, 0x65, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sTexDolbySmall, 0x16d, 0x68, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+            fontWindowEnableWordwrap(2);
+            fontWindowSetTextColour(2, 183, 139, 97, 255, 255);
+            fontWindowAddStringXY(2, 57, 54,  splashGametext->strings[0], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 179, 88, splashGametext->strings[1], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 172, splashGametext->strings[2], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 222, splashGametext->strings[3], 1, ALIGN_TOP_LEFT);
+            fontWindowAddStringXY(2, 57, 381, splashGametext->strings[4], 1, ALIGN_TOP_LEFT);
+            rcpScreenFullWrite(gdl, sTexDolbyBig, 0x3a, 0x65, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sTexDolbySmall, 0x16d, 0x68, 0, 0, 0xff, SCREEN_WRITE_TRANSLUCENT);
         }
 
         if (bss_0 > 240.0f && data_0 == 0) {
@@ -188,7 +188,7 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 var5 = 1.0f;
             }
             
-            rcp_screen_full_write(gdl, dTexN64LogoShadow, 0x5d, 0xc6, 0, 0, (s16)(255.0f * var5), SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, dTexN64LogoShadow, 0x5d, 0xc6, 0, 0, (s16)(255.0f * var5), SCREEN_WRITE_TRANSLUCENT);
         }
 
         if (data_0 >= 2) {
@@ -204,11 +204,11 @@ void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 var5 = 1.0f;
             }
 
-            rcp_screen_full_write(gdl, dTexN64Logo, 0x5f, 200, 0, 0, (u32)(255.0f * var5) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, dTexN64Logo, 0x5f, 200, 0, 0, (u32)(255.0f * var5) & 0xFF, SCREEN_WRITE_TRANSLUCENT);
         }
     }
 
-    font_window_draw(gdl, NULL, NULL, 2);
+    fontWindowDraw(gdl, NULL, NULL, 2);
     bss_5 -= 1;
     if (bss_5 < 0) {
         bss_5 = 0;

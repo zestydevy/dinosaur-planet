@@ -28,7 +28,7 @@ void dll_715_setup(Object* self, DLL715_Setup* setup, s32 arg2) {
     objdata->unk4 = setup->unk1A;
     objdata->unk1 = 0;
     if (arg2 == 0) {
-        obj_add_object_type(self, OBJTYPE_StaticCamera);
+        objAddObjectType(self, OBJTYPE_StaticCamera);
     }
 }
 
@@ -41,13 +41,13 @@ void dll_715_update(Object *self) { }
 // offset: 0xC8 | func: 3 | export: 3
 void dll_715_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
     if (arg5 != 0) {
-        draw_object(arg0, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(arg0, arg1, arg2, arg3, arg4, 1.0f);
     }
 }
 
 // offset: 0x11C | func: 4 | export: 4
 void dll_715_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_StaticCamera);
+    objFreeObjectType(self, OBJTYPE_StaticCamera);
 }
 
 // offset: 0x15C | func: 5 | export: 5

@@ -5,8 +5,8 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/memory.h"
-#include "sys/fs.h"
-#include "sys/asset_thread.h"
+#include "sys/pi.h"
+#include "sys/asset.h"
 
 DLL_INTERFACE(DLL_529_DIMLavaBall) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
@@ -66,7 +66,7 @@ void DIMLavaBallGenerator_setup(Object *self, DIMLavaBallGenerator_Setup *setup,
     objdata->timerMax = setup->timerMax;
     objdata->timer = 0;
     objdata->index = setup->index;
-    objdata->unk14 = main_get_bits(setup->gamebit2);
+    objdata->unk14 = mainGetBits(setup->gamebit2);
     if ((setup->gamebit3 == -1) && !objdata->unk14) {
         objdata->unk17 = 1;
     }
@@ -91,15 +91,15 @@ void DIMLavaBallGenerator_control(Object *self) {
 
     if (objdata->index != 0 && !objdata->loaded) {
         size = sizeof(LightAction);
-        queue_load_file_region_to_ptr((void**)objdata->lfxStructs[0], LACTIONS_BIN,
+        assetRomLoadSection((void**)objdata->lfxStructs[0], LACTIONS_BIN,
             (objdata->index * size), size);
-        queue_load_file_region_to_ptr((void**)objdata->lfxStructs[1], LACTIONS_BIN,
+        assetRomLoadSection((void**)objdata->lfxStructs[1], LACTIONS_BIN,
             ((objdata->index + 1) * size), size);
         objdata->loaded = TRUE;
     }
-    objdata->unk16 = main_get_bits(setup->gamebit3);
+    objdata->unk16 = mainGetBits(setup->gamebit3);
     if (objdata->unk17 != 0) {
-        if (main_get_bits(setup->gamebit1)) {
+        if (mainGetBits(setup->gamebit1)) {
             objdata->unk16 = 1;
             objdata->unk17 = 0;
             objdata->timer = 0;
@@ -108,7 +108,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         }
     }
     if (objdata->lavaball == NULL) {
-        lavaballSetup = obj_alloc_setup(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
+        lavaballSetup = objAllocSetup(sizeof(DIMLavaBall_Setup), OBJ_DIMLavaBall);
         lavaballSetup->base.quarterSize = 9;
         lavaballSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
         lavaballSetup->base.loadDistance = 0xFF;
@@ -122,7 +122,7 @@ void DIMLavaBallGenerator_control(Object *self) {
         lavaballSetup->unk1C = setup->unk1B;
         lavaballSetup->base.uID = setup->base.uID;
 
-        objdata->lavaball = obj_create((ObjSetup*)lavaballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objdata->lavaball = objSetupObject((ObjSetup*)lavaballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 
     lavaball = objdata->lavaball;
@@ -136,7 +136,7 @@ void DIMLavaBallGenerator_control(Object *self) {
     }
 
     if (objdata->unk16 != 0) {
-        if (main_get_bits(setup->gamebit1) && (objdata->unk14 == 0)) {
+        if (mainGetBits(setup->gamebit1) && (objdata->unk14 == 0)) {
             var_a1 = setup->unk20;
             objdata->unk14 = 1;
         } else {
@@ -154,7 +154,7 @@ void DIMLavaBallGenerator_update(Object *self) { }
 // offset: 0x394 | func: 3 | export: 3
 void DIMLavaBallGenerator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -174,7 +174,7 @@ void DIMLavaBallGenerator_free(Object *self, s32 a1) {
     }
     if (a1 == 0) {
         if (objdata->lavaball) {
-            obj_destroy_object(objdata->lavaball);
+            objFreeObject(objdata->lavaball);
         }
     }
 }

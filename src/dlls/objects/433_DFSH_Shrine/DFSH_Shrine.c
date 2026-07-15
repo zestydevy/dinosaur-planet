@@ -59,12 +59,12 @@ void DFShrine_setup(Object* self, DFShrine_Setup* setup, s32 arg2) {
     objdata->stateCooldown = 0;
     objdata->sharpClawDefeated = 0;
     self->animCallback = DFShrine_anim_callback;
-    obj_init_mesg_queue(self, 4);
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_125, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-    main_set_bits(BIT_1E7, 0);
+    objInitMesgQueue(self, 4);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_125, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_1E7, 0);
     objdata->whisperVolume = 0xC;
     objdata->bgmVolume = 0x1E;
     objdata->stateCooldown = 0xC8;
@@ -72,16 +72,16 @@ void DFShrine_setup(Object* self, DFShrine_Setup* setup, s32 arg2) {
     objdata->bgmVolumeRate = 0;
     objdata->startedBgMusic = 0;
     objdata->testTimer = 0;
-    modgfx = dll_load_deferred(DLL_ID_122, 1);
+    modgfx = dllLoad(DLL_ID_122, 1);
     objdata->unkC = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
-    dll_unload(modgfx);
+    dllFree(modgfx);
 }
 
 // offset: 0x1A8 | func: 1 | export: 1
 void DFShrine_control(Object* self) {
     static u8 sFirstTick = TRUE;
     DFShrine_Data* objdata = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     DLL_IModgfx* modgfx;
     f32 playerDoorZDist;
     f32 playerDoorDist;
@@ -97,13 +97,13 @@ void DFShrine_control(Object* self) {
         self->globalPosition.x = self->srt.transl.x;
         self->globalPosition.y = self->srt.transl.y;
         self->globalPosition.z = self->srt.transl.z;
-        main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 1);
         // Start whispers
         gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
     }
     if (sFirstTick) {
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
         sFirstTick = FALSE;
     }
     // Process obj messages
@@ -148,7 +148,7 @@ void DFShrine_control(Object* self) {
         }
     } else {
         // Modulate background music and whispers as player passes the shrine door
-        door = obj_get_nearest_type_to(OBJTYPE_Door, player, &playerDoorDist);
+        door = objGetNearestTypeTo(OBJTYPE_Door, player, &playerDoorDist);
         if ((door != NULL) && (playerDoorDist < 300.0f) && (playerDoorDist > 100.0f)) {
             playerDoorZDist = door->srt.transl.z - player->srt.transl.z;
             if (playerDoorZDist <= 0.0f) {
@@ -172,18 +172,18 @@ void DFShrine_control(Object* self) {
         }
         switch (objdata->state) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->testStartRange) {
-                main_set_bits(BIT_589, 0);
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->testStartRange) {
+                mainSetBits(BIT_589, 0);
                 objdata->state = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                modgfx = dll_load_deferred(DLL_ID_147, 1);
+                modgfx = dllLoad(DLL_ID_147, 1);
                 modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
-                dll_unload(modgfx);
-                modgfx = dll_load_deferred(DLL_ID_148, 1);
+                dllFree(modgfx);
+                modgfx = dllLoad(DLL_ID_148, 1);
                 modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
-                dll_unload(modgfx);
-                main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+                dllFree(modgfx);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
             }
         default:
@@ -200,26 +200,26 @@ void DFShrine_control(Object* self) {
             objdata->testTimer -= gUpdateRate;
             diPrintf("TIMER %d\n", objdata->testTimer);
             if (objdata->sharpClawDefeated == 0) {
-                if (main_get_bits(BIT_F6) == 0) {
-                    main_set_bits(BIT_F6, 1);
+                if (mainGetBits(BIT_F6) == 0) {
+                    mainSetBits(BIT_F6, 1);
                 }
             } else if (objdata->sharpClawDefeated == 1) {
-                if (main_get_bits(BIT_F7) == 0) {
-                    main_set_bits(BIT_F7, 1);
+                if (mainGetBits(BIT_F7) == 0) {
+                    mainSetBits(BIT_F7, 1);
                 }
             } else if (objdata->sharpClawDefeated == 3) {
-                if (main_get_bits(BIT_F8) == 0) {
-                    main_set_bits(BIT_F8, 1);
+                if (mainGetBits(BIT_F8) == 0) {
+                    mainSetBits(BIT_F8, 1);
                 }
             } else if (objdata->sharpClawDefeated == 4) {
-                if (main_get_bits(BIT_FA) == 0) {
-                    main_set_bits(BIT_FA, 1);
+                if (mainGetBits(BIT_FA) == 0) {
+                    mainSetBits(BIT_FA, 1);
                 }
-                if (main_get_bits(BIT_FB) == 0) {
-                    main_set_bits(BIT_FB, 1);
+                if (mainGetBits(BIT_FB) == 0) {
+                    mainSetBits(BIT_FB, 1);
                 }
             }
-            if (main_get_bits(BIT_1E7) != 0) {
+            if (mainGetBits(BIT_1E7) != 0) {
                 // A SharpClaw was defeated
                 objdata->sharpClawDefeated++;
                 objdata->stateCooldown = 100;
@@ -231,7 +231,7 @@ void DFShrine_control(Object* self) {
                     gDLL_5_AMSEQ->vtbl->play_ex(3, 0xE, 0x50, (u8)objdata->bgmVolume, 0);
                     objdata->bgmVolumeRate = 1;
                 }
-                main_set_bits(BIT_1E7, 0);
+                mainSetBits(BIT_1E7, 0);
             } else if (objdata->testTimer <= 0) {
                 // Fail
                 objdata->state = 3;
@@ -241,9 +241,9 @@ void DFShrine_control(Object* self) {
             if (objdata->sharpClawDefeated != 4) {
                 // Test failed
                 // Delete remaining SharpClaws
-                baddieList = obj_get_all_of_type(OBJTYPE_Baddie, &baddieCount);
+                baddieList = objGetAllOfType(OBJTYPE_Baddie, &baddieCount);
                 for (i = 0; i < baddieCount; i++) {
-                    obj_destroy_object(baddieList[i]);
+                    objFreeObject(baddieList[i]);
                 }
                 objdata->stateCooldown = 0;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x35, 0x50, (u8) objdata->bgmVolume, 0);
@@ -255,30 +255,30 @@ void DFShrine_control(Object* self) {
                 objdata->bgmVolume = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->bgmVolume, 0);
                 objdata->bgmVolumeRate = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->state = 5;
             } else {
                 // Test passed, play spirit cutscene
                 objdata->stateCooldown = 0;
-                main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                 objdata->stateCooldown = 10;
             }
             break;
         case 4:
             // Spirit granted
-            main_set_bits(BIT_125, 0);
+            mainSetBits(BIT_125, 0);
             objdata->state = 5;
             ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 2);
             break;
         case 5:
             // Warp out
-            if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-                main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+            if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+                mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
             }
-            main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             objdata->state = 7;
             break;
         case 8:
@@ -287,22 +287,22 @@ void DFShrine_control(Object* self) {
             objdata->unk12 = 0;
             objdata->stateCooldown = 400;
             objdata->sharpClawDefeated = 0;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-            main_set_bits(BIT_125, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-            main_set_bits(BIT_1E7, 0);
-            main_set_bits(BIT_F6, 0);
-            main_set_bits(BIT_F7, 0);
-            main_set_bits(BIT_F8, 0);
-            main_set_bits(BIT_F9, 0);
-            main_set_bits(BIT_FA, 0);
-            main_set_bits(BIT_FB, 0);
-            main_set_bits(BIT_589, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_125, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+            mainSetBits(BIT_1E7, 0);
+            mainSetBits(BIT_F6, 0);
+            mainSetBits(BIT_F7, 0);
+            mainSetBits(BIT_F8, 0);
+            mainSetBits(BIT_F9, 0);
+            mainSetBits(BIT_FA, 0);
+            mainSetBits(BIT_FB, 0);
+            mainSetBits(BIT_589, 1);
             objdata->testTimer = 0;
-            modgfx = dll_load_deferred(DLL_ID_122, 1);
+            modgfx = dllLoad(DLL_ID_122, 1);
             objdata->unkC = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
-            dll_unload(modgfx);
+            dllFree(modgfx);
             break;
         }
     }
@@ -314,7 +314,7 @@ void DFShrine_update(Object *self) { }
 // offset: 0xE10 | func: 3 | export: 3
 void DFShrine_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -374,32 +374,32 @@ static int DFShrine_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
                 case 4:
                     objdata->state = 4;
                     objdata->unk12 = 2;
-                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-                    main_set_bits(BIT_125, 0);
-                    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+                    mainSetBits(BIT_125, 0);
+                    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
                     objdata->bgmVolumeRate = -3;
                     break;
                 case 5:
                     objdata->state = 8;
                     objdata->unk12 = 3;
                     objdata->bgmVolumeRate = -3;
-                    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                     break;
                 case 6:
-                    main_set_bits(BIT_125, 1);
+                    mainSetBits(BIT_125, 1);
                     break;
                 case 7:
-                    main_set_bits(BIT_125, 0);
+                    mainSetBits(BIT_125, 0);
                     objdata->bgmVolumeRate = -3;
                     break;
                 case 9:
-                    main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                    mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                     if (data_0 == NULL) {
-                        data_0 = block_texanim_get_tex(1);
+                        data_0 = blockTexanimGetTex(1);
                     }
                     break;
                 case 8:
-                    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
                     break;
                 case 10:
                     objdata->bgmVolume = 100;
@@ -425,7 +425,7 @@ static void DFShrine_process_obj_messages(Object* self) {
     DFShrine_Data* objdata = self->data;
     
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->whisperVolumeRate = -3;

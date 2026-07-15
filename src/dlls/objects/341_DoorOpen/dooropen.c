@@ -41,23 +41,23 @@ void DoorOpen_setup(Object* self, DoorOpen_Setup* objSetup, s32 reset) {
     self->srt.roll = objSetup->roll << 8;
 
     objData->gamebit = objSetup->gamebit;
-    objData->fxCreated = main_get_bits(objData->gamebit);
+    objData->fxCreated = mainGetBits(objData->gamebit);
 
-    dModGfxDLL = dll_load_deferred(DLL_ID_162, 1);
+    dModGfxDLL = dllLoad(DLL_ID_162, 1);
 }
 
 // offset: 0xE0 | func: 1 | export: 1
 void DoorOpen_control(Object* self) {
     DoorOpen_Data* objData = self->data;
 
-    if ((objData->gamebit != NO_GAMEBIT) && main_get_bits(objData->gamebit) == FALSE) {
+    if ((objData->gamebit != NO_GAMEBIT) && mainGetBits(objData->gamebit) == FALSE) {
         objData->fxCreated = FALSE;
     }
     if (objData->fxCreated) {
         return;
     }
     
-    if ((objData->gamebit != NO_GAMEBIT) && main_get_bits(objData->gamebit)) {
+    if ((objData->gamebit != NO_GAMEBIT) && mainGetBits(objData->gamebit)) {
         objData->fxCreated = TRUE;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_28A, NULL, 4, -1, NULL);
         dModGfxDLL->vtbl->func0(self, objData->pitch, 0, 4, -1, objData);
@@ -74,7 +74,7 @@ void DoorOpen_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void DoorOpen_free(Object* self, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func5(self);
     gDLL_14_Modgfx->vtbl->func5(self);
-    dll_unload(dModGfxDLL);
+    dllFree(dModGfxDLL);
 }
 
 // offset: 0x2AC | func: 5 | export: 5

@@ -38,7 +38,7 @@ void ChukaChuck_control(Object* self) {
     //Count down until unloading
     self->unkDC -= gUpdateRateF;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
     
@@ -58,7 +58,7 @@ void ChukaChuck_control(Object* self) {
         self->srt.pitch += M_5_DEGREES;
 
         //Move
-        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     }
 
     //ObjHits
@@ -68,7 +68,7 @@ void ChukaChuck_control(Object* self) {
     
     //Handle colliding with the player/sidekick
     if (self->objhitInfo->unk48 && 
-        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+        ((objGetPlayer() == self->objhitInfo->unk48) || (objGetSidekick() == self->objhitInfo->unk48))
     ) {
         ChukaChuck_handle_player_or_sidekick_collision(self);
         self->opacity = 0;
@@ -92,13 +92,13 @@ void ChukaChuck_update(Object* self) { }
 // offset: 0x2E0 | func: 3 | export: 3
 void ChukaChuck_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x334 | func: 4 | export: 4
 void ChukaChuck_free(Object* self, s32 onlySelf) {
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x374 | func: 5 | export: 5
@@ -116,11 +116,11 @@ void ChukaChuck_handle_player_or_sidekick_collision(Object* self) {
     s32 i;
 
     //Shake camera
-    camera_enable_y_offset();
-    camera_set_shake_offset(1.0f);
+    camUseShake();
+    camSetShakeOffset(1.0f);
 
     //Play impact sound
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_4B1, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_4B1, MAX_VOLUME, NULL, NULL, 0, NULL);
     
     if (self->id == OBJ_ChukaChuck) {
         //Send a message to the parent ChukaChuck object
@@ -178,11 +178,11 @@ void ChukaChuck_handle_terrain_collision(Object* self) {
     }
     
     //Play impact sound
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_4B1, 0x40, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_4B1, 0x40, NULL, NULL, 0, NULL);
 
     //Shake camera
-    camera_enable_y_offset();
-    camera_set_shake_offset(1.0f);
+    camUseShake();
+    camSetShakeOffset(1.0f);
 }
 
 // offset: 0x77C | func: 9
@@ -191,7 +191,7 @@ int ChukaChuck_does_parent_exist(Object* thrownBy) {
     s32 count;
     Object** objects;
 
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
     while (index < count) {
         if (thrownBy == objects[index++]) {
             //@bug: this should possibly also check whether the object's StateFlags have OBJSTATE_DESTROYED set

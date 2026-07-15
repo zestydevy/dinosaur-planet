@@ -37,7 +37,7 @@ void iceblast_control(Object* self) {
     Iceblast_Data* objdata;
     SRT transform;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata = self->data;
     if (!player) {
         return;
@@ -66,7 +66,7 @@ void iceblast_control(Object* self) {
         transform.pitch = weapon->srt.pitch;
         transform.yaw = weapon->srt.yaw;
 
-        rotate_vec3(&transform, self->velocity.f);
+        mathRotateRPY(&transform, self->velocity.f);
         self->srt.transl.x = weapon->globalPosition.x;
         self->srt.transl.y = weapon->globalPosition.y;
         self->srt.transl.z = weapon->globalPosition.z;
@@ -91,7 +91,7 @@ void iceblast_update(void){ }
 // offset: 0x274 | func: 3 | export: 3
 void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
     //@recomp: may want to hide these debug cubes
-    draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x2BC | func: 4 | export: 4

@@ -54,7 +54,7 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
     objData->scale = self->visRadius * 0.5f;
 
     //Check if door is already open
-    if (main_get_bits(objSetup->gamebitActivated)) {
+    if (mainGetBits(objSetup->gamebitActivated)) {
         //Remove HITS line
         if (objSetup->hitsAnimatorID && !func_80058F50()) {
             func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
@@ -72,7 +72,7 @@ void PortalSpellDoor_control(Object* self) {
     PortalSpellDoor_Data* objData;
     PortalSpellDoor_Setup* objSetup;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     objSetup = (PortalSpellDoor_Setup*)self->setup;
 
@@ -82,13 +82,13 @@ void PortalSpellDoor_control(Object* self) {
 
         //Destroy secondary door object
         if (objData->portalDoorAnim != NULL) {
-            obj_destroy_object(objData->portalDoorAnim);
+            objFreeObject(objData->portalDoorAnim);
             objData->portalDoorAnim = NULL;
         }
 
         ((DLL_210_Player*)player->dll)->vtbl->func51(player, -1);
 
-        main_set_bits(objSetup->gamebitActivated, TRUE);
+        mainSetBits(objSetup->gamebitActivated, TRUE);
 
         //Remove HITS line
         if (objSetup->hitsAnimatorID && !func_80058F50()) {
@@ -107,7 +107,7 @@ void PortalSpellDoor_control(Object* self) {
             self->unkAF |= 8;
             self->def->scale *= 0.5f;
             objData->portalDoorAnim = PortalSpellDoor_create_anim_obj(self);
-            gDLL_3_Animation->vtbl->func31(fsin16_precise(self->srt.yaw) * objData->scale, 0.0f, fcos16_precise(self->srt.yaw) * objData->scale);
+            gDLL_3_Animation->vtbl->func31(mathSinfInterp(self->srt.yaw) * objData->scale, 0.0f, mathCosfInterp(self->srt.yaw) * objData->scale);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objData->sequencePlayed = TRUE;
             objData->timer = -1;
@@ -122,7 +122,7 @@ void PortalSpellDoor_update(Object *self) { }
 // offset: 0x408 | func: 3 | export: 3
 void PortalSpellDoor_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -132,7 +132,7 @@ void PortalSpellDoor_free(Object* self, s32 arg1) {
 
     objData = self->data;
     if (objData->portalDoorAnim && (arg1 == 0)) {
-        obj_destroy_object(objData->portalDoorAnim);
+        objFreeObject(objData->portalDoorAnim);
     }
 }
 
@@ -151,13 +151,13 @@ Object* PortalSpellDoor_create_anim_obj(Object* self) {
     ObjSetup* animObjSetup;
     Object* portalDoorAnim;
 
-    animObjSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_PortalDoorAnim);
+    animObjSetup = objAllocSetup(sizeof(ObjSetup), OBJ_PortalDoorAnim);
     animObjSetup->loadFlags = 2;
     animObjSetup->byte5 = 1;
     animObjSetup->x = self->srt.transl.x;
     animObjSetup->y = self->srt.transl.y;
     animObjSetup->z = self->srt.transl.z;
-    portalDoorAnim = obj_create(animObjSetup, 5, -1, -1, self->parent);
+    portalDoorAnim = objSetupObject(animObjSetup, 5, -1, -1, self->parent);
     portalDoorAnim->def->scale = self->def->scale;
     portalDoorAnim->srt.scale = 1.0f;
     return portalDoorAnim;

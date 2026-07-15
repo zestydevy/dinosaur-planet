@@ -47,7 +47,7 @@ void LightPole_setup(Object* self, LightPole_Setup* objSetup, s32 reset) {
     }
 
     //Restore the texture animation's state
-    if ((objData->flagAnimFinished = main_get_bits(objSetup->gamebitFinished))) {
+    if ((objData->flagAnimFinished = mainGetBits(objSetup->gamebitFinished))) {
         objData->frameValue = objData->endFrameValue;
         objData->flagAnimStarted = TRUE;
     }
@@ -67,7 +67,7 @@ void LightPole_control(Object* self) {
 
     //Check if the texture animation should start
     if (objData->flagAnimStarted == FALSE) {
-        if ((main_get_bits(objSetup->gamebitStart)) && (objData->flagAnimFinished == FALSE)) {
+        if ((mainGetBits(objSetup->gamebitStart)) && (objData->flagAnimFinished == FALSE)) {
             objData->frameValue = 0;
             objData->flagAnimStarted = TRUE;
         }
@@ -75,7 +75,7 @@ void LightPole_control(Object* self) {
     
     //Advance the texture animation when started
     if (objData->flagAnimStarted) {
-        texAnim = func_800348A0(self, objData->animatorID, 0);
+        texAnim = objExprGetTexAnimator(self, objData->animatorID, 0);
         if (texAnim == NULL) {
             return;
         }
@@ -88,7 +88,7 @@ void LightPole_control(Object* self) {
             //Handle ending the texture animation and setting a gamebit
             if (objSetup->gamebitFinished != NO_GAMEBIT) {
                 STUBBED_PRINTF(" Set bit %i ", objSetup->gamebitFinished);
-                main_set_bits(objSetup->gamebitFinished, TRUE);
+                mainSetBits(objSetup->gamebitFinished, TRUE);
 
                 objData->flagAnimStarted = FALSE;
                 objData->flagAnimFinished = TRUE;

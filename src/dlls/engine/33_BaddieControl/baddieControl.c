@@ -58,7 +58,7 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
     spD8.x = obj->srt.transl.x;
     spD8.y = obj->srt.transl.y + 10.0f;
     spD8.z = obj->srt.transl.z;
-    func_80007EE0(&spD8, &spE4);
+    vox_func_80007EE0(&spD8, &spE4);
     if (obj->parent != NULL) {
         spD0 = (u16)(obj->srt.yaw + obj->parent->srt.yaw);
     } else {
@@ -67,14 +67,14 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
 
     for (i = 0; i < 4; i++) {
         var_s0 = spD0 + (i << 0xE);
-        spD8.x = obj->srt.transl.x - (fsin16_precise(var_s0) * arg2);
+        spD8.x = obj->srt.transl.x - (mathSinfInterp(var_s0) * arg2);
         spD8.y = obj->srt.transl.y + 10.0f;
-        spD8.z = obj->srt.transl.z - (fcos16_precise(var_s0) * arg2);
-        func_80007EE0(&spD8, &spEC);
+        spD8.z = obj->srt.transl.z - (mathCosfInterp(var_s0) * arg2);
+        vox_func_80007EE0(&spD8, &spEC);
         if (obj->parent != NULL) {
             var_s0 = 1;
         } else{
-            var_s0 = func_80008048(&spEC, &spE4, NULL, &spD3, 0) & 0xFF;
+            var_s0 = vox_func_80008048(&spEC, &spE4, NULL, &spD3, 0) & 0xFF;
             if (spD3 == 1) {
                 var_s0 = 1;
             }
@@ -115,7 +115,7 @@ void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16*
     sp20.x = arg1->globalPosition.f[0] - arg0->globalPosition.f[0];
     sp20.y = arg1->globalPosition.f[1] - arg0->globalPosition.f[1];
     sp20.z = arg1->globalPosition.f[2] - arg0->globalPosition.f[2];
-    temp_v0 = arctan2_f(-sp20.x, -sp20.z);
+    temp_v0 = mathAtan2f(-sp20.x, -sp20.z);
     if (arg0->parent != NULL) {
         var_a1 = arg0->srt.yaw + arg0->parent->srt.yaw;
     } else {
@@ -149,8 +149,8 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
     sp44 = arg4->globalPosition.z - arg2;
     sp40 = sqrtf(SQ(sp48) + SQ(sp44));
     if (sp40 < arg3) {
-        sp5C = fsin16_precise(arg0->srt.yaw);
-        sp58 = fcos16_precise(arg0->srt.yaw);
+        sp5C = mathSinfInterp(arg0->srt.yaw);
+        sp58 = mathCosfInterp(arg0->srt.yaw);
         temp_fa0 = -(((arg1 - sp5C) * sp5C) + ((arg2 - sp58) * sp58));
         sp44 = (arg4->globalPosition.x * sp5C) + (sp58 * arg4->globalPosition.z) + temp_fa0;
         sp48 = (arg4->prevGlobalPosition.x * sp5C) + (sp58 * arg4->prevGlobalPosition.z) + temp_fa0;
@@ -159,7 +159,7 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
         if ((sp44 > 0.0f) && (sp48 <= 1.0f)) {
             arg4->globalPosition.x -= sp5C * sp44;
             arg4->globalPosition.z -= sp58 * sp44;
-            inverse_transform_point_by_object(arg4->globalPosition.x, arg4->globalPosition.y, arg4->globalPosition.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
+            camInverseTransformPointByObject(arg4->globalPosition.x, arg4->globalPosition.y, arg4->globalPosition.z, arg4->srt.transl.f, &arg4->srt.transl.y, &arg4->srt.transl.z, arg4->parent);
         } else if (sp48 > 1.0f) {
             sp40 = 2.0f * arg3;
         }
@@ -172,8 +172,8 @@ f32 BaddieControl_func_4EC(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* a
         sp44 = arg2;
     }
 
-    sp5C = fsin16_precise(arg0->srt.yaw + 0x4000);
-    sp58 = fcos16_precise(arg0->srt.yaw + 0x4000);
+    sp5C = mathSinfInterp(arg0->srt.yaw + 0x4000);
+    sp58 = mathCosfInterp(arg0->srt.yaw + 0x4000);
     temp_fa0 = -((arg0->srt.transl.x * sp5C) + (arg0->srt.transl.z * sp58));
     return -((sp5C * sp48) + (sp58 * sp44) + temp_fa0);
 }
@@ -295,7 +295,7 @@ s32 BaddieControl_func_8B4(Object* arg0, AnimObj_Data* arg1, Baddie* arg2, ObjFS
         arg1->unk7A = -1;
         arg1->unk7A &= ~0x40;
         arg2->fsa.unk4.mode = 0;
-        main_set_bits(arg2->unk39E, 0);
+        mainSetBits(arg2->unk39E, 0);
     }
     return 1;
 }
@@ -332,7 +332,7 @@ s32 BaddieControl_func_C88(Object* arg0, Baddie* arg1, ObjFSA_StateCallback *arg
             arg1->fsa.animState = arg4;
             arg1->fsa.target = NULL;
             arg1->fsa.unk4.mode = 0;
-            main_set_bits(arg1->unk39E, 0);
+            mainSetBits(arg1->unk39E, 0);
         }
         return 1;
     }
@@ -363,7 +363,7 @@ s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead
         return FALSE;
     }
 
-    if ((baddieObj->parent == NULL) && (map_world_coords_to_block_index(baddieObj->srt.transl.x, baddieObj->srt.transl.y, baddieObj->srt.transl.z) < 0)) {
+    if ((baddieObj->parent == NULL) && (mapWorldCoordsToBlockIndex(baddieObj->srt.transl.x, baddieObj->srt.transl.y, baddieObj->srt.transl.z) < 0)) {
         return FALSE;
     }
 
@@ -377,7 +377,7 @@ s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Vec3f sp3C;
     s32 var_v1;
 
-    player = get_player();
+    player = objGetPlayer();
     var_v1 = 0;
     if (fsa->unk33A != 0) {
         if ((player == fsa->target) && (fsa->hitpoints != 0)) {
@@ -426,7 +426,7 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
     
     stop = FALSE;
 
-    targetObjs[0] = get_player();
+    targetObjs[0] = objGetPlayer();
     targetObjs[1] = NULL;
     
     i = 0;
@@ -437,7 +437,7 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
                 stop = TRUE;
             }
 
-            angle = arctan2_f(-delta.f[0], -delta.f[2]);
+            angle = mathAtan2f(-delta.f[0], -delta.f[2]);
             if (baddieObj->parent != NULL) {
                 angle -= ((baddieObj->srt.yaw + baddieObj->parent->srt.yaw) & 0xFFFF);
                 CIRCLE_WRAP(angle)
@@ -461,14 +461,14 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
                 pTemp.x = baddieObj->srt.transl.x;
                 pTemp.y = baddieObj->srt.transl.y + 10.0f;
                 pTemp.z = baddieObj->srt.transl.z;
-                func_80007EE0(&pTemp, &pBaddieS);
+                vox_func_80007EE0(&pTemp, &pBaddieS);
 
                 pTemp.x = curObj->srt.transl.x;
                 pTemp.y = curObj->srt.transl.y + 10.0f;
                 pTemp.z = curObj->srt.transl.z;
-                func_80007EE0(&pTemp, &pPlayerS);
+                vox_func_80007EE0(&pTemp, &pPlayerS);
 
-                temp_t3 = func_80008048(&pPlayerS, &pBaddieS, NULL, &sp66, 0);
+                temp_t3 = vox_func_80008048(&pPlayerS, &pBaddieS, NULL, &sp66, 0);
                 if ((sp66 == 1) || (temp_t3 != 0)) {
                     if (func_80059C40(&baddieObj->srt.transl, &pTemp, 1.0f, 0, &sp68, baddieObj, 4, -1, 0, 0) != 0) {
                         stop = FALSE;
@@ -504,14 +504,14 @@ void BaddieControl_func_148C(Object* arg0, ObjFSA_Data* arg1, Unk80009024 *arg2,
         *arg4 = 2;
     }
     if (arg7 != 0) {
-        func_80023D30(arg0, arg7, 0.0f, 0);
+        objAnimSet(arg0, arg7, 0.0f, 0);
     }
     gDLL_27->vtbl->reset(arg0, &arg1->unk4);
     if (arg8 != -1) {
         arg1->unk4.mode = arg8;
     }
     if (arg3 != -1) {
-        main_set_bits(arg3, 1);
+        mainSetBits(arg3, 1);
     }
 }
 
@@ -534,16 +534,16 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
 
     switch (droppedItemIdx) {
     case BaddieDrop_1_MagicDust_Mid:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
     case BaddieDrop_2_Energy_Gem:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
         break;
     case BaddieDrop_3_Energy_Egg:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
         break;
     case BaddieDrop_4_MagicDust_Mid:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         if (gamebitID != NO_GAMEBIT) {
             dropSetup->gamebitCollected = gamebitID;
         }
@@ -563,7 +563,7 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
         
         //Search for any nearby Collectables
         distance = 750.0f;
-        drop = obj_get_nearest_type_to(OBJTYPE_Collectable, obj, &distance);
+        drop = objGetNearestTypeTo(OBJTYPE_Collectable, obj, &distance);
         obj->globalPosition.x = x;
         obj->globalPosition.y = y;
         obj->globalPosition.z = z;
@@ -575,16 +575,16 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
         _bss_0 = drop;
         return drop;
     case BaddieDrop_6_MagicDust_Small:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
         break;
     case BaddieDrop_7_MagicDust_Mid:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
         break;
     case BaddieDrop_8_MagicDust_Large:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
         break;
     case BaddieDrop_9_MagicDust_Huge:
-        dropSetup = obj_alloc_setup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
+        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
         break;
     default:
         return NULL;
@@ -606,7 +606,7 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
     dropSetup->base.loadDistance = baddieSetup->base.loadDistance;
     dropSetup->base.fadeFlags = baddieSetup->base.fadeFlags;
     dropSetup->base.fadeDistance = baddieSetup->base.fadeDistance;
-    drop = obj_create(&dropSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, obj->mapID, -1, obj->parent);
+    drop = objSetupObject(&dropSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, obj->mapID, -1, obj->parent);
     _bss_0 = drop;
     return drop;
 }
@@ -625,7 +625,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
     f32 hitZ;
 
     baddie = (Baddie*)obj->data;
-    player = get_player();
+    player = objGetPlayer();
     if (baddie->unk3E8 > 0.0f) {
         baddie->unk3E8 += (gUpdateRateF * baddie->unk3EC);
         if (baddie->unk3B2 & 0x20) {
@@ -719,10 +719,10 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             fsa->lastHitType = (s8) hitType;
         }
         if (*arg7 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(*arg7);
+            dll_amSfx->Stop(*arg7);
             *arg7 = 0;
         }
-        obj_send_mesg(sp50, 0xE0001, obj, NULL);
+        objSendMesg(sp50, 0xE0001, obj, NULL);
     }
     return hitType;
 }
@@ -734,13 +734,13 @@ s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s1
     u32 mesgArg;
 
     mesgArg = NULL;
-    while (obj_recv_mesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
+    while (objRecvMesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
             case 0x140001:
-                gDLL_6_AMSFX->vtbl->play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
             case 0x4:
-                obj_send_mesg(sender, 5, obj, NULL);
+                objSendMesg(sender, 5, obj, NULL);
                 break;
             case 0xE0000:
                 if (sender == fsa->target) {
@@ -800,8 +800,8 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     sp38 = arg6 & 1;
     sp3C = (s32) arg6;
     if ((sp38 == 0) && !(arg6 & 0x20)) {
-        obj_add_object_type(obj, OBJTYPE_Baddie);
-        obj_init_mesg_queue(obj, 4);
+        objAddObjectType(obj, OBJTYPE_Baddie);
+        objInitMesgQueue(obj, 4);
     }
     gDLL_18_objfsa->vtbl->func0(obj, &baddie->fsa, arg3, arg4);
     baddie->fsa.flags = 0;
@@ -818,7 +818,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     baddie->unk3A0 = setup->unk1A;
     baddie->unk3A2 = setup->unk1C;
     if (baddie->unk39E != -1) {
-        main_set_bits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39E, 0);
     }
     if (sp3C & 2) {
         gDLL_27->vtbl->init(&baddie->fsa.unk4, DLL27FLAG_NONE, arg5 | DLL27FLAG_200000, DLL27MODE_1);
@@ -856,7 +856,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
     obj->unkAF &= ~0x8;
     baddie->unk39C = setup->unk18;
     if (baddie->unk39C != -1) {
-        obj->unkDC = main_get_bits(baddie->unk39C);
+        obj->unkDC = mainGetBits(baddie->unk39C);
     } else {
         obj->unkDC = 0;
     }
@@ -874,7 +874,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
         obj->unkE0 = 0;
     }
     if ((sp38 == 0) && !(sp3C & 0x20)) {
-        func_80008DC0(&baddie->unk374);
+        vox_func_80008DC0(&baddie->unk374);
         baddie->unk34C.unk26 = 4;
         baddie->unk34C.unk27 = 0x14;
     }
@@ -896,7 +896,7 @@ void BaddieControl_setup(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 a
 // offset: 0x24FC | func: 19 | export: 15
 void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
     if (baddie->unk3A8 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(baddie->unk3A8);
+        dll_amSfx->Stop(baddie->unk3A8);
     }
     if (!(baddie->unk3B0 & arg2)) {
         if (baddie->unk3A6 != 0) {
@@ -908,7 +908,7 @@ void BaddieControl_free(Object* obj, Baddie* baddie, u8 arg2) {
             gDLL_5_AMSEQ2->vtbl->free(obj, baddie->unk3A4, 0, 0, 0);
         }
     }
-    func_80008E08(&baddie->unk374);
+    vox_func_80008E08(&baddie->unk374);
     if (baddie->unk3F8 != NULL) {
         mmFree(baddie->unk3F8);
         baddie->unk3F8 = NULL;
@@ -927,12 +927,12 @@ void BaddieControl_change_weapon(Object *obj, Baddie *baddie) {
 
     if ((baddie->nextWeaponID != baddie->weaponID) && (obj->opacity != 0)) {
         if (obj->linkedObject != NULL) {
-            obj_destroy_object(obj->linkedObject);
+            objFreeObject(obj->linkedObject);
             obj->linkedObject = NULL;
         }
         if (baddie->nextWeaponID > 0) {
-            obj->linkedObject = obj_create(
-                obj_alloc_setup(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
+            obj->linkedObject = objSetupObject(
+                objAllocSetup(sizeof(ObjSetup), weaponObjIDs[baddie->nextWeaponID - 1]), 
                 OBJINIT_FLAG4, 
                 -1, 
                 -1, 

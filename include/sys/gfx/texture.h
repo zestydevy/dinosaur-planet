@@ -184,7 +184,7 @@ enum RenderFlags {
 /*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU backface culling off)
 };
 
-// Option flags for tex_gdl_set_texture_simple
+// Option flags for texDPTextureSimple
 enum TexSetOptions {
     TEXOPT_INVISIBLE = 0x0,
     TEXOPT_SET_MODES = 0x1, // Update geometry, combine, and other modes
@@ -229,17 +229,17 @@ typedef struct Texture {
 /*1F*/ u8 maskt;
 } Texture;
 
-void tex_init(void);
-void tex_set_alloc_tag(s32 tag);
+void texInitTextures(void);
+void texSetMemColour(s32 tag);
 /**
  * Loads a texture via the asset thread.
  */
-Texture *tex_load_deferred(s32 id);
-Texture *tex_load(s32 id, u8 param2);
-void tex_free(Texture *texture);
-void tex_render_reset(void);
-void tex_render_save_state(void);
-void tex_render_restore_state(void);
+Texture *texLoadTexture(s32 id);
+Texture *texLoadTextureActual(s32 id, u8 param2);
+void texFreeTexture(Texture *texture);
+void texRenderReset(void);
+void texRenderSaveState(void);
+void texRenderRestoreState(void);
 /**
  * @param tex - Texture to draw (or NULL to unset the texture (TEXOPT_SET_MODES required to unset tex))
  * @param renderFlags - RenderFlags enum
@@ -247,7 +247,7 @@ void tex_render_restore_state(void);
  * @param force - Add texture DL to main DL even if the last texture(s) set on the main DL are the same
  * @param options - TexSetOptions enum
  */
-s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options);
+s32 texDPTextureSimple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options);
 /**
  * @param tex0 - Base texture to draw (or NULL to unset the texture (setModes required to unset tex))
  * @param tex1 - Overlay texture to draw (if not blending, this will be drawn at half opacity overlaid)
@@ -256,11 +256,11 @@ s32 tex_gdl_set_texture_simple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 fra
  * @param force - Add texture DL to main DL even if the last texture(s) set on the main DL are the same
  * @param setModes - If true, update geometry, combine, and other modes
  */
-void tex_gdl_set_textures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
-void tex_animate(Texture *tex, s32 *renderFlags, s32 *progress);
-void* tex_get_frame_img(Texture *tex, s32 arg1);
-Texture *tex_get_cached(s32 id);
-void tex_disable_modes(s32 modes);
-void tex_enable_modes(s32 modes);
+void texDPTextures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
+void texAnimateTexture(Texture *tex, s32 *renderFlags, s32 *progress);
+void* texGetFrameImg(Texture *tex, s32 arg1);
+Texture *texGetCached(s32 id);
+void texDisableModes(s32 modes);
+void texEnableModes(s32 modes);
 
 #endif //_SYS_GFX_TEXTURE_H

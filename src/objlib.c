@@ -1,17 +1,19 @@
-#include "common.h"
-#include "dll.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/281_area.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object_id.h"
+#include "sys/joypad.h"
 #include "sys/map.h"
 #include "sys/objlib.h"
+#include "sys/objects.h"
+#include "dll.h"
 
 // objlib.c (default.dol)
 
 typedef struct ObjectPairCallback {
     Object *primary;
     Object *secondary;
-    void (*callback)(Object*, Object*); // callback that takes in the primary and secondary object
+    ObjectTouchCallbackFunc callback; // callback that takes in the primary and secondary object
 } ObjectPairCallback;
 
 // -------- .data start 80091710 -------- //
@@ -23,7 +25,7 @@ ObjectPairCallback sObjectPairCallbacks[16];
 // -------- .bss end 800b2e00 -------- //
 
 /** Transforms a mapSpace point into an objectSpace point, relative to an Area object*/
-void func_80031AA0(Area_Setup* area, f32* ox, f32* oy, f32* oz) {
+/*static*/ void objAreaWorld2LocalSpace(Area_Setup* area, f32* x, f32* y, f32* z) {
     f32 sinYaw;
     f32 cosYaw;
     f32 sinPitch;
@@ -32,35 +34,35 @@ void func_80031AA0(Area_Setup* area, f32* ox, f32* oy, f32* oz) {
     f32 dy;
     f32 dz;
 
-    sinYaw = fsin16_precise(-(area->yaw << 0x8));
-    cosYaw = fcos16_precise(-(area->yaw << 0x8));
-    sinPitch = fsin16_precise(-(area->pitch << 0x8));
-    cosPitch = fcos16_precise(-(area->pitch << 0x8));
+    sinYaw = mathSinfInterp(-(area->yaw << 0x8));
+    cosYaw = mathCosfInterp(-(area->yaw << 0x8));
+    sinPitch = mathSinfInterp(-(area->pitch << 0x8));
+    cosPitch = mathCosfInterp(-(area->pitch << 0x8));
 
-    dx = *ox - area->base.x;
-    dy = *oy - area->base.y;
-    dz = *oz - area->base.z;
+    dx = *x - area->base.x;
+    dy = *y - area->base.y;
+    dz = *z - area->base.z;
 
-    *ox = (dx * cosYaw) - (dz * sinYaw);
+    *x = (dx * cosYaw) - (dz * sinYaw);
     dz = (dx * sinYaw) + (dz * cosYaw);
-    *oy = (dy * cosPitch) - (dz * sinPitch);
-    *oz = (dy * sinPitch) + (dz * cosPitch);
+    *y = (dy * cosPitch) - (dz * sinPitch);
+    *z = (dy * sinPitch) + (dz * cosPitch);
 }
 
-u16 func_80031BBC(f32 x, f32 y, f32 z) {
+u16 objGetAreaValueAtPoint(f32 x, f32 y, f32 z) {
     s32 pad;
     s32 out;
     Area_Setup* objsetup;
     s32 i;
     s32 j;
     MapHeader** maps;
-    f32 ox;
-    f32 oy;
-    f32 oz;
+    f32 lx;
+    f32 ly;
+    f32 lz;
     MapHeader *current;
 
     out = -1U;
-    maps = map_get_loaded_maps_table();
+    maps = mapGetLoadedMapsTable();
     for (i = 0; i < MAP_ID_MAX; i++) {
         if (maps[i] == NULL) {
             continue;
@@ -71,25 +73,25 @@ u16 func_80031BBC(f32 x, f32 y, f32 z) {
         j = 0;
         while (j < current->objectInstancesFileLength) {
             if (objsetup->base.objId == OBJ_Area) {
-                ox = x;
-                oy = y;
-                oz = z;
-                func_80031AA0(objsetup, &ox, &oy, &oz);
+                lx = x;
+                ly = y;
+                lz = z;
+                objAreaWorld2LocalSpace(objsetup, &lx, &ly, &lz);
 
-                if (ox < 0.0f) {
-                    ox = -ox;
+                if (lx < 0.0f) {
+                    lx = -lx;
                 }
-                if (oy < 0.0f) {
-                    oy = -oy;
+                if (ly < 0.0f) {
+                    ly = -ly;
                 }
-                if (oz < 0.0f) {
-                    oz = -oz;
+                if (lz < 0.0f) {
+                    lz = -lz;
                 }
 
                 //Check if in bounds of Area
-                if (ox <= objsetup->halfWidth && 
-                    oy <= objsetup->halfHeight && 
-                    oz <= objsetup->halfDepth
+                if (lx <= objsetup->halfWidth && 
+                    ly <= objsetup->halfHeight && 
+                    lz <= objsetup->halfDepth
                 ) {
                     out = objsetup->value;
                 }
@@ -101,8 +103,7 @@ u16 func_80031BBC(f32 x, f32 y, f32 z) {
     return out;
 }
 
-//aim_object_at_object_get_yaw_diff?
-s16 func_80031DD8(Object* objA, Object* objB, f32* distance) {
+s16 objAngleToObjectXZ(Object* objA, Object* objB, f32* distance) {
     s16 angle;
     s32 angle16;
     f32 dx;
@@ -116,7 +117,7 @@ s16 func_80031DD8(Object* objA, Object* objB, f32* distance) {
     dx = objA->srt.transl.x - objB->srt.transl.x;
     dz = objA->srt.transl.z - objB->srt.transl.z;
 
-    angle = arctan2_f(dx, dz);
+    angle = mathAtan2f(dx, dz);
 
     //(Optional) Store distance
     if (distance != NULL) {
@@ -129,15 +130,16 @@ s16 func_80031DD8(Object* objA, Object* objB, f32* distance) {
     return angle16;
 }
 
-void func_80031EBC(Vec4f* arg0, Vec4f* arg1) {
-    arg1->x = (arg0->w * 0.5f) + ((-0.5f * arg0->x) + (1.5f * arg0->y) + (-1.5f * arg0->z));
-    arg1->y = (arg0->w * -0.5f) + (arg0->x + (-2.5f * arg0->y) + (2.0f * arg0->z));
-    arg1->z = (arg0->z * 0.5f) + (-0.5f * arg0->x);
-    arg1->w = arg0->y;
+// catmull-rom converter with the * 0.5 factored in rather than done as a second step
+void objLibCatmullRomConverter(f32* in, f32* out) {
+    out[0] = (-0.5f * in[0]) + (1.5f * in[1]) + (-1.5f * in[2]) + (in[3] * 0.5f);
+    out[1] = in[0] + (-2.5f * in[1]) + (2.0f * in[2]) + (in[3] * -0.5f);
+    out[2] = (-0.5f * in[0]) + (in[2] * 0.5f);
+    out[3] = in[1];
 }
 
 // 2nd param = placeNum in default.dol
-s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 useInputCoords) {
+s32 objGetAttachPointWorldSpace(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 useInputCoords) {
     s32 boneIdx;
     ModelInstance* modelInstance;
     MtxF* boneMtx;
@@ -170,17 +172,17 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 use
         srt.pitch = obj->def->pAttachPoints[attachIdx].rot.y;
         srt.roll = obj->def->pAttachPoints[attachIdx].rot.z;
     }
-    matrix_from_srt_reversed(&attachPointMtx, (SRT* ) &srt);
+    mathRpyXyzMtx(&attachPointMtx, &srt);
 
     //Transform attach point by its bone's matrix
-    matrix_concat_4x3(&attachPointMtx, boneMtx, &attachPointMtx);
+    mathMtxCat4x3F(&attachPointMtx, boneMtx, &attachPointMtx);
 
     //Store the transformed coords
     *ox = attachPointMtx.m[3][0];
     *oy = attachPointMtx.m[3][1];
     *oz = attachPointMtx.m[3][2];
     if (obj->parent != NULL) {
-        transform_point_by_object(*ox, *oy, *oz, ox, oy, oz, obj->parent);
+        camTransformPointByObject(*ox, *oy, *oz, ox, oy, oz, obj->parent);
     } else {
         *ox += gWorldX;
         *oz += gWorldZ;
@@ -189,7 +191,7 @@ s32 func_80031F6C(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz, s32 use
 }
 
 // 2nd param = "placeNum" in default.dol
-MtxF *func_80032170(Object* obj, s32 arg1) {
+MtxF *objGetAttachPointBoneMatrix(Object* obj, s32 attachIdx) {
     ModelInstance* temp_v1;
     s32 boneIdx;
     u16 new_var;
@@ -198,20 +200,20 @@ MtxF *func_80032170(Object* obj, s32 arg1) {
     if (!(temp_v1->unk34 & 8)) {
         return NULL;
     }
-    boneIdx = obj->def->pAttachPoints[arg1].bones[obj->modelInstIdx];
+    boneIdx = obj->def->pAttachPoints[attachIdx].bones[obj->modelInstIdx];
     new_var = temp_v1->unk34;
     return (MtxF *) &((f32 **)temp_v1->matrices)[new_var & 1][boneIdx << 4];
 }
 
-void func_800321E4(Object* obj, s32 arg1, f32* ox, f32* oy, f32* oz) {
-    *ox = obj->def->pAttachPoints[arg1].pos.x;
-    *oy = obj->def->pAttachPoints[arg1].pos.y;
-    *oz = obj->def->pAttachPoints[arg1].pos.z;
+void objGetAttachPointLocalSpace(Object* obj, s32 attachIdx, f32* ox, f32* oy, f32* oz) {
+    *ox = obj->def->pAttachPoints[attachIdx].pos.x;
+    *oy = obj->def->pAttachPoints[attachIdx].pos.y;
+    *oz = obj->def->pAttachPoints[attachIdx].pos.z;
 }
 
 // attachBaseIdx (2nd param) = "placeno" in default.dol
 // arg2 (3rd param) = "nofeet" in default.dol
-void func_80032238(Object* obj, s32 attachBaseIdx, s32 arg2, Vec3f* position) {
+void objGetAttachPointBoneWorldPositions(Object* obj, s32 attachBaseIdx, s32 count, Vec3f* positions) {
     ModelInstance* modelInst;
     MtxF* mtx;
     ObjDef* objDef;
@@ -219,36 +221,36 @@ void func_80032238(Object* obj, s32 attachBaseIdx, s32 arg2, Vec3f* position) {
     s32 boneIdx;
 
     objDef = obj->def;
-    if (objDef->numAttachPoints < (attachBaseIdx + arg2)) {
+    if (objDef->numAttachPoints < (attachBaseIdx + count)) {
         return;
     }
 
     modelInst = obj->modelInsts[obj->modelInstIdx];
-    for (i = 0; i < arg2; i++) {
+    for (i = 0; i < count; i++) {
         if (modelInst->unk34 & 8) {
             boneIdx = objDef->pAttachPoints[attachBaseIdx + i].bones[obj->modelInstIdx];
             mtx = (MtxF *) &((f32 **)modelInst->matrices)[modelInst->unk34 & 1][boneIdx << 4];
-            position[i].x = mtx->m[3][0];
-            position[i].y = mtx->m[3][1];
-            position[i].z = mtx->m[3][2];
+            positions[i].x = mtx->m[3][0];
+            positions[i].y = mtx->m[3][1];
+            positions[i].z = mtx->m[3][2];
             if (obj->parent == NULL) {
-                position[i].x += gWorldX;
-                position[i].z += gWorldZ;
+                positions[i].x += gWorldX;
+                positions[i].z += gWorldZ;
             }
         } else {
-            position[i].x = obj->srt.transl.x;
-            position[i].y = obj->srt.transl.y;
-            position[i].z = obj->srt.transl.z;
+            positions[i].x = obj->srt.transl.x;
+            positions[i].y = obj->srt.transl.y;
+            positions[i].z = obj->srt.transl.z;
         }
     }
 }
 
-s32 isObjectInWorld(Object *obj) {
+s32 objIsObjectStandalone(Object *obj) {
     Object **objects;
     s32 i;
     s32 objectCount;
 
-    objects = get_world_objects(&i, &objectCount);
+    objects = objGetObjects(&i, &objectCount);
     for (i = 0; i < objectCount; i++) {
         if (obj == objects[i]) {
             return 1;
@@ -258,32 +260,33 @@ s32 isObjectInWorld(Object *obj) {
     return 0;
 }
 
-Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
+Object* objFindClosestObject(Object* obj, s32 objID, f32* distance) {
     Object* outObj;
     Object** objects;
-    f32 distance;
-    s32 sp48;
-    s32 sp44;
+    f32 distTemp;
+    s32 start;
+    s32 numObjs;
     s32 i;
 
-    objects = get_world_objects(&sp48, &sp44);
-    *outDistance = SQ(*outDistance);
+    objects = objGetObjects(&start, &numObjs);
+    *distance = SQ(*distance);
     outObj = NULL;
     if (objID != -1) {
-        for (i = sp48; i < sp44; i++) {
+        for (i = start; i < numObjs; i++) {
             if (objID == objects[i]->id && obj != objects[i]) {
-                distance = vec3_distance_squared(&obj->globalPosition, &objects[i]->globalPosition);
-                if (distance < *outDistance) {
-                    *outDistance = distance;
+                distTemp = vec3DistanceSquared(&obj->globalPosition, &objects[i]->globalPosition);
+                if (distTemp < *distance) {
+                    *distance = distTemp;
                     outObj = objects[i];
                 }
             }
         }
     } else {
-        for (i = sp48; i < sp44; i++) {
-            distance = vec3_distance_squared(&obj->globalPosition, &(objects[i])->globalPosition);
-            if (distance != 0.0f && distance < *outDistance) {
-                *outDistance = distance;
+        for (i = start; i < numObjs; i++) {
+            distTemp = vec3DistanceSquared(&obj->globalPosition, &(objects[i])->globalPosition);
+            // @bug? why exclude a dist of 0 here?
+            if (distTemp != 0.0f && distTemp < *distance) {
+                *distance = distTemp;
                 outObj = objects[i];
             }
         }
@@ -292,15 +295,15 @@ Object* func_800323C4(Object* obj, s32 objID, f32* outDistance) {
     return outObj;
 }
 
-int func_80032538(Object* objInteracted) {
+int objCheckPlayerInteract(Object* obj) {
     Object* player;
 
-    if ((objInteracted->unkAF & ARROW_FLAG_1_Interacted) && 
+    if ((obj->unkAF & ARROW_FLAG_1_Interacted) && 
         (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE)
     ) {
-        player = get_player();
-        if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) {
-            joy_disable_buttons(0, A_BUTTON);
+        player = objGetPlayer();
+        if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == -1) { // ensure no spell is equipped
+            joyDisableButtons(0, A_BUTTON);
             return TRUE;
         }
     }
@@ -308,7 +311,7 @@ int func_80032538(Object* objInteracted) {
     return FALSE;
 }
 
-s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Object*, Object*)) {
+s32 objRegisterTouchCallback(Object* obj, Object* otherObj, ObjectTouchCallbackFunc callback) {
     ObjectPairCallback* callbackPair;
     s32 i;
 
@@ -347,7 +350,7 @@ s32 registerObjectCallback(Object* obj, Object* otherObj, void (*callback)(Objec
     return TRUE;
 }
 
-void func_80032690(Object* obj, Object* otherObj) {
+void objRemoveTouchCallback(Object* obj, Object* otherObj) {
     ObjectPairCallback* callbackPair;
     s32 i;
 
@@ -367,7 +370,7 @@ void func_80032690(Object* obj, Object* otherObj) {
     }
 }
 
-void func_8003273C(Object* obj) {
+void objRemoveTouchCallbacksForObj(Object* obj) {
     ObjectPairCallback* callbackPair;
     s32 i;
 
@@ -387,7 +390,7 @@ void func_8003273C(Object* obj) {
     }
 }
 
-void func_80032804(Object* obj, Object* otherObj) {
+void objInvokeTouchCallbacks(Object* obj, Object* otherObj) {
     ObjectPairCallback* callbackPair;
     s32 i;
     s32 var_s4;

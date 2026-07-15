@@ -5,7 +5,7 @@
 #include "sys/objmsg.h"
 #include "macros.h"
 
-void obj_init_mesg_queue(Object *obj, u32 count) {
+void objInitMesgQueue(Object *obj, u32 count) {
     ObjectMesgQueue *mesgQueue;
     s32 size;
     
@@ -25,7 +25,7 @@ void obj_init_mesg_queue(Object *obj, u32 count) {
     }
 }
 
-u32 obj_send_mesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
+u32 objSendMesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
     ObjectMesgQueue *mesgQueue;
     u32 *temp_a2;
     int new_var;
@@ -53,19 +53,19 @@ u32 obj_send_mesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
     return 0;
 }
 
-void obj_send_mesg_many(s32 filter, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
+void objSendMesgMany(s32 filter, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
     Object** objects;
     s32 i;
     s32 numObjs;
     Object* obj;
 
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     if (flags & OBJMSG_SEND_FILTER_ID) {
         for (; i < numObjs; i++) {
             obj = objects[i];
             
             if ((sender != obj || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && ((flags & OBJMSG_SEND_ALL) || filter == obj->id)) {
-                obj_send_mesg(obj, mesgID, sender, mesgArg);
+                objSendMesg(obj, mesgID, sender, mesgArg);
             }
         }
     } else {
@@ -73,25 +73,25 @@ void obj_send_mesg_many(s32 filter, u16 flags, Object *sender, u32 mesgID, void 
             obj = objects[i];
             
             if ((sender != obj || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && ((flags & OBJMSG_SEND_ALL) || filter == obj->controlNo)) {
-                obj_send_mesg(obj, mesgID, sender, mesgArg);
+                objSendMesg(obj, mesgID, sender, mesgArg);
             }
         }
     }
 }
 
-void obj_send_mesg_many_nearby(s16 objId, f32 distance, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
+void objSendMesgManyNearby(s16 objId, f32 distance, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
     Object *obj;
     Object **objects;
     s32 i;
     s32 numObjs;
 
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     for (; i < numObjs; i++) {
         obj = objects[i];
 
         if ((obj != sender || !(flags & OBJMSG_SEND_IGNORE_SENDER)) && (objId == obj->id || (flags & OBJMSG_SEND_ALL))) {
-            if (vec3_distance(&sender->globalPosition, &obj->globalPosition) < distance) {
-                if (obj_send_mesg(obj, mesgID, sender, mesgArg) == 0) {
+            if (vec3Distance(&sender->globalPosition, &obj->globalPosition) < distance) {
+                if (objSendMesg(obj, mesgID, sender, mesgArg) == 0) {
                     
                 }
             }
@@ -99,7 +99,7 @@ void obj_send_mesg_many_nearby(s16 objId, f32 distance, u16 flags, Object *sende
     }
 }
 
-s32 obj_recv_mesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
+s32 objRecvMesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
     u32 i;
     ObjectMesgQueue* mesgQueue;
     
@@ -133,7 +133,7 @@ s32 obj_recv_mesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMes
     return FALSE;
 }
 
-s32 obj_peek_mesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
+s32 objPeekMesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
     ObjectMesgQueue* temp_v0;
 
     if (obj == NULL) {

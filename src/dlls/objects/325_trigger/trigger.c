@@ -3,7 +3,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/objmsg.h"
@@ -110,8 +110,8 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     s32 i;
     TriggerCommand *cmd;
 
-    obj_add_object_type(self, OBJTYPE_Trigger);
-    obj_set_update_priority(self, OBJPRIORITY_TRIGGER);
+    objAddObjectType(self, OBJTYPE_Trigger);
+    objSetPriority(self, OBJPRIORITY_TRIGGER);
 
     objdata = (Trigger_Data*)self->data;
 
@@ -150,7 +150,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
     }
 
     objdata->bitFlagID = setup->bitFlagID;
-    s0 = main_get_bits(objdata->bitFlagID);
+    s0 = mainGetBits(objdata->bitFlagID);
 
     cmd = setup->commands;
 
@@ -163,7 +163,7 @@ void trigger_setup(Object *self, Trigger_Setup *setup, s32 param3) {
             // Is it the responsibility of the script to handle the previous state?
             s0 = cmd->param1 + 81; // scripts are DLLs 81-83
             if (s0 < 84 && param3 == 0) {
-                objdata->scripts[i] = dll_load_deferred(s0, 0);
+                objdata->scripts[i] = dllLoad(s0, 0);
             }
             // "TRIGGER: warning Script overflow\n"
         }
@@ -193,7 +193,7 @@ void trigger_control(Object* self) {
     
     maxObjSearchDist = 200.0f;
    
-    player = get_player();
+    player = objGetPlayer();
     if (player != NULL) {
         vehicle = ((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player);
         if (vehicle != NULL) {
@@ -201,7 +201,7 @@ void trigger_control(Object* self) {
         }
     }
     
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if ((player != NULL) || (sidekick != NULL)) {
         if (objdata->flags & TRG_RESTORE_ENTERED_STATE) {
@@ -213,7 +213,7 @@ void trigger_control(Object* self) {
         
         b_foundActivatorObj = TRUE;
         if (setup->activatorObjType >= 3) {
-            activatorObj = obj_get_nearest_type_to(setup->activatorObjType, self, &maxObjSearchDist);
+            activatorObj = objGetNearestTypeTo(setup->activatorObjType, self, &maxObjSearchDist);
             if (activatorObj == NULL) {
                 b_foundActivatorObj = FALSE;
             }
@@ -299,7 +299,7 @@ void trigger_control(Object* self) {
         case OBJ_TriggerPlane:
             b_allBitsSet = TRUE;
             if (objdata->conditionBitFlagIDs[0] >= 0) {
-                if (main_get_bits(objdata->conditionBitFlagIDs[0]) == 0) {
+                if (mainGetBits(objdata->conditionBitFlagIDs[0]) == 0) {
                     b_allBitsSet = FALSE;
                 }
             }
@@ -320,15 +320,15 @@ void trigger_control(Object* self) {
             break;
         case OBJ_TriggerSetup:
             trigger_process_commands(self, player, 1, 0);
-            if (ret1_8001454c() != 0) {
-                obj_destroy_object(self);
+            if (main_ret1_8001454c() != 0) {
+                objFreeObject(self);
             }
             break;
         case OBJ_TriggerBits:
             b_allBitsSet = TRUE;
             for (i = 0; i < 4 && b_allBitsSet; i++) {
                 if (objdata->conditionBitFlagIDs[i] >= 0) {
-                    if (main_get_bits(objdata->conditionBitFlagIDs[i]) == 0) {
+                    if (mainGetBits(objdata->conditionBitFlagIDs[i]) == 0) {
                         b_allBitsSet = FALSE;
                     }
                 }
@@ -360,10 +360,10 @@ void trigger_free(Object *self, s32 param2) {
 
     for (i = 0; i < 8; i++) {
         if (objdata->soundHandles[i] != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
+            dll_amSfx->Stop(objdata->soundHandles[i]);
         }
         if (objdata->scripts[i] != NULL) {
-            dll_unload(objdata->scripts[i]);
+            dllFree(objdata->scripts[i]);
         }
 
         objdata->soundHandles[i] = 0;
@@ -376,7 +376,7 @@ void trigger_free(Object *self, s32 param2) {
             if (sPointModel != NULL) {
                 sPointModelRefCount -= 1;
                 if (sPointModelRefCount == 0) {
-                    destroy_model_instance(sPointModel);
+                    modFreeModel(sPointModel);
                     sPointModel = NULL;
                 }
             }
@@ -385,14 +385,14 @@ void trigger_free(Object *self, s32 param2) {
             if (sPlaneModel != NULL) {
                 sPlaneModelRefCount -= 1;
                 if (sPlaneModelRefCount == 0) {
-                    destroy_model_instance(sPlaneModel);
+                    modFreeModel(sPlaneModel);
                     sPlaneModel = NULL;
                 }
             }
             break;
     }
 
-    obj_free_object_type(self, OBJTYPE_Trigger);
+    objFreeObjectType(self, OBJTYPE_Trigger);
 }
 
 u32 trigger_get_model_flags(Object *self) {
@@ -486,14 +486,14 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                     } else {
                         mesgID = 0x81;
                     }
-                    obj_send_mesg_many_nearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
-                    obj_send_mesg_many_nearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
+                    objSendMesgManyNearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
+                    objSendMesgManyNearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);
                 }
                 break;
             case 8: {
                     // "Trigger [%d], Death drop" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 9, 0.0f);
                     }
@@ -502,7 +502,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 9: {
                     // "Trigger [%d], Dangerous Water" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 10, 0.0f);
                     }
@@ -511,7 +511,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             case 10: {
                     // "Trigger [%d], Safe Water" (default.dol)
                     s8 pad;
-                    obj = get_player();
+                    obj = objGetPlayer();
                     if (obj != NULL) {
                         ((DLL_210_Player*)obj->dll)->vtbl->func67(obj, 11, 0.0f);
                     }
@@ -531,10 +531,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_SOUND: 
             // "Trigger [%d], Sound FX,           Action Num [%d],Handle Num [%d]"
             if (dir >= 0) {
-                gDLL_6_AMSFX->vtbl->play2(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
+                dll_amSfx->Play2(self, (cmd->param2 | (cmd->param1 << 8)), &objdata->soundHandles[i]);
             } else {
                 if (objdata->soundHandles[i] != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandles[i]);
+                    dll_amSfx->Stop(objdata->soundHandles[i]);
                     objdata->soundHandles[i] = 0;
                 }
             }
@@ -549,7 +549,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_sky_on(cmd->param2);
+                trackSetSkyOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track Sky On"
                 } else {
@@ -560,7 +560,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_anti_alias_on(cmd->param2);
+                trackSetAntiAliasOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track AntiAlias On"
                 } else {
@@ -571,7 +571,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 if (cmd->param2 >= 2) {
                     cmd->param2 = 1;
                 }
-                track_set_sky_objects_on(cmd->param2);
+                trackSetSkyObjectsOn(cmd->param2);
                 if (cmd->param2 != 0) {
                     // "Trigger [%d], Track SkyObjects On"
                 } else {
@@ -598,7 +598,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 }
                 break;
             case 5:
-                footsteps_toggle(cmd->param2);
+                footstepsTurnOn(cmd->param2);
                 // "Trigger [%d], footstepsTurnOn %d" (default.dol)
                 break;
             case 6:
@@ -612,10 +612,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 7:
                 if (cmd->param2 > 0) {
-                    track_set_sun_glare_on(1);
+                    trackSetSunGlareOn(1);
                     // "Trigger [%d], trackSetSunGlareOn(1)" (default.dol)
                 } else {
-                    track_set_sun_glare_on(0);
+                    trackSetSunGlareOn(0);
                     // "Trigger [%d], trackSetSunGlareOn(0)" (default.dol)
                 }
                 break;
@@ -660,7 +660,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_LOD_MODEL:
             // "Trigger [%d], LOD Model [%d]"
-            obj_set_model(get_player(), cmd->param1);
+            objSetModel(objGetPlayer(), cmd->param1);
             break;
         case TRG_CMD_SETUP_POINT:
             // "Trigger [%d], Setup Point,        Level      [%d], SetupPoint [%d]"
@@ -718,11 +718,11 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_KYTE_FLIGHT_GROUP:
             // "Trigger [%d], kyte flight group change\n" (default.dol)
-            main_set_bits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Kyte_Flight_Curve, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_KYTE_TALK_SEQ:
             // "Trigger [%d], kyte flight talk sequence set\n" (default.dol)
-            main_set_bits(BIT_Kyte_Flight_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Kyte_Flight_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_WORLD_SET_ACT:
             // "Trigger [%d], Act change on map %d to act %d\n" (default.dol)
@@ -730,26 +730,26 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_TRICKY_TALK_SEQ:
             // "Trigger [%d], Tricky talk sequence set to %d\n" (default.dol)
-            main_set_bits(BIT_Tricky_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
+            mainSetBits(BIT_Tricky_Talk_Sequence, cmd->param2 | (cmd->param1 << 8));
             break;
         case TRG_CMD_SAVE_POINT:
             // "Trigger [%d], Save Point\n" (default.dol)
-            gDLL_29_Gplay->vtbl->savepoint(&self->srt.transl, (self->srt.yaw >> 8), cmd->param2, map_get_layer());
+            gDLL_29_Gplay->vtbl->savepoint(&self->srt.transl, (self->srt.yaw >> 8), cmd->param2, mapGetLayer());
             break;
         case TRG_CMD_MAP_LAYER:
             if (cmd->param1 == 0) {
                 // "Trigger [%d],trackIncMapLayer\n" (default.dol)
-                map_increment_layer();
+                mapIncrementLayer();
             } else {
                 // "Trigger [%d],trackIncMapLayer\n" (default.dol)
-                map_decrement_layer();
+                mapDecrementLayer();
             }
             break;
         case TRG_CMD_RESTART:
             switch (cmd->param1) {
             case 0:
                 // "Restart Set [%d]\n"
-                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer());
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, mapGetLayer());
                 break;
             case 1:
                 // "Restart Clear [%d]\n"
@@ -763,13 +763,13 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             // default.dol
             case 3:
                 // "Trigger [%d],Restart Set Dazed [%d]\n"
-                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, map_get_layer(), 1);
+                gDLL_29_Gplay->vtbl->restart_set(&self->srt.transl, self->srt.yaw, mapGetLayer(), 1);
                 break;
             */
             }
             break;
         case TRG_CMD_SIDEKICK:
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick != NULL) {
                 switch (cmd->param1) {
                 case 0:
@@ -779,14 +779,14 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 case 1:
                     // "killing sidekick\n"
                     // "Trigger [%d], Unloading Sidekick\n" (default.dol)
-                    obj_destroy_object(get_sidekick());
+                    objFreeObject(objGetSidekick());
                     break;
                 case 2:
                     // "findobj %i \n"
                     // oh my god this is hacky...
-                    findTarget = obj_get_nearest_type_to(OBJTYPE_DBlevelcontrol, sidekick, NULL);
+                    findTarget = objGetNearestTypeTo(OBJTYPE_DBlevelcontrol, sidekick, NULL);
                     if (findTarget == NULL) {
-                        findTarget = obj_get_nearest_type_to(OBJTYPE_TrickyTarget, sidekick, NULL);
+                        findTarget = objGetNearestTypeTo(OBJTYPE_TrickyTarget, sidekick, NULL);
                     }
                     if (findTarget != NULL) {
                         // "Trigger [%d], Sidekick Find On Object %d\n"
@@ -799,7 +799,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
         case TRG_CMD_WATER_FALLS_FLAGS:
         case TRG_CMD_WATER_FALLS_FLAGS2:
             // "Trigger [%d], amSfxWaterFallsSetFlags,   Action [%d], PassDir [%d]"
-            gDLL_6_AMSFX->vtbl->water_falls_set_flags(cmd->param1);
+            dll_amSfx->WaterFallsSetFlags(cmd->param1);
             break;
         }
     }
@@ -807,7 +807,7 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
     if (dir > 0) {
         // In
         objdata->flags |= TRG_ACTIVATOR_ENTERED;
-        main_set_bits(objdata->bitFlagID, 1);
+        mainSetBits(objdata->bitFlagID, 1);
     } else if (dir < 0) {
         // Out
         objdata->flags |= TRG_ACTIVATOR_EXITED;
@@ -824,7 +824,7 @@ static void trigger_bits_set(u16 param1) {
     gamebitID = param1 & 0x3FFF;
     param1 >>= 14;
 
-    valueToSet = main_get_bits(gamebitID);
+    valueToSet = mainGetBits(gamebitID);
     if (param1 == TriggerCommand_Bits_0_Unset) {
         valueToSet = 0;
     } else if (param1 == TriggerCommand_Bits_1_Set) {
@@ -833,7 +833,7 @@ static void trigger_bits_set(u16 param1) {
         valueToSet = ~valueToSet;
     }
 
-    main_set_bits(gamebitID, valueToSet);
+    mainSetBits(gamebitID, valueToSet);
 }
 
 static void trigger_bits_toggle(u16 param1) {
@@ -844,9 +844,9 @@ static void trigger_bits_toggle(u16 param1) {
     gamebitID = param1 & 0x1FFF;
     param1 >>= 13;
 
-    value = main_get_bits(gamebitID);
+    value = mainGetBits(gamebitID);
     value ^= (1 << param1);
-    main_set_bits(gamebitID, value);
+    mainSetBits(gamebitID, value);
 }
 
 static void trigger_tex_load(u16 param1) {
@@ -854,12 +854,12 @@ static void trigger_tex_load(u16 param1) {
     s32 *ptr2;
     Texture *tex;
 
-    ptr = func_800213A0(param1 + 2);
+    ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = tex_get_cached(*ptr2);
+            tex = texGetCached(*ptr2);
             if (tex == NULL) {
-                func_80012584(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
+                assetEnqueueLoad(50, 3, NULL, (ObjSetup*)*ptr2, 0, 0, 0, 0);
             }
         }
     }
@@ -870,12 +870,12 @@ static void trigger_tex_free(u16 param1) {
     s32 *ptr2;
     Texture *tex;
 
-    ptr = func_800213A0(param1 + 2);
+    ptr = objGetTable(param1 + 2);
     if (ptr != NULL) {
         for (ptr2 = ptr; *ptr2 != -1; ptr2++) {
-            tex = tex_get_cached(*ptr2);
+            tex = texGetCached(*ptr2);
             if (tex != NULL) {
-                tex_free(tex);
+                texFreeTexture(tex);
             }
         }
     }
@@ -892,7 +892,7 @@ static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
     f32 modelRadius;
 
     if (sPointModel == NULL) {
-        sPointModel = func_80017D2C(85, 0);
+        sPointModel = modLoadModel(85, 0);
         sPointModelRefCount = 1;
     } else {
         sPointModelRefCount += 1;
@@ -945,7 +945,7 @@ static void trigger_point_update(Object *self, Object *activator) {
             }
 
             if (self->parent != NULL) {
-                inverse_transform_point_by_object(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z,
+                camInverseTransformPointByObject(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z,
                     &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z, 
                     self->parent);
             }
@@ -1052,7 +1052,7 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     f32 swapTemp;
     
     if (sPlaneModel == NULL) {
-        sPlaneModel = func_80017D2C(78, 0);
+        sPlaneModel = modLoadModel(78, 0);
         sPlaneModelRefCount = 1;
     } else {
         sPlaneModelRefCount += 1;
@@ -1072,9 +1072,9 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
     srt.transl.y = 0.0f;
     srt.transl.z = 0.0f;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
+    mathYprXyzMtx(&mtx, &srt);
 
-    vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &ox, &oy, &oz);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &ox, &oy, &oz);
     objdata->lookVector.x = ox;
     objdata->lookVector.y = oy;
     objdata->lookVector.z = oz;
@@ -1110,8 +1110,8 @@ static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {
         }
     }
 
-    vec3_transform(&mtx, minX, minY, minZ, &minX, &minY, &minZ);
-    vec3_transform(&mtx, maxX, maxY, maxZ, &maxX, &maxY, &maxZ);
+    mathMtxXFMF(&mtx, minX, minY, minZ, &minX, &minY, &minZ);
+    mathMtxXFMF(&mtx, maxX, maxY, maxZ, &maxX, &maxY, &maxZ);
 
     if (maxX < minX) {
         swapTemp = minX;
@@ -1259,10 +1259,10 @@ static void trigger_func_2884(Object *self, f32 *ox, f32 *oy, f32 *oz) {
     f32 temp_f16;
     f32 temp_f2;
     
-    sp2C = fsin16_precise(-self->srt.yaw);
-    sp28 = fcos16_precise(-self->srt.yaw);
-    sp24 = fsin16_precise(-self->srt.pitch);
-    temp_f0 = fcos16_precise(-self->srt.pitch);
+    sp2C = mathSinfInterp(-self->srt.yaw);
+    sp28 = mathCosfInterp(-self->srt.yaw);
+    sp24 = mathSinfInterp(-self->srt.pitch);
+    temp_f0 = mathCosfInterp(-self->srt.pitch);
     
     temp_f2 = (*ox) - self->globalPosition.x;
     temp_f16 = (*oy) - self->globalPosition.y;
@@ -1281,7 +1281,7 @@ static void trigger_func_29C0(u16 localID, Object *activator, s8 dir, s32 activa
     s32 i;
     s32 numObjs;
     
-    objects = get_world_objects(&i, &numObjs);
+    objects = objGetObjects(&i, &numObjs);
     while (i < numObjs) {
         obj = objects[i];
         objsetup = (Trigger_Setup*)obj->setup;

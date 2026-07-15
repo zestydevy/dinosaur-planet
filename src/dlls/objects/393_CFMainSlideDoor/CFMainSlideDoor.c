@@ -44,7 +44,7 @@ void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2)
     self->srt.scale = setup->unk21 * (1.0f / 64.0f);
     self->srt.scale *= self->def->scale;
     objdata = (CFMainSlideDoor_Data*)self->data;
-    objdata->unk0 = vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition) < 130.0f;
+    objdata->unk0 = vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition) < 130.0f;
 }
 
 // offset: 0x108 | func: 1 | export: 1
@@ -71,7 +71,7 @@ void CFMainSlideDoor_update(Object *self) { }
 // offset: 0x1E0 | func: 3 | export: 3
 void CFMainSlideDoor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -97,31 +97,31 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     s32 var_t6;
     s32 var_t7;
 
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     if (player != NULL) {
-        var_t6 = vec3_distance_xz(&a0->globalPosition, &player->globalPosition) < 130.0f;
+        var_t6 = vec3DistanceXZ(&a0->globalPosition, &player->globalPosition) < 130.0f;
     } else {
         var_t6 = 0;
     }
     if (sidekick != NULL) {
-        var_t7 = vec3_distance_xz(&a0->globalPosition, &sidekick->globalPosition) < 130.0f;
+        var_t7 = vec3DistanceXZ(&a0->globalPosition, &sidekick->globalPosition) < 130.0f;
     } else {
         var_t7 = 0;
     }
     objdata = (CFMainSlideDoor_Data*)a0->data;
     setup = (CFMainSlideDoor_Setup*)a0->setup;
     if (objdata->unk0 == 0) {
-        if (main_get_bits(setup->unk18) != 0) {
-            if (setup->unk22 == -1 || main_get_bits(setup->unk22) != 0) {
-                main_set_bits(setup->unk1A, 1);
+        if (mainGetBits(setup->unk18) != 0) {
+            if (setup->unk22 == -1 || mainGetBits(setup->unk22) != 0) {
+                mainSetBits(setup->unk1A, 1);
                 if (var_t6 != 0 || var_t7 != 0) {
                     objdata->unk0 = 2;
                 }
             }
         }
     } else if (objdata->unk0 == 1) {
-        if (main_get_bits(setup->unk18) != 0 || (setup->unk22 != -1 && main_get_bits(setup->unk22) != 0)) {
+        if (mainGetBits(setup->unk18) != 0 || (setup->unk22 != -1 && mainGetBits(setup->unk22) != 0)) {
             if ((var_t6 == 0) && (var_t7 == 0)) {
                 objdata->unk0 = 3;
             }

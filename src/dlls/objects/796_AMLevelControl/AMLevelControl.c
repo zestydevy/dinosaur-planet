@@ -37,9 +37,9 @@ void dll_796_setup(Object* self, ObjSetup* setup, s32 arg2) {
     u8 sp27;
 
     self->animCallback = dll_796_func_1E8;
-    sp27 = main_demo_state();
+    sp27 = mainDemoState();
     gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_ROLLING_DEMO, sp27 & 0xFF, 1);
-    main_set_bits(_data_0[sp27], 1U);
+    mainSetBits(_data_0[sp27], 1U);
 }
 
 // offset: 0xB8 | func: 1 | export: 1
@@ -47,8 +47,8 @@ void dll_796_control(Object* self) {
     u8 temp_a0;
 
     if (self->unkDC != 0) {
-        temp_a0 = main_demo_next();
-        main_demo_start(_data_18[temp_a0].x, _data_18[temp_a0].y, _data_18[temp_a0].z, _data_C[temp_a0]);
+        temp_a0 = mainDemoNext();
+        mainDemoStart(_data_18[temp_a0].x, _data_18[temp_a0].y, _data_18[temp_a0].z, _data_C[temp_a0]);
         self->unkDC = 0;
     }
 }
@@ -60,7 +60,7 @@ void dll_796_update(Object *self) { }
 // offset: 0x160 | func: 3 | export: 3
 void dll_796_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

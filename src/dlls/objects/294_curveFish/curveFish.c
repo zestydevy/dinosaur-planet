@@ -110,7 +110,7 @@ void curveFish_control(Object* self) {
 
     objData = self->data;
     objSetup = (curveFish_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
 
     if (objData->initialised == FALSE) {
         curveFish_initialise(self);
@@ -121,13 +121,13 @@ void curveFish_control(Object* self) {
 
     //Allow targetting based on player-specific gamebits (whether Krystal/Sabre own a fishing net)
     if (player->id == OBJ_Krystal) {
-        if (main_get_bits(BIT_Krystal_Fishing_Net) == FALSE) {
+        if (mainGetBits(BIT_Krystal_Fishing_Net) == FALSE) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     } else {
-        if (main_get_bits(BIT_Sabre_Fishing_Net) == FALSE) {
+        if (mainGetBits(BIT_Sabre_Fishing_Net) == FALSE) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
         } else {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
@@ -145,7 +145,7 @@ void curveFish_control(Object* self) {
 
     //Handle speed and animation speed
     {
-        objData->speed += ((objData->maxSpeed * (s8)rand_next(-50, 100)) / 1000.0f) * gUpdateRateF;
+        objData->speed += ((objData->maxSpeed * (s8)mathRnd(-50, 100)) / 1000.0f) * gUpdateRateF;
         if (objData->speed < 0) {
             objData->speed = 0.0f;
         } else if (objData->speed > objData->maxSpeed) {
@@ -180,7 +180,7 @@ void curveFish_control(Object* self) {
         self->srt.transl.z = objData->curves.unk0.unk68.z;
 
         //Set yaw via tangent vector at curve point
-        self->srt.yaw = arctan2_f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_90_DEGREES;
+        self->srt.yaw = mathAtan2f(objData->curves.unk0.unk74, objData->curves.unk0.unk7C) + M_90_DEGREES;
     }
 
     switch (objData->state) {
@@ -207,8 +207,8 @@ void curveFish_control(Object* self) {
         self->srt.transl.y = objData->curves.unk0.unk68.y + objSetup->curveOffsetY;
         if (objData->timer > objSetup->swimOnBedDuration) {
             objData->state = CurveFish_STATE_3_Swim_Ascending;
-            func_80023D30(self, CurveFish_MODANIM_2_Tilted_Up, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_2_Tilted_Up, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_3_Swim_Ascending:
@@ -217,15 +217,15 @@ void curveFish_control(Object* self) {
             self->srt.transl.y = objData->surfaceY;
             objData->state = CurveFish_STATE_4_Swim_on_Surface;
             objData->timer = 0.0f;
-            func_80023D30(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_4_Swim_on_Surface:
         if (objData->timer > objSetup->swimOnSurfaceDuration) {
             objData->state = CurveFish_STATE_5_Swim_Diving;
-            func_80023D30(self, CurveFish_MODANIM_3_Tilted_Down, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_3_Tilted_Down, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     case CurveFish_STATE_5_Swim_Diving:
@@ -234,13 +234,13 @@ void curveFish_control(Object* self) {
             self->srt.transl.y = objData->curves.unk0.unk68.y + objSetup->curveOffsetY;
             objData->state = CurveFish_STATE_2_Swim_on_Seabed;
             objData->timer = 0.0f;
-            func_80023D30(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
-            func_80024D74(self, 30);
+            objAnimSet(self, CurveFish_MODANIM_0_Swim_LOOP, 0.0f, 0);
+            objAnim_func_80024D74(self, 30);
         }
         break;
     }
     
-    func_80024108(self, objData->animSpeed, gUpdateRateF, NULL);
+    objAnimAdvance(self, objData->animSpeed, gUpdateRateF, NULL);
 }
 
 
@@ -252,7 +252,7 @@ void curveFish_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
     curveFish_Data* curvefishdata = self->data;
     
     if ((curvefishdata->state != CurveFish_STATE_0_Hidden) && visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 // offset: 0x934 | func: 5 | export: 4
@@ -280,9 +280,9 @@ static void curveFish_caught_by_net(Object* self) {
         /* OBJ_SC_golden_nugge is indexed just before OBJ_DF_Lantern: maybe a nugget was 
            once going to be fished out of the water, and it would've shared this DLL
            (or DLL 318, depending on which came first)? */
-        main_set_bits(BIT_Gold_Nugget_LFV, 1);
+        mainSetBits(BIT_Gold_Nugget_LFV, 1);
     } else {
-        player = get_player();
+        player = objGetPlayer();
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Fish);
     }

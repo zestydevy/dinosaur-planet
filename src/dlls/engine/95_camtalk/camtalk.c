@@ -68,7 +68,7 @@ void camtalk_func_18(Cam* cam, s32 arg1, CamTalk_Params* data) {
         
     }
     if (ctype == 4) {
-        ctype = rand_next(0, 3);
+        ctype = mathRnd(0, 3);
     }
     switch (ctype) {
     default:
@@ -90,13 +90,13 @@ void camtalk_func_18(Cam* cam, s32 arg1, CamTalk_Params* data) {
     STUBBED_PRINTF(" ctype %i \n", ctype);
     sState->unk1C = (s32) ctype;
     sState->unk14 = 0.0f;
-    sState->unk18 = rand_next(0x2000, 0x2C00);
+    sState->unk18 = mathRnd(0x2000, 0x2C00);
     xDiff = cam->srt.transl.x - sState->x;
     zDiff = cam->srt.transl.z - sState->z;
-    sp30 = arctan2_f(xDiff, zDiff);
+    sp30 = mathAtan2f(xDiff, zDiff);
     xDiff = cam->player->srt.transl.x - sState->x;
     zDiff = cam->player->srt.transl.z - sState->z;
-    temp_v0_3 = arctan2_f(xDiff, zDiff);
+    temp_v0_3 = mathAtan2f(xDiff, zDiff);
     var_a0 = (sState->unk18 + temp_v0_3) - (sp30 & 0xFFFF);
     CIRCLE_WRAP(var_a0);
     var_v1 = (temp_v0_3 - sState->unk18) - (sp30 & 0xFFFF);
@@ -136,15 +136,15 @@ void camtalk_func_320(Cam* cam) {
     var_f26 = (temp_s0->srt.transl.y + 30.0f) - sp60->y;
     var_f22 = temp_s0->srt.transl.z - sp60->z;
     var_f16 = sqrtf(SQ(var_f20) + SQ(var_f22));
-    sp4A = arctan2_f(var_f20, var_f22);
+    sp4A = mathAtan2f(var_f20, var_f22);
     var_f20 *= 0.5f;
     var_f26 *= 0.72f;
     var_f22 *= 0.5f;
     var_f20 += sp60->x;
     var_f26 += sp60->y;
     var_f22 += sp60->z;
-    var_f24 = fsin16_precise((sp4A & 0xFFFF & 0xFFFF) + (sState->unk18));
-    sp68 = fcos16_precise((sp4A) + (sState->unk18));
+    var_f24 = mathSinfInterp((sp4A & 0xFFFF & 0xFFFF) + (sState->unk18));
+    sp68 = mathCosfInterp((sp4A) + (sState->unk18));
     if (var_f16 < 25.0f) {
         var_f16 = 25.0f;
     }
@@ -155,8 +155,8 @@ void camtalk_func_320(Cam* cam) {
     var_f24 = cam->srt.transl.x - var_f20;
     sp64 = cam->srt.transl.y - var_f26;
     sp68 = cam->srt.transl.z - var_f22;
-    cam->srt.yaw = 0x8000 - arctan2_f(var_f24, sp68);
-    cam->srt.pitch = arctan2_f(sp64, sqrtf(SQ(var_f24) + SQ(sp68)));
+    cam->srt.yaw = 0x8000 - mathAtan2f(var_f24, sp68);
+    cam->srt.pitch = mathAtan2f(sp64, sqrtf(SQ(var_f24) + SQ(sp68)));
 }
 
 // offset: 0x544 | func: 2 | export: 2

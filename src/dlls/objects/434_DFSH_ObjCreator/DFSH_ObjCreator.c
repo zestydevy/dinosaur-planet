@@ -48,16 +48,16 @@ void DFSH_ObjCreator_control(Object* self) {
     Baddie* sharpClawBaddie;
     DLL_IModgfx* modgfx;
 
-    if (main_get_bits(BIT_589) != 0) {
+    if (mainGetBits(BIT_589) != 0) {
         self->unkE0 = 0;
         return;
     }
-    if ((self->unkE0 == 0) && (main_get_bits(setup->type + BIT_F6) != 0)) {
-        modgfx = dll_load_deferred(DLL_ID_146, 1);
+    if ((self->unkE0 == 0) && (mainGetBits(setup->type + BIT_F6) != 0)) {
+        modgfx = dllLoad(DLL_ID_146, 1);
         modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
         modgfx->vtbl->func0(self, 1, 0, 1, -1, 0);
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
-        dll_unload(modgfx);
+        dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dllFree(modgfx);
         objdata->timerRate = 1;
         self->unkE0 = 1;
     }
@@ -65,7 +65,7 @@ void DFSH_ObjCreator_control(Object* self) {
         objdata->timer -= (objdata->timerRate * (s16) gUpdateRateF);
     }
     if (objdata->timer <= 0) {
-        sharpClawSetup = obj_alloc_setup(sizeof(Baddie_Setup), OBJ_ClubSharpClaw);
+        sharpClawSetup = objAllocSetup(sizeof(Baddie_Setup), OBJ_ClubSharpClaw);
         sharpClawSetup->base.x = setup->base.x;
         sharpClawSetup->base.y = setup->base.y;
         sharpClawSetup->base.z = setup->base.z;
@@ -78,7 +78,7 @@ void DFSH_ObjCreator_control(Object* self) {
         sharpClawSetup->unk30 = -1;
         sharpClawSetup->unk2A = (s8) (self->srt.yaw >> 8);
         sharpClawSetup->unk2B = 2;
-        if (main_get_bits(BIT_FC) != 0) {
+        if (mainGetBits(BIT_FC) != 0) {
             sharpClawSetup->unk22 = 0x49;
         } else {
             sharpClawSetup->unk22 = -1;
@@ -103,7 +103,7 @@ void DFSH_ObjCreator_control(Object* self) {
             sharpClawSetup->quarterHitpoints = 3;
             break;
         }
-        sharpClaw = obj_create((ObjSetup*)sharpClawSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+        sharpClaw = objSetupObject((ObjSetup*)sharpClawSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
         if (sharpClaw != NULL) {
             sharpClawBaddie = sharpClaw->data;
             if (sharpClawBaddie != NULL) {
@@ -137,7 +137,7 @@ void DFSH_ObjCreator_update(Object* self) { }
 // offset: 0x3E4 | func: 3 | export: 3
 void DFSH_ObjCreator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

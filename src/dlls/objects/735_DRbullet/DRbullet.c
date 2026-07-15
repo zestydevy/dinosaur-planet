@@ -72,7 +72,7 @@ void DRbullet_control(Object* self) {
 
     switch (objData->state){
         case BULLET_STATE_FIRED:
-            obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+            objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
             objData->timer -= gUpdateRate;
             //Check if the bullet hit something or its timer expired
             if ((objData->timer < 0) || (self->objhitInfo->unk58 & 8)) {
@@ -80,7 +80,7 @@ void DRbullet_control(Object* self) {
                 objData->timer = 0;
                 if (self->objhitInfo->unk58 & 8) {
                     STUBBED_PRINTF(" hit sometime ");
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_851_Laser_Blast, 0x7F, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_851_Laser_Blast, 0x7F, NULL, NULL, 0, NULL);
                 }
                 if (0 && objData->timer == 0){
                     STUBBED_PRINTF(" long time ");
@@ -104,7 +104,7 @@ void DRbullet_control(Object* self) {
 
     //Control whooshing sound volume as bullet passes player
     if (objData->whooshSoundHandle) {
-        gDLL_6_AMSFX->vtbl->update_doppler(objData->whooshSoundHandle, self, get_player(), 150.0f);
+        dll_amSfx->UpdateDoppler(objData->whooshSoundHandle, self, objGetPlayer(), 150.0f);
     }
 }
 
@@ -115,7 +115,7 @@ void DRbullet_update(Object *self) { }
 void DRbullet_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DRbullet_Data* objData = self->data;
     if (visibility && (objData->state != BULLET_STATE_INACTIVE)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -126,7 +126,7 @@ void DRbullet_free(Object* self, s32 arg1) {
 
     lfxEmitter = objData->lfxEmitter;
     if (lfxEmitter) {
-        obj_destroy_object(lfxEmitter);
+        objFreeObject(lfxEmitter);
     }
 }
 
@@ -179,14 +179,14 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     self->velocity.y = velocity.f[1];
     self->velocity.z = velocity.f[2];    
     lateralSpeed = sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z));
-    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
-    self->srt.pitch = -arctan2_f(self->velocity.y, lateralSpeed);
+    self->srt.yaw = mathAtan2f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = -mathAtan2f(self->velocity.y, lateralSpeed);
     self->srt.roll = 0;
     func_8002674C(self);
 
     //Set bullet to "fired" state and play sound
     objData->state = BULLET_STATE_FIRED;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_927_Harsh_Electric_Loop, 0x7F, &objData->whooshSoundHandle, NULL, 0, NULL);
 
     //Set bullet's expiry timer based on 10 second trajectory after being fired
     futurePosition.x = self->velocity.x * 600.0f;
@@ -195,11 +195,11 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     futurePosition.x += self->srt.transl.x;
     futurePosition.y += self->srt.transl.y;
     futurePosition.z += self->srt.transl.z;
-    func_80007EE0(&self->srt.transl, &sCurrentPosition);
-    func_80007EE0(&futurePosition, &sFuturePosition);
+    vox_func_80007EE0(&self->srt.transl, &sCurrentPosition);
+    vox_func_80007EE0(&futurePosition, &sFuturePosition);
 
-    if (func_80008048(&sCurrentPosition, &sFuturePosition, &sp44, NULL, 0) == 0){
-        func_80007E2C(&futurePosition, &sp44);
+    if (vox_func_80008048(&sCurrentPosition, &sFuturePosition, &sp44, NULL, 0) == 0){
+        vox_func_80007E2C(&futurePosition, &sp44);
         displacement.f[0] = futurePosition.f[0] - self->srt.transl.f[0];
         displacement.f[1] = futurePosition.f[1] - self->srt.transl.f[1];
         displacement.f[2] = futurePosition.f[2] - self->srt.transl.f[2];
@@ -211,7 +211,7 @@ void DRbullet_recycle(Object* self, SRT* pFired, SRT* pTarget, f32 speed) {
     //Create new lfxEmitter
     lfxEmitter = objData->lfxEmitter;
     if (lfxEmitter != NULL){
-        obj_destroy_object(lfxEmitter);
+        objFreeObject(lfxEmitter);
     }    
     lfxEmitter = DRbullet_create_lfxEmitter(self, 0x24B);
     objData->lfxEmitter = lfxEmitter;
@@ -232,7 +232,7 @@ void DRbullet_free_if_inactive(Object* self) {
 
     objData->flags |= 1;
     if (objData->state == BULLET_STATE_INACTIVE) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -267,13 +267,13 @@ s32 DRbullet_tick_impact(Object* self) {
 
         //Stop whoosh sound
         if (objData->whooshSoundHandle) {
-            gDLL_6_AMSFX->vtbl->stop(objData->whooshSoundHandle);
+            dll_amSfx->Stop(objData->whooshSoundHandle);
             objData->whooshSoundHandle = 0;
         }
 
         func_800267A4(self);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_380_Scorching_Impact, 0x7F, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_386_Squelched_Impact, 0x7F, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_380_Scorching_Impact, 0x7F, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_386_Squelched_Impact, 0x7F, NULL, NULL, 0, NULL);
     }
 
     //Increment timer, and return True if bullet has been in impact state for a while
@@ -293,7 +293,7 @@ s32 DRbullet_tick_impact(Object* self) {
         }
     } else {
         if (objData->lfxEmitter != NULL) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
             objData->lfxEmitter = NULL;
         }
         self->opacity = 0;
@@ -306,12 +306,12 @@ s32 DRbullet_tick_impact(Object* self) {
 Object* DRbullet_create_lfxEmitter(Object* self, s32 arg1) {
     LFXEmitter_Setup* lfxSetup;
 
-    lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     lfxSetup->base.loadFlags = 2;
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;
     lfxSetup->base.z = self->srt.transl.z;
     lfxSetup->unk1E = arg1;
     lfxSetup->unk22 = -1;
-    return obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
 }

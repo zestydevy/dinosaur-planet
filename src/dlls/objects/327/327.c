@@ -48,11 +48,11 @@ void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
     }
     
     //Set up animation
-    func_80023D30(self, objSetup->modAnimIndex, objSetup->animProgress / 256.0f, 0);
+    objAnimSet(self, objSetup->modAnimIndex, objSetup->animProgress / 256.0f, 0);
     
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitVisible)) {
+        if (mainGetBits(objSetup->gamebitVisible)) {
             self->opacity = OBJECT_OPACITY_MAX;
         } else {
             self->opacity = 0;
@@ -72,11 +72,11 @@ void dll_327_control(Object* self) {
     animSpeedTemp = objSetup->animSpeed;
     animSpeedTemp /= 10000.0f;
     animSpeed = animSpeedTemp;
-    func_80024108(self, animSpeed, gUpdateRateF, 0);
+    objAnimAdvance(self, animSpeed, gUpdateRateF, 0);
 
     //Set visibility based on a gamebit
     if (objSetup->gamebitVisible != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitVisible)) {
+        if (mainGetBits(objSetup->gamebitVisible)) {
             self->opacity = OBJECT_OPACITY_MAX;
         } else {
             self->opacity = 0;
@@ -90,7 +90,7 @@ void dll_327_update(Object *self) { }
 // offset: 0x23C | func: 3 | export: 3
 void dll_327_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -35,9 +35,9 @@ void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
         temp_v0_2->maxDistScale = temp_v0_2->scale * 2.5f;
     }
 
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);
+    dll_amSfx->Play(self, SOUND_9B1_Flames_Venting, MAX_VOLUME, NULL, 0, 0, 0);
     if (_bss_4 == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_9B2_Fire_Burning, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_9B2_Fire_Burning, MAX_VOLUME, (u32*)&_bss_4, 0, 0, 0);
     }
 }
 
@@ -81,7 +81,7 @@ void kamerian_flame_control(Object* self) {
     if (dOpacity >= self->opacity) {
         //Destroy if faded out
         self->opacity = 0;
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
 
@@ -92,19 +92,19 @@ void kamerian_flame_control(Object* self) {
     }
 
     self->velocity.y += -0.046f * gUpdateRateF;
-    self->srt.yaw = arctan2_f(self->velocity.x, self->velocity.z);
-    self->srt.pitch = arctan2_f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    self->srt.yaw = mathAtan2f(self->velocity.x, self->velocity.z);
+    self->srt.pitch = mathAtan2f(sqrtf((self->velocity.x * self->velocity.x) + (self->velocity.z * self->velocity.z)), self->velocity.y) - 0x4000;
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     func_80026128(self, 0xA, 1, 0);
     func_80026940(self, 0x10);
     func_8002674C(self);
 
     //Handle object collisions
     if (self->objhitInfo->unk48 && 
-        ((get_player()) == self->objhitInfo->unk48 || (get_sidekick()) == self->objhitInfo->unk48)) {
+        ((objGetPlayer()) == self->objhitInfo->unk48 || (objGetSidekick()) == self->objhitInfo->unk48)) {
 
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
+        camUseShake();
+        camSetShakeOffset(1.0f);
 
         //Create particles (@bug: particles don't seem to show up?)
         impactSoundID = SOUND_9B5_Explosion;
@@ -147,11 +147,11 @@ void kamerian_flame_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 // offset: 0x5B4 | func: 5 | export: 4
 void kamerian_flame_free(Object* self, s32 arg1) {
     if (_bss_4 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(_bss_4);
+        dll_amSfx->Stop(_bss_4);
         _bss_4 = 0;
     }
-    gDLL_6_AMSFX->vtbl->play(self, impactSoundID, MAX_VOLUME, NULL, 0, 0, 0);
-    camera_disable_y_offset();
+    dll_amSfx->Play(self, impactSoundID, MAX_VOLUME, NULL, 0, 0, 0);
+    camIgnoreShake();
 }
 
 // offset: 0x668 | func: 6 | export: 5

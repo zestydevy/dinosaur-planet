@@ -29,7 +29,7 @@ void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;
     self->animCallback = CCspellpage_anim_callback;
-    obj_add_object_type(self, OBJTYPE_Collectable);
+    objAddObjectType(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x90 | func: 1 | export: 1
@@ -41,13 +41,13 @@ void CCspellpage_update(Object *self) { }
 // offset: 0xA8 | func: 3 | export: 3
 void CCspellpage_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xFC | func: 4 | export: 4
 void CCspellpage_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_Collectable);
+    objFreeObjectType(self, OBJTYPE_Collectable);
 }
 
 // offset: 0x13C | func: 5 | export: 5
@@ -68,7 +68,7 @@ int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
     for (i = 0; i < animObjData->messageCount; i++) {
         if (animObjData->messages[i] == 1) {
             dShowInfoScrollTimer = 100.0f;
-            main_set_bits(BIT_Spell_Forcefield, 1);
+            mainSetBits(BIT_Spell_Forcefield, 1);
         }
     }
 

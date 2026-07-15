@@ -88,14 +88,14 @@ void TexScroll_control(Object* self) {
     objData = self->data;
 
     //Only animate if activation gamebit is set (or if no gamebit is specified)
-    if (!(objData->gamebitActivate == NO_GAMEBIT || main_get_bits(objData->gamebitActivate))) {
+    if (!(objData->gamebitActivate == NO_GAMEBIT || mainGetBits(objData->gamebitActivate))) {
         return;
     }
 
     objData->scrollProgress += gUpdateRate;
 
     //Get object's local Block
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->adjustDeltaTime = TRUE;
         objData->searchForMaterial = TRUE;
@@ -215,7 +215,7 @@ void TexScroll_update(Object *self) { }
 // offset: 0x500 | func: 3 | export: 3
 void TexScroll_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -248,21 +248,21 @@ void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objDat
     objSetup = (TexScroll_Setup*)self->setup;
 
     //Find object's local Block
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y,self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y,self->srt.transl.z));
     if (block == NULL) {
         objData->searchForMaterial = TRUE;
         return;
     }
 
     //Get TABLES.bin subfile #14 ("scroll table")
-    scroll_table = func_800213A0(14);
+    scroll_table = objGetTable(14);
     if (scroll_table == NULL){
         STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;
     }
 
     //Get texture from table
-    texture = tex_get_cached(-scroll_table[objSetup->textureIndex]);
+    texture = texGetCached(-scroll_table[objSetup->textureIndex]);
     if (texture == NULL){
         STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d'\n");
         return;

@@ -52,7 +52,7 @@ void Duster_dtor(void *dll) { }
 void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
     Duster_Data *objdata = self->data;
 
-    objdata->timer1 = rand_next(0, 50);
+    objdata->timer1 = mathRnd(0, 50);
     objdata->unk0 = 0.02f;
 
     objdata->gamebitDiscovered = setup->gamebit;
@@ -62,10 +62,10 @@ void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
         objdata->gamebitCollected = objdata->gamebitDiscovered;
     } else {
         // this is a hidden duster, check if it has been discovered
-        objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+        objdata->discovered = mainGetBits(objdata->gamebitDiscovered);
         objdata->gamebitCollected = objdata->gamebitDiscovered + DUSTER_TOTAL_COUNT;
     }
-    objdata->collected = main_get_bits(objdata->gamebitCollected);
+    objdata->collected = mainGetBits(objdata->gamebitCollected);
     objdata->unk11 = setup->unk1B;
 
     if (self->objhitInfo && !objdata->discovered) {
@@ -88,10 +88,10 @@ void Duster_control(Object *self) {
     PlayerStats *stats;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     if (!objdata->discovered || objdata->collected == TRUE) {
         if (!objdata->discovered) {
-            objdata->discovered = main_get_bits(objdata->gamebitDiscovered);
+            objdata->discovered = mainGetBits(objdata->gamebitDiscovered);
             objdata->timer1 = 0;
         }
         return;
@@ -111,14 +111,14 @@ void Duster_control(Object *self) {
     }
 
     if (objdata->timer1 == 0 && objdata->timer2 == 0) {
-        if (func_80024108(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_87B_Ting, 0x25, NULL, NULL, 0, NULL);
+        if (objAnimAdvance(self, objdata->unk0, gUpdateRateF, NULL) || objdata->unkE) {
+            dll_amSfx->Play(self, SOUND_87B_Ting, 0x25, NULL, NULL, 0, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51F, NULL, PARTFXFLAG_2, -1, NULL);
 
-            objdata->rand = rand_next(0, DUSTER_RANDOM_MAX);
+            objdata->rand = mathRnd(0, DUSTER_RANDOM_MAX);
             if (objdata->rand == DUSTER_RANDOM_MAX) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_87E_Duster_Cry, 0x25, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_87E_Duster_Cry, 0x25, NULL, NULL, 0, NULL);
             }
             if (objdata->unk11 != 0) {
                 self->velocity.x = 0.2f;
@@ -131,7 +131,7 @@ void Duster_control(Object *self) {
                 srt.transl.z = 0.0f;
                 srt.scale = 1.0f;
                 srt.yaw = self->srt.yaw;
-                rotate_vec3(&srt, self->velocity.f);
+                mathRotateRPY(&srt, self->velocity.f);
             } else {
                 self->velocity.x = 0.0f;
                 self->velocity.z = 0.0f;
@@ -145,7 +145,7 @@ void Duster_control(Object *self) {
         }
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
             objdata->resetTimer2 = TRUE;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->timer1 != 0) {
@@ -169,12 +169,12 @@ void Duster_control(Object *self) {
         }
         self->srt.yaw += 0xBB8 * (s16)gUpdateRateF;
     }
-    if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_6CA_Chime, 0x7F, 0, 0, 0, 0);
+    if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 20.0f) {
+        dll_amSfx->Play(self, SOUND_6CA_Chime, 0x7F, 0, 0, 0, 0);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_51A, NULL, PARTFXFLAG_1, -1, NULL);
-        main_set_bits(objdata->gamebitCollected, 1);
+        mainSetBits(objdata->gamebitCollected, 1);
         objdata->collected = TRUE;
         func_800267A4(self);
         stats = gDLL_29_Gplay->vtbl->get_player_stats();
@@ -214,7 +214,7 @@ void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
     Duster_Data *objdata = self->data;
 
     if (visibility && objdata->discovered && !objdata->collected) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

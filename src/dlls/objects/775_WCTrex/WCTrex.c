@@ -66,20 +66,20 @@ void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
     s16 sp3C[] = {5, 10, 20, 20, 20, 20, 20, 20};
     s32 sp38 = 2;
 
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x2AAA, 0x638D, 8);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, sp3C, sp4C, 8);
     objdata->movedata.unk4A9 |= 0x22;
     gDLL_26_Curves->vtbl->func_4288(&objdata->unk828, self, 1000.0f, &sp38, -1);
     gDLL_18_objfsa->vtbl->func0(self, &objdata->fsa, 4, 4);
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x270 | func: 2 | export: 1
 void WCTrex_control(Object* self) {
     WCTrex_Data* objdata = self->data;
 
-    objdata->playerDist = vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition);
+    objdata->playerDist = vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition);
     objdata->fsa.flags |= OBJFSA_FLAG_2000000;
     gDLL_18_objfsa->vtbl->tick(self, &objdata->fsa, gUpdateRateF, gUpdateRateF, bss_0, bss_10);
     if (objdata->flags & 1) {
@@ -88,7 +88,7 @@ void WCTrex_control(Object* self) {
         objdata->movedata.unk4A9 |= 1;
     }
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
-    func_80032A08(self, &objdata->headAnim);
+    objExprEyeIdle(self, &objdata->headAnim);
     WCTrex_func_4A8(self);
 }
 
@@ -100,14 +100,14 @@ void WCTrex_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
     WCTrex_Data* objdata = self->data;
 
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objdata->movedata, 0);
     }
 }
 
 // offset: 0x444 | func: 5 | export: 4
 void WCTrex_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0x484 | func: 6 | export: 5
@@ -135,9 +135,9 @@ static void WCTrex_func_4A8(Object* self) {
     srt.pitch = self->srt.pitch;
     srt.roll = self->srt.roll;
     srt.scale = 1.0f;
-    matrix_from_srt(&mtx, &srt);
-    vec3_transform(&mtx, 0.0f, 0.0f, 0.0f, &x, &y, &z);
-    shadows_set_custom_obj_pos(self, x, y, z);
+    mathYprXyzMtx(&mtx, &srt);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 0.0f, &x, &y, &z);
+    shadowsSetCustomObjPos(self, x, y, z);
 }
 
 // offset: 0x584 | func: 9 | anim state 0
@@ -148,7 +148,7 @@ static s32 WCTrex_func_584(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x59C | func: 10 | anim state 1
 static s32 WCTrex_func_59C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         fsa->animTickDelta = 0.005f;
     }
     return 0;
@@ -160,20 +160,20 @@ static s32 WCTrex_func_608(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     UnkCurvesStruct* curveStruct = &objdata->unk828;
     
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     }
     self->velocity.x = (curveStruct->unk0.unk68.x - self->srt.transl.x) * gUpdateRateInverseF;
     self->velocity.z = (curveStruct->unk0.unk68.z - self->srt.transl.z) * gUpdateRateInverseF;
     self->srt.transl.x = curveStruct->unk0.unk68.x;
     self->srt.transl.z = curveStruct->unk0.unk68.z;
-    self->srt.yaw = arctan2_f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
-    func_8002493C(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
+    self->srt.yaw = mathAtan2f(-curveStruct->unk0.unk74, -curveStruct->unk0.unk7C);
+    objGetAnimChange(self, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), &fsa->animTickDelta);
     return 0;
 }
 
 // offset: 0x728 | func: 12 | anim state 3
 static s32 WCTrex_func_728(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     s32 angle;
     f32 xDiff, zDiff;
 
@@ -181,7 +181,7 @@ static s32 WCTrex_func_728(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animTickDelta = 0.012f;
         xDiff = self->srt.transl.x - player->srt.transl.x;
         zDiff = self->srt.transl.z - player->srt.transl.z;
-        angle = arctan2_f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
+        angle = mathAtan2f(xDiff, zDiff) - (self->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(angle);
         if (angle > 0x4000) {} // required to match, from default.dol
     }
@@ -226,7 +226,7 @@ static s32 WCTrex_func_8DC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         return 1 + 1;
     }
     if ((objdata->playerDist < 100.0f) && (objdata->attackCooldown <= 0.0f)) {
-        objdata->attackCooldown = (f32) rand_next(120, 250);
+        objdata->attackCooldown = (f32) mathRnd(120, 250);
         return 3 + 1;
     }
     return 0;

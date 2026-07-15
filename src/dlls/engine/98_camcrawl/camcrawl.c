@@ -27,12 +27,12 @@ void camcrawl_control(Cam* cam) {
 
     obj = cam->player;
     if (obj != NULL) {
-        cam->srt.transl.x = (fsin16_precise(obj->srt.yaw) * 13.0f) + obj->srt.transl.x;
-        cam->srt.transl.z = (fcos16_precise(obj->srt.yaw) * 13.0f) + obj->srt.transl.z;
+        cam->srt.transl.x = (mathSinfInterp(obj->srt.yaw) * 13.0f) + obj->srt.transl.x;
+        cam->srt.transl.z = (mathCosfInterp(obj->srt.yaw) * 13.0f) + obj->srt.transl.z;
         cam->srt.transl.y = obj->srt.transl.y + 20.0f;
-        camera = get_main_camera();
+        camera = camGetMain();
 
-        dYaw = (-arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
+        dYaw = (-mathAtan2f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) - (cam->srt.yaw & 0xFFFF)) + 0x8000;
         CIRCLE_WRAP(dYaw)
         
         cam->srt.yaw += (dYaw * gUpdateRate) >> 3;

@@ -46,10 +46,10 @@ void WGBouncyVine_setup(Object* self, WGBouncyVine_Setup* objSetup, s32 reset) {
     gamebitValueA = -1;
     gamebitValueB = -1;
     if (objSetup->gamebitA != NO_GAMEBIT) {
-        gamebitValueA = main_get_bits(objSetup->gamebitA);
+        gamebitValueA = mainGetBits(objSetup->gamebitA);
     }
     if (objSetup->gamebitB != NO_GAMEBIT) {
-        gamebitValueB = main_get_bits(objSetup->gamebitA); //@bug: shouldn't this be checking gamebitB?
+        gamebitValueB = mainGetBits(objSetup->gamebitA); //@bug: shouldn't this be checking gamebitB?
     }
     
     //Remove the vine when both gamebits' values are set
@@ -78,25 +78,25 @@ void WGBouncyVine_control(Object* self) {
     switch (objData->state) {
     case WGBouncyVine_STATE_0_Idle:
         //Bounce and hurt the player when a gamebit is set
-        if (main_get_bits(objSetup->gamebitHurtPlayer)) {
-            func_80023D30(self, WGBouncyVine_MODANIM_2_Bounce, 0.0f, 0);
+        if (mainGetBits(objSetup->gamebitHurtPlayer)) {
+            objAnimSet(self, WGBouncyVine_MODANIM_2_Bounce, 0.0f, 0);
             objData->state = WGBouncyVine_STATE_1_Bounce;
-            func_8002635C(get_player(), NULL, Damage_Type_8, 1, 0);
+            func_8002635C(objGetPlayer(), NULL, Damage_Type_8, 1, 0);
         }
 
         //Check whether the pollen cannons' gamebits are set
         if (objSetup->gamebitA != NO_GAMEBIT) {
-            gamebitValueA = main_get_bits(objSetup->gamebitA);
+            gamebitValueA = mainGetBits(objSetup->gamebitA);
         }
         if (objSetup->gamebitB != NO_GAMEBIT) {
-            gamebitValueB = main_get_bits(objSetup->gamebitA); //@bug: shouldn't this be checking gamebitB?
+            gamebitValueB = mainGetBits(objSetup->gamebitA); //@bug: shouldn't this be checking gamebitB?
         }
         
         //Remove the vine when both gamebits' values are set
         if ((gamebitValueA * gamebitValueB) && ((gamebitValueA + gamebitValueB) >= 0)) {
             self->objhitInfo->unk58 &= ~1;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A3E_Vines_Rustle, MAX_VOLUME, NULL, NULL, 0, NULL);
-            func_80023D30(self, WGBouncyVine_MODANIM_1_Collapsing, 0.0f, 0);
+            dll_amSfx->Play(self, SOUND_A3E_Vines_Rustle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objAnimSet(self, WGBouncyVine_MODANIM_1_Collapsing, 0.0f, 0);
             objData->state = WGBouncyVine_STATE_2_Collapsing;
         }
         break;
@@ -105,20 +105,20 @@ void WGBouncyVine_control(Object* self) {
     case WGBouncyVine_STATE_1_Bounce:
         //Play a sound partway through animation
         if ((objData->soundPlayed == FALSE) && (self->animProgress > 0.3f)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A3F_Boing, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_A3F_Boing, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->soundPlayed = TRUE;
         }
         
         //Return to idle when animation finished
-        if (func_80024108(self, 0.02f, gUpdateRateF, &animInfo)) {
-            main_set_bits(objSetup->gamebitHurtPlayer, FALSE);
+        if (objAnimAdvance(self, 0.02f, gUpdateRateF, &animInfo)) {
+            mainSetBits(objSetup->gamebitHurtPlayer, FALSE);
             objData->state = WGBouncyVine_STATE_0_Idle;
             objData->soundPlayed = FALSE;
         }
         break;
     case WGBouncyVine_STATE_2_Collapsing:
         //Disappear when animation finished
-        if (func_80024108(self, 0.01f, gUpdateRateF, &animInfo)) {
+        if (objAnimAdvance(self, 0.01f, gUpdateRateF, &animInfo)) {
             objData->state = WGBouncyVine_STATE_3_Gone;
         }
         break;
@@ -133,7 +133,7 @@ void WGBouncyVine_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tria
     WGBouncyVine_Data* objData = self->data;
     
     if ((objData->state != WGBouncyVine_STATE_3_Gone) && visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

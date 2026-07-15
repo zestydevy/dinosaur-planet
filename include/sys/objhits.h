@@ -127,23 +127,19 @@ typedef enum {
     Damage_Type_None = 0x7F
 } DamageTypes;
 
-void objhits_init(void);
+void objHitInit(void);
 void func_80025DF0(void);
-void obj_do_hit_detection(s32 numObjs);
+void objHitDoHitDetection(s32 numObjs);
 s32 func_80025F40(Object* obj, Object **hitBy, s32 *arg2, s32 *damage);
 s32 func_8002635C(Object* objDamaged, Object* hitBy, s8 damageType, s8 hitDamage, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
-void update_object(Object *);
-void func_8001943C(Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
-void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
 s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 updateRate);
 void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
@@ -180,7 +176,7 @@ void func_800267A4(Object *obj);
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
 u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHitInfo, u32 arg3, Object* obj);
-void update_obj_hitboxes(s32 arg0);
+void objHitUpdateHitModels(s32 arg0);
 void func_80025E58(void);
 void func_8002B6EC(void);
 void func_800267C4(Object* obj);

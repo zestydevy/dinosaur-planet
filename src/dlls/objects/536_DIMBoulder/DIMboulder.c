@@ -50,7 +50,7 @@ void DIMBoulder_setup(Object* self, DIMBoulder_Setup* objSetup, s32 arg2) {
     
     self->stateFlags |= OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED;
     
-    objData->timesHit = main_get_bits(BIT_4CE);
+    objData->timesHit = mainGetBits(BIT_4CE);
     if ((objData->timesHit) == 3) {
         objData->state = DIMBoulder_STATE_2_Finished;
     }
@@ -81,21 +81,21 @@ void DIMBoulder_control(Object* self) {
 
     if (objData->state == DIMBoulder_STATE_0_Stopped) {
         if ((func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) || 
-            ((joy_get_buttons(1) & A_BUTTON)) //Move the snowball with A button presses on Controller 2!
+            ((joyGetButtons(1) & A_BUTTON)) //Move the snowball with A button presses on Controller 2!
         ) {
             objData->state = DIMBoulder_STATE_1_Moving;
             self->velocity.x = dBounceVelocities[objData->timesHit].x;
             self->velocity.y = dBounceVelocities[objData->timesHit].y;
             self->velocity.z = dBounceVelocities[objData->timesHit].z;
             objData->timesHit++;
-            main_set_bits(BIT_4CE, objData->timesHit);
+            mainSetBits(BIT_4CE, objData->timesHit);
         }
         return;
     } 
     
     if (objData->state != DIMBoulder_STATE_2_Finished) {
         self->velocity.f[1] -= 0.09f * temp;
-        obj_move(self, 
+        objMove(self, 
             self->velocity.f[0] * temp, 
             self->velocity.f[1] * temp, 
             self->velocity.f[2] * temp
@@ -141,7 +141,7 @@ void DIMBoulder_control(Object* self) {
                     volume = MAX_VOLUME;
                 }
                 
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_111_Heavy_Collision, volume, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_111_Heavy_Collision, volume, NULL, NULL, 0, NULL);
                 objData->soundTimer = 30;
             }
 
@@ -191,7 +191,7 @@ void DIMBoulder_control(Object* self) {
         self->srt.scale = self->def->scale * objData->scale;
         
         //Save position
-        map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+        mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
 }
 
@@ -201,7 +201,7 @@ void DIMBoulder_update(Object *self) { }
 // offset: 0x640 | func: 3 | export: 3
 void DIMBoulder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

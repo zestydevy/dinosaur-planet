@@ -91,7 +91,7 @@ void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
         return;
     }
 
-    transform_point_by_object(
+    camTransformPointByObject(
         obj->srt.transl.f[0], obj->srt.transl.f[1], obj->srt.transl.f[2], 
         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);
@@ -99,7 +99,7 @@ void dll_27_func_1E8(Object *obj, DLL27_Data *data, f32 updateRate) {
     dll_27_get_obj_world_matrix(obj, data, &worldMtx);
 
     for (var_s4 = 0, i = 0; var_s4 < ((s32) data->numTestPoints >> 4); ) {
-        vec3_transform(&worldMtx, 
+        mathMtxXFMF(&worldMtx, 
                        data->unk4[var_s4].x, data->unk4[var_s4].y, data->unk4[var_s4].z, 
                        &spE0[var_s4].x, &spE0[var_s4].y, &spE0[var_s4].z);
         spD0[i] = data->unk68.unk40[i];
@@ -217,7 +217,7 @@ void dll_27_func_624(Object* obj, DLL27_Data* arg1, f32 updateRate) {
             // Hit line detection and resolution
             dll_27_func_A74(obj, arg1);
             dll_27_func_1278(obj, arg1);
-            transform_point_by_object(
+            camTransformPointByObject(
                 obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
                 &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
                 obj->parent);
@@ -288,7 +288,7 @@ void dll_27_func_624(Object* obj, DLL27_Data* arg1, f32 updateRate) {
         dll_27_reset(obj, arg1);
     }
 
-    inverse_transform_point_by_object(
+    camInverseTransformPointByObject(
         obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z, 
         &obj->srt.transl.x, &obj->srt.transl.y, &obj->srt.transl.z, 
         obj->parent);
@@ -304,7 +304,7 @@ static void dll_27_func_A74(Object* obj, DLL27_Data* data) {
 
     i = 0;
     while (i < (data->numTestPoints & 0xF)) {
-        vec3_transform(&localMtx, 
+        mathMtxXFMF(&localMtx, 
                        data->localHitsTestPoints[i].x, data->localHitsTestPoints[i].y, data->localHitsTestPoints[i].z, 
                        &data->unkE0[i].x, &data->unkE0[i].y, &data->unkE0[i].z);
         i++;
@@ -320,7 +320,7 @@ static void dll_27_func_B68(Object *obj, DLL27_Data *data) {
     dll_27_get_obj_world_matrix(obj, data, &worldMtx);
 
     for (i = 0, i2 = 0; i < (data->numTestPoints >> 4); i++, i2 += 3) {
-        vec3_transform(&worldMtx, 
+        mathMtxXFMF(&worldMtx, 
                        data->unk4[0].f[i2], data->unk4[0].f[i2+1], data->unk4[0].f[i2+2], 
                        &data->unk8[0].f[i2], &data->unk8[0].f[i2+1], &data->unk8[0].f[i2+2]);
         data->unk68.unk50[i] = -1;
@@ -379,7 +379,7 @@ f32 dll_27_func_DF4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 void dll_27_reset(Object *obj, DLL27_Data *data) {
     s32 i;
 
-    transform_point_by_object(
+    camTransformPointByObject(
         obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, 
         &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, 
         obj->parent);
@@ -430,7 +430,7 @@ static void dll_27_get_obj_world_matrix(Object *obj, DLL27_Data *data, MtxF *mtx
     srt.transl.x = obj->globalPosition.x;
     srt.transl.y = obj->globalPosition.y;
     srt.transl.z = obj->globalPosition.z;
-    matrix_from_srt(mtx, &srt);
+    mathYprXyzMtx(mtx, &srt);
 }
 
 // offset: 0x11E0 | func: 12
@@ -449,7 +449,7 @@ static void dll_27_get_obj_local_matrix(Object* obj, DLL27_Data* data, MtxF* mtx
     srt.transl.x = obj->srt.transl.x;
     srt.transl.y = obj->srt.transl.y;
     srt.transl.z = obj->srt.transl.z;
-    matrix_from_srt(mtx, &srt);
+    mathYprXyzMtx(mtx, &srt);
 }
 
 // offset: 0x1278 | func: 13
@@ -501,7 +501,7 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     for (i = 0; i < (numHitsTestPoints*3); i+=3) {
         data->unk110[0].f[i] = data->unkE0[0].f[i];
         data->unk110[0].f[i+2] = data->unkE0[0].f[i+2];
-        vec3_transform(&sp90, 
+        mathMtxXFMF(&sp90, 
                        data->localHitsTestPoints[0].f[i], data->localHitsTestPoints[0].f[i+1], data->localHitsTestPoints[0].f[i+2], 
                        &x, &data->unk110[0].f[i+1], &z);
     }
@@ -647,14 +647,14 @@ static void dll_27_func_1BA8(Object* obj, DLL27_Data* arg1) {
         srt.transl.y = 0.0f;
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
-        matrix_from_srt_reversed(&mtx, &srt);
-        vec3_transform(&mtx, arg1->floorNormalX, arg1->floorNormalY, arg1->floorNormalZ, &x, &y, &z);
+        mathRpyXyzMtx(&mtx, &srt);
+        mathMtxXFMF(&mtx, arg1->floorNormalX, arg1->floorNormalY, arg1->floorNormalZ, &x, &y, &z);
         
-        pitchAngle = M_90_DEGREES - arctan2_f(y, z);
+        pitchAngle = M_90_DEGREES - mathAtan2f(y, z);
         arg1->relativeFloorPitch = pitchAngle;
         arg1->relativeFloorPitchSmooth += ((pitchAngle - arg1->relativeFloorPitchSmooth) * gUpdateRate) >> 4;
         
-        rollAngle = -M_90_DEGREES - -arctan2_f(y, x);
+        rollAngle = -M_90_DEGREES - -mathAtan2f(y, x);
         arg1->relativeFloorRoll = rollAngle;
         arg1->relativeFloorRollSmooth += ((rollAngle - arg1->relativeFloorRollSmooth) * gUpdateRate) >> 4;
     } else {
@@ -707,9 +707,9 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
         spDC.transl.x = -arg0->globalPosition.x;
         spDC.transl.y = -arg0->globalPosition.y;
         spDC.transl.z = -arg0->globalPosition.z;
-        matrix_from_srt_reversed(&sp68, &spDC);
+        mathRpyXyzMtx(&sp68, &spDC);
         for (var_s0_2 = 0, i = 0; i < temp_t7; i++) {
-            vec3_transform(&sp68, 
+            mathMtxXFMF(&sp68, 
                            arg1->unk38[var_s0_2].x, arg1->unk38[var_s0_2].y, arg1->unk38[var_s0_2].z, 
                            &spC8[i], &spB8[i], &spA8[i]);
             var_s0_2++;
@@ -730,17 +730,17 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
             f12 = f0 - temp;
             temp2 = spA8[var_s0_2] + spA8[var_a1];
             f14 = f2 - temp2;
-            arg0->srt.yaw += (s16) ((arctan2_f(f12, f14) & 0xFFFF) + M_180_DEGREES) >> 2;
+            arg0->srt.yaw += (s16) ((mathAtan2f(f12, f14) & 0xFFFF) + M_180_DEGREES) >> 2;
         }
         if (arg1->flags & DLL27FLAG_200) {
             f12 = spA8[var_s0_2] - spA8[0];
             f14 = spB8[var_s0_2] - spB8[0];
-            arg0->srt.pitch += (arctan2_f(f12, f14) - M_90_DEGREES) & 0xFFFF;
+            arg0->srt.pitch += (mathAtan2f(f12, f14) - M_90_DEGREES) & 0xFFFF;
         }
         if ((temp_t7 == 4) && (arg1->flags & DLL27FLAG_400)) {
             f12 = spC8[var_s1_2] - spC8[0];
             f14 = spB8[var_s1_2] - spB8[0];
-            arg0->srt.roll += (M_90_DEGREES - arctan2_f(f12, f14)) & 0xFFFF;
+            arg0->srt.roll += (M_90_DEGREES - mathAtan2f(f12, f14)) & 0xFFFF;
         }
     } else {
         arg0->globalPosition.x = arg1->unk38[0].x;
@@ -885,9 +885,9 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     sp94[1] = arg1->unk4[0].z;
     sp94[0] = sp94[0] - sp94[1];
     sp94[2] = spB0[3] - spB0[0];
-    v1 = (arg0->srt.pitch - (arctan2_f(sp94[2], sp94[0]) & 0xFFFF));
+    v1 = (arg0->srt.pitch - (mathAtan2f(sp94[2], sp94[0]) & 0xFFFF));
     CIRCLE_WRAP(v1)
-    arg0->srt.pitch = -arctan2_f(sp94[2], sp94[0]);
+    arg0->srt.pitch = -mathAtan2f(sp94[2], sp94[0]);
     if (arg1->flags & DLL27FLAG_400) {
         sp94[2] = spB0[1];
         spA0[1] = arg1->unk4[1].x;
@@ -895,7 +895,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
         spA0[2] = arg1->unk4[0].x;
         spA0[1] = spA0[1] - spA0[2];
         sp94[2] = spB0[1] - spB0[0];
-        arg0->srt.roll = arctan2_f(sp94[2], spA0[1]);
+        arg0->srt.roll = mathAtan2f(sp94[2], spA0[1]);
     }
 }
 

@@ -34,13 +34,13 @@ void DFwhirlpool_setup(Object* self, DFwhirlpool_Setup* objSetup, s32 arg2) {
     DFwhirlpool_Data* objData = self->data;
     
     //Check if already lowered
-    if (main_get_bits(BIT_106)) {
+    if (mainGetBits(BIT_106)) {
         objData->state = DFwhirlpool_STATE_Water_Lowered;
         self->srt.transl.y -= WHIRLPOOL_LOWERED_HEIGHT;
         return;
     }
     
-    objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_779_Water_Rushing_Loop, MAX_VOLUME, 0, 0, 0, 0);
+    objData->soundHandle = dll_amSfx->Play(self, SOUND_779_Water_Rushing_Loop, MAX_VOLUME, 0, 0, 0, 0);
 }
 
 // offset: 0xD4 | func: 1 | export: 1
@@ -55,10 +55,10 @@ void DFwhirlpool_control(Object* self) {
         self->srt.yaw -= gUpdateRate * WHIRLPOOL_SPEED_START;
 
         //Wait for cave wall to be demolished
-        if (main_get_bits(BIT_DF_Whirlpool_Cave_Wall_Demolished)) {
+        if (mainGetBits(BIT_DF_Whirlpool_Cave_Wall_Demolished)) {
             objData->state = DFwhirlpool_STATE_Draining;
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77A_Water_Draining_Loop, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Stop(objData->soundHandle);
+            objData->soundHandle = dll_amSfx->Play(self, SOUND_77A_Water_Draining_Loop, MAX_VOLUME, 0, 0, 0, 0);
             return;
         }
         break;
@@ -70,7 +70,7 @@ void DFwhirlpool_control(Object* self) {
 
         //Advance state based on yawSpeed threshold
         if (objData->yawSpeed > WHIRLPOOL_SPEED_STATE_THRESHOLD) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            dll_amSfx->Stop(objData->soundHandle);
             objData->state = DFwhirlpool_STATE_Water_Lowered;
             objData->yawSpeed = WHIRLPOOL_SPEED_MAX;
             return;
@@ -96,7 +96,7 @@ void DFwhirlpool_update(Object *self) { }
 // offset: 0x2E0 | func: 3 | export: 3
 void DFwhirlpool_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -46,7 +46,7 @@ void PickObj_update(Object* self) { }
 // offset: 0x104 | func: 3 | export: 3
 void PickObj_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (gDLL_54_pickup->vtbl->should_print(self, visibility)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

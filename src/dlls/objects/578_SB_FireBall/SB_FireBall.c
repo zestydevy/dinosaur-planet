@@ -29,9 +29,9 @@ void SB_FireBall_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_FireBall_Data *objdata;
 
     objdata = self->data;
-    dll = dll_load_deferred(DLL_ID_133, 1);
+    dll = dllLoad(DLL_ID_133, 1);
     ((DLL_133*)dll)->vtbl->base.func0(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
-    dll_unload(dll);
+    dllFree(dll);
     self->unkDC = 1200;
     objdata->unk6 = 0;
     objdata->velocitySaved = FALSE;
@@ -53,7 +53,7 @@ void SB_FireBall_control(Object *self) {
         ((DLL_573_SB_Cloudrunner*)objdata->cloudrunner->dll)->vtbl->func10(objdata->cloudrunner, &a1, &a2);
         self->unkDC -= gUpdateRate;
         if (self->unkDC < 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         if (!objdata->velocitySaved) {
             objdata->velocity.x = self->velocity.x;
@@ -85,9 +85,9 @@ void SB_FireBall_update(Object *self) { }
 // offset: 0x2D8 | func: 3 | export: 3
 void SB_FireBall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        tex_disable_modes(RENDER_FOG_ACTIVE);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        tex_enable_modes(RENDER_FOG_ACTIVE);
+        texDisableModes(RENDER_FOG_ACTIVE);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        texEnableModes(RENDER_FOG_ACTIVE);
     }
 }
 

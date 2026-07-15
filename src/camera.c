@@ -62,7 +62,7 @@ s8 gMatrixIndex;
 // posX, posY, width, height
 // scissorX1, scissorY1, scissorX2, scissorY2
 // flags
-#define DEFAULT_VIEWPORT                                                                                         \
+#define DEFAULT_VIEWPORT \
     0, 0, 320, 240, \
     160, 120, 320, 240, \
     0, 0, 320 - 1, 240 - 1, \
@@ -120,15 +120,16 @@ MtxF g2DProjectionMtx = {
 // ROM address
 extern u32 D_B0000578;
 
-f32 fexp(f32 x, u32 iterations);
+f32 cam_fexp(f32 x, u32 iterations);
 
-void camera_init(void) {
+// official name: camInit
+void camInit(void) {
     s32 i;
     u32 stat;
 
     for (i = 0; i < 12; i++) {
         gCameraSelector = i;
-        camera_reset(200, 200, 200, 0, 0, 180);
+        camReset(200, 200, 200, 0, 0, 180);
     }
 
     gTriggerUseAlternateCamera = 0;
@@ -155,30 +156,33 @@ void camera_init(void) {
     gFovY = 60.0f;
 
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
 
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gLetterboxSize = 0;
     gLetterboxTarget = 0;
 }
 
-void camera_enable_y_offset(void) {
+// official name: camUseShake
+void camUseShake(void) {
     gCameraYOffsetEnabled = 1;
 }
 
-void camera_disable_y_offset(void) {
+// official name: camIgnoreShake
+void camIgnoreShake(void) {
     gCameraYOffsetEnabled = 0;
 }
 
-u32 camera_is_y_offset_enabled(void) {
+u32 camIsUsingShake(void) {
     return gCameraYOffsetEnabled;
 }
 
-f32 camera_get_fov(void) {
+f32 camGetFOV(void) {
     return gFovY;
 }
 
-void camera_set_fov(f32 fovY) {
+// official name: camSetFOV
+void camSetFOV(f32 fovY) {
     if (fovY > 90.0f) {
         fovY = 90.0f;
     } else if (fovY < 40.0f) {
@@ -188,31 +192,31 @@ void camera_set_fov(f32 fovY) {
     gFovY = fovY;
 
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
 }
 
-void camera_set_ortho_projection_matrix(f32 l, f32 r, f32 b, f32 t) {
+void camSetOrthoProjectionMatrix(f32 l, f32 r, f32 b, f32 t) {
     guOrthoF(gProjectionMtx.m, l, r, b, t, 0.0f, 400.0f, 20.0f);
 }
 
-void camera_set_aspect(f32 aspect) {
+void camSetAspect(f32 aspect) {
     gAspect = aspect;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
 }
 
-void camera_set_near_plane(f32 near) {
+void camSetNearPlane(f32 near) {
     gNearPlane = near;
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, gFovY, gAspect, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
     gProjectionScaleX = gProjectionMtx.m[0][0];
     gProjectionMtx.m[0][3] *= 0.5f;
 }
 
-void camera_set_far_plane_lerp(f32 farPlane, s32 duration) {
+void camSetFarPlaneLerp(f32 farPlane, s32 duration) {
     if (duration != 0) {
         gFarPlaneDuration = duration;
         gFarPlaneTimer = gFarPlaneDuration;
@@ -223,36 +227,36 @@ void camera_set_far_plane_lerp(f32 farPlane, s32 duration) {
     }
 }
 
-f32 camera_get_far_plane(void) {
+f32 camGetFarPlane(void) {
     return gFarPlane;
 }
 
-void camera_reset_near_plane(void) {
-    camera_set_near_plane(4.0f);
+void camResetNearPlane(void) {
+    camSetNearPlane(4.0f);
 }
 
-void camera_reset_far_plane(void) {
-    camera_set_far_plane_lerp(10000.0f, 60);
+void camResetFarPlane(void) {
+    camSetFarPlaneLerp(10000.0f, 60);
 }
 
-void camera_reset_projection(void) {
+void camResetProjection(void) {
     guPerspectiveF(gProjectionMtx.m, &gPerspNorm, 60.0f, 4.0f / 3.0f, gNearPlane, gFarPlane, 1.0f);
-    matrix_f2l(&gProjectionMtx, &gRSPProjectionMtx);
+    mathMtxF2L(&gProjectionMtx, &gRSPProjectionMtx);
 }
 
-MtxF *camera_get_aux_mtx(void) {
+MtxF *camGetAuxMtx(void) {
     return &gAuxMtx2;
 }
 
-u32 camera_get_viewport_mode(void) {
+u32 camGetViewportMode(void) {
     return gViewportMode;
 }
 
-u32 get_camera_selector(void) {
+u32 camGetCameraSelector(void) {
     return gCameraSelector;
 }
 
-void camera_setup_skybox(Gfx **gdl, Mtx **rspMtxs) {
+void camSetupSkybox(Gfx **gdl, Mtx **rspMtxs) {
     Camera *camera;
     s16 yaw;
     s16 pitch;
@@ -262,10 +266,10 @@ void camera_setup_skybox(Gfx **gdl, Mtx **rspMtxs) {
     f32 posY;
     f32 posZ;
 
-    camera_set_viewport_mode(0);
-    set_camera_selector(0);
+    camSetViewportMode(0);
+    camSetCameraSelector(0);
 
-    camera = get_camera();
+    camera = camGet();
     yaw = camera->srt.yaw;
     pitch = camera->srt.pitch;
     roll = camera->srt.roll;
@@ -282,7 +286,7 @@ void camera_setup_skybox(Gfx **gdl, Mtx **rspMtxs) {
     camera->srt.transl.y = 0.0f;
     camera->srt.transl.z = 0.0f;
 
-    camera_setup_viewport_and_matrices(gdl, rspMtxs);
+    camSetupViewportAndMatrices(gdl, rspMtxs);
 
     camera->dpitch = dpitch;
     camera->srt.yaw = yaw;
@@ -293,7 +297,8 @@ void camera_setup_skybox(Gfx **gdl, Mtx **rspMtxs) {
     camera->srt.transl.z = posZ;
 }
 
-f32 camera_get_distance_to_point(f32 x, f32 y, f32 z) {
+// official name: camDistance
+f32 camDistance(f32 x, f32 y, f32 z) {
     s32 cameraIdx;
     f32 dz;
     f32 dx;
@@ -312,7 +317,7 @@ f32 camera_get_distance_to_point(f32 x, f32 y, f32 z) {
     return sqrtf((dz * dz) + ((dy * dy) + (dx * dx)));
 }
 
-void camera_reset(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw) {
+void camReset(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw) {
     gCameras[gCameraSelector].srt.transl.x = tx;
     gCameras[gCameraSelector].srt.transl.y = ty;
     gCameras[gCameraSelector].srt.transl.z = tz;
@@ -328,7 +333,7 @@ void camera_reset(s32 tx, s32 ty, s32 tz, s32 roll, s32 pitch, s32 yaw) {
     gCameras[gCameraSelector].dpitch = 0;
 }
 
-void camera_set_alternate(s32 selector, f32 x, f32 y, f32 z, s16 yaw, s16 pitch, s16 roll) {
+void camSetAlternate(s32 selector, f32 x, f32 y, f32 z, s16 yaw, s16 pitch, s16 roll) {
     selector += 4;
 
     gCameras[selector].dpitch = 0;
@@ -344,17 +349,17 @@ void camera_set_alternate(s32 selector, f32 x, f32 y, f32 z, s16 yaw, s16 pitch,
     }
 }
 
-s8 camera_is_alternate_active(void) {
+s8 camIsAlternateActive(void) {
     return gUseAlternateCamera;
 }
 
-void camera_apply_alternate_trigger(void) {
+void camApplyAlternateTrigger(void) {
     gUseAlternateCamera = gTriggerUseAlternateCamera;
     gTriggerUseAlternateCamera = 0;
 }
 
 // set_active_viewports_and_max?
-s32 camera_set_viewport_mode(s32 num) {
+s32 camSetViewportMode(s32 num) {
     if (num >= 0 && num < 4) {
         gViewportMode = num;
     } else {
@@ -383,7 +388,7 @@ s32 camera_set_viewport_mode(s32 num) {
     return gMaxCameras;
 }
 
-void set_camera_selector(s32 selector) {
+void camSetCameraSelector(s32 selector) {
     if (selector >= 0 && selector < 4) {
         gCameraSelector = selector;
     } else {
@@ -392,7 +397,7 @@ void set_camera_selector(s32 selector) {
     }
 }
 
-void camera_update_rsp_viewports(void) {
+void camUpdateRSPViewports(void) {
     s32 width;
     s32 height;
     s32 port;
@@ -454,7 +459,7 @@ void camera_update_rsp_viewports(void) {
     }
 }
 
-void viewport_enable(s32 selector, u32 immediate) {
+void camViewportEnable(s32 selector, u32 immediate) {
     if (immediate != 0) {
         gViewports[selector].flags |= 0x1;
     } else {
@@ -463,7 +468,7 @@ void viewport_enable(s32 selector, u32 immediate) {
     gViewports[selector].flags &= ~0x4;
 }
 
-void viewport_disable(s32 selector, u32 immediate) {
+void camViewportDisable(s32 selector, u32 immediate) {
     if (immediate != 0) {
         gViewports[selector].flags &= ~0x1;
     } else {
@@ -472,17 +477,17 @@ void viewport_disable(s32 selector, u32 immediate) {
     gViewports[selector].flags &= ~0x2;
 }
 
-u32 viewport_is_active(s32 selector) {
+u32 camViewportIsActive(s32 selector) {
     return gViewports[selector].flags & 0x1;
 }
 
-void viewport_set_scissor_rect(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2) {
+void camViewportSetScissorRect(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2) {
     s32 resolution;
     s32 width;
     s32 height;
     s32 temp;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(resolution) & 0xFFFF;
     width = GET_VIDEO_WIDTH(resolution);
 
@@ -535,7 +540,7 @@ void viewport_set_scissor_rect(s32 viewPortIndex, s32 x1, s32 y1, s32 x2, s32 y2
     gViewports[viewPortIndex].y2 = y2;
 }
 
-void viewport_set_custom_transform(s32 viewPortIndex, s32 posX, s32 posY, s32 width, s32 height) {
+void camViewportSetCustomTransform(s32 viewPortIndex, s32 posX, s32 posY, s32 width, s32 height) {
     if (posX != 0x8000) {
         gViewports[viewPortIndex].posX = posX;
         gViewports[viewPortIndex].flags |= 8;
@@ -566,7 +571,7 @@ void viewport_set_custom_transform(s32 viewPortIndex, s32 posX, s32 posY, s32 wi
     }
 }
 
-u32 viewport_get_scissor_rect(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
+u32 camViewportGetScissorRect(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
     *ulx = gViewports[selector].ulx;
     *lrx = gViewports[selector].lrx;
     *uly = gViewports[selector].uly;
@@ -579,15 +584,15 @@ u32 viewport_get_scissor_rect(s32 selector, s32 *ulx, s32 *uly, s32 *lrx, s32 *l
     return 1;
 }
 
-void viewport_get_rect(s32 selector, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
+void camViewportGetRect(s32 selector, s32 *x1, s32 *y1, s32 *x2, s32 *y2) {
     *x1 = gViewports[selector].x1;
     *y1 = gViewports[selector].y1;
     *x2 = gViewports[selector].x2;
     *y2 = gViewports[selector].y2;
 }
 
-void viewport_get_full_rect(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
-    u32 wh = vi_get_current_size();
+void camViewportGetFullRect(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
+    u32 wh = viGetCurrentSize();
     u32 width = GET_VIDEO_WIDTH(wh);
     u32 height = GET_VIDEO_HEIGHT(wh);
 
@@ -597,7 +602,7 @@ void viewport_get_full_rect(s32 *ulx, s32 *uly, s32 *lrx, s32 *lry) {
     *lry = height - gLetterboxSize - 6;
 }
 
-void camera_setup_viewport_and_matrices(Gfx **gdl, Mtx **rspMtxs) {
+void camSetupViewportAndMatrices(Gfx **gdl, Mtx **rspMtxs) {
     u32 wh;
     u32 mode;
     u32 x;
@@ -614,7 +619,7 @@ void camera_setup_viewport_and_matrices(Gfx **gdl, Mtx **rspMtxs) {
 
     origCamSelector = gCameraSelector;
     savedCamSelector = gCameraSelector;
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh);
     width = GET_VIDEO_WIDTH(wh);
 
@@ -623,10 +628,10 @@ void camera_setup_viewport_and_matrices(Gfx **gdl, Mtx **rspMtxs) {
         tempCamSelector = gCameraSelector;
         gCameraSelector = savedCamSelector;
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, gViewports[gCameraSelector].ulx, gViewports[gCameraSelector].uly, gViewports[gCameraSelector].lrx, gViewports[gCameraSelector].lry);
-        camera_apply_rsp_viewport(gdl, 0, 0, 0, 0);
+        camApplyRSPViewport(gdl, 0, 0, 0, 0);
         gCameraSelector = tempCamSelector;
         if (rspMtxs != NULL) {
-            setup_rsp_camera_matrices(gdl, rspMtxs);
+            camSetupRSPMatrices(gdl, rspMtxs);
         }
         gCameraSelector = origCamSelector;
         return;
@@ -693,16 +698,16 @@ void camera_setup_viewport_and_matrices(Gfx **gdl, Mtx **rspMtxs) {
         posX -= 4;
     }
 
-    camera_apply_rsp_viewport(gdl, scaleX, scaleY, posX, posY);
+    camApplyRSPViewport(gdl, scaleX, scaleY, posX, posY);
     if (rspMtxs != NULL) {
-        setup_rsp_camera_matrices(gdl, rspMtxs);
+        camSetupRSPMatrices(gdl, rspMtxs);
     }
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 
     gCameraSelector = origCamSelector;
 }
 
-void camera_apply_scissor(Gfx **gdl) {
+void camApplyScissor(Gfx **gdl) {
     s32 ulx, uly, lrx, lry;
     s32 wh;
     s32 centerX;
@@ -713,7 +718,7 @@ void camera_apply_scissor(Gfx **gdl) {
     s32 padY;
     s32 mode;
     
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh) & 0xFFFF;
     width = GET_VIDEO_WIDTH(wh);
     
@@ -795,7 +800,7 @@ void camera_apply_scissor(Gfx **gdl) {
     gDPSetScissor((*gdl)++, 0, ulx, uly, lrx, lry);
 }
 
-void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
+void camSetupRSPMatrices(Gfx **gdl, Mtx **rspMtxs) {
     s32 prevCameraSel;
     f32 x,y,z;
     s32 i;
@@ -811,7 +816,7 @@ void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
  
     camera = &gCameras[gCameraSelector];
 
-    update_camera_for_object(camera);
+    camUpdateCameraForObject(camera);
 
     if (gCameraSelector == 4) {
         map_func_80046B58(camera->tx, camera->ty, camera->tz);
@@ -836,9 +841,9 @@ void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     }
     gCameraSRT.transl.z = -z;
 
-    matrix_from_srt_reversed(&gViewMtx, &gCameraSRT);
-    matrix_concat(&gViewMtx, &gProjectionMtx, &gViewProjMtx);
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathRpyXyzMtx(&gViewMtx, &gCameraSRT);
+    mathMtxCatF(&gViewMtx, &gProjectionMtx, &gViewProjMtx);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
 
     gRSPMtxList = *rspMtxs;
 
@@ -855,8 +860,8 @@ void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     }
     gCameraSRT.transl.z = z;
     
-    matrix_from_srt(&gViewMtx2, &gCameraSRT);
-    matrix_f2l(&gViewMtx2, &gRSPViewMtx2);
+    mathYprXyzMtx(&gViewMtx2, &gCameraSRT);
+    mathMtxF2L(&gViewMtx2, &gRSPViewMtx2);
 
     gCameraSelector = prevCameraSel;
 
@@ -866,17 +871,17 @@ void setup_rsp_camera_matrices(Gfx **gdl, Mtx **rspMtxs) {
     }
 }
 
-void camera_set_2d_scale_y(f32 scaleY) {
+void camSet2DScaleY(f32 scaleY) {
     g2DProjectionMtx.m[1][1] = scaleY;
 }
 
-void camera_setup_2d_projection(Gfx** gdl, Mtx** rspMtxs) {
+void camSetup2DProjection(Gfx** gdl, Mtx** rspMtxs) {
     u32 wh;
     s32 i;
     s32 width;
     s32 height;
 
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(wh);
     height = GET_VIDEO_HEIGHT(wh);
     gRSPViewports[gCameraSelector + 5].vp.vscale[0] = width * 2;
@@ -885,24 +890,24 @@ void camera_setup_2d_projection(Gfx** gdl, Mtx** rspMtxs) {
     gRSPViewports[gCameraSelector + 5].vp.vtrans[1] = height * 2;
     gSPViewport((*gdl)++, OS_PHYSICAL_TO_K0(&gRSPViewports[gCameraSelector] + 5));
     for (i = 0; i < 16; i++) { ((f32*)&gViewProjMtx)[i] = ((f32*)&g2DProjectionMtx)[i]; }
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
     gRSPMtxList = *rspMtxs;
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
     for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
 }
 
-void camera_setup_static_projection(Gfx** gdl, Mtx** rspMtxs) {
+void camSetupStaticProjection(Gfx** gdl, Mtx** rspMtxs) {
     s32 i;
 
-    matrix_from_srt_reversed(&gAuxMtx, gStaticCameraSRT);
-    matrix_concat(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
-    matrix_f2l(&gViewProjMtx, *rspMtxs);
+    mathRpyXyzMtx(&gAuxMtx, gStaticCameraSRT);
+    mathMtxCatF(&gAuxMtx, &gProjectionMtx, &gViewProjMtx);
+    mathMtxF2L(&gViewProjMtx, *rspMtxs);
     gRSPMtxList = *rspMtxs;
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_PROJECTION | G_MTX_LOAD);
     for (i = 0; i < 30; i++) { gRSPMatrices[i] = NULL; }
 }
 
-void camera_apply_rsp_viewport(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY) {
+void camApplyRSPViewport(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s32 transY) {
     if (0) {} // fakematch
 
     if (!(gViewports[gCameraSelector].flags & 0x1))
@@ -919,9 +924,9 @@ void camera_apply_rsp_viewport(Gfx **gdl, s32 scaleX, s32 scaleY, s32 transX, s3
     }
 }
 
-void camera_project_point(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
+void camProjectPoint(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
     f32 nrm = x * gViewProjMtx.m[0][3] + y * gViewProjMtx.m[1][3] + z * gViewProjMtx.m[2][3] + gViewProjMtx.m[3][3];
-    vec3_transform(&gViewProjMtx, x, y, z, ox, oy, oz);
+    mathMtxXFMF(&gViewProjMtx, x, y, z, ox, oy, oz);
     if (nrm != 0.0f)
     {
         nrm = 1.0f / nrm;
@@ -931,7 +936,7 @@ void camera_project_point(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
     }
 }
 
-void camera_unproject_point(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
+void camUnprojectPoint(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
     f32 dot = x * gViewProjMtx.m[0][3] + y * gViewProjMtx.m[1][3] + z * gViewProjMtx.m[2][3] + gViewProjMtx.m[3][3];
     if (dot != 0.0f)
     {
@@ -939,10 +944,10 @@ void camera_unproject_point(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
         y *= dot;
         z *= dot;
     }
-    vec3_transform(&gViewMtx2, x, y, z, ox, oy, oz);
+    mathMtxXFMF(&gViewMtx2, x, y, z, ox, oy, oz);
 }
 
-void camera_clip_to_screen(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz) {
+void camClipToScreen(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz) {
     if (ox != NULL) {
         x *= (gRSPViewports[0].vp.vscale[0] >> 2);
         x += (gRSPViewports[0].vp.vtrans[0] >> 2);
@@ -960,7 +965,7 @@ void camera_clip_to_screen(f32 x, f32 y, f32 z, s32 *ox, s32 *oy, s32 *oz) {
     }
 }
 
-void camera_screen_to_clip(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz) {
+void camScreenToClip(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz) {
     x -= (gRSPViewports[0].vp.vtrans[0] >> 2);
     *ox = (f32)(x) / (gRSPViewports[0].vp.vscale[0] >> 2);
 
@@ -972,53 +977,54 @@ void camera_screen_to_clip(s32 x, s32 y, s32 z, f32 *ox, f32 *oy, f32 *oz) {
     *oz = (f32)(z) / (gRSPViewports[0].vp.vscale[2] << 5);
 }
 
-void camera_setup_fullscreen_viewport(Gfx **gdl) {
+void camSetupFullscreenViewport(Gfx **gdl) {
     u32 wh;
     u32 width;
     u32 height;
 
     gCameraSelector = 4;
 
-    wh = vi_get_current_size();
+    wh = viGetCurrentSize();
     height = GET_VIDEO_HEIGHT(wh);
     width = GET_VIDEO_WIDTH(wh);
 
     if (!(gViewports[gCameraSelector].flags & 0x1))
     {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, width - 1, height - 1);
-        camera_apply_rsp_viewport(gdl, width / 2, height / 2, width / 2, height / 2);
+        camApplyRSPViewport(gdl, width / 2, height / 2, width / 2, height / 2);
     }
     else
     {
-        camera_apply_scissor(gdl);
-        camera_apply_rsp_viewport(gdl, 0, 0, 0, 0);
+        camApplyScissor(gdl);
+        camApplyRSPViewport(gdl, 0, 0, 0, 0);
     }
 
     gCameraSelector = 0;
 }
 
-void camera_setup_world_matrix(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale) {
+void camSetupWorldMatrix(Gfx **gdl, Mtx **rspMtxs, s32 x, s32 y, s32 z, f32 scale) {
     MtxF mf;
 
-    matrix_translation(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
+    mathTranslateMtx(&MtxF_800a6a60, x * 640.0f, y, z * 640.0f);
     if (scale != 1.0f) {
-        matrix_scaling(&mf, scale, scale, scale);
-        matrix_concat(&mf, &MtxF_800a6a60, &MtxF_800a6a60);
+        mathScaleMtx(&mf, scale, scale, scale);
+        mathMtxCatF(&mf, &MtxF_800a6a60, &MtxF_800a6a60);
     }
-    matrix_f2l_4x3(&MtxF_800a6a60, *rspMtxs);
+    mathMtx4x3F2L(&MtxF_800a6a60, *rspMtxs);
 
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_MODELVIEW | G_MTX_LOAD);
 }
 
-s32 camera_check_convex_hull(Gfx **gdl, Mtx **rspMtxs, s32 a2, Object *obj, ModelInstance *modelInst, s32 a5, s32 a6) {
+// TODO: where did this function name come from?
+s32 camCheckConvexHull(Gfx **gdl, Mtx **rspMtxs, s32 a2, Object *obj, ModelInstance *modelInst, s32 a5, s32 a6) {
     return 1;
 }
 
-void camera_stub_3294(u32 a0, u32 a1, u32 a2, u32 a4) { }
+void camStub3294(u32 a0, u32 a1, u32 a2, u32 a4) { }
 
-void camera_stub_32AC(u32 a0, u32 a1, u32 a2, u32 a4) { }
+void camStub32AC(u32 a0, u32 a1, u32 a2, u32 a4) { }
 
-void camera_setup_object_srt_matrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 yScale, f32 unused, MtxF *outMtx) {
+void camSetupObjectSRTMatrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 yScale, f32 unused, MtxF *outMtx) {
     MtxF *mtx;
     Mtx *fallbackMtx;
 
@@ -1028,26 +1034,26 @@ void camera_setup_object_srt_matrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 ySca
     srt->transl.z -= gWorldZ;
 
     if (srt->transl.x > 32767.0f || -32767.0f > srt->transl.x || srt->transl.z > 32767.0f || -32767.0f > srt->transl.z) {
-        fallbackMtx = get_some_model_view_mtx();
+        fallbackMtx = mathIdentityMtxL();
         gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(fallbackMtx), G_MTX_LOAD | G_MTX_MODELVIEW);
 
         srt->transl.x += gWorldX;
         srt->transl.z += gWorldZ;
     } else {
-        matrix_from_srt(mtx, srt);
+        mathYprXyzMtx(mtx, srt);
         if (yScale != 1.0f) {
-            matrix_prescale_y(mtx, yScale);
+            mathSquashY(mtx, yScale);
         }
 
         if (outMtx == NULL) {
-            matrix_f2l_4x3(mtx, *rspMtxs);
+            mathMtx4x3F2L(mtx, *rspMtxs);
             gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL((*rspMtxs)++), G_MTX_LOAD | G_MTX_MODELVIEW);
         } else {
             // Output matrix was given, so don't add matrix to the global rsp matrix list but add to
             // the matrix pool so it still gets converted to the long format later before the display
             // list is processed.
             gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(outMtx), G_MTX_LOAD | G_MTX_MODELVIEW);
-            add_matrix_to_pool(outMtx, 1);
+            camAddMatrixToPool(outMtx, 1);
         }
 
         srt->transl.x += gWorldX;
@@ -1055,28 +1061,28 @@ void camera_setup_object_srt_matrix(Gfx **gdl, Mtx **rspMtxs, SRT *srt, f32 ySca
     }
 }
 
-void camera_translate(f32 x, f32 y, f32 z) {
+void camTranslate(f32 x, f32 y, f32 z) {
     gCameras[gCameraSelector].srt.transl.x += x;
     gCameras[gCameraSelector].srt.transl.y += y;
     gCameras[gCameraSelector].srt.transl.z += z;
-    gCameras[gCameraSelector].blockIndex = map_world_coords_to_block_index(
+    gCameras[gCameraSelector].blockIndex = mapWorldCoordsToBlockIndex(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);
 }
 
-void camera_translate_relative(f32 forward, f32 b, f32 strafe) {
-    gCameras[gCameraSelector].srt.transl.x -= forward * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.z -= forward * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.x -= strafe * fsin16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].srt.transl.z += strafe * fcos16_precise(gCameras[gCameraSelector].srt.yaw);
-    gCameras[gCameraSelector].blockIndex = map_world_coords_to_block_index(
+void camTranslateRelative(f32 forward, f32 b, f32 strafe) {
+    gCameras[gCameraSelector].srt.transl.x -= forward * mathCosfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.z -= forward * mathSinfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.x -= strafe * mathSinfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].srt.transl.z += strafe * mathCosfInterp(gCameras[gCameraSelector].srt.yaw);
+    gCameras[gCameraSelector].blockIndex = mapWorldCoordsToBlockIndex(
         gCameras[gCameraSelector].srt.transl.x, 
         gCameras[gCameraSelector].srt.transl.y, 
         gCameras[gCameraSelector].srt.transl.z);
 }
 
-void get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
+void camGetVec3ToCameraNormalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *oz) {
     f32 nrm;
     Camera *camera = &gCameras[gCameraSelector];
 
@@ -1095,17 +1101,17 @@ void get_vec3_to_camera_normalized(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, f32 *o
 }
 
 // Unused
-void rotate_camera(s32 yaw, s32 pitch, s32 roll) {
+void camRotate(s32 yaw, s32 pitch, s32 roll) {
     gCameras[gCameraSelector].srt.yaw += yaw;
     gCameras[gCameraSelector].srt.pitch += pitch;
     gCameras[gCameraSelector].srt.roll += roll;
 }
 
-Camera *get_main_camera(void) {
+Camera *camGetMain(void) {
     return &gCameras[gCameraSelector];
 }
 
-Camera *get_camera(void) {
+Camera *camGet(void) {
     if (gUseAlternateCamera) {
         return &gCameras[gCameraSelector + 4];
     }
@@ -1114,7 +1120,7 @@ Camera *get_camera(void) {
 }
 
 // TODO: rename
-Camera *get_camera_array(void) {
+Camera *camGetCameraArray(void) {
     if (gUseAlternateCamera) {
         return &gCameras[4];
     }
@@ -1122,27 +1128,27 @@ Camera *get_camera_array(void) {
     return gCameras;
 }
 
-MtxF *camera_get_view_mtx2(void) {
+MtxF *camGetViewMtx2(void) {
     return &gViewMtx2;
 }
 
-MtxF *camera_get_viewproj_mtx(void) {
+MtxF *camGetViewprojMtx(void) {
     return &gViewProjMtx;
 }
 
-MtxF *camera_get_projection_mtx(void) {
+MtxF *camGetProjectionMtx(void) {
     return &gProjectionMtx;
 }
 
-Mtx *camera_get_rsp_projection_mtx(void) {
+Mtx *camGetRSPProjectionMtx(void) {
     return &gRSPProjectionMtx;
 }
 
-MtxF *camera_get_view_mtx(void) {
+MtxF *camGetViewMtx(void) {
     return &gViewMtx;
 }
 
-u32 camera_world_to_screen(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 useViewMtx) {
+u32 camWorldToScreen(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 useViewMtx) {
     u32 ret;
     Vp *rspvp;
     f32 vx;
@@ -1154,7 +1160,7 @@ u32 camera_world_to_screen(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 useViewMtx)
     ret = 0;
 
     if (useViewMtx) {
-        vec3_transform(&gViewMtx, x, y, z, &x, &y, &z);
+        mathMtxXFMF(&gViewMtx, x, y, z, &x, &y, &z);
     }
 
     vx = gProjectionMtx.m[0][0] * x;
@@ -1183,7 +1189,7 @@ u32 camera_world_to_screen(f32 x, f32 y, f32 z, f32 *ox, f32 *oy, u8 useViewMtx)
 }
 
 // gets angle to camera z-vector
-f32 camera_get_angle_to_point(f32 x, f32 y, f32 z) {
+f32 camGetAngleToPoint(f32 x, f32 y, f32 z) {
     return 
         x * gViewMtx.m[0][2] +
         y * gViewMtx.m[1][2] +
@@ -1191,7 +1197,7 @@ f32 camera_get_angle_to_point(f32 x, f32 y, f32 z) {
         gViewMtx.m[3][2];
 }
 
-void camera_apply_shake_radial(f32 x, f32 y, f32 z, f32 radius, f32 intensity) {
+void camApplyShakeRadial(f32 x, f32 y, f32 z, f32 radius, f32 intensity) {
     s32 i;
 
     for (i = 0; i < 8; i++)
@@ -1207,7 +1213,7 @@ void camera_apply_shake_radial(f32 x, f32 y, f32 z, f32 radius, f32 intensity) {
     }
 }
 
-void camera_set_shake_offset(f32 dty) {
+void camSetShakeOffset(f32 dty) {
     s32 i;
 
     for (i = 0; i < CAMERA_COUNT; i++)
@@ -1217,7 +1223,7 @@ void camera_set_shake_offset(f32 dty) {
     }
 }
 
-void camera_start_shake_dampened(f32 amplitude, f32 frequency, f32 damping) {
+void camStartShakeDampened(f32 amplitude, f32 frequency, f32 damping) {
     s32 i;
 
     for (i = 0; i < CAMERA_COUNT; i++)
@@ -1232,7 +1238,7 @@ void camera_start_shake_dampened(f32 amplitude, f32 frequency, f32 damping) {
 }
 
 // unused
-void camera_stub_loop_16(s32 a0) {
+void camStubLoop16(s32 a0) {
     s32 i = 0;
     while (i < 16) {
         i++;
@@ -1240,19 +1246,20 @@ void camera_stub_loop_16(s32 a0) {
 }
 
 // unused
-void camera_stub_loop_16b(s32 a0) {
+void camStubLoop16b(s32 a0) {
     s32 i = 0;
     while (i < 16) {
         i++;
     }
 }
 
-void add_matrix_to_pool(MtxF *mf, s32 count) {
+void camAddMatrixToPool(MtxF *mf, s32 count) {
     gMatrixPool[gMatrixCount].mtx = (Mtx_MtxF*)mf;
     gMatrixPool[gMatrixCount++].count = count;
 }
 
-void camera_tick(void) {
+// official name: camTick
+void camTick(void) {
     s32 pad;
     f32 lerpFactor;
     Camera *camera;
@@ -1293,8 +1300,8 @@ void camera_tick(void) {
             camera->shakeCooldown++;
         }
     } else if (camera->shakeMode == 1) {
-        dampFactor = fexp(-camera->shakeDamping * camera->shakeTime, 20);
-        lerpFactor = fcos16_precise(camera->shakeFrequency * 65535.0f * camera->shakeTime);
+        dampFactor = cam_fexp(-camera->shakeDamping * camera->shakeTime, 20);
+        lerpFactor = mathCosfInterp(camera->shakeFrequency * 65535.0f * camera->shakeTime);
         lerpFactor *= camera->shakeAmplitude * dampFactor;
 
         camera->dty = lerpFactor;
@@ -1309,7 +1316,7 @@ void camera_tick(void) {
 }
 
 // Computes e to the power of x
-f32 fexp(f32 x, u32 iterations) {
+f32 cam_fexp(f32 x, u32 iterations) {
     f32 y = 1.0f;
     f32 n = 1.0f;
     f32 xp = x;
@@ -1327,7 +1334,7 @@ f32 fexp(f32 x, u32 iterations) {
 }
 
 // compute viewProjection matrix for object's matrix idx
-void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object) {
+void camSetupRSPMatricesForObject(Gfx **gdl, Mtx **rspMtxs, Object *object) {
     u8 ancestor;
     MtxF mtxf;
     Object *origObject;
@@ -1349,10 +1356,10 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object) {
             }
 
             if (!ancestor) {
-                matrix_from_srt(&MtxF_800a6a60, &object->srt);
+                mathYprXyzMtx(&MtxF_800a6a60, &object->srt);
             } else {
-                matrix_from_srt(&mtxf, &object->srt);
-                matrix_concat_4x3(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
+                mathYprXyzMtx(&mtxf, &object->srt);
+                mathMtxCat4x3F(&MtxF_800a6a60, &mtxf, &MtxF_800a6a60);
             }
 
             object->srt.scale = oldScale;
@@ -1366,8 +1373,8 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object) {
             ancestor = TRUE;
         }
 
-        matrix_concat(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
-        matrix_f2l(&gAuxMtx2, *rspMtxs);
+        mathMtxCatF(&MtxF_800a6a60, &gViewProjMtx, &gAuxMtx2);
+        mathMtxF2L(&gAuxMtx2, *rspMtxs);
         gRSPMatrices[origObject->matrixIdx] = *rspMtxs;
         (*rspMtxs)++;
     }
@@ -1376,12 +1383,12 @@ void setup_rsp_matrices_for_object(Gfx **gdl, Mtx **rspMtxs, Object *object) {
 }
 
 // load parent projection matrix
-void camera_load_parent_projection(Gfx **gdl) {
+void camLoadParentProjection(Gfx **gdl) {
     gSPMatrix((*gdl)++, OS_K0_TO_PHYSICAL(gRSPMtxList), G_MTX_PROJECTION | G_MTX_LOAD);
 }
 
-s32 camera_alloc_object_matrix(Object *object) {
-    camera_build_object_matrix(object, gMatrixIndex);
+s32 camAllocObjectMatrix(Object *object) {
+    camBuildObjectMatrix(object, gMatrixIndex);
     gRSPMatrices[gMatrixIndex] = NULL;
     gMatrixIndex++;
 
@@ -1392,11 +1399,11 @@ s32 camera_alloc_object_matrix(Object *object) {
     return gMatrixIndex - 1;
 }
 
-void camera_update_object_matrix(Object *object) {
-    camera_build_object_matrix(object, object->matrixIdx);
+void camUpdateObjectMatrix(Object *object) {
+    camBuildObjectMatrix(object, object->matrixIdx);
 }
 
-void camera_build_object_matrix(Object *object, int matrixIdx) {
+void camBuildObjectMatrix(Object *object, int matrixIdx) {
     s8 ancestor;
     f32 oldScale;
     s8 objectCount;
@@ -1416,10 +1423,10 @@ void camera_build_object_matrix(Object *object, int matrixIdx) {
         object->srt.scale = 1.0f;
 
         if (!ancestor) {
-            matrix_from_srt((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
+            mathYprXyzMtx((MtxF *) (((f32 *) gObjectMatrices) + (matrixIdx << 4)), &object->srt);
         } else {
-            matrix_from_srt(&gAuxMtx, &object->srt);
-            matrix_concat((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
+            mathYprXyzMtx(&gAuxMtx, &object->srt);
+            mathMtxCatF((MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)), &gAuxMtx, (MtxF *)((f32 *)gObjectMatrices + (matrixIdx << 4)));
         }
 
         object->srt.scale = oldScale;
@@ -1444,11 +1451,11 @@ void camera_build_object_matrix(Object *object, int matrixIdx) {
         invsrt.yaw = -object->srt.yaw;
         invsrt.pitch = -object->srt.pitch;
         invsrt.roll = -object->srt.roll;
-        matrix_from_srt_reversed((MtxF *) ((f32*)gInverseObjectMatrices + (matrixIdx << 4)), &invsrt);
+        mathRpyXyzMtx((MtxF *) ((f32*)gInverseObjectMatrices + (matrixIdx << 4)), &invsrt);
     }
 }
 
-void get_object_child_position(Object *object, f32 *ox, f32 *oy, f32 *oz) {
+void camGetObjectChildPosition(Object *object, f32 *ox, f32 *oy, f32 *oz) {
     Object *parent = object->parent;
 
     if (NULL == parent)
@@ -1459,13 +1466,13 @@ void get_object_child_position(Object *object, f32 *ox, f32 *oy, f32 *oz) {
         return;
     }
 
-    vec3_transform((MtxF *)((f32 *)gObjectMatrices + (object->parent->matrixIdx << 4)), object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, ox, oy, oz);
+    mathMtxXFMF((MtxF *)((f32 *)gObjectMatrices + (object->parent->matrixIdx << 4)), object->srt.transl.x, object->srt.transl.y, object->srt.transl.z, ox, oy, oz);
 }
 
-void transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
+void camTransformPointByObject(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
     if (object != NULL)
     {
-        vec3_transform((MtxF *) ((f32*)gObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
+        mathMtxXFMF((MtxF *) ((f32*)gObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1475,10 +1482,10 @@ void transform_point_by_object(float x, float y, float z, float *ox, float *oy, 
     }
 }
 
-void inverse_transform_point_by_object(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
+void camInverseTransformPointByObject(float x, float y, float z, float *ox, float *oy, float *oz, Object *object) {
     if (object != NULL)
     {
-        vec3_transform((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
+        mathMtxXFMF((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), x, y, z, ox, oy, oz);
     }
     else
     {
@@ -1488,32 +1495,32 @@ void inverse_transform_point_by_object(float x, float y, float z, float *ox, flo
     }
 }
 
-void inverse_rotate_point_by_object(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, Object* object) {
+void camInverseRotatePointByObject(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, Object* object) {
     Vec3f v;
 
     v.x = x;
     v.y = y;
     v.z = z;
-    vec3_transform_no_translate((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), &v, &v);
+    mathMtxFastXFMF((MtxF *) ((f32*)gInverseObjectMatrices + (object->matrixIdx << 4)), &v, &v);
     *ox = v.x;
     *oy = v.y;
     *oz = v.z;
 }
 
-void rotate_point_by_object(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, Object* object) {
+void camRotatePointByObject(f32 x, f32 y, f32 z, f32* ox, f32* oy, f32* oz, Object* object) {
     Vec3f  point;
     u8 mtxId;
 
     point.x = x;
     point.y = y;
     point.z = z;
-    vec3_transform_no_translate((MtxF *)((f32 *)gObjectMatrices + (object->matrixIdx << 4)), &point, &point);
+    mathMtxFastXFMF((MtxF *)((f32 *)gObjectMatrices + (object->matrixIdx << 4)), &point, &point);
     *ox = point.x;
     *oy = point.y;
     *oz = point.z;
 }
 
-void transform_srt_by_object(SRT* srt, SRT* out, Object* object) {
+void camTransformSRTByObject(SRT* srt, SRT* out, Object* object) {
     if (object == NULL) {
         out->transl.x = srt->transl.x;
         out->transl.y = srt->transl.y;
@@ -1523,13 +1530,13 @@ void transform_srt_by_object(SRT* srt, SRT* out, Object* object) {
         out->roll = srt->roll;
         return;
     }
-    vec3_transform((MtxF *) ((f32 *)gObjectMatrices + (object->matrixIdx << 4)), srt->transl.x, srt->transl.y, srt->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
+    mathMtxXFMF((MtxF *) ((f32 *)gObjectMatrices + (object->matrixIdx << 4)), srt->transl.x, srt->transl.y, srt->transl.z, &out->transl.x, &out->transl.y, &out->transl.z);
     out->yaw = object->srt.yaw + srt->yaw;
     out->pitch = srt->pitch;
     out->roll = srt->roll;
 }
 
-void camera_transform_srt_relative(SRT *a, SRT *b, SRT *out) {
+void camTransformSRTRelative(SRT *a, SRT *b, SRT *out) {
     MtxF mf;
     SRT tempsrt;
     s32 yaw;
@@ -1542,9 +1549,9 @@ void camera_transform_srt_relative(SRT *a, SRT *b, SRT *out) {
     tempsrt.pitch = -b->pitch;
     tempsrt.roll = -b->roll;
 
-    matrix_from_srt_reversed(&mf, &tempsrt);
+    mathRpyXyzMtx(&mf, &tempsrt);
 
-    vec3_transform(&mf, 
+    mathMtxXFMF(&mf, 
         a->transl.x, a->transl.y, a->transl.z, 
         &out->transl.x, &out->transl.y, &out->transl.z);
 
@@ -1555,7 +1562,7 @@ void camera_transform_srt_relative(SRT *a, SRT *b, SRT *out) {
     out->roll = a->roll;
 }
 
-void update_camera_for_object(Camera *camera) {
+void camUpdateCameraForObject(Camera *camera) {
     Object *obj;
     Object *obj2;
     f32 x,y,z;
@@ -1576,7 +1583,7 @@ void update_camera_for_object(Camera *camera) {
         z = camera->srt.transl.z;
 
         obj = camera->object;
-        vec3_transform((MtxF*) ((f32 *)gObjectMatrices + (obj->matrixIdx << 4)), x,y,z, &camera->tx, &camera->ty, &camera->tz);
+        mathMtxXFMF((MtxF*) ((f32 *)gObjectMatrices + (obj->matrixIdx << 4)), x,y,z, &camera->tx, &camera->ty, &camera->tz);
         
         camera->yaw = camera->srt.yaw - obj->srt.yaw;
         camera->pitch = camera->srt.pitch;
@@ -1584,7 +1591,7 @@ void update_camera_for_object(Camera *camera) {
     }
 }
 
-void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx){
+void camTransformPointByObjectMatrix(Vec3f *v, Vec3f *ov, s8 matrixIdx){
     u32 noTransformation = matrixIdx < 0; 
 
     if (matrixIdx) {} // @fake
@@ -1596,13 +1603,13 @@ void transform_point_by_object_matrix(Vec3f *v, Vec3f *ov, s8 matrixIdx){
         return; 
     } 
 
-    vec3_transform(&gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
+    mathMtxXFMF(&gObjectMatrices[matrixIdx], v->x, v->y, v->z, &ov->x, &ov->y, &ov->z);
 }
 
-void camera_set_letterbox(s16 size) {
+void camSetLetterbox(s16 size) {
     gLetterboxTarget = size;
 }
 
-s16 camera_get_letterbox(void) {
+s16 camGetLetterbox(void) {
     return gLetterboxTarget;
 }

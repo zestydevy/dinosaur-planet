@@ -75,7 +75,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
 
     objdata = self->data;
 
-    font_load(FONT_DINO_MEDIUM_FONT_IN);
+    fontLoad(FONT_DINO_MEDIUM_FONT_IN);
     self->animCallback = levelname_anim_callback;
 
     gametext = gDLL_21_Gametext->vtbl->get_chunk(setup->textID);
@@ -91,7 +91,7 @@ void levelname_setup(Object* self, LevelName_Setup* setup, s32 arg2) {
     objdata->timer = objdata->opacity;
 
     if (objdata->flagID != NO_GAMEBIT) {
-        if (main_get_bits(objdata->flagID)) {
+        if (mainGetBits(objdata->flagID)) {
             objdata->state = LEVELNAME_STATE_4_FINISHED;
         }
     }
@@ -107,10 +107,10 @@ void levelname_control(Object* self) {
 
     switch (objdata->state) {
         case LEVELNAME_STATE_0_WAITING:
-            distance = vec3_distance(&self->globalPosition, &get_player()->globalPosition);
+            distance = vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition);
             if (distance < objdata->activationRadius) {
                 if (objdata->flagID != NO_GAMEBIT) {
-                    main_set_bits(objdata->flagID, 1);
+                    mainSetBits(objdata->flagID, 1);
                 }
                 objdata->state = LEVELNAME_STATE_1_FADING_IN;
             }
@@ -127,7 +127,7 @@ void levelname_control(Object* self) {
             if ((u32)objdata->timer > objdata->displayDuration) {
                 objdata->state = LEVELNAME_STATE_3_FADING_OUT;
             }    
-            objdata->opacity = (s32) (fsin16_precise(objdata->timer * 0x500) * 30.0f) + 0xDC;
+            objdata->opacity = (s32) (mathSinfInterp(objdata->timer * 0x500) * 30.0f) + 0xDC;
             break;
         case LEVELNAME_STATE_3_FADING_OUT:
             objdata->opacity -= gUpdateRate * 4;
@@ -157,16 +157,16 @@ void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
         return;
 
     gametext = objdata->gametext;
-    font_window_set_coords(6, 0, 0, 320, 240);
-    font_window_use_font(6, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_flush_strings(6);
-    font_window_set_text_colour(6, 
+    fontWindowSetCoords(6, 0, 0, 320, 240);
+    fontWindowUseFont(6, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowFlushStrings(6);
+    fontWindowSetTextColour(6, 
         0xFF, 0xFF, 0xFF, 0, objdata->opacity);
 
     for (index = 0; index < gametext->count; index++, yCoord += 30){
-        font_window_add_string_xy(6, -0x8000, yCoord, 
+        fontWindowAddStringXY(6, -0x8000, yCoord, 
             gametext->strings[index], 1, 4);
-        font_window_draw(gfx, mtx, vtx, 6);
+        fontWindowDraw(gfx, mtx, vtx, 6);
     }
 }
 
@@ -174,7 +174,7 @@ void levelname_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle*
 void levelname_free(Object* self, s32 arg1) {
     LevelName_Data* objdata = self->data;
 
-    font_unload(FONT_DINO_MEDIUM_FONT_IN);
+    fontUnload(FONT_DINO_MEDIUM_FONT_IN);
     mmFree(objdata->gametext);
 }
 
@@ -198,7 +198,7 @@ static int levelname_anim_callback(Object* self, Object *overrideObj, AnimObj_Da
     for (i = 0; i < animData->messageCount; i++){
         if (animData->messages[i] == 1) {
             if (objdata->flagID != -1) {
-                main_set_bits(objdata->flagID, 1);
+                mainSetBits(objdata->flagID, 1);
             }
             objdata->state = LEVELNAME_STATE_1_FADING_IN;
             return 4;

@@ -87,7 +87,7 @@ void dll_251_ctor(void* dll) {
     Texture** tex;
     s32 i;
 
-    if (get_player()->id == 0) {
+    if (objGetPlayer()->id == 0) {
         bss_8 = data_4;
     } else {
         bss_8 = data_0;
@@ -95,17 +95,17 @@ void dll_251_ctor(void* dll) {
     
     if (bss_0 == NULL) {
         for (i = 0, tex = &bss_0; i < 2; ) {
-            tex[i] = tex_load(bss_8[i], 0);
+            tex[i] = texLoadTextureActual(bss_8[i], 0);
             i++;
         }
     }
     
     if (data_78 == NULL) {
-        data_78 = dll_load(DLL_ID_106, 1, FALSE);
+        data_78 = dllLoadActual(DLL_ID_106, 1, FALSE);
     }
     
     if (data_7C == NULL) {
-        data_7C = dll_load(DLL_ID_168, 1, FALSE);
+        data_7C = dllLoadActual(DLL_ID_168, 1, FALSE);
     }
 }
 
@@ -116,17 +116,17 @@ void dll_251_dtor(void* dll) {
 
     if (bss_0 != NULL) {
         for (i = 0, tex = &bss_0; i < 2; ) {
-            tex_free(tex[i]);
+            texFreeTexture(tex[i]);
             i++;
         }
     }
     
     if (data_78 != NULL) {
-        dll_unload(data_78);
+        dllFree(data_78);
     }
     
     if (data_7C != NULL) {
-        dll_unload(data_7C);
+        dllFree(data_7C);
     }
 }
 
@@ -156,7 +156,7 @@ void dll_251_free(Object* self, s32 arg1) {
     }
     
     if (objData->unk6C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk6C);
+        dll_amSfx->Stop(objData->unk6C);
         objData->unk6C = 0;
     }
     
@@ -257,7 +257,7 @@ void dll_251_func_BC0(Object* self, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     
     data_78->vtbl->func0(0, 1, &fxTransform, 0x401, -1, sp50[data_4C[idx] & 0xFFFF]);
     
-    gDLL_6_AMSFX->vtbl->play(self, data_8[idx], MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, data_8[idx], MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 #endif
 

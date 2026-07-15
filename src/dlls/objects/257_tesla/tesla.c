@@ -49,7 +49,7 @@ void dll_257_setup(Object* self, Tesla_Setup* setup, s32 arg2) {
     objdata->unk10 = 0.0f;
     self->srt.yaw = setup->unk20 << 8;
     self->srt.transl.f[1] = setup->base.y - setup->unk1E;
-    obj_add_object_type(self, OBJTYPE_Tesla);
+    objAddObjectType(self, OBJTYPE_Tesla);
 }
 
 
@@ -73,17 +73,17 @@ void dll_257_control(Object* self) {
     setup = (Tesla_Setup*)self->setup;
     var_s0 = NULL;
     if (objdata->unk0 == NULL) {
-        objdata->unk0 = (DLL_IProjgfx*)dll_load_deferred(DLL_ID_205, 1U);
+        objdata->unk0 = (DLL_IProjgfx*)dllLoad(DLL_ID_205, 1U);
         if (objdata->unk0 == NULL) { return; }
     }
     if (objdata->unk4 == NULL) {
-        objdata->unk4 = (DLL_IModgfx*)dll_load_deferred(DLL_ID_157, 1U);
+        objdata->unk4 = (DLL_IModgfx*)dllLoad(DLL_ID_157, 1U);
         if (objdata->unk4 == NULL) { return; }
     }
 
     if (setup) {}
-    player = get_player();
-    sp68 = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
+    player = objGetPlayer();
+    sp68 = vec3DistanceXZ(&player->globalPosition, &self->globalPosition);
     switch (objdata->unk8) {
     case 0:
         objdata->unk10 += setup->unk1F * gUpdateRateF * 0.01f;
@@ -91,35 +91,35 @@ void dll_257_control(Object* self) {
         dll_257_func_1144(self, setup);
         if (
             setup->unk18 < sp68 || 
-            (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)
+            (setup->unk1C != -1 && mainGetBits(setup->unk1C) == 0)
         ) {
             objdata->unk8 = 1U;
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Stop(objdata->unk14);
+            objdata->unk14 = dll_amSfx->Play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
         } else if (setup->base.y == self->srt.transl.f[1]) {
             objdata->unk8 = 3U;
             objdata->unkC = 0U;
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57C, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Stop(objdata->unk14);
+            objdata->unk14 = dll_amSfx->Play(self, SOUND_57C, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 1:
         objdata->unk10 -= setup->unk1F * gUpdateRateF * 0.01f;
         self->srt.transl.f[1] += objdata->unk10 * gUpdateRateF;
         dll_257_func_1144(self, setup);
-        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
+        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || mainGetBits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Stop(objdata->unk14);
+            objdata->unk14 = dll_amSfx->Play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
         } else if ((setup->base.y - setup->unk1E) == self->srt.transl.f[1]) {
             objdata->unk8 = 2U;
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
+            dll_amSfx->Stop(objdata->unk14);
         }
         break;
     case 2:
-        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || main_get_bits(setup->unk1C) != 0)) {
+        if ((sp68 < setup->unk18) && (setup->unk1C == -1 || mainGetBits(setup->unk1C) != 0)) {
             objdata->unk8 = 0U;
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->unk14 = dll_amSfx->Play(self, SOUND_57A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 3:
@@ -145,9 +145,9 @@ void dll_257_control(Object* self) {
         if (temp_fv1 < objdata->unkC) {
             objdata->unkC -= temp_fv1;
             objdata->unkA = 2;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
             sp64 = setup->unk19;
-            var_s0 = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp64);
+            var_s0 = objGetNearestTypeTo(OBJTYPE_Baddie, self, &sp64);
             if (var_s0 == NULL || sp68 <= sp64) {
                 if (sp68 < setup->unk19) {
                     func_8002635C(player, self, Damage_Type_Sword_Staff_Strike2, setup->damageStrength, 0);
@@ -161,7 +161,7 @@ void dll_257_control(Object* self) {
         if (objdata->unkA != 0) {
             if (var_s0 == NULL) {
                 sp64 = setup->unk19;
-                var_s0 = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &sp64);
+                var_s0 = objGetNearestTypeTo(OBJTYPE_Baddie, self, &sp64);
             }
             objdata->unkA--;
             if (var_s0 == NULL || sp68 <= sp64) {
@@ -178,10 +178,10 @@ void dll_257_control(Object* self) {
                     goto bail;
                 }
             }
-            objects = obj_get_all_of_type(OBJTYPE_Tesla, &sp54);
+            objects = objGetAllOfType(OBJTYPE_Tesla, &sp54);
             for (i = 0; i != 2; i++) {
                 start:
-                temp_v0_5 = rand_next(0, sp54 - 1);\
+                temp_v0_5 = mathRnd(0, sp54 - 1);\
                 if (self->tabIdx != objects[temp_v0_5]->tabIdx) {\
                     curObj = objects[temp_v0_5];
                     if (((DLL_Unknown*)curObj->dll)->vtbl->func[7].withOneArgS32((s32)curObj) == 0) {
@@ -192,10 +192,10 @@ void dll_257_control(Object* self) {
             }
         }
         bail:
-        if (setup->unk18 < sp68 || (setup->unk1C != -1 && main_get_bits(setup->unk1C) == 0)) {
+        if (setup->unk18 < sp68 || (setup->unk1C != -1 && mainGetBits(setup->unk1C) == 0)) {
             objdata->unk8 = 1U;
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk14);
-            objdata->unk14 = gDLL_6_AMSFX->vtbl->play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Stop(objdata->unk14);
+            objdata->unk14 = dll_amSfx->Play(self, SOUND_57E, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         break;
     case 4:
@@ -204,7 +204,7 @@ void dll_257_control(Object* self) {
             objdata->unkC -= 10.0f;
             func_8002635C(player, self, 1, 0, 0);
             objdata->unk0->vtbl->func0(self, 0, 0, 1, -1, 0x13, player);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_57D, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         if (setup->unk1A < sp68) {
             objdata->unk8 = 3U;
@@ -222,7 +222,7 @@ void dll_257_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     objdata = self->data;
     if ((visibility != 0) && (objdata->unk8 != 2)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -235,13 +235,13 @@ void dll_257_free(Object* self, s32 a1) {
     objdata = self->data;
     projgfxDLL = objdata->unk0;
     if (projgfxDLL != NULL) {
-        dll_unload(projgfxDLL);
+        dllFree(projgfxDLL);
     }
     modgfxDLL = objdata->unk4;
     if (modgfxDLL != NULL) {
-        dll_unload(modgfxDLL);
+        dllFree(modgfxDLL);
     }
-    obj_free_object_type(self, OBJTYPE_Tesla);
+    objFreeObjectType(self, OBJTYPE_Tesla);
 }
 
 // offset: 0x1120 | func: 5 | export: 5

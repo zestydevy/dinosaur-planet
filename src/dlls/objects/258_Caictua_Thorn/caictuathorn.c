@@ -23,7 +23,7 @@ void Caictua_Thorn_setup(Object* self, Caictua_Thorn_Setup* objSetup, s32 reset)
         self->shadow->maxDistScale = self->shadow->scale * 2.5f;
     }
 
-    self->unkE0 = gDLL_6_AMSFX->vtbl->play(self, SOUND_849, MAX_VOLUME, NULL, NULL, 0, NULL);
+    self->unkE0 = dll_amSfx->Play(self, SOUND_849, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0xDC | func: 1 | export: 1
@@ -33,7 +33,7 @@ void Caictua_Thorn_control(Object* self) {
     self->unkDC -= gUpdateRateF;
     if ((self->unkDC < 0) || self->opacity < gUpdateRate) {
         self->opacity = 0;
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
     
@@ -51,15 +51,15 @@ void Caictua_Thorn_control(Object* self) {
         self->srt.roll += M_5_DEGREES;
 
         //Set orientation from velocity vector
-        self->srt.yaw = arctan2_f(self->velocity.f[0], self->velocity.f[2]); //doesn't change, so may not need to be updated every tick?
-        self->srt.pitch = arctan2_f(sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), self->velocity.y) - M_90_DEGREES;
+        self->srt.yaw = mathAtan2f(self->velocity.f[0], self->velocity.f[2]); //doesn't change, so may not need to be updated every tick?
+        self->srt.pitch = mathAtan2f(sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)), self->velocity.y) - M_90_DEGREES;
 
         //Move
-        obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+        objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     }
 
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->update_doppler(self->unkE0, self, get_player(), 150.0f);
+        dll_amSfx->UpdateDoppler(self->unkE0, self, objGetPlayer(), 150.0f);
     }
     
     func_80026128(self, 0xA, 1, 0);
@@ -68,11 +68,11 @@ void Caictua_Thorn_control(Object* self) {
 
     //Check if the thorn hit the player or the sidekick
     if ((self->objhitInfo->unk48 != NULL) && 
-        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+        ((objGetPlayer() == self->objhitInfo->unk48) || (objGetSidekick() == self->objhitInfo->unk48))
     ) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_721, MAX_VOLUME, NULL, NULL, 0, NULL);
+        camUseShake();
+        camSetShakeOffset(1.0f);
+        dll_amSfx->Play(self, SOUND_721, MAX_VOLUME, NULL, NULL, 0, NULL);
 
         i = 0x19;
         while (i--) {
@@ -84,7 +84,7 @@ void Caictua_Thorn_control(Object* self) {
         func_800267A4(self);
 
         if (self->unkE0) {
-            gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+            dll_amSfx->Stop(self->unkE0);
             self->unkE0 = 0;
         }
     }
@@ -106,11 +106,11 @@ void Caictua_Thorn_update(Object* self) {
     self->velocity.y = 0.0f;
     self->velocity.z = 0.0f;
     func_800267A4(self);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
 
     //Stop sound loop
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+        dll_amSfx->Stop(self->unkE0);
         self->unkE0 = 0;
     }
 }
@@ -118,18 +118,18 @@ void Caictua_Thorn_update(Object* self) {
 // offset: 0x530 | func: 3 | export: 3
 void Caictua_Thorn_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x584 | func: 4 | export: 4
 void Caictua_Thorn_free(Object* self, s32 onlySelf) {
     if (self->unkE0 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(self->unkE0);
+        dll_amSfx->Stop(self->unkE0);
         self->unkE0 = 0;
     }
     
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x600 | func: 5 | export: 5

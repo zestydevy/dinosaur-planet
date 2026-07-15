@@ -4,28 +4,28 @@
 _exports:
 
 # ctor/dtor
-.dword amsfx_ctor
-.dword amsfx_dtor
+.dword amSfx_ctor
+.dword amSfx_dtor
 
 # export table
-.dword amsfx_func_338
-.dword amsfx_func_480
-.dword amsfx_play
-.dword amsfx_func_7E4
-.dword amsfx_set_vol
-.dword amsfx_set_pitch
-.dword amsfx_stop
-.dword amsfx_stop_object
-.dword amsfx_is_playing
-.dword amsfx_find_emitters_in_range
-.dword amsfx_func_DCC
-.dword amsfx_get_default
-.dword amsfx_flush_cache
-.dword amsfx_snd_play_ex
-.dword amsfx_play2
-.dword amsfx_play3
-.dword amsfx_free_object
-.dword amsfx_update_doppler
-.dword amsfx_water_falls_control
-.dword amsfx_water_falls_set_flags
-.dword amsfx_play_custom
+.dword amSfx_Func338
+.dword amSfx_Func480
+.dword amSfx_Play
+.dword amSfx_Func7E4
+.dword amSfx_SetVol
+.dword amSfx_SetPitch
+.dword amSfx_Stop
+.dword amSfx_StopObject
+.dword amSfx_IsPlaying
+.dword amSfx_FindEmittersInRange
+.dword amSfx_FuncDCC
+.dword amSfx_GetDefault
+.dword amSfx_FlushCache
+.dword amSfx_SndPlayEx
+.dword amSfx_Play2
+.dword amSfx_Play3
+.dword amSfx_FreeObject
+.dword amSfx_UpdateDoppler
+.dword amSfx_WaterFallsControl
+.dword amSfx_WaterFallsSetFlags
+.dword amSfx_PlayCustom

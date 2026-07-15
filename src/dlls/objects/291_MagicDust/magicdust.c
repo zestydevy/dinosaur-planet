@@ -32,11 +32,11 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     colliderArg = 3;
 
-    angle = rand_next(0, 0xFFFF);
-    speed = (rand_next(39, 44) / 100.0f);
-    self->velocity.x = fsin16_precise(angle) * speed;
-    self->velocity.z = fcos16_precise(angle) * speed;
-    self->velocity.y = rand_next(40, 50) / 50.0f;
+    angle = mathRnd(0, 0xFFFF);
+    speed = (mathRnd(39, 44) / 100.0f);
+    self->velocity.x = mathSinfInterp(angle) * speed;
+    self->velocity.z = mathCosfInterp(angle) * speed;
+    self->velocity.y = mathRnd(40, 50) / 50.0f;
 
     //Set up special modes
     if (objSetup->mode == MagicDust_MODE_Delay_Fall) {
@@ -51,7 +51,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
         //Set initial speed so gem moves towards the player (arriving in 2 seconds)
         attractDuration = 120.0f;
         if (attractDuration != 0.0f) {
-            player = get_player(); //@bug?: missing NULL check
+            player = objGetPlayer(); //@bug?: missing NULL check
             self->velocity.x = (player->srt.transl.x - self->srt.transl.x) / attractDuration;
             self->velocity.y = (player->srt.transl.y - self->srt.transl.y) / attractDuration;
             self->velocity.z = (player->srt.transl.z - self->srt.transl.z) / attractDuration;
@@ -147,13 +147,13 @@ void MagicDust_control(Object* self) {
     u8 fxParam;
     u32 outMesgID;
     
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
     collision = &objData->collision;
     
     //Wait for the "You have picked up a… MAGIC GEM!" sequence to end (if it's active)
     if (objData->flags & MagicDust_FLAG_Tutorial_Sequence) {
-        while (obj_recv_mesg(self, &outMesgID, NULL, NULL)) {
+        while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
             if (outMesgID == 0x7000B) {
                 MagicDust_collect(self, player, objData);
                 objData->flags &= ~MagicDust_FLAG_Tutorial_Sequence;
@@ -184,8 +184,8 @@ void MagicDust_control(Object* self) {
         //Play a ringing sound at intervals
         objData->soundTimer -= gUpdateRate;
         if (objData->soundTimer < 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_BA1_MagicDust_Twinkle, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->soundTimer = rand_next(240, 300);
+            dll_amSfx->Play(self, SOUND_BA1_MagicDust_Twinkle, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->soundTimer = mathRnd(240, 300);
         }
     }
     
@@ -244,11 +244,11 @@ void MagicDust_control(Object* self) {
                 }
 
                 self->opacity = 1;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B2B_Magic_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B2B_Magic_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
 
             //Move
-            obj_move(self, 
+            objMove(self, 
                 self->velocity.x * gUpdateRateF, 
                 self->velocity.y * gUpdateRateF, 
                 self->velocity.z * gUpdateRateF
@@ -257,9 +257,9 @@ void MagicDust_control(Object* self) {
             //Destroy self when vanish timer's up
             if (objData->timer <= 0.0f) {
                 if (self->srt.flags & OBJFLAG_OWNS_SETUP) {
-                    obj_destroy_object(self);
+                    objFreeObject(self);
                 } else {
-                    obj_free_tick(self);
+                    objDisable(self);
                     self->srt.flags |= OBJFLAG_INVISIBLE;
                 }
             }
@@ -285,7 +285,7 @@ void MagicDust_control(Object* self) {
                     if (absSpeed > 2.0f) {
                         volumeMultiplier = 2.0f;
                     }
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_66E_Ting, volumeMultiplier * 32.0f, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(self, SOUND_66E_Ting, volumeMultiplier * 32.0f, NULL, NULL, 0, NULL);
                 }
                 
                 //Reflect speed vector off surface normal (@bug: result unused?)
@@ -345,15 +345,15 @@ void MagicDust_control(Object* self) {
         distance = -distance;
     } 
     if (distance < 20.0f) {
-        playerDistance = vec3_distance_xz_squared(&self->globalPosition, &player->globalPosition);
+        playerDistance = vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition);
         distance = objData->collisionRadius + 8.0f;
         if (playerDistance < SQ(distance)) {
             //Display a tutorial box when the player first collects a Magic Crystal
-            if (main_get_bits(BIT_Tutorial_Magic_Crystal) == 0) {
+            if (mainGetBits(BIT_Tutorial_Magic_Crystal) == 0) {
                 gDLL_3_Animation->vtbl->set_variable_obj(objData->animObjectID, NULL, 0);
                 outMesgID = 0;
-                obj_send_mesg(player, 0x7000A, self, NULL);
-                main_set_bits(BIT_Tutorial_Magic_Crystal, 1);
+                objSendMesg(player, 0x7000A, self, NULL);
+                mainSetBits(BIT_Tutorial_Magic_Crystal, 1);
                 objData->flags |= MagicDust_FLAG_Tutorial_Sequence;
             } else {
                 MagicDust_collect(self, player, objData);
@@ -365,7 +365,7 @@ void MagicDust_control(Object* self) {
                 gDLL_17_partfx->vtbl->spawn(self, objData->fxIDSparkle, NULL, 1, -1, NULL);
             }
             
-            gDLL_6_AMSFX->vtbl->play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 }
@@ -377,7 +377,7 @@ void MagicDust_update(Object *self) { }
 void MagicDust_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     //When the MagicDust gem is attached to a MagicPlant, the plant handles drawing the gem instead
     if (visibility && (self->unkC4 == NULL)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

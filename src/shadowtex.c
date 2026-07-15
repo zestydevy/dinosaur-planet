@@ -33,9 +33,9 @@ s32 D_80092EA8 = 0; // unused
 // function statics start here
 // -------- .data start 80092EC0 -------- //
 
-void shadowtex_swap_buffer(s32 slot);
+void shadowtexSwapBuffer(s32 slot);
 
-void shadowtex_init(void) {
+void shadowtexInit(void) {
     gShadowTexFramebuffers[0] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
     gShadowTexFramebuffers[0] = (void*)(((u32)(gShadowTexFramebuffers[0]) + 0x3f) & ~0x3f); //Makes sure framebuffer addresses are 64-byte-aligned
     gShadowTexFramebuffers[1] = mmAlloc((gShadowTexWidth * gShadowTexHeight << 1) + 0x30, ALLOC_TAG_SHAD_COL, ALLOC_NAME("maketex:shadowtex"));
@@ -65,16 +65,16 @@ void shadowtex_init(void) {
     bzero(D_800BB578[2], gShadowTexWidth * gShadowTexHeight >> 1);
     bzero(D_800BB578[3], gShadowTexWidth * gShadowTexHeight >> 1);
 
-    shadowtex_swap_buffer(0);
-    shadowtex_swap_buffer(1);
+    shadowtexSwapBuffer(0);
+    shadowtexSwapBuffer(1);
 }
 
-void shadowtex_swap_buffer(s32 slot) {
+void shadowtexSwapBuffer(s32 slot) {
     gShadowTexCurrFbIdx[slot] ^= 1;
     gShadowTexCurrFb[slot] = gShadowTexFramebuffers[SHADOWTEX_NUM_SLOTS*slot + gShadowTexCurrFbIdx[slot]];
 }
 
-s32 shadowtex_get_status(s32 *outTexWidth) {
+s32 shadowtexGetStatus(s32 *outTexWidth) {
     if (outTexWidth != NULL) {
         *outTexWidth = gShadowTexWidth;
     }
@@ -92,7 +92,7 @@ void shadowtex_func_8005BC58(Object *obj, s32 arg1, s32 slot) {
     obj->shadow->bufferIdx ^= 1;
 }
 
-void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot) {
+void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot) {
     Camera* temp_v0_2;
     s32 _pad;
     f32 spC4;
@@ -122,11 +122,11 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     }
     D_800BB558[slot] = D_800BB560[(obj->shadow->bufferIdx ^ 1)+(slot*SHADOWTEX_NUM_SLOTS)];
     D_800BB570[slot] = D_800BB578[(obj->shadow->bufferIdx ^ 1)+(slot*SHADOWTEX_NUM_SLOTS)];
-    set_camera_selector(1);
-    temp_s0 = get_camera();
-    sp88 = camera_get_fov();
-    camera_set_fov(70.0f);
-    camera_set_aspect(1.0f);
+    camSetCameraSelector(1);
+    temp_s0 = camGet();
+    sp88 = camGetFOV();
+    camSetFOV(70.0f);
+    camSetAspect(1.0f);
     spC4 = temp_s0->srt.transl.f[0];
     spC0 = temp_s0->srt.transl.f[1];
     spBC = temp_s0->srt.transl.f[2];
@@ -134,8 +134,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     spAC = temp_s0->srt.yaw;
     spA8 = temp_s0->srt.roll;
     if (arg6 != 0) {
-        set_camera_selector(0);
-        temp_v0_2 = get_camera();
+        camSetCameraSelector(0);
+        temp_v0_2 = camGet();
         someX = temp_v0_2->tx - obj->globalPosition.f[0];
         someY = temp_v0_2->ty - obj->globalPosition.f[1];
         someZ = temp_v0_2->tz - obj->globalPosition.f[2];
@@ -145,8 +145,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
             someY *= 15.0f / var_fv0;
             someZ *= 15.0f / var_fv0;
         }
-        temp_s0->srt.yaw = 0x8000 - arctan2_f(someX, someZ);
-        temp_s0->srt.pitch = arctan2_f(someY, sqrtf(SQ(someX) + SQ(someZ)));
+        temp_s0->srt.yaw = 0x8000 - mathAtan2f(someX, someZ);
+        temp_s0->srt.pitch = mathAtan2f(someY, sqrtf(SQ(someX) + SQ(someZ)));
         var_fv0 = temp_s0->srt.pitch / 200.0f;
         if (var_fv0 < 35.0f) {
             var_fv0 = 35.0f;
@@ -157,8 +157,8 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         temp_s0->srt.transl.f[0] = someX + obj->srt.transl.f[0];
         temp_s0->srt.transl.f[1] = arg7  + obj->srt.transl.f[1];
         temp_s0->srt.transl.f[2] = someZ + obj->srt.transl.f[2];
-        set_camera_selector(1);
-        camera_set_ortho_projection_matrix(-19.5f, 19.5f, 0.0f, var_fv0);
+        camSetCameraSelector(1);
+        camSetOrthoProjectionMatrix(-19.5f, 19.5f, 0.0f, var_fv0);
     } else {
         temp_s0->srt.pitch = 0;
         someX = obj->shadow->dir.f[0];
@@ -167,11 +167,11 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         sp8C = -obj->shadow->dir.f[0];
         sp90 = -obj->shadow->dir.f[1];
         sp94 = -obj->shadow->dir.f[2];
-        D_80092EAC = arctan2_f(-sp8C, sp94);
+        D_80092EAC = mathAtan2f(-sp8C, sp94);
         sp8C *= sp8C;
         sp94 *= sp94;
         D_80092EB0 = sqrtf(sp8C + sp94);
-        D_80092EB0 = arctan2_f(D_80092EB0, sp90) - 0x3FC8;
+        D_80092EB0 = mathAtan2f(D_80092EB0, sp90) - 0x3FC8;
         temp_s0->srt.pitch = D_80092EB0;
         if (obj->shadow->flags & OBJ_SHADOW_FLAG_USE_OBJ_YAW) {
             temp_s0->srt.yaw = 0x10000 - obj->srt.yaw;
@@ -194,30 +194,30 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
         temp_s0->srt.transl.f[1] = obj->srt.transl.f[1] + someY;
         temp_s0->srt.transl.f[2] = obj->srt.transl.f[2] + someZ;
         if (obj->id == OBJ_DIMSnowHorn1) {
-            camera_set_ortho_projection_matrix(-55.0f, 55.0f, -50.0f, 60.0f);
+            camSetOrthoProjectionMatrix(-55.0f, 55.0f, -50.0f, 60.0f);
         } else {
-            camera_set_ortho_projection_matrix(-26.0f, 26.0f, -29.0f, 23.0f);
+            camSetOrthoProjectionMatrix(-26.0f, 26.0f, -29.0f, 23.0f);
         }
     }
     if (obj->parent != NULL) {
         temp_s0->srt.transl.f[0] += gWorldX;
         temp_s0->srt.transl.f[2] += gWorldZ;
     }
-    spA4 = camera_is_y_offset_enabled();
+    spA4 = camIsUsingShake();
     if (spA4 != 0) {
-        camera_disable_y_offset();
+        camIgnoreShake();
     }
-    camera_setup_viewport_and_matrices(gdl, &sp84);
+    camSetupViewportAndMatrices(gdl, &sp84);
     if (spA4 != 0) {
-        camera_enable_y_offset();
+        camUseShake();
     }
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, gShadowTexWidth, gShadowTexHeight);
-    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
-    rsp_segment(gdl, SEGMENT_4, (u8*)gShadowTexCurrFb[slot] - 0x280);
+    segSetBase(gdl, SEGMENT_FRAMEBUFFER, gShadowTexCurrFb[slot]);
+    segSetBase(gdl, SEGMENT_4, (u8*)gShadowTexCurrFb[slot] - 0x280);
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_FILL | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     gSPClipRatio((*gdl)++, FRUSTRATIO_3);
     if (arg6 != 0) {
         if (gDLBuilder->needsPipeSync != 0) {
@@ -225,29 +225,29 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
             gDPPipeSync((*gdl)++);
         }
         gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, gShadowTexWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
-        dl_set_fill_color(gdl, 0);
+        dlSetFillColor(gdl, 0);
     } else {
         if (gDLBuilder->needsPipeSync != 0) {
             gDLBuilder->needsPipeSync = 0;
             gDPPipeSync((*gdl)++);
         }
         gDPSetColorImage((*gdl)++, G_IM_FMT_I, G_IM_SIZ_8b, gShadowTexWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
-        dl_set_fill_color(gdl, -1);
+        dlSetFillColor(gdl, -1);
         gSPTexture((*gdl)++, 0, 0, 0, G_TX_RENDERTILE, G_OFF);
     }
     gDPFillRectangle((*gdl)++, 0, 0, gShadowTexWidth - 1, gShadowTexHeight - 1);
     gDLBuilder->needsPipeSync = 1;
     if (arg6 == 0) {
         gDPSetCombineMode(*gdl, G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl,
             G_AD_DISABLE | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-        dl_apply_other_mode(gdl);
-        dl_set_prim_color(gdl, 0, 0, 0xFF, 0x7D);
+        dlApplyOtherMode(gdl);
+        dlSetPrimColor(gdl, 0, 0, 0xFF, 0x7D);
     }
-    func_800359D0(obj, gdl, &sp84, vtxs, pols, arg6);
+    objprintDrawShadowModel(obj, gdl, &sp84, vtxs, pols, arg6);
     gSPTexture((*gdl)++, -1, -1, 3, G_TX_RENDERTILE, G_ON);
     gIsShadowTexActive = FALSE;
     temp_s0->srt.transl.f[0] = spC4;
@@ -257,39 +257,39 @@ void shadowtex_draw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs,
     temp_s0->srt.yaw = (s16) spAC;
     temp_s0->srt.roll = (s16) spA8;
     if (track_func_80041E08() != 0) {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
         if (track_func_80041DBC() != 0) {
-            camera_set_aspect(2.25f); // 9:4
+            camSetAspect(2.25f); // 9:4
         } else {
-            camera_set_aspect(1.66f); // 5:3
+            camSetAspect(1.66f); // 5:3
         }
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetupViewportAndMatrices(gdl, &sp84);
     } else if (track_func_80041DBC() != 0) {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
-        camera_set_aspect(1.7777778f);
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
+        camSetAspect(1.7777778f);
+        camSetupViewportAndMatrices(gdl, &sp84);
     } else {
-        set_camera_selector(0);
-        camera_set_fov(sp88);
-        camera_set_aspect(gAspectRatio);
-        camera_setup_viewport_and_matrices(gdl, &sp84);
+        camSetCameraSelector(0);
+        camSetFOV(sp88);
+        camSetAspect(gAspectRatio);
+        camSetupViewportAndMatrices(gdl, &sp84);
     }
-    rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
+    segSetBase(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(gdl, SEGMENT_4, gFrontFramebuffer - (0x500 / sizeof(u16)));
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
         gDPPipeSync((*gdl)++);
     }
-    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, GET_VIDEO_WIDTH(vi_get_current_size()), 
+    gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, GET_VIDEO_WIDTH(viGetCurrentSize()), 
         SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
     shadowtex_func_8005BC58(obj, arg6, slot);
-    shadowtex_swap_buffer(slot);
+    shadowtexSwapBuffer(slot);
     *mtxs = sp84;
 }
 
-void shadowtex_get_textures(s32 bufferIdx, void **arg1, void **arg2, s32 slot) {
+void shadowtexGetTextures(s32 bufferIdx, void **arg1, void **arg2, s32 slot) {
     *arg1 = D_800BB560[bufferIdx + (slot * SHADOWTEX_NUM_SLOTS)];
     *arg2 = D_800BB578[bufferIdx + (slot * SHADOWTEX_NUM_SLOTS)];
 }

@@ -48,7 +48,7 @@ void SB_Lamp_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->unk24 = 600.0f;
     objdata->unk1C = 0.5f;
     self->animCallback = SB_Lamp_anim_callback;
-    sDLL107 = dll_load(DLL_ID_107, 1, FALSE);
+    sDLL107 = dllLoadActual(DLL_ID_107, 1, FALSE);
 }
 
 // offset: 0xB8 | func: 1 | export: 1
@@ -92,8 +92,8 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     pdz = 0.0f;
     pdy = 0.0f;
     objdata = self->data;
-    camera = get_camera();
-    if (rand_next(0, 1) != 0) {
+    camera = camGet();
+    if (mathRnd(0, 1) != 0) {
         animObjData->unk9D = 4;
     } else {
         animObjData->unk9D = 8;
@@ -101,7 +101,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     animObjData->unk7A = -1;
     animObjData->unk62 = 0;
     animObjData->unk7A &= ~0x20;
-    player = get_player();
+    player = objGetPlayer();
     if (!player) {
         return 0;
     }
@@ -133,16 +133,16 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     x = self->globalPosition.x - gWorldX;
     z = self->globalPosition.z - gWorldZ;
     y = self->globalPosition.y;
-    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
-    camera_clip_to_screen(ox1, oy1, oz1, &ox, &oy, NULL);
-    sp30 = vi_obj_depth(ox, oy, self);
-    get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
+    camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
+    camClipToScreen(ox1, oy1, oz1, &ox, &oy, NULL);
+    sp30 = viObjDepth(ox, oy, self);
+    camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &pdx, &pdy, &pdz);
     x += (pdx * 20.0f);
     y += (pdy * 20.0f);
     z += (pdz * 20.0f);
-    camera_project_point(x, y, z, &ox1, &oy1, &oz1);
-    camera_clip_to_screen(ox1, oy1, oz1, NULL, NULL, &oz);
-    if ((vi_contains_point(ox, oy)) && (oz > 0) && (oz < sp30)) {
+    camProjectPoint(x, y, z, &ox1, &oy1, &oz1);
+    camClipToScreen(ox1, oy1, oz1, NULL, NULL, &oz);
+    if ((viContainsPoint(ox, oy)) && (oz > 0) && (oz < sp30)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
     return 0;
@@ -151,7 +151,7 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
 // offset: 0x5E4 | func: 4 | export: 3
 void SB_Lamp_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -162,10 +162,10 @@ void SB_Lamp_free(Object *self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->obj) {
-        obj_destroy_object(objdata->obj);
+        objFreeObject(objdata->obj);
     }
     objdata->obj = NULL;
-    dll_unload(sDLL107);
+    dllFree(sDLL107);
 }
 
 // offset: 0x6C8 | func: 6 | export: 5

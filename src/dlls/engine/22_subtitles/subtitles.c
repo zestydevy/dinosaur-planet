@@ -116,7 +116,7 @@ void dll_22_ctor(s32 arg0) {
 
     sFontID = 1;
     sWindowID = 6;
-    font_load(FONT_DINO_SUBTITLE_FONT_1);
+    fontLoad(FONT_DINO_SUBTITLE_FONT_1);
     _bss_780[0] = &_bss_38[0];
     _bss_780[1] = &_bss_38[1];
     _bss_780[2] = &_bss_38[2];
@@ -141,8 +141,8 @@ void dll_22_ctor(s32 arg0) {
     }
 
     //Set up background strip (shown behind subtitles when played outside of sequences)
-    sBackground[0].tex = tex_load_deferred(TEXTABLE_27B_SubtitleScaleyBackground1);
-    sBackground[1].tex = tex_load_deferred(TEXTABLE_27C_SubtitleScaleyBackground2);
+    sBackground[0].tex = texLoadTexture(TEXTABLE_27B_SubtitleScaleyBackground1);
+    sBackground[1].tex = texLoadTexture(TEXTABLE_27C_SubtitleScaleyBackground2);
     sBackground[2].tex = NULL;
     sBackground[0].x = 0;
     sBackground[1].x = sBackground[0].tex->width;
@@ -160,24 +160,24 @@ void dll_22_dtor(s32 arg0) {
     s32 i;
     s32 j;
 
-    font_unload(FONT_DINO_SUBTITLE_FONT_1);
+    fontUnload(FONT_DINO_SUBTITLE_FONT_1);
 
     for (j = 0; j < 3; j++) {
         temp = &_bss_38[j];
         for (i = 0; i < 8; i++) {
             temp_a0 = temp->unkC8[0][i].unk0;
             if (temp_a0 != 0) {
-                tex_free(temp_a0);
+                texFreeTexture(temp_a0);
             }
             temp_a0 = temp->unkC8[1][i].unk0;
             if (temp_a0 != 0) {
-                tex_free(temp_a0);
+                texFreeTexture(temp_a0);
             }
         }
     }
 
-    tex_free(sBackground[0].tex);
-    tex_free(sBackground[1].tex);
+    texFreeTexture(sBackground[0].tex);
+    texFreeTexture(sBackground[1].tex);
 }
 
 // offset: 0x2D0 | func: 0 | export: 0
@@ -231,11 +231,11 @@ void dll_22_func_448(void) {
 // offset: 0x4C0 | func: 5 | export: 5
 void dll_22_func_4C0(void) {
     if (_data_54 == 0) {
-        if (joy_get_buttons(0) & R_TRIG) {
+        if (joyGetButtons(0) & R_TRIG) {
             *_bss_7B2 = dll_22_func_2D0(1U);
             _data_54 = 1;
         }
-    } else if (!(joy_get_buttons(0) & R_TRIG)) {
+    } else if (!(joyGetButtons(0) & R_TRIG)) {
         dll_22_func_2D0((u32)*_bss_7B2);
         _data_54 = 0;
     }
@@ -272,7 +272,7 @@ void dll_22_func_578(Gfx **gdl) {
         return;
     }
 
-    temp_v0 = vi_get_current_size();
+    temp_v0 = viGetCurrentSize();
     _bss_7A0 = GET_VIDEO_WIDTH(temp_v0);
     _bss_79C = _bss_7A0 - (_bss_7A2 * 2);
     _bss_798 = (_bss_7A0 - _bss_79C) / 2;
@@ -313,7 +313,7 @@ void dll_22_func_578(Gfx **gdl) {
 
 // offset: 0x8F4 | func: 7
 /* static */ void dll_22_func_8F4(void) {
-    _bss_794 = GET_VIDEO_HEIGHT(vi_get_current_size());
+    _bss_794 = GET_VIDEO_HEIGHT(viGetCurrentSize());
     _bss_794 = (_bss_794 - _bss_790) - 0x18;
 }
 
@@ -425,7 +425,7 @@ void dll_22_func_D9C(Gfx **gdl) {
         return;
     }
 
-    font_window_use_font(sWindowID, sFontID);
+    fontWindowUseFont(sWindowID, sFontID);
     temp_a2 = _bss_794 + _data_3C;
     _bss_8 = temp_a2;
     _bss_C = _bss_8;
@@ -446,13 +446,13 @@ void dll_22_func_D9C(Gfx **gdl) {
     if ((_bss_794 + 0x18) < _bss_C) {
         _bss_C = (_bss_794 + 0x18);
     }
-    if (camera_get_letterbox() == 0) {
+    if (camGetLetterbox() == 0) {
         gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, (_bss_8 - 2), (_bss_7A0 - 1), (_bss_C + 2));
         for (i = 0; i < _bss_7A0; i += sBackgroundWidth) {
-            rcp_tile_write(gdl, sBackground, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
+            rcpTileWrite(gdl, sBackground, i, _bss_8, 0x7F, 0x7F, 0x7F, (_bss_7A4 * _data_40) / 100);
         }
     }
-    font_window_set_coords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);
+    fontWindowSetCoords(sWindowID, _bss_798, _bss_8, _bss_798 + _bss_79C, _bss_C);
     for (i = 0; i < 3; i++) {
         dll_22_func_10C8(&sp6C, i, gdl);
     }
@@ -546,12 +546,12 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
         arg0->unk80[1].unk0[var_s1] = 0;
         tex = arg0->unkC8[var_s1].unk0;
         if (tex != NULL) {
-            tex_free(tex);
+            texFreeTexture(tex);
             arg0->unkC8[var_s1].unk0 = NULL;
         }
         tex = arg0->unk188[var_s1].unk0;
         if (tex != NULL) {
-            tex_free(tex);
+            texFreeTexture(tex);
             arg0->unk188[var_s1].unk0 = NULL;
         }
     }
@@ -593,7 +593,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
             do {
                 temp_v0_2 = &_data_0[var_s1++];
             } while (temp_v0_2->unk0 != (_bss_7AC->unk4[*arg1]));
-            tex = tex_load_deferred(temp_v0_2->unk2);
+            tex = texLoadTexture(temp_v0_2->unk2);
             arg0->unkC8[var_s0][0].unk0 = tex;
             dll_22_func_1F44(arg0, _bss_7AC->strings[(*arg1)++], _bss_7A8, var_s4, var_s0++);
         }
@@ -617,7 +617,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
                 var_s0_2--;
             }
             arg0->chars[var_s1][var_s0_2] = 0;
-            var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+            var_v1 = arg0->unk80[var_s1].unk0[0] - fontGetTextWidth(0, arg0->chars[var_s1], 0, sFontID);
             while (_bss_79C < (var_t0 - var_v1)) {
                 arg0->chars[var_s1][var_s0_2] = SPACE_CHAR;
 
@@ -628,7 +628,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
                 }
                 arg0->chars[var_s1][var_s0_2] = 0;
 
-                var_v1 = arg0->unk80[var_s1].unk0[0] - font_get_text_width(0, arg0->chars[var_s1], 0, sFontID);
+                var_v1 = arg0->unk80[var_s1].unk0[0] - fontGetTextWidth(0, arg0->chars[var_s1], 0, sFontID);
             }
             arg0->unk80[var_s1].unk0[0] -= var_v1;
             arg0->unk0[1].unk0 = arg0->chars[var_s1] + var_s0_2 + 1;
@@ -665,7 +665,7 @@ void dll_22_func_1798(StructBss38 *arg0, s32 *arg1) {
 // offset: 0x1F44 | func: 16
 void dll_22_func_1F44(StructBss38 *arg0, char *text, s32 arg2, u8 arg3, u8 arg4) {
     arg0->unk0[arg3][arg4] = text;
-    arg0->unk80[arg3][arg4] += font_get_text_width(0, text, 0, sFontID);
+    arg0->unk80[arg3][arg4] += fontGetTextWidth(0, text, 0, sFontID);
     dll_22_func_2000((u8 *)&arg0->unk40[arg3][arg4], arg2);
 }
 

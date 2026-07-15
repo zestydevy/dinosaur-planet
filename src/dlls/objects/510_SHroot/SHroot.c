@@ -36,7 +36,7 @@ void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
     self->srt.scale = self->def->scale - (temp_v1->unk0 * 0.5f);
     self->srt.yaw = setup->unk18 << 8;
     self->velocity.f[1] = 0.0f;
-    if (main_get_bits((s32) setup->unk1E) != 0) {
+    if (mainGetBits((s32) setup->unk1E) != 0) {
         temp_v1->unk12 = 4;
     }
 }
@@ -56,9 +56,9 @@ void dll_510_control(Object* self) {
     switch (objData->unk12) {
     case 0:
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
-            objData->unk10 = rand_next(800, 1200);
+            objData->unk10 = mathRnd(800, 1200);
             objData->unk12 = 3;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_3D6, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
     break;
@@ -96,7 +96,7 @@ void dll_510_control(Object* self) {
         if (objData->unk14 > 0) {
             objData->unk14 -= gUpdateRate;
             if (objData->unk14 <= 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_3D7_Whoosh, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         self->velocity.f[1] -= 0.1f * gUpdateRateF;
@@ -108,12 +108,12 @@ void dll_510_control(Object* self) {
             if (self->srt.transl.f[1] < (objData->unk8 + 10.0f)) {
                 gDLL_24_Waterfx->vtbl->spawn_splash(self->srt.transl.f[0], objData->unk8, self->srt.transl.f[2], 10.0f);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(self->srt.transl.f[0], objData->unk8, self->srt.transl.f[2], 0, 0.0f, 2);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objData->unk13 |= 1 ;
             }
         }
         if ((objData->unk13 & 2) && (self->srt.transl.f[1] < (objData->unk4 + 40.0f))) {
-            main_set_bits(objSetup->unk1E, 1);
+            mainSetBits(objSetup->unk1E, 1);
             objData->unk12 = 2;
             return;
         }
@@ -150,7 +150,7 @@ void dll_510_update(Object *self) { }
 // offset: 0x5EC | func: 3 | export: 3
 void dll_510_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 // offset: 0x640 | func: 4 | export: 4

@@ -102,11 +102,11 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         objData->pStartZ = objSetup->base.z;
         objData->timer = 500;
         objData->speed = 1;
-        if ((id == OBJ_WM_Platform) && main_get_bits(BIT_322)) {
+        if ((id == OBJ_WM_Platform) && mainGetBits(BIT_322)) {
             self->srt.transl.x = 34022.0f;
             self->srt.transl.y = 457.0f;
             self->srt.transl.z = 22523.0f;
-        } else if ((id == OBJ_WM_Platform) && main_get_bits(BIT_369)) {
+        } else if ((id == OBJ_WM_Platform) && mainGetBits(BIT_369)) {
             self->srt.transl.x = 34022.0f;
             self->srt.transl.y = 457.0f;
             self->srt.transl.z = 22523.0f;
@@ -134,21 +134,21 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         return;
     case OBJ_NWSH_rock:
     case OBJ_WMrock:
-        objData->roll = rand_next(100, 400);
-        objData->pitch = rand_next(100, 400);
-        self->velocity.x = rand_next(0, 100) * 0.04f;
-        self->velocity.z = rand_next(0, 100) * 0.04f;
-        self->srt.scale *= 0.3f + (0.01f * rand_next(0, 10));
+        objData->roll = mathRnd(100, 400);
+        objData->pitch = mathRnd(100, 400);
+        self->velocity.x = mathRnd(0, 100) * 0.04f;
+        self->velocity.z = mathRnd(0, 100) * 0.04f;
+        self->srt.scale *= 0.3f + (0.01f * mathRnd(0, 10));
         objData->speed = 200;
         objData->debugPrintDistance = 0;
         objData->unk3E = 2;
-        self->modelInstIdx = rand_next(0, 1);
+        self->modelInstIdx = mathRnd(0, 1);
         return;
     case OBJ_DFP_blockwall:
         self->srt.yaw = objSetup->yaw << 8;
         self->modelInstIdx = objSetup->modelInstanceIdx;
         objData->gamebitA = objSetup->gamebitB;
-        if (main_get_bits(objData->gamebitA)) {
+        if (mainGetBits(objData->gamebitA)) {
             self->srt.transl.y = objSetup->base.y + 30.0f;
             return;
         }
@@ -226,7 +226,7 @@ void dll_331_setup(Object* self, GenProps_Setup* objSetup, s32 arg2) {
         objData->lampZero = 0;
         objData->unk1C = 0.5f;
         objData->unk24 = 600.0f;
-        objData->lampRandom = rand_next(1000, 5000);
+        objData->lampRandom = mathRnd(1000, 5000);
         objData->lampBool = TRUE;
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
@@ -274,9 +274,9 @@ void dll_331_control(Object* self) {
     GenProps_Data* objData2;
     Camera* camera;
 
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
-    camera = get_camera();
+    camera = camGet();
     objSetup = (GenProps_Setup*)self->setup;
     
     id = self->id;
@@ -290,13 +290,13 @@ void dll_331_control(Object* self) {
         self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF; 
         self->srt.transl.f[2] += self->velocity.f[2] * gUpdateRateF;
         gDLL_17_partfx->vtbl->spawn(self, 0x5F3, NULL, 0x10001, -1, NULL);
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
-            obj_send_mesg(player, 0x60004, self, (void*)1);
-            obj_destroy_object(self);
+            objSendMesg(player, 0x60004, self, (void*)1);
+            objFreeObject(self);
         }
         if (self->unkE0 <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return;
     case OBJ_VFP_PowerBolt: //0x549
@@ -305,17 +305,17 @@ void dll_331_control(Object* self) {
         self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
         self->srt.transl.f[2] += self->velocity.f[2] * gUpdateRateF;
         gDLL_17_partfx->vtbl->spawn(self, 0x39D, NULL, 0x10001, -1, NULL);
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
             diPrintf("\tHit Krystal\n");
-            obj_send_mesg(player, 0x60004, self, (void*)1);
-            obj_destroy_object(self);
+            objSendMesg(player, 0x60004, self, (void*)1);
+            objFreeObject(self);
         }
         if ((self->unkE0 <= 0) != 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         break;
     case OBJ_DFP_blockwall: //0x4bf
-        if ((self->srt.transl.f[1] < (objSetup->base.y + 30.0f)) && (main_get_bits(objData->gamebitA))) {
+        if ((self->srt.transl.f[1] < (objSetup->base.y + 30.0f)) && (mainGetBits(objData->gamebitA))) {
             self->srt.transl.f[1] += gUpdateRateF;
         }
         break;
@@ -332,27 +332,27 @@ void dll_331_control(Object* self) {
     case OBJ_DFdebris1: //0xab
         objData->roll -= gUpdateRate;
         if (objData->roll < 0) {
-            tempDLL2 = dll_load_deferred(0x1003, 1);
+            tempDLL2 = dllLoad(0x1003, 1);
             tempDLL2->vtbl->func[0].withSixArgs((s32)self, 0, 0, 1, -1, 0);
-            dll_unload(tempDLL2);
+            dllFree(tempDLL2);
             objData->roll = 30.0f;
             return;
         }
         break;
     case OBJ_WMlargerock: //0x2b7
-        if (main_get_bits(objData->gamebitA) == 0) {
+        if (mainGetBits(objData->gamebitA) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
         break;
     case OBJ_WM_MoonSeedMoun: //0x271
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tMoonSeed Mound\n");
             diPrintf("\tThe Player Guesses that a Seed goes here!\n");
         }
         break;
     case OBJ_WM_Walkway1: //0x293
     case OBJ_WM_Walkway2: //0x294
-        if ((objData->gamebitA != -1) && (main_get_bits(objData->gamebitA) != 0)) {
+        if ((objData->gamebitA != -1) && (mainGetBits(objData->gamebitA) != 0)) {
             if (self->srt.pitch <= 0) {
                 self->srt.pitch += 50;
             } else {
@@ -363,11 +363,11 @@ void dll_331_control(Object* self) {
     case OBJ_WM_Platform: //0x295
         if (objData->gamebitA != -1) {
             objData2 = objData;
-            if ((main_get_bits(objData2->gamebitA)) && (objData2->tValue <= 1.0f) && (objData2->timer == 0)) {
+            if ((mainGetBits(objData2->gamebitA)) && (objData2->tValue <= 1.0f) && (objData2->timer == 0)) {
                 if (objData2->gamebitB != -1) {
-                    if (main_get_bits(objData2->gamebitB)) {
+                    if (mainGetBits(objData2->gamebitB)) {
                         objData2->timer = 400;
-                        main_set_bits(objData2->gamebitB, 0);
+                        mainSetBits(objData2->gamebitB, 0);
                     }
                 }
                 objData2->tValue += 0.001f * objData2->speed * gUpdateRateF;
@@ -375,12 +375,12 @@ void dll_331_control(Object* self) {
                     objData2->tValue = 1.0f;
                     objData2->speed *= -1;
                     objData2->timer = 400;
-                    main_set_bits(BIT_322, 1);
+                    mainSetBits(BIT_322, 1);
                 } else if (objData2->tValue < 0.0f) {
                     objData2->tValue = 0.0f;
                     objData2->speed *= -1;
                     objData2->timer = 400;
-                    main_set_bits(BIT_322, 0);
+                    mainSetBits(BIT_322, 0);
                 }
 
                 //Lerping for the platform, with different paths based on gamebitID
@@ -409,10 +409,10 @@ void dll_331_control(Object* self) {
             objData->timer -= gUpdateRate;
             if (objData->timer <= 0) {
                 objData->timer = 0;
-                if (main_get_bits(BIT_322) != 0) {
-                    main_set_bits(BIT_322, 0);
-                } else if (main_get_bits(BIT_369) != 0) {
-                    main_set_bits(BIT_369, 0);
+                if (mainGetBits(BIT_322) != 0) {
+                    mainSetBits(BIT_322, 0);
+                } else if (mainGetBits(BIT_369) != 0) {
+                    mainSetBits(BIT_369, 0);
                 }
             }
         }
@@ -422,11 +422,11 @@ void dll_331_control(Object* self) {
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objData->vineHealth--;
             if (objData->vineHealth < 0) {
-                obj_destroy_object(self);
+                objFreeObject(self);
             }
         }
         //Print debug info about object's purpose
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tNoPass Vine\n");
             diPrintf("\tThe Player Burns it away!\n");
         }
@@ -436,12 +436,12 @@ void dll_331_control(Object* self) {
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objData->vineHealth--;
             if (objData->vineHealth < 0) {
-                main_set_bits(objData->gamebitA, 1);
-                obj_destroy_object(self);
+                mainSetBits(objData->gamebitA, 1);
+                objFreeObject(self);
             }
         }
         //Print debug info about object's purpose
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objData->debugPrintDistance) {
             diPrintf("\tNoPass Vine\n");
             diPrintf("\tThe Player Burns it away!\n");
         }
@@ -454,11 +454,11 @@ void dll_331_control(Object* self) {
         self->objhitInfo->unkC = 10.0f;
         self->objhitInfo->unk50 = 30;
         self->objhitInfo->unk58 |= 1;
-        if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
+        if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
             self->objhitInfo->unk58 &= ~1;
         }
         if (objData->unk3E == 2) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_35A_Low_Whoosh, 0x43, NULL, NULL, 0, NULL);
             objData->unk3E--;
         }
         if ((objData->unk3E != 0) && ((self->srt.transl.f[1] + self->velocity.f[1]) <= player->srt.transl.f[1])) {
@@ -469,8 +469,8 @@ void dll_331_control(Object* self) {
             self->srt.scale *= 0.5f;
             objData->roll *= 2;
             objData->pitch *= 2;
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
-            camera_set_shake_offset(0.5f);
+            dll_amSfx->Play(NULL, SOUND_35B_Rock_Slide, 0x43, NULL, NULL, 0, NULL);
+            camSetShakeOffset(0.5f);
         }
         if (objData->unk3E == 0) {
             if (objData->debugPrintDistance <= 40000.0f) {
@@ -489,12 +489,12 @@ void dll_331_control(Object* self) {
         self->globalPosition.z = self->srt.transl.z;
         objData->speed -= gUpdateRate;
         if (player->srt.transl.f[1] < self->srt.transl.f[1]) {
-            if (rand_next(0, 2) == 0) {
+            if (mathRnd(0, 2) == 0) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x27F, NULL, 0x10001, -1, NULL);
             }
         }
         if (objData->speed <= 0) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         break;
     case OBJ_SB_Galleon: //0x322
@@ -508,7 +508,7 @@ void dll_331_control(Object* self) {
         objData->roll += objData->unk24 * 3.0f;
         break;
     case 133: //unknown deleted object (0x85)
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             dx = player->globalPosition.f[0] - self->globalPosition.f[0];
             dz = player->globalPosition.f[2] - self->globalPosition.f[2];
@@ -516,24 +516,24 @@ void dll_331_control(Object* self) {
             if ((distance < 400.0f) && (self->unkDC <= 0)) {
 
                 index = 1;
-                tempDLL2 = dll_load_deferred(0x1008, 1);
+                tempDLL2 = dllLoad(0x1008, 1);
 
                 while (index != 0){ 
                     tempDLL2->vtbl->func[0].withSixArgs((s32)self, 0, 0, 1, -1, 0);
                     index--;
                 }
                 
-                dll_unload(tempDLL2);
-                self->unkDC = rand_next(100, 200);
+                dllFree(tempDLL2);
+                self->unkDC = mathRnd(100, 200);
             } else if (distance < 200.0f) {
                 self->unkDC -= 1;
             }
             if ((_data_0 != NULL) && (self->unkE0 == 0)) {
                 self->unkE0 = 1;
-                tempDLL = dll_load_deferred(0x200A, 1);
+                tempDLL = dllLoad(0x200A, 1);
                 tempDLL->vtbl->func[0].withSevenArgs((s32)self, 0, 0, 1, -1, 0xA, 0);
                 if (tempDLL != NULL) {
-                    dll_unload(tempDLL);
+                    dllFree(tempDLL);
                 }
             }
             if (_data_0 == NULL) {
@@ -542,7 +542,7 @@ void dll_331_control(Object* self) {
         }
         break;
     case 134: //unknown deleted object (0x86)
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             dx = player->globalPosition.f[0] - self->globalPosition.f[0];
             dz = player->globalPosition.f[2] - self->globalPosition.f[2];
@@ -550,17 +550,17 @@ void dll_331_control(Object* self) {
             if (self->unkDC != 0) {
                 self->unkDC -= gUpdateRate;
                 if (self->unkDC <= 0) {
-                    tempDLL = dll_load_deferred(0x2009, 1);
+                    tempDLL = dllLoad(0x2009, 1);
                     tempDLL->vtbl->func[0].withSevenArgs((s32)_data_0, 0, 0, 1, -1, 9, 0);
                     if (tempDLL != NULL) {
-                        dll_unload(tempDLL);
+                        dllFree(tempDLL);
                     }
                     _data_0 = NULL;
                     self->unkDC = 0;
                     self->unkE0 = 100;
                 }
             } else if ((distance <= 10.0f) && (_data_0 == NULL) && (self->unkE0 == 0)) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_1D2_Roar, 0x7F, NULL, NULL, 0, NULL);
                 _data_0 = self;
                 self->unkDC = 0x46;
             } else if ((distance < 40.0f) && (self->unkE0 == 0) && (self->unkDC == 0)) {
@@ -574,14 +574,14 @@ void dll_331_control(Object* self) {
     case OBJ_DIM2IceFloe2: //10d
         objData->timer -= gUpdateRate;
         if (objData->timer < 0) {
-            gDLL_6_AMSFX->vtbl->play(self, objData->soundIDs[rand_next(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, objData->soundIDs[mathRnd(0, objData->lastSoundIndex)], 0x7F, NULL, NULL, 0, NULL);
             objData->timer = objData->minCooldown;
-            objData->timer += rand_next(0, objData->minCooldown);
+            objData->timer += mathRnd(0, objData->minCooldown);
         }
         break;
     case OBJ_SB_Lamp: //0x125
         self->srt.roll = -camera->srt.roll * 1.5;
-        player = get_player();
+        player = objGetPlayer();
         dx = player->globalPosition.x - self->globalPosition.x;
         dz = player->globalPosition.z - self->globalPosition.z;
         dy = player->globalPosition.y - self->globalPosition.y;
@@ -629,7 +629,7 @@ s32 dll_331_func_1D34(Object* self, Object* animObj, AnimObj_Data* animObjData, 
             }        
             break;
         case OBJ_WMlargerock:
-            if (main_get_bits(objData->gamebitB)) {
+            if (mainGetBits(objData->gamebitB)) {
                 animObjData->unk9D |= 4;
             }
             
@@ -657,7 +657,7 @@ void dll_331_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle
         return;
     }
     
-    draw_object(self, arg1, arg2, arg3, arg4, 1.0f);
+    objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
 }
 
 // offset: 0x1FB8 | func: 5 | export: 4

@@ -30,17 +30,17 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     Model* model;
 
     objData = self->data;
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 
-    if (main_get_bits(objSetup->gamebitBurnt)) {
+    if (mainGetBits(objSetup->gamebitBurnt)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        obj_free_tick(self);
+        objDisable(self);
         func_800267A4(self);
     }
     
     self->srt.yaw = objSetup->yaw << 8;
     
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
 
     modelInstance = self->modelInsts[self->modelInstIdx];
     model = modelInstance->model;
@@ -53,11 +53,11 @@ void SHvines_control(Object* self) {
     Object* sidekick;
 
     objSetup = (SHvines_Setup*)self->setup;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     //Allow the Flame command when nearby
     if (sidekick != NULL) {
-        if (vec3_distance_squared(&self->globalPosition, &get_player()->globalPosition) <= SQ(objSetup->flameDistance)) {
+        if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameDistance)) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }
@@ -65,7 +65,7 @@ void SHvines_control(Object* self) {
     //Fade out
     if (self->opacity < OBJECT_OPACITY_MAX) {
         if (self->opacity < gUpdateRate) {
-            obj_free_tick(self);
+            objDisable(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
             func_800267A4(self);
             return;
@@ -86,7 +86,7 @@ void SHvines_update(Object* self) {
     //Check for Flame command collisions
     if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Flame_Command) {
         STUBBED_PRINTF("\n HIT HIT HIT HIT Hit by Booldy Side Kick \n\n\n");
-        main_set_bits(objSetup->gamebitBurnt, 1);
+        mainSetBits(objSetup->gamebitBurnt, 1);
         self->opacity = OBJECT_OPACITY_MAX - 2; //start fade out
     }
 }
@@ -102,12 +102,12 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     transl = &srt.transl;
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->opacity < OBJECT_OPACITY_MAX) {
             srt.scale = self->visRadius * 0.03f;
             for (i = 0; i < gUpdateRate; i++) {
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->get_vtx_world_pos(self, rand_next(0, objData->vertexCount - 1), transl);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->get_vtx_world_pos(self, mathRnd(0, objData->vertexCount - 1), transl);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_672, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_673, &srt, 0x200001, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_674, &srt, 0x200001, -1, NULL);
@@ -118,8 +118,8 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
 // offset: 0x470 | func: 4 | export: 4
 void SHvines_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 }
 
 // offset: 0x4C4 | func: 5 | export: 5

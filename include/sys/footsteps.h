@@ -25,10 +25,10 @@ typedef struct {
 /*10*/ Object *unk10;
 } UnkFootstepsStruct2;
 
-void footsteps_init(void);
-void footsteps_toggle(u32 enabled);
+void footstepsInit(void);
+void footstepsTurnOn(u32 enabled);
 void footsteps_func_8005CA88(Object *obj, Vec3f *a1, u8 a2);
 void footsteps_func_8005CC74(Gfx **gdl, Object *arg1);
-u16 *footsteps_get_sfx_bank(s32 bank);
+u16 *footstepsGetSfxBank(s32 bank);
 
 #endif

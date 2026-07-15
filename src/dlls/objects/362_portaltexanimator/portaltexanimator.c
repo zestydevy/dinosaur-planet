@@ -68,7 +68,7 @@ void portaltexanimator_control(Object* self) {
     objdata = self->data;
 
     //Get the object's local BLOCKS model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objdata->blockFound = FALSE;
         return;
@@ -82,7 +82,7 @@ void portaltexanimator_control(Object* self) {
     //Animate tagged shapes' vertex opacity based on player distance
     if (objdata->animatedVertexCount == 0) {
         objdata->animatorID = setup->animatorID;
-        objdata->animatedVertexCount = block_get_animator_vertex_count(self, objdata->animatorID);
+        objdata->animatedVertexCount = blockGetAnimatorVertexCount(self, objdata->animatorID);
 
         if (objdata->animatedVertexCount == 0) {
             objdata->animatorID = 0;
@@ -101,7 +101,7 @@ void portaltexanimator_control(Object* self) {
         if (setup->gamebitEnable == NO_GAMEBIT) {
             objdata->enabled = TRUE;
         } else {
-            objdata->enabled = main_get_bits(setup->gamebitEnable);
+            objdata->enabled = mainGetBits(setup->gamebitEnable);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity
@@ -113,7 +113,7 @@ void portaltexanimator_control(Object* self) {
     } 
 
     if (objdata->animatorID) {
-        distance = vec3_distance(&self->globalPosition, &get_player()->globalPosition) - objdata->minDistance;
+        distance = vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) - objdata->minDistance;
         if (distance < 0.0f) {
             distance = 0.0f;
         }
@@ -173,7 +173,7 @@ void portaltexanimator_update(Object *self) { }
 // offset: 0x420 | func: 4 | export: 3
 void portaltexanimator_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 

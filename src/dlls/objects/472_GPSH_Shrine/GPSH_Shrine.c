@@ -75,18 +75,18 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unk16 = 0;
     objdata->unk2 = 0;
     self->animCallback = GPSH_Shrine_func_1024;
-    obj_init_mesg_queue(self, 4);
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-    main_set_bits(BIT_Test_of_Fear_Particles, 0);
-    main_set_bits(BIT_149, 0);
-    main_set_bits(BIT_14C, 0);
-    main_set_bits(BIT_14D, 0);
-    main_set_bits(BIT_14E, 0);
-    main_set_bits(BIT_14A, 0);
-    main_set_bits(BIT_14B, 0);
+    objInitMesgQueue(self, 4);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_Test_of_Fear_Particles, 0);
+    mainSetBits(BIT_149, 0);
+    mainSetBits(BIT_14C, 0);
+    mainSetBits(BIT_14D, 0);
+    mainSetBits(BIT_14E, 0);
+    mainSetBits(BIT_14A, 0);
+    mainSetBits(BIT_14B, 0);
     objdata->unk10 = 0;
     objdata->unk4 = 0xC;
     objdata->unk8 = 0x1E;
@@ -96,9 +96,9 @@ void GPSH_Shrine_setup(Object* self, GPSH_Shrine_Setup* setup, s32 arg2) {
     objdata->unkA = 0;
     objdata->unk18 = 0;
     objdata->unk19 = 0;
-    modgfxDLL = dll_load_deferred(DLL_ID_122, 1);
+    modgfxDLL = dllLoad(DLL_ID_122, 1);
     objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
-    dll_unload(modgfxDLL);
+    dllFree(modgfxDLL);
     _bss_8 = 0.00001f;
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
@@ -118,7 +118,7 @@ void GPSH_Shrine_control(Object* self) {
     s32 sp34;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     sp34 = 0;
     sp40 = 1000.0f;
     sp3C = 0.0f;
@@ -126,7 +126,7 @@ void GPSH_Shrine_control(Object* self) {
         return;
     }
     
-    if (main_get_bits(BIT_5B1) != 0) {
+    if (mainGetBits(BIT_5B1) != 0) {
         if (player->srt.scale >= 0.0265f) {
             player->srt.scale = 0.0495f - ((player->srt.transl.x + -16386.0f) * 0.0005f);
             diPrintf("scale %f %f  %f\n", &player->srt.scale, &sp3C, &player->srt.transl);
@@ -134,7 +134,7 @@ void GPSH_Shrine_control(Object* self) {
                 player->srt.scale = 0.0265f;
             }
         }
-    } else if (main_get_bits(BIT_5AD) != 0) {
+    } else if (mainGetBits(BIT_5AD) != 0) {
         if (player->srt.scale >= 0.0265f) {
             player->srt.scale = ((player->srt.transl.x + -15613.0f) * 0.0005f) + 0.0495f;
             diPrintf("scale %f %f  %f\n", &player->srt.scale, &sp3C, &player->srt.transl);
@@ -146,7 +146,7 @@ void GPSH_Shrine_control(Object* self) {
         player->srt.scale = 0.0495f;
     }
     GPSH_Shrine_func_13E0(self);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
     if (objdata->unk6 != 0) {
         objdata->unk4 += objdata->unk6;
         if (objdata->unk4 < 0xD) {
@@ -182,7 +182,7 @@ void GPSH_Shrine_control(Object* self) {
             objdata->unk19 = 1;
         }
     } else {
-        temp_v0_5 = obj_get_nearest_type_to(OBJTYPE_Door, player, &sp40);
+        temp_v0_5 = objGetNearestTypeTo(OBJTYPE_Door, player, &sp40);
         if ((temp_v0_5 != NULL) && (sp40 < 300.0f) && (sp40 > 100.0f)) {
             sp3C = temp_v0_5->srt.transl.z - player->srt.transl.z;
             if (sp3C <= 0.0f) {
@@ -206,25 +206,25 @@ void GPSH_Shrine_control(Object* self) {
         }
         switch (objdata->unk15) {
         case 0:
-            if (vec3_distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->unk0) {
                 objdata->unk15 = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                modgfxDLL = dll_load_deferred(DLL_ID_147, 1);
+                modgfxDLL = dllLoad(DLL_ID_147, 1);
                 modgfxDLL->vtbl->func0(self, 2, 0, 1, -1, 0);
-                dll_unload(modgfxDLL);
-                modgfxDLL = dll_load_deferred(DLL_ID_148, 1);
+                dllFree(modgfxDLL);
+                modgfxDLL = dllLoad(DLL_ID_148, 1);
                 modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
-                dll_unload(modgfxDLL);
-                main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+                dllFree(modgfxDLL);
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
                 objdata->unkC = -1;
-                main_set_bits(BIT_5AF, 0);
+                mainSetBits(BIT_5AF, 0);
             }
             break;
         case 1:
             if (objdata->unk16 == 1) {
-                main_set_bits(BIT_148, 1);
+                mainSetBits(BIT_148, 1);
                 objdata->unk15 = 2;
                 objdata->unk2 = 0x50;
                 objdata->unk10 = 0x3A98;
@@ -235,22 +235,22 @@ void GPSH_Shrine_control(Object* self) {
             objdata->unk10 -= gUpdateRate;
             diPrintf("\ntime %d\n", objdata->unk10);
             objdata->unk14 = 0;
-            if (main_get_bits(BIT_149) != 0) {
+            if (mainGetBits(BIT_149) != 0) {
                 objdata->unk14++;
             }
-            if (main_get_bits(BIT_14B) != 0) {
+            if (mainGetBits(BIT_14B) != 0) {
                 objdata->unk14++;
             }
-            if (main_get_bits(BIT_14E) != 0) {
+            if (mainGetBits(BIT_14E) != 0) {
                 objdata->unk14++;;
             }
-            if (main_get_bits(BIT_14D) != 0) {
+            if (mainGetBits(BIT_14D) != 0) {
                 objdata->unk14++;
             }
-            if (main_get_bits(BIT_14C) != 0) {
+            if (mainGetBits(BIT_14C) != 0) {
                 objdata->unk14++;
             }
-            if (main_get_bits(BIT_14A) != 0) {
+            if (mainGetBits(BIT_14A) != 0) {
                 objdata->unk14++;
             }
             if (objdata->unk14 == 6) {
@@ -260,9 +260,9 @@ void GPSH_Shrine_control(Object* self) {
             }
             if (objdata->unk10 <= 0) {
                 objdata->unk15 = 7;
-                temp_v0_8 = obj_get_all_of_type(OBJTYPE_Pickup, &sp34);
+                temp_v0_8 = objGetAllOfType(OBJTYPE_Pickup, &sp34);
                 while (sp34 != 0) {
-                    obj_destroy_object(temp_v0_8[sp34 - 1]);
+                    objFreeObject(temp_v0_8[sp34 - 1]);
                     sp34--;
                     if ((!objdata) && (!objdata)){} // @fake
                 }
@@ -273,50 +273,50 @@ void GPSH_Shrine_control(Object* self) {
             }
             break;
         case 4:
-            if (main_get_bits(BIT_SP_Map_MMP) != 0) {
+            if (mainGetBits(BIT_SP_Map_MMP) != 0) {
                 objdata->unk8 = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
                 objdata->unkA = 1;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 objdata->unk15 = 6;
                 return;
             }
-            main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->unk8, 0);
             objdata->unkA = 1;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->unk15 = 5;
             return;
         case 5:
-            if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-                main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+            if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+                mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
             }
-            main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 0);
+            mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 0);
             objdata->unk15 = 6;
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_SP_Map_MMP, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_SP_Map_MMP, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 8);
             break;
         case 7:
             objdata->unk15 = 0;
             objdata->unk16 = 0;
             objdata->unk2 = 0x190;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-            main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-            main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-            modgfxDLL = dll_load_deferred(DLL_ID_122, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+            modgfxDLL = dllLoad(DLL_ID_122, 1);
             objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
-            dll_unload(modgfxDLL);
-            main_set_bits(BIT_149, 0);
-            main_set_bits(BIT_14C, 0);
-            main_set_bits(BIT_14D, 0);
-            main_set_bits(BIT_14E, 0);
-            main_set_bits(BIT_14A, 0);
-            main_set_bits(BIT_14B, 0);
-            main_set_bits(BIT_14B, 0);
-            main_set_bits(BIT_5AF, 1);
-            main_set_bits(BIT_148, 0);
+            dllFree(modgfxDLL);
+            mainSetBits(BIT_149, 0);
+            mainSetBits(BIT_14C, 0);
+            mainSetBits(BIT_14D, 0);
+            mainSetBits(BIT_14E, 0);
+            mainSetBits(BIT_14A, 0);
+            mainSetBits(BIT_14B, 0);
+            mainSetBits(BIT_14B, 0);
+            mainSetBits(BIT_5AF, 1);
+            mainSetBits(BIT_148, 0);
             break;
         }
     }
@@ -328,7 +328,7 @@ void GPSH_Shrine_update(Object *self) { }
 // offset: 0xF1C | func: 3 | export: 3
 void GPSH_Shrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -357,7 +357,7 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
     u8 temp_v0_2;
 
     objdata = a0->data;
-    player = get_player();
+    player = objGetPlayer();
     a2->unk7A = -1;
     a2->unk62 = 0;
     if (objdata->unkA != 0) {
@@ -394,41 +394,41 @@ static int GPSH_Shrine_func_1024(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3
                 break;
             case 5:
                 objdata->unk16 = 2;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 6:
                 objdata->unk15 = 5;
                 objdata->unk16 = 3;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
-                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
+                mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 1);
                 break;
             case 8:
-                main_set_bits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
+                mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
                 objdata->unkA = -3;
                 break;
             case 10:
-                main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (_data_0 == 0) {
-                    _data_0 = block_texanim_get_tex(1);
+                    _data_0 = blockTexanimGetTex(1);
                 }
                 break;
             case 9:
-                main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_2, 1);
                 break;
             case 11:
                 objdata->unk8 = 0x64;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x30, 0x50, (u8)objdata->unk8, 0);
                 break;
             case 12:
-                main_set_bits(BIT_Test_of_Fear_Particles, 0);
+                mainSetBits(BIT_Test_of_Fear_Particles, 0);
                 break;
             }
         }
         a2->messages[i] = 0;
     }
-    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3_distance(&a0->globalPosition, &player->globalPosition))) {
+    if ((objdata->unk15 == 3) && ((f32)objdata->unk0 < vec3Distance(&a0->globalPosition, &player->globalPosition))) {
         gDLL_3_Animation->vtbl->end_obj_sequence(a2->seqSlot);
     }
     return 0;
@@ -443,7 +443,7 @@ static void GPSH_Shrine_func_13E0(Object* self) {
 
     objdata = self->data;
     mesg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &mesgSender, &mesg) != 0) {
+    while (objRecvMesg(self, &mesgID, &mesgSender, &mesg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->unk6 = -3;

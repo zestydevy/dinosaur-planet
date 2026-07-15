@@ -26,13 +26,13 @@ void FEseqobject_dtor(void *dll) { }
 void FEseqobject_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = 0;
     self->animCallback = FEseqobject_anim_callback;
-    obj_init_mesg_queue(self, 10);
+    objInitMesgQueue(self, 10);
 }
 
 // offset: 0x6C | func: 1 | export: 1
 void FEseqobject_control(Object *self) {
     self->srt.yaw = 0x2000;
-    if (!main_get_bits(BIT_SB_Battle_Started)) {
+    if (!mainGetBits(BIT_SB_Battle_Started)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
     }
 }
@@ -43,7 +43,7 @@ void FEseqobject_update(Object *self) { }
 // offset: 0xF0 | func: 3 | export: 3
 void FEseqobject_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -84,7 +84,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
         transform.scale = 1.0f;
         switch (animObjData->messages[i]) {
         case 1:
-            main_set_bits(BIT_SB_Battle_Started, 1);
+            mainSetBits(BIT_SB_Battle_Started, 1);
             break;
         case 2:
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_85, &transform, PARTFXFLAG_1, -1, NULL);
@@ -107,11 +107,11 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
             break;
         }
     }
-    while (obj_recv_mesg(self, &mesgID, &mesgSender, &mesg)) {
+    while (objRecvMesg(self, &mesgID, &mesgSender, &mesg)) {
         if (!(animObjData->unk9D & 0x80)) {
             switch (mesgID) {
             case 0xF000B:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {
@@ -120,11 +120,11 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130001, self, NULL);
+                    objSendMesg(receiver, 0x130001, self, NULL);
                 }
                 break;
             case 0xF000C:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {
@@ -133,11 +133,11 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130002, self, NULL);
+                    objSendMesg(receiver, 0x130002, self, NULL);
                 }
                 break;
             case 0xF000D:
-                objects = obj_get_all_of_type(OBJTYPE_Baddie, &objCount);
+                objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
                     if (obj->id == OBJ_SB_ShipHead) {
@@ -146,7 +146,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    obj_send_mesg(receiver, 0x130003, self, NULL);
+                    objSendMesg(receiver, 0x130003, self, NULL);
                 }
                 break;
             }

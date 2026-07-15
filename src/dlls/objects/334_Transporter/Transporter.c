@@ -91,24 +91,24 @@ void Transporter_control(Object *self) {
     setup = (Transporter_Setup*)self->setup;
 
     //Show a tutorial when approaching a Transporter for the first time
-    if ((self->unkAF & ARROW_FLAG_4_Highlighted) && !main_get_bits(BIT_Shown_ZLock_Interact_Message)) {
+    if ((self->unkAF & ARROW_FLAG_4_Highlighted) && !mainGetBits(BIT_Shown_ZLock_Interact_Message)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
-        main_set_bits(BIT_Shown_ZLock_Interact_Message, TRUE);
+        mainSetBits(BIT_Shown_ZLock_Interact_Message, TRUE);
         return;
     }
 
-    camera_enable_y_offset();
+    camUseShake();
 
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }
 
     //Handle the player being nearby, while the warp has yet to begin
-    distToPlayer = vec3_distance_xz(&player->globalPosition, &self->globalPosition);
+    distToPlayer = vec3DistanceXZ(&player->globalPosition, &self->globalPosition);
     if ((objdata->isOutbound == FALSE) && (objdata->isPoweringUp == FALSE) && (distToPlayer < 40.0f)) {
         if (!objdata->mGfxKrazoaPoints) {
-            objdata->mGfxKrazoaPoints = dll_load_deferred(DLL_ID_140, 1);
+            objdata->mGfxKrazoaPoints = dllLoad(DLL_ID_140, 1);
         }
 
         if (D_800B4A5E >= 0) {
@@ -118,29 +118,29 @@ void Transporter_control(Object *self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             self->unkDC = objdata->durationPoweringUp;
             if (!objdata->dll129) {
-                objdata->dll129 = dll_load_deferred(DLL_ID_129, 1);
+                objdata->dll129 = dllLoad(DLL_ID_129, 1);
             }
             if (!objdata->dll130) {
-                objdata->dll130 = dll_load_deferred(DLL_ID_130, 1);
+                objdata->dll130 = dllLoad(DLL_ID_130, 1);
             }
             objdata->isPoweringUp = TRUE;
             D_80092A78 = 2;
             objdata->runTimersPostPowerUp = FALSE;
         } else {
             //Set up outbound warp when the player interacts with the Transporter's LockIcon
-            if (((setup->gamebitEnabled == NO_GAMEBIT) || main_get_bits(setup->gamebitEnabled)) && 
+            if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
                 (self->unkAF & ARROW_FLAG_1_Interacted)
             ) {
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
                 func_80000860(self, self, 187, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->isOutbound = TRUE;
                 self->unkDC = objdata->durationPoweringUp;
                 if (!objdata->dll129) {
-                    objdata->dll129 = dll_load_deferred(DLL_ID_129, 1);
+                    objdata->dll129 = dllLoad(DLL_ID_129, 1);
                 }
                 if (!objdata->dll130) {
-                    objdata->dll130 = dll_load_deferred(DLL_ID_130, 1);
+                    objdata->dll130 = dllLoad(DLL_ID_130, 1);
                 }
                 objdata->isPoweringUp = TRUE;
                 objdata->runTimersPostPowerUp = TRUE;
@@ -148,9 +148,9 @@ void Transporter_control(Object *self) {
         }
 
         //Emanate a beam of light from a randomly-selected point on the Krazoa symbol (2.5% chance) 
-        if (((setup->gamebitEnabled == NO_GAMEBIT) || main_get_bits(setup->gamebitEnabled)) && 
-            (rand_next(0, 40) == 0)) {
-            objdata->mGfxKrazoaPoints->vtbl->func0(self, rand_next(0, 5), NULL, 1, -1, NULL);
+        if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
+            (mathRnd(0, 40) == 0)) {
+            objdata->mGfxKrazoaPoints->vtbl->func0(self, mathRnd(0, 5), NULL, 1, -1, NULL);
         }
     }
 
@@ -174,7 +174,7 @@ void Transporter_control(Object *self) {
 
         //Get camera-to-Transporter vector
         {
-            camera = get_camera();
+            camera = camGet();
             delta.f[0] = self->globalPosition.x - camera->tx;
             delta.f[1] = self->globalPosition.y - camera->ty;
             delta.f[2] = self->globalPosition.z - camera->tz;
@@ -203,9 +203,9 @@ void Transporter_control(Object *self) {
                     for (i = 0; i < objdata->particleCount; i++) {
                         gDLL_17_partfx->vtbl->spawn(player, PARTICLE_79, NULL, PARTFXFLAG_4, -1, NULL);
                     }
-                    camera_set_shake_offset(rand_next(0, 10) * 0.1f);
+                    camSetShakeOffset(mathRnd(0, 10) * 0.1f);
                 } else if ((objdata->isOutbound == FALSE) && (self->unkDC < 200)) {
-                    camera_set_shake_offset(rand_next(0, 10) * 0.05f);
+                    camSetShakeOffset(mathRnd(0, 10) * 0.05f);
                 }
 
                 //Create wide ripples periodically, with a randomised vertical offset
@@ -227,8 +227,8 @@ void Transporter_control(Object *self) {
                     transform.yaw = 0;
                     transform.roll = 0;
                     transform.pitch = 0;
-                    camera_set_shake_offset(8.0f);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    camSetShakeOffset(8.0f);
+                    dll_amSfx->Play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
                     
                     //Create horizontal blast particle spreading out from base of Transporter
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
@@ -250,8 +250,8 @@ void Transporter_control(Object *self) {
 
         if (objdata->isOutbound) {
             //Fire the transporter
-            camera_set_shake_offset(8.0f);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
+            camSetShakeOffset(8.0f);
+            dll_amSfx->Play(NULL, SOUND_43D_Transporter_Fire, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Create horizontal blast particle spreading out from base of Transporter
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_75, NULL, PARTFXFLAG_2, -1, NULL);
@@ -261,7 +261,7 @@ void Transporter_control(Object *self) {
                 gDLL_17_partfx->vtbl->spawn(player, PARTICLE_77, NULL, PARTFXFLAG_NONE, -1, NULL);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_9B_Transporter_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_9B_Transporter_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Create lots of tiny sparkles that wander outwards before gravitating back inwards
             for (i = 0; i < 100; i++) {
@@ -270,9 +270,9 @@ void Transporter_control(Object *self) {
         }
 
         //Unload modGfxDLLs
-        dll_unload(objdata->dll129);
+        dllFree(objdata->dll129);
         objdata->dll129 = NULL;
-        dll_unload(objdata->dll130);
+        dllFree(objdata->dll130);
         objdata->dll130 = NULL;
 
         self->unkDC = 0;
@@ -301,7 +301,7 @@ void Transporter_control(Object *self) {
     if (objdata->timerWarpPlayer && objdata->runTimersPostPowerUp) {
         objdata->timerWarpPlayer -= gUpdateRate;
         if (objdata->timerWarpPlayer <= 0) {
-            warpPlayer(setup->warpID, FALSE);
+            mapWarpPlayer(setup->warpID, FALSE);
             objdata->runTimersPostPowerUp = FALSE;
             objdata->timerWarpPlayer = 0;
         }
@@ -322,14 +322,14 @@ void Transporter_update(Object *self) {
     Transporter_Setup *setup;
 
     setup = (Transporter_Setup*)self->setup;
-    if ((setup->gamebitEnabled != NO_GAMEBIT) && (main_get_bits(setup->gamebitEnabled) == FALSE)) {
+    if ((setup->gamebitEnabled != NO_GAMEBIT) && (mainGetBits(setup->gamebitEnabled) == FALSE)) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     } else {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     }
 
     if (self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 
@@ -343,13 +343,13 @@ void Transporter_free(Object *self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->dll129) {
-        dll_unload(objdata->dll129);
+        dllFree(objdata->dll129);
     }
     if (objdata->dll130) {
-        dll_unload(objdata->dll130);
+        dllFree(objdata->dll130);
     }
     if (objdata->mGfxKrazoaPoints) {
-        dll_unload(objdata->mGfxKrazoaPoints);
+        dllFree(objdata->mGfxKrazoaPoints);
     }
 }
 

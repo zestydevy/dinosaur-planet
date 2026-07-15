@@ -69,20 +69,20 @@ void NWsfx_control(Object* self) {
 
     //Set up the next interval between sounds (randomised: somewhere between 1x and 2x the objSetup interval value)
     objData->intervalTimer = objData->interval; 
-    objData->intervalTimer += rand_next(0, objData->interval);
+    objData->intervalTimer += mathRnd(0, objData->interval);
 
     //Don't play sounds if a specified gamebit is set
-    if ((objData->gamebitDisable != NO_GAMEBIT) && main_get_bits(objData->gamebitDisable)) {
+    if ((objData->gamebitDisable != NO_GAMEBIT) && mainGetBits(objData->gamebitDisable)) {
         return;
     }
     
     //Play a sound
     if (objData->totalSounds == 0) {
         //Play the first sound (NOTE: unreachable, since `objData->sounds` will be NULL when `objData->totalSounds` is 0?)
-        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, objData->sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
         //Pick a random sound to play
-        gDLL_6_AMSFX->vtbl->play(self, objData->sounds[rand_next(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, objData->sounds[mathRnd(0, objData->totalSounds - 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -92,7 +92,7 @@ void NWsfx_update(Object* self) { }
 // offset: 0x1F4 | func: 3 | export: 3
 void NWsfx_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

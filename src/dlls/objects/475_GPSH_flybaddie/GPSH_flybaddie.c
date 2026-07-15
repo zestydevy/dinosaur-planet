@@ -77,11 +77,11 @@ void GPSH_flybaddie_setup(Object* self, GPSH_flybaddie_Setup* setup, s32 arg2) {
     objdata->curveT = 1.0f;
     objdata->unk51 = 0;
     objdata->unk50 = 0;
-    objdata->unk48 = rand_next(0, 65000);
+    objdata->unk48 = mathRnd(0, 65000);
     objdata->unk4A = 10000;
     objdata->unk53 = 1;
-    objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
-    objdata->unk4E = rand_next(0, 1000);
+    objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
+    objdata->unk4E = mathRnd(0, 1000);
     if (setup->unk1A == 0) {
         objdata->unk44 = -130.0f;
     } else {
@@ -101,7 +101,7 @@ void GPSH_flybaddie_control(Object* self) {
         objdata->unk4E -= (s16)gUpdateRateF;
     }
     if ((objdata->unk4E != -999) && (objdata->unk4E <= 0)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_72F_Harsh_Magical_Thrum_Loop, 0x28, NULL, NULL, 0, NULL);
         objdata->unk4E = -999;
     }
     self->srt.yaw += (s16) (objdata->unk48 / 10);
@@ -111,15 +111,15 @@ void GPSH_flybaddie_control(Object* self) {
     }
     if (objdata->unk4C <= 0) {
         GPSH_flybaddie_func_7F8(self);
-        objdata->unk4C = (s16) (rand_next(0, 1000) + 1000);
+        objdata->unk4C = (s16) (mathRnd(0, 1000) + 1000);
     }
     if (objdata->curveT > 1.0f) {
         objdata->curveT -= 1.0f;
         GPSH_flybaddie_func_654(self);
     }
-    self->srt.transl.x = curves_b_spline(objdata->xCurve, objdata->curveT, NULL);
-    self->srt.transl.y = curves_b_spline(objdata->yCurve, objdata->curveT, NULL);
-    self->srt.transl.z = curves_b_spline(objdata->zCurve, objdata->curveT, NULL);
+    self->srt.transl.x = curvesBSpline(objdata->xCurve, objdata->curveT, NULL);
+    self->srt.transl.y = curvesBSpline(objdata->yCurve, objdata->curveT, NULL);
+    self->srt.transl.z = curvesBSpline(objdata->zCurve, objdata->curveT, NULL);
     objdata->curveT += (objdata->unk34 * (f32) (_data_0 + 1) * gUpdateRateF);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
     gDLL_17_partfx->vtbl->spawn(self, self->modelInstIdx + PARTICLE_286, NULL, PARTFXFLAG_1, -1, NULL);
@@ -131,13 +131,13 @@ void GPSH_flybaddie_control(Object* self) {
             objdata->unk52++;
             objdata->unk34 *= 1.2f;
             if (objdata->unk52 >= 3) {
-                obj_destroy_object(self);
+                objFreeObject(self);
                 _data_0++;
                 if (_data_0 >= 3) {
-                    main_set_bits(BIT_5A9, 1);
+                    mainSetBits(BIT_5A9, 1);
                 }
             } else {
-                obj_set_model(self, self->modelInstIdx + 1);
+                objSetModel(self, self->modelInstIdx + 1);
             }
         }
     }
@@ -149,7 +149,7 @@ void GPSH_flybaddie_update(Object *self) { }
 // offset: 0x5CC | func: 3 | export: 3
 void GPSH_flybaddie_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -185,11 +185,11 @@ static void GPSH_flybaddie_func_654(Object* self) {
     sp48[0] = 0.0f;
     sp48[1] = 0.0f;
     sp48[2] = objdata->unk44;
-    objdata->unk48 += (s16)rand_next(1000, 2000);
+    objdata->unk48 += (s16)mathRnd(1000, 2000);
     if (((objdata->unk4A < 4001) && (objdata->unk53 == -1)) || ((objdata->unk4A >= 28000) && (objdata->unk53 == 1))) {
         objdata->unk53 = -objdata->unk53;
     }
-    objdata->unk4A += ((s16)rand_next(2000, 3000) * objdata->unk53);
+    objdata->unk4A += ((s16)mathRnd(2000, 3000) * objdata->unk53);
     sp30.roll = 0;
     sp30.transl.x = 0.0f;
     sp30.transl.y = 0.0f;
@@ -197,7 +197,7 @@ static void GPSH_flybaddie_func_654(Object* self) {
     sp30.scale = 1.0f;
     sp30.pitch = objdata->unk4A;
     sp30.yaw = objdata->unk48;
-    rotate_vec3(&sp30, sp48);
+    mathRotateRPY(&sp30, sp48);
     objdata->xCurve[3] = (sp48[0] + objdata->unk38);
     objdata->yCurve[3] = (sp48[1] + (objdata->unk3C + 20.0f));
     objdata->zCurve[3] = (sp48[2] + objdata->unk40);
@@ -216,7 +216,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     f32 dirVec[3];
     f32 magnitude;
 
-    player = get_player();
+    player = objGetPlayer();
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
@@ -230,7 +230,7 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     objsetup->x = self->srt.transl.x;
     objsetup->y = self->srt.transl.y;
     objsetup->z = self->srt.transl.z;
-    obj = obj_create(objsetup, OBJINIT_STANDALONE, -1, -1, NULL);
+    obj = objSetupObject(objsetup, OBJINIT_STANDALONE, -1, -1, NULL);
     if (obj != NULL) {
         obj->srt.flags |= OBJFLAG_OWNS_SETUP;
         dirVec[0] = player->srt.transl.x - self->srt.transl.x;
@@ -255,6 +255,6 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
         obj->globalPosition.x = obj->srt.transl.x;
         obj->globalPosition.y = obj->srt.transl.y;
         obj->globalPosition.z = obj->srt.transl.z;
-        gDLL_6_AMSFX->vtbl->play(obj, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(obj, SOUND_730_Electrified_Blast, 0x50, NULL, NULL, 0, NULL);
     }
 }

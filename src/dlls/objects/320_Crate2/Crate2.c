@@ -43,14 +43,14 @@ void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
     if (sp20 < 0.05f) {
         sp20 = 0.05f;
     }
-    _data_0 = dll_load_deferred(0x1003U, 1U);
+    _data_0 = dllLoad(0x1003U, 1U);
     if (self->shadow != NULL) {
         self->shadow->flags |= 0x810;
         self->shadow->scale = self->def->shadowScale * sp20; 
         self->shadow->maxDistScale = self->shadow->scale * 0.5f;
     }
     objdata->unk1 = 2;
-    objdata->unk0 = main_get_bits((s32) setup->unk1C);
+    objdata->unk0 = mainGetBits((s32) setup->unk1C);
     temp_v1_3 = self->objhitInfo;
     self->srt.scale = self->def->scale * sp20;
     temp_v1_3->unk52 = (s16) (s32) ((f32) temp_v1_3->unk52 * sp20);
@@ -77,8 +77,8 @@ void dll_320_control(Object* self) {
         objdata->unk1 = (s8) (objdata->unk1 - 1);
         if (objdata->unk1 > 0) {
             sp48 = objdata;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
-            obj_set_model(self, 2 - objdata->unk1);
+            dll_amSfx->Play(self, SOUND_372_Crate_Struck, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objSetModel(self, 2 - objdata->unk1);
         }
     }
     if (objdata->unk1 <= 0) {
@@ -86,12 +86,12 @@ void dll_320_control(Object* self) {
         objdata->unk0 = 1;
         temp_v0 = self->objhitInfo;
         temp_v0->unk58 &= 0xFFFE;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_371_Crate_Smash, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (sp40->unk1C != -1) {
-            main_set_bits((s32) sp40->unk1C, 1U);
+            mainSetBits((s32) sp40->unk1C, 1U);
         }
         sp3C = 50.0f;
-        temp_v0_2 = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &sp3C);
+        temp_v0_2 = objGetNearestTypeTo(OBJTYPE_Collectable, self, &sp3C);
         if (temp_v0_2 != NULL) {
             temp_fv0 = self->srt.transl.f[0];
             temp_v0_2->globalPosition.f[0] = temp_fv0;
@@ -125,15 +125,15 @@ void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     if (visibility != 0) {
         objsetup = (DLL320_Setup*)self->setup; 
         if (objsetup->unk1F & 1) {
-            func_80036F6C((s16) objsetup->unk20, (s16) objsetup->unk21, (s16) objsetup->unk22);
+            objprintSetMultiplierColor((s16) objsetup->unk20, (s16) objsetup->unk21, (s16) objsetup->unk22);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x498 | func: 4 | export: 4
 void dll_320_free(Object* self, s32 a1) {
-    dll_unload( _data_0);
+    dllFree( _data_0);
 }
 
 // offset: 0x4DC | func: 5 | export: 5

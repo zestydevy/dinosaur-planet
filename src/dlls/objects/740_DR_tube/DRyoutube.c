@@ -77,16 +77,16 @@ void DR_Tube_setup(Object* self, DR_Tube_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
 
     for (i = 0; i < 3; i++) {
-        texAnim = func_800348A0(self, i, 0);
+        texAnim = objExprGetTexAnimator(self, i, 0);
         if (texAnim != NULL) {
             texAnim->frame = 0;
         }
     }
     
-    sAllTubesActivated = main_get_bits(BIT_DR_Tubes_All_Activated);
+    sAllTubesActivated = mainGetBits(BIT_DR_Tubes_All_Activated);
 
     if (sAllTubesActivated) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
 }
 
@@ -100,16 +100,16 @@ void DR_Tube_control(Object* self) {
     if (sAllTubesActivated) {
         //Play pulsing model animation
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
         }
-        func_80024108(self, 0.01f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.01f, gUpdateRateF, NULL);
 
         //Continue animating tube's section textures
         DR_Tube_animate_all_sections(self, DR_Tube_ALL_SECTIONS);
     } else {
         //Play an eerie alarm loop when the tube is partly activated
         if (objData->sectionsBitfield && (objData->soundHandle == 0)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_8DB_Eerie_Alarm_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_8DB_Eerie_Alarm_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
 
         //Animate the tube's section textures
@@ -121,16 +121,16 @@ void DR_Tube_control(Object* self) {
     if ((objData->tubeIndex == 0) && (sAllTubesActivated == FALSE) && 
         (DR_Tube_get_sections_bitfield(dTubeTopGamebits) >= DR_Tube_ALL_SECTIONS)
     ) {
-        main_set_bits(BIT_DR_Tubes_All_Activated, TRUE);
+        mainSetBits(BIT_DR_Tubes_All_Activated, TRUE);
         sAllTubesActivated = TRUE;
 
         //Stop the eerie alarm loop
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            dll_amSfx->Stop(objData->soundHandle);
         }
 
         //Start the thrumming sound loop
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_8DC_Ominous_Thrumming_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
     }
 }
 
@@ -140,7 +140,7 @@ void DR_Tube_update(Object *self) { }
 // offset: 0x370 | func: 3 | export: 3
 void DR_Tube_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -182,7 +182,7 @@ void DR_Tube_section_anim_on(Object* self, s32 sectionIndex) {
     TextureAnimator* texAnim;
     s32 frameValue;
 
-    texAnim = func_800348A0(self, sectionIndex, 0);
+    texAnim = objExprGetTexAnimator(self, sectionIndex, 0);
     if (texAnim != NULL) {
         diPrintf(" Anim %i ", sectionIndex);
         frameValue = texAnim->frame + (gUpdateRate * TEX_ANIM_ON_SPEED);
@@ -200,7 +200,7 @@ void DR_Tube_section_anim_on(Object* self, s32 sectionIndex) {
 void DR_Tube_section_anim_off(Object* self, s32 sectionIndex) {
     TextureAnimator* texAnim;
 
-    texAnim = func_800348A0(self, sectionIndex, 0);
+    texAnim = objExprGetTexAnimator(self, sectionIndex, 0);
     if (texAnim != NULL) {
         texAnim->frame = 0;
     }
@@ -217,7 +217,7 @@ s32 DR_Tube_get_sections_bitfield(s16* gamebits) {
     u8 i;
 
     for (bitfield = 0, i = 0; i < 3; i++, gamebits++) {
-        bitfield |= main_get_bits(*gamebits) << i;
+        bitfield |= mainGetBits(*gamebits) << i;
     }
     
     return bitfield;

@@ -43,19 +43,19 @@ void VisAnimator_setup(Object* self, VisAnimator_Setup* objSetup, s32 arg2) {
     //Set initial visibility, inverting if the relevant bit is set in the multi-bit flag 
     objData->visibility = objSetup->initialVisibility;
     objData->bitMask = 1 << objSetup->bitIndex;
-    if (main_get_bits(objSetup->gamebitID) & objData->bitMask) {
+    if (mainGetBits(objSetup->gamebitID) & objData->bitMask) {
         objData->visibility ^= VisAnimator_FLAG_Block_Animate_Needed;
     }
 
     //Get local Blocks model and animate tagged Shapes' visibility
-    block = map_get_block_by_index(map_world_coords_to_block_index(
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(
         self->srt.transl.x,self->srt.transl.y, self->srt.transl.z));
     if (block) {
         VisAnimator_animate_block_shapes(block, self, objData, objSetup);
     }
 
     //Check a specific bit from the multi-bit gamebit's current value
-    gamebitSet = main_get_bits(objSetup->gamebitID) & objData->bitMask;
+    gamebitSet = mainGetBits(objSetup->gamebitID) & objData->bitMask;
     objData->gamebitState = gamebitSet;
     objData->gamebitStatePrev = gamebitSet;
 
@@ -72,14 +72,14 @@ void VisAnimator_control(Object* self) {
     objData = self->data;
 
     //Get local Block model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->flags |= VisAnimator_FLAG_Block_Animate_Needed;
         return;
     }
 
     //Check a specific bit from the multi-bit gamebit's current value
-    objData->gamebitState = main_get_bits(objSetup->gamebitID) & objData->bitMask;
+    objData->gamebitState = mainGetBits(objSetup->gamebitID) & objData->bitMask;
     if (objData->gamebitStatePrev != objData->gamebitState) {
         objData->visibility ^= 1;
         objData->flags |= VisAnimator_FLAG_Block_Animate_Needed;

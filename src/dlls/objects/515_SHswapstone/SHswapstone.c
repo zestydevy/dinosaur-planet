@@ -68,7 +68,7 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon
     // approaching SwapStone (happens if camera lags behind in SwapStone Circe)
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         objdata->bitSwapStoneSpokenTo = BIT_883;
         objdata->bitIntroSeq = BIT_Play_Seq_0107_Rocky_Intro_Unused;
@@ -83,13 +83,13 @@ void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
         self->modelInstIdx = 0;
     }
 
-    if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
+    if (mainGetBits(BIT_Talking_to_Rocky) && mainGetBits(BIT_Talked_to_Rocky)) {
         objdata->awake = TRUE;
     } else {
         objdata->awake = FALSE;
     }
 
-    main_set_bits(objdata->bitIntroSeq, 0);
+    mainSetBits(objdata->bitIntroSeq, 0);
 }
 
 // offset: 0x140 | func: 1 | export: 1
@@ -98,22 +98,22 @@ void SHswapstone_control(Object* self) {
 
     if (objdata->awake == FALSE) {
         if (self->curModAnimId != 0xC) {
-            func_80023D30(self, 0xC, 0.0f, 0);
+            objAnimSet(self, 0xC, 0.0f, 0);
         }
 
-        func_80024108(self, 0.008f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.008f, gUpdateRateF, NULL);
 
-        if (main_get_bits(BIT_Talking_to_Rocky) && main_get_bits(BIT_Talked_to_Rocky)) {
+        if (mainGetBits(BIT_Talking_to_Rocky) && mainGetBits(BIT_Talked_to_Rocky)) {
             objdata->awake = TRUE;
         }
     } else {
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
         }
 
-        func_80024108(self, 0.008f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.008f, gUpdateRateF, NULL);
 
-        if (main_get_bits(BIT_Talking_to_Rocky) == 0) {
+        if (mainGetBits(BIT_Talking_to_Rocky) == 0) {
             objdata->awake = FALSE;
         }
     }
@@ -136,17 +136,17 @@ void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
         return;
     }
 
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     
     //Draw the player when attached to SwapStone's hand
-    player = get_player();
+    player = objGetPlayer();
     if (!player){
         return;
     }
     if (((DLL_210_Player*)player->dll)->vtbl->func34(player)) {
-        func_80031F6C(self, objdata->attachIdx, &x, &y, &z, 0);
+        objGetAttachPointWorldSpace(self, objdata->attachIdx, &x, &y, &z, 0);
         ((DLL_210_Player*)player->dll)->vtbl->func65(player, x, y, z);
-        ((DLL_210_Player*)player->dll)->vtbl->base.print(player, gdl, mtxs, vtxs, pols, -1);
+        ((DLL_210_Player*)player->dll)->vtbl->base.Print(player, gdl, mtxs, vtxs, pols, -1);
     }
 }
 
@@ -157,7 +157,7 @@ void SHswapstone_free(Object *self, s32 a1) { }
 u32 SHswapstone_get_model_flags(Object* self) {
     s32 modelno;
 
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         // We are Rubble
         modelno = 1;
     } else {
@@ -184,8 +184,8 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
 
     objdata = self->data;
 
-    if (menu_get_current() != MENU_SELECTION) {
-        menu_set(MENU_SELECTION);
+    if (menuGetCurrent() != MENU_SELECTION) {
+        menuSet(MENU_SELECTION);
     }
 
     animData->decisionCallback = SHswapstone_is_stick_direction_available;
@@ -200,7 +200,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
             objdata->flags |= SWAPSTONE_PLAYER_HAS_SPELLSTONE;
         }
         animData->unk62 = 0;
-        if (main_get_bits(objdata->bitSwapStoneSpokenTo) != 0) {
+        if (mainGetBits(objdata->bitSwapStoneSpokenTo) != 0) {
             animData->unk9D |= 4;
         }
     }
@@ -222,19 +222,19 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 0, 1);
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_HOLLOW, 7, 1);
                 gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_HOLLOW, 1);
-                if ((main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) != 0) && (main_get_bits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract) == 0)) {
+                if ((mainGetBits(BIT_Play_Seq_0180_Release_Spirit_1) != 0) && (mainGetBits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract) == 0)) {
                     // Set Rocky to give Tricky the distract command
-                    main_set_bits(BIT_Play_Seq_01FD_Rocky_Teaches_Distract, 1);
+                    mainSetBits(BIT_Play_Seq_01FD_Rocky_Teaches_Distract, 1);
                 } else {
-                    main_set_bits(objdata->bitSwappedToSeq, 1);
+                    mainSetBits(objdata->bitSwappedToSeq, 1);
                 }
             } else {
                 // Going to SwapStone Circle
                 gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_SWAPSTONE_CIRCLE, 0, 1);
                 gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
-                main_set_bits(objdata->bitSwappedToSeq, 1);
+                mainSetBits(objdata->bitSwappedToSeq, 1);
             }
-            warpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(sSwapStoneWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 7:
             // Warp to Warlock Mountain
@@ -259,7 +259,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
                 gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 2);
                 break;
             }
-            warpPlayer(sWarlockMountainWarps[playerno], /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(sWarlockMountainWarps[playerno], /*fadeToBlack=*/FALSE);
             break;
         case 10:
             objdata->bShowScreen ^= 1;
@@ -269,18 +269,18 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
             gDLL_29_Gplay->vtbl->set_playerno(1 - playerno);
             gDLL_29_Gplay->vtbl->set_act(MAP_ICE_MOUNTAIN_1, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_SWAPSTONE_CIRCLE, 2);
-            menu_set(MENU_GAMEPLAY);
-            warpPlayer(WARP_ICE_MOUNTAIN_CAMPSITE, /*fadeToBlack=*/FALSE);
+            menuSet(MENU_GAMEPLAY);
+            mapWarpPlayer(WARP_ICE_MOUNTAIN_CAMPSITE, /*fadeToBlack=*/FALSE);
             break;
         case 12:
-            warpPlayer(WARP_SWAPSTONE_SHOP_ENTRANCE, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_SWAPSTONE_SHOP_ENTRANCE, /*fadeToBlack=*/FALSE);
             break;
         case (SELECT_SCREEN(SelectionMenu_STATE_0_Fade_Out)):
         case (SELECT_SCREEN(SelectionMenu_STATE_1_SwapStone_Choices)):
         case (SELECT_SCREEN(SelectionMenu_STATE_2_Confirm_Right)):
         case (SELECT_SCREEN(SelectionMenu_STATE_3_Confirm_Left)):
-            if (menu_get_current() == MENU_SELECTION) {
-                ((DLL_Menu16*)menu_get_active_dll())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
+            if (menuGetCurrent() == MENU_SELECTION) {
+                ((DLL_Menu16*)menuGetActiveDLL())->vtbl->set_selection_state(animData->messages[i] - CMD_BASE_SELECTION);
             }
             break;
         default:
@@ -295,7 +295,7 @@ static int SHswapstone_anim_callback(Object* self, Object* overrideObj, AnimObj_
 
 // offset: 0xA8C | func: 8
 static void SHswapstone_restore_gameplay_menu(Object* self, Object *override, struct AnimObj_Data* animData) {
-    menu_set(MENU_GAMEPLAY);
+    menuSet(MENU_GAMEPLAY);
 }
 
 // offset: 0xAD4 | func: 9
@@ -305,7 +305,7 @@ static s32 SHswapstone_is_stick_direction_available(Object* self, Object *overri
     s8 joyYSign;
 
     objdata = self->data;
-    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joyGetStickMenuXYSign(0, &joyXSign, &joyYSign);
 
     switch (cond) {
     case ANIM_DECISION_CUSTOM1:
@@ -346,7 +346,7 @@ static s32 SHswapstone_get_held_spirit(void) {
     s32 spiritBits;
 
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
-    player = get_player();
+    player = objGetPlayer();
     
     spiritBits = ((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_ANY);
     if (playerno == PLAYER_SABRE) {
@@ -384,10 +384,10 @@ static s32 SHswapstone_get_held_spirit(void) {
 // Whether the player has a SpellStone.
 // Only checks for the first two!
 static int SHswapstone_has_spellstone(void) {
-    if (main_get_bits(BIT_SpellStone_CRF) != 0) {
+    if (mainGetBits(BIT_SpellStone_CRF) != 0) {
         return TRUE;
     }
-    if (main_get_bits(BIT_SpellStone_DIM) != 0) {
+    if (mainGetBits(BIT_SpellStone_DIM) != 0) {
         return TRUE;
     }
     return FALSE;

@@ -69,11 +69,11 @@ void DBSH_Symbol_control(Object* self) {
     
     DBSH_Symbol_Data* objData = self->data;
 
-    if (main_get_bits(BIT_16A) == 0) {
+    if (mainGetBits(BIT_16A) == 0) {
         objData->timeLeft = 4000; //66.666 seconds
         objData->state = DBSH_Symbol_STATE_Initial;
         objData->krystal = NULL;
-        main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
+        mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 0);
         dAnimOffsetSabre = 0;
         dAnimOffsetKrystal = 0;
         return;
@@ -105,8 +105,8 @@ void DBSH_Symbol_control(Object* self) {
         objData->pushSeq = gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
         //Start a UI countdown (66 seconds)
-        func_8000F64C(0x1D, 66);
-        func_8000F6CC();
+        menu_func_8000F64C(0x1D, 66);
+        menu_func_8000F6CC();
         return;
     }
     
@@ -114,7 +114,7 @@ void DBSH_Symbol_control(Object* self) {
     if (objData->state == DBSH_Symbol_STATE_Rising_Up) {
         if (dPlayHissSound) {
             dPlayHissSound = FALSE;
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_358_Reverse_Static_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_358_Reverse_Static_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
 
         if (self->srt.transl.y < objData->baseY) {
@@ -142,7 +142,7 @@ void DBSH_Symbol_control(Object* self) {
     if (objData->state == DBSH_Symbol_STATE_Sinking_Down) {
         if (dPlayHissSound) {
             dPlayHissSound = FALSE;
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_358_Reverse_Static_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_358_Reverse_Static_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             return;
         }
         
@@ -152,9 +152,9 @@ void DBSH_Symbol_control(Object* self) {
 
             //Set win/lose gamebit once underground
             if ((self->srt.transl.y <= (objData->baseY - Y_UNDERGROUND)) && (objData->timeLeft <= 0)) {
-                main_set_bits(BIT_DB_Shrine_Test_of_Strength_Lose, 1);
+                mainSetBits(BIT_DB_Shrine_Test_of_Strength_Lose, 1);
             } else if (self->srt.transl.y <= (objData->baseY - Y_UNDERGROUND)) {
-                main_set_bits(BIT_DB_Shrine_Test_of_Strength_Win, 1);
+                mainSetBits(BIT_DB_Shrine_Test_of_Strength_Win, 1);
             }
             
             //Create glowing magic flare particles under the symbol's points
@@ -168,7 +168,7 @@ void DBSH_Symbol_control(Object* self) {
             
             //Stop magic hum sound loop
             if (objData->soundHandle != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -182,12 +182,12 @@ void DBSH_Symbol_update(Object *self) { }
 
 // offset: 0x604 | func: 3 | export: 3
 void DBSH_Symbol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0x64C | func: 4 | export: 4
 void DBSH_Symbol_free(Object* self, s32 arg1) {
-    func_8000FA2C();
+    menu_func_8000FA2C();
 }
 
 // offset: 0x68C | func: 5 | export: 5
@@ -212,7 +212,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     s32 count;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     animData->unk7A = -1;
     animData->unk62 = 0;
@@ -235,13 +235,13 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     
     //Play magic humming loop
     if (objData->soundHandle == 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_357_Magic_Hum_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle, 0.8f);
+        dll_amSfx->Play(self, SOUND_357_Magic_Hum_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+        dll_amSfx->SetPitch(objData->soundHandle, 0.8f);
     }
 
     //Find phantom Krystal
     if (objData->krystal == NULL) {
-        for (objects = get_world_objects(&index, &count); index < count; index++) {
+        for (objects = objGetObjects(&index, &count); index < count; index++) {
             objData->krystal = objects[index];
             if (objData->krystal->id == OBJ_DBSH_Krystal) {
                 break;
@@ -262,19 +262,19 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         //Handle losing (time running out)
         if (objData->timeLeft <= 0) {
             gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
-            func_8000FA2C();
+            menu_func_8000FA2C();
         }
         
         //Handle tapping A button
-        if (joy_get_released_buffered(0, i) & A_BUTTON) {
+        if (joyGetReleasedBuffered(0, i) & A_BUTTON) {
             //@bug: harder at smoother FPS, since it won't increase as much per press
             objData->yawSpeed += 18.8f;
 
             //5% chance of playing random Sabre effort sound
-            if (rand_next(0, 20) == 0) {
-                gDLL_6_AMSFX->vtbl->play(
+            if (mathRnd(0, 20) == 0) {
+                dll_amSfx->Play(
                     NULL, 
-                    SOUND_710_Sabre_Test_of_Strength_1 + rand_next(0, 2), 
+                    SOUND_710_Sabre_Test_of_Strength_1 + mathRnd(0, 2), 
                     0x1E, 
                     NULL, 
                     NULL, 
@@ -298,10 +298,10 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         if (objData->yaw > YAW_WIN) {
             objData->yaw = YAW_WIN;
             gDLL_3_Animation->vtbl->end_obj_sequence(objData->pushSeq);
-            func_8000FA2C();
+            menu_func_8000FA2C();
             objData->magicFxTimer = 10;
             objData->delayTimer = 20;
-            func_80023D30(player, 0, 0.0f, 0);
+            objAnimSet(player, 0, 0.0f, 0);
             break;
         }
         
@@ -317,8 +317,8 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
             }
             
             //Use stopped animation for Sabre/Krystal
-            func_80023D30(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
-            func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
+            objAnimSet(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
+            objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
             
             sPrevYaw = objData->yaw;
 
@@ -335,26 +335,26 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
         }
     
         //Handle player anim progress/looping
-        if (func_80024108(player, ((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0) {
+        if (objAnimAdvance(player, ((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0) {
             dAnimOffsetSabre = 1 - dAnimOffsetSabre;
             if ((((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f) < 0.0f) {
                 //Start at end of animation
-                func_80023D30(player, dAnimOffsetSabre + 0x4A, 1.0f, 0);
+                objAnimSet(player, dAnimOffsetSabre + 0x4A, 1.0f, 0);
             } else {
                 //Start at beginning of animation
-                func_80023D30(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
+                objAnimSet(player, dAnimOffsetSabre + 0x4A, 0.0f, 0);
             }
         }
         
         //Handle phantom Krystal anim progress/looping
-        if (objData->krystal && (func_80024108(objData->krystal, -((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0)) {
+        if (objData->krystal && (objAnimAdvance(objData->krystal, -((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f, gUpdateRateF, NULL) != 0)) {
             dAnimOffsetKrystal = 1 - dAnimOffsetKrystal;
             if ((((f32) objData->yaw - (f32) sPrevYaw) / 7500.0f) < 0.0f) {
                 //Start at beginning of animation
-                func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 0.0f, 0);
+                objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 0.0f, 0);
             } else {
                 //Start at end of animation
-                func_80023D30(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
+                objAnimSet(objData->krystal, dAnimOffsetKrystal + 0x4A, 1.0f, 0);
             }
         }
         
@@ -362,7 +362,7 @@ int DBSH_Symbol_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* a
     }
 
     //Adjust magic hum sound loop's pitch wrt. yaw
-    gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandle, ((f32) objData->yaw / 97500.0f) + 0.8f);
+    dll_amSfx->SetPitch(objData->soundHandle, ((f32) objData->yaw / 97500.0f) + 0.8f);
 
     return 0;
 }

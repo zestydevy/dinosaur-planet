@@ -11,10 +11,10 @@ typedef struct {
     /*0x10*/ s32 bitPos;
 } BitStream;
 
-BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capacity);
-u32 bitstream_read(BitStream *stream, u8 n);
-void bitstream_write(BitStream *stream, u32 data, u8 n);
-void bitstream_append(BitStream *stream, u32 data, u8 n);
-void bitstream_set_pos(BitStream *stream, s32 bitPos);
+BitStream *bitstreamInit(BitStream *stream, u8 *data, s32 bitLength, s32 capacity);
+u32 bitstreamRead(BitStream *stream, u8 n);
+void bitstreamWrite(BitStream *stream, u32 data, u8 n);
+void bitstreamAppend(BitStream *stream, u32 data, u8 n);
+void bitstreamSetPos(BitStream *stream, s32 bitPos);
 
 #endif

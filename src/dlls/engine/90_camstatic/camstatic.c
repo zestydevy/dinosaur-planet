@@ -74,12 +74,12 @@ void camstatic_func_18(Cam* cam, s32 arg1, CamStatic_Params* data) {
     sp40 = sp4C->globalPosition.y - temp_s0->globalPosition.y;
     sp3C = sp4C->globalPosition.z - temp_s0->globalPosition.z;
     if (sp48->unk1B & 1) {
-        sp36 = 0x8000 - arctan2_f(sp44, sp3C);
+        sp36 = 0x8000 - mathAtan2f(sp44, sp3C);
     } else {
         sp36 = sp48->unk1C + 0x8000;
     }
     if (sp48->unk1B & 2) {
-        var_a3 = (arctan2_f(sp40, sqrtf(SQ(sp44) + SQ(sp3C))) & 0xFFFF & 0xFFFF) - sp48->unk1E;
+        var_a3 = (mathAtan2f(sp40, sqrtf(SQ(sp44) + SQ(sp3C))) & 0xFFFF & 0xFFFF) - sp48->unk1E;
     } else {
         var_a3 = sp48->unk1E;
     }
@@ -142,10 +142,10 @@ void camstatic_func_278(Cam* cam) {
     sp3C = cam->srt.transl.y - sp34->globalPosition.y;
     sp38 = cam->srt.transl.z - sp34->globalPosition.z;
     if (sp4C->unk1B & 1) {
-        cam->srt.yaw = 0x8000 - arctan2_f(sp40, sp38);
+        cam->srt.yaw = 0x8000 - mathAtan2f(sp40, sp38);
     }
     if (sp4C->unk1B & 2) {
-        var_v1 = (arctan2_f(sp3C, sqrtf(SQ(sp40) + SQ(sp38))) - sp4C->unk1E) - (cam->srt.pitch & 0xFFFF);
+        var_v1 = (mathAtan2f(sp3C, sqrtf(SQ(sp40) + SQ(sp38))) - sp4C->unk1E) - (cam->srt.pitch & 0xFFFF);
         CIRCLE_WRAP(var_v1);
         cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) >> 3);
     }
@@ -211,7 +211,7 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    var_fv1 = curves_hermite(&sState->unk40.x, var_fs0, NULL);
+    var_fv1 = curvesHermite(&sState->unk40.x, var_fs0, NULL);
     if (var_fv1 < 0.2f) {
         var_fv1 = 0.2f;
     }
@@ -220,9 +220,9 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
     if (var_fs0 > 1.0f) {
         var_fs0 = 1.0f;
     }
-    cam->srt.transl.x = curves_linear(&sState->unk8, var_fs0, NULL);
-    cam->srt.transl.y = curves_linear(&sState->unk10, var_fs0, NULL);
-    cam->srt.transl.z = curves_linear(&sState->unk18, var_fs0, NULL);
+    cam->srt.transl.x = curvesLinear(&sState->unk8, var_fs0, NULL);
+    cam->srt.transl.y = curvesLinear(&sState->unk10, var_fs0, NULL);
+    cam->srt.transl.z = curvesLinear(&sState->unk18, var_fs0, NULL);
     if (((sState->unk20 - sState->unk24) > 32768.0f) || ((sState->unk20 - sState->unk24) < -32768.0f)) {
         if (sState->unk20 < 0.0f) {
             sState->unk20 += 65535.0f;
@@ -245,13 +245,13 @@ static s32 camstatic_func_798(Cam* cam, u8 arg1) {
         }
     }
     if (!(arg1 & 1)) {
-        cam->srt.yaw = (s16) curves_linear(&sState->unk20, var_fs0, NULL);
+        cam->srt.yaw = (s16) curvesLinear(&sState->unk20, var_fs0, NULL);
     }
     if (!(arg1 & 2)) {
-        cam->srt.pitch = (s16) curves_linear(&sState->unk28, var_fs0, NULL);
+        cam->srt.pitch = (s16) curvesLinear(&sState->unk28, var_fs0, NULL);
     }
     if (!(arg1 & 4)) {
-        cam->srt.roll = (s16) curves_linear(&sState->unk30, var_fs0, NULL);
+        cam->srt.roll = (s16) curvesLinear(&sState->unk30, var_fs0, NULL);
     }
     return var_fs0 >= 1.0f;
 }
@@ -272,7 +272,7 @@ static Object* camstatic_func_C04(f32 x, f32 y, f32 z, s32 arg3, s32 controlNo) 
 
     closestStaticCam = NULL;
     closestDist = 100000.0f;
-    staticCams = obj_get_all_of_type(OBJTYPE_StaticCamera, &numObjs);
+    staticCams = objGetAllOfType(OBJTYPE_StaticCamera, &numObjs);
     for (i = 0; i < numObjs; i++) {
         staticCam = staticCams[i];
         if (controlNo == staticCam->controlNo) {

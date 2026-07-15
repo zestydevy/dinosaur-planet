@@ -52,25 +52,25 @@ void SBCageKyte_control(Object* self) {
     if (self->parent->unkDC == 7) {
         //Randomly call out to Krystal
         objData->randomSoundDelay -= gUpdateRate;
-        if ((vec3_distance(&self->globalPosition, &get_player()->globalPosition) < 280.0f) && (objData->randomSoundDelay <= 0)) {
-            if (rand_next(0, 10) < 8) {
+        if ((vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) < 280.0f) && (objData->randomSoundDelay <= 0)) {
+            if (mathRnd(0, 10) < 8) {
                 randomSoundIndex = 0;
             } else {
                 randomSoundIndex = 1;
             }
-            gDLL_6_AMSFX->vtbl->play(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
-            objData->randomSoundDelay = rand_next(400, 600);
+            dll_amSfx->Play(self, soundIDs[randomSoundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
+            objData->randomSoundDelay = mathRnd(400, 600);
         }
     } else if (self->parent->unkDC >= 9) {
         //Play empty sound? (May have been removed)
         self->unkAF &= 0xFFF7;
         if (self->unkAF & 1) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_287_SB_Kyte_Empty, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_287_SB_Kyte_Empty, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
         if (objData->soundHandle) {
             self->unkAF |= 8;
-            if (!gDLL_6_AMSFX->vtbl->is_playing(objData->soundHandle)) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            if (!dll_amSfx->IsPlaying(objData->soundHandle)) {
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -82,8 +82,8 @@ void SBCageKyte_update(Object *self) { }
 
 // offset: 0x278 | func: 3 | export: 3
 void SBCageKyte_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    if (visibility && !main_get_bits(BIT_WM_Played_Randorn_First_Meeting) && !self->unkDC) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    if (visibility && !mainGetBits(BIT_WM_Played_Randorn_First_Meeting) && !self->unkDC) {
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -92,7 +92,7 @@ void SBCageKyte_free(Object* self, s32 arg1) {
     CageKyte_Data* data = self->data;
 
     if (data->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(data->soundHandle);
+        dll_amSfx->Stop(data->soundHandle);
     }
 }
 

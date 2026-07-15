@@ -51,13 +51,13 @@ void DFSH_Door1Special_setup(Object* self, DFSH_Door1Special_Setup* objSetup, s3
     
     //Restore texture glow state
     {
-        if (main_get_bits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitLit)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_2_Pulse;
         } else {
             objData->glowState = DFSH_DoorSpecial_GLOW_0_Unlit;
         }
     
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             if (objData->glowState == DFSH_DoorSpecial_GLOW_2_Pulse) {
                 texAnim->frame = 1;
@@ -85,7 +85,7 @@ void DFSH_Door1Special_setup(Object* self, DFSH_Door1Special_Setup* objSetup, s3
 
     //Restore state by gamebit
     if (objSetup->gamebitDoorState != NO_GAMEBIT) {
-        objData->state = main_get_bits(objSetup->gamebitDoorState);
+        objData->state = mainGetBits(objSetup->gamebitDoorState);
     } else {
         objData->state = DFSH_Door1Special_STATE_0_Closed;
     }
@@ -128,7 +128,7 @@ void DFSH_Door1Special_update(Object *self) { }
 // offset: 0x29C | func: 3 | export: 3
 void DFSH_Door1Special_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -159,13 +159,13 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
     //Texture glow State Machine
     switch (objData->glowState) {
     case DFSH_DoorSpecial_GLOW_0_Unlit:
-        if (main_get_bits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitLit)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_1_Fade_In;
         }
         break;
     case DFSH_DoorSpecial_GLOW_1_Fade_In:
         //Texture blends into glowing state
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             frame = texAnim->frame + (gUpdateRate * 8);
             if (frame > 0x100) {
@@ -178,20 +178,20 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
     case DFSH_DoorSpecial_GLOW_2_Pulse:
     default:
         //Glow pulses slowly, via oscillating texture frame blending 
-        texAnim = func_800348A0(self, 0, 0);
+        texAnim = objExprGetTexAnimator(self, 0, 0);
         if (texAnim != NULL) {
             objData->phase += gUpdateRate * 800;
-            texAnim->frame = 0x100 - ((1.0f - fcos16_precise(objData->phase)) * 50.0f);
+            texAnim->frame = 0x100 - ((1.0f - mathCosfInterp(objData->phase)) * 50.0f);
         }
         break;
     }
     
     //Door opening State Machine
     if (objData->state == DFSH_Door1Special_STATE_0_Closed) {
-        if (main_get_bits(objSetup->gamebitOpened)) {
+        if (mainGetBits(objSetup->gamebitOpened)) {
             objData->state = DFSH_Door1Special_STATE_2;
         }
-    } else if ((objData->state == DFSH_Door1Special_STATE_1) && (main_get_bits(objSetup->gamebitOpened) == FALSE)) {
+    } else if ((objData->state == DFSH_Door1Special_STATE_1) && (mainGetBits(objSetup->gamebitOpened) == FALSE)) {
         objData->state = DFSH_Door1Special_STATE_3;
     }
     
@@ -200,7 +200,7 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
             if (animData->messages[i] == 2) {
                 objData->state = DFSH_Door1Special_STATE_1;
                 if (objSetup->gamebitDoorState != NO_GAMEBIT) {
-                    main_set_bits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_1);
+                    mainSetBits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_1);
                 }
             }
         }
@@ -209,7 +209,7 @@ int DFSH_Door1Special_anim_callback(Object* self, Object* overrideObj, AnimObj_D
             if (animData->messages[i] == 1) {
                 objData->state = DFSH_Door1Special_STATE_0_Closed;
                 if (objSetup->gamebitDoorState != 1) { //@bug?: should this be -1 (NO_GAMEBIT)?
-                    main_set_bits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_0_Closed);
+                    mainSetBits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_0_Closed);
                 }
             }
         }

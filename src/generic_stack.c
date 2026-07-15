@@ -2,7 +2,7 @@
 #include "sys/generic_stack.h"
 #include "sys/memory.h"
 
-GenericStack *generic_stack_init(GenericStack *stack, void *data, s32 capacity, s32 elementSize) {
+GenericStack *genericStackInit(GenericStack *stack, void *data, s32 capacity, s32 elementSize) {
     stack->data = data;
     stack->count = 0;
     stack->capacity = capacity;
@@ -12,7 +12,7 @@ GenericStack *generic_stack_init(GenericStack *stack, void *data, s32 capacity, 
     return stack;
 }
 
-GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
+GenericStack *genericStackNew(s32 capacity, s32 elementSize) {
     GenericStack *stack;
 
     stack = mmAlloc(
@@ -29,11 +29,11 @@ GenericStack *generic_stack_new(s32 capacity, s32 elementSize) {
     return stack;
 }
 
-void generic_stack_free(GenericStack *stack) {
+void genericStackFree(GenericStack *stack) {
     mmFree(stack);
 }
 
-void generic_stack_push(GenericStack *stack, void *element) {
+void genericStackPush(GenericStack *stack, void *element) {
     bcopy(
         /*src*/element, 
         /*dst*/(void*)((u32)stack->data + stack->top * stack->elementSize), 
@@ -48,7 +48,7 @@ void generic_stack_push(GenericStack *stack, void *element) {
     stack->count += 1;
 }
 
-void generic_stack_pop(GenericStack *stack, void *outElement) {
+void genericStackPop(GenericStack *stack, void *outElement) {
     stack->top -= 1;
 
     if (stack->top < 0) {
@@ -63,7 +63,7 @@ void generic_stack_pop(GenericStack *stack, void *outElement) {
     stack->count -= 1;
 }
 
-void generic_stack_delete_element(GenericStack *stack, s32 idx) {
+void genericStackDeleteElement(GenericStack *stack, s32 idx) {
     u8 *end;
     u8 *src;
     u8 *dst;
@@ -105,10 +105,10 @@ void *generic_stack_func_8000B260(GenericStack *stack) {
     return element;
 }
 
-s32 generic_stack_is_full(GenericStack *stack) {
+s32 genericStackIsFull(GenericStack *stack) {
     return (stack->count + 1) == stack->capacity;
 }
 
-s32 generic_stack_is_empty(GenericStack *stack) {
+s32 genericStackIsEmpty(GenericStack *stack) {
     return stack->count == 0;
 }

@@ -3,9 +3,9 @@
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/dll.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -86,7 +86,7 @@ void CamControl_ctor(void* dll) {
     sCam = &sCamInternal;
     bzero(sCam, sizeof(Cam));
     
-    voxmap_init();
+    voxInit();
 
     sActiveID = DLL_NONE;
     sActiveLoadedIndex = DLL_NONE;
@@ -99,7 +99,7 @@ void CamControl_ctor(void* dll) {
 
 // offset: 0xA0 | dtor
 void CamControl_dtor(void* dll) {
-    voxmap_free();
+    voxFree();
     _bss_1C8 = -1;
 }
 
@@ -124,7 +124,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     f32 tSpeed;
     u8 onTitleScreen;
 
-    if (menu_get_current() == MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         onTitleScreen = TRUE;
     } else {
         onTitleScreen = FALSE;
@@ -135,7 +135,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
         return;
     }
     
-    func_80008D90(player->parent);
+    vox_func_80008D90(player->parent);
     CamControl_store_player_coords(player);
     CamControl_average_player_speed(sCam, player);
     
@@ -152,7 +152,7 @@ void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an
     
     //Transform the player's coordinates based on their parent Object
     if (player->parent != NULL) {
-        transform_point_by_object(
+        camTransformPointByObject(
             player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, 
             &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, 
             player->parent
@@ -310,7 +310,7 @@ CameraAction* CamControl_get_camera_action(s32 actionIndex) {
     actionIndex--;
     
     camAction = mmAlloc(sizeof(CameraAction), ALLOC_TAG_CAM_COL, ALLOC_NAME("camcontrol2"));
-    queue_load_file_region_to_ptr(
+    assetRomLoadSection(
         camAction, 
         CAMACTIONS_BIN, 
         actionIndex * sizeof(CameraAction), 
@@ -477,9 +477,9 @@ void CamControl_lock_icon_tick(void) {
 
     arrow = sLockIcon;
     hlObject = sCam->highlight;
-    player = get_player();
+    player = objGetPlayer();
     
-    if (menu_get_current() == MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() == MENU_TITLE_SCREEN) {
         return;
     }
     
@@ -515,11 +515,11 @@ void CamControl_lock_icon_tick(void) {
         //Update target Object's interaction flags when A button pressed
         if (hlObject->unkAF & ARROW_FLAG_4_Highlighted) {
             if (!(hlObject->unkAF & ARROW_FLAG_10_Greyed_Out)){
-                if (joy_get_pressed(0) & A_BUTTON) {
+                if (joyGetPressed(0) & A_BUTTON) {
                 hlObject->unkAF |= ARROW_FLAG_1_Interacted;
                 }
-            } else if (joy_get_pressed(0) & A_BUTTON) {
-                gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_6E6_Interaction_Refused, MAX_VOLUME, 0, 0, 0, 0);
+            } else if (joyGetPressed(0) & A_BUTTON) {
+                dll_amSfx->Play(hlObject, SOUND_6E6_Interaction_Refused, MAX_VOLUME, 0, 0, 0, 0);
             }
         }
     }
@@ -540,18 +540,18 @@ void CamControl_lock_icon_tick(void) {
         sIconRotateSpeed = 0;
         arrow->opacity = OBJECT_OPACITY_MAX;
         sIconState = LockIcon_STATE_Highlighted;
-        gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_43C_Target_Highlighted, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(hlObject, SOUND_43C_Target_Highlighted, MAX_VOLUME, 0, 0, 0, 0);
         break;
 
     case LockIcon_STATE_Highlighted:
         //While the LockIcon is highlighting a nearby Object (but it's not targeted yet)
         if ((hlObject == NULL) || (sActiveID == DLL_ID_CAM1STPERSON) || (hlObject->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting))) {
-            gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
             sIconState = LockIcon_STATE_Vanish;
         } else {
             //Automatically lock-on
             if (sActiveID == DLL_ID_CAMLOCKON) {
-                gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72D_Lock_On, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(hlObject, SOUND_72D_Lock_On, MAX_VOLUME, 0, 0, 0, 0);
                 sIconState = LockIcon_STATE_Lock_On;
                 sIconRapidTimer = 60; //icon spins extra quickly for 1st second
             }
@@ -566,7 +566,7 @@ void CamControl_lock_icon_tick(void) {
     case LockIcon_STATE_Lock_On:
         //Disengage lock when needed
         if ((hlObject == NULL) || (hlObject->unkAF & (ARROW_FLAG_20_Removed | ARROW_FLAG_8_No_Targetting))) {
-            gDLL_6_AMSFX->vtbl->play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(hlObject, SOUND_72E_Lock_Disengage, MAX_VOLUME, 0, 0, 0, 0);
             sIconState = LockIcon_STATE_Vanish;
             break;
         }
@@ -623,7 +623,7 @@ void CamControl_lock_icon_tick(void) {
 
 // offset: 0x1408 | func: 21 | export: 20
 void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
-    if (menu_get_current() != MENU_TITLE_SCREEN) {
+    if (menuGetCurrent() != MENU_TITLE_SCREEN) {
         _data_0[0] = -1;
         CamControl_print(sCam->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
     }
@@ -636,7 +636,7 @@ void CamControl_set_letterbox_goal(s32 height, s32 startAtGoal) {
         sCam->letterboxSpeed = 1;
         
         if (startAtGoal) {
-            camera_set_letterbox(height);
+            camSetLetterbox(height);
         }
     }
 }
@@ -680,7 +680,7 @@ s32 CamControl_get_loaded_module_index(u16 dllID) {
 
 // offset: 0x1630 | func: 27
 void CamControl_free_module(s32 idx) {
-    dll_unload(sCamModules[idx]->dll);
+    dllFree(sCamModules[idx]->dll);
     mmFree(sCamModules[idx]);
     sCamModules[idx] = sCamModules[sCamModuleCount - 1];
     sCamModuleCount--;
@@ -706,7 +706,7 @@ s32 CamControl_load_module(u16 dllID, s32 doDeferredFree) {
     camModule = module;
     camModule->id = dllID;
     camModule->doDeferredFree = doDeferredFree;
-    camModule->dll = dll_load_deferred(dllID, 4);
+    camModule->dll = dllLoad(dllID, 4);
     return sCamModuleCount - 1;
 }
 
@@ -716,8 +716,8 @@ static void CamControl_update_camera(Cam* cam) {
     f32 tValue;
     f32 spline[4];
 
-    set_camera_selector(0);
-    camera = get_main_camera();
+    camSetCameraSelector(0);
+    camera = camGetMain();
     camera->srt.yaw = cam->srt.yaw;
     camera->srt.pitch = cam->srt.pitch;
     camera->srt.roll = cam->srt.roll;
@@ -735,7 +735,7 @@ static void CamControl_update_camera(Cam* cam) {
         spline[2] = 0.0f;
         spline[0] = 0.0f;
         spline[1] = 1.0f;
-        tValue = 1.0f - curves_hermite(spline, cam->tValue, 0);
+        tValue = 1.0f - curvesHermite(spline, cam->tValue, 0);
 
         //Linear interpolation (position)
         if (cam->easeFlags & Cam_Ease_X) {
@@ -767,15 +767,15 @@ static void CamControl_update_camera(Cam* cam) {
     }
     
     //Change FOV
-    if (camera_get_fov() != sFov) {
-        camera_set_fov(sFov);
+    if (camGetFOV() != sFov) {
+        camSetFOV(sFov);
     }
     
-    update_camera_for_object(camera);
+    camUpdateCameraForObject(camera);
     map_func_80046B58(camera->tx, camera->ty, camera->tz);
 
     //Update camera letterboxing
-    sLetterboxHeight = camera_get_letterbox();
+    sLetterboxHeight = camGetLetterbox();
     if (sLetterboxHeight != cam->letterboxGoal) {
         if (sLetterboxHeight < cam->letterboxGoal) {
             sLetterboxHeight += cam->letterboxSpeed * (s32) gUpdateRateF;
@@ -788,7 +788,7 @@ static void CamControl_update_camera(Cam* cam) {
                 sLetterboxHeight = cam->letterboxGoal;
             }
         }
-        camera_set_letterbox(sLetterboxHeight);
+        camSetLetterbox(sLetterboxHeight);
     }
     
     cam->letterboxGoal = 0;
@@ -953,16 +953,16 @@ Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
                     angularRange = (s16)(targetDef[lockIndex].hlAngularRange * 182.04f);
                 }
 
-                dYaw = player->srt.yaw - (arctan2s(dx, dz) & 0xFFFF);
+                dYaw = player->srt.yaw - (mathAtan2(dx, dz) & 0xFFFF);
                 CIRCLE_WRAP(dYaw)
                 
                 if ((dYaw < angularRange) && (-angularRange < dYaw)) {
                     if (targetDef[lockIndex].flags & 0x20) {
                         //Use VoxMaps (check if player has line-of-sight to Object, maybe?)
-                        func_80007EE0(&targetCoords[lockIndex].drawPoint, &sp74);
-                        func_80007EE0(&player->srt.transl, &sp6C);
+                        vox_func_80007EE0(&targetCoords[lockIndex].drawPoint, &sp74);
+                        vox_func_80007EE0(&player->srt.transl, &sp6C);
                         sp6C.y += 2;
-                        if (func_80008048(&sp74, &sp6C, 0, 0, 0) != 0) {
+                        if (vox_func_80008048(&sp74, &sp6C, 0, 0, 0) != 0) {
                             objects[matchCount] = obj;
                             matchCount++;
                         }
@@ -989,8 +989,8 @@ Object* CamControl_find_highlight_object(Cam* cam, Object* player) {
 // offset: 0x236C | func: 35
 /** Creates an `OBJ_LockIcon` and stores a reference to it in `sLockIcon` */
 void CamControl_create_LockIcon(void) {
-    sLockIcon = obj_create(
-        obj_alloc_setup(sizeof(ObjSetup), OBJ_LockIcon),
+    sLockIcon = objSetupObject(
+        objAllocSetup(sizeof(ObjSetup), OBJ_LockIcon),
         0,
         -1,
         -1,
@@ -1051,7 +1051,7 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
         lockIcon->parent = obj->parent;
         
         if (lockIcon->parent != 0){
-            inverse_transform_point_by_object(
+            camInverseTransformPointByObject(
                 lockIcon->globalPosition.x, lockIcon->globalPosition.y, lockIcon->globalPosition.z, 
                 &lockIcon->srt.transl.x, &lockIcon->srt.transl.y, &lockIcon->srt.transl.z, 
                 lockIcon->parent
@@ -1068,7 +1068,7 @@ void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, V
     lockIcon->srt.scale = 0.08f;
     lockIcon->opacityWithFade = lockIcon->opacity;
 
-    draw_object(lockIcon, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(lockIcon, gdl, mtxs, vtxs, pols, 1.0f);
     
     lockIcon->modelInsts[lockIcon->modelInstIdx]->unk34 &= ~8;
 }

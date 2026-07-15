@@ -86,11 +86,11 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
     endPosition->y += 0.25f;
 
     if (objdata->visible) {
-        func_80024108(self, 0.006f, gUpdateRateF, NULL);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objAnimAdvance(self, 0.006f, gUpdateRateF, NULL);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        self->srt.yaw = arctan2_f(heldPosition->x - endPosition->x, heldPosition->z - endPosition->z) - M_90_DEGREES;
-        self->srt.roll = arctan2_f(heldPosition->y - endPosition->y, sqrtf(SQ(heldPosition->z - endPosition->z) + SQ(heldPosition->x - endPosition->x)));
+        self->srt.yaw = mathAtan2f(heldPosition->x - endPosition->x, heldPosition->z - endPosition->z) - M_90_DEGREES;
+        self->srt.roll = mathAtan2f(heldPosition->y - endPosition->y, sqrtf(SQ(heldPosition->z - endPosition->z) + SQ(heldPosition->x - endPosition->x)));
         
         objhitInfo->unk40 = 16;
         objhitInfo->unk44 = 16;
@@ -100,14 +100,14 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         //Draw the object held in the net?
         if (objdata->objCaught != NULL) {
             caught = objdata->objCaught;
-            func_80031F6C(self, 0, &caught->srt.transl.x, &caught->srt.transl.y, &caught->srt.transl.z, 0);
+            objGetAttachPointWorldSpace(self, 0, &caught->srt.transl.x, &caught->srt.transl.y, &caught->srt.transl.z, 0);
             caught->globalPosition.f[0] = caught->srt.transl.f[0];
             caught->globalPosition.f[1] = caught->srt.transl.f[1];
             caught->globalPosition.f[2] = caught->srt.transl.f[2];
             caught->srt.yaw = self->srt.yaw;
             caught->srt.pitch = self->srt.roll;
             caught->srt.roll = 0;
-            draw_object(caught, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(caught, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -130,7 +130,7 @@ u8 fishingnet_catch(Object* self, s32 flags, Object* caught) {
     s32 temp;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     temp = ((DLL_210_Player*)player->dll)->vtbl->func32(player);
     
     switch (flags) {

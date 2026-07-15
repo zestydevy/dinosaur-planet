@@ -30,7 +30,7 @@ void SCFlameGameFlame_setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 
 
     objData = self->data;
     self->srt.yaw = objSetup->yaw << 8;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 
     for (i = 0, objData->unk4 = 0; i < 4; i++) {
         if (objSetup->kyteFlightCurveID == dKyteFlightCurveIDs[i]) {
@@ -51,15 +51,15 @@ void SCFlameGameFlame_control(Object* self) {
 
     objData = self->data;
     objSetup = (SCFlameGameFlame_Setup*)self->setup;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (
         (objData->flags & SCFlameGameFlame_FLAG_Target_in_View) && 
-        main_get_bits(objData->gamebitActive)
+        mainGetBits(objData->gamebitActive)
     ) {
         //Check if Kyte is nearby
         if (sidekick != NULL) {
-            if (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
+            if (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
                 objData->flags |= SCFlameGameFlame_FLAG_Kyte_is_Nearby;
 
                 //Show Flame command option
@@ -71,18 +71,18 @@ void SCFlameGameFlame_control(Object* self) {
 
         //Check if the player issued the Flame command from the inventory
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-            main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
+            mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
             objData->flags |= SCFlameGameFlame_FLAG_Player_Gave_Command;
         }
     }
 
     //When Flame is finished, set a gamebit and destroy self
     if ((objData->flags & SCFlameGameFlame_FLAG_Finished) && 
-        (vec3_distance_xz_squared(&sidekick->globalPosition, &self->globalPosition) <= 400.0f)
+        (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= 400.0f)
     ) {
-        main_set_bits(objData->gamebitFinished, 1);
+        mainSetBits(objData->gamebitFinished, 1);
         objData->flags &= ~SCFlameGameFlame_FLAG_Finished;
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -101,7 +101,7 @@ void SCFlameGameFlame_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 
 // offset: 0x2F0 | func: 4 | export: 4
 void SCFlameGameFlame_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x330 | func: 5 | export: 5

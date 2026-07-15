@@ -33,7 +33,7 @@ void dll_465_control(Object* self) {
     objData = self->data;
     objSetup = (DLL465_Setup*)self->setup;
     
-    objData->unk0 = main_get_bits(objSetup->unk1E);
+    objData->unk0 = mainGetBits(objSetup->unk1E);
     if (objData->unk0 == 1) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         self->stateFlags |= OBJSTATE_CONTROL_DISABLED;
