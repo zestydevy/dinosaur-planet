@@ -625,6 +625,7 @@ enum SoundID {
     SOUND_927_Harsh_Electric_Loop = 0x927, // DRbullet
 
     SOUND_95A_Frigid_Air_Loop = 0x95A, //used by Ice Blast Spell
+    SOUND_95B = 0x95B,
 
     SOUND_96B_Magic_Whir = 0x96B, //DFPLevelControl
 

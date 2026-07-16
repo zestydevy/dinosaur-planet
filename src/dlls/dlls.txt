@@ -83,6 +83,7 @@
 # objects
 210 = objects/210_player
 211 = objects/211_Tricky
+212 = objects/212_Kyte
 213 = objects/213
 214 = objects/214_animobj
 216 = objects/216_SnowWorm
