@@ -142,47 +142,59 @@ void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3)
     sp1C[1] = arg2->headGoalAngle;
 }
 
-void func_80032CF8(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3) {
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
-    f32 sp38;
-    s16* sp34;
-    s32 temp;
-    s16 sp2C[2];
+void func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators, s32 maxAngle) {
+    f32 dx;
+    f32 dz;
+    f32 dy;
+    f32 lateralDistance;
+    SeqJoint* headJoint;
+    s32 yawAngle;
+    s16 goalAngles[2];
     s32 i;
 
-    sp34 = func_80034804(obj, 0);
-    if (sp34 == NULL) {
+    //Get head seqJoint
+    headJoint = (SeqJoint*)func_80034804(obj, 0);
+    if (headJoint == NULL) {
         STUBBED_PRINTF(" WARNING EXPR: This Object has no Head ");
         return;
     }
 
-    if (otherObj == NULL) {
-        sp34[1] = (s16) ((s16) sp34[1] >> 1);
-        sp34[0] = (u16) ((s16) sp34[0] >> 1);
+    //Animate back to neutral pose when target is gone (@framerate-dependent)
+    if (targetObj == NULL) {
+        headJoint->yaw >>= 1;
+        headJoint->pitch >>= 1;
         return;
     }
-    sp44 = obj->srt.transl.x - otherObj->srt.transl.x;
-    sp40 = obj->srt.transl.z - otherObj->srt.transl.z;
-    sp3C = obj->srt.transl.y - otherObj->srt.transl.y;
-    sp38 = sqrtf(SQ(sp44) + SQ(sp40));
-    temp = arctan2_f(sp44, sp40);
-    sp2C[0] = ((s16)temp - (obj->srt.yaw & 0xFFFF));
-    CIRCLE_WRAP(sp2C[0])
-    sp2C[1] = (arctan2_f(sp38, sp3C) - 0x3FFF) & 0xFFFF & 0xFFFF;
-    arg3 = (s16) (arg3 * 182.04f);
+
+    //Get head yaw/pitch angles, based on vector from target to self
+    dx = obj->srt.transl.x - targetObj->srt.transl.x;
+    dz = obj->srt.transl.z - targetObj->srt.transl.z;
+    dy = obj->srt.transl.y - targetObj->srt.transl.y;
+
+    lateralDistance = sqrtf(SQ(dx) + SQ(dz));
+    yawAngle = arctan2_f(dx, dz);
+
+    goalAngles[0] = (s16)yawAngle - (obj->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(goalAngles[0]);
+    goalAngles[1] = (arctan2_f(lateralDistance, dy) - (M_90_DEGREES - 1)) & 0xFFFF & 0xFFFF;
+    
+    //Convert maxAngle from degrees to angle16
+    maxAngle = (s16) (maxAngle * M_1_DEGREE_F);
+
+    //Set headAnimators' goal angles (limited by max angle)
     for (i = 0; i < 2; i++) {
-        arg2[i].headGoalAngle = sp2C[i];
-        if (arg3 < arg2[i].headGoalAngle) {
-            arg2[i].headGoalAngle = arg3;
+        headAnimators[i].headGoalAngle = goalAngles[i];
+        if (headAnimators[i].headGoalAngle > maxAngle) {
+            headAnimators[i].headGoalAngle = maxAngle;
         }
-        if (arg2[i].headGoalAngle < -arg3) {
-            arg2[i].headGoalAngle = -arg3;
+        if (headAnimators[i].headGoalAngle < -maxAngle) {
+            headAnimators[i].headGoalAngle = -maxAngle;
         }
     }
-    sp34[1] = arg2->headGoalAngle;
-    sp34[0] = arg2[1].headGoalAngle;
+
+    //Set head seqJoint's pitch and yaw
+    headJoint->yaw = headAnimators[0].headGoalAngle;
+    headJoint->pitch = headAnimators[1].headGoalAngle;
 }
 
 s16 func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s16* arg3) {
