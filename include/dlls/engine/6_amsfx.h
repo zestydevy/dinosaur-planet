@@ -156,7 +156,12 @@ enum SoundID {
     SOUND_AF_Take_Out_Staff = 0xAF,
     SOUND_B0_Put_Back_Staff = 0xB0,
 
-    SOUND_C8 = 0xC8,   
+    SOUND_C2_CloudRunner_Chirp_Double = 0xC2,  
+    SOUND_C3_CloudRunner_Chirp = 0xC3,  
+    SOUND_C4_CloudRunner_Chirp_Descending = 0xC4,  
+    SOUND_C5_CloudRunner_Chirp_Warble = 0xC5,  
+
+    SOUND_C8_CC_HighTop_Do_Not_Swim = 0xC8, //"Do not swim in these waters! The currents are strong, they will drag you straight under."
     SOUND_C9 = 0xC9,    
     SOUND_CA = 0xCA,    
     SOUND_CB = 0xCB,        
@@ -219,6 +224,12 @@ enum SoundID {
     SOUND_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
+    
+    SOUND_1C9_SharpClaw_Snore_Loop = 0x1C9,
+
+    SOUND_1CF_CRF_Uncle_Help_Me = 0x1CF, //"Help me!" (UNUSED)
+    SOUND_1D0_CRF_Uncle_Get_Me_Out = 0x1D0, //"Get me out of here!"
+    SOUND_1D1 = 0x1D1, //Silent
 
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
     SOUND_1D3 = 0x1D3,
