@@ -294,20 +294,22 @@ void func_80033224(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     }
 }
 
-void func_800332A4(Object* arg0, s32* arg1, s32 arg2) {
-    s16* temp_v0;
+void func_800332A4(Object* obj, s32* seqJointIDs, s32 seqJointCount) {
+    SeqJoint* seqJoint;
     s32 i;
 
-    for (i = 0; i < arg2; i++) {
-        temp_v0 = func_80034804(arg0, arg1[i]);
-        if (temp_v0 == NULL) {
+    //Animate all specified seqJoints back to their neutral pose
+    for (i = 0; i < seqJointCount; i++) {
+        seqJoint = (SeqJoint*)func_80034804(obj, seqJointIDs[i]);
+        if (seqJoint == NULL) {
             STUBBED_PRINTF(" WARNING EXPR: Obj Has No Joint %i ", i);
             continue;
         }
 
-        temp_v0[1] = (temp_v0[1] * 3) >> 2; // *= 0.75
-        temp_v0[0] = (temp_v0[0] * 3) >> 2; // *= 0.75
-        temp_v0[2] = (temp_v0[2] * 3) >> 2; // *= 0.75
+        //@framerate-dependent
+        seqJoint->yaw   = (seqJoint->yaw * 3) >> 2;   // *= 0.75
+        seqJoint->pitch = (seqJoint->pitch * 3) >> 2; // *= 0.75
+        seqJoint->roll  = (seqJoint->roll * 3) >> 2;  // *= 0.75
     }
 }
 
