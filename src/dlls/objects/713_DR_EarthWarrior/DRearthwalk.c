@@ -753,7 +753,7 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
         case 10:
             break;
         case 14:
-            gDLL_6_AMSFX->vtbl->play(actor, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->play(actor, SOUND_57_Dinosaur_Death_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_6_AMSFX->vtbl->play(actor, SOUND_9E, MAX_VOLUME, NULL, NULL, 0, NULL);
             for (partIdx = 0; partIdx != 10; partIdx++) {
                 gDLL_17_partfx->vtbl->spawn(actor, PARTICLE_3C, NULL, 2, -1, NULL);

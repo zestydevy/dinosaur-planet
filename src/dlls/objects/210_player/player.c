@@ -1201,15 +1201,15 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     case Damage_Type_Icy_Water:
         switch (hitDamage) {
             case 0x7F:
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_Sabre_Exit_Icy_Water, MAX_VOLUME, NULL, NULL, 0, NULL);
+                gDLL_6_AMSFX->vtbl->play(self, SOUND_184_Sabre_Exit_Icy_Water, MAX_VOLUME, NULL, NULL, 0, NULL);
                 hitDamage = 0;
                 dll_210_add_health(self, 1);
                 break;
             case 0:
                 if (rand_next(0, 1) != 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_183_Sabre_Freezing_A, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_Sabre_Freezing_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    gDLL_6_AMSFX->vtbl->play(self, SOUND_193_Sabre_Freezing_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             default:

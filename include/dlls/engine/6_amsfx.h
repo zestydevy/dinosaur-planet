@@ -9,7 +9,7 @@
 typedef struct {
     u16 bankAndClipID; //bankID (1 bit), clipID (15 bit)
     u8 volume;
-    u8 unk3;
+    u8 minVolume; //Minimum volume when applying distance-based falloff
     u8 pitch; //100 for base pitch (default: 0 interpretted as 100)
     u8 pan;
     u8 unk6; //reverb strength?
@@ -84,7 +84,11 @@ enum SoundID {
     SOUND_4E_Tricky_Slow_Snarl = 0x4E,     //Tricky low & slow, starting to think he's all talk
     SOUND_4F_Bassy_Pulse_Loop = 0X4F,      //wWwWwWwWwWwWwWwWwWwWwWwWwWw
 
-    SOUND_57 = 0x57,
+    SOUND_53_General_Scales_Hurt = 0x53,   //Unsure if this is actually General Scales, but it sounds like him!
+    SOUND_54_General_Scales_Hurt = 0x54,
+    SOUND_55_General_Scales_Hurt = 0x55,
+    SOUND_56_General_Scales_Hurt = 0x56,
+    SOUND_57_Dinosaur_Death_Roar = 0x57,
     SOUND_58_Water_Splash = 0x58,          //Water Splash
     SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
     SOUND_5A_SandWorm_Roar = 0X5A,         //CCsandwormBoss
@@ -162,32 +166,55 @@ enum SoundID {
     SOUND_C5_CloudRunner_Chirp_Warble = 0xC5,  
 
     SOUND_C8_CC_HighTop_Do_Not_Swim = 0xC8, //"Do not swim in these waters! The currents are strong, they will drag you straight under."
-    SOUND_C9 = 0xC9,    
-    SOUND_CA = 0xCA,    
-    SOUND_CB = 0xCB,        
+    SOUND_C9_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_1 = 0xC9, //"WE ARE QUAN ATA LACHU, SIX STARS OF EIGHT. BY YOUR WILL YOU HAVE ALMOST [...]"
+    SOUND_CA_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_2 = 0xCA, //"Do you mean General Scales?" (Sabre) 
+    SOUND_CB_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_3 = 0xCB, //"NOT SCALES. EVIL."
+    SOUND_CC_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_4 = 0xCC, //"WHEN WE ARE ONE, THE MAJESTIC 8 SHALL BE ALIGNED. WHEN THIS IS COMPLETE, EVIL SHALL BE BANISHED FOREVER."
+    SOUND_CD_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_5 = 0xCD, //"Majestic 8? Eight planets in alignment?" (Sabre)
+    SOUND_CE_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_6 = 0xCE, //"DINOSAUR PLANET AND YOUR OWN WORLD, ARE BUT TWO OF THE MAJESTIC 8. [...]"
+    SOUND_CF_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_7 = 0xCF, //"You mean they actually exist??" (Sabre)
+    SOUND_D0_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_8 = 0xD0, //"THE KRAZOA FOUGHT A GREAT WAR AGAINST EVIL. MANY AEONS IN THE PAST. [...]"
+    SOUND_D1_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_9 = 0xD1, //"IF EVIL SUCCEEDS IN EXTRACTING THIS PLANET'S SOURCE OF MAGIC ENERGY, THEN EVIL HAS WON. WE CANNOT STOP THE DARKNESS."
+    SOUND_D2_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_10 = 0xD2, //"GO TO THE KRAZOA. GO TO THE KRAZOA. GO TO THE KRAZOA. [...]"
+    SOUND_D3_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_11 = 0xD3, //"So that's why Krystal saw the mirage... the Krazoa need us to help them. Krystal must go there immediately!" (Sabre)
 
+    SOUND_D6_Krystal_Hup = 0xD6,           //player attack sfx
+    SOUND_D7_Krystal_Hut = 0xD7,           //player attack sfx
+    SOUND_D8_Krystal_Huh = 0xD8,           //player attack sfx
     SOUND_D9_Krystal_Hurt_Agh = 0xD9,      //player hurt sfx
     SOUND_DA_Krystal_Hurt_Ough = 0xDA,     //player hurt sfx
     SOUND_DB_Krystal_Hurt_Ack = 0xDB,      //player hurt sfx
     SOUND_DC_Krystal_Hurt_Ogh = 0xDC,      //player hurt sfx
     SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
     SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
-
+    SOUND_DF_Krystal_Hah = 0xDF,           //player sfx 
+    SOUND_E0_Krystal_Hoo = 0xE0,           //player sfx 
     SOUND_E1_Krystal_Ugh = 0xE1,           //SCtotemstrength
     SOUND_E2_Krystal_Yuh = 0xE2,
     SOUND_E3_Krystal_Yaahh = 0xE3,
     SOUND_E4_Krystal_Yeah = 0xE4,
-    
+    SOUND_E5_Krystal_Huh = 0xE5,
+    SOUND_E6_Krystal_Yah = 0xE6,
     SOUND_E7_Krystal_Hyeh = 0xE7,          //SCtotemstrength
-    
+    SOUND_E8_Explosion = 0xE8,
     SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
     SOUND_EB_Krystal_Flame = 0xEB,         //"Fight!"
     SOUND_EC_Krystal_Distract = 0xEC,      //"Distract them!"
     SOUND_ED_Krystal_Guard = 0xED,         //"Look after it."
     SOUND_EE_Krystal_Fetch = 0xEE,         //"Go play!"
-    
+    SOUND_EF_Sabre_Heel = 0xEF,            //"*whistle* Here boy!"
+    SOUND_F0_Krystal_Hurt_Uuugh = 0xF0,    //player hurt sfx 
+    SOUND_F1_Sabre_Heel = 0xF1,            //"Seek it out!"
     SOUND_F2_Garbled_Message = 0xF2,    //(sped up)I'veHadAGarbledMessageFromTheWizardSomethingAboutAFloatingMountainHiddenWithinAStorm
+    SOUND_F3_Sabre_Distract = 0xF3,        //"Distract 'em!"
+    SOUND_F4_Sabre_Guard = 0xF4,           //"Look after it!"
+    SOUND_F5_Krystal_Faint = 0xF5,         //player hurt sfx 
+    SOUND_F6_SH_Queen_EarthWalker_Saved_2 = 0xF6, //"Thank you for saving my son, and for saving me."
+    SOUND_F7_Flap_Heavy = 0xF7,
+    SOUND_F8_Flap_Quiet = 0xF8,
+    SOUND_F9_Flap = 0xF9,
+    SOUND_FA_Low_Crunch = 0xFA,
    
     SOUND_10A_Galleon_Roar = 0x10A,
 
@@ -195,19 +222,47 @@ enum SoundID {
 
     SOUND_115_ScorpionRobot_LaserFire = 0x115,
 
+    SOUND_117_Brawl = 0x117,
+    SOUND_118_Cartoon_Fling = 0x118,
+
+    SOUND_125_Metal_Clunk = 0x125,
+
+    SOUND_12C_Metal_Unclunk = 0x12C,
+
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
+    SOUND_142_Krystal_Play = 0x142,          //"Go play!"
+    SOUND_143_Krystal_Fetch = 0x143,         //"Fetch!"
+    SOUND_144_Krystal_Chase = 0x144,         //"Chase!" (Scrapped recreational sidekick commands?)
+    SOUND_145_Krystal_Hide_and_Seek = 0x145, //"Hide and Seek!"
+    SOUND_146_Krystal_Tag = 0x146,           //"Tag."
+    SOUND_147_Krystal_Tug_of_War = 0x147,    //"Tug o' War!"
+    SOUND_148_Krystal_Rodeo = 0x148,         //"Rodeo!"
+    SOUND_149_Sabre_Fetch = 0x149,           //"Fetch!"
+    SOUND_14A_Sabre_Chase = 0x14A,           //"Chase!"
+    SOUND_14B_Sabre_Hide_and_Seek = 0x14B,   //"Hide and Seek!"
+    SOUND_14C_Sabre_Tag = 0x14C,             //"Tag!"
+    SOUND_14D_Sabre_Tug_of_War = 0x14D,      //"Tug of War!"
+    SOUND_14E_Sabre_Rodeo = 0x14E,           //"Rodeo!"
+
+    SOUND_153_SharpClaw_Here_Fishy = 0x153, //"Heeere fishy! *laughs*"
+    SOUND_154_SharpClaw_Here_Fishy_Fishy = 0x154,   //"Heeere fishy-fishy! *laughs*"
+    SOUND_155_Tricky_Hey_Look_at_This = 0x155,      //(Heard along the path to the SnowHorn geyser area in the One Hour Footage)
+    SOUND_156_Tricky_Wait_Theres_Something_Close_By = 0x156, //(Heard along the path to the SnowHorn geyser area in the One Hour Footage)
     SOUND_157_Bird_Call_Warbling = 0x157, //NWsfx
     SOUND_158_Bird_Call_Whistle_Descending = 0x158, //NWsfx
-
+    SOUND_159_DFPT_Kyte_SpellStone_Holder = 0x159, //"Krystal! It's the SpellStone Holder!"
     SOUND_15A_Bird_Call_Whistle_Ascending = 0x15A, //NWsfx
     SOUND_15B_Bird_Call_Squawk = 0x15B, //NWsfx
 
+    SOUND_160_Toy_Squeak = 0x160, //Unused?
     SOUND_161_Toy_Squeak = 0x161,
+    
+    SOUND_163_Toy_Double_Squeak = 0x163, //Unused?
 
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
     SOUND_175_Machinery_Move_B = 0x175, //SB_ShipGun
@@ -218,10 +273,13 @@ enum SoundID {
     SOUND_17A_Galleon_Roar = 0x17A,
     SOUND_17B_Galleon_Rumble_Loop = 0x17B,
 
-    SOUND_Sabre_Freezing_A = 0x183,     //"I'm freezing!"
-    SOUND_Sabre_Exit_Icy_Water = 0x184, //"That's much better!"
+    SOUND_183_Sabre_Freezing_A = 0x183,     //"I'm freezing!"
+    SOUND_184_Sabre_Exit_Icy_Water = 0x184, //"That's much better!"
 
-    SOUND_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
+    SOUND_193_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
+    SOUND_194_Metal_Clunk = 0x194,
+
+    SOUND_197_Cartoon_Fling = 0x197,
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
     
@@ -233,6 +291,8 @@ enum SoundID {
 
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
     SOUND_1D3 = 0x1D3,
+    SOUND_1D4_Metal_Ratcheting_Loop = 0x1D4,
+    SOUND_1D5_Metal_Squeak = 0x1D5,
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
 
@@ -729,6 +789,8 @@ enum SoundID {
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
     SOUND_B38 = 0xB38,
+    
+    SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     SOUND_B47 = 0xB47,
 
@@ -761,8 +823,6 @@ enum SoundID {
     SOUND_BA8_Randorn_Calling_Krystal_1 = 0xBA8,
     SOUND_BA8_Randorn_Calling_Krystal_2 = 0xBA9,
     SOUND_BA8_Randorn_Calling_Krystal_3 = 0xBAA,
-
-    SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     NO_SOUND = -1
 };

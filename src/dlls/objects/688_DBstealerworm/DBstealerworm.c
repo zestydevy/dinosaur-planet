@@ -1006,7 +1006,7 @@ s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateR
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+        gDLL_6_AMSFX->vtbl->play(self, SOUND_57_Dinosaur_Death_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
 
         objData = baddie->objdata;
