@@ -307,12 +307,17 @@ void SPShop_buy_item(Object* self, s32 cost) {
 
     //Handle special cases (player energy/magic refills)
     switch (objData->itemIndex) {  
-        case 2:
-        case 3:
-        case 6:
-        case 7:
-        case 27:
-        case 45:
+        case SPItem_Red_Mushroom:
+        case SPItem_Red_Maggot:
+            break;
+        case 6: //Some unknown/scrapped/planned item in the Cold Storage room? Maybe Blue Mushrooms?
+        case 7: //Some unknown/scrapped/planned item in the Cold Storage room? Maybe Blue Grubs?
+            break;
+        case SPItem_Small_Player_Foodbag:
+            break;
+        case SPItem_Warlock_Replay_Disk:
+            break;
+        case SPItem_Ice_Mountain_Replay_Disk:
             break;
         case SPItem_Fruit:
             ((DLL_210_Player*)player->dll)->vtbl->add_health(player, 1);
