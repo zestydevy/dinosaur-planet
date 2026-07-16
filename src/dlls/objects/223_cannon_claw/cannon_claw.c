@@ -35,6 +35,7 @@ void cannon_claw_control(Object* self) {
 
     sidekick = get_sidekick();
     
+    //Do nothing when not being drawn
     if (self->unkDC) {
         return;
     }
