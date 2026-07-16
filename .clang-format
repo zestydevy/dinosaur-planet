@@ -1,0 +1,38 @@
+Language: C
+IndentWidth: 4
+UseTab: Never
+ColumnLimit: 0
+LineEnding: LF
+
+AlignAfterOpenBracket: false
+AllowAllArgumentsOnNextLine: true
+AllowAllParametersOfDeclarationOnNextLine: false
+AlignEscapedNewlines: LeftWithLastLine
+AllowShortBlocksOnASingleLine: Empty
+AllowShortFunctionsOnASingleLine: Empty
+AlignTrailingComments: Leave
+BracedInitializerIndentWidth: 4
+BreakBeforeBinaryOperators: NonAssignment
+BreakBeforeBraces: Attach
+BreakBeforeCloseBracketBracedList: true
+BreakBinaryOperations: OnePerLine
+ContinuationIndentWidth: 8
+IncludeBlocks: Preserve
+IncludeCategories:
+  - Regex: '^(<|")PR/' # libultra
+    Priority: 1
+  - Regex: '^(<|")(libc|libnaudio|libultra|mp3)/' # other libraries
+    Priority: 2
+  - Regex: '^(<|").*/' # subdirectories
+    Priority: 3
+  - Regex: 'prevent_bss_reordering' # hacks (always last)
+    Priority: 5
+  - Regex: '.*'        # everything else
+    Priority: 4
+IndentCaseBlocks: false
+IndentCaseLabels: false
+ReflowComments: false
+SortIncludes: true
+SpaceAfterCStyleCast: false
+SpaceInEmptyBraces: Block
+PointerAlignment: Left
