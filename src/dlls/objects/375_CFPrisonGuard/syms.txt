@@ -1,0 +1,14 @@
+.text = 0x0:
+dll_375_ctor = 0x0;
+dll_375_dtor = 0xC;
+dll_375_setup = 0x18;
+dll_375_control = 0xD0;
+dll_375_update = 0x274;
+dll_375_print = 0x2D0;
+dll_375_free = 0x42C;
+dll_375_get_model_flags = 0x494;
+dll_375_get_data_size = 0x4A4;
+dll_375_func_4B8 = 0x4B8;
+
+.rodata = 0xA80:
+str_0 = 0x0; // absolute:0xA80
