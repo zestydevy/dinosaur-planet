@@ -2,10 +2,10 @@
 #include "PR/os.h"
 #include "libnaudio/n_libaudio.h"
 #include "libnaudio/n_unkfuncs.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -50,11 +50,11 @@ OSMesg audDMAMessageBuf[NUM_DMA_MESSAGES];
 u32 D_800AB960;
 /* -------- .bss end 800ab970 -------- */
 
-// @bug: This file uses the wrong signature for mpeg_init
+// @bug: This file uses the wrong signature for mpegInit
 #ifdef AVOID_UB
 #include "sys/mpeg.h" 
 #else
-extern void mpeg_init(void);
+extern void mpegInit(void);
 #endif
 
 void __amMain(void *arg);
@@ -63,8 +63,8 @@ void __amHandleDoneMsg(void);
 void __clearAudioDMA(void);
 ALDMAproc __amDmaNew(AMDMAState **state);
 
-// Official name: amCreateAudioMgr ?
-void init_audio(OSSched* sched, OSPri threadPriority) {
+// Official name: amCreateAudioMgr
+void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     ALSynConfig c;
     f32 fsize;
     s32 frameSize;
@@ -76,9 +76,9 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     audioTab = NULL;
     
 #ifdef AVOID_UB
-    mpeg_init(NULL);
+    mpegInit(NULL);
 #else
-    mpeg_init();
+    mpegInit();
 #endif
     
     c.maxVVoices = c.maxPVoices = 72;
@@ -88,22 +88,22 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     c.dmaproc = &__amDmaNew;
     c.heap = NULL;
     
-    queue_alloc_load_file((void**)&audioTab, AUDIO_TAB);
+    assetRomLoad((void**)&audioTab, AUDIO_TAB);
     
     offset = audioTab[24];
     size = audioTab[25] - offset;
-    queue_load_file_region_to_ptr((void** ) &D_800AB960, AUDIO_BIN, offset, size);
+    assetRomLoadSection((void** ) &D_800AB960, AUDIO_BIN, offset, size);
     
     offset = audioTab[D_800AB960 + 3];
     size = audioTab[D_800AB960 + 4] - offset;
     
     c.fxTypes[0] = AL_FX_CUSTOM;
     c.params[0] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[0], AUDIO_BIN, offset, size);
+    assetRomLoadSection((void**)c.params[0], AUDIO_BIN, offset, size);
     
     c.fxTypes[1] = AL_FX_CUSTOM;
     c.params[1] = mmAlloc(size, ALLOC_TAG_AUDIO_COL, NULL);
-    queue_load_file_region_to_ptr((void**)c.params[1], AUDIO_BIN, offset, size);
+    assetRomLoadSection((void**)c.params[1], AUDIO_BIN, offset, size);
     
     n_alInit(&__am_g, &c);
     
@@ -150,9 +150,9 @@ void init_audio(OSSched* sched, OSPri threadPriority) {
     osCreateThread(&gAudioThread, 4, __amMain, NULL, 
         &gAudioThreadStack[STACKSIZE(AUDIO_THREAD_STACK_SIZE)], threadPriority);
     
-    speaker_set_mode(4);
-    speaker_func_80063bb4(0, 4);
-    speaker_func_80063bb4(1, 4);
+    speakerSetMode(4);
+    speakerFunc80063bb4(0, 4);
+    speakerFunc80063bb4(1, 4);
 }
 
 void __amMain(void *arg) {
@@ -186,14 +186,14 @@ void __amMain(void *arg) {
 }
 
 // Official Name: amGo
-void start_audio_thread(void) {
+void amGo(void) {
     if (alSynFlag) {
         osStartThread(&gAudioThread);
     }
 }
 
-// Official Name: amGoStop
-void stop_audio_thread(void) {
+// Official Name: amStop
+void amStop(void) {
     osStopThread(&gAudioThread);
 }
 
@@ -236,7 +236,7 @@ void __amHandleFrameMsg(void) {
     gAudioTask.list.t.type = 2;
     gAudioTask.list.t.flags = 2;
     gAudioTask.list.t.ucode_boot = (u64* ) rspbootTextStart;
-    gAudioTask.list.t.ucode_boot_size = (s32)gspF3DEX2_xbusTextStart - (s32)rspbootTextStart;
+    gAudioTask.list.t.ucode_boot_size = (s32)rspbootTextEnd - (s32)rspbootTextStart;
     gAudioTask.list.t.ucode = (u64* ) aspMainTextStart;
     gAudioTask.list.t.ucode_data = (u64* ) aspMainDataStart;
     gAudioTask.list.t.ucode_data_size = 0x800;
@@ -387,14 +387,14 @@ void __clearAudioDMA(void) {
     audFrameCt++;
 }
 
-void audio_func_800121DC(void) {
+void am_func_800121DC(void) {
     gDLL_5_AMSEQ2->vtbl->tick();
-    gDLL_6_AMSFX->vtbl->func_338();
+    dll_amSfx->Func338();
 }
 
-void audio_func_80012224(s32 a0) { }
+void am_func_80012224(s32 a0) { }
 
-void func_80012230(u8 a0) {
+void am_func_80012230(u8 a0) {
     u8 i;
     
     if (a0 == D_8008C8D4) {
@@ -419,11 +419,11 @@ void func_80012230(u8 a0) {
     }
 }
 
-u8 audio_func_80012348(void) {
+u8 am_func_80012348(void) {
     return D_8008C8D4;
 }
 
-void func_80012358(void) {
+void am_func_80012358(void) {
     alBnkfNew(NULL,NULL);
     alSeqFileNew(NULL,NULL);
     n_alCSPDelete(NULL);

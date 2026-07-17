@@ -26,18 +26,18 @@ void DFbarrelcreator_control(Object* self) {
     objSetup = (DFBarrelCreator_Setup*)self->setup;
 
     //Don't create a barrel if the specified gamebit is set
-    if ((objSetup->gamebitStop != NO_GAMEBIT) && main_get_bits(objSetup->gamebitStop)) {
+    if ((objSetup->gamebitStop != NO_GAMEBIT) && mainGetBits(objSetup->gamebitStop)) {
         return;
     }
 
     //Don't create a barrel if there's already one nearby
     distance = objSetup->searchDistance * 4;
-    if (obj_get_nearest_type_to(OBJTYPE_Barrel, self, &distance)) {
+    if (objGetNearestTypeTo(OBJTYPE_Barrel, self, &distance)) {
         return;
     }
 
     //Create a barrel
-    barrel = (DFBarrel_Setup*)obj_alloc_setup(sizeof(DFBarrel_Setup), OBJ_DFbarrel);
+    barrel = (DFBarrel_Setup*)objAllocSetup(sizeof(DFBarrel_Setup), OBJ_DFbarrel);
     barrel->base.loadDistance = 100;
     barrel->base.fadeDistance = 80;
     barrel->base.loadFlags = 4;
@@ -45,7 +45,7 @@ void DFbarrelcreator_control(Object* self) {
     barrel->base.x = self->srt.transl.x;
     barrel->base.y = self->srt.transl.y - 30.0f;
     barrel->base.z = self->srt.transl.z;
-    obj_create((ObjSetup*)barrel, 5, self->mapID, -1, NULL);
+    objSetupObject((ObjSetup*)barrel, 5, self->mapID, -1, NULL);
 }
 
 // offset: 0x140 | func: 2 | export: 2
@@ -54,7 +54,7 @@ void DFbarrelcreator_update(Object *self) { }
 // offset: 0x14C | func: 3 | export: 3
 void DFbarrelcreator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -77,12 +77,12 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
     objdata->choiceWasCorrect = NO_CHOICE_YET;
     objdata->spiritCup = 0;
     self->animCallback = ECSHshrine_anim_callback;
-    obj_init_mesg_queue(self, 4);
-    main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-    main_set_bits(BIT_143, 0);
-    main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
-    main_set_bits(BIT_Test_of_Fear_Particles, 0);
+    objInitMesgQueue(self, 4);
+    mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+    mainSetBits(BIT_143, 0);
+    mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_Test_of_Fear_Particles, 0);
     objdata->musWhispersVol = WHISPERS_VOL_INIT;
     objdata->musCorridorVol = CORRIDOR_VOL_INIT;
     objdata->musicPlayTimer = 200;
@@ -92,18 +92,18 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
     objdata->musicStarted = FALSE;
 
     //Create glowing circle around test's startpoint
-    modGfxDLL = dll_load_deferred(DLL_ID_122, 1);
+    modGfxDLL = dllLoad(DLL_ID_122, 1);
     objdata->modGfxCircle = modGfxDLL->vtbl->func0(self, 2, NULL, 0x402, -1, NULL);
-    dll_unload(modGfxDLL);
+    dllFree(modGfxDLL);
 
     dShrine = self;
-    obj_add_object_type(self, OBJTYPE_13);
+    objAddObjectType(self, OBJTYPE_13);
 }
 
 // offset: 0x208 | func: 1 | export: 1
 void ECSHshrine_control(Object* self) {
     ECSHshrine_Data* objdata = self->data;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     f32 dz;
     f32 tempCupZ;
     f32 tempCupX;
@@ -117,7 +117,7 @@ void ECSHshrine_control(Object* self) {
 
     objectDistance = 1000.0f;
     ECSHshrine_handle_messages(self);
-    main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+    mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
     //Update music volume (whispers)
     if (objdata->musWhipersVolSpeed != 0) {
@@ -159,7 +159,7 @@ void ECSHshrine_control(Object* self) {
     }
 
     //Crossfade music volumes as player approaches door
-    door = obj_get_nearest_type_to(OBJTYPE_Door, player, &objectDistance);
+    door = objGetNearestTypeTo(OBJTYPE_Door, player, &objectDistance);
     if ((door != NULL) && (objectDistance < 300.0f) && (objectDistance > 100.0f)) {
         dz = door->srt.transl.z - player->srt.transl.z;
 
@@ -192,20 +192,20 @@ void ECSHshrine_control(Object* self) {
     //STATE MACHINE
     switch (objdata->state) {
     case ECShrine_STATE_Waiting:
-        if (vec3_distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
+        if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
             objdata->state = ECShrine_STATE_Test_Start;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 0);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
-            modGfxDLL = dll_load_deferred(DLL_ID_147, 1);
+            modGfxDLL = dllLoad(DLL_ID_147, 1);
             modGfxDLL->vtbl->func0(self, 2, NULL, 1, -1, NULL);
-            dll_unload(modGfxDLL);
+            dllFree(modGfxDLL);
 
-            modGfxDLL = dll_load_deferred(DLL_ID_148, 1);
+            modGfxDLL = dllLoad(DLL_ID_148, 1);
             modGfxDLL->vtbl->func0(self, 0, NULL, 1, -1, NULL);
-            dll_unload(modGfxDLL);
+            dllFree(modGfxDLL);
 
-            main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_14_Modgfx->vtbl->func7(&objdata->modGfxCircle);
         }
         break;
@@ -215,7 +215,7 @@ void ECSHshrine_control(Object* self) {
             objdata->state = ECShrine_STATE_Cup_Game_Start;
             objdata->musicPlayTimer = 200;
             objdata->substate = Cup_STATE_Rise_Up;
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->delayTimer = 0;
         }
         break;
@@ -225,7 +225,7 @@ void ECSHshrine_control(Object* self) {
         objdata->substate = Cup_STATE_Round_Start;
         objdata->delayTimer = 40;
         objdata->shuffles = 16;
-        objdata->spiritCup = rand_next(0, 5);
+        objdata->spiritCup = mathRnd(0, 5);
         gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
         break;
     case ECShrine_STATE_Cups_Round_1:
@@ -265,11 +265,11 @@ void ECSHshrine_control(Object* self) {
 
                     //Pick one of 8 different ways of shuffling cups (some options only used in later rounds)
                     if (objdata->state == ECShrine_STATE_Cups_Round_1) {
-                        i = rand_next(0, 1);
+                        i = mathRnd(0, 1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
-                        i = rand_next(0, 5);
+                        i = mathRnd(0, 5);
                     } else {
-                        i = rand_next(0, 7);
+                        i = mathRnd(0, 7);
                     }
 
                     //Perform the chosen shuffle
@@ -360,29 +360,29 @@ void ECSHshrine_control(Object* self) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
                     objdata->musicPlayTimer = 10;
                     objdata->substate = Cup_STATE_Sink_Down;
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                 } else if (objdata->choiceWasCorrect == TRUE) {
                     if (objdata->state == ECShrine_STATE_Cups_Round_1) {
                         //Go to round 2
-                        objdata->spiritCup = rand_next(0, 5);
+                        objdata->spiritCup = mathRnd(0, 5);
                         objdata->state = ECShrine_STATE_Cups_Round_2;
                         objdata->substate = Cup_STATE_Round_End;
                         objdata->musicPlayTimer = 150;
                         objdata->delayTimer = 12;
                         objdata->shuffles = 10;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                     } else if (objdata->state == ECShrine_STATE_Cups_Round_2) {
                         //Go to round 3
-                        objdata->spiritCup = rand_next(0, 5);
+                        objdata->spiritCup = mathRnd(0, 5);
                         objdata->state = ECShrine_STATE_Cups_Round_3;
                         objdata->substate = Cup_STATE_Round_End;
                         objdata->musicPlayTimer = 150;
                         objdata->delayTimer = 12;
                         objdata->shuffles = 16;
                         objdata->choiceWasCorrect = NO_CHOICE_YET;
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
                     } else {
                         //Test won!
@@ -390,8 +390,8 @@ void ECSHshrine_control(Object* self) {
                         objdata->state = ECShrine_STATE_Test_Successful;
                         objdata->choiceWasCorrect = 0;
                         objdata->substate = Cup_STATE_Sink_Down;
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 } else {
                     //Automatically win if the player takes too long choosing (@bug? Possibly supposed to fail instead)
@@ -401,8 +401,8 @@ void ECSHshrine_control(Object* self) {
                         objdata->state = ECShrine_STATE_Test_Successful;
                         objdata->choiceWasCorrect = FALSE;
                         objdata->substate = Cup_STATE_Sink_Down;
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
-                        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_344_Chime, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(NULL, SOUND_33E_Reverse_Magic_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
                 break;
@@ -415,10 +415,10 @@ void ECSHshrine_control(Object* self) {
             objdata->musCorridorVol = 1;
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->musCorridorVol, 0);
             objdata->musCorridorVolSpeed = 1;
-            main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+            mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             objdata->state = ECShrine_STATE_Warp_Away;
         } else {
-            main_set_bits(BIT_DB_Entered_Shrine_1, 0);
+            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
             gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->musCorridorVol, 0);
             objdata->musCorridorVolSpeed = 1;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
@@ -426,17 +426,17 @@ void ECSHshrine_control(Object* self) {
         }
         break;
     case ECShrine_STATE_Grant_Spirit:
-        main_set_bits(BIT_143, 0);
+        mainSetBits(BIT_143, 0);
         objdata->state = ECShrine_STATE_Warp_Away;
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
         gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 5);
         break;
     case ECShrine_STATE_Warp_Away:
-        if (main_get_bits(BIT_Shrine_Do_Exit_Warp) == 0) {
-            main_set_bits(BIT_Shrine_Do_Exit_Warp, 1);
+        if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
+            mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
         }
-        main_set_bits(BIT_DB_Entered_Shrine_2, 0);
-        main_set_bits(BIT_DB_Entered_Shrine_3, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 0);
+        mainSetBits(BIT_DB_Entered_Shrine_3, 0);
         objdata->state = ECShrine_STATE_Finished;
         break;
     case ECShrine_STATE_Test_Failure:
@@ -451,13 +451,13 @@ void ECSHshrine_control(Object* self) {
         objdata->seqValue = 0;
         objdata->musicPlayTimer = 400;
         
-        main_set_bits(BIT_DB_Entered_Shrine_3, 1);
-        main_set_bits(BIT_DB_Entered_Shrine_1, 1);
-        main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_3, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_1, 1);
+        mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
-        modGfxDLL = dll_load_deferred(DLL_ID_122, 1);
+        modGfxDLL = dllLoad(DLL_ID_122, 1);
         objdata->modGfxCircle = modGfxDLL->vtbl->func0(self, 2, NULL, 0x402, -1, NULL);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         break;
     case ECShrine_STATE_Finished:
         break;
@@ -470,13 +470,13 @@ void ECSHshrine_update(Object *self) { }
 // offset: 0x132C | func: 3 | export: 3
 void ECSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1380 | func: 4 | export: 4
 void ECSHshrine_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_13);
+    objFreeObjectType(self, OBJTYPE_13);
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
@@ -599,30 +599,30 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
                 objdata->seqValue = 1;
                 break;
             case 5:
-                main_set_bits(BIT_143, 0);
+                mainSetBits(BIT_143, 0);
                 objdata->seqValue = 2;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 6:
                 objdata->state = ECShrine_STATE_Grant_Spirit;
                 objdata->seqValue = 3;
-                main_set_bits(BIT_DB_Entered_Shrine_3, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
-                main_set_bits(BIT_143, 1);
+                mainSetBits(BIT_143, 1);
                 break;
             case 8:
-                main_set_bits(BIT_143, 0);
+                mainSetBits(BIT_143, 0);
                 objdata->musCorridorVolSpeed = -3;
                 break;
             case 10:
-                main_set_bits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
+                mainSetBits(BIT_DB_Triggered_In_Shrine_Spirit_Cutscene, 1);
                 if (dTexture == NULL) {
-                    dTexture = block_texanim_get_tex(1);
+                    dTexture = blockTexanimGetTex(1);
                 }
                 break;
             case 9:
-                main_set_bits(BIT_DB_Entered_Shrine_2, 1);
+                mainSetBits(BIT_DB_Entered_Shrine_2, 1);
                 break;
             case 11:
                 objdata->musCorridorVol = 100;
@@ -647,7 +647,7 @@ static void ECSHshrine_handle_messages(Object *self) {
 
     objdata = self->data;
     mesgArg = NULL;
-    while (obj_recv_mesg(self, &mesgID, &sender, &mesgArg) != 0) {
+    while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x30005:
             objdata->musWhipersVolSpeed = -3;

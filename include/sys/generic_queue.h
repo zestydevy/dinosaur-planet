@@ -13,18 +13,18 @@ typedef struct {
     /*0C*/ void *data;
 } GenericQueue;
 
-GenericQueue *generic_queue_init(GenericQueue *queue, void *data, s32 capacity, s32 elementSize);
-GenericQueue *generic_queue_new(s32 capacity, s32 elementSize);
-void generic_queue_free(GenericQueue *queue);
+GenericQueue *genericQueueInit(GenericQueue *queue, void *data, s32 capacity, s32 elementSize);
+GenericQueue *genericQueueNew(s32 capacity, s32 elementSize);
+void genericQueueFree(GenericQueue *queue);
 /**
  * Enqueues a copy of the element.
  */
-void generic_queue_enqueue(GenericQueue *queue, void *element);
+void genericQueueEnqueue(GenericQueue *queue, void *element);
 /**
  * Dequeues a copy of the next element in the queue.
  */
-void generic_queue_dequeue(GenericQueue *queue, void *outElement);
-s32 generic_queue_is_full(GenericQueue *queue);
-s32 generic_queue_is_empty(GenericQueue *queue);
+void genericQueueDequeue(GenericQueue *queue, void *outElement);
+s32 genericQueueIsFull(GenericQueue *queue);
+s32 genericQueueIsEmpty(GenericQueue *queue);
 
 #endif //_SYS_GENERIC_QUEUE_H

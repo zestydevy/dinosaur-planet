@@ -106,8 +106,8 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_Galleon_Data *objdata;
 
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_Baddie);
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objAddObjectType(self, OBJTYPE_Baddie);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = SB_Galleon_anim_callback;
     objdata->x2 = self->srt.transl.x;
     objdata->y2 = self->srt.transl.y;
@@ -121,8 +121,8 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->srt.yaw = M_90_DEGREES;
     self->srt.pitch = 0;
     self->srt.roll = 0;
-    _data_0.tex1 = tex_load_deferred(365);
-    _data_0.tex2 = tex_load_deferred(137);
+    _data_0.tex1 = texLoadTexture(365);
+    _data_0.tex2 = texLoadTexture(137);
     if (0) { }
     objdata->soundHandle2 = 0;
     objdata->unk8E = 100;
@@ -141,7 +141,7 @@ void SB_Galleon_control(Object *self) {
     SB_Galleon_Data *objdata = self->data;
 
     self->mapID = objdata->mapID;
-    if (!main_get_bits(BIT_SB_Battle_Started)) {
+    if (!mainGetBits(BIT_SB_Battle_Started)) {
         if (!gDLL_29_Gplay->vtbl->get_obj_group_status(self->mobileMapID, 1)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, 1, 1);
         }
@@ -187,7 +187,7 @@ void SB_Galleon_update(Object *self) { }
 // offset: 0x438 | func: 3 | export: 3
 void SB_Galleon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -197,21 +197,21 @@ void SB_Galleon_free(Object *self, s32 a1) {
 
     objdata = self->data;
     if (_data_0.tex1) {
-        tex_free(_data_0.tex1);
+        texFreeTexture(_data_0.tex1);
         _data_0.tex1 = NULL;
     }
     if (_data_0.tex2) {
-        tex_free(_data_0.tex2);
+        texFreeTexture(_data_0.tex2);
         _data_0.tex2 = NULL;
     }
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
     }
     if (objdata->soundHandle2) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
+        dll_amSfx->Stop(objdata->soundHandle2);
     }
     if (_data_0.tex1) { }
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if ((objdata->unk8A != 0) && (a1 == 0)) {
         objdata->unk8A = 0;
     }
@@ -234,7 +234,7 @@ s32 SB_Galleon_func_5C8(Object *self) {
     objdata = self->data;
     if (objdata->unk29 != 1) {
         if (objdata->unk29 >= 2) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_10A_Galleon_Roar, 97, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_10A_Galleon_Roar, 97, NULL, NULL, 0, NULL);
         }
         objdata->unk2B++;
         return 1;
@@ -326,8 +326,8 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 objdata->unk80 = 1;
             break;
         case 3:
-            objdata->dll = tempDll = dll_load_deferred(DLL_ID_139, 1);
-            objects = get_world_objects(&objIndex, &objCount);
+            objdata->dll = tempDll = dllLoad(DLL_ID_139, 1);
+            objects = objGetObjects(&objIndex, &objCount);
             for (i = objIndex; i < objCount; i++) {
                 if (objects[i]->id == OBJ_SB_ShipHead) {
                     objdata->shiphead = objects[i];
@@ -340,7 +340,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             objdata->unk82 = 0;
             break;
         case 4:
-            dll_unload(objdata->dll);
+            dllFree(objdata->dll);
             objdata->dll = NULL;
             break;
         case 5:
@@ -351,13 +351,13 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
             break;
         case 6:
             if (objdata->soundHandle == 0)
-                objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objdata->soundHandle = dll_amSfx->Play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             break;
             // @fake
             if ((s32)&self) {}
         case 7:
             if (objdata->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+                dll_amSfx->Stop(objdata->soundHandle);
                 objdata->soundHandle = 0;
             }
             break;
@@ -415,15 +415,15 @@ void SB_Galleon_func_B88(Object *self) {
     self->unkDC = 7;
     objdata = self->data;
 
-    if (main_get_bits(BIT_SB_Scales_Intro) && (!main_get_bits(BIT_SB_Found_Kyte))) {
+    if (mainGetBits(BIT_SB_Scales_Intro) && (!mainGetBits(BIT_SB_Found_Kyte))) {
         _data_0.fadeoutStarted = TRUE;
-        main_set_bits(BIT_SB_Found_Kyte, 1);
+        mainSetBits(BIT_SB_Found_Kyte, 1);
         gDLL_28_ScreenFade->vtbl->fade(10, SCREEN_FADE_BLACK);
     }
 
     if (objdata->unk8E != 0) {
-        player = get_player();
-        func_80000860(player, get_player(), 148, 0);
+        player = objGetPlayer();
+        func_80000860(player, objGetPlayer(), 148, 0);
         objdata->unk8E = 0;
     }
 
@@ -436,13 +436,13 @@ void SB_Galleon_func_B88(Object *self) {
     
     gDLL_12_Minic->vtbl->func9(-25.0f, 0.0f);
     gDLL_12_Minic->vtbl->func7(0);
-    roll = fsin16_precise(objdata->unk74);
+    roll = mathSinfInterp(objdata->unk74);
     if (objdata->unk8B == 0) {
         if (roll < -0.9f) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_27A_Wood_Creak_A, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         } else if (roll > 0.9f) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_27B_Wood_Creak_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_27B_Wood_Creak_B, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk8B = 1;
         }
     } else if ((roll > -0.1f) && (roll < 0.1f)) {
@@ -533,7 +533,7 @@ void SB_Galleon_func_EAC(Object *self) {
         objdata->cloudrunner = NULL;
     }
     if (objdata->cloudrunner == NULL) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i1 = objIndex; i1 < objCount; i1++) {
             if (objects[i1]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i1];
@@ -543,11 +543,11 @@ void SB_Galleon_func_EAC(Object *self) {
     }
     if (objdata->unk29 >= 2) {
         if (objdata->soundHandle == 0) {
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = dll_amSfx->Play(self, SOUND_17B_Galleon_Rumble_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+            dll_amSfx->Stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
@@ -571,15 +571,15 @@ void SB_Galleon_func_EAC(Object *self) {
         case 0:                                     /* switch 1 */
             sp84 = 120.0f;
             if (objdata->soundHandle2 != 0) {
-                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
+                dll_amSfx->Stop(objdata->soundHandle2);
                 objdata->soundHandle2 = 0;
             }
             gDLL_2_Camera->vtbl->func22(&sp84, 0);
             self->unkDC = 1;
             dx4 = objdata->x3 - 1600.0f;
 
-            dz4 = (fcos16_precise(objdata->unk20) * 150.0f) + objdata->z3;
-            temp_ft1 = fsin16_precise(objdata->unk20) * 60.0f;
+            dz4 = (mathCosfInterp(objdata->unk20) * 150.0f) + objdata->z3;
+            temp_ft1 = mathSinfInterp(objdata->unk20) * 60.0f;
 
             objdata->unk20 = (s16) (objdata->unk20 + (gUpdateRate * 0xB6));
             var_fa1 = (dx4 - self->srt.transl.x) * 0.03125f;
@@ -649,7 +649,7 @@ void SB_Galleon_func_EAC(Object *self) {
             spD8 = 637.0f;
             spD4 = 0.01f;
             spD0 = 10.0f;
-            if (joy_get_pressed(0) & U_JPAD) {
+            if (joyGetPressed(0) & U_JPAD) {
                 objdata->unk2B++;
             }
             if (objdata->unk28 == 0) {
@@ -668,7 +668,7 @@ void SB_Galleon_func_EAC(Object *self) {
                         objdata->hintCounter--;
                         if (objdata->hintCounter <= 0) {
                             gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_007_SB_CloudRunner_battle_tips_1);
-                            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objdata->hintCounter = HINT_COUNTER_MAX;
                         }
                     }
@@ -688,7 +688,7 @@ void SB_Galleon_func_EAC(Object *self) {
                         objdata->hintCounter--;
                         if (objdata->hintCounter <= 0) {
                             gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_007_SB_CloudRunner_battle_tips_1);
-                            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(NULL, SOUND_25F_SB_CloudRunner_battle_tips_1, MAX_VOLUME, NULL, NULL, 0, NULL);
                             objdata->hintCounter = HINT_COUNTER_MAX;
                         }
                     }
@@ -709,12 +709,12 @@ void SB_Galleon_func_EAC(Object *self) {
                 dy4 = cloudrunner->srt.transl.y + 260.0f;
                 if ((objdata->hintCounter <= 0) && ((temp_v0_10 = objdata->unk86, (temp_v0_10 == 0)) || (temp_v0_10 == 5))) {
                     gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_065_SB_CloudRunner_battle_tips_2);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_260_SB_CloudRunner_battle_tips_2, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_260_SB_CloudRunner_battle_tips_2, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->hintCounter = HINT_COUNTER_MAX;
                 }
                 if (objdata->soundHandle2 == 0) {
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_140_Galleon_Propeller_Loop, 80, &objdata->soundHandle2, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_277_Galleon_Creaking, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_140_Galleon_Propeller_Loop, 80, &objdata->soundHandle2, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_277_Galleon_Creaking, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
                 break;
             case 1:
@@ -816,7 +816,7 @@ void SB_Galleon_func_EAC(Object *self) {
                             objdata->unk84 = 4;
                         } else {
                             // spA8 = objdata;
-                            objdata->unk84 = (s8) (rand_next(/*temp_fa0_4, temp_fa1_6,*/ 1, 2) * 2);
+                            objdata->unk84 = (s8) (mathRnd(/*temp_fa0_4, temp_fa1_6,*/ 1, 2) * 2);
                         }
                     }
                 }
@@ -886,7 +886,7 @@ void SB_Galleon_func_EAC(Object *self) {
             // temp_a0_3 = objdata->soundHandle2;
             if (objdata->soundHandle2 != 0) {
                 // spA8 = objdata;
-                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
+                dll_amSfx->Stop(objdata->soundHandle2);
                 objdata->soundHandle2 = 0;
             }
             // spA8 = objdata;
@@ -935,7 +935,7 @@ void SB_Galleon_func_EAC(Object *self) {
                 if ((objdata->hintCounter <= 0) && (objdata->unk2B == 6)) {
                     // spA8 = objdata;
                     gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_069_SB_CloudRunner_battle_tips_3);
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_261_SB_CloudRunner_battle_tips_3, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_261_SB_CloudRunner_battle_tips_3, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->hintCounter = HINT_COUNTER_MAX;
                 }
                 break;
@@ -985,9 +985,9 @@ void SB_Galleon_func_EAC(Object *self) {
                 objdata->unk29 = (s8) spB0;
             }
             // spA8 = objdata;
-            temp_v1_2 = arctan2_f(spF4, spEC) + M_180_DEGREES;
+            temp_v1_2 = mathAtan2f(spF4, spEC) + M_180_DEGREES;
             // spB8 = temp_v1_2;
-            temp_v0_14 = arctan2_f(spF0, spE8);
+            temp_v0_14 = mathAtan2f(spF0, spE8);
             var_a0_3 = temp_v1_2 - (self->srt.yaw & 0xFFFF);
             if (var_a0_3 > M_180_DEGREES) {
                 var_a0_3 += -0xFFFF;
@@ -1036,8 +1036,8 @@ void SB_Galleon_func_EAC(Object *self) {
             transform.pitch = self->srt.pitch;
             // spA8 = objdata;
             transform.roll = self->srt.roll;
-            matrix_from_srt(&mtx, &transform);
-            vec3_transform(&mtx, 0.0f, 0.0f, -objdata->unk1C * gUpdateRateF, &objdata->x1, &objdata->y1, &objdata->z1);
+            mathYprXyzMtx(&mtx, &transform);
+            mathMtxXFMF(&mtx, 0.0f, 0.0f, -objdata->unk1C * gUpdateRateF, &objdata->x1, &objdata->y1, &objdata->z1);
             // objdata = spA8;
             if (objdata->unk29 == 7) {
                 objdata->x2 = dx4;
@@ -1080,7 +1080,7 @@ void SB_Galleon_func_EAC(Object *self) {
                     self->srt.transl.z = setup->z;
                     if (objdata->soundHandle != 0) {
                         // spA8 = objdata;
-                        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+                        dll_amSfx->Stop(objdata->soundHandle);
                         objdata->soundHandle = 0;
                     }
                     gDLL_29_Gplay->vtbl->set_obj_group_status(SOME_MAP_ID, 3, 0);

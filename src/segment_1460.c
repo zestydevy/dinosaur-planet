@@ -75,7 +75,7 @@ s32 func_80000860(Object *calledBy, Object *target, u16 actionIndex, s32 arg3) {
     EnvFxAction *envFx;
 
     envFx = mmAlloc(sizeof(EnvFxAction), COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
-    queue_load_file_region_to_ptr ((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
+    assetRomLoadSection ((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
     if (envFx != NULL) {
         if ((envFx->unk5C < 3) || (envFx->unk5C == 4)) {
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);
@@ -96,7 +96,7 @@ s32 func_800009C8(Object *calledBy, Object *target, u16 actionIndex, s32 arg3) {
     EnvFxAction *envFx;
 
     envFx = mmAlloc(sizeof(EnvFxAction), COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
-    queue_load_file_region_to_ptr((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
+    assetRomLoadSection((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
     if (envFx != NULL) {
         if ((envFx->unk5C < 3) || (envFx->unk5C == 4)) {
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);

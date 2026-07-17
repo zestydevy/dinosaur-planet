@@ -216,7 +216,7 @@ static s32 CRSnowBike_sharpclaw_update_race_pathing(Object* self, CRSnowBike_Dat
 
     checkpointSetup = gDLL_4_Race->vtbl->func8(data->raceData.unk10, &sp30);
     if (checkpointSetup->unk20[1] == -1) {
-        objData->branchFlagCPU = rand_next(0, 1);
+        objData->branchFlagCPU = mathRnd(0, 1);
     }
     
     return gDLL_4_Race->vtbl->func5(&data->srtCurves, &data->raceData, arg2, 1, 0, objData->branchFlagCPU);
@@ -260,7 +260,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     CRSnowBike_update_collision_points(self, objData);
     CRSnowBike_init_motion_data(self, &objData->motion);
 
-    func_80023D30(self, 0, 0.0f, 0);
+    objAnimSet(self, 0, 0.0f, 0);
 
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -280,15 +280,15 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
     objData->srtCurves.transl.y = self->srt.transl.y;
     objData->srtCurves.transl.z = self->srt.transl.z;
     
-    obj_add_object_type(self, OBJTYPE_Vehicle);
+    objAddObjectType(self, OBJTYPE_Vehicle);
 
     //Load textures (not used by DLL itself, possibly just intended to cache the modgfx textures)
-    sTexVerticalWave = tex_load_deferred(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
-    sTexThrusterFlames = tex_load_deferred(TEXTABLE_89);    //(TEX0_253) thruster flames 
-    sTexDriftWaves = tex_load_deferred(TEXTABLE_3C);        //(TEX0_136) 3 horizontal waves, for drift effect
+    sTexVerticalWave = texLoadTexture(TEXTABLE_186);     //(TEX0_486) 1 vertical wave? 
+    sTexThrusterFlames = texLoadTexture(TEXTABLE_89);    //(TEX0_253) thruster flames 
+    sTexDriftWaves = texLoadTexture(TEXTABLE_3C);        //(TEX0_136) 3 horizontal waves, for drift effect
 
     //Hide the bike if a gamebit is set
-    if (main_get_bits(objSetup->gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         STUBBED_PRINTF(" FInished Is SEt for Some Reason \n");
         flagsValue = CRSnowBike_FLAG_1_Finished;
     } else {
@@ -332,12 +332,12 @@ void CRSnowBike_control(Object* self) {
         return;
     }
         
-    if (main_get_bits(objSetup->gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         objData->flags |= CRSnowBike_FLAG_1_Finished;
         return;
     }
     
-    player = get_player();
+    player = objGetPlayer();
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
@@ -371,20 +371,20 @@ void CRSnowBike_control(Object* self) {
             objData->mountingFrom = PLAYER_NOT_NEARBY;
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
-            if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || main_get_bits(objSetup->gamebitUnlocked)) {
+            if ((objSetup->gamebitUnlocked == NO_GAMEBIT) || mainGetBits(objSetup->gamebitUnlocked)) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
             }
             
             //Check if the player is near the bike, and which side of the bike they're on
-            if ((player != NULL) && (vec3_distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
+            if ((player != NULL) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 100.0f)) {
                 objData->mountingFrom = SIDE_LEFT;
 
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 1, 1);
                 
                 //Show LockIcon if the player is close to the left side of the bike
-                vec3_transform(&bikeMtx, dBikeMountSidePoints[0].x, dBikeMountSidePoints[0].y, dBikeMountSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                mathMtxXFMF(&bikeMtx, dBikeMountSidePoints[0].x, dBikeMountSidePoints[0].y, dBikeMountSidePoints[0].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                 dx = player->srt.transl.x - wsPoint.z;
                 dz = player->srt.transl.z - wsPoint.x;
                 if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -392,7 +392,7 @@ void CRSnowBike_control(Object* self) {
                     objData->mountingFrom = SIDE_RIGHT;
                 } else {
                     //Show LockIcon if the player is close to the right side of the bike
-                    vec3_transform(&bikeMtx, dBikeMountSidePoints[1].x, dBikeMountSidePoints[1].y, dBikeMountSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
+                    mathMtxXFMF(&bikeMtx, dBikeMountSidePoints[1].x, dBikeMountSidePoints[1].y, dBikeMountSidePoints[1].z, &wsPoint.z, &wsPoint.y, &wsPoint.x);
                     dx = player->srt.transl.x - wsPoint.z;
                     dz = player->srt.transl.z - wsPoint.x;
                     if ((SQ(dx) + SQ(dz)) < SQ(10)) {
@@ -406,17 +406,17 @@ void CRSnowBike_control(Object* self) {
         //Stop sound loops
         {
             if (objData->soundHandleJets) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                dll_amSfx->Stop(objData->soundHandleJets);
                 objData->soundHandleJets = 0;
             }
 
             if (objData->soundHandleHiss) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
 
             if (objData->soundHandleRumble) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                dll_amSfx->Stop(objData->soundHandleRumble);
                 objData->soundHandleRumble = 0;
             }
         }
@@ -424,12 +424,12 @@ void CRSnowBike_control(Object* self) {
         //Remove modGfx
         {
             if (objData->modGfxDLLFlames != NULL) {
-                dll_unload(objData->modGfxDLLFlames);
+                dllFree(objData->modGfxDLLFlames);
                 objData->modGfxDLLFlames = NULL;
             }
 
             if (objData->modGfxDLLWaves != NULL) {
-                dll_unload(objData->modGfxDLLWaves);
+                dllFree(objData->modGfxDLLWaves);
                 objData->modGfxDLLWaves = NULL;
             }
         }
@@ -444,7 +444,7 @@ void CRSnowBike_control(Object* self) {
             objData->raceData.unk1C = 0;
 
             //Check if the race has started
-            if (main_get_bits(objData->gamebitIDs->started)) {
+            if (mainGetBits(objData->gamebitIDs->started)) {
                 flagValue = CRSnowBike_FLAG_8_Race_Started;
             } else {
                 flagValue = CRSnowBike_FLAG_0_None;
@@ -459,7 +459,7 @@ void CRSnowBike_control(Object* self) {
                 }
                 gDLL_4_Race->vtbl->func9(&objData->raceData);
             }
-        } else if (main_get_bits(objData->gamebitIDs->ended)) {
+        } else if (mainGetBits(objData->gamebitIDs->ended)) {
             //Check if the race ended
             objData->flags &= ~CRSnowBike_FLAG_8_Race_Started;
         }
@@ -473,7 +473,7 @@ void CRSnowBike_control(Object* self) {
                 return;
             }
             
-            if (map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
+            if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) >= 0) {
                 if (objData->flags & CRSnowBike_FLAG_2_Driving_In_Void) {
                     sp5C = CRSnowBike_sharpclaw_update_race_pathing(self, objData, 2.8f * gUpdateRateF);
                     gDLL_4_Race->vtbl->func4(self, &objData->raceData);
@@ -481,7 +481,7 @@ void CRSnowBike_control(Object* self) {
                     
                     if (sp5C == 0) {
                         motion = &objData->motion;
-                        self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                        self->srt.yaw = mathAtan2f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
                         self->srt.transl.x = objData->srtCurves.transl.x;
                         self->srt.transl.y = objData->srtCurves.transl.y;
                         self->srt.transl.z = objData->srtCurves.transl.z;
@@ -509,7 +509,7 @@ void CRSnowBike_control(Object* self) {
                 gDLL_4_Race->vtbl->func4(self, &objData->raceData);
                 gDLL_4_Race->vtbl->func10(&objData->raceData);
                 if (sp5C == 0) {
-                    self->srt.yaw = arctan2_f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
+                    self->srt.yaw = mathAtan2f(self->srt.transl.x - objData->srtCurves.transl.x, self->srt.transl.z - objData->srtCurves.transl.z);
                     self->srt.transl.x = objData->srtCurves.transl.x;
                     self->srt.transl.y = objData->srtCurves.transl.y;
                     self->srt.transl.z = objData->srtCurves.transl.z;
@@ -554,8 +554,8 @@ void CRSnowBike_control(Object* self) {
                 diPrintf(" \tRAN OUT OF FUEL \t");
                 
                 //Play bump sound randomly while out of fuel
-                if (rand_next(0, 10) == 0) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
+                if (mathRnd(0, 10) == 0) {
+                    dll_amSfx->Play(self, SOUND_B38, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
 
                 //Max velocity dwindles
@@ -591,19 +591,19 @@ void CRSnowBike_control(Object* self) {
             );
         } else {
             if (objData->soundHandleEngine) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+                dll_amSfx->Stop(objData->soundHandleEngine);
                 objData->soundHandleEngine = 0;
             }
             if (objData->soundHandleJets) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+                dll_amSfx->Stop(objData->soundHandleJets);
                 objData->soundHandleJets = 0;
             }
             if (objData->soundHandleHiss) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
             if (objData->soundHandleRumble) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+                dll_amSfx->Stop(objData->soundHandleRumble);
                 objData->soundHandleRumble = 0;
             }
         }
@@ -656,8 +656,8 @@ void CRSnowBike_update(Object* self) {
         switch (objID){
         case OBJ_CRSnowClaw:
         case OBJ_CRSnowClaw2:
-            camera_enable_y_offset();
-            camera_set_shake_offset(1.0f);
+            camUseShake();
+            camSetShakeOffset(1.0f);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_551, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_552, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_554, NULL, 4, -1, NULL);
@@ -680,7 +680,7 @@ void CRSnowBike_update(Object* self) {
             sRotationTransform.yaw = -objData->yaw;
             sRotationTransform.pitch = -objData->pitch;
             sRotationTransform.roll = -objData->roll;
-            matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
+            mathRpyXyzMtx(&invRotMtx, &sRotationTransform);
 
             self->velocity.f[0] = (self->srt.transl.x - self->prevLocalPosition.x) * gUpdateRateInverseF;
             self->velocity.f[1] = (self->srt.transl.y - self->prevLocalPosition.y) * gUpdateRateInverseF;
@@ -691,7 +691,7 @@ void CRSnowBike_update(Object* self) {
             wsVelocity.y = self->velocity.f[1] * 0.93749994f;
             wsVelocity.z = self->velocity.f[2] * 0.93749994f;
             
-            vec3_transform(&invRotMtx, 
+            mathMtxXFMF(&invRotMtx, 
                 wsVelocity.f[0], wsVelocity.f[1], wsVelocity.f[2], 
                 &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
             );
@@ -699,7 +699,7 @@ void CRSnowBike_update(Object* self) {
         
         //Store the worldSpace coordinates of a point on the bike
         CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, FALSE, FALSE, FALSE);
-        vec3_transform(&bikeMtx, 
+        mathMtxXFMF(&bikeMtx, 
             0.0f, 0.0f, -10.0f, 
             &objData->wsFrontOfBike.x, &objData->wsFrontOfBike.y, &objData->wsFrontOfBike.z
         );
@@ -722,9 +722,9 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         if ((objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) == FALSE) {
             CRSnowBike_handle_partfx_and_impact_sounds(self, objData, gdl, mtxs, vtxs, pols);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        func_80031F6C(self, 0, 
+        objGetAttachPointWorldSpace(self, 0, 
             &objData->attachPointCoords.x, 
             &objData->attachPointCoords.y, 
             &objData->attachPointCoords.z, 
@@ -744,8 +744,8 @@ void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     }
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        func_80031F6C(self, 0, 
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objGetAttachPointWorldSpace(self, 0, 
             &objData->attachPointCoords.x,
             &objData->attachPointCoords.y,
             &objData->attachPointCoords.z, 
@@ -761,44 +761,44 @@ void CRSnowBike_free(Object* self, s32 onlySelf) {
     objData = self->data;
 
     if (objData->soundHandleEngine) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleEngine);
+        dll_amSfx->Stop(objData->soundHandleEngine);
         objData->soundHandleEngine = 0;
     }
 
     if (objData->soundHandleJets) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleJets);
+        dll_amSfx->Stop(objData->soundHandleJets);
         objData->soundHandleJets = 0;
     }
 
     if (objData->soundHandleHiss) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+        dll_amSfx->Stop(objData->soundHandleHiss);
         objData->soundHandleHiss = 0;
     }
 
     if (objData->soundHandleRumble) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandleRumble);
+        dll_amSfx->Stop(objData->soundHandleRumble);
         objData->soundHandleRumble = 0;
     }
 
     if (objData->modGfxDLLFlames != NULL) {
-        dll_unload(objData->modGfxDLLFlames);
+        dllFree(objData->modGfxDLLFlames);
     }
     objData->modGfxDLLFlames = NULL;
     
     if (objData->modGfxDLLWaves != NULL) {
-        dll_unload(objData->modGfxDLLWaves);
+        dllFree(objData->modGfxDLLWaves);
     }
     objData->modGfxDLLWaves = NULL;
     
-    obj_free_object_type(self, OBJTYPE_Vehicle);
+    objFreeObjectType(self, OBJTYPE_Vehicle);
     
     if (!(objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver)) {
         gDLL_1_cmdmenu->vtbl->energy_bar_free();
     }
     
-    tex_free(sTexVerticalWave);
-    tex_free(sTexThrusterFlames);
-    tex_free(sTexDriftWaves);
+    texFreeTexture(sTexVerticalWave);
+    texFreeTexture(sTexThrusterFlames);
+    texFreeTexture(sTexDriftWaves);
 }
 
 // offset: 0x18D8 | func: 6 | export: 5
@@ -823,7 +823,7 @@ u8 CRSnowBike_can_bike_be_mounted(Object* self, s32 arg1) {
         return 0;
     }
 
-    if ((objSetup->gamebitUnlocked != NO_GAMEBIT) && (main_get_bits(objSetup->gamebitUnlocked) == FALSE)) {
+    if ((objSetup->gamebitUnlocked != NO_GAMEBIT) && (mainGetBits(objSetup->gamebitUnlocked) == FALSE)) {
         return 0;
     }
 
@@ -858,7 +858,7 @@ s32 CRSnowBike_can_bike_be_dismounted(Object* self, s32 arg1) {
         return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
-    if ((joy_get_pressed(0) & B_BUTTON) == FALSE) {
+    if ((joyGetPressed(0) & B_BUTTON) == FALSE) {
         return PLAYER_NOT_ALLOWED_DISMOUNT;
     }
     
@@ -970,7 +970,7 @@ void CRSnowBike_sharpclaw_start_race(Object* self) {
         break;
     }
     
-    checkpointSetup = (checkpoint4_Setup*)map_find_obj_setup(checkpointUID, NULL, NULL, NULL, NULL);
+    checkpointSetup = (checkpoint4_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
     if (checkpointSetup == NULL) {
         return;
     }
@@ -1032,7 +1032,7 @@ void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* o
     }
 
     //Set particle colour (just set to white, but maybe once intended to use dColourRGBA?)
-    dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
+    dlSetPrimColor(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
     
     //Create different smoke particles based on bike's forward speed
     {
@@ -1072,18 +1072,18 @@ void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* o
 
     //Play impact sound effects while colliding (not debounced)
     if (objData->forwardSpeed < -1.2f) {
-        dColourRGBA[1] += rand_next(0, 155);
-        dColourRGBA[2] += rand_next(0, 155);
+        dColourRGBA[1] += mathRnd(0, 155);
+        dColourRGBA[2] += mathRnd(0, 155);
         volume = ((0.0f - objData->forwardSpeed) * 21.0f);
         if (objData->collisionFlags & 1) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->collisionFlags & 2) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         } else if (objData->collisionFlags & 4) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
-            gDLL_6_AMSFX->vtbl->set_pitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
+            dll_amSfx->Play(self, SOUND_292_Impact, volume, &sImpactSoundHandle, NULL, 0, NULL);
+            dll_amSfx->SetPitch(sImpactSoundHandle, (volume / 127.0f) + 0.5f);
         }
     }
     
@@ -1163,12 +1163,12 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
-    matrix_from_srt(&mtx, &sRotationTransform);
+    mathYprXyzMtx(&mtx, &sRotationTransform);
 
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
-    matrix_from_srt_reversed(&invMtx, &sRotationTransform);
+    mathRpyXyzMtx(&invMtx, &sRotationTransform);
     
     //Calculate pitch while airborne
     if ((objData->flags & CRSnowBike_FLAG_4_Grounded) == FALSE) {
@@ -1185,7 +1185,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
     }
     
     //Transform gravity vector into bike's objectSpace
-    vec3_transform(&invMtx, 
+    mathMtxXFMF(&invMtx, 
         0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
         &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]);
 
@@ -1326,10 +1326,10 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         }
     }
 
-    vec3_transform(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
+    mathMtxXFMF(&mtx, motion->velocity.x, motion->velocity.y, motion->velocity.z, 
                    &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]);
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
 
     /* Run terrain calculations 
        (the bike iterates its motion logic for each skipped frame plus the current one, 
@@ -1352,7 +1352,7 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         velocityReduced.f[2] = self->velocity.z * 0.93749994f;
 
         //Transform velocity into bike's local objectSpace
-        vec3_transform(&invMtx, 
+        mathMtxXFMF(&invMtx, 
             velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
             &motion->velocity.x, &motion->velocity.y, &motion->velocity.z
         );
@@ -1393,15 +1393,15 @@ void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
-        vec3_transform(&invMtxYaw, 
+        mathRpyXyzMtx(&invMtxYaw, &sRotationTransform);
+        mathMtxXFMF(&invMtxYaw, 
             vNormal.f[0], vNormal.f[1], vNormal.f[2], 
             &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
         );
         
         //Get the bike's goal pitch and roll, based on the surface normal
-        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
-        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+        anglePitch = M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[0]));
 
         //Blend towards goal pitch
         anglePitch -= (objData->pitch & 0xFFFF);
@@ -1468,15 +1468,15 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
     sRotationTransform.yaw = objData->yaw;
     sRotationTransform.pitch = objData->pitch;
     sRotationTransform.roll = objData->roll;
-    matrix_from_srt(&rotMtx, &sRotationTransform);
+    mathYprXyzMtx(&rotMtx, &sRotationTransform);
     
     sRotationTransform.yaw = -objData->yaw;
     sRotationTransform.pitch = -objData->pitch;
     sRotationTransform.roll = -objData->roll;
-    matrix_from_srt_reversed(&invRotMtx, &sRotationTransform);
+    mathRpyXyzMtx(&invRotMtx, &sRotationTransform);
     
     //Transform gravity vector into bike's objectSpace
-    vec3_transform(&invRotMtx, 
+    mathMtxXFMF(&invRotMtx, 
         0.0f, motion->gravity * motion->gravityFactor, 0.0f, 
         &osGravity.f[0], &osGravity.f[1], &osGravity.f[2]
     );
@@ -1534,12 +1534,12 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         }
     }
     
-    vec3_transform(&rotMtx, 
+    mathMtxXFMF(&rotMtx, 
         motion->velocity.f[0], motion->velocity.f[1], motion->velocity.f[2], 
         &self->velocity.f[0], &self->velocity.f[1], &self->velocity.f[2]
     );
     VECTOR_SCALE(self->velocity, 1.0666667f);
-    obj_move(self, self->velocity.x, self->velocity.y, self->velocity.z);
+    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
     /* Run terrain calculations 
        (the bike iterates its motion logic for each skipped frame plus the current one, 
@@ -1560,7 +1560,7 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         velocityReduced.f[0] = self->velocity.x * 0.93749994f;
         velocityReduced.f[1] = self->velocity.y * 0.93749994f;
         velocityReduced.f[2] = self->velocity.z * 0.93749994f;
-        vec3_transform(&invRotMtx, 
+        mathMtxXFMF(&invRotMtx, 
             velocityReduced.f[0], velocityReduced.f[1], velocityReduced.f[2], 
             &motion->velocity.f[0], &motion->velocity.f[1], &motion->velocity.f[2]
         );
@@ -1599,15 +1599,15 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
         sRotationTransform.yaw = -objData->yaw;
         sRotationTransform.pitch = 0;
         sRotationTransform.roll = 0;
-        matrix_from_srt_reversed(&invMtxYaw, &sRotationTransform);
-        vec3_transform(&invMtxYaw, 
+        mathRpyXyzMtx(&invMtxYaw, &sRotationTransform);
+        mathMtxXFMF(&invMtxYaw, 
             vNormal.f[0], vNormal.f[1], vNormal.f[2], 
             &vNormal.f[0], &vNormal.f[1], &vNormal.f[2]
         );
         
         //Get the bike's goal pitch and roll, based on the surface normal
-        anglePitch = M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[2]);
-        angleRoll = -(M_90_DEGREES - arctan2_f(vNormal.f[1], vNormal.f[0]));
+        anglePitch = M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[2]);
+        angleRoll = -(M_90_DEGREES - mathAtan2f(vNormal.f[1], vNormal.f[0]));
 
         //Blend towards goal pitch
         anglePitch -= (objData->pitch & 0xFFFF);
@@ -1632,8 +1632,8 @@ void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, 
   * Interesting to note arg2 being `controllerPort`! It may suggest Rare's were at least considering the idea of multiplayer bike races.
   */
 void CRSnowBike_read_joy_stick(Object* self, CRSnowBike_SteerData* steering, u8 controllerPort, s32 buffer) {
-    steering->xJoy = joy_get_stick_x_buffered(controllerPort, buffer);
-    steering->yJoy = joy_get_stick_y_buffered(controllerPort, buffer);
+    steering->xJoy = joyGetStickXBuffered(controllerPort, buffer);
+    steering->yJoy = joyGetStickYBuffered(controllerPort, buffer);
 }
 
 // offset: 0x3694 | func: 26
@@ -1655,7 +1655,7 @@ void CRSnowBike_get_bike_matrix(Object* self, CRSnowBike_Data* objData, MtxF* oM
         transform.yaw += objData->yawOffset;
     }
     
-    matrix_from_srt(oMtx, &transform);
+    mathYprXyzMtx(oMtx, &transform);
 }
 
 // offset: 0x3748 | func: 27
@@ -1707,7 +1707,7 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
         case CRSnowBike_ANIMCMD_2_Lose_Race:
-            main_set_bits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
+            mainSetBits(BIT_Play_Seq_02AA_CF_Lose_Race, TRUE);
             break;
         case CRSnowBike_ANIMCMD_3_Free_Fuel_Gauge:
             gDLL_1_cmdmenu->vtbl->energy_bar_free();
@@ -1737,10 +1737,10 @@ int CRSnowBike_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
             transform.pitch = -self->srt.pitch;
             transform.roll = -self->srt.roll;
             bikeMotion = &objData->motion;
-            matrix_from_srt_reversed(&mtx, &transform);
+            mathRpyXyzMtx(&mtx, &transform);
             
             //Transform velocity from worldSpace to the bike's own objectSpace
-            vec3_transform(&mtx, 
+            mathMtxXFMF(&mtx, 
                 wsVelocity.x, wsVelocity.y, wsVelocity.z, 
                 &bikeMotion->velocity.x, &bikeMotion->velocity.y, &bikeMotion->velocity.z
             );
@@ -1789,7 +1789,7 @@ void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_
                 CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, TRUE, TRUE, TRUE);
                 
                 //Transform the bike's objectSpace collision point into worldSpace
-                vec3_transform(&bikeMtx, 
+                mathMtxXFMF(&bikeMtx, 
                         dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
                         &wsPoint[i].x, &wsPoint[i].y, &wsPoint[i].z);
 
@@ -1805,7 +1805,7 @@ void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_
                     bikeMtx.m[3][0] = wsPoint[i].x;
                     bikeMtx.m[3][1] = wsPoint[i].y;
                     bikeMtx.m[3][2] = wsPoint[i].z;
-                    vec3_transform(&bikeMtx, 
+                    mathMtxXFMF(&bikeMtx, 
                         -dCollisionPoints[i].x, -dCollisionPoints[i].y, -dCollisionPoints[i].z, 
                         &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z
                     );
@@ -1855,7 +1855,7 @@ s32 CRSnowBike_sharpclaw_handle_steering(Object* self, CRSnowBike_Data* arg1, CR
 
     dx = self->srt.transl.x - objData->srtCurves.transl.x;
     dz = self->srt.transl.z - objData->srtCurves.transl.z;
-    dYaw = arctan2_f(dx, dz) - (self->srt.yaw & 0xFFFF);
+    dYaw = mathAtan2f(dx, dz) - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(dYaw);
     
     value = dYaw >> 5;
@@ -1884,7 +1884,7 @@ void CRSnowBike_update_collision_points(Object* self, CRSnowBike_Data* objData) 
     CRSnowBike_get_bike_matrix(self, objData, &bikeMtx, 0, 0, 0);
     
     for (i = 0; i < objData->numCollisionPoints; i++) {
-        vec3_transform(&bikeMtx, 
+        mathMtxXFMF(&bikeMtx, 
             dCollisionPoints[i].x, dCollisionPoints[i].y, dCollisionPoints[i].z, 
             &objData->wsCollisionCoords[i].x, &objData->wsCollisionCoords[i].y, &objData->wsCollisionCoords[i].z
         );
@@ -1900,7 +1900,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
     
     if (soundFlags & CRSnowBike_SOUNDFLAG_Engine) {
         if (objData->soundHandleEngine == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandleEngine, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_289_Engine_Loop, MAX_VOLUME, &objData->soundHandleEngine, NULL, 0, NULL);
         }
 
         if (objData->soundHandleEngine != 0) {
@@ -1914,7 +1914,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (sEngineAudioTweak > 200.0f) {
                 sEngineAudioTweak = 200.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleEngine, (sEngineAudioTweak / 70.0f) + 0.1f);
+            dll_amSfx->SetPitch(objData->soundHandleEngine, (sEngineAudioTweak / 70.0f) + 0.1f);
 
             if (objData->framesInAir < 18) {
                 volume = forwardSpeed * 30.0f;
@@ -1924,16 +1924,16 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
                 if (volume > MAX_VOLUME) {
                     volume = MAX_VOLUME;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, volume);
+                dll_amSfx->SetVol(objData->soundHandleEngine, volume);
             } else {
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleEngine, 0);
+                dll_amSfx->SetVol(objData->soundHandleEngine, 0);
             }
         }
     }
     
     if (soundFlags & CRSnowBike_SOUNDFLAG_Hiss) {
         if (objData->soundHandleHiss == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objData->soundHandleHiss, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_28F_Hiss_Loop, MAX_VOLUME, &objData->soundHandleHiss, NULL, 0, NULL);
         }
         if (objData->soundHandleHiss != 0) {
             sEngineAudioTweak = forwardSpeed ? ((self->srt.roll * forwardSpeed) / 30000.0f) : 0;
@@ -1942,7 +1942,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             } else if (sEngineAudioTweak > 1.0f) {
                 sEngineAudioTweak = 1.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleHiss, 0.1f + sEngineAudioTweak);
+            dll_amSfx->SetPitch(objData->soundHandleHiss, 0.1f + sEngineAudioTweak);
 
             if (objData->framesInAir < 18) {
                 sEngineAudioTweak *= MAX_VOLUME_F;
@@ -1952,9 +1952,9 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
                     sEngineAudioTweak = 0.0f;
                 }
 
-                gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleHiss, sEngineAudioTweak);
+                dll_amSfx->SetVol(objData->soundHandleHiss, sEngineAudioTweak);
             } else {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandleHiss);
+                dll_amSfx->Stop(objData->soundHandleHiss);
                 objData->soundHandleHiss = 0;
             }
         }
@@ -1963,16 +1963,16 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
     if (soundFlags & CRSnowBike_SOUNDFLAG_Jets) {
         if (objData->fxTimer <= 0) {
             if (objData->soundHandleJets == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandleJets, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_50D_Jet_Loop, MAX_VOLUME, &objData->soundHandleJets, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_28E, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             if (objData->soundHandleRumble == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandleRumble, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_50C_Low_Rumble_Loop, MAX_VOLUME, &objData->soundHandleRumble, NULL, 0, NULL);
             }
         }
         
         if (objData->soundHandleJets != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleJets, (objData->soundFactorJets * (1.0f / 2048.0f)) + 0.5f);
+            dll_amSfx->SetPitch(objData->soundHandleJets, (objData->soundFactorJets * (1.0f / 2048.0f)) + 0.5f);
             if (yJoy >= 6) {
                 objData->soundFactorJets += gUpdateRateF;
             } else {
@@ -1985,11 +1985,11 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (objData->soundFactorJets > 90.0f) {
                 objData->soundFactorJets = 90.0f;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleJets, objData->soundFactorJets);
+            dll_amSfx->SetVol(objData->soundHandleJets, objData->soundFactorJets);
         }
 
         if (objData->soundHandleRumble != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(objData->soundHandleRumble, (objData->soundFactorRumble / 75.0f) + 0.2f);
+            dll_amSfx->SetPitch(objData->soundHandleRumble, (objData->soundFactorRumble / 75.0f) + 0.2f);
             if (yJoy >= 6) {
                 objData->soundFactorRumble = (yJoy * 0.6f) + 15.0f;
             } else {
@@ -2002,18 +2002,18 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (objData->soundFactorRumble > MAX_VOLUME_F) {
                 objData->soundFactorRumble = MAX_VOLUME_F;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandleRumble, objData->soundFactorRumble);
+            dll_amSfx->SetVol(objData->soundHandleRumble, objData->soundFactorRumble);
         }
     }
     
     //Handle modGfx
     {
         if (objData->modGfxDLLFlames == NULL) {
-            objData->modGfxDLLFlames = dll_load_deferred(DLL_ID_141, 1);
+            objData->modGfxDLLFlames = dllLoad(DLL_ID_141, 1);
         }
         
         if (objData->modGfxDLLWaves == NULL) {
-            objData->modGfxDLLWaves = dll_load_deferred(DLL_ID_142, 1);
+            objData->modGfxDLLWaves = dllLoad(DLL_ID_142, 1);
         }
         
         if (objData->fxTimer <= 0) {

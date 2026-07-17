@@ -1,8 +1,8 @@
 #include "sys/voxmap.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/camera.h"
 #include "sys/curves.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/rarezip.h"
@@ -40,11 +40,11 @@ Object *gVoxmapCurrentObject;
 s32 D_800A7D0C; // gVoxmapObjectCount?
 /* -------- .bss end 800a7d10 -------- */
 
-void voxmap_init(void) {
+void voxInit(void) {
     s32 i;
 
-    queue_alloc_load_file((void**)&gVoxmapTextureIndices, TEXPRE_TAB);
-    queue_alloc_load_file((void**)&gVoxmapObjectIndices, VOXOBJ_TAB);
+    assetRomLoad((void**)&gVoxmapTextureIndices, TEXPRE_TAB);
+    assetRomLoad((void**)&gVoxmapObjectIndices, VOXOBJ_TAB);
     for (i = 0; gVoxmapObjectIndices[i] != -1; i++) {}
 
     D_800A7D0C = --i;
@@ -63,7 +63,7 @@ void voxmap_init(void) {
     gVoxmapCurrentObject = NULL;
 }
 
-void voxmap_free(void) {
+void voxFree(void) {
     VoxmapSlot *temp_a0;
     s32 i;
 
@@ -79,7 +79,7 @@ void voxmap_free(void) {
     mmFree(D_800A7C78);
 }
 
-void voxmap_update_cache_timers(void) {
+void voxUpdateCacheTimers(void) {
     s32 i;
 
     for (i = 0; i < SLOT_COUNT; i++) {
@@ -89,7 +89,7 @@ void voxmap_update_cache_timers(void) {
     }
 }
 
-VoxmapSlot *voxmap_reserve_slot(void) {
+VoxmapSlot *voxReserveSlot(void) {
     s32 minTTL;
     s32 cachedItemIdx;
     s32 i;
@@ -113,7 +113,7 @@ VoxmapSlot *voxmap_reserve_slot(void) {
     return NULL;
 }
 
-void voxmap_release_slot(VoxmapSlot *slot) {
+void voxReleaseSlot(VoxmapSlot *slot) {
     s32 i;
 
     for (i = 0; i < SLOT_COUNT; i++) {
@@ -124,7 +124,7 @@ void voxmap_release_slot(VoxmapSlot *slot) {
     }
 }
 
-s32 voxmap_reload_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
+s32 voxReloadSlot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockIndex) {
     if ((gVoxmapTextureIndices[blockID + 1] == gVoxmapTextureIndices[blockID]) != 0) {
         return 0;
     }
@@ -133,11 +133,11 @@ s32 voxmap_reload_slot(s32 blockID, s32 slotIndex, s32 trkBlkIndex, s32 blockInd
         mmFree(D_800A7C80[slotIndex]);
     }
 
-    D_800A7C80[slotIndex] = (VoxmapSlot*) voxmap_load_slot(blockID, slotIndex, trkBlkIndex, blockIndex);
+    D_800A7C80[slotIndex] = (VoxmapSlot*) voxLoadSlot(blockID, slotIndex, trkBlkIndex, blockIndex);
     return 1;
 }
 
-u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, UNUSED s32 blockIndex) {
+u8 *voxLoadSlot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, UNUSED s32 blockIndex) {
     s32 size;
     s32 fileSize;
     u32 offset;
@@ -150,15 +150,15 @@ u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, 
     if (size == 0) {
         return 0;
     }
-    fileSize = rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[blockID], TRUE);
+    fileSize = rarezipUncompressSizeROM(TEXPRE_BIN, gVoxmapTextureIndices[blockID], /*directLoad=*/TRUE);
     if (fileSize > 0x5000) {
         return 0;
     }
     temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp2C = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
-    read_file_region(TEXPRE_BIN, sp2C, offset, size);
-    rarezip_uncompress(sp2C, temp_v0, fileSize + 0x80);
+    piRomLoadSection(TEXPRE_BIN, sp2C, offset, size);
+    rarezipUncompress(sp2C, temp_v0, fileSize + 0x80);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
@@ -169,16 +169,16 @@ u8 *voxmap_load_slot(s32 blockID, UNUSED s32 slotIndex, UNUSED s32 trkBlkIndex, 
     return temp_v0;
 }
 
-s32 func_800075B0(s32 arg0, s32 arg1) {
+s32 vox_func_800075B0(s32 arg0, s32 arg1) {
     if ((arg0 < 0) || (arg0 >= D_800A7D0C)) {
         // "VOXMAP: attempt to load invalid object voxmap '%d'\n"
         return 0;
     }
-    func_80012584(0x3C, 6U, (u32* ) &D_800A7C80[arg1], (ObjSetup* ) arg0, 0, 0, NULL, 0);
+    assetEnqueueLoad(0x3C, 6U, (u32* ) &D_800A7C80[arg1], (ObjSetup* ) arg0, 0, 0, NULL, 0);
     return 1;
 }
 
-u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
+u8 *vox_func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     s32 size;
     u8* temp_v0;
     u32 offset;
@@ -194,15 +194,15 @@ u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     if (size == 0) {
         return 0;
     }
-    fileSize = rarezip_uncompress_size_rom(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], TRUE);
+    fileSize = rarezipUncompressSizeROM(VOXOBJ_BIN, gVoxmapObjectIndices[blockID], /*directLoad=*/TRUE);
     if (fileSize > 0x5000) {
         return 0;
     }
     temp_v0 = mmAlloc(fileSize + 0x80, ALLOC_TAG_VOX_COL, ALLOC_NAME("voxmap"));
     temp_v1 = (s32)(&temp_v0[fileSize] - size + 0x80);
     sp24 = (u8*)(temp_v1 - (temp_v1 % 16)); // Align the pointer to a 16 byte boundary
-    read_file_region(VOXOBJ_BIN, sp24, offset, size);
-    rarezip_uncompress(sp24, temp_v0, fileSize);
+    piRomLoadSection(VOXOBJ_BIN, sp24, offset, size);
+    rarezipUncompress(sp24, temp_v0, fileSize);
     temp_v0 = mmRealloc(temp_v0, fileSize, ALLOC_NAME("voxmap"));
     for (temp_v1 = 0; temp_v1 < 2; ) {
         ((s32*)temp_v0)[temp_v1 + 7] = ((s32*)temp_v0)[temp_v1 + 7] + (s32)temp_v0;
@@ -213,7 +213,7 @@ u8 *func_80007620(s32 blockID, UNUSED s32 slotIndex) {
     return temp_v0;
 }
 
-VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
+VoxmapSlot* voxFindClosestSlot(Vec3s16 *position) {
     s32 var_s1;
     s32 sp40;
     s32 pad2;
@@ -226,20 +226,20 @@ VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
     s8 arg3;
 
     if (gVoxmapCurrentObject != NULL) {
-        return voxmap_find_closest_object_slot(position);
+        return voxFindClosestObjectSlot(position);
     }
 
     var_v0 = ((position->s[0] * SOME_FACTOR) - D_80092A60) + 5;
     var_s1 = ((position->s[2] * SOME_FACTOR) - D_80092A64) + 5;
-    var_s0 = floor_f(var_v0 / BLOCKS_GRID_UNIT_F);
-    sp40 = floor_f(var_s1 / BLOCKS_GRID_UNIT_F);
+    var_s0 = floorf(var_v0 / BLOCKS_GRID_UNIT_F);
+    sp40 = floorf(var_s1 / BLOCKS_GRID_UNIT_F);
     gVoxmapLastSearchedSlot.unk0 = (var_s0 * BLOCKS_GRID_UNIT) + D_80092A60;
     gVoxmapLastSearchedSlot.unk4 = (sp40 * BLOCKS_GRID_UNIT) + D_80092A64;
     gVoxmapLastSearchedSlot.unk8 = gVoxmapLastSearchedSlot.unk0 / SOME_FACTOR;
     gVoxmapLastSearchedSlot.unkC = gVoxmapLastSearchedSlot.unk4 / SOME_FACTOR;
     var_s1 = -1;
-    if (map_get_block_from_grid(var_s0, sp40, 0) != 0) {
-        mapCell = func_80046698(var_s0, sp40);
+    if (mapGetBlockFromGrid(var_s0, sp40, 0) != 0) {
+        mapCell = map_func_80046698(var_s0, sp40);
         var_s1 = mapCell->blockID;
     }
     if (var_s1 != -1) {
@@ -266,7 +266,7 @@ VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
                     }
                 }
             }
-            if (voxmap_reload_slot(var_s1, var_s0, mapCell->trkBlkIndex, mapCell->loadedBlockIndex) != 0) {
+            if (voxReloadSlot(var_s1, var_s0, mapCell->trkBlkIndex, mapCell->loadedBlockIndex) != 0) {
                 gVoxmapBlockIDs[var_s0] = var_s1;
                 gVoxmapCacheTimers[var_s0] = 0;
                 D_800A7CF0[var_s0][0] = gVoxmapLastSearchedSlot.unk8;
@@ -280,7 +280,7 @@ VoxmapSlot* voxmap_find_closest_slot(Vec3s16 *position) {
     return &gVoxmapLastSearchedSlot;
 }
 
-VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16* position) {
+VoxmapSlot* voxFindClosestObjectSlot(Vec3s16* position) {
     ObjDef* temp_v1;
     s32 temp_t5;
     s32 temp_t8;
@@ -323,7 +323,7 @@ VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16* position) {
                 var_a1 = gVoxmapCacheTimers[i];
             }
         }
-        if (func_800075B0(temp_s0, sp24) != 0) {
+        if (vox_func_800075B0(temp_s0, sp24) != 0) {
             gVoxmapBlockIDs[sp24] = (temp_s0 + 30000);
             gVoxmapCacheTimers[sp24] = 0;
             gVoxmapLastSearchedSlot.data = D_800A7C80[sp24];
@@ -334,15 +334,15 @@ VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16* position) {
     return &gVoxmapLastSearchedSlot;
 }
 
-VoxmapSlot* voxmap_get_last_found_slot(void) {
+VoxmapSlot* voxGetLastFoundSlot(void) {
     return &gVoxmapLastSearchedSlot;
 }
 
-void func_80007CCC(s32 arg0) {
-    rarezip_uncompress_size_rom(TEXPRE_BIN, gVoxmapTextureIndices[arg0], TRUE);
+void vox_func_80007CCC(s32 arg0) {
+    rarezipUncompressSizeROM(TEXPRE_BIN, gVoxmapTextureIndices[arg0], /*directLoad=*/TRUE);
 }
 
-u8 *func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {
+u8 *vox_func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {
     u32 var_v1;
     u8 *temp_v0;
     u8 *var_a1;
@@ -380,16 +380,16 @@ u8 *func_80007D08(u8 *arg0, u8 *arg1, u8 *arg2, s32 arg3, s32 arg4, s32 arg5) {
     return &arg1[var_v1 * 4];
 }
 
-void func_80007E2C(Vec3f* arg0, Vec3s16 *arg1) {
+void vox_func_80007E2C(Vec3f* arg0, Vec3s16 *arg1) {
     arg0->x = (arg1->s[0] * SOME_FACTOR) + 5;
     arg0->y = (arg1->s[1] * SOME_FACTOR) + 5;
     arg0->z = (arg1->s[2] * SOME_FACTOR) + 5;
     if (gVoxmapCurrentObject != NULL) {
-        transform_point_by_object(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, gVoxmapCurrentObject);
+        camTransformPointByObject(arg0->x, arg0->y, arg0->z, arg0->f, &arg0->y, &arg0->z, gVoxmapCurrentObject);
     }
 }
 
-void func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
+void vox_func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
     Vec3f sp44;
     s32 var_a0;
     s32 var_a1;
@@ -399,7 +399,7 @@ void func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
     sp44.y = arg0->y;
     sp44.x = arg0->z;
     if (gVoxmapCurrentObject != NULL) {
-        inverse_transform_point_by_object(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, gVoxmapCurrentObject);
+        camInverseTransformPointByObject(sp44.z, sp44.y, sp44.x, &sp44.z, &sp44.y, &sp44.x, gVoxmapCurrentObject);
     }
     var_a0 = sp44.z;
     var_a1 = sp44.y;
@@ -418,7 +418,7 @@ void func_80007EE0(Vec3f* arg0, Vec3s16 *arg1) {
     arg1->s[2] = var_a2 / SOME_FACTOR;
 }
 
-s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4) {
+s32 vox_func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4) {
     s32 spD4;
     s32 spD0;
     s32 spCC;
@@ -470,7 +470,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     var_s2 = spA8 - spB0;
     var_s3 = spAC - spA8;
     spA4 = spB0 + spAC + spA8;
-    voxmap_find_closest_slot(&sp80);
+    voxFindClosestSlot(&sp80);
     var_s5 = (sp80.s[0] - gVoxmapLastSearchedSlot.unk8);
     var_s5 &= 0x3F;
     var_s1 = (sp80.s[2] - gVoxmapLastSearchedSlot.unkC);
@@ -508,7 +508,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 if ((var_v0 >> (temp_a3 & 7)) & 1) {
                     // var_s1 * 0 is @fake
                     if (sp88 != (var_s1 * 0)) {
-                        sp68 = func_80007D08(tempObj->unk1C, tempObj->unk14, tempObj->unk24, temp_a3, sp9C, temp_t1);
+                        sp68 = vox_func_80007D08(tempObj->unk1C, tempObj->unk14, tempObj->unk24, temp_a3, sp9C, temp_t1);
                         sp88 = 0;
                     }
                     temp2 = sp68[var_s1 & 3];
@@ -536,7 +536,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 temp_s0 = var_s5 >> 2;
                 var_v1 = sp80.s[0] - gVoxmapLastSearchedSlot.unk8;
                 if ((var_v1 >> 6) != 0) {
-                    voxmap_find_closest_slot(&sp80);
+                    voxFindClosestSlot(&sp80);
                     var_s4 = NULL;
                 }
                 var_v1 = sp80.s[0] - gVoxmapLastSearchedSlot.unk8;
@@ -552,7 +552,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 temp_s0 = var_s1 >> 2;
                 var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 if ((var_v1 >> 6) != 0) {
-                    voxmap_find_closest_slot(&sp80);
+                    voxFindClosestSlot(&sp80);
                     var_s4 = NULL;
                 }
                 var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
@@ -570,7 +570,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
                 var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
                 temp_s0 = var_s1 >> 2;
                 if ((var_v1 >> 6) != 0) {
-                    voxmap_find_closest_slot(&sp80);
+                    voxFindClosestSlot(&sp80);
                     var_s4 = NULL;
                 }
                 var_v1 = sp80.s[2] - gVoxmapLastSearchedSlot.unkC;
@@ -592,7 +592,7 @@ s32 func_80008048(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2, u8* arg3, u8 arg4
     return 1;
 }
 
-s32* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4) {
+s32* vox_func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4) {
     f32 temp_fv0;
     s32 temp_a2;
     s32 temp_a2_2;
@@ -725,7 +725,7 @@ s32* func_80008524(Vec3s16 *arg0, Vec3s16 *arg1, s32* arg2, s32* arg3, s32* arg4
     return D_800A7C98;
 }
 
-s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
+s32 vox_func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     s32 pad;
     s32 sp80;
     s32 sp7C;
@@ -739,7 +739,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     Vec3s16 sp54;
     s32* temp_v0;
 
-    temp_v0 = func_80008524(arg0, arg1, &sp6C, &sp80, &sp7C);
+    temp_v0 = vox_func_80008524(arg0, arg1, &sp6C, &sp80, &sp7C);
     if (temp_v0 == NULL) {
         return 0;
     }
@@ -756,7 +756,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     while (var_s0 == FALSE) {
         sp5C.x = temp_v0[sp7C] & 0xFFFF & 0xFFFF;
         sp5C.z = temp_v0[sp7C] >> 0x10;
-        if ((var_s2 == FALSE) && func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
+        if ((var_s2 == FALSE) && vox_func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
             var_s5 = -1;
             var_s0 = TRUE;
             arg2[0] = sp5C;
@@ -773,7 +773,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
         if (var_s0 == FALSE) {
             sp5C.x = temp_v0[sp80] & 0xFFFF & 0xFFFF;
             sp5C.z = temp_v0[sp80] >> 0x10;
-            if ((var_s3 == FALSE) && func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
+            if ((var_s3 == FALSE) && vox_func_80008048(&sp5C, arg0, &sp54, NULL, 0)) {
                 var_s0 = TRUE;
                 var_s5 = 1;
                 arg2[0] = sp5C;
@@ -791,7 +791,7 @@ s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2) {
     return var_s5;
 }
 
-s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
+s32 vox_func_80008BE4(CurvesStruct* arg0, s32 arg1) {
     s32 i;
     s32 j;
     s32 stepCount;
@@ -803,7 +803,7 @@ s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
     Vec3f sp5C;
 
     stepCount = 1;
-    if ((arg0->splineFunc == curves_hermite) || (arg0->splineFunc == curves_bezier)) {
+    if ((arg0->splineFunc == curvesHermite) || (arg0->splineFunc == curvesBezier)) {
         stepCount = 4;
     }
 
@@ -813,12 +813,12 @@ s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
             sp5C.f[0] = sp120[j];
             sp5C.f[1] = spCC[j];
             sp5C.f[2] = sp78[j];
-            func_80007EE0(&sp5C, &sp70);
+            vox_func_80007EE0(&sp5C, &sp70);
             sp5C.f[0] = sp120[j + 1];
             sp5C.f[1] = spCC[j + 1];
             sp5C.f[2] = sp78[j + 1];
-            func_80007EE0(&sp5C, &sp68);
-            if (func_80008048(&sp70, &sp68, NULL, NULL, 0U) == 0) {
+            vox_func_80007EE0(&sp5C, &sp68);
+            if (vox_func_80008048(&sp70, &sp68, NULL, NULL, 0U) == 0) {
                 return 1;
             }
         }
@@ -827,49 +827,49 @@ s32 func_80008BE4(CurvesStruct* arg0, s32 arg1) {
     return 0;
 }
 
-void func_80008D90(Object* arg0) {
+void vox_func_80008D90(Object* arg0) {
     gVoxmapCurrentObject = arg0;
     if ((arg0 != NULL) && (arg0->def->unk7E == -1)) {
         gVoxmapCurrentObject = NULL;
     }
 }
 
-void func_80008DC0(Unk80008E40* arg0) {
+void vox_func_80008DC0(Unk80008E40* arg0) {
     s32 allocSize = (sizeof(Unk80008E40Unk0) * 200) + (sizeof(Unk80008E40Unk4) * 200) + (sizeof(Vec3f) * 10);
     arg0->unk0 = (Unk80008E40Unk0*) mmAlloc(allocSize, ALLOC_TAG_VOX_COL, ALLOC_NAME("vox:route"));
     arg0->unk4 = (Unk80008E40Unk4*) ((u8*)arg0->unk0 + (sizeof(Unk80008E40Unk0) * 200));
     arg0->unk8 = (Vec3f*)           ((u8*)arg0->unk4 + (sizeof(Unk80008E40Unk4) * 200));
 }
 
-void func_80008E08(Unk80008E40* arg0) {
+void vox_func_80008E08(Unk80008E40* arg0) {
     if (arg0->unk0 != NULL) {
         mmFree(arg0->unk0);
         arg0->unk0 = NULL;
     }
 }
 
-s32 func_80008E40(Unk80008E40* arg0, Vec3f* arg1, Vec3f* arg2) {
+s32 vox_func_80008E40(Unk80008E40* arg0, Vec3f* arg1, Vec3f* arg2) {
     Unk80008E40Unk0* temp_v0;
     Vec3s16 sp2C;
 
-    func_8000A650(arg0);
-    func_80007EE0(arg1, &arg0->unk12);
-    func_80007EE0(arg2, &arg0->unkC);
+    vox_func_8000A650(arg0);
+    vox_func_80007EE0(arg1, &arg0->unk12);
+    vox_func_80007EE0(arg2, &arg0->unkC);
     arg0->unk12.s[0] &= ~1;
     arg0->unk12.s[2] &= ~1;
     arg0->unkC.s[0] &= ~1;
     arg0->unkC.s[2] &= ~1;
-    if (func_800099D0(&arg0->unk12, &arg0->unkC, &sp2C) != 0) {
+    if (vox_func_800099D0(&arg0->unk12, &arg0->unkC, &sp2C) != 0) {
         return 1;
     }
     arg0->unk24 = 10000;
-    temp_v0 = func_8000A9AC(arg0, &sp2C, 0, 0xFF);
-    func_8000A80C(arg0->unk4, &arg0->unk1E, arg0->unk1C - 1, temp_v0->unk6 + temp_v0->unk8);
+    temp_v0 = vox_func_8000A9AC(arg0, &sp2C, 0, 0xFF);
+    vox_func_8000A80C(arg0->unk4, &arg0->unk1E, arg0->unk1C - 1, temp_v0->unk6 + temp_v0->unk8);
     arg0->unk20 = 0;
     return 0;
 }
 
-s32 func_80008F34(Unk80008E40* arg0, s32 arg1) {
+s32 vox_func_80008F34(Unk80008E40* arg0, s32 arg1) {
     s32 temp_v0;
     s32 var_s1;
     s32 var_s2;
@@ -879,7 +879,7 @@ s32 func_80008F34(Unk80008E40* arg0, s32 arg1) {
     var_s1 = 0;
     var_s3 = 0;
     while (var_s1 == 0 && arg1 != 0) {
-        temp_v0 = func_8000A934(arg0->unk4, &arg0->unk1E);
+        temp_v0 = vox_func_8000A934(arg0->unk4, &arg0->unk1E);
         if (temp_v0 >= 0) {
             arg0->unk18 = temp_v0;
             temp_a1 = &arg0->unk0[temp_v0];
@@ -888,7 +888,7 @@ s32 func_80008F34(Unk80008E40* arg0, s32 arg1) {
                 var_s3 = 1;
             } else {
                 temp_a1->unkC = 1;
-                func_80009F5C(arg0, temp_a1, temp_v0);
+                vox_func_80009F5C(arg0, temp_a1, temp_v0);
             }
         } else {
             var_s1 = 1;
@@ -899,7 +899,7 @@ s32 func_80008F34(Unk80008E40* arg0, s32 arg1) {
     return var_s3;
 }
 
-s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
+s32 vox_func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
     s32 sp2C;
     s32 sp28;
     s32 sp24;
@@ -909,7 +909,7 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
     sp28 = 0;
     if (sp2C == 0) {
         sp24 = 0;
-        if (func_80008E40(arg1, &arg0->unk0, &arg0->unkC) != 0) {
+        if (vox_func_80008E40(arg1, &arg0->unk0, &arg0->unkC) != 0) {
             arg0->unk18.x = arg0->unkC.x;
             arg0->unk18.y = arg0->unkC.y;
             arg0->unk18.z = arg0->unkC.z;
@@ -921,11 +921,11 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
     }
     if (sp2C != 0) {
         sp28 = 1;
-        switch (func_80008F34(arg1, arg0->unk27)) {
+        switch (vox_func_80008F34(arg1, arg0->unk27)) {
         case 0:
             if (sp2C++ >= arg0->unk26) {
                 sp2C = 0;
-                if (func_8000921C(arg1, 1) != 0) {
+                if (vox_func_8000921C(arg1, 1) != 0) {
                     arg0->unk18.x = arg1->unk8->x;
                     arg0->unk18.y = arg1->unk8->y;
                     arg0->unk18.z = arg1->unk8->z;
@@ -939,7 +939,7 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
             break;
         case 1:
             sp2C = 0;
-            if (func_8000921C(arg1, 1) != 0) {
+            if (vox_func_8000921C(arg1, 1) != 0) {
                 arg0->unk18.x = arg1->unk8->x;
                 arg0->unk18.y = arg1->unk8->y;
                 arg0->unk18.z = arg1->unk8->z;
@@ -963,7 +963,7 @@ s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1) {
     return sp28;
 }
 
-s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
+s32 vox_func_8000921C(Unk80008E40* arg0, s32 arg1) {
     Unk80008E40Unk0* var_s1;
     Unk80008E40Unk0* next;
     Unk80008E40Unk0* var_s5;
@@ -998,8 +998,8 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     next = &sp4C;
     var_s3 = 0;
     while (arg1 > var_s3 && var_s1 != NULL) {
-        if (((var_s1->unk0.s[0] != next->unk0.s[0]) || (var_s1->unk0.s[2] != next->unk0.s[2])) && (func_800099D0(&var_s1->unk0, &next->unk0, NULL) == 0)) {
-            func_80007E2C(&sp68, &var_s5->unk0);
+        if (((var_s1->unk0.s[0] != next->unk0.s[0]) || (var_s1->unk0.s[2] != next->unk0.s[2])) && (vox_func_800099D0(&var_s1->unk0, &next->unk0, NULL) == 0)) {
+            vox_func_80007E2C(&sp68, &var_s5->unk0);
             arg0->unk8[var_s3].x = (s32) sp68.f[0] + 5;
             arg0->unk8[var_s3].y = (s32) sp68.f[1];
             arg0->unk8[var_s3].z = (s32) sp68.f[2] + 5;
@@ -1010,7 +1010,7 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
         var_s1 = var_s1->unkB == 0xFF ? NULL : &arg0->unk0[var_s1->unkB];
     }
     if (var_s3 < arg1) {
-        func_80007E2C(&sp68, &var_s5->unk0);
+        vox_func_80007E2C(&sp68, &var_s5->unk0);
         arg0->unk8[var_s3].x = (s32) sp68.f[0] + 5;
         arg0->unk8[var_s3].y = (s32) sp68.f[1];
         arg0->unk8[var_s3].z = (s32) sp68.f[2] + 5;
@@ -1024,7 +1024,7 @@ s32 func_8000921C(Unk80008E40* arg0, s32 arg1) {
     return var_s3;
 }
 
-s32 func_80009528(Unk80008E40* arg0, Unk80009024* arg1) {
+s32 vox_func_80009528(Unk80008E40* arg0, Unk80009024* arg1) {
     if (arg0->unk22 < arg0->unk20) {
         arg1->unk18.x = arg0->unk8[arg0->unk22].x;
         arg1->unk18.y = arg0->unk8[arg0->unk22].y;
@@ -1036,7 +1036,7 @@ s32 func_80009528(Unk80008E40* arg0, Unk80009024* arg1) {
     return 0;
 }
 
-void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk80008E40* arg4) {
+void vox_func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk80008E40* arg4) {
     DLTri* tri;
     s32 temp_v0;
     s32 var_fp;
@@ -1047,15 +1047,15 @@ void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk
     vtx = *vertices;
     tri = *tris;
     gfx = *gdl;
-    tex_gdl_set_textures(&gfx, NULL, NULL, 3, 0, 0, 1);
-    dl_set_prim_color(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
-    camera_setup_world_matrix(&gfx, matrics, 0, 0, 0, 1.0f);
+    texDPTextures(&gfx, NULL, NULL, 3, 0, 0, 1);
+    dlSetPrimColor(&gfx, 0xFF, 0xFF, 0xFF, 0xFF);
+    camSetupWorldMatrix(&gfx, matrics, 0, 0, 0, 1.0f);
     var_fp = 1;
     var_s4 = 0;
     temp_v0 = 0;
     while (temp_v0 < (arg4->unk20 - 1)) {
         gSPVertex(gfx++, OS_PHYSICAL_TO_K0(vtx), 4, 0);
-        dl_triangles(&gfx, tri, 2);
+        dlTriangles(&gfx, tri, 2);
         vtx[0].ob[0] = arg4->unk8[var_s4].x - D_80092A60;
         vtx[0].ob[1] = arg4->unk8[var_s4].y + 5.0f;
         vtx[0].ob[2] = arg4->unk8[var_s4].z - D_80092A64;
@@ -1120,7 +1120,7 @@ void func_800095B0(Gfx** gdl, Vtx_t** vertices, DLTri** tris, Mtx** matrics, Unk
     *gdl = gfx;
 }
 
-s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
+s32 vox_func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     s32 sp104;
     s32 sp100;
     s32 temp_a0;
@@ -1170,7 +1170,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     spE0 = var_v0 - var_v1;
     spD8[0] = var_v0;
     spD8[1] = var_v1;
-    voxmap_find_closest_slot(&sp9C);
+    voxFindClosestSlot(&sp9C);
     spC0 = (sp9C.s[0] - gVoxmapLastSearchedSlot.unk8) & 0x3F;
     spB8 = (sp9C.s[2] - gVoxmapLastSearchedSlot.unkC) & 0x3F;
     spCC[0] = (spC0 & 3) << 1;
@@ -1204,7 +1204,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
                 var_t0 = temp_t2 & 7;
                 temp_a0 = temp_s2->unk24[(var_v0 << 5) | ((temp_s4 * 2) + (temp_t2 >> 3))];
                 if ((temp_a0 >> var_t0) & 1) {
-                    temp_v0_3 = func_80007D08(temp_s2->unk1C, temp_s2->unk14, temp_s2->unk24, temp_t2, var_v0, temp_s4);
+                    temp_v0_3 = vox_func_80007D08(temp_s2->unk1C, temp_s2->unk14, temp_s2->unk24, temp_t2, var_v0, temp_s4);
                     temp_a0 = temp_v0_3[spC4[0]];
                     sp7C[(var_a2 * 4) + 0] = (temp_a0 >> spCC[0]) & 3;
                     sp7C[(var_a2 * 4) + 1] = (temp_a0 >> spCC[1]) & 3;
@@ -1273,7 +1273,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
             new_var[0] += sp104;\
             spE0 += spD8[0] * 2;
             if (((new_var[0] - gVoxmapLastSearchedSlot.unk8) >> 6) != 0) {
-                voxmap_find_closest_slot(&sp9C);
+                voxFindClosestSlot(&sp9C);
             }
             spC0 = (new_var[0] - gVoxmapLastSearchedSlot.unkC) & 0x3F;
             spCC[0] = (spC0 & 3) << 1;
@@ -1285,7 +1285,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
             spE0 -= spD8[1] * 2;
             var_v1 = new_var[2] - gVoxmapLastSearchedSlot.unkC;
             if ((var_v1 >> 6) != 0) {
-                voxmap_find_closest_slot(&sp9C);
+                voxFindClosestSlot(&sp9C);
             }
             var_v1 = new_var[2] - gVoxmapLastSearchedSlot.unkC;
             spB8 = var_v1 & 0x3F;
@@ -1297,7 +1297,7 @@ s32 func_800099D0(Vec3s16* arg0, Vec3s16* arg1, Vec3s16* arg2) {
     return 1;
 }
 
-void func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
+void vox_func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
     Vec3s16 sp30;
     u16 temp_t6;
 
@@ -1306,20 +1306,20 @@ void func_80009F5C(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2) {
     sp30.s[1] = arg1->unk0.s[1];
     sp30.s[2] = arg1->unk0.s[2];
     sp30.s[0] += 2;
-    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    vox_func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
     sp30.s[0] -= 4;
     sp30.s[1] = arg1->unk0.s[1];
-    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    vox_func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
     sp30.s[0] += 2;
     sp30.s[2] += 2;
     sp30.s[1] = arg1->unk0.s[1];
-    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    vox_func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
     sp30.s[2] -= 4;
     sp30.s[1] = arg1->unk0.s[1];
-    func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
+    vox_func_8000A078(arg0, arg1, arg2, temp_t6, &sp30);
 }
 
-void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4) {
+void vox_func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3, Vec3s16* arg4) {
     s32 pad3;
     s32 temp_v0_3;
     s32 sp9C;
@@ -1346,13 +1346,13 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
 
     if ((arg0->unkC.s[0] == arg4->s[0]) && (arg0->unkC.s[2] == arg4->s[2])) {
         sp78 = arg0->unk1C;
-        func_8000A9AC(arg0, arg4, arg3, arg2);
-        func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, 1U);
+        vox_func_8000A9AC(arg0, arg4, arg3, arg2);
+        vox_func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, 1U);
     }
     var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
     var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
     if ((var_v1 >> 6) || (var_a0 >> 6)) {
-        voxmap_find_closest_slot(arg4);
+        voxFindClosestSlot(arg4);
         var_v1 = arg4->s[0] - gVoxmapLastSearchedSlot.unk8;
         var_a0 = arg4->s[2] - gVoxmapLastSearchedSlot.unkC;
     }
@@ -1392,7 +1392,7 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
         temp_a0 = sp54->unk24[(temp_v0_3 << 5) | ((new_var * 2) + (new_var2 >> 3))];
         temp_a0 = (temp_a0 >> new_var3) & 1;
         if (temp_a0) {
-            temp_v0_2 = func_80007D08(sp54->unk1C, sp54->unk14, sp54->unk24, new_var2, temp_v0_3, new_var);
+            temp_v0_2 = vox_func_80007D08(sp54->unk1C, sp54->unk14, sp54->unk24, new_var2, temp_v0_3, new_var);
             temp_a0 = temp_v0_2[sp7C[0]];
             sp3C[sp6C][0] = (temp_a0 >> sp84[0]) & 3;
             sp3C[sp6C][1] = (temp_a0 >> sp84[1]) & 3;
@@ -1464,41 +1464,41 @@ void func_8000A078(Unk80008E40* arg0, Unk80008E40Unk0* arg1, s32 arg2, u16 arg3,
     }
 
     arg4->s[1] += sp70;
-    new_var3 = func_8000AB18(arg0, arg4->s[0], arg4->s[2], &sp9C);
+    new_var3 = vox_func_8000AB18(arg0, arg4->s[0], arg4->s[2], &sp9C);
     if ((new_var3 >= 0) && (sp9C == 0)) {
         sp50 = &arg0->unk0[new_var3];
         if (arg3 < sp50->unk8) {
             sp50->unkA = arg2;
             sp50->unk8 = arg3;
-            func_8000A884(arg0->unk4, arg0->unk1E, new_var3, sp50->unk6 + sp50->unk8);
+            vox_func_8000A884(arg0->unk4, arg0->unk1E, new_var3, sp50->unk6 + sp50->unk8);
         }
     } else if (new_var3 < 0) {
         sp78 = arg0->unk1C;
-        sp50 = func_8000A9AC(arg0, arg4, arg3, arg2);
+        sp50 = vox_func_8000A9AC(arg0, arg4, arg3, arg2);
         if (sp50 == NULL) {
             return;
         }
 
         if (sp50->unk6 > arg0->unk24) {
-            if (func_8000A640(arg4) == 0) {
+            if (vox_func_8000A640(arg4) == 0) {
                 arg0->unk1C -= 1;
             } else {
-                func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
+                vox_func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
             }
         } else {
             if (sp50->unk6 < arg0->unk24) {
                 arg0->unk24 = sp50->unk6;
             }
-            func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
+            vox_func_8000A80C(arg0->unk4, &arg0->unk1E, sp78, sp50->unk6 + sp50->unk8);
         }
     }
 }
 
-s32 func_8000A640(Vec3s16* arg0) {
+s32 vox_func_8000A640(Vec3s16* arg0) {
     return 1;
 }
 
-void func_8000A650(Unk80008E40* arg0) {
+void vox_func_8000A650(Unk80008E40* arg0) {
     s32 i;
 
     arg0->unk1E = 0;
@@ -1509,7 +1509,7 @@ void func_8000A650(Unk80008E40* arg0) {
     }
 }
 
-void func_8000A6D8(Unk80008E40Unk4* arg0, s32 arg1) {
+void vox_func_8000A6D8(Unk80008E40Unk4* arg0, s32 arg1) {
     s32 var_a3;
     u16 temp_a2;
     u16 temp_v0;
@@ -1528,7 +1528,7 @@ void func_8000A6D8(Unk80008E40Unk4* arg0, s32 arg1) {
     arg0[arg1].unk2 = temp_a2;
 }
 
-void func_8000A76C(Unk80008E40Unk4* arg0, s32 arg1, s32 arg2) {
+void vox_func_8000A76C(Unk80008E40Unk4* arg0, s32 arg1, s32 arg2) {
     Unk80008E40Unk4* var_v1;
     s32 var_t1;
     u16 temp_a3;
@@ -1557,14 +1557,14 @@ void func_8000A76C(Unk80008E40Unk4* arg0, s32 arg1, s32 arg2) {
     arg0[arg2].unk2 = temp_a3;
 }
 
-void func_8000A80C(Unk80008E40Unk4 *arg0, s16* arg1, u16 arg2, u16 arg3) {
+void vox_func_8000A80C(Unk80008E40Unk4 *arg0, s16* arg1, u16 arg2, u16 arg3) {
     arg1[0] = arg1[0] + 1;
     arg0[arg1[0]].unk2 = arg2;
     arg0[arg1[0]].unk0 = 0xFFFF - arg3;
-    func_8000A6D8(arg0, arg1[0]);
+    vox_func_8000A6D8(arg0, arg1[0]);
 }
 
-void func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3) {
+void vox_func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3) {
     s32 sp1C;
     s32 i;
     s32 temp_v1;
@@ -1578,13 +1578,13 @@ void func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3) {
     temp_v1 = arg0[sp1C].unk0;
     arg0[sp1C].unk0 = arg3;
     if (arg3 < temp_v1) {
-        func_8000A76C(arg0, arg1, sp1C);
+        vox_func_8000A76C(arg0, arg1, sp1C);
     } else if (temp_v1 < arg3) {
-        func_8000A6D8(arg0, sp1C);
+        vox_func_8000A6D8(arg0, sp1C);
     }
 }
 
-s32 func_8000A934(Unk80008E40Unk4 *arg0, s16* arg1) {
+s32 vox_func_8000A934(Unk80008E40Unk4 *arg0, s16* arg1) {
     u16 sp1E;
     s16 temp_v0;
 
@@ -1596,12 +1596,12 @@ s32 func_8000A934(Unk80008E40Unk4 *arg0, s16* arg1) {
     arg0[1].unk0 = arg0[arg1[0]].unk0;
     arg0[1].unk2 = arg0[arg1[0]].unk2;
     arg1[0]--;
-    func_8000A76C(arg0, arg1[0], 1);
+    vox_func_8000A76C(arg0, arg1[0], 1);
 
     return sp1E;
 }
 
-Unk80008E40Unk0* func_8000A9AC(Unk80008E40* arg0, Vec3s16* arg1, u16 arg2, u16 arg3) {
+Unk80008E40Unk0* vox_func_8000A9AC(Unk80008E40* arg0, Vec3s16* arg1, u16 arg2, u16 arg3) {
     Unk80008E40Unk0* sp24;
     s32 temp_a0;
     s32 temp_v0;
@@ -1621,7 +1621,7 @@ Unk80008E40Unk0* func_8000A9AC(Unk80008E40* arg0, Vec3s16* arg1, u16 arg2, u16 a
     return sp24;
 }
 
-s32 func_8000AB18(Unk80008E40* arg0, s32 arg1, s32 arg2, s32* arg3) {
+s32 vox_func_8000AB18(Unk80008E40* arg0, s32 arg1, s32 arg2, s32* arg3) {
     s32 i;
     Unk80008E40Unk0 *temp;
 
@@ -1635,7 +1635,7 @@ s32 func_8000AB18(Unk80008E40* arg0, s32 arg1, s32 arg2, s32* arg3) {
     return -1;
 }
 
-s32 func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
+s32 vox_func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     Vec3s16 sp48;
     Vec3s16 sp40;
     f32 sp3C;
@@ -1649,16 +1649,16 @@ s32 func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     sp38 = arg1->srt.transl.y - arg0->srt.transl.y;
     sp34 = arg1->srt.transl.z - arg0->srt.transl.z;
     sp28 = 0;
-    var_v1 = arg0->srt.yaw - (arctan2_f(-sp3C, -sp34) & 0xFFFF);
+    var_v1 = arg0->srt.yaw - (mathAtan2f(-sp3C, -sp34) & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     if ((-arg3 < var_v1) && (var_v1 < arg3)) {
         sp28 = 1;
         if (arg4 != 0) {
-            func_80007EE0(&arg0->srt.transl, &sp48);
-            func_80007EE0(&arg1->srt.transl, &sp40);
+            vox_func_80007EE0(&arg0->srt.transl, &sp48);
+            vox_func_80007EE0(&arg1->srt.transl, &sp40);
             sp48.s[1] += 2;
             sp40.s[1] += 2;
-            sp28 = func_80008048(&sp48, &sp40, NULL, NULL, 0U);
+            sp28 = vox_func_80008048(&sp48, &sp40, NULL, NULL, 0U);
         }
         if (sp28 != 0) {
             *arg2 = SQ(sp3C) + SQ(sp38) + SQ(sp34);
@@ -1667,7 +1667,7 @@ s32 func_8000AB84(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     return sp28;
 }
 
-s32 func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
+s32 vox_func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     Vec3s16 sp50;
     Vec3s16 sp48;
     f32 temp_fa0;
@@ -1684,14 +1684,14 @@ s32 func_8000ACD4(Object* arg0, Object* arg1, f32* arg2, s16 arg3, u8 arg4) {
     temp_fa1 = SQ(*arg2);
     sp30 = 0;
     if (temp < temp_fa1) {
-        if (track_obj_vis_check(arg1) != 0) {
+        if (trackObjVisCheck(arg1) != 0) {
             sp30 = 1;
             if (arg4 != 0) {
-                func_80007EE0(&arg0->srt.transl, &sp50);
-                func_80007EE0(&arg1->srt.transl, &sp48);
+                vox_func_80007EE0(&arg0->srt.transl, &sp50);
+                vox_func_80007EE0(&arg1->srt.transl, &sp48);
                 sp50.s[1] += 2;
                 sp48.s[1] += 2;
-                sp30 = func_80008048(&sp50, &sp48, NULL, NULL, 0U);
+                sp30 = vox_func_80008048(&sp50, &sp48, NULL, NULL, 0U);
             }
             if (sp30 != 0) {
                 *arg2 = temp;

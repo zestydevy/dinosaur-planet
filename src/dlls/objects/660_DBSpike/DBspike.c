@@ -77,24 +77,24 @@ void DBSpike_control(Object* self) {
         if (self->modelInstIdx != DBSpike_MODEL_Regular) {
             objData->motionBlurTimer -= gUpdateRate;
             if (objData->motionBlurTimer < 0) {
-                obj_set_model(self, DBSpike_MODEL_Regular);
+                objSetModel(self, DBSpike_MODEL_Regular);
             }
         }
         
         //Check gamebit for change in state
-        if (main_get_bits(objSetup->gamebit) != objData->state) {
-            objData->state = main_get_bits(objSetup->gamebit);
+        if (mainGetBits(objSetup->gamebit) != objData->state) {
+            objData->state = mainGetBits(objSetup->gamebit);
             objData->flags |= DBSpike_FLAG_Moving;
             objData->rollGoal = dRollGoals[objData->state] + self->srt.roll;
 
             if (objData->state != DBSpike_STATE_Retracted) {
                 //Sprung
-                obj_set_model(self, DBSpike_MODEL_Motion_Smear);
+                objSetModel(self, DBSpike_MODEL_Motion_Smear);
                 objData->motionBlurTimer = -56;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_A2A_Heavy_Swing, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_A2A_Heavy_Swing, MAX_VOLUME, 0, 0, 0, 0);
             } else {
                 //Retracting
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_A29_Wooden_Ratcheting_Loop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_A29_Wooden_Ratcheting_Loop, MAX_VOLUME, &objData->soundHandle, 0, 0, 0);
             }
         }
     } else {
@@ -112,15 +112,15 @@ void DBSpike_control(Object* self) {
             (self->srt.roll > objData->rollGoal - 0x500)
         ) {
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
             objData->flags &= ~DBSpike_FLAG_Moving;
         }
 
         //Keep gamebit in sync with spike's state
-        if (main_get_bits(objSetup->gamebit) != objData->state) {
-            main_set_bits(objSetup->gamebit, objData->state);
+        if (mainGetBits(objSetup->gamebit) != objData->state) {
+            mainSetBits(objSetup->gamebit, objData->state);
         }
     }
 }
@@ -129,14 +129,14 @@ void DBSpike_control(Object* self) {
 void DBSpike_update(Object* self) {
     //Play sound when any kind of collision is detected
     if (func_80025F40(self, 0, 0, 0)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A28_Blade_Impact, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_A28_Blade_Impact, MAX_VOLUME, 0, 0, 0, 0);
     }
 }
 
 // offset: 0x3AC | func: 3 | export: 3
 void DBSpike_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

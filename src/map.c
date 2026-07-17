@@ -3,10 +3,10 @@
 #include "dlls/objects/common/vehicle.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/texture.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/bitstream.h"
-#include "sys/dl_debug.h"
-#include "sys/fs.h"
+#include "sys/di_rcp.h"
+#include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
@@ -180,73 +180,73 @@ s32 D_80092BBC = -1;
 Unk80092BC0 D_80092BC0 = {0};
 // -------- .data end 80092bd0 -------- //
 
-void map_handle_transition(void);
-void map_restore_saved_objects(MapHeader* arg0, s32 mapID);
-HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr);
-void track_sort_render_list(u32* arg0, s32 arg1);
-void block_color_table_add_block(Block *block);
-void block_color_table_free_block(Block *block);
-u32 hits_get_size(s32 id);
-void block_setup_vertices(Block *block);
-void block_setup_gdl_groups(Block *block);
-s32 block_setup_texture_anims(Block *block);
-void block_setup_xz_bitmap(Block *block);
-void block_compute_vertex_colors(Block*,s32,s32,s32);
-void block_texscroll_free(u32 id);
-void block_free_texture_anims(Block*);
-void block_texscroll_tick(void);
-void block_texanim_tick(void);
-void track_update_frustum(void);
-void block_color_table_tick(void);
-void track_draw_main(void);
-u8 is_sphere_in_frustum(Vec3f *v, f32 radius);
-void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z);
-void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
-MapHeader *map_load_streammap(s32, s32);
-void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
-void map_update_objects_streaming(s32);
+void mapHandleTransition(void);
+void mapRestoreSavedObjects(MapHeader* arg0, s32 mapID);
+HitsLine* blockLoadHits(Block *block, s32 blockID, u8 fromAssetThread, HitsLine* hits_ptr);
+void trackSortRenderList(u32* arg0, s32 arg1);
+void blockColorTableAddBlock(Block *block);
+void blockColorTableFreeBlock(Block *block);
+u32 blockHitsGetSize(s32 id);
+void blockSetupVertices(Block *block);
+void blockSetupDLGroups(Block *block);
+s32 blockSetupTextureAnims(Block *block);
+void blockSetupXZBitmap(Block *block);
+void blockComputeVertexColors(Block*,s32,s32,s32);
+void blockTexscrollFree(u32 id);
+void blockFreeTextureAnims(Block*);
+void blockTexscrollTick(void);
+void blockTexanimTick(void);
+void trackUpdateFrustum(void);
+void blockColorTableTick(void);
+void trackDrawMain(void);
+u8 trackIsSphereInFrustum(Vec3f *v, f32 radius);
+void mapConvertObjPositionsToWS(MapHeader *map, f32 X, f32 Z);
+void mapInitObjSetupList(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
+MapHeader *mapLoadStreamMap(s32, s32);
+void mapReadLayout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
+void mapUpdateObjectsStreaming(s32);
 s32 map_func_800485FC(s32, s32, s32, s32, s32);
-void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx);
-void block_free(s32 blockIndex);
-s32 block_texanim_add(Texture* tex, u32 renderFlags, s32 animatorID);
-s32 map_should_obj_unload(Object*);
-void func_8004B548(MapHeader*, s32, s32, Object*);
-s32 map_should_stream_load_object(ObjSetup*, s8, s32);
-s32 map_check_some_mapobj_flag(s32, u32);
-void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
-s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
-s32 func_8004B4A0(ObjSetup* obj, s32 mapno);
-void block_add_to_render_list(Block *block, f32 x, f32 z);
-void track_draw_object(Object* obj, s32 visibility);
-s32 func_80045DC0(s32, s32, s32);
-s32 map_find_streammap_index(s32);
-s32 map_load_streammap_add_to_table(s32);
-s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a);
-void block_texanim_free(Texture *tex, s32 animatorID);
-void draw_render_list(Mtx *rspMtxs, s8 *visibilities);
-void block_calc_shape_visibility(Block*, s16, s16, s16);
-void track_add_visible_objects(s8* objVisibilities);
-s32 block_frustum_check(s32 xPos, s32 zPos, Block* block);
-void some_cell_func(BitStream* stream);
-BlockTextureScroller* block_texscroll_get(s32 id);
-s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4);
+void mapCheckBlockGrid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx);
+void blockFree(s32 blockIndex);
+s32 blockTexanimAdd(Texture* tex, u32 renderFlags, s32 animatorID);
+s32 mapShouldObjUnload(Object*);
+void map_func_8004B548(MapHeader*, s32, s32, Object*);
+s32 mapShouldStreamLoadObject(ObjSetup*, s8, s32);
+s32 mapGetObjLoaded(s32, u32);
+void mapSetObjLoaded(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
+s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
+s32 mapCheckObjLoadMapAct(ObjSetup* obj, s32 mapno);
+void blockAddToRenderList(Block *block, f32 x, f32 z);
+void trackDrawObject(Object* obj, s32 visibility);
+s32 map_func_80045DC0(s32, s32, s32);
+s32 mapFindStreamMapIndex(s32);
+s32 mapLoadStreamMapAddToTable(s32);
+s32 blockColorTableAdd(u8 r, u8 g, u8 b, u8 a);
+void blockTexanimFree(Texture *tex, s32 animatorID);
+void trackDrawRenderList(Mtx *rspMtxs, s8 *visibilities);
+void blockCalcShapeVisibility(Block*, s16, s16, s16);
+void trackAddVisibleObjects(s8* objVisibilities);
+s32 blockFrustumCheck(s32 xPos, s32 zPos, Block* block);
+void trackSomeCellFunc(BitStream* stream);
+BlockTextureScroller* blockTexscrollGet(s32 id);
+s32 map_func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4);
 
-void dl_set_all_dirty(void) {
+void dlSetAllDirty(void) {
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
     gDLBuilder->needsPipeSync = TRUE;
 }
 
-void dl_use_alt_builder(void) {
+void dlUseAltBuilder(void) {
     gDLBuilder = &sAltDLBuilder;
     gDLBuilder->dirtyFlags = DIRTY_FLAGS_ALL;
     gDLBuilder->needsPipeSync = TRUE;
 }
 
-void dl_use_main_builder(void) {
+void dlUseMainBuilder(void) {
     gDLBuilder = &sMainDLBuilder;
 }
 
-void dl_apply_combine(Gfx **gdl) {
+void dlApplyCombine(Gfx **gdl) {
     Gfx *currGfx = &gDLBuilder->combine;
     u8 dirty;
 
@@ -274,7 +274,7 @@ void dl_apply_combine(Gfx **gdl) {
     }
 }
 
-void dl_apply_other_mode(Gfx **gdl) {
+void dlApplyOtherMode(Gfx **gdl) {
     Gfx *currGfx;
     u8 dirty;
 
@@ -307,7 +307,7 @@ void dl_apply_other_mode(Gfx **gdl) {
     }
 }
 
-void dl_apply_geometry_mode(Gfx **gdl) {
+void dlApplyGeometryMode(Gfx **gdl) {
     u8 dirty;
 
     if (gTrackFlags & TRACKFLAG_DISABLE_Z_BUFFER) {
@@ -327,19 +327,19 @@ void dl_apply_geometry_mode(Gfx **gdl) {
     }
 }
 
-void dl_set_geometry_mode(Gfx **gdl, u32 mode) {
+void dlSetGeometryMode(Gfx **gdl, u32 mode) {
     mode |= gDLBuilder->geometryMode;
     gSPLoadGeometryMode(*gdl, mode);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
 }
 
-void dl_clear_geometry_mode(Gfx **gdl, u32 mode) {
+void dlClearGeometryMode(Gfx **gdl, u32 mode) {
     mode = gDLBuilder->geometryMode & ~mode;
     gSPLoadGeometryMode(*gdl, mode);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
 }
 
-void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetPrimColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -360,13 +360,13 @@ void dl_set_prim_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     }
 }
 
-void dl_set_prim_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetPrimColorNoSync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     gDLBuilder->dirtyFlags |= DIRTY_FLAGS_SET_PRIMARY_COLOR;
     gDLBuilder->needsPipeSync = FALSE;
-    dl_set_prim_color(gdl, r, g, b, a);
+    dlSetPrimColor(gdl, r, g, b, a);
 }
 
-void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetEnvColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -393,13 +393,13 @@ void dl_set_env_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     }
 }
 
-void dl_set_env_color_no_sync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetEnvColorNoSync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     gDLBuilder->dirtyFlags |= DIRTY_FLAGS_SET_ENV_COLOR;
     gDLBuilder->needsPipeSync = FALSE;
-    dl_set_env_color(gdl, r, g, b, a);
+    dlSetEnvColor(gdl, r, g, b, a);
 }
 
-void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetBlendColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -426,7 +426,7 @@ void dl_set_blend_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     }
 }
 
-void dl_set_fill_color(Gfx **gdl, u32 color) {
+void dlSetFillColor(Gfx **gdl, u32 color) {
     u8 dirty;
 
     if (gDLBuilder->dirtyFlags & DIRTY_FLAGS_SET_FILL_COLOR)
@@ -452,7 +452,7 @@ void dl_set_fill_color(Gfx **gdl, u32 color) {
     }
 }
 
-void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
+void dlSetFogColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     u32 rgba = RGBA8(r, g, b, a);
     u8 dirty;
 
@@ -479,7 +479,7 @@ void dl_set_fog_color(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     }
 }
 
-void dl_triangles(Gfx **gdl, DLTri *tris, s32 triCount) {
+void dlTriangles(Gfx **gdl, DLTri *tris, s32 triCount) {
     s32 n;
     DLTri *tri;
 
@@ -505,7 +505,7 @@ void track_func_80041C30(s32 on) {
     }
 }
 
-void track_set_sky_on(s32 on) {
+void trackSetSkyOn(s32 on) {
     if (on != 0) {
         gTrackFlags |= TRACKFLAG_SKY;
     } else {
@@ -513,7 +513,7 @@ void track_set_sky_on(s32 on) {
     }
 }
 
-void track_set_anti_alias_on(s32 on) {
+void trackSetAntiAliasOn(s32 on) {
     if (on != 0) {
         gTrackFlags |= TRACKFLAG_ANTI_ALIAS;
     } else {
@@ -521,7 +521,7 @@ void track_set_anti_alias_on(s32 on) {
     }
 }
 
-void track_set_sky_objects_on(s32 on) {
+void trackSetSkyObjectsOn(s32 on) {
     if (on != 0) {
         gTrackFlags |= TRACKFLAG_SKY_OBJECTS;
     } else {
@@ -529,7 +529,7 @@ void track_set_sky_objects_on(s32 on) {
     }
 }
 
-void track_set_z_buffer_on(s32 on) {
+void trackSetZBufferOn(s32 on) {
     if (on != 0) {
         gTrackFlags &= ~TRACKFLAG_DISABLE_Z_BUFFER;
     } else {
@@ -537,11 +537,11 @@ void track_set_z_buffer_on(s32 on) {
     }
 }
 
-s32 track_is_z_buffer_on(void) {
+s32 trackIsZBufferOn(void) {
     return (gTrackFlags & TRACKFLAG_DISABLE_Z_BUFFER) == FALSE;
 }
 
-u32 track_is_sky_on(void) {
+u32 trackIsSkyOn(void) {
     return gTrackFlags & TRACKFLAG_SKY;
 }
 
@@ -549,7 +549,7 @@ u32 track_func_80041D8C(void) {
     return gTrackFlags & TRACKFLAG_UNK100;
 }
 
-u32 track_get_shadows_on(void) {
+u32 trackGetShadowsOn(void) {
     return gTrackFlags & TRACKFLAG_SHADOWS;
 }
 
@@ -574,7 +574,7 @@ s32 track_func_80041E08(void) {
     return gTrackFlags & TRACKFLAG_UNK10000;
 }
 
-void track_set_sun_glare_on(s32 on) {
+void trackSetSunGlareOn(s32 on) {
     if (on != 0) {
         gTrackFlags |= TRACKFLAG_SUN_GLARE;
     } else {
@@ -582,11 +582,11 @@ void track_set_sun_glare_on(s32 on) {
     }
 }
 
-s32 track_get_sun_glare_on(void) {
+s32 trackGetSunGlareOn(void) {
     return gTrackFlags & TRACKFLAG_SUN_GLARE;
 }
 
-void init_maps(void) {
+void trackInit(void) {
     s32 i;
 
     gTrackFlags = 0;
@@ -603,16 +603,16 @@ void init_maps(void) {
         gDecodedGlobalMap[i] = gDecodedGlobalMap[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
         D_800B9700[i] = D_800B9700[i - 1] + BLOCKS_GRID_TOTAL_CELLS;
     }
-    queue_alloc_load_file((void **) &gFile_MAPS_TAB, MAPS_TAB);
-    queue_alloc_load_file((void** ) &gFile_HITS_TAB, HITS_TAB);
+    assetRomLoad((void **) &gFile_MAPS_TAB, MAPS_TAB);
+    assetRomLoad((void** ) &gFile_HITS_TAB, HITS_TAB);
     for (i = 0; i < 120; i++) { gLoadedMapsDataTable[i] = NULL; }
-    queue_alloc_load_file((void** ) &gFile_TRKBLK, TRKBLK_BIN);
+    assetRomLoad((void** ) &gFile_TRKBLK, TRKBLK_BIN);
     gNumTRKBLKEntries = 0;
     while (gFile_TRKBLK[gNumTRKBLKEntries] != 0xFFFF) {
         gNumTRKBLKEntries++;
     }
     gNumTRKBLKEntries--;
-    queue_alloc_load_file((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
+    assetRomLoad((void **) &gFile_BLOCKS_TAB, BLOCKS_TAB);
     gNumTotalBlocks = 0;
     while (gFile_BLOCKS_TAB[gNumTotalBlocks] != -1) {
         gNumTotalBlocks++;
@@ -629,7 +629,7 @@ void init_maps(void) {
     gRenderList[0] = ((1 << 18) - 1) << 14; // all draw order bits set (18 bits, starts at bit 14)
 }
 
-void track_tick(s32 arg0) {
+void trackTick(s32 arg0) {
     if (arg0 == 0) {
         if (gTrackFlags & TRACKFLAG_SKY) {
             gDLL_12_Minic->vtbl->func2();
@@ -637,9 +637,9 @@ void track_tick(s32 arg0) {
         gDLL_8->vtbl->func2();
         gDLL_7_Newday->vtbl->func2();
         gDLL_9_Newclouds->vtbl->func3();
-        block_texanim_tick();
-        block_texscroll_tick();
-        map_handle_transition();
+        blockTexanimTick();
+        blockTexscrollTick();
+        mapHandleTransition();
         if (gDLL_76 != NULL) {
             gDLL_76->vtbl->func1();
         }
@@ -648,7 +648,7 @@ void track_tick(s32 arg0) {
     func_8001EB80();
 }
 
-void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
+void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
     Mtx* mtx;
 
     gMainDL = *gdl;
@@ -660,33 +660,33 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
         gTrackFlags &= ~TRACKFLAG_UNK1;
     }
     gSPTexture(gMainDL++, -1, -1, 3, 0, 1);
-    mtx = get_some_model_view_mtx();
+    mtx = mathIdentityMtxL();
     gSPMatrix(gMainDL++, OS_K0_TO_PHYSICAL(mtx), G_MTX_MODELVIEW | G_MTX_LOAD);
-    camera_setup_viewport_and_matrices(&gMainDL, 0);
-    track_update_frustum();
-    if (func_80010048() != 0) {
+    camSetupViewportAndMatrices(&gMainDL, 0);
+    trackUpdateFrustum();
+    if (menu_func_80010048() != 0) {
         if (!(gTrackFlags & TRACKFLAG_UNK8)) {
             gTrackFlags |= TRACKFLAG_UNK8;
         }
-        camera_set_aspect(1.7777778f);
+        camSetAspect(1.7777778f);
     } else {
         if (gTrackFlags & TRACKFLAG_UNK8) {
             gTrackFlags &= ~TRACKFLAG_UNK8;
-            camera_set_aspect(1.3333334f);
+            camSetAspect(1.3333334f);
         }
     }
     if (gTrackFlags & TRACKFLAG_UNK10000) {
         if (gTrackFlags & TRACKFLAG_UNK8) {
-            camera_set_aspect(1.7777778f);
+            camSetAspect(1.7777778f);
         } else {
-            camera_set_aspect(1.3333334f);
+            camSetAspect(1.3333334f);
         }
-        viewport_disable(get_camera_selector(), 0U);
-        vi_some_video_setup(0);
+        camViewportDisable(camGetCameraSelector(), 0U);
+        viSomeVideoSetup(0);
         gTrackFlags &= ~TRACKFLAG_UNK10000;
     }
     if (gTrackFlags & TRACKFLAG_SKY) {
-        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        camSetupRSPMatrices(&gMainDL, &gWorldRSPMatrices);
         gDLL_7_Newday->vtbl->func13(&gMainDL, &gWorldRSPMatrices);
 
         if (gTrackFlags & TRACKFLAG_SKY_OBJECTS) {
@@ -694,7 +694,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
         }
         gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, gTrackFlags & TRACKFLAG_SKY_OBJECTS);
     } else {
-        setup_rsp_camera_matrices(&gMainDL, &gWorldRSPMatrices);
+        camSetupRSPMatrices(&gMainDL, &gWorldRSPMatrices);
     }
     gDLL_11_Newlfx->vtbl->func2();
     gDLL_57->vtbl->func3();
@@ -706,11 +706,11 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     } else {
         gDLL_8->vtbl->func3(&gMainDL);
     }
-    D_800B51E4 = get_camera();
-    block_color_table_tick();
-    track_draw_main();
+    D_800B51E4 = camGet();
+    blockColorTableTick();
+    trackDrawMain();
     gDLL_9_Newclouds->vtbl->func4(&gMainDL);
-    camera_setup_fullscreen_viewport(&gMainDL);
+    camSetupFullscreenViewport(&gMainDL);
     *gdl = gMainDL;
     *mtxs = gWorldRSPMatrices;
     *vtxs = D_800B51D4;
@@ -721,7 +721,7 @@ void track_draw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** 
     // diProfEnd("Trackdraw") (default.dol)
 }
 
-void track_draw_main(void) {
+void trackDrawMain(void) {
     s32 xIdx;
     Block* block;
     s32 gridIdx;
@@ -740,19 +740,19 @@ void track_draw_main(void) {
     s8 objVisibilities[MAX_VISIBLE_OBJECTS];
     Mtx* rspMtxs;
 
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1323);
-    some_cell_func(&D_800B9780);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1323);
+    trackSomeCellFunc(&D_800B9780);
     shadows_func_8004D9B8();
     shadows_func_8004DABC();
     gRenderListLength = 1;
     gBlocksToDrawIdx = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1341);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1341);
     gDLL_9_Newclouds->vtbl->func6(&gMainDL, gUpdateRate, 0);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 3);
     if (gTrackFlags & TRACKFLAG_SKY) {
         gDLL_12_Minic->vtbl->func3(&gMainDL, &gWorldRSPMatrices);
     }
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1349);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1349);
     blockIdxMap = D_80092B0C;
     rspMtxs = gWorldRSPMatrices;
     layer = MAP_LAYER_COUNT;
@@ -760,7 +760,7 @@ void track_draw_main(void) {
         // Determine which blocks are visible from the current stream coords
         sp230 = gBlockIndices[layer];
         D_800B9714 = D_800B9700[layer];
-        map_check_block_grid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 
+        mapCheckBlockGrid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 
             sp274, sp264, sp254, sp244, layer, /*checkVis*/TRUE, D_800B4A54);
         for (gridIdx = 0; gridIdx < ARRAYCOUNT_S(blockVisibilities); gridIdx++) { blockVisibilities[gridIdx] = 0; }
         
@@ -804,33 +804,33 @@ void track_draw_main(void) {
                         continue;
                     }
                 }
-                if (blockIdx < 0 || block_frustum_check(x, z, block) == FALSE) {
+                if (blockIdx < 0 || blockFrustumCheck(x, z, block) == FALSE) {
                     // Block not loaded or failed frustum check
                     continue;
                 }
                 // Calculate visible shapes/triangles
                 D_800B97B8 = x * BLOCKS_GRID_UNIT_F;
                 D_800B97BC = z * BLOCKS_GRID_UNIT_F;
-                block_calc_shape_visibility(block, x, z, layer);
+                blockCalcShapeVisibility(block, x, z, layer);
                 // Update block lighting
                 if (gTrackFlags & TRACKFLAG_BLOCK_LIGHTING) {
                     if (block->unk3E != 0) {
-                        block_compute_vertex_colors(block, x, z, 0);
+                        blockComputeVertexColors(block, x, z, 0);
                     }
                     if ((block->numSphereMappedShapes != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
                         func_8001F4C0(block, x, z);
                     }
                 }
                 // Add to render list
-                block_add_to_render_list(block, D_800B97B8, D_800B97BC);
+                blockAddToRenderList(block, D_800B97B8, D_800B97BC);
             }
         }
     }
     // Add visible objects to render list
-    track_add_visible_objects(objVisibilities);
+    trackAddVisibleObjects(objVisibilities);
     // Draw blocks and objects
-    draw_render_list(rspMtxs, objVisibilities);
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1458);
+    trackDrawRenderList(rspMtxs, objVisibilities);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1458);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 2);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1);
     gDLL_14_Modgfx->vtbl->func11(objVisibilities);
@@ -841,10 +841,10 @@ void track_draw_main(void) {
     gDLL_59_Minimap->vtbl->func1(&gMainDL, &gWorldRSPMatrices);
     shadows_func_8004D974(0);
     D_800B1847 = 0;
-    dl_add_debug_info(gMainDL, 0, "track/track.c", 1478);
+    diRcpTrace(gMainDL, 0, "track/track.c", 1478);
 }
 
-void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
+void trackDrawRenderList(Mtx* rspMtxs, s8* visibilities) {
     BlockShape* shape;
     Vtx_t *tempVtx;
     s32 shapeIdx;
@@ -878,13 +878,13 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     Object *obj;
 
     lastBlockIdx = -1;
-    objList = get_world_objects(NULL, NULL);
+    objList = objGetObjects(NULL, NULL);
     gDLL_57->vtbl->func2(&spE0, &spDC, &spD8, &spD4, &spD0, &spCC);
     for (i = 1; i < gRenderListLength; i++) {
         idx = shapeIdx = (gRenderList[i] & 0x3F80) >> 7;
         if (gRenderList[i] & 0x40) {
             obj = objList[idx];
-            track_draw_object(obj, visibilities[idx]);
+            trackDrawObject(obj, visibilities[idx]);
             lastBlockMtx = 0;
         } else {
             // @fake
@@ -918,24 +918,24 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             }
             if (shape->flags & RENDER_UNK2000) {
                 if (tex0->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY)) {
-                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xA0);
+                    dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0xA0);
                 } else {
-                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0x64);
+                    dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0x64);
                 }
             } else {
                 if (shape->envColourMode == 0xFF) {
-                    dl_set_prim_color(&gMainDL, spE0, spDC, spD8, 0xFF);
+                    dlSetPrimColor(&gMainDL, spE0, spDC, spD8, 0xFF);
                 } else if (shape->envColourMode == 0xFE) {
-                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
+                    dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else if (shape->flags & (RENDER_UNK40000000 | RENDER_UNK4000000 | RENDER_UNK2000000 | RENDER_UNK800000 | RENDER_UNK400000)) {
-                    dl_set_prim_color(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
+                    dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else {
                     func_8001F848(&gMainDL);
                 }
             }
             renderFlags = shape->flags;
             if (renderFlags & RENDER_SHAPE_ANIMATED) {
-                temp_v0_4 = block_texanim_get_instance(block, shape->animatorID);
+                temp_v0_4 = blockTexanimGetInstance(block, shape->animatorID);
                 if (temp_v0_4 != NULL) {
                     frameOptions = gBlockTexAnimTable[temp_v0_4->texanimID].unk4 << 8;
                     renderFlags |= gBlockTexAnimTable[temp_v0_4->texanimID].flags;
@@ -956,9 +956,9 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             } else {
                 tex1 = NULL;
             }
-            tex_gdl_set_textures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
+            texDPTextures(&gMainDL, tex0, tex1, renderFlags, frameOptions, forceTexSet, FALSE);
             if (shape->texScrollerID != 0xFF) {
-                texScroller = block_texscroll_get(shape->texScrollerID);
+                texScroller = blockTexscrollGet(shape->texScrollerID);
                 gDPSetTileSize(gMainDL++, 0, texScroller->uOffsetA, texScroller->vOffsetA, (tex0->width - 1) << 2, (tex0->height - 1) << 2);
                 if (tex1 != NULL) {
                     gDPSetTileSize(gMainDL++, 1, texScroller->uOffsetB, texScroller->vOffsetB, (tex1->width - 1) << 2, (tex1->height - 1) << 2);
@@ -973,14 +973,14 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
             gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
             gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
             shapeIdx++;
-            dl_apply_geometry_mode(&gMainDL);
+            dlApplyGeometryMode(&gMainDL);
             gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
             gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
             shapeIdx++;
-            dl_apply_combine(&gMainDL);
+            dlApplyCombine(&gMainDL);
             gMainDL->words.w0 = block->gdlGroups[shapeIdx].words.w0;
             gMainDL->words.w1 = block->gdlGroups[shapeIdx].words.w1;
-            dl_apply_other_mode(&gMainDL);
+            dlApplyOtherMode(&gMainDL);
             tempVtx = block->vertices2[(block->vtxFlags & 1) ^ 1];
             var_a0 = block->encodedTris;
             var_a0 += shape->triBase;
@@ -1016,32 +1016,32 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
                (when using fog, the RSP replaces each pixel's A with the Z-depth value) */
             if ((renderFlags & (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) == (RENDER_FOG_ACTIVE | RENDER_DECAL_SIMPLE | RENDER_DECAL)) {
                 temp_s0_2 = gMainDL - temp_s5;
-                dl_set_geometry_mode(&gMainDL, G_FOG);
+                dlSetGeometryMode(&gMainDL, G_FOG);
 
                 if (renderFlags & (RENDER_UNK2000 | RENDER_SEMI_TRANSPARENT)) {
                     /* Semi-transparent decals
                       (e.g. cross-fading two sections of water that flow in different directions) */
                     //@bug: fog ends up too opaque here
                     gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
-                    dl_apply_combine(&gMainDL);
+                    dlApplyCombine(&gMainDL);
                     gDPSetOtherMode(
                         gMainDL, 
                         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
                         G_AC_NONE | G_ZS_PIXEL | Z_CMP | IM_RD | CVG_DST_FULL | ZMODE_XLU | FORCE_BL | GBL_c1(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA) | GBL_c2(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA)
                     );
-                    dl_apply_other_mode(&gMainDL);
+                    dlApplyOtherMode(&gMainDL);
                 } else {
                     /* Opaque decals 
                       (e.g. cross-fading two sections of ground, like grass transitioning into autumnal leaves) */
                     gDPSetCombineLERP(gMainDL, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 0, 1);
-                    dl_apply_combine(&gMainDL);
+                    dlApplyCombine(&gMainDL);
                     
                     gDPSetOtherMode(
                         gMainDL, 
                         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
                         G_AC_NONE | G_ZS_PIXEL | AA_EN | Z_CMP | IM_RD | CLR_ON_CVG | CVG_DST_WRAP | ZMODE_DEC | FORCE_BL | GBL_c1(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA) | GBL_c2(G_BL_CLR_FOG, G_BL_A_SHADE, G_BL_CLR_MEM, G_BL_1MA)
                     );
-                    dl_apply_other_mode(&gMainDL);
+                    dlApplyOtherMode(&gMainDL);
                 }
 
                 //Redraw the previous facebatch by copying its draw commands
@@ -1053,14 +1053,14 @@ void draw_render_list(Mtx* rspMtxs, s8* visibilities) {
     }
 }
 
-void track_draw_object(Object* obj, s32 visibility) {
+void trackDrawObject(Object* obj, s32 visibility) {
     s8 sp37;
     u8 someBool;
 
     someBool = TRUE;
     if ((obj->id == OBJ_IMSnowBike) || (obj->id == OBJ_CRSnowBike)) {
         someBool = TRUE;
-        if (((DLL_IVehicle*)obj->dll)->vtbl->get_mount_state(obj) != VEHICLE_NoRider) {
+        if (dll_vehicle(obj)->GetMountState(obj) != VEHICLE_NoRider) {
             someBool = FALSE;
         }
     }
@@ -1077,7 +1077,7 @@ void track_draw_object(Object* obj, s32 visibility) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
         }
     }
-    objprint_func(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, visibility);
+    objprintDrawObject(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8, obj, visibility);
     if (sp37 != 0) {
         if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0, 0);
@@ -1095,7 +1095,7 @@ void track_draw_object(Object* obj, s32 visibility) {
 }
 
 /** Calculates frustum culling for a Block's shapes, and for each shape's faces. */
-void block_calc_shape_visibility(Block* block, s16 arg1, s16 arg2, s16 arg3) {
+void blockCalcShapeVisibility(Block* block, s16 arg1, s16 arg2, s16 arg3) {
     BlockShape* shape;
     EncodedTri* triEnd;
     EncodedTri* tri;
@@ -1142,7 +1142,7 @@ void block_calc_shape_visibility(Block* block, s16 arg1, s16 arg2, s16 arg3) {
 
         if ((D_800B9794 != 0) && 
             ((D_800B979C & 1) || !(shape->flags & (RENDER_UNK2000 | RENDER_DECAL_SIMPLE | RENDER_SEMI_TRANSPARENT))) && 
-            (func_80045600((shape - block->shapes), &D_800B9780, arg1, arg2, arg3) == 0)
+            (map_func_80045600((shape - block->shapes), &D_800B9780, arg1, arg2, arg3) == 0)
         ) {
             shape->flags &= ~RENDER_SHAPE_VISIBLE;
             shape++;
@@ -1251,7 +1251,7 @@ void block_calc_shape_visibility(Block* block, s16 arg1, s16 arg2, s16 arg3) {
 }
 
 
-void block_add_to_render_list(Block *block, f32 x, f32 z) {
+void blockAddToRenderList(Block *block, f32 x, f32 z) {
     s32 unused;
     s32 oldRenderListLength;
     s32 i;
@@ -1283,22 +1283,22 @@ void block_add_to_render_list(Block *block, f32 x, f32 z) {
         gBlocksToDraw[gBlocksToDrawIdx] = block;
         gBlocksToDrawIdx++;
 
-        matrix_translation(&mf, x, 0.0f, z);
-        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        mathTranslateMtx(&mf, x, 0.0f, z);
+        mathMtx4x3F2L(&mf, gWorldRSPMatrices);
 
         gWorldRSPMatrices++;
 
         mf.m[3][1] = block->minY;
 
-        matrix_scaling(&mf2, 1.0f, 0.05f, 1.0f);
-        matrix_concat(&mf2, &mf, &mf);
-        matrix_f2l_4x3(&mf, gWorldRSPMatrices);
+        mathScaleMtx(&mf2, 1.0f, 0.05f, 1.0f);
+        mathMtxCatF(&mf2, &mf, &mf);
+        mathMtx4x3F2L(&mf, gWorldRSPMatrices);
 
         gWorldRSPMatrices++;
     }
 }
 
-void track_add_visible_objects(s8* objVisibilities) {
+void trackAddVisibleObjects(s8* objVisibilities) {
     Object* object;
     Object** objects;
     s32 numObjs;
@@ -1307,15 +1307,15 @@ void track_add_visible_objects(s8* objVisibilities) {
     s32 var_v0;
     s8* vis;
 
-    objects = get_world_objects(NULL, NULL);
+    objects = objGetObjects(NULL, NULL);
     // Separate invisible objects from visible objects
-    visibleStartIdx = obj_visibility_sort_objects(&numObjs);
+    visibleStartIdx = objVisibilitySortObjects(&numObjs);
     if (numObjs > MAX_VISIBLE_OBJECTS) {
         STUBBED_PRINTF("depthSortObjects: MAX_VISIBLE_OBJECTS exceeded\n");
         numObjs = MAX_VISIBLE_OBJECTS;
     }
     // Depth sort just the visible objects
-    obj_depth_sort_objects(visibleStartIdx, numObjs - 1);
+    objDepthSortObjects(visibleStartIdx, numObjs - 1);
     for (i = 0; i < numObjs; i++) {
         object = objects[i];
         vis = &objVisibilities[i];
@@ -1323,12 +1323,12 @@ void track_add_visible_objects(s8* objVisibilities) {
             // Object is always invisible due to its definition
             *vis = FALSE;
         } else {
-            *vis = track_obj_vis_check(object);
+            *vis = trackObjVisCheck(object);
             if (*vis && (object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_GEOM)) {
-                shadows_update_obj_geom(object, 0, 0, gUpdateRate);
+                shadowsUpdateObjGeom(object, 0, 0, gUpdateRate);
             }
             if ((object->shadow != NULL) && (object->def->shadowType == OBJ_SHADOW_BOX))  {
-                shadows_update_obj_box(object);
+                shadowsUpdateObjBox(object);
             }
             if (gRenderListLength < MAX_RENDER_LIST_LENGTH) {
                 if (object->def->flags & OBJDEF_FORCE_OPAQUE_DRAW_ORDER) {
@@ -1349,11 +1349,11 @@ void track_add_visible_objects(s8* objVisibilities) {
         }
     }
     if (gRenderListLength >= 2) {
-        track_sort_render_list(gRenderList, gRenderListLength);
+        trackSortRenderList(gRenderList, gRenderListLength);
     }
 }
 
-void track_sort_render_list(u32* list, s32 length) {
+void trackSortRenderList(u32* list, s32 length) {
     u32 temp_a0;
     s32 var_t0;
     s32 var_v0;
@@ -1387,15 +1387,15 @@ void track_sort_render_list(u32* list, s32 length) {
 }
 
 // Note: This does not check every loaded map and probably won't behave how you'd expect!
-s32 map_are_world_coords_in_map(f32 worldX, f32 worldZ) {
+s32 mapAreWorldCoordsInMap(f32 worldX, f32 worldZ) {
     s32 localGridX;
     s32 localGridZ;
     s32 temp;
 
-    temp = floor_f((worldX - gWorldX) / BLOCKS_GRID_UNIT);
-    localGridX = temp + gMapCurrentStreamCoordsX + gMapActiveStreamMap->originOffsetX - floor_f(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
-    temp = floor_f((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
-    localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floor_f(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
+    temp = floorf((worldX - gWorldX) / BLOCKS_GRID_UNIT);
+    localGridX = temp + gMapCurrentStreamCoordsX + gMapActiveStreamMap->originOffsetX - floorf(gMapActiveStreamMap->originWorldX / BLOCKS_GRID_UNIT);
+    temp = floorf((worldZ - gWorldZ) / BLOCKS_GRID_UNIT);
+    localGridZ = temp + gMapCurrentStreamCoordsZ + gMapActiveStreamMap->originOffsetZ - floorf(gMapActiveStreamMap->originWorldZ / BLOCKS_GRID_UNIT);
     
     if (localGridX < 0 || localGridZ < 0 || localGridX >= gMapActiveStreamMap->gridSizeX || localGridZ >= gMapActiveStreamMap->gridSizeZ) {
         return 0;
@@ -1403,7 +1403,7 @@ s32 map_are_world_coords_in_map(f32 worldX, f32 worldZ) {
     return 1;
 }
 
-ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap) {
+ObjSetup* mapFindObjSetup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap) {
     s32 mapID;
     s32 offset;
     s32 object_indexInMap;
@@ -1455,15 +1455,15 @@ ObjSetup* map_find_obj_setup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s
     return NULL;
 }
 
-s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z) {
+s32 mapWorldCoordsToBlockIndex(f32 x, f32 y, f32 z) {
     s32 gridX;
     s32 gridZ;
     Block *currentBlock;
     s32 i;
     s8 *temp;
     
-    gridX = floor_f(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
-    gridZ = floor_f(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
+    gridX = floorf(x / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floorf(z / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
@@ -1487,24 +1487,24 @@ s32 map_world_coords_to_block_index(f32 x, f32 y, f32 z) {
     return -1;
 }
 
-void map_world_to_block_world_coords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ) {
+void mapWorldToBlockWorldCoords(f32 worldX, f32 worldY, f32 worldZ, f32* blockWorldX, f32* blockWorldZ) {
     s32 gridX;
     s32 gridZ;
 
-    gridX = floor_f(worldX / BLOCKS_GRID_UNIT);
-    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT);
+    gridX = floorf(worldX / BLOCKS_GRID_UNIT);
+    gridZ = floorf(worldZ / BLOCKS_GRID_UNIT);
     
     *blockWorldX = (f32) gridX * BLOCKS_GRID_UNIT;
     *blockWorldZ = (f32) gridZ * BLOCKS_GRID_UNIT;
 }
 
-s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ) {
+s16 mapWorldXZToMapID(f32 worldX, f32 worldZ) {
     s32 gridX;
     s32 gridZ;
     GlobalMapCell *layer;
 
-    gridX = floor_f(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
-    gridZ = floor_f(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
+    gridX = floorf(worldX / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsX;
+    gridZ = floorf(worldZ / BLOCKS_GRID_UNIT) - gMapCurrentStreamCoordsZ;
     
     if (gridX < 0 || gridX >= BLOCKS_GRID_SPAN) {
         return -1;
@@ -1517,7 +1517,7 @@ s16 map_world_xz_to_map_id(f32 worldX, f32 worldZ) {
     return layer[GRID_INDEX(gridZ, gridX)].mapIDs[0];
 }
 
-s32 map_find_map_id_of_obj_setup(ObjSetup *setup) {
+s32 mapFindMapIDOfObjSetup(ObjSetup *setup) {
     GlobalMapCell* var_a3;
     MapHeader* temp_v1;
     s16 var_v0;
@@ -1571,16 +1571,16 @@ s32 map_find_map_id_of_obj_setup(ObjSetup *setup) {
     return -1;
 }
 
-MapHeader** map_get_loaded_maps_table(void) {
+MapHeader** mapGetLoadedMapsTable(void) {
     return gLoadedMapsDataTable;
 }
 
 /** Assign object instance file length and get object instance file from map */
-ObjSetup* map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* objectsFileLength) {
+ObjSetup* mapWorldXZToMapObjSetupList(f32 worldX, f32 worldZ, s32* objectsFileLength) {
     s32 mapID;
     MapHeader *map;
 
-    mapID = map_world_xz_to_map_id(worldX, worldZ);
+    mapID = mapWorldXZToMapID(worldX, worldZ);
     if (mapID != -1){
       *objectsFileLength = gLoadedMapsDataTable[mapID]->objectInstancesFileLength;
       return (void *)gLoadedMapsDataTable[mapID]->objectInstanceFile_ptr;
@@ -1589,14 +1589,14 @@ ObjSetup* map_world_xz_to_map_obj_setup_list(f32 worldX, f32 worldZ, s32* object
 }
 
 /** Assign blockIndex from worldX/Z */
-s32 map_world_xz_to_block_index(s32 worldX, s32 worldZ, s32* blockIndex) {
+s32 mapWorldXZToBlockIndex(s32 worldX, s32 worldZ, s32* blockIndex) {
     s8 *blocksLayer;
     s32 *tempX;
       
     blocksLayer = gBlockIndices[0];
       
-    worldX = floor_f((f32) worldX / BLOCKS_GRID_UNIT);
-    worldZ = floor_f((f32) worldZ / BLOCKS_GRID_UNIT);
+    worldX = floorf((f32) worldX / BLOCKS_GRID_UNIT);
+    worldZ = floorf((f32) worldZ / BLOCKS_GRID_UNIT);
   
     tempX = &gMapCurrentStreamCoordsX;
       
@@ -1605,7 +1605,7 @@ s32 map_world_xz_to_block_index(s32 worldX, s32 worldZ, s32* blockIndex) {
 }
 
 /** Get Block from visGrid cell */
-Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
+Block* mapGetBlockFromGrid(s32 visGridX, s32 visGridZ, s32 mapLayer) { 
     s8 *blocksLayer;
     s8 blockIndex;
 
@@ -1623,19 +1623,19 @@ Block* map_get_block_from_grid(s32 visGridX, s32 visGridZ, s32 mapLayer) {
 }
 
 /** Get visGrid layer */
-s8* map_get_block_grid_layer(s32 layer) {
+s8* mapGetBlockGridLayer(s32 layer) {
     return gBlockIndices[layer];
 }
 
 /** Get Block from blockIndex */
-Block* map_get_block_by_index(s32 blockIndex) {
+Block* mapGetBlockByIndex(s32 blockIndex) {
     if (blockIndex < 0 || blockIndex >= gLoadedBlockCount) {
         return 0;
     }
     return gLoadedBlocks[blockIndex];
 }
 
-void track_update_frustum(void) {
+void trackUpdateFrustum(void) {
     f32 spDC;
     f32 spD8;
     f32 spD4;
@@ -1655,11 +1655,11 @@ void track_update_frustum(void) {
     s16 sp68;
     SRT srt;
 
-    camera = get_camera();
+    camera = camGet();
     if ((gTrackFlags & TRACKFLAG_UNK8) || (gTrackFlags & TRACKFLAG_UNK10000)) {
-        sp80 = camera_get_fov() / 1.5f;
+        sp80 = camGetFOV() / 1.5f;
     } else {
-        sp80 = camera_get_fov() * 0.5f;
+        sp80 = camGetFOV() * 0.5f;
     }
     spD0 = camera->tx - gWorldX;
     spCC = camera->ty;
@@ -1672,40 +1672,40 @@ void track_update_frustum(void) {
     srt.pitch = -camera->pitch;
     srt.roll = camera->roll;
     var_s0 = 0;
-    matrix_from_srt(&sp84, &srt);
-    vec3_transform(&sp84, 0.0f, 0.0f, -1.0f, &spDC, &spD8, &spD4);
+    mathYprXyzMtx(&sp84, &srt);
+    mathMtxXFMF(&sp84, 0.0f, 0.0f, -1.0f, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    sp78 = fcos16_precise(sp80 * 182.0f);
-    sp6E = arctan2_f(160.0f, 120.0f / (fsin16_precise(sp80 * 182.0f) / sp78));
-    sp7C = fsin16_precise(sp6E);
-    sp78 = fcos16_precise(sp6E);
-    vec3_transform(&sp84, -(-sp78), 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    sp78 = mathCosfInterp(sp80 * 182.0f);
+    sp6E = mathAtan2f(160.0f, 120.0f / (mathSinfInterp(sp80 * 182.0f) / sp78));
+    sp7C = mathSinfInterp(sp6E);
+    sp78 = mathCosfInterp(sp6E);
+    mathMtxXFMF(&sp84, -(-sp78), 0.0f, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, -sp78, 0.0f, -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, -sp78, 0.0f, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, 0.0f, -sp78, -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, 0.0f, -sp78, -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
     plane->z = spD4;
     plane->d = -((spD0 * spDC) + (spCC * spD8) + (spC8 * spD4));
     var_s0++;
-    vec3_transform(&sp84, 0.0f, -(-sp78), -sp7C, &spDC, &spD8, &spD4);
+    mathMtxXFMF(&sp84, 0.0f, -(-sp78), -sp7C, &spDC, &spD8, &spD4);
     plane = &gFrustumPlanes[var_s0];
     plane->x = spDC;
     plane->y = spD8;
@@ -1756,7 +1756,7 @@ void track_update_frustum(void) {
     }
 }
 
-s32 block_frustum_check(s32 xPos, s32 zPos, Block* block) {
+s32 blockFrustumCheck(s32 xPos, s32 zPos, Block* block) {
     Plane* currentPlane;
     f32 scaledXPos;
     f32 scaledZPos;
@@ -1816,12 +1816,12 @@ s32 block_frustum_check(s32 xPos, s32 zPos, Block* block) {
     return 1;
 }
 
-void func_8004530C(void) {
+void map_func_8004530C(void) {
     D_800B979E = 0;
     D_800B9794 = 0;
 }
 
-void some_cell_func(BitStream* stream) {
+void trackSomeCellFunc(BitStream* stream) {
     f32 var_fv1;
     s32 var_v0;
     s32 temp_t3;
@@ -1839,11 +1839,11 @@ void some_cell_func(BitStream* stream) {
         return;
     }
 
-    sp3C = floor_f((D_800B51E4->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-    sp28 = map_get_block_from_grid(sp3C, floor_f((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
+    sp3C = floorf((D_800B51E4->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    sp28 = mapGetBlockFromGrid(sp3C, floorf((D_800B51E4->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F), 0);
 
-    sp3C = floor_f(D_800B51E4->srt.transl.x / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT;
-    temp = (floor_f(D_800B51E4->srt.transl.z / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT);
+    sp3C = floorf(D_800B51E4->srt.transl.x / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT;
+    temp = (floorf(D_800B51E4->srt.transl.z / BLOCKS_GRID_UNIT_F) * BLOCKS_GRID_UNIT);
     temp_t2 = (D_800B51E4->srt.transl.x - sp3C);
     temp_t3 = (D_800B51E4->srt.transl.z - temp);
     if (sp28 == NULL) {
@@ -1874,12 +1874,12 @@ void some_cell_func(BitStream* stream) {
         var_v1 += 1;
     }
     temp = ((cellY * (8 * 8)) + (cellZ * 8) + cellX);
-    bitstream_init(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
+    bitstreamInit(stream, &D_800B9798[(var_v1 * temp)], D_800B979E, D_800B979E);
 }
 
 static const char str_8009a5e0[] = " ERROR: visible index greater than no vis blocks ";
 
-s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
+s32 map_func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     s8 bitPosIndex;
     s8 *new_var;
 
@@ -1887,8 +1887,8 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
     bitPosIndex = new_var[arg2 + arg3 * 16];
     
     if (bitPosIndex >= 0){
-        bitstream_set_pos(stream, D_800B97A0[bitPosIndex] + arg0);
-        return bitstream_read(stream, 1);
+        bitstreamSetPos(stream, D_800B97A0[bitPosIndex] + arg0);
+        return bitstreamRead(stream, 1);
     }
     diPrintf("SW ");
     return 0;
@@ -1898,7 +1898,7 @@ s32 func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4) {
  * Updates the object's distance-based fade and returns whether the object is visible 
  * according to the distance fade and frustum culling.
  */
-u8 track_obj_vis_check(Object* obj) {
+u8 trackObjVisCheck(Object* obj) {
     f32 fadeDist;
     Object* playerObj;
     f32 dist;
@@ -1918,10 +1918,10 @@ u8 track_obj_vis_check(Object* obj) {
             obj->opacityWithFade = 0;
             return FALSE;
         }
-        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = get_player(), (playerObj != NULL))) {
-            dist = vec3_distance(&obj->globalPosition, &playerObj->globalPosition);
+        if ((obj->setup != NULL) && (obj->setup->fadeFlags & OBJSETUP_FADE_MAIN) && (playerObj = objGetPlayer(), (playerObj != NULL))) {
+            dist = vec3Distance(&obj->globalPosition, &playerObj->globalPosition);
         } else {
-            dist = camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
+            dist = camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z);
         }
         if (fadeDist < dist) {
             obj->opacityWithFade = 0;
@@ -1944,10 +1944,10 @@ u8 track_obj_vis_check(Object* obj) {
     if (obj->id == OBJ_FXEmit) {
         return TRUE;
     }
-    return is_sphere_in_frustum(&obj->globalPosition, obj->visRadius);
+    return trackIsSphereInFrustum(&obj->globalPosition, obj->visRadius);
 }
 
-u8 is_sphere_in_frustum(Vec3f *v, f32 radius) {
+u8 trackIsSphereInFrustum(Vec3f *v, f32 radius) {
     u8 i;
 
     for (i = 0; i < MAP_LAYER_COUNT; i++)
@@ -1966,7 +1966,7 @@ u8 is_sphere_in_frustum(Vec3f *v, f32 radius) {
     return TRUE;
 }
 
-MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
+MapHeader* mapLoadStreamMap(s32 mapID, s32 arg1) {
     s32 map_start;
     s32 map_size; // sp48
     s32 instanceCount;
@@ -1976,7 +1976,7 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     
     map_start = READ_MAPS_TAB(mapID, 0);
     map_size = READ_MAPS_TAB(mapID, 7) - map_start;
-    queue_load_file_region_to_ptr((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MapHeader));
+    assetRomLoadSection((void *) gMapReadBuffer, MAPS_BIN, map_start, sizeof(MapHeader));
     gMapActiveStreamMap = (MapHeader*)gMapReadBuffer;
 
     size = gMapActiveStreamMap->gridB_sixteenthSize;
@@ -1984,7 +1984,7 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gMapActiveStreamMap = mmAlloc(((size * 0x20) + map_size) + (instanceCount >> 3) + 1, 
         ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
 
-    queue_load_file_region_to_ptr((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
+    assetRomLoadSection((void*)gMapActiveStreamMap, MAPS_BIN, map_start, map_size);
     
     //Setting up pointers to the 7 MAPS files (excluding the header) (and EOF)
     gMapActiveStreamMap->blockIDs_ptr = (u32*)(((u8*)gMapActiveStreamMap) + READ_MAPS_TAB(mapID, 1) - map_start);
@@ -2008,17 +2008,17 @@ MapHeader* map_load_streammap(s32 mapID, s32 arg1) {
     gLoadedMapsDataTable[mapID] = gMapActiveStreamMap;
     
     if (arg1 == 0){
-        map_init_obj_setup_list(gMapActiveStreamMap, &gMapObjSetupLists[mapID], mapID, 0);
+        mapInitObjSetupList(gMapActiveStreamMap, &gMapObjSetupLists[mapID], mapID, 0);
         gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     }
     else
     {
-        map_restore_saved_objects(gMapActiveStreamMap, mapID);
+        mapRestoreSavedObjects(gMapActiveStreamMap, mapID);
     }
     return gMapActiveStreamMap;
 }
 
-s32 map_load_streammap_add_to_table(s32 arg0) {
+s32 mapLoadStreamMapAddToTable(s32 arg0) {
     s32 sp2C;
     Struct_D_800B9768_unk4* temp_a3;
 
@@ -2027,25 +2027,25 @@ s32 map_load_streammap_add_to_table(s32 arg0) {
     if (sp2C == gMapNumStreamMaps) {
         gMapNumStreamMaps += 1;
     }
-    gMapStreamMapTable[sp2C].header = map_load_streammap(arg0, 0);
+    gMapStreamMapTable[sp2C].header = mapLoadStreamMap(arg0, 0);
     gMapStreamMapTable[sp2C].mapID = arg0;
     temp_a3 = &D_800B9768.unk4[arg0];
     gMapActiveStreamMap = gMapStreamMapTable[sp2C].header;
     gMapActiveStreamMap->unk19 = D_800B9768.unkC[arg0];
     gMapActiveStreamMap->originWorldX = (temp_a3->xMin + gMapActiveStreamMap->originOffsetX) * BLOCKS_GRID_UNIT_F;
     gMapActiveStreamMap->originWorldZ = (temp_a3->zMin + gMapActiveStreamMap->originOffsetZ) * BLOCKS_GRID_UNIT_F;
-    map_convert_objpositions_to_ws(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
-    map_restore_saved_objects(gMapActiveStreamMap, arg0);
+    mapConvertObjPositionsToWS(gMapActiveStreamMap, gMapActiveStreamMap->originWorldX, gMapActiveStreamMap->originWorldZ);
+    mapRestoreSavedObjects(gMapActiveStreamMap, arg0);
     D_80092A94 = arg0;
     return sp2C;
 }
 
 /** Returns one of the loaded maps' mapID (as defined in MAPINFO.bin) */
-s32 func_80045D58(void) {
+s32 map_func_80045D58(void) {
     return D_80092A94;
 }
 
-s32 map_find_streammap_index(s32 mapID_to_find) {
+s32 mapFindStreamMapIndex(s32 mapID_to_find) {
     s32 index;
     
     for (index = 0; index < gMapNumStreamMaps; index++){
@@ -2057,7 +2057,7 @@ s32 map_find_streammap_index(s32 mapID_to_find) {
     return -1;
 }
 
-s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
+s32 map_func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
     Struct_D_800B9768_unk4* var_v0;
     s32 temp_a2;
     s32 temp_t3;
@@ -2085,10 +2085,10 @@ s32 func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
     return -1;
 }
 
-// track_free_map
-void map_free(s32 mapID) {
+// official name: trackFreeMap
+void mapFree(s32 mapID) {
     if (gLoadedMapsDataTable[mapID]){
-        map_init_obj_setup_list(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
+        mapInitObjSetupList(gLoadedMapsDataTable[mapID], &gMapObjSetupLists[mapID], mapID, 1);
         mmFree(gLoadedMapsDataTable[mapID]);
         gLoadedMapsDataTable[mapID] = 0;
     } else {
@@ -2096,7 +2096,7 @@ void map_free(s32 mapID) {
     }
 }
 
-void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 param4) {
+void mapInitObjSetupList(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 param4) {
     s32 _pad;
     s32 objSetupFileLength;
     s32 groupsStart;
@@ -2171,11 +2171,11 @@ void map_init_obj_setup_list(MapHeader* map, MapObjSetupList* setupList, s32 map
 }
 
 // this is probably checkMap in default.dol
-void func_800462B0(){
+void map_func_800462B0(){
 }
 
 /** Iterates over all the ObjSetup in a map's object instance file, transforming the objects' coordinates from local coordinates to world-space coordinates */
-void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
+void mapConvertObjPositionsToWS(MapHeader *map, f32 X, f32 Z) {
     u8 *ptr;
     s32 offset;
     ObjSetup *obj;
@@ -2197,14 +2197,14 @@ void map_convert_objpositions_to_ws(MapHeader *map, f32 X, f32 Z) {
     }
 }
 
-void map_load_mobile_map(s32 id, Object *obj) {
+void mapLoadMobileMap(s32 id, Object *obj) {
     s32 sp24;
     s32 foundEmptySlot;
     s32 mapID;
     MapHeader *sp18;
 
     sp24 = D_800B4A50;
-    sp18 = map_load_streammap(id, 1);
+    sp18 = mapLoadStreamMap(id, 1);
     gLoadedMapsDataTable[id] = 0;
     foundEmptySlot = FALSE;
 
@@ -2216,7 +2216,7 @@ void map_load_mobile_map(s32 id, Object *obj) {
         } 
     }
 
-    map_init_obj_setup_list(sp18, &gMapObjSetupLists[mapID], mapID, 0);
+    mapInitObjSetupList(sp18, &gMapObjSetupLists[mapID], mapID, 0);
     gDLL_29_Gplay->vtbl->world_load_obj_group_bits(mapID);
     obj->mobileMapID = mapID;
     gDLL_29_Gplay->vtbl->set_mobile_map(id, mapID);
@@ -2226,7 +2226,7 @@ void map_load_mobile_map(s32 id, Object *obj) {
     D_800B4A50 = sp24;
 }
 
-void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
+void map_func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
     Struct_D_800B9768_unk4 *temp;
     s32 sp30;
     s32 temp_v1_2;
@@ -2235,11 +2235,11 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
     s8 sp20[2];
     s16 *temp2;
 
-    sp30 = func_80045DC0(worldGridX, worldGridZ, arg3);
+    sp30 = map_func_80045DC0(worldGridX, worldGridZ, arg3);
     if (sp30 != -1) {
-        mapIndex = map_find_streammap_index(sp30);
+        mapIndex = mapFindStreamMapIndex(sp30);
         if (mapIndex == -1) {
-            mapIndex = map_load_streammap_add_to_table(sp30);
+            mapIndex = mapLoadStreamMapAddToTable(sp30);
         }
         gMapStreamMapTable[mapIndex].unk06 = 1;
         sp24 = gMapStreamMapTable[mapIndex].header;
@@ -2250,16 +2250,16 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
         cell->mapIDs[1] = sp20[0];
         cell->mapIDs[2] = sp20[1];
         if (sp20[0] != -1) {
-            mapIndex = map_find_streammap_index(sp20[0]);
+            mapIndex = mapFindStreamMapIndex(sp20[0]);
             if (mapIndex == -1) {
-                mapIndex = map_load_streammap_add_to_table(sp20[0]);
+                mapIndex = mapLoadStreamMapAddToTable(sp20[0]);
             }
             ((s8 *)&gMapStreamMapTable[mapIndex])[6] = 1;
         }
         if (sp20[1] != -1) {
-            mapIndex = map_find_streammap_index(sp20[1]);
+            mapIndex = mapFindStreamMapIndex(sp20[1]);
             if (mapIndex == -1) {
-                mapIndex = map_load_streammap_add_to_table(sp20[1]);
+                mapIndex = mapLoadStreamMapAddToTable(sp20[1]);
             }
             ((s8 *)&gMapStreamMapTable[mapIndex])[6] = 1;
         }
@@ -2297,10 +2297,10 @@ void func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3
     }
 }
 
-void func_80046688(s32 arg0, s32 arg1) {
+void map_func_80046688(s32 arg0, s32 arg1) {
 }
 
-GlobalMapCell* func_80046698(s32 gridX, s32 gridZ) {
+GlobalMapCell* map_func_80046698(s32 gridX, s32 gridZ) {
     GlobalMapCell *layer;    
     s32 cellIndex;
     
@@ -2310,7 +2310,7 @@ GlobalMapCell* func_80046698(s32 gridX, s32 gridZ) {
     return &layer[cellIndex];
 }
 
-MapHeader* func_800466C0(void) {
+MapHeader* map_func_800466C0(void) {
     MapHeader* map;
     GlobalMapCell *layer;
     s32 mapID;
@@ -2332,27 +2332,27 @@ MapHeader* func_800466C0(void) {
     return map;
 }
 
-s16 func_80046718(void) {
+s16 map_func_80046718(void) {
     return gNumTRKBLKEntries;
 }
 
 /** map_get_mapID_blocks_count? (Calculated by quickly comparing base blockID for this map and next map) */
-s32 func_80046728(s32 mapID) {
+s32 map_func_80046728(s32 mapID) {
     if (mapID < 0 || mapID >= gNumTRKBLKEntries)
         return 0;
     return gFile_TRKBLK[mapID + 1] - gFile_TRKBLK[mapID];
 }
 
-void init_global_map(void) {
+void mapInitGlobalMap(void) {
     #define SOME_LENGTH     64
     s32 i;
     s32 size;
     StructBuf *buf = NULL;
     Struct_D_800B9768_unk4 *thisunk4;
 
-    size = get_file_size(GLOBALMAP_BIN);
+    size = piRomGetFileSize(GLOBALMAP_BIN);
 
-    queue_alloc_load_file((void**)&buf, GLOBALMAP_BIN);
+    assetRomLoad((void**)&buf, GLOBALMAP_BIN);
 
     size /= sizeof(StructBuf);
 
@@ -2380,7 +2380,7 @@ void init_global_map(void) {
     for (i = 0; i < size && (buf[i].unk6 >= 0); i++) {
         D_800B9768.unkC[buf[i].unk6] = buf[i].unk4;
 
-        map_read_layout(
+        mapReadLayout(
             &D_800B9768.unk4[buf[i].unk6],
             (u8 *)&D_800B9768.unk10[buf[i].unk6].unk0,
             buf[i].unk0,
@@ -2397,7 +2397,8 @@ void init_global_map(void) {
     mmFree(buf);
 }
 
-void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapID) {
+// official name: getdim
+void mapReadLayout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 mapID) {
     MapsBinStruct* mapbinstruct;
     s32 temp_v1;
     s32 var_v0;
@@ -2413,7 +2414,7 @@ void map_read_layout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3,
     }
     */
     
-    queue_load_file_region_to_ptr((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
+    assetRomLoadSection((void**)mapbinstruct, MAPS_BIN, READ_MAPS_TAB(mapID, 0), size);
     
     mapbinstruct->unkC = (s32 *) 
         (((s8*)mapbinstruct) + READ_MAPS_TAB(mapID, 1) - READ_MAPS_TAB(mapID, 0));
@@ -2448,12 +2449,12 @@ void map_func_80046B58(f32 x, f32 y, f32 z) {
         D_800B97B4 = z;
         gTrackFlags = temp_t8 | TRACKFLAG_UPDATE_STREAMING;
         if (gTrackFlags & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE){
-            map_update_streaming();
+            mapUpdateStreaming();
         }
     }
 }
 
-void map_update_streaming(void) {
+void mapUpdateStreaming(void) {
     f32 f14;
     f32 sp308;
     GlobalMapCell *var_v1;
@@ -2491,13 +2492,13 @@ void map_update_streaming(void) {
     f2 = D_800B97B4;
     f14 = f0 - gWorldX;
     sp308 = f2 - gWorldZ;
-    sp2F4 = floor_f(f14 / BLOCKS_GRID_UNIT_F);
-    sp2F0 = floor_f(sp308 / BLOCKS_GRID_UNIT_F);
+    sp2F4 = floorf(f14 / BLOCKS_GRID_UNIT_F);
+    sp2F0 = floorf(sp308 / BLOCKS_GRID_UNIT_F);
     sp294 = gTrackFlags & TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
     gTrackFlags &= ~TRACKFLAG_UPDATE_STREAMING_IMMEDIATE;
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (gTrackFlags & TRACKFLAG_LAYER_CHANGED)) {
         shadows_func_8004D974(1);
-        func_80012B54(1, 0);
+        assetQueueClearMesgType(1, 0);
         var_fp = 0;
         for (var_s7 = 0; var_s7 < 5; var_s7++) {
             var_v1 = gDecodedGlobalMap[var_s7];
@@ -2536,17 +2537,17 @@ void map_update_streaming(void) {
         for (var_s3 = 0; var_s3 < gMapNumStreamMaps; var_s3++) {
             gMapStreamMapTable[var_s3].unk06 = 0;
         }
-        D_800B4A50 = func_80045DC0(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 0);
+        D_800B4A50 = map_func_80045DC0(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 0);
         D_800B4A54 = -1;
         if (D_800B4A50 != -1) {
-            sp284 = map_find_streammap_index(D_800B4A50);
+            sp284 = mapFindStreamMapIndex(D_800B4A50);
             if (sp284 == -1) {
-                sp284 = map_load_streammap_add_to_table(D_800B4A50);
+                sp284 = mapLoadStreamMapAddToTable(D_800B4A50);
             }
             gMapStreamMapTable[sp284].unk06 = 1;
             D_800B4A54 = sp284;
             for (var_s7 = 0; var_s7 < ARRAYCOUNT_S(gBlockIndices); var_s7++) {
-                map_check_block_grid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
+                mapCheckBlockGrid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
                 temp_a3 = gBlockIndices[var_s7];
                 D_800B9714 = D_800B9700[var_s7];
                 for (var_s2 = sp2C8[2]; sp2C8[3] >= var_s2; var_s2++) {
@@ -2597,7 +2598,7 @@ void map_update_streaming(void) {
             if ((s8) gMapStreamMapTable[var_s3].unk06 == 0) {
                 if (gMapStreamMapTable[var_s3].header != NULL) {
                     var_s1 = gMapStreamMapTable[var_s3].mapID;
-                    map_init_obj_setup_list(gMapStreamMapTable[var_s3].header, &gMapObjSetupLists[var_s1], var_s1, 1);
+                    mapInitObjSetupList(gMapStreamMapTable[var_s3].header, &gMapObjSetupLists[var_s1], var_s1, 1);
                     mmFree(gMapStreamMapTable[var_s3].header);
                     gLoadedMapsDataTable[var_s1] = NULL;
                 }
@@ -2613,15 +2614,15 @@ void map_update_streaming(void) {
             }
         }
         for (var_s3 = 0; var_s3 < var_fp; var_s3++) {
-            block_free(sp84[var_s3].unk4);
+            blockFree(sp84[var_s3].unk4);
         }
-        func_8004530C();
+        map_func_8004530C();
     }
-    map_update_objects_streaming(sp294);
+    mapUpdateObjectsStreaming(sp294);
     gTrackFlags &= ~TRACKFLAG_LAYER_CHANGED;
 }
 
-void map_increment_layer(void) {
+void mapIncrementLayer(void) {
     gMapLayer += 1;
     if (gMapLayer >= 3) {
         gMapLayer = 2;
@@ -2629,7 +2630,7 @@ void map_increment_layer(void) {
     gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
-void map_decrement_layer(void) {
+void mapDecrementLayer(void) {
     gMapLayer -= 1;
     if (gMapLayer < -2) {
         gMapLayer = -2;
@@ -2637,7 +2638,7 @@ void map_decrement_layer(void) {
     gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
-void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx) {
+void mapCheckBlockGrid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx) {
     MapHeader* mapHeader;
     s32 temp_t6;
     s32 temp_v1_2;
@@ -2741,10 +2742,10 @@ void map_check_block_grid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4,
     }
 }
 
-void func_80047710(s32 arg0, s32 arg1, s32 arg2) {
+void map_func_80047710(s32 arg0, s32 arg1, s32 arg2) {
 }
 
-void func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+void map_func_80047724(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
 }
 
 void map_func_8004773C(void) {
@@ -2766,8 +2767,8 @@ void map_func_8004773C(void) {
         D_80092A78 = 8;
     }
     gDLL_3_Animation->vtbl->init();
-    camera_apply_alternate_trigger();
-    camera_apply_alternate_trigger();
+    camApplyAlternateTrigger();
+    camApplyAlternateTrigger();
     func_80053300();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
@@ -2789,8 +2790,8 @@ void map_func_8004773C(void) {
     gBlockColorTableLength = 0;
     playerno = gDLL_29_Gplay->vtbl->get_playerno();
     savedPlayerLocation = gDLL_29_Gplay->vtbl->get_player_saved_location();
-    gMapCurrentStreamCoordsX = floor_f(savedPlayerLocation->vec.x / BLOCKS_GRID_UNIT_F);
-    gMapCurrentStreamCoordsZ = floor_f(savedPlayerLocation->vec.z / BLOCKS_GRID_UNIT_F);
+    gMapCurrentStreamCoordsX = floorf(savedPlayerLocation->vec.x / BLOCKS_GRID_UNIT_F);
+    gMapCurrentStreamCoordsZ = floorf(savedPlayerLocation->vec.z / BLOCKS_GRID_UNIT_F);
     Vec3_Int_array->f.x = savedPlayerLocation->vec.x;
     Vec3_Int_array->f.y = savedPlayerLocation->vec.y;
     Vec3_Int_array->f.z = savedPlayerLocation->vec.z;
@@ -2818,22 +2819,22 @@ void map_func_8004773C(void) {
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
-    footsteps_init();
+    footstepsInit();
     gTrackFlags &= (TRACKFLAG_DISABLE_Z_BUFFER | TRACKFLAG_SKY);
     gTrackFlags |= (TRACKFLAG_BLOCK_LIGHTING | TRACKFLAG_UNK100 | TRACKFLAG_SHADOWS | TRACKFLAG_SKY_OBJECTS | TRACKFLAG_ANTI_ALIAS);
     gTrackFlags |= (TRACKFLAG_UPDATE_STREAMING_IMMEDIATE | TRACKFLAG_UNK4);
     map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
     gTrackFlags &= ~TRACKFLAG_UNK4;
     func_800591EC();
-    func_80023628();
+    objLoadPlayer();
     D_800B4A58 = 0;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     camera->srt.transl.x = savedPlayerLocation->vec.x;
     camera->srt.transl.y = savedPlayerLocation->vec.y;
     camera->srt.transl.z = savedPlayerLocation->vec.z;
 
-    player = get_player();
+    player = objGetPlayer();
     if ((D_800B4A5E == -2) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
         sp40 = gDLL_29_Gplay->vtbl->get_current_player_lactions();
         sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
@@ -2916,7 +2917,7 @@ void map_func_8004773C(void) {
     }
 }
 
-s32 map_get_type(void) {
+s32 mapGetType(void) {
     return gMapType;
 }
 
@@ -2940,7 +2941,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
 
     offset = 0;
     if (D_800B9768.unkC[mapID] == -0x80) {
-        map_read_layout(&D_800B9768.unk4[mapID], &D_800B9768.unk10->unk0[mapID], 0, 0, mapID);
+        mapReadLayout(&D_800B9768.unk4[mapID], &D_800B9768.unk10->unk0[mapID], 0, 0, mapID);
         D_800B9768.unkC[mapID] = 0;
     }
     *arg5 = D_800B9768.unkC[mapID];
@@ -2952,7 +2953,7 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         mapBinOffset = READ_MAPS_TAB(mapID, 0);
         mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
         map = mmAlloc(mapBinSize, ALLOC_TAG_TRACK_COL, ALLOC_NAME("trk:map"));
-        queue_load_file_region_to_ptr((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
+        assetRomLoadSection((void *)map, MAPS_BIN, mapBinOffset, mapBinSize);
         map->objectInstanceFile_ptr = (ObjSetup *) (READ_MAPS_TAB(mapID, 4) + (s8 *)map - mapBinOffset);
         map->originWorldX = (D_800B9768.unk4[mapID].xMin + map->originOffsetX) * BLOCKS_GRID_UNIT_F;
         map->originWorldZ = (D_800B9768.unk4[mapID].zMin + map->originOffsetZ) * BLOCKS_GRID_UNIT_F;
@@ -2979,12 +2980,12 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         }
         mmFree(map);
     }
-    mapInfoListLength = (u32)get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
+    mapInfoListLength = (u32)piRomGetFileSize(MAPINFO_BIN) / sizeof(MapInfo);
     if ((mapID < 0) || (mapID >= mapInfoListLength)) {
         gMapType = MAPTYPE_REGULAR;
     } else {
         sp64 = (MapInfo*)gMapReadBuffer;
-        queue_load_file_region_to_ptr((void** ) sp64, MAPINFO_BIN, mapID * sizeof(MapInfo), sizeof(MapInfo));
+        assetRomLoadSection((void** ) sp64, MAPINFO_BIN, mapID * sizeof(MapInfo), sizeof(MapInfo));
         gMapType = sp64->type;
     }
     gMobileMapUnknown = 0;
@@ -3000,14 +3001,14 @@ void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     s32 mapInfoCount;
     MapInfo* mapInfo;
 
-    mapID = map_world_xz_to_map_id(worldX, worldZ);
-    mapInfoCount = get_file_size(MAPINFO_BIN) / sizeof(MapInfo);
+    mapID = mapWorldXZToMapID(worldX, worldZ);
+    mapInfoCount = piRomGetFileSize(MAPINFO_BIN) / sizeof(MapInfo);
 
     if (mapID < 0 || !(mapID < mapInfoCount)) {
         gMapType = MAPTYPE_REGULAR;
     } else {
         mapInfo = (MapInfo *)gMapReadBuffer;
-        queue_load_file_region_to_ptr((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
+        assetRomLoadSection((void *) mapInfo, MAPINFO_BIN, mapID * (sizeof(MapInfo)), sizeof(MapInfo));
         gMapType = mapInfo->type;
     } 
     
@@ -3020,14 +3021,14 @@ void map_func_800483BC(f32 worldX, f32 worldY, f32 worldZ) {
     }
 }
 
-s16 map_get_mobile_map_vars(s32* outMapID) {
+s16 mapGetMobileMapVars(s32* outMapID) {
     if (outMapID) {
         *outMapID = (s32) gMobileMapID;
     }
     return gMobileMapUnknown;
 }
 
-s32 map_get_layer(void) {
+s32 mapGetLayer(void) {
     return gMapLayer;
 }
 
@@ -3037,15 +3038,15 @@ void map_func_800484A8(void) {
     s8* var_s1;
 
     mmSetDelay(0);
-    func_80012B54(1, 0);
+    assetQueueClearMesgType(1, 0);
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         var_s1 = gBlockIndices[i];
         for (j = 0; j < 256; j++) {
-            block_free(var_s1[j]);
+            blockFree(var_s1[j]);
         }
     }
     gLoadedBlockCount = 0;
-    obj_free_all();
+    objFreeAll();
     for (j = 0; j < 120; j++) {
         if (gLoadedMapsDataTable[j] != NULL) {
             mmFree(gLoadedMapsDataTable[j]);
@@ -3073,7 +3074,7 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     currentBlockIndices = gBlockIndices[arg4];
     currentMap = gDecodedGlobalMap[arg4];
     currentMap += fieldIndex;
-    func_80046428(arg2, arg3, currentMap, arg4);
+    map_func_80046428(arg2, arg3, currentMap, arg4);
     blockID = currentMap->blockID;
     if (blockID < 0) {
         blockID = -1;
@@ -3090,12 +3091,12 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             return 1;
         }
     }
-    block_load(blockID, fieldIndex, arg4, 0);
+    blockLoad(blockID, fieldIndex, arg4, /*fromAssetThread=*/FALSE);
     return 1;
 }
 
 static const char str_8009a688[] = "Blocksize error(1): %d should be %d\n";
-void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
+void blockLoad(s32 id, s32 param_2, s32 globalMapIdx, u8 fromAssetThread) {
     s32 texIdx;
     s32 binOffset;
     s32 binSize;
@@ -3112,9 +3113,9 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
 
     binOffset = gFile_BLOCKS_TAB[id];
     binSize = gFile_BLOCKS_TAB[id + 1] - binOffset;
-    read_file_region(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
+    piRomLoadSection(BLOCKS_BIN, gMapReadBuffer, binOffset, 0x10);
     size = ((s32*)gMapReadBuffer)[0];
-    size += hits_get_size(id) + 8;
+    size += blockHitsGetSize(id) + 8;
     block = mmAlloc(size, ALLOC_TAG_TRACK_COL, NULL);
     if (block == NULL) {
         return;
@@ -3124,25 +3125,25 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
 
     tempLoadAddr = (((u32)block + size) - binSize) - 0x10;
     tempLoadAddr -= tempLoadAddr % 16;
-    read_file_region(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
-    rarezip_uncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
+    piRomLoadSection(BLOCKS_BIN, (void*)tempLoadAddr, binOffset, binSize);
+    rarezipUncompress(((u8*)tempLoadAddr) + 4, (u8*)block, size);
     block->vertices = (BlockVertex*)((u32)block->vertices + (u32)block);
     block->encodedTris = (EncodedTri*)((u32)block->encodedTris + (u32)block);
     block->shapes = (BlockShape*)((u32)block->shapes + (u32)block);
     block->ptr_faceEdgeVectors = (s16*)((u32)block->ptr_faceEdgeVectors + (u32)block);
     block->materials = (BlocksMaterial*)((u32)block->materials + (u32)block);
-    tex_set_alloc_tag(ALLOC_TAG_TRACKTEX_COL);
+    texSetMemColour(ALLOC_TAG_TRACKTEX_COL);
     for (texIdx = 0; texIdx < block->materialCount; texIdx++) {
-        block->materials[texIdx].texture = tex_load(-((u32)block->materials[texIdx].texture | 0x8000), queue);
+        block->materials[texIdx].texture = texLoadTextureActual(-((u32)block->materials[texIdx].texture | 0x8000), fromAssetThread);
     }
-    tex_set_alloc_tag(ALLOC_TAG_TEX_COL);
-    block_setup_vertices(block);
+    texSetMemColour(ALLOC_TAG_TEX_COL);
+    blockSetupVertices(block);
     addr = (u32)block;
     addr += block->modelSize;
     block->gdlGroups = (Gfx*)addr;
-    block_setup_gdl_groups(block);
+    blockSetupDLGroups(block);
     addr += (3 * block->shapeCount * sizeof(Gfx));
-    block_color_table_add_block(block);
+    blockColorTableAddBlock(block);
     if (block->vtxFlags & 8) {
         addr = mmAlign8(addr);
         fileVerts = block->vertices;
@@ -3189,22 +3190,22 @@ void block_load(s32 id, s32 param_2, s32 globalMapIdx, u8 queue) {
     }
     addr = mmAlign4(addr);
     block->texAnims = (BlockTextureAnimInstance*)addr;
-    addr += block_setup_texture_anims(block);
+    addr += blockSetupTextureAnims(block);
     addr = mmAlign2(addr);
     block->xzBitmap = (s16*)addr;
     addr += block->unk34 * 2;
-    block_setup_xz_bitmap(block);
+    blockSetupXZBitmap(block);
     addr = mmAlign8(addr);
-    addr = (u32)block_load_hits(block, id, queue, (HitsLine*)addr);
+    addr = (u32)blockLoadHits(block, id, fromAssetThread, (HitsLine*)addr);
 
-    if (queue != 0) {
-        queue_block_emplace(1, (u32* ) block, (u8*) id, param_2, globalMapIdx);
+    if (fromAssetThread != 0) {
+        assetQueueCompletedLoad(1, (u32* ) block, (u8*) id, param_2, globalMapIdx);
     } else {
-        block_emplace(block, id, param_2, globalMapIdx);
+        blockEmplace(block, id, param_2, globalMapIdx);
     }
 }
 
-void block_color_table_add_block(Block* block) {
+void blockColorTableAddBlock(Block* block) {
     s32 targetVertexIndex;
     s32 vertexIndex;
     s32 result;
@@ -3218,7 +3219,7 @@ void block_color_table_add_block(Block* block) {
             vertexIndex = currentShape->vtxBase;
             targetVertexIndex = currentShape[1].vtxBase;
             while (vertexIndex < targetVertexIndex) {
-                result = block_color_table_add(
+                result = blockColorTableAdd(
                     block->vertices[vertexIndex].cn[0],
                     block->vertices[vertexIndex].cn[1],
                     block->vertices[vertexIndex].cn[2],
@@ -3234,7 +3235,7 @@ void block_color_table_add_block(Block* block) {
 }
 
 static const char str_8009a6b0[] = "COLOUR TABLE: Attempt to free invalid entry\n";
-void block_color_table_free_block(Block* block) {
+void blockColorTableFreeBlock(Block* block) {
     s32 index;
     s32 i;
     s32 targetVertexIndex;
@@ -3262,7 +3263,7 @@ void block_color_table_free_block(Block* block) {
     }
 }
 
-s32 block_color_table_get(u8 r, u8 g, u8 b, u8 a) {
+s32 blockColorTableGet(u8 r, u8 g, u8 b, u8 a) {
     s32 index;
     
     for (index = 0; index < gBlockColorTableLength; index++){
@@ -3277,11 +3278,11 @@ s32 block_color_table_get(u8 r, u8 g, u8 b, u8 a) {
     return -1;
 }
 
-s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a) {
+s32 blockColorTableAdd(u8 r, u8 g, u8 b, u8 a) {
     s32 i;
 
     // try to get the index from another function
-    i = block_color_table_get(r, g, b, a);
+    i = blockColorTableGet(r, g, b, a);
 
     // if we got something valid use it to increment unk8
     // then return
@@ -3314,7 +3315,7 @@ s32 block_color_table_add(u8 r, u8 g, u8 b, u8 a) {
     return i;
 }
 
-void block_color_table_tick(void) {
+void blockColorTableTick(void) {
     s32 i;
     u8 r, g, b;
 
@@ -3329,7 +3330,8 @@ void block_color_table_tick(void) {
     }
 }
 
-void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
+// official name: trackLoadBlockEnd
+void blockEmplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
     s32 slot;
     s8 *ptr;
 
@@ -3354,13 +3356,13 @@ void block_emplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
     gBlockRefCounts[slot] = 1;
 
     if (block->unk3E != 0) {
-        block_compute_vertex_colors(block, 0, 0, 1);
+        blockComputeVertexColors(block, 0, 0, 1);
     }
 
     func_80058F3C();
 }
 
-void block_setup_gdl_groups(Block *block) {
+void blockSetupDLGroups(Block *block) {
     s32 i;
 
     for (i = 0; i < block->shapeCount; i++) {
@@ -3407,19 +3409,19 @@ void block_setup_gdl_groups(Block *block) {
         if (flags & RENDER_DECAL_SIMPLE) {
             if (flags & RENDER_SUBSURFACE) {
                 flags &= ~RENDER_SUBSURFACE;
-                tex_disable_modes(RENDER_SEMI_TRANSPARENT);
+                texDisableModes(RENDER_SEMI_TRANSPARENT);
             } else {
                 if ((flags & RENDER_UNK2000) || (flags & RENDER_SEMI_TRANSPARENT) || (flags & RENDER_DECAL)) {
                     flags |= RENDER_SEMI_TRANSPARENT;
                 } else {
-                    tex_disable_modes(RENDER_SEMI_TRANSPARENT);
+                    texDisableModes(RENDER_SEMI_TRANSPARENT);
                 }
             }
         }
 
         mygdl = &block->gdlGroups[i * 3];
         // only set modes, don't set texture!
-        tex_gdl_set_texture_simple(&mygdl, texture, 
+        texDPTextureSimple(&mygdl, texture, 
             flags | RENDER_NO_CULL, 
             TEX_FRAME(0),
             TRUE, // force
@@ -3449,15 +3451,15 @@ void block_setup_gdl_groups(Block *block) {
         }
 
         if (flags & RENDER_DECAL_SIMPLE) {
-            tex_enable_modes(RENDER_SEMI_TRANSPARENT);
+            texEnableModes(RENDER_SEMI_TRANSPARENT);
         }
     }
 }
 
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_setup_vertices.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/blockSetupVertices.s")
 #else
-void block_setup_vertices(Block *block) {
+void blockSetupVertices(Block *block) {
     s32 i;
     BlockShape *shape;
     s32 v0[3]; // spC4 - spCC
@@ -3532,7 +3534,7 @@ void block_setup_vertices(Block *block) {
 }
 #endif
 
-void block_free(s32 blockIndex) {
+void blockFree(s32 blockIndex) {
     Block *block;
     s32 i;
     u8 runtimeValue;
@@ -3545,24 +3547,24 @@ void block_free(s32 blockIndex) {
     gBlockRefCounts[blockIndex] -= 1;
     if (gBlockRefCounts[blockIndex] == 0) {
         block = gLoadedBlocks[blockIndex];
-        block_color_table_free_block(block);
+        blockColorTableFreeBlock(block);
         gLoadedBlockIds[blockIndex] = -1;
         gLoadedBlocks[blockIndex] = NULL;
         if (block->numTexAnims != 0) {
-            block_free_texture_anims(block);
+            blockFreeTextureAnims(block);
         }
 
         //Loop over shapes and free them
         for (i = 0; i < block->shapeCount; i++){
             runtimeValue = (&block->shapes[i])->texScrollerID;
             if (runtimeValue != 0xFF) {
-                block_texscroll_free(runtimeValue);
+                blockTexscrollFree(runtimeValue);
             }
         }
 
         //Loop over materials and free their textures
         for (i = 0; i < block->materialCount; i++){
-            tex_free(block->materials[i].texture);
+            texFreeTexture(block->materials[i].texture);
         }
         
         if ((u32*)block->unk1C != NULL) {
@@ -3574,12 +3576,12 @@ void block_free(s32 blockIndex) {
     }
 }
 
-u32 hits_get_size(s32 id) {
+u32 blockHitsGetSize(s32 id) {
     u32 size = gFile_HITS_TAB[id + 1] - gFile_HITS_TAB[id];
     return size;
 }
 
-HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_ptr) {
+HitsLine* blockLoadHits(Block *block, s32 blockID, u8 fromAssetThread, HitsLine* hits_ptr) {
     s32 hits_start;
     s32 hits_size;
     s32 lineIndex;
@@ -3590,7 +3592,7 @@ HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_p
     
     if (hits_size > 0) {
         block->ptr_hits_lines = hits_ptr;
-        read_file_region(HITS_BIN, hits_ptr, hits_start, hits_size);        
+        piRomLoadSection(HITS_BIN, hits_ptr, hits_start, hits_size);        
         hits_ptr = (HitsLine*)((u8*)hits_ptr + hits_size);
     }
     block->hits_line_count = hits_size / sizeof(HitsLine);
@@ -3616,11 +3618,11 @@ HitsLine* block_load_hits(Block *block, s32 blockID, u8 unused, HitsLine* hits_p
     return hits_ptr;
 }
 
-void func_800499B4(){
+void map_func_800499B4(void) {
 }
 
 /** Updates all the block texture scrollers */
-void block_texscroll_tick(void) {
+void blockTexscrollTick(void) {
     BlockTextureScroller *scroll;
     s32 i;
     s32 dU;
@@ -3691,7 +3693,7 @@ void block_texscroll_tick(void) {
   * MaterialA is the primary texture,
   * MaterialB is an optional blend texture, mostly used for texture-blended animated water
   */
-s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
+s32 blockTexscrollAdd(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
     BlockTextureScroller* scroll;
     s32 index;
     s32 scrollHandlerID;
@@ -3762,7 +3764,7 @@ s32 block_texscroll_add(s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 u
   * MaterialA is the primary texture,
   * MaterialB is an optional blend texture, mostly used for texture-blended animated water
   */
-void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
+void blockTexscrollSet(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s32 heightA, s32 uSpeedB, s32 vSpeedB, s32 widthB, s32 heightB) {
     BlockTextureScroller *scroll;
 
     scroll = &sBlockTexScrollTable[scrollerID];
@@ -3780,7 +3782,7 @@ void block_texscroll_set(u32 scrollerID, s32 uSpeedA, s32 vSpeedA, s32 widthA, s
     scroll->heightB = heightB; 
 }
 
-void block_texscroll_free(u32 id) {
+void blockTexscrollFree(u32 id) {
     if (sBlockTexScrollTable[id].refCount > 0) {
         sBlockTexScrollTable[id].refCount--;
     } else {
@@ -3788,11 +3790,11 @@ void block_texscroll_free(u32 id) {
     }
 }
 
-BlockTextureScroller* block_texscroll_get(s32 id) {
+BlockTextureScroller* blockTexscrollGet(s32 id) {
     return &sBlockTexScrollTable[id];
 }
 
-void block_texanim_tick(void) {
+void blockTexanimTick(void) {
     s32 i;
     Texture *texture;
 
@@ -3802,14 +3804,14 @@ void block_texanim_tick(void) {
 
             if ((texture != NULL) && (texture->animDuration != 0x100)) {
                 if (texture->animSpeed != 0) {
-                    tex_animate(texture, (s32 *)&gBlockTexAnimTable[i].flags, (s32 *)&gBlockTexAnimTable[i].unk4);
+                    texAnimateTexture(texture, (s32 *)&gBlockTexAnimTable[i].flags, (s32 *)&gBlockTexAnimTable[i].unk4);
                 }
             }
         }
     }
 }
 
-s32 block_setup_texture_anims(Block* block) {
+s32 blockSetupTextureAnims(Block* block) {
     s32 var_a1;
     s32 numTexAnims;
     s32 i;
@@ -3843,12 +3845,12 @@ s32 block_setup_texture_anims(Block* block) {
                 animatorID = shape->animatorID;
                 if (var_a1 == FALSE) {
                     var_a1 = shape->flags;
-                    block->texAnims[numTexAnims].texanimID = block_texanim_add(block->materials[shape->materialIndex].texture, var_a1, animatorID);
+                    block->texAnims[numTexAnims].texanimID = blockTexanimAdd(block->materials[shape->materialIndex].texture, var_a1, animatorID);
                     block->texAnims[numTexAnims].animatorID = block->shapes[i].animatorID;
                     numTexAnims++;
                 } else {
                     var_a1 = shape->flags;
-                    block_texanim_add(block->materials[shape->materialIndex].texture, var_a1, animatorID);
+                    blockTexanimAdd(block->materials[shape->materialIndex].texture, var_a1, animatorID);
                 }
             }
         }
@@ -3858,7 +3860,7 @@ s32 block_setup_texture_anims(Block* block) {
     return numTexAnims * sizeof(BlockTextureAnimInstance);
 }
 
-void block_free_texture_anims(Block* block) {
+void blockFreeTextureAnims(Block* block) {
     s32 index;
     u8 animatorID;
     BlockShape* shape;
@@ -3868,13 +3870,13 @@ void block_free_texture_anims(Block* block) {
         if (shape->flags & RENDER_SHAPE_ANIMATED) {
             animatorID = shape->animatorID;
             if (animatorID) {
-                block_texanim_free(block->materials[shape->materialIndex].texture, animatorID);
+                blockTexanimFree(block->materials[shape->materialIndex].texture, animatorID);
             }
         }
     }
 }
 
-s32 block_texanim_add(Texture* tex, u32 renderFlags, s32 animatorID) {
+s32 blockTexanimAdd(Texture* tex, u32 renderFlags, s32 animatorID) {
     s32 index;
     s32 indexOfUnref;
     
@@ -3919,7 +3921,7 @@ s32 block_texanim_add(Texture* tex, u32 renderFlags, s32 animatorID) {
     return 0;
 }
 
-void block_texanim_free(Texture *tex, s32 animatorID) {
+void blockTexanimFree(Texture *tex, s32 animatorID) {
     s32 index;
     for (index = 0; index < MAX_TEXTURE_ANIMS; index++) {
         if (tex == gBlockTexAnimTable[index].texture && animatorID == gBlockTexAnimTable[index].animatorID) {
@@ -3932,7 +3934,7 @@ void block_texanim_free(Texture *tex, s32 animatorID) {
     }
 }
 
-Texture* block_texanim_get_tex(s32 animatorID) {
+Texture* blockTexanimGetTex(s32 animatorID) {
     s32 blockIndex;
     Block *block;
     s32 textureIndex;
@@ -3952,7 +3954,7 @@ Texture* block_texanim_get_tex(s32 animatorID) {
     return NULL;
 }
 
-BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorID) {
+BlockTextureAnimInstance *blockTexanimGetInstance(Block *block, s32 animatorID) {
     s32 i;
 
     for (i = 0; i < block->numTexAnims; i++) {
@@ -3964,11 +3966,11 @@ BlockTextureAnimInstance *block_texanim_get_instance(Block *block, s32 animatorI
     return NULL;
 }
 
-BlockTextureAnim *block_texanim_get(s32 idx) {
+BlockTextureAnim *blockTexanimGet(s32 idx) {
     return &gBlockTexAnimTable[idx];
 }
 
-void block_setup_xz_bitmap(Block* block) {
+void blockSetupXZBitmap(Block* block) {
     s16 tempTriBase;
     s16 pad;
     s32 triIndex;
@@ -4035,13 +4037,13 @@ void block_setup_xz_bitmap(Block* block) {
 /**
   * uses the animator object's world position to find the relevant block
   */
-s32 block_get_animator_vertex_count(Object* obj, u8 animatorID) {
+s32 blockGetAnimatorVertexCount(Object* obj, u8 animatorID) {
     s32 i;
     s32 vertexCount;
     Block *block;
     BlockShape *shapes;
 
-    block = map_get_block_by_index(map_world_coords_to_block_index(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return 0;
     }
@@ -4057,14 +4059,14 @@ s32 block_get_animator_vertex_count(Object* obj, u8 animatorID) {
     return vertexCount;
 }
 
-s32 block_get_animator_shape_count(Object* obj, u8 animatorID) {
+s32 blockGetAnimatorShapeCount(Object* obj, u8 animatorID) {
     Block* block;
     s32 matches;
     s32 i;
     BlockShape *shapes;
 
     //Get object's local Blocks model
-    block = map_get_block_by_index(map_world_coords_to_block_index(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z));
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return 0;
     }
@@ -4078,7 +4080,7 @@ s32 block_get_animator_shape_count(Object* obj, u8 animatorID) {
     return matches;
 }
 
-void func_8004A67C(void) {
+void map_func_8004A67C(void) {
     s32 pad;
     s32 i;
     s32 id;
@@ -4090,9 +4092,9 @@ void func_8004A67C(void) {
     Object* obj;
     Object** mobileMapObjs;
 
-    mobileMapObjs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
-    camera = get_camera();
-    update_camera_for_object(camera);
+    mobileMapObjs = objGetAllOfType(OBJTYPE_MobileMap, &count);
+    camera = camGet();
+    camUpdateCameraForObject(camera);
 
     for (i = 0; i < 20;) {
         Vec3_Int_array[i++].i = 0;
@@ -4117,7 +4119,7 @@ void func_8004A67C(void) {
             Vec3_Int_array[id].f.y = camera->srt.transl.y;
             Vec3_Int_array[id].f.z = camera->srt.transl.z;
         } else {
-            inverse_transform_point_by_object(
+            camInverseTransformPointByObject(
                 camera->tx,
                 camera->ty,
                 camera->tz,
@@ -4136,7 +4138,7 @@ void func_8004A67C(void) {
 }
 
 // official name: trackObjectControl
-void map_update_objects_streaming(s32 arg0) {
+void mapUpdateObjectsStreaming(s32 arg0) {
     GlobalMapCell* var_a3;
     s32 i;
     MapHeader* temp_s6;
@@ -4187,7 +4189,7 @@ void map_update_objects_streaming(s32 arg0) {
         }
     }
     
-    objList = get_world_objects(&i, &count);
+    objList = objGetObjects(&i, &count);
     while (i < count) {
         unloadObj = FALSE;
         obj = objList[i];
@@ -4196,15 +4198,15 @@ void map_update_objects_streaming(s32 arg0) {
         if (obj->mapID >= 0) {
             if (!(objSetup->loadFlags & OBJSETUP_LOAD_MANUAL)) {
                 if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
-                    if ((obj->controlNo >= OBJCONTROL_None) && (map_should_obj_unload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_None) && (mapShouldObjUnload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[obj->mapID] == NULL)) {
                         unloadObj = TRUE;
                     }
                 } else {
-                    if ((obj->controlNo >= OBJCONTROL_None) && (map_should_obj_unload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_None) && (mapShouldObjUnload(obj) != 0)) {
                         unloadObj = TRUE;
-                    } else if ((obj->mapID < MAP_ID_MAX) && (func_8004AEFC(obj->mapID, sp70, var_s4) == 0)) {
+                    } else if ((obj->mapID < MAP_ID_MAX) && (map_func_8004AEFC(obj->mapID, sp70, var_s4) == 0)) {
                         unloadObj = TRUE;
                     }
                 }
@@ -4213,13 +4215,13 @@ void map_update_objects_streaming(s32 arg0) {
         if (unloadObj) {
             if (gLoadedMapsDataTable[obj->mapID] != NULL) {
                 if (obj->unkB2 >= 0) {
-                    func_8004B710(obj->unkB2, obj->mapID, 0);
+                    mapSetObjLoaded(obj->unkB2, obj->mapID, 0);
                 }
             }
             if (obj->id == OBJ_IMSnowBike) {
-                STUBBED_PRINTF(" Map not Loaded %i ", func_8004AEFC(obj->mapID, sp70, var_s4) == 0);
+                STUBBED_PRINTF(" Map not Loaded %i ", map_func_8004AEFC(obj->mapID, sp70, var_s4) == 0);
             }
-            obj_destroy_object(obj);
+            objFreeObject(obj);
             i -= 1;
             count -= 1;
         }
@@ -4232,7 +4234,7 @@ void map_update_objects_streaming(s32 arg0) {
                 group = 0;
                 while (objGroupBits != 0) {
                     if (objGroupBits & 1) {
-                        func_8004B548(gLoadedMapsDataTable[i], i, group, NULL);
+                        map_func_8004B548(gLoadedMapsDataTable[i], i, group, NULL);
                     }
                     objGroupBits >>= 1;
                     group++;
@@ -4253,14 +4255,14 @@ void map_update_objects_streaming(s32 arg0) {
                     break;
                 }
 
-                if ((map_check_some_mapobj_flag(var_s3, (u32) sp70[i]) == 0) && (map_should_stream_load_object(var_s1_2, 0, sp70[i]) != 0)) {
-                    func_8004B710(var_s3, (u32) sp70[i], 1);
+                if ((mapGetObjLoaded(var_s3, (u32) sp70[i]) == 0) && (mapShouldStreamLoadObject(var_s1_2, 0, sp70[i]) != 0)) {
+                    mapSetObjLoaded(var_s3, (u32) sp70[i], 1);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
-                    } else if (map_get_is_object_streaming_disabled() != 0) {
-                        func_80012584(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
+                    } else if (assetIsObjQueueEnabled() != 0) {
+                        assetEnqueueLoad(0x3E, 4, NULL, var_s1_2, sp70[i], var_s3, 0, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, sp70[i], var_s3, NULL);
                     }
                 }
                 var_s3++;
@@ -4274,7 +4276,7 @@ void map_update_objects_streaming(s32 arg0) {
             }
         }
     }
-    objList = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+    objList = objGetAllOfType(OBJTYPE_MobileMap, &count);
     for (i = 0; i < count; i++) {
         temp_s5 = objList[i];
         var_s3 = 0;
@@ -4290,7 +4292,7 @@ void map_update_objects_streaming(s32 arg0) {
                 group = 0;
                 while (objGroupBits != 0) {
                     if (objGroupBits & 1) {
-                        func_8004B548(temp_s6, (s32) temp_s4, group, temp_s5);
+                        map_func_8004B548(temp_s6, (s32) temp_s4, group, temp_s5);
                     }
                     objGroupBits >>=1;
                     group++;
@@ -4298,14 +4300,14 @@ void map_update_objects_streaming(s32 arg0) {
             }
             while ((u32) var_s1_2 < (u32) temp_fp) {
                 objSetup = var_s1_2;
-                if ((map_check_some_mapobj_flag(var_s3, temp_s4) == 0) && (map_should_stream_load_object(var_s1_2, temp_s7, temp_s4) != 0)) {
-                    func_8004B710(var_s3, temp_s4, 1U);
+                if ((mapGetObjLoaded(var_s3, temp_s4) == 0) && (mapShouldStreamLoadObject(var_s1_2, temp_s7, temp_s4) != 0)) {
+                    mapSetObjLoaded(var_s3, temp_s4, 1U);
                     if (arg0 != 0) {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
-                    } else if (map_get_is_object_streaming_disabled() != 0) {
-                        func_80012584(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
+                    } else if (assetIsObjQueueEnabled() != 0) {
+                        assetEnqueueLoad(0x3D, 4U, NULL, var_s1_2, temp_s4, var_s3, temp_s5, temp_s7);
                     } else {
-                        obj_create(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
+                        objSetupObject(var_s1_2, OBJINIT_STANDALONE, temp_s4, var_s3, temp_s5);
                     }
                 }
                 var_s3++;
@@ -4315,7 +4317,7 @@ void map_update_objects_streaming(s32 arg0) {
     }
 }
 
-s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
+s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     s16 searchIndex;
 
     for (searchIndex = 0; searchIndex < searchLimit; searchIndex++){
@@ -4327,7 +4329,7 @@ s32 func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
+s32 mapShouldStreamLoadObject(ObjSetup* arg0, s8 arg1, s32 arg2) {
     s32 scaledX;
     Object* player;
     s32 scaledZOrFlag;
@@ -4342,7 +4344,7 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     s8 i;
     s8 *currentBlockIndices;
 
-    if (func_8004B4A0(arg0, arg2) == 0) {
+    if (mapCheckObjLoadMapAct(arg0, arg2) == 0) {
         return 0;
     }
 
@@ -4355,8 +4357,8 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     }
 
     if (arg1 == 0) {
-        scaledX = floor_f((arg0->x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        scaledZOrFlag = floor_f((arg0->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+        scaledX = floorf((arg0->x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        scaledZOrFlag = floorf((arg0->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
         if (scaledX < 0 || scaledZOrFlag < 0 || scaledX >= BLOCKS_GRID_SPAN || scaledZOrFlag >= BLOCKS_GRID_SPAN) {
             return 0;
         }
@@ -4380,7 +4382,7 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
 
     scaledZOrFlag = 0;
     if ((arg0->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
-        player = get_player();
+        player = objGetPlayer();
         if (player != NULL) {
             sp20 = player->globalPosition.x;
             sp1C = player->globalPosition.y;
@@ -4410,7 +4412,7 @@ s32 map_should_stream_load_object(ObjSetup* arg0, s8 arg1, s32 arg2) {
     return 0;
 }
 
-s32 map_should_obj_unload(Object *obj) {
+s32 mapShouldObjUnload(Object *obj) {
     s32 gridX;
     s32 pad[6];
     f32 loadDist;
@@ -4437,7 +4439,7 @@ s32 map_should_obj_unload(Object *obj) {
     }
 
     //Unload the object if it's not used in the map's current Act
-    if (func_8004B4A0(objSetup, obj->mapID) == 0) {
+    if (mapCheckObjLoadMapAct(objSetup, obj->mapID) == 0) {
         return TRUE;
     }
 
@@ -4464,8 +4466,8 @@ s32 map_should_obj_unload(Object *obj) {
 
     //If the object's not parented to a mobile map, check if its local block is loaded
     if (obj->parent == NULL) {
-        gridX = floor_f((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        gridZ = floor_f((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+        gridX = floorf((obj->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        gridZ = floorf((obj->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
         //Check if the grid cell is out of the loaded range
         if ((gridX < 0) || (gridZ < 0) || (gridX >= BLOCKS_GRID_SPAN) || (gridZ >= BLOCKS_GRID_SPAN)) {
@@ -4492,7 +4494,7 @@ s32 map_should_obj_unload(Object *obj) {
 
     //Use player/camera distance to check if the object should unload
     if ((objSetup->loadFlags & OBJSETUP_LOAD_MAIN) && 
-        (player = get_player(), (player != NULL)) && obj->parent == NULL
+        (player = objGetPlayer(), (player != NULL)) && obj->parent == NULL
     ) {
         refX = player->globalPosition.x;
         refY = player->globalPosition.y;
@@ -4533,9 +4535,8 @@ s32 map_should_obj_unload(Object *obj) {
     }
 }
 
-// is_obj_in_current_map_setup
-// track_check_object_load
-s32 func_8004B4A0(ObjSetup* obj, s32 mapno) {
+// official name: trackCheckObjectLoad
+s32 mapCheckObjLoadMapAct(ObjSetup* obj, s32 mapno) {
     s32 actno;
 
     actno = gDLL_29_Gplay->vtbl->get_act(mapno);
@@ -4564,7 +4565,7 @@ s32 func_8004B4A0(ObjSetup* obj, s32 mapno) {
     return 1;
 }
 
-void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
+void map_func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     s8 *s4;
     s8 *s3;
     s8 *s0;
@@ -4606,12 +4607,12 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
     s4 = &((s8 *)map->objectInstanceFile_ptr)[objSetupList->groups[someIndex]];
     while ((u32) s0 < (u32) s4) {
         s3 = s0;
-        if ((map_check_some_mapobj_flag(someVar, mapID) == 0) && (func_8004B4A0((ObjSetup *)s0, mapID) != 0)) {
-            func_8004B710(someVar, mapID, 1U);
-            if (map_get_is_object_streaming_disabled() != 0) {
-                func_80012584(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
+        if ((mapGetObjLoaded(someVar, mapID) == 0) && (mapCheckObjLoadMapAct((ObjSetup *)s0, mapID) != 0)) {
+            mapSetObjLoaded(someVar, mapID, 1U);
+            if (assetIsObjQueueEnabled() != 0) {
+                assetEnqueueLoad(0x3E, 4U, NULL, (ObjSetup *)s0, mapID, someVar, arg3, var_s6);
             } else {
-                obj_create((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
+                objSetupObject((ObjSetup* )s0, OBJINIT_STANDALONE, mapID, someVar, arg3);
             }
         }
         someVar += 1;
@@ -4622,8 +4623,8 @@ void func_8004B548(MapHeader* map, s32 mapID, s32 objGroupIdx, Object* arg3) {
 /**
  * Seems to be called when camera moves between grid cells?
  */
-// track_set_loaded
-void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
+// official name: trackSetLoaded
+void mapSetObjLoaded(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
     s32 cell_offset;
     s32 bit_at_index;
     MapHeader *map;
@@ -4647,8 +4648,8 @@ void func_8004B710(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2) {
     }
 }
 
-// track_get_loaded
-s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
+// official name: trackGetLoaded
+s32 mapGetObjLoaded(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     MapHeader *map;
     s32 bit_at_index;
     u32 cell_offset;
@@ -4672,7 +4673,7 @@ s32 map_check_some_mapobj_flag(s32 cellIndex_plusBitToCheck, u32 mapIndex) {
     return 0;
 }
 
-ObjSetup *map_find_curve(s32 search_uID, u32 arg1){
+ObjSetup *mapFindCurve(s32 search_uID, u32 arg1){
     MapHeader *map;
     u8 *ptr;
     s32 offset;
@@ -4702,7 +4703,7 @@ ObjSetup *map_find_curve(s32 search_uID, u32 arg1){
 /**
   * "search_mapID == -1" searches through all maps instead of a specific mapID!
   */
-ObjSetup* map_find_checkpoint(s32 search_uID, s32 search_mapID) {
+ObjSetup* mapFindCheckpoint(s32 search_uID, s32 search_mapID) {
     MapHeader* map;
     s32 search_endID;
     u8 *ptr;
@@ -4742,7 +4743,7 @@ ObjSetup* map_find_checkpoint(s32 search_uID, s32 search_mapID) {
     return NULL;
 }
 
-void map_is_loaded(s32 mapID) {
+void mapIsLoaded(s32 mapID) {
     MapHeader *map;
 
     if ((mapID >= 0) && (mapID < 120)) {
@@ -4761,7 +4762,7 @@ void track_func_8004B948(s32 on) {
     }
 }
 
-void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
+void mapSaveObject(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
     s16 numSavedObjs;
     s8 found;
     s32 i;
@@ -4814,7 +4815,7 @@ void map_save_object(ObjSetup* objsetup, s32 mapID, f32 x, f32 y, f32 z) {
 }
 
 // unused
-void func_8004BC20(SavedObject* arg0, s32 uID) {
+void map_func_8004BC20(SavedObject* arg0, s32 uID) {
     s16 numSavedObjs;
     s32 i;
     SavedObject* savedObjs;
@@ -4841,7 +4842,7 @@ static const char str_8009a8ec[] = " Removed Restored Num %i ";
 static const char str_8009a908[] = "%i ";
 
 // official name: romdefMove_Set ?
-void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
+void mapRestoreSavedObjects(MapHeader* arg0, s32 mapID) {
     s32 i;
     s32 uID;
     s32 numFound;
@@ -4884,7 +4885,7 @@ void map_restore_saved_objects(MapHeader* arg0, s32 mapID) {
     }
 }
 
-void func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
+void map_func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
     u8* temp;
 
     if (arg2 == 0) {
@@ -4916,7 +4917,7 @@ void func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
 }
 
 #ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/map/block_compute_vertex_colors.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/map/blockComputeVertexColors.s")
 #else
 typedef struct UnkSp8C {
     f32 unk0;
@@ -4930,7 +4931,7 @@ typedef struct UnkSp8C {
 } UnkSp8C;
 
 // https://decomp.me/scratch/FLOC0
-void block_compute_vertex_colors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
+void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkSp8C* var_v0;
     BlockColorTableEntry* temp_v0_7;
     s32 var_a0;
@@ -5375,12 +5376,12 @@ static const char str_8009a930[] = "######  DOING WARP  ########\n";
 /** 
   * Warps the player to coordinates stored in WARPTAB.bin 
   */
-void warpPlayer(s32 warpID, s8 fadeToBlack) {
+void mapWarpPlayer(s32 warpID, s8 fadeToBlack) {
     Warp *warp;
     Warp *mostRecentWarp;
 
     warp = (Warp*)gMapReadBuffer;
-    queue_load_file_region_to_ptr((void*)warp, WARPTAB_BIN, warpID << 4, sizeof(Warp));
+    assetRomLoadSection((void*)warp, WARPTAB_BIN, warpID << 4, sizeof(Warp));
     mostRecentWarp = (Warp*)&D_800B4A60;
   
     mostRecentWarp->coord.x = warp->coord.x;
@@ -5407,7 +5408,7 @@ void warpPlayer(s32 warpID, s8 fadeToBlack) {
     Called every frame!
     Seems to start a fade-out followed by a warp
 */
-void map_handle_transition(void) {
+void mapHandleTransition(void) {
     PlayerLocation* playerLocation;
     Warp* warpLocation;
     u8 temp2;
@@ -5438,7 +5439,7 @@ void map_handle_transition(void) {
         playerLocation->vec.y = warpLocation->coord.y;
         playerLocation->vec.z = warpLocation->coord.z;
         playerLocation->mapLayer = (s8)warpLocation->layer;
-        func_800143A4();
+        main_func_800143A4();
         D_800B4A5E = D_800B4A5C;
         D_800B4A5C = -1;
         D_80092A78 = 8;

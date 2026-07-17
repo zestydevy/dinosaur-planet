@@ -318,27 +318,27 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
 void dll_63_ctor(void *self) {
     s32 i;
 
-    sBackgroundTexture = tex_load_deferred(TEXTABLE_2DD_Paper_BG_Scales);
-    sLogoTexture = tex_load_deferred(TEXTABLE_C5_DinosaurPlanetLogo);
-    sLogoShadowTexture = tex_load_deferred(TEXTABLE_2E1_DinosaurPlanetLogoShadow);
+    sBackgroundTexture = texLoadTexture(TEXTABLE_2DD_Paper_BG_Scales);
+    sLogoTexture = texLoadTexture(TEXTABLE_C5_DinosaurPlanetLogo);
+    sLogoShadowTexture = texLoadTexture(TEXTABLE_2E1_DinosaurPlanetLogoShadow);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0EC_Menu_Managing_Saves);
     }
 
     for (i = 0; i < 18; i++) {
-        sSaveGameBgTextures[i] = tex_load_deferred(sSaveGameBgTextureIDs[i]);
+        sSaveGameBgTextures[i] = texLoadTexture(sSaveGameBgTextureIDs[i]);
     }
 
     for (i = 0; i < 4; i++) {
-        sSaveGameTextures[i] = tex_load_deferred(sSaveGameTextureIDs[i]);
+        sSaveGameTextures[i] = texLoadTexture(sSaveGameTextureIDs[i]);
     }
 
-    if (menu_get_previous() != MENU_ENTER_NAME) {
+    if (menuGetPrevious() != MENU_ENTER_NAME) {
         gDLL_28_ScreenFade->vtbl->fade_reversed(20, SCREEN_FADE_BLACK);
         dll_63_goto_game_select(1);
     } else {
-        sSelectedSaveIdx = get_save_game_idx();
+        sSelectedSaveIdx = menuGetSaveGameIdx();
         sSaveGameBoxX = 56;
         sSaveGameBoxY = 179;
         dll_63_load_save_game_info();
@@ -377,22 +377,22 @@ s32 dll_63_update1() {
 
     if (sExitToGame || sExitToMainMenu) {
         if (prevExitTransitionTimer >= 13 && sExitTransitionTimer <= 12) {
-            vi_init(1, get_ossched(), FALSE);
+            viInit(1, mainGetScheduler(), FALSE);
             if (sExitToGame) {
                 dll_63_clean_up(/*leavingMenus*/TRUE);
             } else {
                 dll_63_clean_up(/*leavingMenus*/FALSE);
             }
-            track_set_z_buffer_on(TRUE);
-            track_set_sky_on(TRUE);
+            trackSetZBufferOn(TRUE);
+            trackSetSkyOn(TRUE);
         } else if (sExitTransitionTimer < 1) {
             if (sExitToGame) {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             } else {
                 // Exit to main menu
-                main_demo_reset();
-                main_start_game(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
-                menu_set(MENU_TITLE_SCREEN);
+                mainDemoReset();
+                mainStartGame(12457.1f, -1474.875f, -6690.398f, PLAYER_KRYSTAL);
+                menuSet(MENU_TITLE_SCREEN);
             }
         }
 
@@ -458,49 +458,49 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         return;
     }
         
-    font_window_set_coords(1, 0, 0,
-        GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
-        GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(1);
+    fontWindowSetCoords(1, 0, 0,
+        GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+        GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(1);
 
-    font_window_set_coords(3, 105, 0,
-        GET_VIDEO_WIDTH(vi_get_current_size()) - 200,
-        GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(3);
+    fontWindowSetCoords(3, 105, 0,
+        GET_VIDEO_WIDTH(viGetCurrentSize()) - 200,
+        GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(3);
 
     if (sRedrawFrames != 0) {
-        rcp_screen_full_write(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
+        rcpScreenFullWrite(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
 
         if (sSubmenuIdx == SUBMENU_GAME_RECAP) {
-            rcp_screen_full_write(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
-            rcp_screen_full_write(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sLogoShadowTexture, 119, 92, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sLogoTexture, 129, 100, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
             numRecentTasks = gDLL_30_Task->vtbl->get_num_recently_completed();
             if (numRecentTasks > 3) {
                 numRecentTasks = 3;
             }
 
-            font_window_enable_wordwrap(3);
-            font_window_use_font(1, FONT_FUN_FONT);
-            font_window_use_font(3, FONT_FUN_FONT);
-            font_window_set_text_colour(1, 183, 139, 97, 255, 255);
-            font_window_set_text_colour(3, 183, 139, 97, 255, 255);
+            fontWindowEnableWordwrap(3);
+            fontWindowUseFont(1, FONT_FUN_FONT);
+            fontWindowUseFont(3, FONT_FUN_FONT);
+            fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
+            fontWindowSetTextColour(3, 183, 139, 97, 255, 255);
 
             y = 232;
             for (i = 0; i < numRecentTasks; i++) {
                 sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                font_window_add_string_xy(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                font_window_add_string_xy(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(1, 75, y, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(3, 2, y, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                 y += 40;
             }
 
             y = 232;
-            font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-            font_window_set_text_colour(3, 0, 0, 0, 255, 255);
+            fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+            fontWindowSetTextColour(3, 0, 0, 0, 255, 255);
             for (i = 0; i < numRecentTasks; i++) {
                 sprintf(sRecentTaskNumStrs[i], "%1d.", (int)(i + 1));
-                font_window_add_string_xy(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
-                font_window_add_string_xy(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(1, 73, y - 2, sRecentTaskNumStrs[i], 1, ALIGN_TOP_LEFT);
+                fontWindowAddStringXY(3, 0, y - 2, gDLL_30_Task->vtbl->get_recently_completed_task_text(i), 1, ALIGN_TOP_LEFT);
                 y += 40;
             }
         } else {
@@ -508,37 +508,37 @@ void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
                 dll_63_draw_save_game_box(gdl, sSaveGameBoxX, sSaveGameBoxY, &sSaveGameInfo[sSelectedSaveIdx]);
             }
 
-            font_window_use_font(1, FONT_FUN_FONT);
-            font_window_set_text_colour(1, 183, 139, 97, 255, 255);
+            fontWindowUseFont(1, FONT_FUN_FONT);
+            fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
 
-            font_window_add_string_xy(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
-            font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-            font_window_add_string_xy(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
+            fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 1, ALIGN_TOP_CENTER);
+            fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+            fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[submenu->buttonLegendTextIdx], 2, ALIGN_TOP_CENTER);
         }
 
-        font_window_set_coords(2, 0, 0,
-            GET_VIDEO_WIDTH(vi_get_current_size()) - 100,
-            GET_VIDEO_HEIGHT(vi_get_current_size()));
-        font_window_flush_strings(2);
-        font_window_use_font(2, FONT_DINO_MEDIUM_FONT_IN);
-        font_window_enable_wordwrap(2);
-        font_window_set_text_colour(2, 255, 255, 255, 0, 255);
+        fontWindowSetCoords(2, 0, 0,
+            GET_VIDEO_WIDTH(viGetCurrentSize()) - 100,
+            GET_VIDEO_HEIGHT(viGetCurrentSize()));
+        fontWindowFlushStrings(2);
+        fontWindowUseFont(2, FONT_DINO_MEDIUM_FONT_IN);
+        fontWindowEnableWordwrap(2);
+        fontWindowSetTextColour(2, 255, 255, 255, 0, 255);
 
-        font_window_add_string_xy(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
-        font_window_set_text_colour(2, 0, 0, 0, 255, 255);
-        font_window_add_string_xy(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
+        fontWindowAddStringXY(2, 69, 61, sGameTextChunk->strings[submenu->titleTextIdx], 1, ALIGN_TOP_LEFT);
+        fontWindowSetTextColour(2, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(2, 64, 56, sGameTextChunk->strings[submenu->titleTextIdx], 2, ALIGN_TOP_LEFT);
 
-        font_window_draw(gdl, NULL, NULL, 2);
+        fontWindowDraw(gdl, NULL, NULL, 2);
     } else {
         // Always redraw background in case picmenu redraws
-        func_80010158(&ulx, &lrx, &uly, &lry);
-        rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
+        menu_func_80010158(&ulx, &lrx, &uly, &lry);
+        rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
     }
 
     gDLL_74_Picmenu->vtbl->draw(gdl);
 
-    font_window_draw(gdl, NULL, NULL, 1);
-    font_window_draw(gdl, NULL, NULL, 3);
+    fontWindowDraw(gdl, NULL, NULL, 1);
+    fontWindowDraw(gdl, NULL, NULL, 3);
 
     sRedrawFrames -= 1;
     if (sRedrawFrames < 0) {
@@ -562,27 +562,27 @@ static void dll_63_clean_up(s32 leavingMenus) {
 
     for (i = 0; i < 18; i++) {
         if (sSaveGameBgTextures[i] != NULL) {
-            tex_free(sSaveGameBgTextures[i]);
+            texFreeTexture(sSaveGameBgTextures[i]);
             sSaveGameBgTextures[i] = NULL;
         }
     }
 
     for (i = 0; i < 4; i++) {
         if (sSaveGameTextures[i] != NULL) {
-            tex_free(sSaveGameTextures[i]);
+            texFreeTexture(sSaveGameTextures[i]);
             sSaveGameTextures[i] = NULL;
         }
     }
 
-    tex_free(sBackgroundTexture);
-    tex_free(sLogoTexture);
-    tex_free(sLogoShadowTexture);
+    texFreeTexture(sBackgroundTexture);
+    texFreeTexture(sLogoTexture);
+    texFreeTexture(sLogoShadowTexture);
 
     if (leavingMenus) {
-        font_unload(FONT_DINO_MEDIUM_FONT_IN);
-        font_unload(FONT_DINO_MEDIUM_FONT_OUT);
-        font_unload(FONT_FUN_FONT);
-        main_unload_frontend();
+        fontUnload(FONT_DINO_MEDIUM_FONT_IN);
+        fontUnload(FONT_DINO_MEDIUM_FONT_OUT);
+        fontUnload(FONT_FUN_FONT);
+        mainUnloadFrontend();
     }
 }
 
@@ -629,7 +629,7 @@ static void dll_63_load_save_game_info() {
 
             if (!saveFile->isEmpty) {
                 sSaveGameInfo[i].playerno = saveFile->playerno;
-                sSaveGameInfo[i].spiritBits = main_get_bits(BIT_Spirit_Bits);
+                sSaveGameInfo[i].spiritBits = mainGetBits(BIT_Spirit_Bits);
                 sSaveGameInfo[i].unk3 = 0;
 
                 filenamePtr = sSaveGameInfo[i].filename;
@@ -898,8 +898,8 @@ static void dll_63_act_game_select(PicMenuAction action, s32 selected) {
                 if (sSaveGameInfo[selected].isEmpty) {
                     // Go to name entry menu
                     dll_63_clean_up(0);
-                    set_save_game_idx(selected);
-                    menu_set(MENU_ENTER_NAME);
+                    menuSetSaveGameIdx(selected);
+                    menuSet(MENU_ENTER_NAME);
                 } else {
                     sSelectedSaveIdx = selected;
                     sSaveGameBoxX = 56;
@@ -1023,30 +1023,30 @@ static void dll_63_draw_save_game_box(Gfx **gdl, s32 x, s32 y, GameSelectSaveInf
             x2 = x;
             y2 += 32;
         } else {
-            rcp_screen_full_write(gdl, sSaveGameBgTextures[sSaveGameBgIndices[i]], x2, y2, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+            rcpScreenFullWrite(gdl, sSaveGameBgTextures[sSaveGameBgIndices[i]], x2, y2, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
             x2 += 64;
         }
     }
 
     // Draw player icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[saveInfo->playerno], x + 14, y + 8, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spirit icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_2_Spirits], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[IconTexture_2_Spirits], x + 241, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     // Draw spell stone icon
-    rcp_screen_full_write(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, sSaveGameTextures[IconTexture_3_SpellStones], x2 + 14, y + 71, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
 
     // Draw text
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_set_text_colour(1, 255, 255, 255, 0, 255);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
 
-    font_window_add_string_xy(1, x + 64, y + 18, saveInfo->filename, 1, ALIGN_TOP_LEFT);
+    fontWindowAddStringXY(1, x + 64, y + 18, saveInfo->filename, 1, ALIGN_TOP_LEFT);
 
     sprintf(sSaveGameTimeStr, "%3d:%02d:%02d", saveInfo->timeHours, saveInfo->timeMinutes, saveInfo->timeSeconds);
-    font_window_add_string_xy(1, x + 156, y + 49, sSaveGameTimeStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 156, y + 49, sSaveGameTimeStr, 1, ALIGN_TOP_CENTER);
 
     sprintf(sSpiritCountStr, "%1d", 0);
-    font_window_add_string_xy(1, x + 234, y + 81, sSpiritCountStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 234, y + 81, sSpiritCountStr, 1, ALIGN_TOP_CENTER);
 
     sprintf(sSpellStoneCountStr, "%1d", 0);
-    font_window_add_string_xy(1, x + 84, y + 81, sSpellStoneCountStr, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x + 84, y + 81, sSpellStoneCountStr, 1, ALIGN_TOP_CENTER);
 }

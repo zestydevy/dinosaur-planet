@@ -55,7 +55,7 @@ void DRLavaControl_setup(Object* self, DRLavaControl_Setup* objSetup, s32 arg2) 
     objData->freezeTimer = objSetup->freezeDuration;
     objData->freezeDuration = objData->freezeTimer;
     
-    if (main_get_bits(objSetup->gameBitFrozen)) {
+    if (mainGetBits(objSetup->gameBitFrozen)) {
         isFrozen = TRUE;
     } else {
         isFrozen = FALSE;
@@ -93,7 +93,7 @@ void DRLavaControl_free(Object* self, s32 arg1) {
     DRLavaControl_Data* objData = self->data;
 
     if (objData->lfxEmitter && (arg1 == 0)) {
-        obj_destroy_object(objData->lfxEmitter);
+        objFreeObject(objData->lfxEmitter);
     }
     gDLL_13_Expgfx->vtbl->func4(self);
 }
@@ -122,17 +122,17 @@ void DRLavaControl_freeze(Object* self) {
     objSetup = (DRLavaControl_Setup*)self->setup;
 
     if (objData->freezeTimer > 0) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_80C_Steam_Hissing, MAX_VOLUME, NULL, NULL, 0, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5A, NULL, PARTFXFLAG_2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5B, NULL, PARTFXFLAG_2, -1, NULL);
         objData->freezeTimer--; //@bug: doesn't use gUpdateRate, frame-rate dependent
 
         if (objData->freezeTimer == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
             objData->flags |= 1;
-            main_set_bits(objSetup->gameBitFrozen, TRUE);
+            mainSetBits(objSetup->gameBitFrozen, TRUE);
             // diPrintf(" bit set %i ", objSetup->gameBitFrozen);
-            main_increment_bits(BIT_DR_Lava_Pools_Cooled_Count);
+            mainIncrementBits(BIT_DR_Lava_Pools_Cooled_Count);
             gDLL_5_AMSEQ2->vtbl->set(self, 0x102, 0, 0, 0);
         }
     }
@@ -154,7 +154,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
     }
     
     distance = 500.0f;
-    waveAnimator = obj_get_nearest_type_to(OBJTYPE_WaveAnimator, self, &distance);
+    waveAnimator = objGetNearestTypeTo(OBJTYPE_WaveAnimator, self, &distance);
     if (waveAnimator) {
         // diPrintf(" WAVE OBJ %x ", waveAnimator);
         ((DLL_Unknown*)waveAnimator->dll)->vtbl->func[7].withOneS32OneF32((s32)waveAnimator, temperature_tValue); //blending wave amplitude to 0 as lava cools?
@@ -164,7 +164,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
     
     if (effectIndex != objData->effectIndex) {
         if (objData->lfxEmitter) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
         }
         if (effectIndex) {
             // diPrintf(" Creating LIGHT %i  x %f z %f \n", arg2, self->srt.transl.x, self->srt.transl.z);
@@ -178,7 +178,7 @@ void DRLavaControl_freeze_update_effects(Object* self, DRLavaControl_Data* objDa
 Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     LFXEmitter_Setup* setup;
 
-    setup = (LFXEmitter_Setup*)obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+    setup = (LFXEmitter_Setup*)objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
     
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     setup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
@@ -191,14 +191,14 @@ Object* DRLavaControl_create_light(Object* self, s32 lfxSetupUnk1E) {
     setup->unk1E = lfxSetupUnk1E;
     setup->unk22 = -1;
     setup->unk18 = 0;
-    rand_next(-500, 500);
+    mathRnd(-500, 500);
     setup->unk1A = 0;
     setup->unk1C = 0;
-    rand_next(-500, 500);
+    mathRnd(-500, 500);
     setup->unk24 = 1;
     setup->unk25 = 50;
     
-    return obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    return objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0x720 | func: 10
@@ -209,10 +209,10 @@ void DRLavaControl_create_particles(Object* self, u32 effectIndex) {
     
     if (effectIndex){
         effectIndex--;        
-        if (!rand_next(0, particleChanceA[effectIndex])){
+        if (!mathRnd(0, particleChanceA[effectIndex])){
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_684, NULL, PARTFXFLAG_2, -1, NULL);
         }
-        if (!rand_next(0, particleChanceB[effectIndex])){
+        if (!mathRnd(0, particleChanceB[effectIndex])){
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_683, NULL, PARTFXFLAG_2, -1, NULL);
         }
     }

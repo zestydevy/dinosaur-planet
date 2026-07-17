@@ -78,7 +78,7 @@ void MoonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
     self->srt.yaw = setup->yaw << 8;
     objData->state = MoonSeedReceptacle_STATE_0_Init;
     
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
 
     switch (setup->base.uID) {
         //Soil spot just beyond SharpClaw outpost 
@@ -123,8 +123,8 @@ void MoonSeedReceptacle_control(Object* self) {
     
     if (objData->flags & MoonSeedReceptacle_FLAG_1_Sequence_Played){
         objData->state = MoonSeedReceptacle_STATE_2_Seed_Planted;
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-        main_set_bits(objData->gamebitPlanted, TRUE);
+        dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        mainSetBits(objData->gamebitPlanted, TRUE);
         objData->flags &= ~MoonSeedReceptacle_FLAG_1_Sequence_Played;
         self->opacity = OBJECT_OPACITY_MAX;
     }
@@ -144,14 +144,14 @@ void MoonSeedReceptacle_control(Object* self) {
             self->srt.transl.y = objSetup->base.y - 10.0f;
 
             //Restore state if a seed was planted previously
-            if (main_get_bits(objData->gamebitPlanted)){
+            if (mainGetBits(objData->gamebitPlanted)){
                 objData->state = MoonSeedReceptacle_STATE_2_Seed_Planted;
                 self->srt.transl.y = objSetup->base.y;
                 self->opacity = OBJECT_OPACITY_MAX;
             }
 
             //Restore state if a seed was grown previously
-            if (main_get_bits(objData->gamebitGrown)){
+            if (mainGetBits(objData->gamebitGrown)){
                 MoonSeedReceptacle_func_D40(self);
             }
             return;
@@ -161,47 +161,47 @@ void MoonSeedReceptacle_control(Object* self) {
             if ((self->unkAF & ARROW_FLAG_1_Interacted) && 
                 gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_MoonSeeds)
             ){
-                count = main_get_bits(BIT_Inventory_MoonSeeds);
+                count = mainGetBits(BIT_Inventory_MoonSeeds);
                 if (count){
                     self->srt.transl.y = objSetup->base.y;
                     self->opacity = 0;
                     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                    main_set_bits(BIT_Inventory_MoonSeeds, count - 1);
+                    mainSetBits(BIT_Inventory_MoonSeeds, count - 1);
                 }
             }
             break;
         
         case MoonSeedReceptacle_STATE_2_Seed_Planted:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
 
             //Glow at night
             if (objData->flags & MoonSeedReceptacle_FLAG_2_Glowing){
                 //While rattling: shake vertically and emit a particle
                 if (objData->flags & MoonSeedReceptacle_FLAG_4_Rattling){
-                    self->srt.transl.y = rand_next(-1, 1) + objSetup->base.y;
+                    self->srt.transl.y = mathRnd(-1, 1) + objSetup->base.y;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70F, NULL, PARTFXFLAG_2, -1, NULL);
                 }
                 
                 //Play a rattle sound randomly
                 objData->rattleTimer -= gUpdateRateF;
                 if (objData->rattleTimer <= 0.0f){
-                    if (rand_next(0, 1)){
+                    if (mathRnd(0, 1)){
                         objData->rattleTimer = 45.0f;
-                        gDLL_6_AMSFX->vtbl->play(self, rand_next(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
+                        dll_amSfx->Play(self, mathRnd(SOUND_A71_Rattling_1, SOUND_A72_Rattling_2), MAX_VOLUME, NULL, NULL, bssIndex, NULL);
                         objData->flags |= MoonSeedReceptacle_FLAG_4_Rattling;
                     } else {
-                        objData->rattleTimer = rand_next(50, 200);
+                        objData->rattleTimer = mathRnd(50, 200);
                         objData->flags &= ~MoonSeedReceptacle_FLAG_4_Rattling;
                     }
                 }
                 
                 //Create glow particles
                 {
-                    particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                    particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                    particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                    particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                    particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                    particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                     
-                    sPartFXParams[bssIndex] = (fsin16_precise(objData->glowPhase) + 1.0f) * 24.0f;
+                    sPartFXParams[bssIndex] = (mathSinfInterp(objData->glowPhase) + 1.0f) * 24.0f;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &sPartFXParams[bssIndex]);
                 }
@@ -214,28 +214,28 @@ void MoonSeedReceptacle_control(Object* self) {
 
                 //Check if Flame command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){
-                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
             break;
         
         case MoonSeedReceptacle_STATE_3_Seed_Flamed:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
             self->srt.transl.y = objSetup->base.y;
-            if (vec3_distance_xz_squared(&kyte->globalPosition, &self->globalPosition) <= SQ(50)){
+            if (vec3DistanceXZSquared(&kyte->globalPosition, &self->globalPosition) <= SQ(50)){
                 for (count = -1; count < (objData->glowPhase >> 0xD); count++){
-                    particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                    particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                    particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                    particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                    particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                    particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 }
                 
                 sPartFXParams[bssIndex] = objData->glowPhase >> 7;
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, 2, -1, &sPartFXParams[bssIndex]);
             } else {
-                particleTrans.transl.x = rand_next(-7, 7) + objSetup->base.x;
-                particleTrans.transl.y = rand_next(0, 10) + objSetup->base.y;
-                particleTrans.transl.z = rand_next(-7, 7) + objSetup->base.z;
+                particleTrans.transl.x = mathRnd(-7, 7) + objSetup->base.x;
+                particleTrans.transl.y = mathRnd(0, 10) + objSetup->base.y;
+                particleTrans.transl.z = mathRnd(-7, 7) + objSetup->base.z;
                 sPartFXParams[bssIndex] = 0x50;
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70D, &particleTrans, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_70E, NULL, PARTFXFLAG_2, -1, &sPartFXParams[bssIndex]);
@@ -260,26 +260,26 @@ void MoonSeedReceptacle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs
         if (objData->state == MoonSeedReceptacle_STATE_2_Seed_Planted) {
             if (objData->flags & MoonSeedReceptacle_FLAG_2_Glowing) {
                 objData->glowPhase += M_45_DEGREES/2;
-                colourR = (u8) ((fsin16_precise(objData->glowPhase) + 1) * 63.0f) + 0x7F;
+                colourR = (u8) ((mathSinfInterp(objData->glowPhase) + 1) * 63.0f) + 0x7F;
 
-                func_80036F6C(colourR, 0xFF, 0xFF);
+                objprintSetMultiplierColor(colourR, 0xFF, 0xFF);
             }
         } else if (objData->state == MoonSeedReceptacle_STATE_3_Seed_Flamed) {
             if (objData->glowPhase < M_180_DEGREES - 0x300) {
                 objData->glowPhase += 0xFF;
             }
-            func_80036F6C((otherColourR >> 7), 0xFF, 0xFF); //@bug: otherColourR uninitialised
+            objprintSetMultiplierColor((otherColourR >> 7), 0xFF, 0xFF); //@bug: otherColourR uninitialised
         } else {
-            func_80036F6C(0xFF, 0xFF, 0xFF);
+            objprintSetMultiplierColor(0xFF, 0xFF, 0xFF);
         }
 
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xB88 | func: 4 | export: 4
 void MoonSeedReceptacle_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0xBC8 | func: 5 | export: 5
@@ -306,12 +306,12 @@ s32 MoonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
     } else if (arg1 == 1) {
         if (objData->state == MoonSeedReceptacle_STATE_3_Seed_Flamed) {
             returnVal = TRUE;
-            if (main_get_bits(objData->gamebitPlanted) && 
-                !main_get_bits(objData->gamebitGrown)) {
+            if (mainGetBits(objData->gamebitPlanted) && 
+                !mainGetBits(objData->gamebitGrown)) {
                 MoonSeedReceptacle_func_D40(self);
             }
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
 
@@ -342,20 +342,20 @@ void MoonSeedReceptacle_func_D40(Object* self) {
     objData = self->data;
     objSetup = (MoonSeedReceptacle_Setup*)self->setup;
     
-    if (main_get_bits(objData->gamebitPlanted) == FALSE) {
+    if (mainGetBits(objData->gamebitPlanted) == FALSE) {
         return;
     }
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
-    main_set_bits(objData->gamebitGrown, TRUE);
+    dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+    mainSetBits(objData->gamebitGrown, TRUE);
     objData->state = MoonSeedReceptacle_STATE_4_Grown;
     self->srt.transl.y = objSetup->base.y;
 
     curveSetup = gDLL_25->vtbl->func_2BC4(self, objSetup->kyteFlightGroup);
     objData->curveSetup = curveSetup;
     if (curveSetup->type22.usedBit != NO_GAMEBIT) {
-        main_set_bits(curveSetup->type22.usedBit, TRUE);
+        mainSetBits(curveSetup->type22.usedBit, TRUE);
     }
 }
 

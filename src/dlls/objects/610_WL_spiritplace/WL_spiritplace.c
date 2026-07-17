@@ -61,10 +61,10 @@ void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2
     objdata->bit2 = objsetup->bit2;
     objdata->mode = objsetup->mode;
     if (objdata->mode == 0) {
-        _data_0 = dll_load_deferred(DLL_ID_155, 1);
-        _data_4 = dll_load_deferred(DLL_ID_149, 1);
+        _data_0 = dllLoad(DLL_ID_155, 1);
+        _data_4 = dllLoad(DLL_ID_149, 1);
     } else if (objdata->mode == 2) {
-        _data_0 = dll_load_deferred(DLL_ID_155, 1);
+        _data_0 = dllLoad(DLL_ID_155, 1);
     }
 }
 
@@ -72,7 +72,7 @@ void WL_spiritplace_setup(Object *self, WL_spiritplace_Setup *objsetup, s32 arg2
 void WL_spiritplace_control(Object *self) {
     WL_spiritplace_Data *objdata = self->data;
 
-    if (main_get_bits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
+    if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
         if (objdata->effectTimer <= 0) {
             if (objdata->unk6 == 0) {
                 _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
@@ -89,20 +89,20 @@ void WL_spiritplace_control(Object *self) {
             objdata->effectTimer = 15;
         }
         objdata->effectTimer -= gUpdateRate;
-    } else if (main_get_bits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
+    } else if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
             _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
-            objdata->effectTimer = 195 + rand_next(0, 35);
+            objdata->effectTimer = 195 + mathRnd(0, 35);
         }
         objdata->effectTimer -= gUpdateRate;
     } else if (
-        main_get_bits(objdata->bit1) &&
+        mainGetBits(objdata->bit1) &&
         objdata->mode == 0 &&
-        rand_next(1, 2) == 2 &&
-        vec3_distance(&get_player()->globalPosition, &self->globalPosition) < 90.0f) {
+        mathRnd(1, 2) == 2 &&
+        vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition) < 90.0f) {
             _data_4->vtbl->base.func0(self, 4, NULL, 1, -1, NULL);
     }
-    if (main_get_bits(objdata->bit2) && objdata->unk0 == 0) {
+    if (mainGetBits(objdata->bit2) && objdata->unk0 == 0) {
         self->srt.roll += 200;
     }
 }
@@ -113,7 +113,7 @@ void WL_spiritplace_update(Object *self) { }
 // offset: 0x4C8 | func: 3 | export: 3
 void WL_spiritplace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -121,10 +121,10 @@ void WL_spiritplace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 void WL_spiritplace_free(Object *self, s32 arg1) {
     WL_spiritplace_Data *objdata = self->data;
     if (objdata->mode == 0) {
-        dll_unload(_data_0);
-        dll_unload(_data_4);
+        dllFree(_data_0);
+        dllFree(_data_4);
     } else if (objdata->mode == 0) { // @bug: should be 2
-        dll_unload(_data_0);
+        dllFree(_data_0);
     }
 }
 

@@ -47,7 +47,7 @@ void perchobject_setup(Object* self, s32 arg1, s32 arg2) {
     PerchObject_Data* objData = self->data;
 
     objData->stateIndex = STATE_0_Initialise;
-    obj_add_object_type(self, OBJTYPE_KyteTarget);
+    objAddObjectType(self, OBJTYPE_KyteTarget);
     self->animCallback = perchobject_anim_callback;
 }
 
@@ -78,19 +78,19 @@ void perchobject_control(Object* self) {
             STUBBED_PRINTF(" Could Not Find node %i ");
             return;        
         case STATE_1_Wait_for_Player_to_Instruct_Kyte:
-            kyte = get_sidekick();
+            kyte = objGetSidekick();
             if (!kyte){
                 break;
             }
 
-            player = get_player();
+            player = objGetPlayer();
 
             //Check distance between player and perch (either lateral X/Z distance or full 3D distance check)
             if (objSetup->useDistance3D){
-                playerToCurveDistance = vec3_distance_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
+                playerToCurveDistance = vec3DistanceSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
                 playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange));
             } else {
-                playerToCurveDistance = vec3_distance_xz_squared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
+                playerToCurveDistance = vec3DistanceXZSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
                 playerIsNearby = FALSE;
                 if (playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange)) {
                     playerIsNearby = TRUE;
@@ -104,7 +104,7 @@ void perchobject_control(Object* self) {
                 ((DLL_ISidekick*) kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)){
                     STUBBED_PRINTF("should activate the command\n");
-                    main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
                 }
             }
             break;
@@ -118,14 +118,14 @@ void perchobject_update(Object *self) { }
 // offset: 0x268 | func: 3 | export: 3
 void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 
 // offset: 0x2BC | func: 4 | export: 4
 void perchobject_free(Object* self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_KyteTarget);
+    objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x2FC | func: 5 | export: 5
@@ -151,7 +151,7 @@ s32 perchobject_land_on_perch(Object* self, s32 arg1) {
     landedOnPerch = FALSE;
     if (arg1 == 5) {
         if (objData->curveSetup->type22.usedBit != NO_GAMEBIT) {
-            main_set_bits(objData->curveSetup->type22.usedBit, 1);
+            mainSetBits(objData->curveSetup->type22.usedBit, 1);
             STUBBED_PRINTF("\n\n Setting Used Bit \n\n");
         }
         landedOnPerch = TRUE;
@@ -171,13 +171,13 @@ u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
     s16 flag;
     PerchObject_Data *objData;
 
-    kyte = get_sidekick();
+    kyte = objGetSidekick();
     objData = (PerchObject_Data*)self->data;
 
     switch (arg1){
         case 0:
             flag = objData->curveSetup->type22.usedBit;
-            return main_get_bits(flag);
+            return mainGetBits(flag);
         case 1:
             *deltaY = self->srt.transl.y - kyte->srt.transl.y;
             return 1;
@@ -202,20 +202,20 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
     PerchObject_Data* objData;
     PerchObject_Setup* objSetup;
 
-    get_sidekick(); //@bug: not stored to variable, called again later!
+    objGetSidekick(); //@bug: not stored to variable, called again later!
     objData = self->data;
     objSetup = (PerchObject_Setup*)self->setup;
 
-    kyte = get_sidekick();    
+    kyte = objGetSidekick();    
     if (kyte) {
-        if (vec3_distance_squared(&get_player()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
+        if (vec3DistanceSquared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
             //Enable Find command option
             ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
             
             //Check if Find command was used
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                 STUBBED_PRINTF("should activate the command\n");
-                main_set_bits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
             }
         }
     }

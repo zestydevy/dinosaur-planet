@@ -74,7 +74,7 @@ void VFP_PodiumPoint_control(Object* self) {
 // offset: 0x128 | func: 2 | export: 2
 void VFP_PodiumPoint_update(Object *self) {
     if (self->unk74 != NULL) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 
@@ -103,19 +103,19 @@ static void VFP_PodiumPoint_func_1B8(Object* self) {
 
     objdata = self->data;
     conditionGamebitValue = 1;
-    player = get_player();
+    player = objGetPlayer();
 
     if (player != NULL) {
         if (objdata->conditionGamebit != -1) {
-            conditionGamebitValue = main_get_bits(objdata->conditionGamebit);
+            conditionGamebitValue = mainGetBits(objdata->conditionGamebit);
         }
-        gamebitValue = main_get_bits(objdata->setGamebit);
+        gamebitValue = mainGetBits(objdata->setGamebit);
         if ((gamebitValue == 0) && (objdata->unk4 == 0) && (conditionGamebitValue != 0)) {
             self->unkAF &= ~0x8;
             if ((gDLL_1_cmdmenu->vtbl->was_this_item_used(data_0) != 0) &&
-                    (vec3_distance(&self->globalPosition, &player->globalPosition) < 100.0f)) {
+                    (vec3Distance(&self->globalPosition, &player->globalPosition) < 100.0f)) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-                main_set_bits(objdata->setGamebit, 1);
+                mainSetBits(objdata->setGamebit, 1);
                 objdata->unk4 = 1;
                 self->unkAF |= 8;
             }
@@ -133,13 +133,13 @@ static int VFP_PodiumPoint_func_324(Object* a0, Object* a1, AnimObj_Data* a2, s8
             act = gDLL_29_Gplay->vtbl->get_act(a0->mapID);
             switch (act) {
             case 1:
-                main_set_bits(BIT_VFP_Door_Seal_Break, 1);
+                mainSetBits(BIT_VFP_Door_Seal_Break, 1);
                 break;
             case 2:
-                main_set_bits(BIT_515, 1);
+                mainSetBits(BIT_515, 1);
                 break;
             case 3:
-                main_set_bits(BIT_VFP_Door_Open, 1);
+                mainSetBits(BIT_VFP_Door_Open, 1);
                 break;
             }
             a2->messages[i] = 0;

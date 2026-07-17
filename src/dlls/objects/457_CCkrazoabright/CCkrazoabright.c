@@ -85,7 +85,7 @@ void CCkrazoabright_setup(Object* self, ObjSetup *setup, s32 arg2) {
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
     //Set initial state of lever column icons (blending between two sets of icons)
-    if (main_get_bits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
+    if (mainGetBits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
         objData->iconBlendTimer = 255.0f;
     } else {
         objData->iconBlendTimer = 0.0f;
@@ -99,13 +99,13 @@ void CCkrazoabright_control(Object* self) {
     objData = self->data;
     
     if (objData->state == STATE_Initialise) {
-        if (main_get_bits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
+        if (mainGetBits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
             objData->state = STATE_Lever_Puzzle_Two;
             CCkrazoabright_clear_point_colours();
-        } else if (main_get_bits(BIT_CC_Courtyard_Gate_Reopened)) {
+        } else if (mainGetBits(BIT_CC_Courtyard_Gate_Reopened)) {
             objData->state = STATE_Krazoa_Tablet_Quest;
             CCkrazoabright_colour_krazoa_symbol_tablet_quest(self);
-        } else if (main_get_bits(BIT_CC_Kyte_Pulled_All_Four_Levers)) {
+        } else if (mainGetBits(BIT_CC_Kyte_Pulled_All_Four_Levers)) {
             objData->state = STATE_Lighting_Lanterns;
             CCkrazoabright_colour_krazoa_symbol_tablet_quest(self);
         } else {
@@ -159,7 +159,7 @@ void CCkrazoabright_colour_krazoa_symbol_tablet_quest(Object* self) {
     gDLL_3_Animation->vtbl->start_obj_sequence(0, self, 0x78);
 
     for (index = 0; index < 6; index++){
-        gamebitValueInverted = main_get_bits(data_tablet_quest_gamebits[index]) ^ 1;
+        gamebitValueInverted = mainGetBits(data_tablet_quest_gamebits[index]) ^ 1;
         objData->prevPoints[index] = gamebitValueInverted;
         objData->pointsLit[index] = gamebitValueInverted;
 
@@ -182,35 +182,35 @@ void CCkrazoabright_handle_lever_puzzle_1(Object* self, CCkrazoabright_Data* obj
         //Handle resetting levers and gamebits after each pull
         objData->timer += gUpdateRateF;
         if (objData->timer > 300.0f) {
-            main_set_bits(BIT_636, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever, 0);
-            main_set_bits(BIT_638, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever, 0);
-            main_set_bits(BIT_4D5, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever, 0);
-            main_set_bits(BIT_637, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever, 0);
+            mainSetBits(BIT_636, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever, 0);
+            mainSetBits(BIT_638, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever, 0);
+            mainSetBits(BIT_4D5, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever, 0);
+            mainSetBits(BIT_637, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever, 0);
             objData->updateNeeded = FALSE;
         }
     } else {
         //Check if Kyte pulls levers (positions noted from left, while facing towards ocean)
-        if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever)) {
+        if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever)) {
             objData->pointsLit[5] = objData->prevPoints[5] ^ 1;
             objData->pointsLit[0] = objData->prevPoints[0] ^ 1;
             objData->pointsLit[2] = objData->prevPoints[2] ^ 1;
             objData->updateNeeded = TRUE;
         } else {
-            if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever)) {
+            if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever)) {
                 objData->pointsLit[5] = objData->prevPoints[5] ^ 1;
                 objData->pointsLit[1] = objData->prevPoints[1] ^ 1;
                 objData->pointsLit[2] = objData->prevPoints[2] ^ 1;
                 objData->updateNeeded = TRUE;
             }
-            else if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever)) {
+            else if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever)) {
                 objData->pointsLit[3] = objData->prevPoints[3] ^ 1;
                 objData->pointsLit[4] = objData->prevPoints[4] ^ 1;
                 objData->updateNeeded = TRUE;
-            } else if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever)) {
+            } else if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever)) {
                 objData->pointsLit[5] = objData->prevPoints[5] ^ 1;
                 objData->pointsLit[2] = objData->prevPoints[2] ^ 1;
                 objData->updateNeeded = TRUE;
@@ -243,10 +243,10 @@ void CCkrazoabright_handle_lever_puzzle_1(Object* self, CCkrazoabright_Data* obj
 // offset: 0x728 | func: 5
 void CCkrazoabright_handle_lighting_lanterns(Object* self, CCkrazoabright_Data* objData) {
     if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 5) && 
-        main_get_bits(BIT_CC_Courtyard_Gate_Left_Lever_or_Lantern) && 
-        main_get_bits(BIT_CC_Courtyard_Gate_Right_Lever_or_Lantern)
+        mainGetBits(BIT_CC_Courtyard_Gate_Left_Lever_or_Lantern) && 
+        mainGetBits(BIT_CC_Courtyard_Gate_Right_Lever_or_Lantern)
     ) {
-        main_set_bits(BIT_CC_Courtyard_Gate_Reopened, 1);
+        mainSetBits(BIT_CC_Courtyard_Gate_Reopened, 1);
         objData->updateNeeded = FALSE;
 
         //Show courtyard gate reopening
@@ -272,11 +272,11 @@ void CCkrazoabright_handle_krazoa_tablet_quest(Object* self, CCkrazoabright_Data
         //Handle quest
         for (index = 0; index < 6; index++) {
             if (objData->prevPoints[index]){
-                if (objData->pointsLit[index] && main_get_bits(data_tablet_quest_gamebits[index])){
+                if (objData->pointsLit[index] && mainGetBits(data_tablet_quest_gamebits[index])){
                     objData->pointsLit[index] = 0;
                     objData->timer = 0.0f;
                 }
-            } else if (!objData->pointsLit[index] && !main_get_bits(data_tablet_quest_gamebits[index])){
+            } else if (!objData->pointsLit[index] && !mainGetBits(data_tablet_quest_gamebits[index])){
                 objData->pointsLit[index] = 1;
                 objData->timer = 0.0f;
             }
@@ -326,35 +326,35 @@ void CCkrazoabright_handle_lever_puzzle_2(Object* self, CCkrazoabright_Data* obj
         //Handle resetting levers and gamebits after each pull
         objData->timer += gUpdateRateF;
         if (objData->timer > 300.0f) {
-            main_set_bits(BIT_636, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever, 0);
-            main_set_bits(BIT_638, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever, 0);
-            main_set_bits(BIT_4D5, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever, 0);
-            main_set_bits(BIT_637, 0);
-            main_set_bits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever, 0);
+            mainSetBits(BIT_636, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever, 0);
+            mainSetBits(BIT_638, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever, 0);
+            mainSetBits(BIT_4D5, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever, 0);
+            mainSetBits(BIT_637, 0);
+            mainSetBits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever, 0);
             objData->updateNeeded = FALSE;
         }
     } else {
         //Check if Kyte pulls levers (positions noted from left, while facing towards ocean)
-        if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever)) {
+        if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_4th_Lever)) {
             objData->pointsLit[2] = objData->prevPoints[2] ^ 1;
             objData->pointsLit[3] = objData->prevPoints[3] ^ 1;
             objData->pointsLit[4] = objData->prevPoints[4] ^ 1;
             objData->updateNeeded = TRUE;
-        } else if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever)) {
+        } else if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_3rd_Lever)) {
             objData->pointsLit[3] = objData->prevPoints[3] ^ 1;
             objData->pointsLit[4] = objData->prevPoints[4] ^ 1;
             objData->pointsLit[5] = objData->prevPoints[5] ^ 1;
             objData->updateNeeded = TRUE;
-        } else if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever)) {
+        } else if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_2nd_Lever)) {
             objData->pointsLit[5] = objData->prevPoints[5] ^ 1;
             objData->pointsLit[0] = objData->prevPoints[0] ^ 1;
             objData->pointsLit[1] = objData->prevPoints[1] ^ 1;
             objData->pointsLit[2] = objData->prevPoints[2] ^ 1;
             objData->updateNeeded = TRUE;
-        } else if (main_get_bits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever)) {
+        } else if (mainGetBits(BIT_CC_Courtyard_Kyte_Pulled_1st_Lever)) {
             objData->pointsLit[0] = objData->prevPoints[0] ^ 1;
             objData->pointsLit[1] = objData->prevPoints[1] ^ 1;
             objData->pointsLit[3] = objData->prevPoints[3] ^ 1;
@@ -474,7 +474,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
     
     //Iterate over the courtyard well's two Block model pieces (containing the Krazoa symbol)
     for (b = 0; b < 2; b++){
-        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
+        block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(data_coords_well_blocks[b].x, data_coords_well_blocks[b].y, data_coords_well_blocks[b].z));
         if (block == NULL) {
             continue;
         }
@@ -485,7 +485,7 @@ void CCkrazoabright_apply_blending_krazoa_symbol(u8* colours) {
             //If the shape has any of the 6 relevant animatorIDs, apply its new texture blend value
             for (a = 0; a < 6; a++){
                 if (data_krazoa_symbol_shape_animatorIDs[a] == shapes[s].animatorID){
-                    block_texanim_get(block_texanim_get_instance(block, shapes[s].animatorID)->texanimID)->unk4 = colours[a];
+                    blockTexanimGet(blockTexanimGetInstance(block, shapes[s].animatorID)->texanimID)->unk4 = colours[a];
                     break;
                 }
             }
@@ -505,7 +505,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
 
     //Fade in blue colour
     if (objData->iconBlendTimer == 0.0f) {
-        if (main_get_bits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
+        if (mainGetBits(BIT_CC_Courtyard_Crossfade_Lever_Icons)) {
             objData->iconBlendTimer = 2.0f * gUpdateRateF;
         }
     } else {
@@ -518,7 +518,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
 
     //Iterate over the courtyard's two ocean-side Block models (containing the lever columns) 
     for (b = 0; b < 2; b++) {
-        block = map_get_block_by_index(map_world_coords_to_block_index(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
+        block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(data_coords_lever_blocks[b].x, data_coords_lever_blocks[b].y, data_coords_lever_blocks[b].z));
         if (block == NULL) {
             continue;
         }
@@ -529,7 +529,7 @@ void CCkrazoabright_apply_blending_lever_icons(Object* self, CCkrazoabright_Data
             //If the shape's animatorIDs is 11 (used by lever icons), apply new texture blend value
             if (shapes[s].animatorID == 11) {
                 colourToSet = colour;
-                block_texanim_get(block_texanim_get_instance(block, shapes[s].animatorID)->texanimID)->unk4 = colourToSet;
+                blockTexanimGet(blockTexanimGetInstance(block, shapes[s].animatorID)->texanimID)->unk4 = colourToSet;
             }
         }
     }

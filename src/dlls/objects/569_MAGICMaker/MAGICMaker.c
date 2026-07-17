@@ -47,11 +47,11 @@ void MAGICMaker_control(Object *self) {
     Object *player;
     Object *bonedustObj;
 
-    if (main_get_bits(BIT_26B)) {
-        main_set_bits(BIT_26B, 0);
-        player = get_player();
+    if (mainGetBits(BIT_26B)) {
+        mainSetBits(BIT_26B, 0);
+        player = objGetPlayer();
         if (((DLL_210_Player*)player->dll)->vtbl->get_magic(player) < 10) {
-            objects = obj_get_all_of_type(OBJTYPE_Collectable, &count);
+            objects = objGetAllOfType(OBJTYPE_Collectable, &count);
             foundObjs = 0;
             for (i = 0; i < count; i++) {
                 obj = objects[i];
@@ -60,15 +60,15 @@ void MAGICMaker_control(Object *self) {
                 }
             }
             if (foundObjs < 5) {
-                bonedustSetup = obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust);
+                bonedustSetup = objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust);
                 bonedustSetup->unk1A = 0x14;
                 bonedustSetup->unk2C = -1;
                 bonedustSetup->unk1C = -1;
-                bonedustSetup->base.x = self->srt.transl.x + rand_next(-300, 300);
+                bonedustSetup->base.x = self->srt.transl.x + mathRnd(-300, 300);
                 bonedustSetup->base.y = self->srt.transl.y;
-                bonedustSetup->base.z = self->srt.transl.z + rand_next(-300, 300);
+                bonedustSetup->base.z = self->srt.transl.z + mathRnd(-300, 300);
                 bonedustSetup->unk24 = -1;
-                bonedustObj = obj_create((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                bonedustObj = objSetupObject((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 if (bonedustObj) {
                     ((DLL_BoneDust*)bonedustObj->dll)->vtbl->func10(bonedustObj, 0, -0.75f, 0);
                 }
@@ -83,7 +83,7 @@ void MAGICMaker_update(Object *self) { }
 // offset: 0x2AC | func: 3 | export: 3
 void MAGICMaker_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

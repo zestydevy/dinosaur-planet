@@ -51,9 +51,9 @@ void WMvein_setup(Object* self, WMvein_Setup* objsetup, s32 arg2) {
     objdata->unk8 = 0.0f;
     objdata->unkC = 0.0f;
     objdata->unk10 = 0.0f;
-    objdata->rollSpeed = rand_next(400, 600);
+    objdata->rollSpeed = mathRnd(400, 600);
     objdata->unk1E = 0;
-    objdata->unk20 = rand_next(100, 200);
+    objdata->unk20 = mathRnd(100, 200);
     objdata->modgfxReturnVal = -1;
 }
 
@@ -67,7 +67,7 @@ void WMvein_control(Object* self) {
 
     objdata = self->data;
     
-    player = get_player();
+    player = objGetPlayer();
     if (player == NULL) {
         return;
     }
@@ -80,9 +80,9 @@ void WMvein_control(Object* self) {
     if (distance <= objdata->fxRadius) {
         if (objdata->effectCreated == FALSE) {
 
-            modGfxDLL = dll_load_deferred(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
+            modGfxDLL = dllLoad(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
             objdata->modgfxReturnVal = ((DLL_IModgfx*)modGfxDLL)->vtbl->func0(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
-            dll_unload(modGfxDLL);
+            dllFree(modGfxDLL);
             objdata->effectCreated = TRUE;
         }
         if (objdata->animateRoll == TRUE) {

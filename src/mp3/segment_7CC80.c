@@ -3,7 +3,7 @@
 #include "PR/ultratypes.h"
 #include "intrinsics.h"
 
-f32 mp3_func_8007C080(f32 param1) {
+f32 mp3Func8007C080(f32 param1) {
     s32 var2;
     f32 var3;
     f32 var4;

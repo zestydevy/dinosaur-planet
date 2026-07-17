@@ -52,7 +52,7 @@ void dll_783_control(Object *self) {
     sp44 = 100000.0f;
     objdata = self->data;
     if (objdata->levelCtrl == NULL) {
-        objdata->levelCtrl = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &sp44);
+        objdata->levelCtrl = objGetNearestTypeTo(OBJTYPE_LevelControl, self, &sp44);
         self->opacity = 0;
         return;
     }
@@ -60,13 +60,13 @@ void dll_783_control(Object *self) {
     if (objdata->unkE != 5) {
         sp3B = gDLL_7_Newday->vtbl->func8(&sp40);
         if (self->modelInstIdx == 1) {
-            if (main_get_bits(BIT_812) != 0) {
+            if (mainGetBits(BIT_812) != 0) {
                 objdata->unkE = 5;
             } else if (sp3B) {
                 objdata->unkE = 3;
             }
         } else {
-            if (main_get_bits(BIT_813) != 0) { // if moon block puzzle complete
+            if (mainGetBits(BIT_813) != 0) { // if moon block puzzle complete
                 objdata->unkE = 5;
             } else if (!sp3B) {
                 objdata->unkE = 3;
@@ -148,7 +148,7 @@ void dll_783_update(Object *self) { }
 // offset: 0x51C | func: 3 | export: 3
 void dll_783_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

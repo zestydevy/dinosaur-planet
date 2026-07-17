@@ -73,7 +73,7 @@ void camdrakor_func_138(Cam* cam) {
         return;
     }
     if (sState->unk4 == NULL) {
-        temp_v0 = get_world_objects(&sp78, &sp74);
+        temp_v0 = objGetObjects(&sp78, &sp74);
         while (sp78 < sp74) {
             if (temp_v0[sp78]->id == OBJ_BossDrakor) {
                 sState->unk4 = temp_v0[sp78];
@@ -84,7 +84,7 @@ void camdrakor_func_138(Cam* cam) {
         }
     }
     if (sState->unk8 == NULL) {
-        sState->unk8 = get_player();
+        sState->unk8 = objGetPlayer();
     }
     sp70 = sState->unk4->globalPosition.x - sState->unk0->globalPosition.x;
     sp6C = sState->unk4->globalPosition.y - sState->unk0->globalPosition.y;
@@ -99,8 +99,8 @@ void camdrakor_func_138(Cam* cam) {
     cam->srt.transl.x = sState->unk0->srt.transl.x - (sp64 * (-30.0f + (temp_fv1_3 * 350.0f)));
     cam->srt.transl.y = sState->unk0->srt.transl.y + 20.0f + (temp_fv1_3 * 60.0f);
     cam->srt.transl.z = sState->unk0->srt.transl.z - (sp60 * (-30.0f + (temp_fv1_3 * 350.0f)));
-    cam->srt.yaw = -arctan2_f(sp70, sp68);
-    cam->srt.pitch = -arctan2_f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
+    cam->srt.yaw = -mathAtan2f(sp70, sp68);
+    cam->srt.pitch = -mathAtan2f(sp6C - ((sp5C / 400.0f) * 100.0f), sqrtf(SQ(sp70) + SQ(sp68)));
     if (sState->unkC == 0) {
         temp_fa1_3 = sState->unk10 / 60.0f;
         cam->srt.transl.x += ((sState->unk14 - cam->srt.transl.x) * temp_fa1_3);

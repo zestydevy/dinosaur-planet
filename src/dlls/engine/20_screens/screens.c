@@ -1,8 +1,8 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "sys/asset_thread.h"
-#include "sys/fs.h"
+#include "sys/asset.h"
+#include "sys/pi.h"
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "macros.h"
@@ -32,7 +32,7 @@ void screens_show_screen(s32 screenNo) {
     screensTab = NULL;
     
     if (screenNo != sLoadedScreenNo) {
-        queue_alloc_load_file((void**)&screensTab, SCREENS_TAB);
+        assetRomLoad((void**)&screensTab, SCREENS_TAB);
 
         numScreens = 0;
         while (screensTab[numScreens] != 0xFFFFFFFF) {
@@ -57,7 +57,7 @@ void screens_show_screen(s32 screenNo) {
         }
 
         sLoadedScreenByteLength = length;
-        queue_load_file_region_to_ptr((void*)sLoadedScreen, SCREENS_BIN, offset, length);
+        assetRomLoadSection((void*)sLoadedScreen, SCREENS_BIN, offset, length);
 
         mmFree(screensTab);
         sLoadedScreenNo = screenNo;
@@ -102,12 +102,12 @@ void screens_draw(Gfx **gdl) {
         ptr += 8;
 
         gDPSetCombineLERP((*gdl), TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, SCALE, 0, 0, 0, 0, TEXEL0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
 
         gDPSetOtherMode((*gdl), 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
 
         yPos = 0;
         do {

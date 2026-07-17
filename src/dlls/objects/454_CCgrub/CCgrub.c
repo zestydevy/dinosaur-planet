@@ -68,7 +68,7 @@ void CCgrub_setup(Object* self, CCgrub_Setup* setup, s32 arg2) {
         self->srt.transl.y = temp_v0_2->pos.y;
         self->srt.transl.z = temp_v0_2->pos.z;
         self->shadow->flags |= (OBJ_SHADOW_FLAG_20000 | OBJ_SHADOW_FLAG_USE_OBJ_YAW);
-        obj_init_mesg_queue(self, 1);
+        objInitMesgQueue(self, 1);
     }
 }
 
@@ -91,9 +91,9 @@ void CCgrub_control(Object* self) {
     objdata = (CCgrub_Data*)self->data;
     objsetup = (CCgrub_Setup*)self->setup;
 
-    while (obj_recv_mesg(self, &sp5C, NULL, NULL) != 0) {
+    while (objRecvMesg(self, &sp5C, NULL, NULL) != 0) {
         if (sp5C == 0x7000B) {
-            temp_v0 = get_player();
+            temp_v0 = objGetPlayer();
             sp54 = ((DLL_210_Player*)temp_v0->dll)->vtbl->func66(temp_v0, 16);
             if (((DLL_IFoodbag*)sp54->dll)->vtbl->is_obtained(sp54) != 0) {
                 ((DLL_IFoodbag*)sp54->dll)->vtbl->collect_food(sp54, SIDEFOOD_Blue_Grubs);
@@ -102,7 +102,7 @@ void CCgrub_control(Object* self) {
                 gDLL_1_cmdmenu->vtbl->info_show(
                     BIT_CloudRunner_Grubs, 
                     300, 
-                    main_increment_bits(BIT_CloudRunner_Grubs)
+                    mainIncrementBits(BIT_CloudRunner_Grubs)
                 );
             }
             objdata->unk109 = 0xA;
@@ -110,7 +110,7 @@ void CCgrub_control(Object* self) {
     }
     
     if ((func_80025F40(self, NULL, NULL, NULL) != 0) && (objdata->unk109 != 0)) {
-        func_80023D30(self, 0, 0.0f, 0);
+        objAnimSet(self, 0, 0.0f, 0);
         objdata->unk110 = 0.005f;
         objdata->unk109 = 0;
     }
@@ -133,9 +133,9 @@ void CCgrub_control(Object* self) {
         break;
     case 2:
         if (self->animProgress >= 0.9f) {
-            objdata->unk10C = ((f32) rand_next(objsetup->unk18, objsetup->unk19) / 100.0f);
+            objdata->unk10C = ((f32) mathRnd(objsetup->unk18, objsetup->unk19) / 100.0f);
             objdata->unk110 = 0.02f;
-            func_80023D30(self, 5, 0.0f, 0);
+            objAnimSet(self, 5, 0.0f, 0);
             objdata->unk109 = 4;
         }
         break;
@@ -171,10 +171,10 @@ void CCgrub_control(Object* self) {
                 }
             } else {
                 if (objdata->unk13E == objdata->unk13C) {
-                    temp_v0_4 = get_player();
+                    temp_v0_4 = objGetPlayer();
                     sp40[0] = temp_v0_4->srt.transl.x - self->srt.transl.x;
                     sp40[1] = temp_v0_4->srt.transl.z - self->srt.transl.z;
-                    objdata->unk13E = arctan2_f(-sp40[0], -sp40[1]);
+                    objdata->unk13E = mathAtan2f(-sp40[0], -sp40[1]);
                 }
                 var_v1 = objdata->unk13C - (objdata->unk13E & 0xFFFF);
                 CIRCLE_WRAP(var_v1);
@@ -207,7 +207,7 @@ void CCgrub_control(Object* self) {
         CCgrub_func_104C(self, objdata);
         break;
     }
-    func_80024108(self, objdata->unk110, gUpdateRateF, &objdata->unk120);
+    objAnimAdvance(self, objdata->unk110, gUpdateRateF, &objdata->unk120);
     objdata->unk120.unk0[2] = -(objdata->unk120.unk0[2] / gUpdateRateF);
     if (objdata->unk109 != 6) {
         CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
@@ -215,9 +215,9 @@ void CCgrub_control(Object* self) {
     }
     if (self->unkAF & 1) {
         // @bug: the gamebit used here is also used for disabling particles!
-        obj_send_mesg(get_player(), 0x7000A, self, (void* )BIT_5);
+        objSendMesg(objGetPlayer(), 0x7000A, self, (void* )BIT_5);
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.0f, 0);
+            objAnimSet(self, 0, 0.0f, 0);
             objdata->unk110 = 0.005f;
         }
         objdata->unk109 = 9;
@@ -227,9 +227,9 @@ void CCgrub_control(Object* self) {
 // offset: 0xAB0 | func: 2
 static void CCgrub_func_AB0(Object* self, CCgrub_Data* objdata, f32 a2) {
     if (a2 < 1.0f) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
     } else {
-        func_80023D30(self, 2, 0.0f, 0);
+        objAnimSet(self, 2, 0.0f, 0);
     }
     objdata->unk109 = 1;
     objdata->unk10C = a2;
@@ -243,7 +243,7 @@ void CCgrub_update(Object *self) { }
 // offset: 0xB60 | func: 4 | export: 3
 void CCgrub_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -313,22 +313,22 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
     if (objdata->unk140 > 10.0f) {
         objdata->unk140 -= 10.0f;
     }
-    func_8002493C(self, objdata->unk10C, &objdata->unk110);
+    objGetAnimChange(self, objdata->unk10C, &objdata->unk110);
     self->srt.transl.y = objdata->unk0.unk0.unk68.y;
-    self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
+    self->srt.yaw = mathAtan2f(-objdata->unk114, -objdata->unk118);
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
-        temp_fv0 = vec3_distance_xz_squared(&self->globalPosition, &get_player()->globalPosition);
+        temp_fv0 = vec3DistanceXZSquared(&self->globalPosition, &objGetPlayer()->globalPosition);
         if ((f32) (objsetup->unk1B * objsetup->unk1B) <= temp_fv0) {
             if ((f32) (objsetup->unk1A * objsetup->unk1A) <= temp_fv0) {
-                func_80023D30(self, 3, 0.0f, 0);
+                objAnimSet(self, 3, 0.0f, 0);
                 objdata->unk110 = 0.01f;
                 objdata->unk109 = 2;
                 return;
             }
             objdata->unk13C = self->srt.yaw;
             objdata->unk13E = self->srt.yaw;
-            func_80023D30(self, 6, 0.0f, 0);
+            objAnimSet(self, 6, 0.0f, 0);
             if (objdata->unk10C == ((f32) objsetup->unk19 / 50.0f)) {
                 objdata->unk110 = 0.015f;
             } else {
@@ -339,7 +339,7 @@ static void CCgrub_func_DC4(Object* self, CCgrub_Data* objdata) {
             return;
         }
         self->unkAF |= 8;
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         objdata->unk110 = 0.02f;
         objdata->unk109 = 6;
     }
@@ -352,14 +352,14 @@ void CCgrub_func_104C(Object* self, CCgrub_Data* objdata) {
     objdata->unk11C += gUpdateRateF;
     if (objdata->unk11C >= 300.0f) {
         self->unkAF &= ~0x8;
-        CCgrub_func_AB0(self, objdata, (f32) rand_next(setup->unk18, setup->unk19) / 100.0f);
+        CCgrub_func_AB0(self, objdata, (f32) mathRnd(setup->unk18, setup->unk19) / 100.0f);
         CCgrub_func_DC4(self, objdata);
         return;
     }
     CCgrub_func_BE8(self, objdata, objdata->unk10C, 1.0f);
     CCgrub_func_CEC(self, &objdata->unk0.unk0.unk68, objdata->unk10C, &objdata->unk114);
     self->srt.transl.y = objdata->unk0.unk0.unk68.y;
-    self->srt.yaw = arctan2_f(-objdata->unk114, -objdata->unk118);
+    self->srt.yaw = mathAtan2f(-objdata->unk114, -objdata->unk118);
 }
 
 /*0x0*/ static const char str_0[] = "msg %d\n";

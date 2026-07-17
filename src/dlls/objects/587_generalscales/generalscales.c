@@ -1,7 +1,11 @@
 #include "PR/gbi.h"
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
+#include "sys/map.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 
 typedef struct {
     AnimObj_Data unk0;
@@ -90,7 +94,7 @@ void dll_587_control(Object* self) {
     
     matchObj = NULL;
     seqSlot = objData->seqSlot;
-    objects = get_world_objects(&index, &count);
+    objects = objGetObjects(&index, &count);
 
     for (matches = 0, index = 0; index < count; index++) {
         obj = objects[index];
@@ -113,7 +117,7 @@ void dll_587_control(Object* self) {
     
     self->seqSlot = SEQSLOT_NONE;
     
-    obj_destroy_object(self);
+    objFreeObject(self);
 }
 
 // offset: 0x340 | func: 2 | export: 2
@@ -130,7 +134,7 @@ void dll_587_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     }
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -144,14 +148,14 @@ void dll_587_free(Object* self, s32 onlySelf) {
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i] != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->sfxHandles[i]);
+            dll_amSfx->Stop(objData->sfxHandles[i]);
         }
     }
     
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
 
     if (objData->unk30 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk30);
+        dll_amSfx->Stop(objData->unk30);
     }
 }
 
@@ -181,15 +185,15 @@ void dll_587_func_548(Object* self) {
     case 2:
         sVanishMask.state = ModelMask_STATE_2_Contracting;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_556, NULL, 2, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB63, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB64, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xB63, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xB64, MAX_VOLUME, NULL, NULL, 0, NULL);
         sVanishMask.maskY = 0.0f;
         break;
     case 3:
         sVanishMask.state = ModelMask_STATE_3_Expanding;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_556, NULL, 2, -1, &sp30);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB63, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, 0xB64, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xB63, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, 0xB64, MAX_VOLUME, NULL, NULL, 0, NULL);
         sVanishMask.maskY = 800.0f;
         break;
     case 4:
@@ -235,14 +239,14 @@ void dll_587_func_75C(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangl
     initVtx = *vtxs;
     vtx = initVtx;
     
-    dl_set_env_color(gdl, 0xFF, 0xFF, 0xFF, 0xFF);
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0x80);
+    dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, 0xFF);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, 0x80);
     
     gSPLoadGeometryMode(*gdl, G_SHADE | G_ZBUFFER | G_FOG | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     
     gDPSetCombineLERP(*gdl, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     for (i = 0; i < ARRAYCOUNT(rodata_C0); i++) {
         if (i < 4) {
@@ -271,7 +275,7 @@ void dll_587_func_75C(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangl
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP |
         G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE |
         ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(G_BL_CLR_IN, G_BL_0, G_BL_CLR_MEM, G_BL_1MA));
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     srt.transl.f[0] = self->globalPosition.f[0];
     srt.transl.f[1] = self->globalPosition.f[1] + 30.0f;
@@ -280,10 +284,10 @@ void dll_587_func_75C(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangl
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 0.05f;
-    camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1, 0, NULL);
+    camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
     
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dl_triangles(gdl, (DLTri*)rodata_0, ARRAYCOUNT(rodata_0));
+    dlTriangles(gdl, (DLTri*)rodata_0, ARRAYCOUNT(rodata_0));
     
     srt.transl.x = self->globalPosition.f[0];
     srt.transl.y = self->globalPosition.f[1] + 30.0f;
@@ -292,10 +296,10 @@ void dll_587_func_75C(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangl
     srt.pitch = 0x7FFF;
     srt.roll = 0;
     srt.scale = 0.05f;
-    camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+    camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dl_triangles(gdl, (DLTri*)rodata_0, ARRAYCOUNT(rodata_0));
+    dlTriangles(gdl, (DLTri*)rodata_0, ARRAYCOUNT(rodata_0));
     
     srt.yaw = 0;
     srt.pitch = 0;

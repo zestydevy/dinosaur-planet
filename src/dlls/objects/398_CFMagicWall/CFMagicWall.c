@@ -27,7 +27,7 @@ void CFMagicWall_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void CFMagicWall_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_32);
+    objAddObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x5C | func: 1 | export: 1
@@ -41,16 +41,16 @@ void CFMagicWall_control(Object* self) {
     f32 temp;
 
     setup = (CFMagicWall_Setup*)self->setup;
-    player = get_player();
+    player = objGetPlayer();
     var_ft1 = (f32)setup->unk1A;
-    temp = vec3_distance(&self->globalPosition, &player->globalPosition);
-    if (temp < vec3_distance(&self->globalPosition, &get_sidekick()->globalPosition)) {
-        var_fv0 = vec3_distance(&self->globalPosition, &player->globalPosition);
+    temp = vec3Distance(&self->globalPosition, &player->globalPosition);
+    if (temp < vec3Distance(&self->globalPosition, &objGetSidekick()->globalPosition)) {
+        var_fv0 = vec3Distance(&self->globalPosition, &player->globalPosition);
     } else {
-        var_fv0 = vec3_distance(&self->globalPosition, &get_sidekick()->globalPosition);
+        var_fv0 = vec3Distance(&self->globalPosition, &objGetSidekick()->globalPosition);
     }
-    if (camera_get_distance_to_point(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
-        var_fv0 = camera_get_distance_to_point(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    if (camDistance(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) < var_fv0) {
+        var_fv0 = camDistance(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
     }
     if (var_fv0 < var_ft1) {
         var_a1 = ((var_fv0 / var_ft1) * 255.0f);
@@ -69,13 +69,13 @@ void CFMagicWall_update(Object *self) { }
 // offset: 0x2CC | func: 3 | export: 3
 void CFMagicWall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x320 | func: 4 | export: 4
 void CFMagicWall_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_32);
+    objFreeObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x360 | func: 5 | export: 5
@@ -97,8 +97,8 @@ static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID) {
     s32 vertexIdx;
     s32 shapeIdx;
 
-    blockIdx = map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
-    block = map_get_block_by_index(blockIdx);
+    blockIdx = mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+    block = mapGetBlockByIndex(blockIdx);
     if (block != NULL && (block->vtxFlags & 8)) {
         vtxs = block->vertices2[block->vtxFlags & 1];
         shapeIdx = 0;

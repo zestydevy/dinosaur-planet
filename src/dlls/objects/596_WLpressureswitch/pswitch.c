@@ -58,7 +58,7 @@ void WLpressureswitch_setup(Object* self, WLPressureSwitch_Setup* setup, s32 arg
     objdata = self->data;
     self->animCallback = WLpressureswitch_anim_callback;
     self->srt.yaw = setup->yaw << 8;
-    if (main_get_bits(setup->gameBitPressed)) {
+    if (mainGetBits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - 25.0f;
         objdata->pressed = 30;
     }
@@ -77,12 +77,12 @@ void WLpressureswitch_control(Object* self) {
     s8 playerIsFarAway;
     s32 index;
 
-    player = get_player();
+    player = objGetPlayer();
     setup = (WLPressureSwitch_Setup*)self->setup;
     objdata = self->data;
 
     playerIsFarAway = FALSE;
-    if (vec3_distance(&self->globalPosition, &player->globalPosition) > 100.0f) {
+    if (vec3Distance(&self->globalPosition, &player->globalPosition) > 100.0f) {
         playerIsFarAway = TRUE;
     }
 
@@ -104,15 +104,15 @@ void WLpressureswitch_control(Object* self) {
             if (objdata->state == STATE_0_UP && 
                 listedObject && listedObject->id == OBJ_WL_Column_Top) {
                 if (!playerIsFarAway) {
-                    gDLL_6_AMSFX->vtbl->play(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
+                    dll_amSfx->Play(self, SOUND_B89_Puzzle_Solved, 0x7F, NULL, 0, 0, 0);
                 }
                 objdata->state = STATE_1_DOWN;
             }
         }
     //Handle Tricky's behaviour during Sabre's first visit
     } else if (gDLL_29_Gplay->vtbl->get_act(self->mapID) == WM_ACT_3_SPIRIT_2_SABRE_DB) {
-        sidekick = get_sidekick();
-        if (sidekick && vec3_distance(&self->globalPosition, &sidekick->globalPosition) < 50.0f) {
+        sidekick = objGetSidekick();
+        if (sidekick && vec3Distance(&self->globalPosition, &sidekick->globalPosition) < 50.0f) {
             objdata->pressed = 5;
         }
     }
@@ -124,12 +124,12 @@ void WLpressureswitch_control(Object* self) {
             deltaY = setup->base.y - self->srt.transl.y;
             // Trigger seq for pointing the camera at the door to Randorn's room partway through descending
             if (2.5f < deltaY && deltaY < 5.0f) {
-                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, TRUE);
-            } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
-                main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
+                mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, TRUE);
+            } else if (mainGetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+                mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
             }
-        } else if (main_get_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
-            main_set_bits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
+        } else if (mainGetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door)) {
+            mainSetBits(BIT_WM_Seq_446_LookAt_Randorn_Hall_Door, FALSE);
         }
     }
 
@@ -143,12 +143,12 @@ void WLpressureswitch_control(Object* self) {
                 self->srt.transl.y = deltaY;
             }
             playSound = FALSE;
-            main_set_bits(setup->gameBitPressed, TRUE);
+            mainSetBits(setup->gameBitPressed, TRUE);
         } else {
             self->srt.transl.y -= 0.125f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
                 self->srt.transl.y = deltaY;
-                main_set_bits(setup->gameBitPressed, TRUE);
+                mainSetBits(setup->gameBitPressed, TRUE);
                 playSound = FALSE;
             } else {
                 playSound = TRUE;
@@ -162,17 +162,17 @@ void WLpressureswitch_control(Object* self) {
         } else {
             playSound = TRUE;
         }
-        main_set_bits(setup->gameBitPressed, FALSE);
+        mainSetBits(setup->gameBitPressed, FALSE);
     }
 
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, (u32*)&objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+            dll_amSfx->Stop(objdata->soundHandle);
             objdata->soundHandle = 0;
         }
     }
@@ -184,7 +184,7 @@ void WLpressureswitch_update(Object* self){ }
 // offset: 0x5A4 | func: 3 | export: 3
 void WLpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
@@ -195,7 +195,7 @@ void WLpressureswitch_free(Object* self, s32 arg1) {
 
     soundHandle = objdata->soundHandle;
     if (soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle);
+        dll_amSfx->Stop(soundHandle);
     }
 }
 

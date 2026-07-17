@@ -35,7 +35,7 @@ void dll_413_setup(Object *self, ObjSetup *arg1, s32 arg2) {
 
     //Setting thruster textures' initial colour multiplier to black
     for (index = 2; index < 7; index++){
-        animTexture = func_800348A0(self, index, 0);
+        animTexture = objExprGetTexAnimator(self, index, 0);
         animTexture->multiplyR = 1;
         animTexture->multiplyG = 1;
         animTexture->multiplyB = 1;
@@ -56,7 +56,7 @@ void dll_413_update(Object *self) { }
 // offset: 0xEC | func: 3 | export: 3
 void dll_413_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -88,7 +88,7 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     
     objData = self->data;
     
-    animTexture = func_800348A0(self, 1, 0);
+    animTexture = objExprGetTexAnimator(self, 1, 0);
     animTexture->frame = (((objData->unk3 >> 1) & 1) ^ 1) << 8;
     
     if (!(objData->unk3 & 2)){
@@ -113,7 +113,7 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         gDLL_17_partfx->vtbl->spawn(self, 0x133, &fxTransform, 4, -1, NULL);
     }
     
-    animTexture = func_800348A0(self, 0, 0);
+    animTexture = objExprGetTexAnimator(self, 0, 0);
     animTexture->frame = 0x100;
 
     for (index = 0; index < arg2->messageCount; index++){
@@ -126,7 +126,7 @@ int dll_413_func_1AC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         case 4:
             objData->unk2 ^= 1 << (subcommandID - 1);
             if (1){}
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_509_Engine_Boom, 0x7F, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_509_Engine_Boom, 0x7F, NULL, NULL, 0, NULL);
             break;
         case 5:
             objData->unk2 ^= 0x40 | 0x20 | 0x10;
@@ -181,7 +181,7 @@ void dll_413_func_4BC(Object* self, s32 animTextureNumber, f32 brightness) {
         brightness = 1.0f;
     }
     
-    animTexture = func_800348A0(self, animTextureNumber + 2, 0);
+    animTexture = objExprGetTexAnimator(self, animTextureNumber + 2, 0);
     
     componentValue = brightness;
     

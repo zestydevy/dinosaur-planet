@@ -41,13 +41,15 @@ s32 gNumLoadedAnims;
 s16 SHORT_ARRAY_800b17d0[48]; // TODO: check length, it's at most 48
 /* -------- .bss end 800b1830 -------- */
 
-void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
-Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
-void anim_destroy(Animation*);
-void model_destroy(Model* model);
-void func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
+void mod_func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5);
+Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
+void modFreeAnim(Animation*);
+void freeModel(Model* model);
+void mod_func_8001A640(Object* object, ModelInstance* modelInst, Model* model);
+ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
+s32 makeModelAnimation(Model* model, s32 id, u8* data);
 
-void init_models() {
+void modInit(void) {
     u32* temp_v0;    
 
     gLoadedModels = mmAlloc(0x230, ALLOC_TAG_MODELS_COL, NULL);
@@ -55,7 +57,7 @@ void init_models() {
     gNumLoadedModels = 0;
     gNumFreeModelSlots = 0;
 
-    queue_alloc_load_file((void*)&gFile_MODELS_TAB, MODELS_TAB);
+    assetRomLoad((void*)&gFile_MODELS_TAB, MODELS_TAB);
     
     gNumModelsTabEntries = 0;
     while (gFile_MODELS_TAB[gNumModelsTabEntries] != -1){
@@ -71,14 +73,14 @@ void init_models() {
     gNumLoadedAnims = 0;
 }
 
-ModelInstance* func_80017D2C(s32 arg0, s32 arg1) {
+ModelInstance* modLoadModel(s32 arg0, s32 arg1) {
     ModelInstance* model;
 
-    queue_load_model((void*)&model, arg0, arg1);
+    assetLoadModel((void*)&model, arg0, arg1);
     return model;
 }
 
-ModelInstance* model_load_create_instance(s32 id, u32 flags) {
+ModelInstance* modLoadModelActual(s32 id, u32 flags) {
     s32 i;
     s32 sp50;
     s32 sp4C;
@@ -98,7 +100,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     if (id < 0) {
         id = -id;
     } else {
-        read_file_region(MODELIND_BIN, gAuxBuffer, id * 2, 8);
+        piRomLoadSection(MODELIND_BIN, gAuxBuffer, id * 2, 8);
         id = gAuxBuffer[0];
     }
     for (i = 0; i < gNumLoadedModels; i++) {
@@ -110,9 +112,9 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
         modelInst = createModelInstance(model, flags, 0);
         if (modelInst != NULL) {
             model->refCount++;
-            model_setup_anim_playback(modelInst, modelInst->animState0);
+            modSetupAnimPlayback(modelInst, modelInst->animState0);
             if (modelInst->animState1 != NULL) {
-                model_setup_anim_playback(modelInst, modelInst->animState1);
+                modSetupAnimPlayback(modelInst, modelInst->animState1);
             }
         }
         return modelInst;
@@ -133,12 +135,12 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     sp4C = gFile_MODELS_TAB[id + 0];
     sp48 = gFile_MODELS_TAB[id + 1] - sp4C;
-    read_file_region(MODELS_BIN, gAuxBuffer, sp4C, 0x10);
+    piRomLoadSection(MODELS_BIN, gAuxBuffer, sp4C, 0x10);
     sp42 = gAuxBuffer[0];
     sp3E = gAuxBuffer[2];
     sp40 = ((u16)mmAlign8(gAuxBuffer[1]) & 0xFFFF) + 0x90;
-    uncompressedSize = rarezip_uncompress_size((u8*)gAuxBuffer + 8);
-    sp28 = model_load_anim_remap_table(id, sp3E, sp42);
+    uncompressedSize = rarezipUncompressSize((u8*)gAuxBuffer + 8);
+    sp28 = modLoadAnimRemapTable(id, sp3E, sp42);
     sp28 += uncompressedSize + 500;
     model = mmAlloc(sp28, 9, NULL);
     if (model == NULL) {
@@ -152,8 +154,8 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     temp = (((u32)model + sp28) - sp48) - 0x10;
     modelInst = (ModelInstance *) (temp - (temp % 16));
-    read_file_region(MODELS_BIN, (void*) modelInst, sp4C, sp48);
-    rarezip_uncompress((u8*)modelInst + 8, (u8*)model, sp28);
+    piRomLoadSection(MODELS_BIN, (void*) modelInst, sp4C, sp48);
+    rarezipUncompress((u8*)modelInst + 8, (u8*)model, sp28);
     model->materials = (ModelTexture*) ((u32)model->materials + (u32)model);
     model->vertices = (Vtx*) ((u32)model->vertices + (u32)model);
     model->faces = (ModelFacebatch*) ((u32)model->faces + (u32)model);
@@ -202,7 +204,7 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
     }
     sp33 = 0;
     for (i = 0; i < model->textureCount; i++) {
-        model->materials[i].texture = tex_load(-((u32)model->materials[i].texture | 0x8000), 0);
+        model->materials[i].texture = texLoadTextureActual(-((u32)model->materials[i].texture | 0x8000), 0);
         if (model->materials[i].texture == NULL) {
             sp33 = 1;
         }
@@ -213,15 +215,15 @@ ModelInstance* model_load_create_instance(s32 id, u32 flags) {
                 goto bail;
             }
         }
-        patch_model_display_list_for_textures(model);
+        modPatchModelDisplayListForTextures(model);
         uncompressedSize += (u32)model;
         uncompressedSize = mmAlign8(uncompressedSize);
-        if (modanim_load(model, id, (u8*)uncompressedSize) == 0) {
+        if (makeModelAnimation(model, id, (u8*)uncompressedSize) == 0) {
             modelInst = createModelInstance(model, flags, 1);
             if (modelInst != NULL) {
-                model_setup_anim_playback(modelInst, modelInst->animState0);
+                modSetupAnimPlayback(modelInst, modelInst->animState0);
                 if (modelInst->animState1 != NULL) {
-                    model_setup_anim_playback(modelInst, modelInst->animState1);
+                    modSetupAnimPlayback(modelInst, modelInst->animState1);
                 }
                 MODEL_SLOT_ID(gLoadedModels, sp50) = id;
                 MODEL_SLOT_MODEL(gLoadedModels, sp50) = (s32)model;
@@ -238,11 +240,12 @@ bail:
     if (isNewSlot) {
         gNumFreeModelSlots++;
     }
-    model_destroy(model);
+    freeModel(model);
     return NULL;
 }
 
-ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
+// official name: createModelInstance
+/*static*/ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     ModelInstance* temp_v0;
     s32 i;
     AnimState *temp_a1;
@@ -256,7 +259,7 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
         STUBBED_PRINTF(str_800992a8);
         return NULL;
     }
-    sp58 = model_get_stats(model, flags, &sp30, model->envMapCount != 0 || model->textureAnimationCount != 0);
+    sp58 = modGetStats(model, flags, &sp30, model->envMapCount != 0 || model->textureAnimationCount != 0);
     temp_v0 = mmAlloc(sp58, 0x89, ALLOC_NAME("minst"));
     // @fake
     if (&sp58) {}
@@ -357,12 +360,12 @@ ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2) {
     } else {
         temp_v0->displayList = model->displayList;
     }
-    load_model_display_list(model, temp_v0);
+    modLoadModelDisplayList(model, temp_v0);
     temp_v0->model = model;
     return temp_v0;
 }
 
-void patch_model_display_list_for_textures(Model* model) {
+void modPatchModelDisplayListForTextures(Model* model) {
     Gfx *gfx;
     s32 i;
     u32 idx;
@@ -417,7 +420,7 @@ void patch_model_display_list_for_textures(Model* model) {
 /** 
   * Calculates various model malloc categories and returns the total size allocated to the model 
   */
-u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting) {
+u32 modGetStats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting) {
     s32 joints_calc;
     s32 total;
     
@@ -468,7 +471,7 @@ u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 b
 }
 
 //Draw mode when opaque?
-void load_model_display_list(Model *model, ModelInstance *modelInst)
+void modLoadModelDisplayList(Model *model, ModelInstance *modelInst)
 {
     ModelDLInfo *dlInfo = model->drawModes;
     ModelDLInfo *dlInfoEnd = dlInfo + model->drawModesCount;
@@ -480,7 +483,7 @@ void load_model_display_list(Model *model, ModelInstance *modelInst)
 }
 
 //Draw mode when at semi-transparent opacity?
-void load_model_display_list2(Model *model, ModelInstance *modelInst)
+void modLoadModelDisplayList2(Model *model, ModelInstance *modelInst)
 {
     ModelDLInfo *dlInfo = model->drawModes;
     ModelDLInfo *dlInfoEnd = dlInfo + model->drawModesCount;
@@ -491,7 +494,8 @@ void load_model_display_list2(Model *model, ModelInstance *modelInst)
     }
 }
 
-void destroy_model_instance(ModelInstance* modelInst) {
+// official name: modFreeModel
+void modFreeModel(ModelInstance* modelInst) {
     Model* sp1C;
     s32 i;
 
@@ -523,18 +527,17 @@ void destroy_model_instance(ModelInstance* modelInst) {
 
         MODEL_SLOT_ID(gLoadedModels, i) = -1;
         MODEL_SLOT_MODEL(gLoadedModels, i) = -1;
-        model_destroy(sp1C);
+        freeModel(sp1C);
     }
 }
 
-
-void model_destroy(Model* model) {
+/*static*/ void freeModel(Model* model) {
     s32 i;
 
     for (i = 0; i < model->textureCount; i++)
     {
         if ((&model->materials[i])->texture) {
-            tex_free((&model->materials[i])->texture);
+            texFreeTexture((&model->materials[i])->texture);
         }
     }
 
@@ -542,7 +545,7 @@ void model_destroy(Model* model) {
         i = 0;
         if (model->animCount != 0) {
             do {
-                anim_destroy(model->anims[i]);
+                modFreeAnim(model->anims[i]);
                 i++;
             } while (i < model->animCount);
         }
@@ -551,7 +554,7 @@ void model_destroy(Model* model) {
     mmFree(model);
 }
 
-s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
+s32 modLoadAnimRemapTable(s32 modelID, s32 arg1, s32 animCount) {
     s32 *offset;
     s32 amap_size;
     s32 total_size;
@@ -566,7 +569,7 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
         PAD16(total_size);
        
         index = modelID & 3;
-        read_file_region(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
+        piRomLoadSection(AMAP_TAB, D_800B17BC, (modelID & ~3) << 2, 0x20);
 
         amap_size = D_800B17BC[index+1] - D_800B17BC[index];
         
@@ -576,7 +579,7 @@ s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount) {
 }
 
 // official name: makeModelAnimation
-s32 modanim_load(Model* model, s32 id, u8* data) {
+/*static*/ s32 makeModelAnimation(Model* model, s32 id, u8* data) {
     s32 temp_t0;
     s32 temp_t7;
     s32 temp_v0;
@@ -591,7 +594,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
 
     temp_s0 = (s16*)D_800B17BC;
     var_s1 = 0;
-    read_file_region(MODANIM_TAB, temp_s0, id << 1, 0x10);
+    piRomLoadSection(MODANIM_TAB, temp_s0, id << 1, 0x10);
     temp_t0 = temp_s0[0];
     var_a0 = temp_s0[1];
     temp_t7 = (var_a0 - temp_t0) >> 1;
@@ -607,7 +610,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
     if (var_s0 > 0x800) {
         STUBBED_PRINTF("Warning: Model animation buffer overflow!! size=%d\n", var_s0);
     }
-    read_file_region(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
+    piRomLoadSection(AMAP_TAB, D_800B17BC, (id & ~3) << 2, 0x20);
     model->unk5C = D_800B17BC[id & 3];
     sp40 = D_800B17BC[(id & 3) + 1] - D_800B17BC[(id & 3) + 0];
     if (model->unk71 & 0x40) {
@@ -615,9 +618,9 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
         PAD16(var_s0);
         var_s1 = var_s0;
         data += var_s0;
-        read_file_region(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
+        piRomLoadSection(MODANIM_BIN, model->modAnim, temp_t0, var_s0);
     } else {
-        read_file_region(MODANIM_BIN, gAuxBuffer, temp_t0, var_s0);
+        piRomLoadSection(MODANIM_BIN, gAuxBuffer, temp_t0, var_s0);
         model->modAnim = gAuxBuffer;
     }
     model->modAnimBankBases[0] = 0;
@@ -645,14 +648,14 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
             data += 1;
         }
         model->amap = (u8*)data;
-        read_file_region(AMAP_BIN, data, model->unk5C, sp40);
+        piRomLoadSection(AMAP_BIN, data, model->unk5C, sp40);
         var_s1 = 0;
         do {
             if (gAuxBuffer[var_s1] != -1) {
-                model->anims[var_s1] = anim_load(gAuxBuffer[var_s1], var_s1, NULL, model);
+                model->anims[var_s1] = modLoadAnimActual(gAuxBuffer[var_s1], var_s1, NULL, model);
                 if (model->anims[var_s1] == 0) {
                     for (i = 0; i < var_s1; i++) {
-                        anim_destroy(model->anims[i]);
+                        modFreeAnim(model->anims[i]);
                     }
                     model->anims = NULL;
                     return 1;
@@ -666,7 +669,7 @@ s32 modanim_load(Model* model, s32 id, u8* data) {
     return 0;
 }
 
-void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
+void modSetupAnimPlayback(ModelInstance* arg0, AnimState* animState) {
     Model* model;
     AnimationHeader* animHeader;
     Animation* anim;
@@ -683,10 +686,10 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
     model = arg0->model;
     if (model->animCount != 0) {
         if (model->unk71 & 0x40) {
-            anim_load(*model->modAnim, 0, animState->anims[0], model);
-            anim_load(*model->modAnim, 0, animState->anims[1], model);
-            anim_load(*model->modAnim, 0, animState->anims2[0], model);
-            anim_load(*model->modAnim, 0, animState->anims2[1], model);
+            modLoadAnimActual(*model->modAnim, 0, animState->anims[0], model);
+            modLoadAnimActual(*model->modAnim, 0, animState->anims[1], model);
+            modLoadAnimActual(*model->modAnim, 0, animState->anims2[0], model);
+            modLoadAnimActual(*model->modAnim, 0, animState->anims2[1], model);
             animState->animIndexes[0] = 0U;
             anim = &animState->anims[animState->animIndexes[0]]->anim;
         } else {
@@ -720,21 +723,22 @@ void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState) {
 
 static const char str_800993e0[] = "modLoadAnimActual: anim overflow %d/%d\n";
 
-Animation* func_80019118(s16 animId, s16 modAnimId, s32 amap, s32 model) {
+Animation* modLoadAnim(s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model* model) {
     Animation* anim;
 
     anim = NULL;
-    queue_load_anim((void*)&anim, animId, modAnimId, amap, model);
+    assetLoadAnim((void*)&anim, animID, modAnimID, amap, model);
     return anim;
 }
 
+// official name: modLoadAnimActual
 #ifndef NON_MATCHING
-Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
-#pragma GLOBAL_ASM("asm/nonmatchings/model/anim_load.s")
+Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
+#pragma GLOBAL_ASM("asm/nonmatchings/model/modLoadAnimActual.s")
 #else
 // https://decomp.me/scratch/j3qkH
 
-Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
+Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
     s32 i;
     s32 sp28;
     s32 sp24;
@@ -758,7 +762,7 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
     // FAKE
     if (gNumLoadedAnims == 128) {}
 
-    read_file_region(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
+    piRomLoadSection(ANIM_TAB, gBuffer_ANIM_TAB, (animId & ~1) << 2, 0x10);
     sp24 = gBuffer_ANIM_TAB[(animId & 1) + 0];
     sp20 = gBuffer_ANIM_TAB[(animId & 1) + 1] - sp24;
 
@@ -778,10 +782,10 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
     // FAKE
     if (gNumLoadedAnims == 128) {}
 
-    read_file_region(ANIM_BIN, var_s1, sp24, sp20);
+    piRomLoadSection(ANIM_BIN, var_s1, sp24, sp20);
     if (anim != NULL) {
         sp20 = ALIGN8(model->jointCount - 1);
-        read_file_region(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
+        piRomLoadSection(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
     }
 
     if (anim == NULL) {
@@ -806,7 +810,7 @@ Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* 
 
 #endif
 
-void anim_destroy(Animation* anim) {
+void modFreeAnim(Animation* anim) {
     AnimSlot* slot;
     s32 index;
     s32 matchIndex;
@@ -837,7 +841,7 @@ void anim_destroy(Animation* anim) {
 
 static const char str_80099440[] = "**Top matrix out of range: (%.1f,%.1f,%.1f) (%.1f,%.1f)\n";
 
-void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
+void mod_func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     if (object->parent == NULL) {
         object->srt.transl.f[0] -= gWorldX;
         object->srt.transl.f[2] -= gWorldZ;
@@ -854,12 +858,12 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
             object->srt.transl.f[2] += gWorldZ;
         }
     } else {
-        matrix_from_srt(mf, &object->srt);
+        mathYprXyzMtx(mf, &object->srt);
         if (object->id == OBJ_ScorpionRobot) {
-            matrix_from_yaw(((DLL_234_ScorpionRobot*)object->dll)->vtbl->get_spin(object), mf);
+            mathMtxApplyYaw(((DLL_234_ScorpionRobot*)object->dll)->vtbl->get_spin(object), mf);
         }
         if (yPrescale != 1.0f) {
-            matrix_prescale_y(mf, yPrescale);
+            mathSquashY(mf, yPrescale);
         }
         if (object->parent == NULL) {
             object->srt.transl.f[0] += gWorldX;
@@ -868,7 +872,7 @@ void func_8001943C(Object* object, MtxF* mf, f32 yPrescale, f32 arg3) {
     }
 }
 
-void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* topMtx, f32 *modelJointMtxs) {
+void mod_func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* topMtx, f32 *modelJointMtxs) {
     s32 i;
     s32 j;
     MtxF* jointMtx;
@@ -909,7 +913,7 @@ void func_800195F8(f32 scale, UNK_TYPE_32 arg1, Model* model, MtxF* topMtx, f32 
     }
 }
 
-void func_80019730(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3) {
+void mod_func_80019730(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3) {
     AnimState* animState0;
     s32 sp60;
     s32 pad;
@@ -917,34 +921,34 @@ void func_80019730(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
     Vec3f sp4C;
     s16 sp44[3];
 
-    func_8001A640(obj, modelInst, model);
+    mod_func_8001A640(obj, modelInst, model);
     modelInst->unk34 ^= 1;
     sp60 = modelInst->unk34 & 1;
     animState0 = modelInst->animState0;
     if (animState0->unk62[1] & 4) {
-        func_8001A3FC(modelInst, 0, 0, obj->animProgress, obj->srt.scale, &sp4C, sp44);
+        mod_func_8001A3FC(modelInst, 0, 0, obj->animProgress, obj->srt.scale, &sp4C, sp44);
         D_800903DC = sp44[0];
         D_800903DE = sp44[1];
         D_800903E0 = sp44[2];
     }
     if (modelInst->model->unk71 & 8) {
-        func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
+        mod_func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
     } else if (modelInst->animState0->unk62[1] & 8) {
         animState1 = modelInst->animState1;
-        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 2, 0x14, animState0->unk58[1]);
-        func_80019FC0(arg3, modelInst, animState1, obj->animProgressLayered, 0x7F, 0, 0, 2, 0x18, animState1->unk58[1]);
-        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 0, 7, animState1->unk58[0]);
-        func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 1, 1, 1, animState0->unk58[0]);
+        mod_func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 2, 0x14, animState0->unk58[1]);
+        mod_func_80019FC0(arg3, modelInst, animState1, obj->animProgressLayered, 0x7F, 0, 0, 2, 0x18, animState1->unk58[1]);
+        mod_func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 0, 0, 7, animState1->unk58[0]);
+        mod_func_80019FC0(arg3, modelInst, animState0, obj->animProgress, 0x7F, 0, 1, 1, 1, animState0->unk58[0]);
     } else {
-        func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
+        mod_func_800199A8(arg3, modelInst, modelInst->animState0, obj->animProgress, 0x7F);
         if ((modelInst->animState1 != NULL) && (obj->curModAnimIdLayered >= 0)) {
-            func_800199A8(arg3, modelInst, modelInst->animState1, obj->animProgressLayered, -1U);
+            mod_func_800199A8(arg3, modelInst, modelInst->animState1, obj->animProgressLayered, -1U);
         }
     }
-    add_matrix_to_pool(modelInst->matrices[sp60], model->jointCount);
+    camAddMatrixToPool(modelInst->matrices[sp60], model->jointCount);
 }
 
-void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 animProgress, u32 arg4) {
+void mod_func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 animProgress, u32 arg4) {
     MtxF* jointMtxs;
     Model* model;
     s32 var_s0;
@@ -980,7 +984,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
         }
 
         animStateN.unk58[0] = animState->unk58[0];
-        func_8001A1D4(model, &animStateN, 2);
+        mod_func_8001A1D4(model, &animStateN, 2);
         temp_v0 = animState->unk62[1];
         if (temp_v0 & 1) {
             animFlags = 0x10;
@@ -1024,7 +1028,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
                 animStateN.animIndexes[1] = animState->unk48[var_s0];
             }
             animStateN.unk58[0] = var_v1;
-            func_8001A1D4(model, &animStateN, 2);
+            mod_func_8001A1D4(model, &animStateN, 2);
             func_8001B4F0(&jointMtxs, arg0, &animStateN, model->joints, (s32) model->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, var_s1);
             if (var_s1 != 0) {
                 animFlags |= 1 << var_s0;
@@ -1050,7 +1054,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
         }
         
         animStateN.unk58[0] = animState->unk58[0];
-        func_8001A1D4(model, &animStateN, var_s1);
+        mod_func_8001A1D4(model, &animStateN, var_s1);
         temp_v0 = animState->unk62[1];
         if (temp_v0 & 1) {
             animFlags |= 0x10;
@@ -1062,7 +1066,7 @@ void func_800199A8(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
     }
 }
 
-void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9) {
+void mod_func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9) {
     MtxF* spA4;
     Model* temp_s1;
     AnimState sp38;
@@ -1097,7 +1101,7 @@ void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
         arg9 = 1;
     }
     sp38.unk58[0] = arg9;
-    func_8001A1D4(temp_s1, &sp38, 2);
+    mod_func_8001A1D4(temp_s1, &sp38, 2);
     flags &= 0xF;
     if (!(flags & 0xC)) {
         if (animState->unk62[1] & 1) {
@@ -1110,7 +1114,7 @@ void func_80019FC0(MtxF* arg0, ModelInstance* modelInst, AnimState* animState, f
     func_8001B4F0(&spA4, arg0, &sp38, temp_s1->joints, (s32) temp_s1->jointCount, SHORT_ARRAY_800b17d0, (s32) arg4, flags);
 }
 
-void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
+void mod_func_8001A1D4(Model* model, AnimState* animState, s32 count) {
     AmapPlusAnimation* mapAnim;
     Animation* anim;
     s32 keyIdx;
@@ -1166,7 +1170,7 @@ void func_8001A1D4(Model* model, AnimState* animState, s32 count) {
     }
 }
 
-void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f* arg5, s16* arg6) {
+void mod_func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f* arg5, s16* arg6) {
     AnimState* sp44;
     Animation* var_a3;
     s32 temp;
@@ -1214,7 +1218,7 @@ void func_8001A3FC(ModelInstance* modelInst, u32 selector, s32 idx, f32 arg3, f3
     VECTOR_SCALE((*arg5), scale);
 }
 
-void func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
+void mod_func_8001A640(Object* object, ModelInstance* modelInst, Model* model) {
     s8* amap;
     AnimState* animState0;
     ObjDef* def;
@@ -1314,7 +1318,7 @@ static const char str_8009949c[] = "%d : %d\n";
 static const char str_800994a8[] = "\n";
 static const char str_800994ac[] = "blend_frames: %x\n";
 
-void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2) {
+void mod_func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2) {
     MtxF* var_s0;
     s32 temp_t8;
     f32 f0;
@@ -1358,7 +1362,7 @@ void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
             var_s0 = arg3;
         }
         if (i == 0 && obj2 != obj) {
-            vec3_transform(var_s0, 0.0f, 0.0f, 0.0f, &sp70[2], &sp70[1], &sp70[0]);
+            mathMtxXFMF(var_s0, 0.0f, 0.0f, 0.0f, &sp70[2], &sp70[1], &sp70[0]);
             obj->srt.transl.f[0] = sp70[2] + gWorldX;
             obj->srt.transl.f[1] = sp70[1];
             obj->srt.transl.f[2] = sp70[0] + gWorldZ;
@@ -1368,16 +1372,16 @@ void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
         sp70[0] = model->hitSpheres[i].z;
         f0 = model->hitSpheres[i].unk2;
         modelInst->unk24[i].f[0] = obj2->srt.scale * f0;
-        vec3_transform(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+        mathMtxXFMF(var_s0, sp70[2], sp70[1], sp70[0], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
         if (obj2->parent != NULL) {
-            transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
+            camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj2->parent);
             modelInst->unk24[i].f[1] -= gWorldX;
             modelInst->unk24[i].f[3] -= gWorldZ;
         }
     }
 }
 
-void func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, MtxF* arg4, u32 arg5, f32 arg6) {
+void mod_func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, MtxF* arg4, u32 arg5, f32 arg6) {
     MtxF* var_s6;
     s32 i;
     f32 f0;
@@ -1403,9 +1407,9 @@ void func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
             pos.z = model->hitSpheres[i].z;
             f0 = model->hitSpheres[i].unk2;
             modelInst->unk24[i].f[0] = f0 * arg6;
-            vec3_transform(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
+            mathMtxXFMF(var_s6, pos.x, pos.y, pos.z, &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3]);
             if (obj->parent != NULL) {
-                transform_point_by_object(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
+                camTransformPointByObject(modelInst->unk24[i].f[1], modelInst->unk24[i].f[2], modelInst->unk24[i].f[3], &modelInst->unk24[i].f[1], &modelInst->unk24[i].f[2], &modelInst->unk24[i].f[3], obj->parent);
                 modelInst->unk24[i].f[1] -= gWorldX;
                 modelInst->unk24[i].f[3] -= gWorldZ;
             }
@@ -1413,15 +1417,15 @@ void func_8001AC44(ModelInstance* modelInst, Model* model, Object* obj, MtxF* ar
     }
 }
 
-void func_8001AE74(ModelInstance *modelInst) {
+void mod_func_8001AE74(ModelInstance *modelInst) {
     if (modelInst->model->blendshapes != NULL) {
-        func_8001AF04(modelInst, -1, -1, 0, 0, 7);
-        func_8001AF04(modelInst, -1, -1, 0, 1, 7);
-        func_8001AF04(modelInst, -1, -1, 0, 2, 7);
+        mod_func_8001AF04(modelInst, -1, -1, 0, 0, 7);
+        mod_func_8001AF04(modelInst, -1, -1, 0, 1, 7);
+        mod_func_8001AF04(modelInst, -1, -1, 0, 2, 7);
     }
 }
 
-void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5) {
+void mod_func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3, s32 layer, s32 arg5) {
     BlendshapeHeader* blendshapes;
     ModelInstanceBlendshape* blendshape;
     s16 totalBlendshapes;
@@ -1454,7 +1458,7 @@ void func_8001AF04(ModelInstance* modelInstance, s32 arg1, s32 shapeId, f32 arg3
     }
 }
 
-void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
+void mod_func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
     ModelInstanceBlendshape *var1;
 
     if (param2 < 3 && modelInst->model->blendshapes != NULL) {
@@ -1464,7 +1468,7 @@ void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3) {
     }
 }
 
-s32 func_8001B010(ModelInstance *modelInst) {
+s32 mod_func_8001B010(ModelInstance *modelInst) {
     int i;
     ModelInstanceBlendshape *var1;
     
@@ -1483,7 +1487,7 @@ s32 func_8001B010(ModelInstance *modelInst) {
     return 0;
 }
 
-void func_8001B084(ModelInstance *modelInst, f32 updateRate) {
+void mod_func_8001B084(ModelInstance *modelInst, f32 updateRate) {
     int i;
     ModelInstanceBlendshape *var1;
     
@@ -1502,7 +1506,7 @@ void func_8001B084(ModelInstance *modelInst, f32 updateRate) {
     }
 }
 
-void func_8001B100(ModelInstance* modelInst) {
+void mod_func_8001B100(ModelInstance* modelInst) {
     BlendshapeHeader* temp_v0;
     Model* temp_s2;
     Vtx* var_a1;
@@ -1610,7 +1614,7 @@ void func_8001B100(ModelInstance* modelInst) {
     }
 }
 
-void func_8001B49C(void) {
+void mod_func_8001B49C(void) {
     s32 index;
     
     for (index = 0; index < gNumLoadedModels; index++){
@@ -1625,4 +1629,4 @@ void func_8001B49C(void) {
     }
 }
 
-void doNothing_8001B4E4(s32 arg) {}
+void mod_doNothing_8001B4E4(s32 arg) {}

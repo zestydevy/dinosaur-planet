@@ -14,12 +14,12 @@
 
 // offset: 0x0 | ctor
 void dll_77_ctor(void *dll) {
-    scarabTexture = tex_load_deferred(1146);
+    scarabTexture = texLoadTexture(1146);
 }
 
 // offset: 0x44 | dtor
 void dll_77_dtor(void *dll) {
-    tex_free(scarabTexture);
+    texFreeTexture(scarabTexture);
 }
 
 // offset: 0x84 | func: 0 | export: 0
@@ -45,15 +45,15 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     sp38 = 0;
     distance = 10000.0f;
     if (D_800A7D94 != 0) {
-        func_8000FB2C(gdl);
+        menu_func_8000FB2C(gdl);
     }
     
-    object = obj_get_nearest_type_to(OBJTYPE_LevelControl, get_player(), &distance);
+    object = objGetNearestTypeTo(OBJTYPE_LevelControl, objGetPlayer(), &distance);
     if (object) {
         ((DLL_768_SPShop*)object->dll)->vtbl->func20(object, &sp40, &scarabCount, &sp38);
     }
     
-    rcp_screen_full_write(gdl, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+    rcpScreenFullWrite(gdl, scarabTexture, 0xFC, 0xC6, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
     
     scarabCount = (sp38 - scarabCount) + sp40;
     if (scarabCount < 0) {
@@ -61,10 +61,10 @@ void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     }
     sprintf(scarabCountString, "%2d", (int)scarabCount);
     
-    font_window_set_coords(1, 0, 0, GET_VIDEO_WIDTH(vi_get_current_size()), GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_DINO_SUBTITLE_FONT_1);
-    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
-    font_window_add_string_xy(1, 270, 202, scarabCountString, 1, ALIGN_TOP_LEFT);
-    font_window_draw(gdl, mtxs, vtxs, 1);
+    fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(viGetCurrentSize()), GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_DINO_SUBTITLE_FONT_1);
+    fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF);
+    fontWindowAddStringXY(1, 270, 202, scarabCountString, 1, ALIGN_TOP_LEFT);
+    fontWindowDraw(gdl, mtxs, vtxs, 1);
 }

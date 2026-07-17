@@ -51,14 +51,14 @@ void HitAnimator_setup(Object* self, HitAnimator_Setup* objSetup, s32 arg2) {
     objData->active = objSetup->mode & HitAnimator_Mode_Invert;
     objData->flags = HitAnimator_No_Flags;
 
-    if (main_get_bits(objSetup->gamebitActivate)) {
+    if (mainGetBits(objSetup->gamebitActivate)) {
         objData->active ^= 1;
         if (objSetup->enableFlag1 == TRUE) {
             objData->flags |= HitAnimator_Flag_1;
         }
     }
 
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block && (objSetup->mode & HitAnimator_Mode_BLOCKS) && objSetup->blocksAnimatorID) {
         HitAnimator_animate_blocks_shapes(block, self, objData, objSetup);
     }
@@ -68,7 +68,7 @@ void HitAnimator_setup(Object* self, HitAnimator_Setup* objSetup, s32 arg2) {
         objData->flags |= HitAnimator_Flag_BLOCK_Animate_Needed;
     }
 
-    gamebitValue = main_get_bits(objSetup->gamebitActivate);
+    gamebitValue = mainGetBits(objSetup->gamebitActivate);
     objData->gamebitStatePrev = gamebitValue;
     objData->gamebitState = gamebitValue;
 }
@@ -84,7 +84,7 @@ void HitAnimator_control(Object* self) {
     objData = self->data;
 
     //Get object's local Blocks model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->flags &= ~HitAnimator_Flag_1;
         objData->flags |= HitAnimator_Flag_BLOCK_Animate_Needed;
@@ -92,7 +92,7 @@ void HitAnimator_control(Object* self) {
     }
 
     //Check if gamebit's value changed
-    objData->gamebitState = main_get_bits(objSetup->gamebitActivate);
+    objData->gamebitState = mainGetBits(objSetup->gamebitActivate);
     if (objData->gamebitStatePrev != objData->gamebitState) {
         objData->active ^= 1;
         if (objSetup->enableFlag1 == TRUE) {
@@ -131,7 +131,7 @@ void HitAnimator_update(Object *self) { }
 // offset: 0x360 | func: 3 | export: 3
 void HitAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

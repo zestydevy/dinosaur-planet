@@ -153,7 +153,7 @@ void capy_update(Object *self) {
 // offset: 0x324 | func: 4 | export: 3
 void capy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -161,9 +161,9 @@ void capy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **p
 void capy_free(Object *self, s32 a1) {
     Baddie *baddie = self->data;
 
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 1);
@@ -203,13 +203,13 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         fsa->targetDist = sqrtf(SQ(vec.f[0]) + SQ(vec.f[1]) + SQ(vec.f[2]));
     }
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
-    player = get_player();
+    player = objGetPlayer();
     if ((player == fsa->target) || ((fsa->target != NULL) && (fsa->target->id == OBJ_foodbagNewMeat))) {
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         if (foodbag != NULL) {
             dinoEgg = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, FOOD_Dino_Egg);
         }
-        if ((dinoEgg != NULL) && (vec3_distance(&self->globalPosition, &dinoEgg->globalPosition) < 150.0f)) {
+        if ((dinoEgg != NULL) && (vec3Distance(&self->globalPosition, &dinoEgg->globalPosition) < 150.0f)) {
             fsa->target = dinoEgg;
             return;
         }
@@ -221,7 +221,7 @@ static void capy_func_468(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
 static void capy_func_644(Object *self, s32 arg1, Baddie *baddie, ObjFSA_Data *fsa) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     self->objhitInfo->unk58 |= 1;
     if (player == fsa->target) {
         if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1) != 0) {
@@ -255,7 +255,7 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_3_Standing, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_3_Standing, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.03f;
@@ -266,17 +266,17 @@ s32 capy_anim_state_0_standing(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         capydata->timer = 0;
     }
     capydata->timer += 1;
-    if ((get_player() == fsa->target) && (capydata->timer >= 61)) {
+    if ((objGetPlayer() == fsa->target) && (capydata->timer >= 61)) {
         if (capydata->ateMagicPlant != 0) {
             fsa->enteredAnimState = TRUE;
             fsa->unk33A = 0;
             fsa->logicState = CAPY_LSTATE_5_Underground;
             return CAPY_ASTATE_3_Burrow + 1;
         }
-        objlist = obj_get_all_of_type(OBJTYPE_MagicPlant, &count);
+        objlist = objGetAllOfType(OBJTYPE_MagicPlant, &count);
         distflag = 0;
         for (i = 0; i < count; i++) {
-            if (!distflag && vec3_distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {
+            if (!distflag && vec3Distance(&self->globalPosition, &objlist[i]->globalPosition) < 300.0f) {
                 distflag = 1;
                 fsa->target = objlist[i];
             }
@@ -292,7 +292,7 @@ s32 capy_anim_state_1_burrowed(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     capydata = objdata->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (capydata->timer != 0) {
@@ -307,7 +307,7 @@ s32 capy_anim_state_1_burrowed(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0xA0C | func: 14
 s32 capy_anim_state_2_unburrow(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_1_Unburrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -333,7 +333,7 @@ s32 capy_anim_state_3_burrow(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_0_Burrow, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_0_Burrow, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.04f;
@@ -361,7 +361,7 @@ s32 capy_anim_state_4_sniff(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_5_Sniffing, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_5_Sniffing, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.04f;
@@ -369,8 +369,8 @@ s32 capy_anim_state_4_sniff(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77C_Capy_Sniff, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77C_Capy_Sniff, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         return CAPY_ASTATE_5_Eat + 1;
@@ -390,7 +390,7 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_6_Eating, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_6_Eating, 0.0f, 0);
         fsa->unk33A = 0;
     }
     target = fsa->target;
@@ -406,8 +406,8 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk33A != 0) {
         if (target != NULL) {
@@ -416,10 +416,10 @@ s32 capy_anim_state_5_eat(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             }
             if (target->id == OBJ_MagicPlant) {
                 capydata->ateMagicPlant = TRUE;
-                obj_destroy_object(target);
+                objFreeObject(target);
             } else {
                 capydata->fed = TRUE;
-                player = get_player();
+                player = objGetPlayer();
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
                 if (foodbag != NULL) {
                     ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, target);
@@ -439,7 +439,7 @@ s32 capy_anim_state_6_done_eating(Object* self, ObjFSA_Data* fsa, f32 updateRate
 
     baddie = self->data;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_7_DoneEating, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_7_DoneEating, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.08f;
@@ -447,7 +447,7 @@ s32 capy_anim_state_6_done_eating(Object* self, ObjFSA_Data* fsa, f32 updateRate
     fsa->unk27C = 0.0f;
     if (fsa->unk33A != 0) {
         if ((gDLL_26_Curves->vtbl->func_4288(baddie->unk3F8, self, 150.0f, _data_0, -1) == 0) 
-                && (main_get_bits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18]) == 0)) {
+                && (mainGetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18]) == 0)) {
             fsa->logicState = CAPY_LSTATE_2_GoToDigSpot;
             return CAPY_ASTATE_8_Walking + 1;
         }
@@ -465,7 +465,7 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_2_DigWall, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_2_DigWall, 0.0f, 0);
         fsa->unk33A = 0;
     }
     fsa->animTickDelta = 0.015f;
@@ -473,11 +473,11 @@ s32 capy_anim_state_7_dig_wall(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     if (fsa->unk308 & 0x1) {
         fsa->unk308 &= ~0x1;
-        capydata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(capydata->soundHandle, ((f32) rand_next(-0xA, 0xA) / 100.0f) + 1.0f);
+        capydata->soundHandle = dll_amSfx->Play(self, SOUND_77D_Capy_Eat, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(capydata->soundHandle, ((f32) mathRnd(-0xA, 0xA) / 100.0f) + 1.0f);
     }
     if (fsa->unk308 & 0x200) {
-        main_set_bits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);
+        mainSetBits(sTunnelGamebits[baddie->unk3F8->unk9C->unk18], 1);
     }
     if (fsa->unk33A != 0) {
         fsa->logicState = CAPY_LSTATE_4_Idle;
@@ -496,7 +496,7 @@ s32 capy_anim_state_8_walking(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->enteredAnimState != 0) {
-        func_80023D30(self, CAPY_MODANIM_4_Walking, 0.0f, 0);
+        objAnimSet(self, CAPY_MODANIM_4_Walking, 0.0f, 0);
         fsa->unk33A = 0;
     }
     if (fsa->enteredAnimState != 0) {
@@ -558,7 +558,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
         if (self){} // @fake
         return 0;
     } else {
-        temp4 = (arctan2_f(baddieCurves->unk0.unk74, baddieCurves->unk0.unk7C) & 0xFFFF);
+        temp4 = (mathAtan2f(baddieCurves->unk0.unk74, baddieCurves->unk0.unk7C) & 0xFFFF);
         var_fv0 = (f32) (((temp4 - ((u16)self->srt.yaw & 0xFFFF))) + 0x8000);
         if (var_fv0 > 32768.0f) {
             var_fv0 = -65535.0f + var_fv0;
@@ -585,7 +585,7 @@ s32 capy_logic_state_2_go_to_dig_spot(Object* self, ObjFSA_Data* fsa, f32 update
 
 // offset: 0x1698 | func: 24
 s32 capy_logic_state_3_eating(Object *self, ObjFSA_Data* fsa, f32 updateRate) {
-    if ((fsa->animState != CAPY_ASTATE_6_DoneEating) && ((fsa->target == 0) || (get_player() == fsa->target))) {
+    if ((fsa->animState != CAPY_ASTATE_6_DoneEating) && ((fsa->target == 0) || (objGetPlayer() == fsa->target))) {
         fsa->animState = CAPY_ASTATE_3_Burrow;
         fsa->enteredAnimState = TRUE;
         fsa->unk33A = 0;
@@ -604,14 +604,14 @@ s32 capy_logic_state_4_idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     capydata = baddie->objdata;
     if (fsa->target != NULL) {
-        isTargetPlayer = get_player() == fsa->target;
+        isTargetPlayer = objGetPlayer() == fsa->target;
         fsa->animState = CAPY_ASTATE_8_Walking;
         fsa->xAnalogInput = 0.0f;
         fsa->yAnalogInput = 0.0f;
         temp_s1 = &baddie->unk34C;
         bcopy(&self->srt.transl, &temp_s1->unk0, sizeof(Vec3f));
         bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
-        func_80009024(temp_s1, &baddie->unk374);
+        vox_func_80009024(temp_s1, &baddie->unk374);
         if (isTargetPlayer != 0) {
             if ((fsa->targetDist < 50.0f) || !capydata->fed) {
                 fsa->animState = CAPY_ASTATE_0_Standing;

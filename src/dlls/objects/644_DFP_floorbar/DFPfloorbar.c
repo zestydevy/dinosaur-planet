@@ -50,7 +50,7 @@ void DFPfloorbar_setup(Object* self, DFPfloorbar_Setup* objSetup, s32 arg2) {
     }
 
     //Sink into ground
-    if (main_get_bits(objData->gamebitLowered)) {
+    if (mainGetBits(objData->gamebitLowered)) {
         objData->lowered = TRUE;
         self->srt.transl.y = objSetup->base.y - 3.2f;
     }
@@ -76,7 +76,7 @@ void DFPfloorbar_control(Object* self) {
     
     tileSteppedOnNum = -1;
     
-    diPrintf("needbit %d\n", main_get_bits(objData->gamebitLowered));
+    diPrintf("needbit %d\n", mainGetBits(objData->gamebitLowered));
     
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);
     
@@ -98,15 +98,15 @@ void DFPfloorbar_control(Object* self) {
     }
     
 
-    if (main_get_bits(BIT_DFPT_Zapped_by_Floor_Tiles) || 
-        main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed)
+    if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles) || 
+        mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed)
     ) {
         objData->lowered = FALSE;
     }
     
     //Find DFPLevelControl
     if (dLevelControl == NULL) { 
-        objects = get_world_objects(&start, &count);
+        objects = objGetObjects(&start, &count);
         for (index = start; index < count; index++) {
             if (objects[index]->id == OBJ_DFP_LevelContro) {             
                 dLevelControl = objects[index];
@@ -143,7 +143,7 @@ void DFPfloorbar_control(Object* self) {
             return;
         }
 
-        player = get_player();
+        player = objGetPlayer();
         if (player == NULL){
             return;
         }
@@ -180,10 +180,10 @@ void DFPfloorbar_control(Object* self) {
         }
         
         if (tileSteppedOnNum == objData->safeTileIndex) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_999_Mechanical_Ratcheting, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_999_Mechanical_Ratcheting, MAX_VOLUME, 0, 0, 0, 0);
             objData->lowered = TRUE;
         } else {
-            main_set_bits(BIT_DFPT_Zapped_by_Floor_Tiles, 1);
+            mainSetBits(BIT_DFPT_Zapped_by_Floor_Tiles, 1);
         }
     }
 }
@@ -197,11 +197,11 @@ void DFPfloorbar_update(Object* arg0) {
 
 // offset: 0x5A0 | func: 3 | export: 3
 void DFPfloorbar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
-    if (main_get_bits(BIT_DFPT_Puzzle_Pad_Pressed)) {
-        main_set_bits(BIT_DFPT_Puzzle_Pad_Pressed, 0);
+    if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed)) {
+        mainSetBits(BIT_DFPT_Puzzle_Pad_Pressed, 0);
     }
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -14,7 +14,7 @@ void SCAnimObj_dtor(void *dll) { }
 void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     AnimObj_Data* objData;
 
-    obj_set_update_priority(self, OBJPRIORITY_ANIM);
+    objSetPriority(self, OBJPRIORITY_ANIM);
 
     objData = self->data;
     
@@ -67,7 +67,7 @@ void SCAnimObj_control(Object* self) {
         temp = objData->seqSlot;
         matchObj = NULL;
         
-        objects = get_world_objects(&index, &count);
+        objects = objGetObjects(&index, &count);
         matchCount = 0;
 
         for (index = 0; index < count; index++) {
@@ -125,10 +125,10 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     s32 i;
 
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->unkE0 & 7) {
-            func_80031F6C(self, 0, &sTransform.transl.x, &sTransform.transl.y, &sTransform.transl.z, 0);
+            objGetAttachPointWorldSpace(self, 0, &sTransform.transl.x, &sTransform.transl.y, &sTransform.transl.z, 0);
         }
         
         if (self->unkE0 & 1) {
@@ -151,14 +151,14 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
             }
             
             for (i = 0; i < 7; i++) {
-                sTransform.transl.x += rand_next(-50, 50) / 10.0f;
-                sTransform.transl.z += rand_next(-50, 50) / 10.0f;
+                sTransform.transl.x += mathRnd(-50, 50) / 10.0f;
+                sTransform.transl.z += mathRnd(-50, 50) / 10.0f;
                 
                 gDLL_24_Waterfx->vtbl->spawn_splash(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 4.0f);
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(sTransform.transl.x, self->srt.transl.y, sTransform.transl.z, 0, 0.0f, 3);
             }
             
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_3D8_Water_Splash, MAX_VOLUME, 0, 0, 0, 0);
             
             self->unkE0 &= ~4;
         }
@@ -176,14 +176,14 @@ void SCAnimObj_free(Object* self, s32 arg1) {
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i]) {
-            gDLL_6_AMSFX->vtbl->stop(objData->sfxHandles[i]);
+            dll_amSfx->Stop(objData->sfxHandles[i]);
         }
     }
     
     gDLL_5_AMSEQ2->vtbl->free(self, 0xFFFF, 0, 0, 0);
     
     if (objData->unk30 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->unk30);
+        dll_amSfx->Stop(objData->unk30);
     }
 }
 

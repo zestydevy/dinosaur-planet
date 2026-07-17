@@ -1,5 +1,5 @@
-#ifndef _SYS_ASSET_THREAD_H
-#define _SYS_ASSET_THREAD_H
+#ifndef _SYS_ASSET_H
+#define _SYS_ASSET_H
 
 #include "PR/os.h"
 #include "PR/ultratypes.h"
@@ -65,8 +65,8 @@ struct AssetLoadThreadMsg {
             /* 14 */ s32 unused14; //and these were params for other types?
             /* 18 */ s32 unused18;
             /* 1C */ s32 unused1C;
-            /* 20 */ s32 arg3;
-            /* 24 */ s32 arg4;
+            /* 20 */ AmapPlusAnimation* arg3;
+            /* 24 */ Model* arg4;
         } animation;
     } p; //give it a name just to shut the compiler up
     //actual size is 0x30 but that includes padding
@@ -104,20 +104,20 @@ typedef struct {
     u32 unk10;
 } AssetThreadStackElement;
 
-void create_asset_thread(void);
-void asset_thread_main(void *arg);
-void func_80012584(s32 param1, u8 param2, u32 *param3, ObjSetup *param4, s32 param5, s32 param6, Object* param7, s32 param8);
-void queue_alloc_load_file(void **dest, s32 fileId);
-void queue_load_file_to_ptr(void **dest, s32 fileId);
-void queue_load_file_region_to_ptr(void **dest, s32 fileId, s32 offset, s32 length);
-void queue_load_map_object(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
-void queue_load_texture(Texture **dest, s32 id);
-void queue_load_dll(void **dest, s32 idOrIdx, s32 exportCount);
-void queue_load_model(void **dest, s32 id, s32 arg2);
-void queue_load_anim(void **dest, s16 animID, s16 modAnimID, s32 amap, s32 model);
-void queue_block_emplace(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5);
-void func_800129E4();
-void func_80012B54(s32 param1, s32 param2);
-u8 map_get_is_object_streaming_disabled(void);
+void assetInit(void);
+void assetEnqueueLoad(s32 param1, u8 param2, u32 *param3, ObjSetup *param4, s32 param5, s32 param6, Object* param7, s32 param8);
+void assetRomLoad(void **dest, s32 fileId);
+void assetRomLoadToDest(void **dest, s32 fileId);
+void assetRomLoadSection(void **dest, s32 fileId, s32 offset, s32 length);
+void assetLoadObject(Object **dest, ObjSetup *setup, u32 initFlags, s32 mapID, s32 arg4, Object *parent, s32 arg6);
+void assetLoadTexture(Texture **dest, s32 id);
+void assetLoadDLL(void **dest, s32 idOrIdx, s32 exportCount);
+void assetLoadModel(void **dest, s32 id, s32 arg2);
+void assetLoadAnim(void **dest, s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model* model);
+void assetQueueCompletedLoad(s32 param1, u32 *param2, u8 *param3, s32 param4, s32 param5);
+void assetQueueTick();
+void assetQueueClearMesgType(s32 param1, s32 param2);
+u8 assetIsObjQueueEnabled(void);
+void assetToggleObjQueue(u32 enabled);
 
-#endif //_SYS_ASSET_THREAD_H
+#endif

@@ -112,16 +112,16 @@ void camclimb_func_340(Cam* cam) {
     sp48 -= sState->unk4;
     sp48 *= (0.05f * gUpdateRateF);
     sState->unk4 += sp48;
-    cam->srt.transl.x = (fsin16_precise(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.x;
-    cam->srt.transl.z = (fcos16_precise(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.z;
+    cam->srt.transl.x = (mathSinfInterp(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.x;
+    cam->srt.transl.z = (mathCosfInterp(temp_s0->srt.yaw) * sState->unk4) + temp_s0->srt.transl.z;
     gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp54, &sp50, &sp4C, &sp48, 0.0f);
     
-    var_v1 = (-arctan2_f(sp54, sp4C) - (cam->srt.yaw & 0xFFFF));
+    var_v1 = (-mathAtan2f(sp54, sp4C) - (cam->srt.yaw & 0xFFFF));
     var_v1 += 0x8000;
     CIRCLE_WRAP(var_v1);
     cam->srt.yaw += var_v1;
     
-    var_v1 = (arctan2_f(sp50, sp48) - sState->unk30) - (cam->srt.pitch & 0xFFFF);
+    var_v1 = (mathAtan2f(sp50, sp48) - sState->unk30) - (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(var_v1);
     cam->srt.pitch += ((s32) (var_v1 * gUpdateRate) / 6);
 }

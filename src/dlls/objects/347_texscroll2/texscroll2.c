@@ -52,7 +52,7 @@ void TexScroll2_control(Object* self) {
     objData = self->data;
 
     //Get object's local Block model
-    if (map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)) == NULL) {
+    if (mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z)) == NULL) {
         objData->scrollSetupNeeded = TRUE;
         return;
     }
@@ -70,7 +70,7 @@ void TexScroll2_update(Object *self) { }
 // offset: 0x134 | func: 3 | export: 3
 void TexScroll2_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -105,21 +105,21 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     objSetup = (TexScroll2_Setup*)self->setup;
 
     //Get object's local Block
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (block == NULL) {
         objData->scrollSetupNeeded = TRUE;
         return;
     }
 
     //Get TABLES.bin subfile #14 ("scroll table")
-    scrollTable = func_800213A0(14);
+    scrollTable = objGetTable(14);
     if (scrollTable == NULL) {
         STUBBED_PRINTF("TEXSCROLL: no scroll table\n");
         return;
     }
 
     //Get texture from table
-    texture = tex_get_cached(-scrollTable[objSetup->textureIndex]);
+    texture = texGetCached(-scrollTable[objSetup->textureIndex]);
     if (texture == NULL) {
         STUBBED_PRINTF("TEXSCROLL: cannot find texture '%d' %f %f %f %d\n",
             scrollTable[objSetup->textureIndex],
@@ -148,7 +148,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
 
     //Iterate over Block's materials until finding one that uses the blended texture (if it's in use)
     if (objSetup->blendTextureIndex != -1) {
-        textureBlended = tex_get_cached(-scrollTable[objSetup->blendTextureIndex]);
+        textureBlended = texGetCached(-scrollTable[objSetup->blendTextureIndex]);
         if (textureBlended != NULL) {
             for (materialIndex = 0; materialIndex < block->materialCount; materialIndex++) {
                 if (textureBlended == block->materials[materialIndex].texture) {
@@ -171,11 +171,11 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
             if (objData->blendMaterialIndex == -1 || 
                 objData->blendMaterialIndex == block->shapes[shapeIndex].blendMaterialIndex) {
                 if (block->shapes[shapeIndex].texScrollerID != 0xFF) {
-                    block_texscroll_set(block->shapes[shapeIndex].texScrollerID, 
+                    blockTexscrollSet(block->shapes[shapeIndex].texScrollerID, 
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA, 
                         objData->uSpeedB, objData->vSpeedB, widthB, heightB);
                 } else {
-                    block->shapes[shapeIndex].texScrollerID = block_texscroll_add(
+                    block->shapes[shapeIndex].texScrollerID = blockTexscrollAdd(
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA,
                         objData->uSpeedB, objData->vSpeedB, widthB, heightB);
                 }

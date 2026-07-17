@@ -85,7 +85,7 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData = self->data;
 
     playerNo = gDLL_29_Gplay->vtbl->get_playerno();
-    objData->dllPutdown = dll_load_deferred(56, 10);
+    objData->dllPutdown = dllLoad(56, 10);
     objData->placedObjects.nextIndex = 0;
 
     for (index = 0; index < 20; index++){
@@ -108,7 +108,7 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData->capacity = 0;
     objData->bagSlots = gDLL_29_Gplay->vtbl->get_player_foodbag();
 
-    if (main_get_bits(BIT_Foodbag_Setting_Eat_First)) {
+    if (mainGetBits(BIT_Foodbag_Setting_Eat_First)) {
         objData->eatFirst = TRUE;
     } else {
         objData->eatFirst = FALSE;
@@ -119,16 +119,16 @@ void Foodbag_setup(Object *self, Foodbag_ObjSetup *objSetup, s32 arg2) {
     objData->playerHealthMax = &playerStats->healthMax;
 
     //Set initial foodbag config, if none set
-    if (main_get_bits(BIT_Foodbag_Setting_Eat_Later) == FALSE &&
-        main_get_bits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
+    if (mainGetBits(BIT_Foodbag_Setting_Eat_Later) == FALSE &&
+        mainGetBits(BIT_Foodbag_Setting_Eat_First) == FALSE) {
 
         //Make sure eat/place/give options are available
-        main_set_bits(BIT_Foodbag_Eat, TRUE);
-        main_set_bits(BIT_Foodbag_Place, TRUE);
-        main_set_bits(BIT_Foodbag_Give, TRUE);
+        mainSetBits(BIT_Foodbag_Eat, TRUE);
+        mainSetBits(BIT_Foodbag_Place, TRUE);
+        mainSetBits(BIT_Foodbag_Give, TRUE);
 
         //Default to "Eat Later" config
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, TRUE);
     }
 }
 
@@ -208,7 +208,7 @@ void Foodbag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 // offset: 0x524 | func: 4 | export: 4
 void Foodbag_free(Object *self, s32 arg1) {
     Foodbag_Data *objData = self->data;
-    dll_unload(objData->dllPutdown);
+    dllFree(objData->dllPutdown);
 }
 
 // offset: 0x56C | func: 5 | export: 5
@@ -256,12 +256,12 @@ int Foodbag_set_eat_config(Object* self, s32 eatFirst) {
 
     previousSetting = objData->eatFirst;
     if (eatFirst == FALSE) {
-        main_set_bits(BIT_Foodbag_Setting_Eat_First, FALSE);
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_First, FALSE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, TRUE);
         objData->eatFirst = FALSE;
     } else {
-        main_set_bits(BIT_Foodbag_Setting_Eat_First, TRUE);
-        main_set_bits(BIT_Foodbag_Setting_Eat_Later, FALSE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_First, TRUE);
+        mainSetBits(BIT_Foodbag_Setting_Eat_Later, FALSE);
         objData->eatFirst = TRUE;
     }
 
@@ -316,7 +316,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
             if (objData->playerHealth && objData->playerHealth && objData->playerHealth) {} //@fake?
 
             if (*objData->playerHealthMax != currentHealth) {
-                gDLL_6_AMSFX->vtbl->play(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(objGetPlayer(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
             }
             *objData->playerHealth = *objData->playerHealthMax;
             return TRUE;
@@ -326,7 +326,7 @@ s32 Foodbag_eat_food(Foodbag_Data* objData, s32 foodType) {
         if (*objData->playerHealth == *objData->playerHealthMax){
             objData->playerEatTimer = 120.0f;
         }
-        gDLL_6_AMSFX->vtbl->play(get_player(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(objGetPlayer(), SOUND_5EE_Eating_Food, MAX_VOLUME, 0, 0, 0, 0);
         return TRUE;
     }
 

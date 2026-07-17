@@ -1,4 +1,5 @@
-#include "common.h"
+#include "PR/gbi.h"
+#include "sys/memory.h"
 
 static const char str_8009b670[] = "diRcpTrace: Buffer not allocated!\n";
 
@@ -21,19 +22,21 @@ u32 gDLDebugInfoIdx = 0;
 s32 gDLDebugInfoLengths[2];
 /* -------- .bss end 800bfe80 -------- */
 
-void dl_init_debug_infos(void) {
+// official name: diRcpTraceInit
+void diRcpTraceInit(void) {
     gDLDebugInfos[0] = mmAlloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), COLOUR_TAG_CYAN, NULL);
     gDLDebugInfos[1] = mmAlloc(MAX_DL_DEBUG_INFO_LENGTH * sizeof(DLDebugInfo), COLOUR_TAG_CYAN, NULL);
 }
 
-void dl_next_debug_info_set(void) {
+// official name: diRcpTraceReset
+void diRcpTraceReset(void) {
     gDLDebugInfoIdx = 1 - gDLDebugInfoIdx;
     gDLDebugInfoLengths[gDLDebugInfoIdx] = 0;
 }
 
-void dl_add_debug_info(Gfx *gdl, u32 objID, const char *file, u32 line) {
-    if (gDLDebugInfos[gDLDebugInfoIdx] != NULL && gDLDebugInfoLengths[gDLDebugInfoIdx] < MAX_DL_DEBUG_INFO_LENGTH)
-    {
+// official name: diRcpTrace
+void diRcpTrace(Gfx *gdl, u32 objID, const char *file, u32 line) {
+    if (gDLDebugInfos[gDLDebugInfoIdx] != NULL && gDLDebugInfoLengths[gDLDebugInfoIdx] < MAX_DL_DEBUG_INFO_LENGTH) {
         gDLDebugInfos[gDLDebugInfoIdx][gDLDebugInfoLengths[gDLDebugInfoIdx]].gdl = gdl;
         gDLDebugInfos[gDLDebugInfoIdx][gDLDebugInfoLengths[gDLDebugInfoIdx]].objID = objID;
         gDLDebugInfos[gDLDebugInfoIdx][gDLDebugInfoLengths[gDLDebugInfoIdx]].file = file;
@@ -43,7 +46,8 @@ void dl_add_debug_info(Gfx *gdl, u32 objID, const char *file, u32 line) {
     }
 }
 
-void dl_get_debug_info_for_gdl(Gfx *gdl, const char** file, s32* arg2, s32* arg3) {
+// official name: diRcpTraceGetInfo
+void diRcpTraceGetInfo(Gfx *gdl, const char** file, s32* arg2, s32* arg3) {
     Gfx* curr;
     Gfx* prev;
     s32 i;
@@ -72,7 +76,9 @@ void dl_get_debug_info_for_gdl(Gfx *gdl, const char** file, s32* arg2, s32* arg3
     }
 }
 
-void dl_get_debug_info2(Gfx* arg0, u32* arg1, const char** arg2, u32* arg3, Gfx** arg4, u32* arg5, const char** arg6, u32* arg7, Gfx** arg8) {
+void diRcpTraceGetInfo2(Gfx* arg0, 
+        u32* arg1, const char** arg2, u32* arg3, Gfx** arg4, 
+        u32* arg5, const char** arg6, u32* arg7, Gfx** arg8) {
     s32 i;
     Gfx *temp_a0;
     Gfx *var_t0;

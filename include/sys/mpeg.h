@@ -4,7 +4,7 @@
 #include "PR/ultratypes.h"
 #include "PR/libaudio.h"
 
-void mpeg_init(ALHeap *heap);
-void mpeg_play(s32 id);
+void mpegInit(ALHeap *heap);
+void mpegPlay(s32 id);
 
 #endif

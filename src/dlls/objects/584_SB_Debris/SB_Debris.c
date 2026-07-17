@@ -22,7 +22,7 @@ void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     SB_Debris_Data *objdata;
 
     objdata = self->data;
-    velocity.x *= rand_next(3, 5);
+    velocity.x *= mathRnd(3, 5);
     self->unkDC = 75;
     objdata->unk0 = 75.0f;
     transform.transl.x = 0.0f;
@@ -30,13 +30,13 @@ void SB_Debris_setup(Object *self, ObjSetup *setup, s32 arg2) {
     transform.transl.z = 0.0f;
     transform.scale = 1.0f;
     transform.roll = 0;
-    transform.pitch = rand_next(-0x2EE0, 0x2EE0);
-    transform.yaw = rand_next(0, 0xFFFE);
-    rotate_vec3(&transform, velocity.f);
+    transform.pitch = mathRnd(-0x2EE0, 0x2EE0);
+    transform.yaw = mathRnd(0, 0xFFFE);
+    mathRotateRPY(&transform, velocity.f);
     self->velocity.x = velocity.x;
     self->velocity.y = velocity.y;
     self->velocity.z = velocity.z;
-    self->modelInstIdx = rand_next(0, 1);
+    self->modelInstIdx = mathRnd(0, 1);
     self->srt.scale *= 5.0f;
 }
 
@@ -74,7 +74,7 @@ void SB_Debris_control(Object *self) {
     self->velocity.y -= 0.05f;
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 }
 
@@ -96,9 +96,9 @@ void SB_Debris_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
     self->opacityWithFade = opacity;
     self->opacity = opacity;
     if (visibility) {
-        tex_disable_modes(RENDER_FOG_ACTIVE);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        tex_enable_modes(RENDER_FOG_ACTIVE);
+        texDisableModes(RENDER_FOG_ACTIVE);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        texEnableModes(RENDER_FOG_ACTIVE);
     }
 }
 

@@ -16,11 +16,11 @@ void Pollen_dtor(void *dll) { }
 void Pollen_setup(Object* self, ObjSetup* setup, s32 arg2) {
     Pollen_Data* objdata = self->data;
 
-    objdata->unk0 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
-    objdata->unkC = rand_next(4000, 5000) * 0.01f;
-    objdata->unk4 = rand_next(-M_180_DEGREES, M_180_DEGREES - 1);
+    objdata->unk0 = mathRnd(-M_180_DEGREES, M_180_DEGREES - 1);
+    objdata->unkC = mathRnd(4000, 5000) * 0.01f;
+    objdata->unk4 = mathRnd(-M_180_DEGREES, M_180_DEGREES - 1);
     objdata->unk8 = 0.0f;
-    objdata->unk6 = rand_next(230, 500);
+    objdata->unk6 = mathRnd(230, 500);
     objdata->unk10 = 0;
     objdata->unk12 = 10;
 
@@ -42,7 +42,7 @@ static void Pollen_create_fragments(Object* self) {
 
     i = 6;
     while (i--) {
-        setup = obj_alloc_setup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
+        setup = objAllocSetup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
         setup->base.x = self->srt.transl.x;
         setup->base.y = self->srt.transl.y;
         setup->base.z = self->srt.transl.z;
@@ -50,7 +50,7 @@ static void Pollen_create_fragments(Object* self) {
         setup->base.byte5 = 1;
         setup->base.byte6 = 0xFF;
         setup->base.fadeDistance = 0xFF;
-        fragment = obj_create(
+        fragment = objSetupObject(
             (ObjSetup*)setup, 
             OBJINIT_STANDALONE | OBJINIT_FLAG4, 
             -1, 
@@ -61,9 +61,9 @@ static void Pollen_create_fragments(Object* self) {
         if (fragment != NULL) {
             fragment->srt.pitch = 0;
             fragment->srt.yaw = 0;
-            fragment->velocity.x = 0.01f * rand_next(-50, 50);
-            fragment->velocity.y = 0.01f * rand_next(0, 30);
-            fragment->velocity.z = 0.01f * rand_next(-50, 50);
+            fragment->velocity.x = 0.01f * mathRnd(-50, 50);
+            fragment->velocity.y = 0.01f * mathRnd(0, 30);
+            fragment->velocity.z = 0.01f * mathRnd(-50, 50);
             fragment->unkC4 = self;
         }
     }
@@ -90,7 +90,7 @@ void Pollen_control(Object* self) {
     
     //Apply gravity and move
     self->velocity.y -= 0.045f * gUpdateRateF;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Objhits
     func_80026128(self, 0x15, 1, 0);
@@ -99,11 +99,11 @@ void Pollen_control(Object* self) {
 
     //React to hitting the player or sidekick
     if (self->objhitInfo->unk48 && 
-        ((get_player() == self->objhitInfo->unk48) || (get_sidekick() == self->objhitInfo->unk48))
+        ((objGetPlayer() == self->objhitInfo->unk48) || (objGetSidekick() == self->objhitInfo->unk48))
     ) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(1.0f);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
+        camUseShake();
+        camSetShakeOffset(1.0f);
+        dll_amSfx->Play(self, SOUND_AFF_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 0;
         func_800267A4(self);
     }
@@ -126,8 +126,8 @@ void Pollen_control(Object* self) {
         }
         
         Pollen_create_fragments(self);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
-        obj_destroy_object(self);
+        dll_amSfx->Play(self, SOUND_722_Impact_Wobble, 0x40, NULL, NULL, 0, NULL);
+        objFreeObject(self);
     }
 }
 
@@ -151,13 +151,13 @@ void Pollen_update(Object* self) {
 // offset: 0x634 | func: 4 | export: 3
 void Pollen_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x688 | func: 5 | export: 4
 void Pollen_free(Object* self, s32 a1) {
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x6C8 | func: 6 | export: 5

@@ -27,15 +27,15 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
     STUBBED_PRINTF("about to place object %d\n", foodDefs[foodIndex].objectID);
 
     if (foodDefs[foodIndex].objectID != NO_FOOD_OBJECT_ID) {
-        player = get_player();
+        player = objGetPlayer();
 
         placed->nextIndex = (placed->nextIndex + 1) % MAX_FOOD_PLACED;        
         food = placed->objects[placed->nextIndex];
         if (food) {
-            obj_destroy_object(food);
+            objFreeObject(food);
         }
         
-        foodSetup = obj_alloc_setup(sizeof(PlacedFood_Setup),
+        foodSetup = objAllocSetup(sizeof(PlacedFood_Setup),
                                            foodDefs[foodIndex].objectID);
         foodSetup->base.fadeDistance = 0xFF;
         foodSetup->base.loadFlags = 2;
@@ -46,7 +46,7 @@ int putdown_place_food(Object* foodbag, s32 foodType, FoodbagPlaced* placed, Foo
         foodSetup->unk19 = 0;
         foodSetup->unk18 = 0;
 
-        placed->objects[placed->nextIndex] = obj_create(
+        placed->objects[placed->nextIndex] = objSetupObject(
             &foodSetup->base,
             1, -1, -1, foodbag->parent);
         placed->foodType[placed->nextIndex] = foodType;
@@ -88,7 +88,7 @@ Object* putdown_get_nearest_placed_food_of_type(Object* foodbag, Object* target,
     //Find the nearest object in the placed food's subset
     for (closestFoodIndex = -1, index = 0, minDistance = 10000.0f; index < MAX_FOOD_PLACED; index++){
         if (placed_objects[index]){
-            distance = vec3_distance_squared(&target->globalPosition, &placed_objects[index]->globalPosition);
+            distance = vec3DistanceSquared(&target->globalPosition, &placed_objects[index]->globalPosition);
             if (closestFoodIndex == -1 || distance <= minDistance) {
                 minDistance = distance;
                 closestFoodIndex = index;
@@ -112,7 +112,7 @@ int putdown_destroy_placed_food(Object* foodObject, FoodbagPlaced* placedObjects
 
     for (index = 0; index < MAX_FOOD_PLACED; index++){
         if (foodObject == placedObjects->objects[index]) {
-            obj_destroy_object(foodObject);
+            objFreeObject(foodObject);
             placedObjects->objects[index] = NULL;
             placedObjects->foodType[index] = 0;
             return TRUE;
@@ -254,18 +254,18 @@ void putdown_delete_food_from_bag(u8 indexInBag, u16 foodType, FoodbagContents* 
   * Returns a foodbag's item capacity, based on whether small/medium/large bag gamebits are set 
   */
 s32 putdown_get_capacity(FoodbagGamebits* gamebitIDs) {
-    if (main_get_bits(gamebitIDs->large)) {
-        main_set_bits(gamebitIDs->medium, TRUE);
-        main_set_bits(gamebitIDs->small, TRUE);
+    if (mainGetBits(gamebitIDs->large)) {
+        mainSetBits(gamebitIDs->medium, TRUE);
+        mainSetBits(gamebitIDs->small, TRUE);
         return BAG_CAPACITY_LARGE;
     }
 
-    if (main_get_bits(gamebitIDs->medium)) {
-        main_set_bits(gamebitIDs->small, TRUE);
+    if (mainGetBits(gamebitIDs->medium)) {
+        mainSetBits(gamebitIDs->small, TRUE);
         return BAG_CAPACITY_MEDIUM;
     }
 
-    if (main_get_bits(gamebitIDs->small)) {
+    if (mainGetBits(gamebitIDs->small)) {
         return BAG_CAPACITY_SMALL;
     }
 
@@ -286,7 +286,7 @@ void putdown_update_food_quantity_gamebits(FoodbagContents* bagSlots, FoodbagIte
     //Iterate over food definitions (skip empty 1st entry)
     for (index = 1; index < MAX_FOOD_DEFINITIONS; index++){
         if (foodDefs[index].gamebitID > 0){
-            main_set_bits(foodDefs[index].gamebitID, food_quantities[index]);
+            mainSetBits(foodDefs[index].gamebitID, food_quantities[index]);
         }
     }
 }

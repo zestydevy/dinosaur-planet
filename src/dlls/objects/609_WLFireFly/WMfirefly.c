@@ -44,7 +44,7 @@ void WMFireFly_setup(Object* self, WMFireFly_Setup* objSetup, s32 reset) {
     
     objData = self->data;
     
-    obj_add_object_type(self, OBJTYPE_FireFly);
+    objAddObjectType(self, OBJTYPE_FireFly);
 
     v.f[0] = self->srt.transl.x;
     v.f[1] = self->srt.transl.y;
@@ -74,8 +74,8 @@ void WMFireFly_setup(Object* self, WMFireFly_Setup* objSetup, s32 reset) {
     objData->tValueSpline = 1.0f;
     objData->splinePointNum = 0;
     objData->unk67 = 0;
-    objData->unk62 = rand_next(500, 1500);
-    objData->randomYaw = rand_next(0, 65000);
+    objData->unk62 = mathRnd(500, 1500);
+    objData->randomYaw = mathRnd(0, 65000);
     objData->varianceY = objSetup->varianceY;
     objData->effectType = objSetup->effectType;
     objData->fxRange = objSetup->fxRange;
@@ -96,8 +96,8 @@ void WMFireFly_control(Object* self) {
     LFXEmitter_Setup* lfxSetup;
 
     objData = self->data;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     
     if (objData->tValueSpline > 1.0f) {
         objData->tValueSpline -= 1.0f;
@@ -110,13 +110,13 @@ void WMFireFly_control(Object* self) {
         WMFireFly_append_spline_point(self);
     }
     
-    self->srt.transl.x = curves_b_spline(objData->splineX, objData->tValueSpline, NULL);
-    self->srt.transl.y = curves_b_spline(objData->splineY, objData->tValueSpline, NULL);
-    self->srt.transl.z = curves_b_spline(objData->splineZ, objData->tValueSpline, NULL);
+    self->srt.transl.x = curvesBSpline(objData->splineX, objData->tValueSpline, NULL);
+    self->srt.transl.y = curvesBSpline(objData->splineY, objData->tValueSpline, NULL);
+    self->srt.transl.z = curvesBSpline(objData->splineZ, objData->tValueSpline, NULL);
     
     objData->tValueSpline += objData->tValueSpeed * gUpdateRateF;
     
-    self->srt.yaw = arctan2_f(self->srt.transl.x - self->prevLocalPosition.x, self->srt.transl.f[2] - self->prevLocalPosition.f[2]);
+    self->srt.yaw = mathAtan2f(self->srt.transl.x - self->prevLocalPosition.x, self->srt.transl.f[2] - self->prevLocalPosition.f[2]);
 
     if (objData->lfxEmitter && (objData->lfxEmitter->stateFlags & OBJSTATE_DESTROYED)) {
         objData->lightCreated = FALSE;
@@ -124,17 +124,17 @@ void WMFireFly_control(Object* self) {
     }
 
     if ((objData->effectType == 1) || (objData->effectType == 4)) {
-        if ((vec3_distance_xz(&player->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f) || ((sidekick != NULL) && (vec3_distance_xz(&sidekick->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f))) {
+        if ((vec3DistanceXZ(&player->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f) || ((sidekick != NULL) && (vec3DistanceXZ(&sidekick->globalPosition, (Vec3f* ) &self->setup->x) < 190.0f))) {
             if (objData->lightCreated == FALSE) {
                 objData->lightCreated = TRUE;
-                lfxSetup = obj_alloc_setup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
+                lfxSetup = objAllocSetup(sizeof(LFXEmitter_Setup), OBJ_LFXEmitter);
                 lfxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
                 lfxSetup->base.x = self->srt.transl.x;
                 lfxSetup->base.y = self->srt.transl.y;
                 lfxSetup->base.z = self->srt.transl.z;
-                lfxSetup->unk1E = rand_next(0, 1) + 0x1AA;
+                lfxSetup->unk1E = mathRnd(0, 1) + 0x1AA;
                 lfxSetup->unk22 = -1;
-                objData->lfxEmitter = obj_create((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+                objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
             }
 
             objData->lfxEmitter->srt.transl.x = self->srt.transl.x;
@@ -143,7 +143,7 @@ void WMFireFly_control(Object* self) {
         } else {
             if (((objData->effectType == 1) || (objData->effectType == 4)) && (objData->lightCreated == TRUE)) {
                 if (objData->lfxEmitter != NULL) {
-                    obj_destroy_object(objData->lfxEmitter);
+                    objFreeObject(objData->lfxEmitter);
                     objData->lightCreated = FALSE;
                     objData->lfxEmitter = NULL;
                 }
@@ -160,8 +160,8 @@ void WMFireFly_control(Object* self) {
     }
     
     //Create more particles when the player or sidekick are nearby
-    if ((vec3_distance_xz(&player->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange) || 
-        (sidekick && (vec3_distance_xz(&sidekick->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange))
+    if ((vec3DistanceXZ(&player->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange) || 
+        (sidekick && (vec3DistanceXZ(&sidekick->globalPosition, (Vec3f*)&self->setup->x) < objData->fxRange))
     ) {
         if (objData->effectType == 4) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_19F, NULL, 1, -1, NULL);
@@ -195,7 +195,7 @@ void WMFireFly_update(Object* self) { }
 // offset: 0x7C4 | func: 3 | export: 3
 void WMFireFly_print(Object* self, Gfx** gfl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gfl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -205,11 +205,11 @@ void WMFireFly_free(Object* self, s32 onlySelf) {
 
     if (onlySelf == FALSE) {
         if (objData->lfxEmitter != NULL) {
-            obj_destroy_object(objData->lfxEmitter);
+            objFreeObject(objData->lfxEmitter);
         }
     }
     
-    obj_free_object_type(self, OBJTYPE_FireFly);
+    objFreeObjectType(self, OBJTYPE_FireFly);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
@@ -239,7 +239,7 @@ void WMFireFly_append_spline_point(Object* self) {
     objData->splineY[2] = objData->splineY[3];
     objData->splineZ[2] = objData->splineZ[3];
     
-    objData->tValueSpeed = rand_next(60, 90) * 0.00015f;
+    objData->tValueSpeed = mathRnd(60, 90) * 0.00015f;
     
     objData->splineX[3] = objData->nextSplineCoord.x;
     objData->splineY[3] = objData->nextSplineCoord.y;
@@ -255,15 +255,15 @@ void WMFireFly_set_next_spline_coord_randomised(Object* self) {
 
     //Randomise Y and Z components
     objData->nextSplineCoord.x = 0;
-    objData->nextSplineCoord.y = rand_next(-objData->varianceY, objData->varianceY);
+    objData->nextSplineCoord.y = mathRnd(-objData->varianceY, objData->varianceY);
     if (objData->varianceZ < 21.0f) {
         objData->nextSplineCoord.z = 0.0f;
     } else {
-        objData->nextSplineCoord.z = objData->varianceZ - rand_next(20, (s16)objData->varianceZ);
+        objData->nextSplineCoord.z = objData->varianceZ - mathRnd(20, (s16)objData->varianceZ);
     }
 
     //Pick random yaw
-    objData->randomYaw += (s16)rand_next(3000, 5000);
+    objData->randomYaw += (s16)mathRnd(3000, 5000);
     
     //Rotate nextSplineCoord around random yaw
     transform.transl.x = 0.0f;
@@ -273,7 +273,7 @@ void WMFireFly_set_next_spline_coord_randomised(Object* self) {
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = objData->randomYaw;
-    rotate_vec3(&transform, objData->nextSplineCoord.f);
+    mathRotateRPY(&transform, objData->nextSplineCoord.f);
     
     //Transform to worldSpace
     objData->nextSplineCoord.x = (objData->home.x + objData->nextSplineCoord.x);

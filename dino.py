@@ -433,7 +433,14 @@ class DinoCommandRunner:
         print()
         print(f"Done! Run '{self.__get_invoked_as()} build' to build the ROM.")
 
-    def setup_dll(self, number: int, dll_dir: str):
+    def setup_dll(self, number: int, file: str, prefix: str | None):
+        filepath = Path(file)
+        if len(filepath.suffix) == 0:
+            print(f"Filepath option must be a path to a C file.")
+            sys.exit(1)
+        dll_dir = filepath.parent.as_posix()
+        filename = filepath.name
+        
         dlls_txt_path = SRC_PATH.joinpath("dlls/dlls.txt")
         assert dlls_txt_path.exists(), f"Missing dlls.txt file at {dlls_txt_path.absolute()}"
         
@@ -466,7 +473,7 @@ class DinoCommandRunner:
         
         # Extract DLL
         print("Extracting DLL...")
-        self.__extract_dlls([number], quiet=True)
+        self.__setup_dll(number, filename, prefix)
 
         # Re-configure build script
         self.configure()
@@ -555,7 +562,28 @@ class DinoCommandRunner:
         if disassemble_all:
             args.append("--disassemble-all")
 
+        args.append("split")
         args.extend([str(dll) for dll in dlls])
+
+        self.__run_cmd(args)
+
+    def __setup_dll(self, dll: str | int, filename: str, prefix: str | None):
+        args = [
+            sys.executable, str(DLL_SPLIT_PY),
+            "--base-dir", str(SCRIPT_DIR),
+            "--quiet"
+        ]
+
+        if self.verbose:
+            args.append("--verbose")
+
+        args.extend([
+            "split-single", str(dll),
+            "--filename", filename
+        ])
+
+        if prefix != None:
+            args.extend(["--prefix", prefix])
 
         self.__run_cmd(args)
     
@@ -577,7 +605,8 @@ def main():
 
     setup_dll_cmd = subparsers.add_parser("setup-dll", help="Set up a new environment for decomping a DLL.")
     setup_dll_cmd.add_argument("number", type=int, help="The number of the DLL.")
-    setup_dll_cmd.add_argument("dir", type=str, help="Directory name to set up the DLL under.")
+    setup_dll_cmd.add_argument("file", type=str, help="Path to the DLL C file.")
+    setup_dll_cmd.add_argument("--prefix", type=str, help="Function prefix.")
     
     extract_cmd = subparsers.add_parser("extract", help="Split ROM and extract DLLs.")
     extract_cmd.add_argument("--use-cache", action="store_true", dest="use_cache", help="Only split changed segments in splat config.", default=False)
@@ -631,7 +660,7 @@ def main():
         if cmd == "setup":
             runner.setup()
         elif cmd == "setup-dll":
-            runner.setup_dll(number=args.number, dll_dir=args.dir)
+            runner.setup_dll(number=args.number, file=args.file, prefix=args.prefix)
         elif cmd == "extract":
             runner.extract(core_only=False, use_cache=args.use_cache, disassemble_all=args.disassemble_all)
         elif cmd == "extract-core":

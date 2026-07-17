@@ -68,40 +68,40 @@ typedef struct {
     u8 unk27;
 } Unk80009024;
 
-void voxmap_update_cache_timers(void);
+void voxUpdateCacheTimers(void);
 
-u8 *voxmap_load_slot(s32, s32, s32, s32);
-u8 *func_80007620(s32, s32);
+u8 *voxLoadSlot(s32, s32, s32, s32);
+u8 *vox_func_80007620(s32, s32);
 
-void func_80007E2C(Vec3f*, Vec3s16*);
-void func_80007EE0(Vec3f*, Vec3s16*);
-s32 func_80008048(Vec3s16 *, Vec3s16 *, Vec3s16 *, u8*, u8);
+void vox_func_80007E2C(Vec3f*, Vec3s16*);
+void vox_func_80007EE0(Vec3f*, Vec3s16*);
+s32 vox_func_80008048(Vec3s16 *, Vec3s16 *, Vec3s16 *, u8*, u8);
 
-s32 func_800099D0(Vec3s16 *, Vec3s16 *, Vec3s16*);
-void func_8000A650(Unk80008E40*);
-void func_8000A80C(Unk80008E40Unk4 *, s16*, u16, u16);
-Unk80008E40Unk0* func_8000A9AC(Unk80008E40*, Vec3s16*, u16, u16);
-void func_80009F5C(Unk80008E40*, Unk80008E40Unk0*, s32);
-s32 func_8000A934(Unk80008E40Unk4 *, s16* );
-s32 func_80008E40(Unk80008E40*, Vec3f*, Vec3f*);
-s32 func_80008F34(Unk80008E40*, s32);
-s32 func_8000921C(Unk80008E40*, s32);
-void func_8000A078(Unk80008E40*, Unk80008E40Unk0*, s32, u16, Vec3s16*);
-s32 func_8000A640(Vec3s16*);
-void func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3);
-s32 func_8000AB18(Unk80008E40*, s32, s32, s32*);
+s32 vox_func_800099D0(Vec3s16 *, Vec3s16 *, Vec3s16*);
+void vox_func_8000A650(Unk80008E40*);
+void vox_func_8000A80C(Unk80008E40Unk4 *, s16*, u16, u16);
+Unk80008E40Unk0* vox_func_8000A9AC(Unk80008E40*, Vec3s16*, u16, u16);
+void vox_func_80009F5C(Unk80008E40*, Unk80008E40Unk0*, s32);
+s32 vox_func_8000A934(Unk80008E40Unk4 *, s16* );
+s32 vox_func_80008E40(Unk80008E40*, Vec3f*, Vec3f*);
+s32 vox_func_80008F34(Unk80008E40*, s32);
+s32 vox_func_8000921C(Unk80008E40*, s32);
+void vox_func_8000A078(Unk80008E40*, Unk80008E40Unk0*, s32, u16, Vec3s16*);
+s32 vox_func_8000A640(Vec3s16*);
+void vox_func_8000A884(Unk80008E40Unk4* arg0, s32 arg1, u16 arg2, u16 arg3);
+s32 vox_func_8000AB18(Unk80008E40*, s32, s32, s32*);
 
-VoxmapSlot* voxmap_find_closest_object_slot(Vec3s16 *position);
+VoxmapSlot* voxFindClosestObjectSlot(Vec3s16 *position);
 
-void func_80008DC0(Unk80008E40*); // init/alloc struct
-void func_80008E08(Unk80008E40*); // free struct
-s32 func_80009024(Unk80009024* arg0, Unk80008E40* arg1);
+void vox_func_80008DC0(Unk80008E40*); // init/alloc struct
+void vox_func_80008E08(Unk80008E40*); // free struct
+s32 vox_func_80009024(Unk80009024* arg0, Unk80008E40* arg1);
 
-void func_80008D90(Object* arg0);
+void vox_func_80008D90(Object* arg0);
 
-void voxmap_init(void);
-void voxmap_free(void);
+void voxInit(void);
+void voxFree(void);
 
-s32 func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2);
+s32 vox_func_8000896C(Vec3s16 *arg0, Vec3s16 *arg1, Vec3s16 *arg2);
 
 #endif

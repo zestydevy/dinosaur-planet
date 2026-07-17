@@ -24,13 +24,13 @@ void DBExpBit_setup(Object* self, DBExpBit_Setup* objSetup, s32 reset) {
     
     objData->reset = reset;
     
-    obj_set_model(self, objSetup->modelIdx);
+    objSetModel(self, objSetup->modelIdx);
     
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
     
-    obj_add_object_type(self, OBJTYPE_DBExpbit);
+    objAddObjectType(self, OBJTYPE_DBExpbit);
 }
 
 // offset: 0x98 | func: 1 | export: 1
@@ -51,14 +51,14 @@ void DBExpBit_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
     objData = self->data;
     
     if (visibility && (objSetup->doDraw || objData->reset)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 
 // offset: 0x12C | func: 4 | export: 4
 void DBExpBit_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_DBExpbit);
+    objFreeObjectType(self, OBJTYPE_DBExpbit);
 }
 
 // offset: 0x16C | func: 5 | export: 5

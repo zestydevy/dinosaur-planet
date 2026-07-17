@@ -92,7 +92,7 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
     objData->changedState = TRUE;
     objData->animSpeed = 0.0f;
     
-    func_80023D30(self, 0, 0.5f, 0);
+    objAnimSet(self, 0, 0.5f, 0);
     
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
     baddie->fsa.animState = WGTriffid_ASTATE_0;
@@ -124,7 +124,7 @@ void WGTriffid_control(Object* self) {
     baddie = self->data;
     objSetup = (WGTriffid_Setup*)self->setup;
     objData = baddie->objdata;
-    player = get_player();
+    player = objGetPlayer();
     
     if (self->unkDC) {
         return;
@@ -143,7 +143,7 @@ void WGTriffid_control(Object* self) {
         return;
     }
     
-    func_80024108(self, objData->animSpeed, gUpdateRateF, NULL);
+    objAnimAdvance(self, objData->animSpeed, gUpdateRateF, NULL);
     baddie->fsa.target = NULL;
     baddie->fsa.targetDist = 0.0f;
     
@@ -207,7 +207,7 @@ void WGTriffid_update(Object *self) { }
 // offset: 0x6D0 | func: 4 | export: 3
 void WGTriffid_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if ((visibility) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -216,10 +216,10 @@ void WGTriffid_free(Object* self, s32 a1) {
     Baddie* objData;
 
     objData = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
 
@@ -246,22 +246,22 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
 
     i = 0;
     do {
-        pollenSetup = obj_alloc_setup(sizeof(Pollen_Setup), OBJ_Pollen);
-        pollenSetup->x = (fsin16(self->srt.yaw) * 16.0f) + self->srt.transl.x;
+        pollenSetup = objAllocSetup(sizeof(Pollen_Setup), OBJ_Pollen);
+        pollenSetup->x = (Sinf(self->srt.yaw) * 16.0f) + self->srt.transl.x;
         pollenSetup->y = self->srt.transl.y;
-        pollenSetup->z = (fcos16(self->srt.yaw) * 16.0f) + self->srt.transl.z;
+        pollenSetup->z = (Cosf(self->srt.yaw) * 16.0f) + self->srt.transl.z;
         pollenSetup->loadFlags = OBJSETUP_LOAD_LEVEL;
         pollenSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
         pollenSetup->loadDistance = 0xFF;
         pollenSetup->fadeDistance = 0xFF;
-        pollen = obj_create(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
+        pollen = objSetupObject(pollenSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
         
         if (pollen != NULL) {
-            thetaA = rand_next(-2000, 2000) + self->srt.yaw;
-            thetaB = rand_next(-2000, 2000);
-            pollen->velocity.x = fcos16(thetaB) * fsin16(thetaA) * 4.0f;
-            pollen->velocity.y = fsin16(thetaB) * 4.0f;
-            pollen->velocity.z = fcos16(thetaB) * fcos16(thetaA) * 4.0f;
+            thetaA = mathRnd(-2000, 2000) + self->srt.yaw;
+            thetaB = mathRnd(-2000, 2000);
+            pollen->velocity.x = Cosf(thetaB) * Sinf(thetaA) * 4.0f;
+            pollen->velocity.y = Sinf(thetaB) * 4.0f;
+            pollen->velocity.z = Cosf(thetaB) * Cosf(thetaA) * 4.0f;
             pollen->unkC4 = self;
         }
         
@@ -281,7 +281,7 @@ s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (objData->changedState) {
         objData->changedState = FALSE;
         objData->animSpeed = 0.0f;
-        func_80023D30(self, 0, 0.5f, 0);
+        objAnimSet(self, 0, 0.5f, 0);
         func_8002674C(self);
     }
 
@@ -313,7 +313,7 @@ s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->changedState = FALSE;
         objData->createdPollen = FALSE;
         objData->animSpeed = 0.02f;
-        func_80023D30(self, 0, 0.5f, 0);
+        objAnimSet(self, 0, 0.5f, 0);
         func_8002674C(self);
     }
     
@@ -344,7 +344,7 @@ s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (objData->changedState) {
         objData->changedState = FALSE;
         objData->animSpeed = 0.01f;
-        func_80023D30(self, 0, 0.5f, 0);
+        objAnimSet(self, 0, 0.5f, 0);
         func_800267A4(self);
     }
     
@@ -370,7 +370,7 @@ s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (objData->changedState) {
         objData->changedState = FALSE;
-        obj_send_mesg_many(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, 0xE0000, self);
         gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
         baddie->unk3B4 = 0;
@@ -385,7 +385,7 @@ s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
 
     if (self->opacity == 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
 
     return 0;

@@ -5,7 +5,7 @@
 #include "libnaudio/n_unkfuncs.h"
 #include "mp3/mp3_internal.h"
 
-f32 mp3_func_80077900(f32 arg0, f32 arg1) {
+f32 mp3Func80077900(f32 arg0, f32 arg1) {
 	s32 arg1int = arg1;
 	f32 sp30;
 	register s32 s0;
@@ -23,7 +23,7 @@ f32 mp3_func_80077900(f32 arg0, f32 arg1) {
 	}
 
 	if (arg1int != arg1) {
-		arg0 = mp3_func_8007BEB0(mp3_func_8007C080(arg0) * arg1);
+		arg0 = mp3Func8007BEB0(mp3Func8007C080(arg0) * arg1);
 	} else if (arg1 > 0) {
 		arg1--;
 		sp30 = arg0;

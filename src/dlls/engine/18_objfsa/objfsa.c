@@ -161,7 +161,7 @@ void objfsa_tick(Object *obj, ObjFSA_Data *data, f32 fsaUpdateRate, f32 arg3,
     }
     if (data->target != NULL && sp2F != data->unk341) {
         mesgArg = (void*)(s32)data->unk341;
-        obj_send_mesg(data->target, 11, obj, mesgArg);
+        objSendMesg(data->target, 11, obj, mesgArg);
     }
 }
 
@@ -173,8 +173,8 @@ void objfsa_func_5E0(Object *obj, ObjFSA_Data *data, ObjFSA_StateCallback *callb
     f32 temp_fv1;
 
     if (data->unk340 & 1) {
-        sp24 = fsin16_precise(obj->srt.yaw);
-        temp_fv0 = fcos16_precise(obj->srt.yaw);
+        sp24 = mathSinfInterp(obj->srt.yaw);
+        temp_fv0 = mathCosfInterp(obj->srt.yaw);
         if (data->unk340 & 8) {
             data->unk278 = (-obj->velocity.z * temp_fv0) - (obj->velocity.x * sp24);
             data->speed = data->unk278;
@@ -302,12 +302,12 @@ static void objfsa_run_anim_state(Object *obj, ObjFSA_Data *data, f32 updateRate
     }
     if ((_bss_10 == 0) && !(data->unk340 & 1)) {
         sp50.unk1B = 0;
-        data->unk33A = func_80024108(obj, data->animTickDelta, updateRate, &sp50);
+        data->unk33A = objAnimAdvance(obj, data->animTickDelta, updateRate, &sp50);
         data->unk308 = 0;
         for (i = 0; i < sp50.unk1B; i++) {
             data->unk308 |= 1 << sp50.unk13[i];
         }
-        func_80025780(obj, updateRate, &sp50, NULL);
+        objAnim_func_80025780(obj, updateRate, &sp50, NULL);
         data->flags &= ~0x10000;
     }
     if (!(data->flags & 0x4000)) {
@@ -376,12 +376,12 @@ void objfsa_func_C84(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 arg3) {
     s32 var_v1;
 
     sp34.unk12 = 0;
-    data->unk33A = func_80024108(obj, data->animTickDelta, updateRate, &sp34);
+    data->unk33A = objAnimAdvance(obj, data->animTickDelta, updateRate, &sp34);
     data->unk308 = 0;
     for (var_v1 = 0; var_v1 < sp34.unk1B; var_v1++) {
         data->unk308 |= 1 << sp34.unk13[var_v1];
     }
-    func_80025780(obj, updateRate, &sp34, NULL);
+    objAnim_func_80025780(obj, updateRate, &sp34, NULL);
     data->flags &= ~0x10000;
     if (sp34.unk12 != 0) {
         if (arg3 & 0x10) {
@@ -474,7 +474,7 @@ void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 t
             var_fv0 = obj->globalPosition.x - data->target->globalPosition.x;
             var_fv1 = obj->globalPosition.z - data->target->globalPosition.z;
         }
-        var_v1 = arctan2_f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
+        var_v1 = mathAtan2f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(var_v1)
         obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) turnDuration * 3.0f));
     }
@@ -487,7 +487,7 @@ void objfsa_func_1120(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, 
     bitMask = 1 << bitIdx;
     if (data->unk308 & bitMask) {
         data->unk308 = data->unk308 & ~bitMask;
-        gDLL_6_AMSFX->vtbl->play(obj, soundIDs[soundIdx], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(obj, soundIDs[soundIdx], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }
 
@@ -499,9 +499,9 @@ void objfsa_func_11BC(Object *obj, ObjFSA_Data *data, s32 bitIdx, s32 soundIdx, 
     bitMask = 1 << bitIdx;
     if (data->unk308 & bitMask) {
         data->unk308 = data->unk308 & ~bitMask;
-        soundHandle = gDLL_6_AMSFX->vtbl->play(obj, soundIDs[soundIdx], volume, NULL, NULL, 0, NULL);
+        soundHandle = dll_amSfx->Play(obj, soundIDs[soundIdx], volume, NULL, NULL, 0, NULL);
         if (soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->set_pitch(soundHandle, pitch);
+            dll_amSfx->SetPitch(soundHandle, pitch);
         }
     }
 }
@@ -544,8 +544,8 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
     
     data->unk340 |= 1;
     if (_bss_1C == 0) {
-        var_fa0 = -fsin16_precise(_bss_4) * data->analogInputPower * arg3;
-        var_fa1 = -fcos16_precise(_bss_4) * data->analogInputPower * arg3;
+        var_fa0 = -mathSinfInterp(_bss_4) * data->analogInputPower * arg3;
+        var_fa1 = -mathCosfInterp(_bss_4) * data->analogInputPower * arg3;
         if (data->analogInputPower < 0.02f) {
             var_fa0 = 0.0f;
             var_fa1 = 0.0f;
@@ -561,8 +561,8 @@ void objfsa_func_13F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         obj->velocity.x = 0.0f;
         obj->velocity.z = 0.0f;
     }
-    sp2C = fsin16_precise(obj->srt.yaw);
-    temp_fv0_4 = fcos16_precise(obj->srt.yaw);
+    sp2C = mathSinfInterp(obj->srt.yaw);
+    temp_fv0_4 = mathCosfInterp(obj->srt.yaw);
     data->unk27C = (obj->velocity.x * temp_fv0_4) - (obj->velocity.z * sp2C);
     data->unk278 = (-obj->velocity.z * temp_fv0_4) - (obj->velocity.x * sp2C);
 }
@@ -590,14 +590,14 @@ void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 
     if (_bss_1C != 0) {
         if ((data->unk278 > 0.0f) && (_bss_14 != obj->curModAnimId)) {
-            func_80023D30(obj, _bss_14, obj->animProgress, 0U);
+            objAnimSet(obj, _bss_14, obj->animProgress, 0U);
             data->unk33A = 0;
         } else if ((data->unk278 < 0.0f) && (_bss_18 != obj->curModAnimId)) {
-            func_80023D30(obj, _bss_18, obj->animProgress, 0U);
+            objAnimSet(obj, _bss_18, obj->animProgress, 0U);
             data->unk33A = 0;
         }
         sp30 = sqrtf(SQ(data->unk278) + SQ(data->unk27C));
-        if (func_8002493C(obj, sp30, &sp34) != 0) {
+        if (objGetAnimChange(obj, sp30, &sp34) != 0) {
             data->animTickDelta = sp34;
         }
         if (sp30 != 0.0f) {
@@ -613,9 +613,9 @@ void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
             var_a2 = 0x3FF;
         }
         if (data->unk27C > 0.0f) {
-            func_80025540(obj, arg3, var_a2);
+            objAnimSetBlend(obj, arg3, var_a2);
         } else {
-            func_80025540(obj, arg2, var_a2);
+            objAnimSetBlend(obj, arg2, var_a2);
         }
     }
 }
@@ -624,7 +624,7 @@ void objfsa_func_162C(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
 void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 arg5, u32 arg6) {
     DLL_18_UnknownDLL* temp_s3;
 
-    temp_s3 = dll_load_deferred((arg2 + 0x1000), 1);
+    temp_s3 = dllLoad((arg2 + 0x1000), 1);
     while (arg3 != 0) {
         if (arg6 == 0) {
             temp_s3->vtbl->func0(obj, 0, 0, 1, -1, 0);
@@ -635,7 +635,7 @@ void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 ar
         }
         arg3--;
     }
-    dll_unload(temp_s3);
+    dllFree(temp_s3);
 }
 
 // offset: 0x1978 | func: 22 | export: 21
@@ -667,7 +667,7 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
         data->analogInputPower = 65.0f;
     }
     data->analogInputPower /= 65.0f;
-    _bss_4 = arctan2_f(data->xAnalogInput, -data->yAnalogInput);
+    _bss_4 = mathAtan2f(data->xAnalogInput, -data->yAnalogInput);
     _bss_4 -= data->unk324;
     var_v1 = _bss_4;
     var_v1 -= (obj->srt.yaw & 0xFFFF);
@@ -716,16 +716,16 @@ static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
             sp88.transl.y = 0;
             sp88.transl.z = 0;
             sp88.scale = 1.0f;
-            matrix_from_srt(&sp48, &sp88);
+            mathYprXyzMtx(&sp48, &sp88);
             if (data->flags & 0x10000) {
-                vec3_transform(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
+                mathMtxXFMF(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
             } else {
-                vec3_transform(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
+                mathMtxXFMF(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
             }
             obj->velocity.x = sp40;
             obj->velocity.z = sp3C;
         }
-        obj_move(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
+        objMove(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
     }
 }
 
@@ -741,11 +741,11 @@ static void objfsa_func_1E30(Object *obj, ObjFSA_Data *data) {
     sp38.transl.y = 0;
     sp38.transl.z = 0;
     sp38.scale = 1.0f;
-    matrix_from_srt(&sp50, &sp38);
+    mathYprXyzMtx(&sp50, &sp38);
     
-    vec3_transform(&sp50, 0.0f, 0.0f, 1.0f, &data->unk274[0].x, &data->unk274[0].y, &data->unk274[0].z);
-    vec3_transform(&sp50, 0.0f, 1.0f, 0.0f, &data->unk274[1].x, &data->unk274[1].y, &data->unk274[1].z);
-    vec3_transform(&sp50, 1.0f, 0.0f, 0.0f, &data->unk274[2].x, &data->unk274[2].y, &data->unk274[2].z);
+    mathMtxXFMF(&sp50, 0.0f, 0.0f, 1.0f, &data->unk274[0].x, &data->unk274[0].y, &data->unk274[0].z);
+    mathMtxXFMF(&sp50, 0.0f, 1.0f, 0.0f, &data->unk274[1].x, &data->unk274[1].y, &data->unk274[1].z);
+    mathMtxXFMF(&sp50, 1.0f, 0.0f, 0.0f, &data->unk274[2].x, &data->unk274[2].y, &data->unk274[2].z);
 }
 
 // offset: 0x1F64 | func: 26 | export: 5

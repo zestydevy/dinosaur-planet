@@ -49,10 +49,10 @@ void camspellaim_func_64(Cam* cam) {
     sp2C -= (cam->srt.pitch & 0xFFFF);
     CIRCLE_WRAP(sp2C);
     cam->srt.pitch += (s32) (sp2C * gUpdateRate) >> 3;
-    sp3C = fsin16_precise((s16) (cam->srt.yaw - 0x4000));
-    sp38 = fcos16_precise((s16) (cam->srt.yaw - 0x4000));
-    sp34 = fcos16_precise(cam->srt.pitch);
-    temp = fsin16_precise(cam->srt.pitch);
+    sp3C = mathSinfInterp((s16) (cam->srt.yaw - 0x4000));
+    sp38 = mathCosfInterp((s16) (cam->srt.yaw - 0x4000));
+    sp34 = mathCosfInterp(cam->srt.pitch);
+    temp = mathSinfInterp(cam->srt.pitch);
     var_f12 = bss_4;
     temp_fv1 = var_f12 * sp34;
     cam->srt.transl.x = sp20[2] + (temp_fv1 * sp38);
@@ -81,8 +81,8 @@ static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
     AABBs32 sp98;
     Unk80027934 sp2C;
 
-    spD4 = fsin16_precise(arg1->srt.yaw);
-    temp_ft2 = fcos16_precise(arg1->srt.yaw) * 60.0f;
+    spD4 = mathSinfInterp(arg1->srt.yaw);
+    temp_ft2 = mathCosfInterp(arg1->srt.yaw) * 60.0f;
     spB0.x = arg1->globalPosition.x + (spD4 * 60.0f);
     spB0.y = arg1->globalPosition.y + 37.0f;
     spB0.z = arg1->globalPosition.z + temp_ft2;

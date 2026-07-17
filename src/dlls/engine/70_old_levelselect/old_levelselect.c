@@ -7,7 +7,7 @@
 #include "sys/menu.h"
 #include "sys/map_enums.h"
 
-extern DLL_73* dll_throw_fault; //NOTE: BROKEN! This is a function now, not DLL 73.
+extern DLL_73* dllThrowFault; //NOTE: BROKEN! This is a function now, not DLL 73.
 
 #define LINE_HEIGHT 0x20
 #define TOTAL_STRINGS 53
@@ -158,25 +158,25 @@ void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     char *string;
     s32 prevSelectedPrintIdx;
 
-    func_80014508(20);
+    main_func_80014508(20);
     gDLL_20_Screens->vtbl->show_screen(2); //NOTE: this screen is missing - maybe it contained the old Dinosaur Planet logo?
     
     //Display either the Level Select list, or a "LEVEL NOT AVAILABLE" message
     if (dShowLevelUnavailable == FALSE) {
-        dll_throw_fault->vtbl->init_text_window(120);
+        dllThrowFault->vtbl->init_text_window(120);
     
         //Print 9 strings at a time
         if (dSelectedListIdx < 4) { 
             //Upper half of first page of strings
             for (i = 0, string = dStrings[0]; i < STRINGS_PER_PAGE; i++, string += STRING_LENGTH) {
-                dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
+                dllThrowFault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
                 
                 if (gDLL_20_Screens){} //fake
             }
         } else if (dSelectedListIdx >= (TOTAL_STRINGS - 4)) { 
             //Lower half of last page of strings
             for (i = LAST_PAGE_FIRST_IDX, string = dStrings[LAST_PAGE_FIRST_IDX]; i < TOTAL_STRINGS; i++, string += STRING_LENGTH) {
-                dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
+                dllThrowFault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
             }
         } else {
             //Scrolling between top/bottom of list
@@ -185,7 +185,7 @@ void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
             if (start < (dSelectedListIdx + 5)) {
                 string = dStrings[start];
                 do {
-                    dll_throw_fault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
+                    dllThrowFault->vtbl->add_string(i, string, LINE_HEIGHT, dSelectedPrintIdx);
                     i++;
                     string += STRING_LENGTH;
                 } while (i < (dSelectedListIdx + 5));
@@ -195,7 +195,7 @@ void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
         //Handle moving up/down the list
         {
             prevSelectedPrintIdx = dSelectedPrintIdx;
-            menuAction = dll_throw_fault->vtbl->handle_joystick_and_buttons(&dSelectedPrintIdx);
+            menuAction = dllThrowFault->vtbl->handle_joystick_and_buttons(&dSelectedPrintIdx);
             
             if ((prevSelectedPrintIdx == 0) && (dSelectedPrintIdx == (STRINGS_PER_PAGE - 1))) {
                 //Wrapping from top to bottom
@@ -393,14 +393,14 @@ void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
     } else {
         //Display message if option/level can't be accessed
         sButtonsEnabled = FALSE;
-        dll_throw_fault->vtbl->init_text_window(180);
-        dll_throw_fault->vtbl->add_string(0, "LEVEL NOT AVAILABLE", 12, 0);
-        if (dll_throw_fault->vtbl->handle_joystick_and_buttons(&sButtonsEnabled) >= 0) {
+        dllThrowFault->vtbl->init_text_window(180);
+        dllThrowFault->vtbl->add_string(0, "LEVEL NOT AVAILABLE", 12, 0);
+        if (dllThrowFault->vtbl->handle_joystick_and_buttons(&sButtonsEnabled) >= 0) {
             dShowLevelUnavailable = FALSE;
         }
     }
 
-    font_window_draw(gdl, 0, 0, 1);
+    fontWindowDraw(gdl, 0, 0, 1);
 }
 
 // offset: 0xB58 | func: 3
@@ -410,5 +410,5 @@ void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
 void old_levelselect_start(MapIDs mapID, s32 act, PlayerNo playerNo) {
     gDLL_5_AMSEQ2->vtbl->set(NULL, 0x23, 0, 0, 0);
     gDLL_29_Gplay->vtbl->init_save(0, NULL);
-    main_change_map(mapID, act, playerNo, MENU_GAMEPLAY);
+    mainChangeMap(mapID, act, playerNo, MENU_GAMEPLAY);
 }

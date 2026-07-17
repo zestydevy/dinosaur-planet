@@ -91,9 +91,9 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp74 = 0.0f;
     sp70 = 0.0f;
     objdata = self->data;
-    camera = get_camera();
+    camera = camGet();
     setup = (CFLamp_Setup*)self->setup;
-    if (rand_next(0, 1) != 0) {
+    if (mathRnd(0, 1) != 0) {
         arg2->unk9D = 4;
     } else {
         arg2->unk9D = 8;
@@ -109,7 +109,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     if (sp60 != 0) { 
         sp60 = sqrtf(sp60);
     }
-    obj_get_nearest_type_to(OBJTYPE_56, self, &sp70);
+    objGetNearestTypeTo(OBJTYPE_56, self, &sp70);
     if ((sp70 < setup->unk1A) && (objdata->unk33 == 1)) {
         objdata->unk33 = 0;
         func_80000450(self, self, 0x5C, 0, 0, 0);
@@ -123,16 +123,16 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     sp50 = self->globalPosition.x - gWorldX;
     sp48 = self->globalPosition.z - gWorldZ;
     sp4C = self->globalPosition.y;
-    camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
-    camera_clip_to_screen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
-    sp2C = vi_obj_depth(sp38, sp34, self);
-    get_vec3_to_camera_normalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
+    camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
+    camClipToScreen(sp44, sp40, sp3C, &sp38, &sp34, NULL);
+    sp2C = viObjDepth(sp38, sp34, self);
+    camGetVec3ToCameraNormalized(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp7C, &sp74, &sp78);
     sp50 += (sp7C * 20.0f);
     sp4C += (sp74 * 20.0f); 
     sp48 += (sp78 * 20.0f);
-    camera_project_point(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
-    camera_clip_to_screen(sp44, sp40, sp3C, NULL, NULL, &sp30);
-    if ((vi_contains_point(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
+    camProjectPoint(sp50, sp4C, sp48, &sp44, &sp40, &sp3C);
+    camClipToScreen(sp44, sp40, sp3C, NULL, NULL, &sp30);
+    if ((viContainsPoint(sp38, sp34) != 0) && (sp30 > 0) && (sp30 < sp2C)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8D, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
     }
     arg2->lastMessage = 0;
@@ -143,7 +143,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
 // offset: 0x534 | func: 4 | export: 3
 void dll_405_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -154,7 +154,7 @@ void dll_405_free(Object* self, s32 a1) {
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
     if (objdata->unk4 != NULL) {
-        obj_destroy_object(objdata->unk4);
+        objFreeObject(objdata->unk4);
     }
     objdata->unk4 = NULL;
     if (objdata->unk33 == 0) {

@@ -57,13 +57,13 @@ void WCpressureswitch_setup(Object* self, PressureSwitch_Setup* setup, s32 arg2)
         STUBBED_PRINTF("PRESSURESWITCH.c: modelno out of range romdefno=%d\n", setup->base.objId);
     }
 
-    if (main_get_bits(setup->gameBitPressed)) {
+    if (mainGetBits(setup->gameBitPressed)) {
         self->srt.transl.y = setup->base.y - setup->yOffsetAnimation;
         objdata->pressed = 30;
         objdata->state = 2;
     }
 
-    obj_add_object_type(self, OBJTYPE_TrickyTarget);
+    objAddObjectType(self, OBJTYPE_TrickyTarget);
 
     for (index = 0; index < 10; index++) { objdata->objectsOnSwitch[index] = 0; }
 
@@ -83,7 +83,7 @@ void WCpressureswitch_control(Object* self) {
     objdata = self->data;
 
     //Bail if switch deactivated
-    if (setup->gameBitActivated > 0 && !main_get_bits(setup->gameBitActivated)) {
+    if (setup->gameBitActivated > 0 && !mainGetBits(setup->gameBitActivated)) {
         diPrintf(" Avitvate %i ", setup->gameBitActivated);
         return;
     }
@@ -115,14 +115,14 @@ void WCpressureswitch_control(Object* self) {
     switch (objdata->state) {
         case STATE_0_UP:
             if (objdata->pressed && deltaY <= self->srt.transl.y) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_3_MOVING_DOWN;
             }
             break;
         case STATE_3_MOVING_DOWN:
             self->srt.transl.y -= 0.05f * gUpdateRateF;
             if (self->srt.transl.y < deltaY) {
-                main_set_bits(setup->gameBitPressed, 1);
+                mainSetBits(setup->gameBitPressed, 1);
                 objdata->state = STATE_2_DOWN;
                 self->srt.transl.y = deltaY;
             }
@@ -130,8 +130,8 @@ void WCpressureswitch_control(Object* self) {
         case STATE_2_DOWN:
             /* Subtly different behaviour to other pressure switches,
              * waits for flag to unset before depressing the switch (for WC's timed challenges) */
-            if (!main_get_bits(setup->gameBitPressed)) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
+            if (!mainGetBits(setup->gameBitPressed)) {
+                dll_amSfx->Play(self, SOUND_99a_Mechanical_Ratcheting, 0x7F, NULL, 0, 0, 0);
                 objdata->state = STATE_1_MOVING_UP;
             }
             break;
@@ -145,7 +145,7 @@ void WCpressureswitch_control(Object* self) {
     }
 
     //Change texture frame (sun/moon glowing)
-    animTexture = func_800348A0(self, 0, 0);
+    animTexture = objExprGetTexAnimator(self, 0, 0);
     if (animTexture != NULL) {
         if (objdata->state == 2) {
             animTexture->frame = 1;
@@ -162,7 +162,7 @@ void WCpressureswitch_update(Object* self){ }
 // offset: 0x4C0 | func: 3 | export: 3
 void WCpressureswitch_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
@@ -171,9 +171,9 @@ void WCpressureswitch_free(Object* self, s32 arg1) {
     PressureSwitch_Data* objdata = self->data;
 
     if (objdata->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
     }
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x594 | func: 5 | export: 5
@@ -255,7 +255,7 @@ static int WCpressureswitch_anim_callback(Object* self, Object* animObj, AnimObj
         self->srt.transl.z = setup->base.x; //@bug? should be x component?
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
-        main_set_bits(setup->gameBitPressed, 0);
+        mainSetBits(setup->gameBitPressed, 0);
         animObjData->lastMessage = 0;
     }
 

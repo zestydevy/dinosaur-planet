@@ -41,8 +41,8 @@ void scarab_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
 
     objData->state = Scarab_STATE_Tumbling_Through_Air;
     objData->lifetime = setup->lifetime;
-    objData->rollSpeed = rand_next(1000, 4000);
-    objData->goldClimbDuration = rand_next(50, 100);
+    objData->rollSpeed = mathRnd(1000, 4000);
+    objData->goldClimbDuration = mathRnd(50, 100);
     objData->initialY = setup->base.y;
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -71,7 +71,7 @@ void scarab_setup(Object* self, Scarab_Setup* setup, s32 arg2) {
             break;
     }
 
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
 }
 
 // offset: 0x174 | func: 1 | export: 1
@@ -97,11 +97,11 @@ void scarab_control(Object* self) {
     Unk80027934 sp4C;
     
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
 
     //Handle flags
     if (objData->flags & Scarab_FLAG_Wait_for_Message) {
-        while (obj_recv_mesg(self, &messageID, 0, 0)){
+        while (objRecvMesg(self, &messageID, 0, 0)){
             if (messageID == 0x7000B) {
                 scarab_collect(self, player, objData);
                 objData->flags &= ~Scarab_FLAG_Wait_for_Message;
@@ -118,7 +118,7 @@ void scarab_control(Object* self) {
         objData->destructDelayTimer -= gUpdateRate;
         if (objData->destructDelayTimer <= 0) {
             objData->destructDelayTimer = 0;
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         return;
     }    
@@ -168,7 +168,7 @@ void scarab_control(Object* self) {
         }
 
         //Create particles while tumbling through air
-        if (rand_next(0, 2) == 0) {
+        if (mathRnd(0, 2) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, 0x519, NULL, 1, -1, 0);
         }
 
@@ -184,9 +184,9 @@ void scarab_control(Object* self) {
             //Become stunned (delays scurry behaviour after landing)
             objData->stunTimer = 250;
 
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
             
@@ -209,9 +209,9 @@ void scarab_control(Object* self) {
             transform.transl.x = 0;
             transform.transl.y = 0;
             transform.transl.z = 0;
-            transform.yaw = rand_next(-10000, 10000);
-            rotate_vec3(&transform, self->velocity.f);
-            yaw = self->srt.yaw - (u16)arctan2_f(self->velocity.x, -self->velocity.z);
+            transform.yaw = mathRnd(-10000, 10000);
+            mathRotateRPY(&transform, self->velocity.f);
+            yaw = self->srt.yaw - (u16)mathAtan2f(self->velocity.x, -self->velocity.z);
             CIRCLE_WRAP(yaw)
             self->srt.yaw = yaw;
             objData->state = Scarab_STATE_Tumbling_Through_Air;
@@ -223,7 +223,7 @@ void scarab_control(Object* self) {
         if (objData->stunTimer == 0) { 
             //Play scurrying sound
             if (objData->soundHandle == 0) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_669_Insect_Scurry_Loop, 0x39, &objData->soundHandle, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_669_Insect_Scurry_Loop, 0x39, &objData->soundHandle, 0, 0, 0);
             }
             
             //Find nearest ground distance
@@ -250,12 +250,12 @@ void scarab_control(Object* self) {
             
             //Random yaw/roll jitter (in Rainbow Scarab's case, go towards player as well)
             if (self->id == OBJ_Rain_scarab) {
-                self->srt.yaw = arctan2_f(player->srt.transl.x - self->srt.transl.x, player->srt.transl.z - self->srt.transl.z) + 0x7FFF;
-                self->srt.yaw += rand_next(-1460, 1460);
+                self->srt.yaw = mathAtan2f(player->srt.transl.x - self->srt.transl.x, player->srt.transl.z - self->srt.transl.z) + 0x7FFF;
+                self->srt.yaw += mathRnd(-1460, 1460);
             } else {
-                self->srt.yaw += rand_next(-1460, 1460);
+                self->srt.yaw += mathRnd(-1460, 1460);
             }
-            self->srt.roll += rand_next(-1000, 1000);
+            self->srt.roll += mathRnd(-1000, 1000);
             
             self->velocity.x = objData->speedX;
             self->velocity.y = 0/*.0f*/;
@@ -268,7 +268,7 @@ void scarab_control(Object* self) {
             transform.roll = 0;
             transform.pitch = 0;
             transform.yaw = self->srt.yaw - objData->scurryInitialYaw;
-            rotate_vec3(&transform, (f32*)&self->velocity);
+            mathRotateRPY(&transform, (f32*)&self->velocity);
             
             //Handle lifetime timer
             objData->lifetime -= gUpdateRate;
@@ -336,13 +336,13 @@ void scarab_control(Object* self) {
         }
 
         //Collect scurrying Scarab when player is nearby (Rainbow Scarabs must also be stunned)
-        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 25.0f)) {
+        if ((objData->stunTimer || (self->id != OBJ_Rain_scarab)) && (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 25.0f)) {
             //Play an item collection sequence the first time a Scarab is collected
-            if (!main_get_bits(BIT_Tutorial_Collected_Scarab)) {
+            if (!mainGetBits(BIT_Tutorial_Collected_Scarab)) {
                 gDLL_3_Animation->vtbl->set_variable_obj(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
                 messageID = 0;
-                obj_send_mesg(player, 0x7000A, self, 0);
-                main_set_bits(BIT_Tutorial_Collected_Scarab, 1);
+                objSendMesg(player, 0x7000A, self, 0);
+                mainSetBits(BIT_Tutorial_Collected_Scarab, 1);
                 objData->flags |= 1;
             } else {
                 scarab_collect(self, player, objData);
@@ -350,7 +350,7 @@ void scarab_control(Object* self) {
             
             //Remove objHits, play sound, create effects
             func_800267A4(self);
-            gDLL_6_AMSFX->vtbl->play(self, objData->collectSoundID, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, objData->collectSoundID, MAX_VOLUME, 0, 0, 0, 0);
             transform.scale = objData->collectFXScale;
             gDLL_17_partfx->vtbl->spawn(self, 0x51A, &transform, 1, -1, 0);
             gDLL_17_partfx->vtbl->spawn(self, 0x51A, &transform, 1, -1, 0);
@@ -358,7 +358,7 @@ void scarab_control(Object* self) {
             
             //Stop scurrying sound loop
             if (objData->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
             }
         }
@@ -366,25 +366,25 @@ void scarab_control(Object* self) {
         //Rainbow Scarab: attack behaviour (when not stunned)
         if ((objData->stunTimer == 0) && (self->id == OBJ_Rain_scarab)) {
             //Colliding with player
-            if (vec3_distance_xz(&player->globalPosition, &self->globalPosition) < 20.0f) {
+            if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 20.0f) {
                 //Hurt player (unless special Rainbow Scarab immunity gamebit is set!)
-                if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
-                    obj_send_mesg(player, 0x60004, self, (void*)1);
+                if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
+                    objSendMesg(player, 0x60004, self, (void*)1);
                 }
 
                 //Jolt backwards slightly
                 self->srt.transl.x += (-self->velocity.x * 26.0f);
                 self->srt.transl.z += (-self->velocity.z * 26.0f);
                 
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BB_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_6BB_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
             }
 
             //Become stunned when hit by Projectile Spell / Grenade
             if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 objData->stunTimer = 250;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_6BC_Creature_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                    dll_amSfx->Stop(objData->soundHandle);
                     objData->soundHandle = 0;
                 }
             }
@@ -394,9 +394,9 @@ void scarab_control(Object* self) {
             //Check for a follow-up Projectile Spell / Grenade attack while stunned
             if (func_80025F40(self, 0, 0, 0) == Damage_Type_Projectile) {
                 gDLL_17_partfx->vtbl->spawn(self, 0x51A, NULL, 1, -1, 0);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_6BD_Creature_Death_Cry, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_6BD_Creature_Death_Cry, MAX_VOLUME, 0, 0, 0, 0);
                 if (objData->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+                    dll_amSfx->Stop(objData->soundHandle);
                     objData->soundHandle = 0;
                 }
 
@@ -427,7 +427,7 @@ void scarab_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** p
         return;
     }
 
-    draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+    objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
 }
 
 // offset: 0x11F8 | func: 4 | export: 4
@@ -436,7 +436,7 @@ void scarab_free(Object* self, s32 arg1) {
 
     objData = self->data;
     if (objData->soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+        dll_amSfx->Stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -499,7 +499,7 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
         self->velocity.z /= doubleSpeed;
         objData->speedX = self->velocity.x;
         objData->speedZ = self->velocity.z;
-        self->srt.yaw = arctan2_f(-arg3->unk0->x, -arg3->unk0->z);
+        self->srt.yaw = mathAtan2f(-arg3->unk0->x, -arg3->unk0->z);
         return;
     }
 
@@ -510,21 +510,21 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
     transform.roll = 0;
     transform.pitch = 0;
     transform.yaw = self->srt.yaw;
-    rotate_vec3(&transform, v.f);
+    mathRotateRPY(&transform, v.f);
 
     if (arg1){
-        angle = arctan2_f(v.x, v.y);
-        self->srt.pitch = arctan2_f(v.z, v.y);
+        angle = mathAtan2f(v.x, v.y);
+        self->srt.pitch = mathAtan2f(v.z, v.y);
         self->srt.roll = angle;
         return;
     }
 
     self->srt.roll = 0;
-    self->srt.pitch = arctan2_f(arg3->unk0->z + arg3->unk0->x, arg3->unk0->y);
+    self->srt.pitch = mathAtan2f(arg3->unk0->z + arg3->unk0->x, arg3->unk0->y);
     if (self->srt.pitch < 0){
         self->srt.pitch = -self->srt.pitch;
     }
-    self->srt.yaw = arctan2_f(arg3->unk0->x, arg3->unk0->z);
+    self->srt.yaw = mathAtan2f(arg3->unk0->x, arg3->unk0->z);
     return;
 }
 

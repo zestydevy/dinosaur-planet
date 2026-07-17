@@ -104,7 +104,7 @@ static void DFP_ForceAway_type0_control(Object* self) {
     SRT partSRT;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
     zDist = player->srt.transl.z - self->srt.transl.z;
@@ -147,15 +147,15 @@ static void DFP_ForceAway_type0_control(Object* self) {
         if (xSide != objdata->prevPlayerXSide) {
             partSRT.yaw = 0x3FFF;
         }
-        if (main_get_bits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
-            main_set_bits(BIT_468, 1);
-            obj_send_mesg(player, 0x60004, self, NULL);
+        if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) != 0) {
+            mainSetBits(BIT_468, 1);
+            objSendMesg(player, 0x60004, self, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5ED, &partSRT, PARTFXFLAG_2, -1, NULL);
         } else {
-            obj_send_mesg(player, 0x60004, self, (void* )1);
+            objSendMesg(player, 0x60004, self, (void* )1);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5ED, &partSRT, PARTFXFLAG_2, -1, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     objdata->prevPlayerXSide = xSide;
     objdata->prevPlayerYSide = ySide;
@@ -173,7 +173,7 @@ static void DFP_ForceAway_type1_control(Object* self) {
     f32 sp24;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     axisCounter = 0;
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
@@ -197,8 +197,8 @@ static void DFP_ForceAway_type1_control(Object* self) {
         axisCounter++;
     }
     if (axisCounter == 3) {
-        sp24 = (f32) rand_next(-0x17, 0x17) * 0.01f;
-        ((DLL_210_Player*)player->dll)->vtbl->func73(player, sp24, (f32) rand_next(-0x17, 0x17) * 0.01f);
+        sp24 = (f32) mathRnd(-0x17, 0x17) * 0.01f;
+        ((DLL_210_Player*)player->dll)->vtbl->func73(player, sp24, (f32) mathRnd(-0x17, 0x17) * 0.01f);
     }
 }
 
@@ -218,7 +218,7 @@ static void DFP_ForceAway_type2_control(Object* self) {
     s32 _pad;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     axisCounter = 0;
     xSide = 0;
     ySide = 0;
@@ -265,15 +265,15 @@ static void DFP_ForceAway_type2_control(Object* self) {
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == 0x1D7) {
             if (data_0 > 20) {
                 data_0 = 0;
-                main_set_bits(BIT_468, 1);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
+                mainSetBits(BIT_468, 1);
+                dll_amSfx->Play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             gDLL_17_partfx->vtbl->spawn(player, PARTICLE_397, NULL, PARTFXFLAG_2, -1, NULL);
         } else {
-            main_set_bits(BIT_468, 1);
-            obj_send_mesg(player, 0x60004, self, (void* )2);
+            mainSetBits(BIT_468, 1);
+            objSendMesg(player, 0x60004, self, (void* )2);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_399, &partSRT, PARTFXFLAG_2, -1, NULL);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_837, MAX_VOLUME, NULL, NULL, 0, NULL);
 
         }
     }
@@ -295,7 +295,7 @@ static void DFP_ForceAway_type3_control(Object* self) {
     f32 zDist;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     xDist = player->srt.transl.x - self->srt.transl.x;
     yDist = player->srt.transl.y - self->srt.transl.y;
     zDist = player->srt.transl.z - self->srt.transl.z;
@@ -332,13 +332,13 @@ static void DFP_ForceAway_type3_control(Object* self) {
     }
     if ((axisCounter == 3) && (objdata->cooldownTimer <= 0)) {
         if (((DLL_210_Player*)player->dll)->vtbl->func50(player) == 0x1D7) {
-            main_set_bits(BIT_468, 1);
-            gDLL_6_AMSFX->vtbl->play(player, SOUND_B47, MAX_VOLUME, NULL, NULL, 0, NULL);
+            mainSetBits(BIT_468, 1);
+            dll_amSfx->Play(player, SOUND_B47, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_17_partfx->vtbl->spawn(player, PARTICLE_397, NULL, PARTFXFLAG_2, -1, NULL);
             objdata->cooldownTimer = 200;
         } else {
             func_8002635C(player, NULL, Damage_Type_13, /*damage*/2, 0);
-            gDLL_6_AMSFX->vtbl->play(player, SOUND_B47, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(player, SOUND_B47, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->cooldownTimer = 200;
         }
     }

@@ -58,7 +58,7 @@ void CFPrisonUncle_dtor(void *dll) { }
 void CFPrisonUncle_setup(Object* self, ObjSetup* setup, s32 reset) {
     CFPrisonUncle_Data* objData;
 
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
     objData = self->data;
     self->animCallback = CFPrisonUncle_anim_callback;
 
@@ -69,8 +69,8 @@ void CFPrisonUncle_setup(Object* self, ObjSetup* setup, s32 reset) {
     objData->talkWaitTimer = 0;
     objData->magicDropped = FALSE;
 
-    if (main_get_bits(BIT_CRF_CloudRunner_Uncle_Freed)) {
-        main_set_bits(BIT_CRF_CloudRunner_Uncle_Escaped, TRUE);
+    if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Freed)) {
+        mainSetBits(BIT_CRF_CloudRunner_Uncle_Escaped, TRUE);
     }
 }
 
@@ -88,16 +88,16 @@ void CFPrisonUncle_control(Object* self) {
     SeqJoint* jawJoint;
     
     objData = self->data;
-    if (!objData || main_get_bits(BIT_CRF_CloudRunner_Uncle_Escaped)){
+    if (!objData || mainGetBits(BIT_CRF_CloudRunner_Uncle_Escaped)){
         return;
     }
     
-    if (obj_recv_mesg(self, &messageID, &messageSender, &messageArg)) {
+    if (objRecvMesg(self, &messageID, &messageSender, &messageArg)) {
         objData->perchObj = NULL;
     }
     
     if (objData->perchObj == NULL) {
-        objects = get_world_objects(&initialIndex, &objectsCount);
+        objects = objGetObjects(&initialIndex, &objectsCount);
         for (i = initialIndex; i < objectsCount; i++){
             if (objects[i]->controlNo == OBJCONTROL_CFPerch) {
                 objData->perchObj = objects[i];
@@ -106,50 +106,50 @@ void CFPrisonUncle_control(Object* self) {
         }
     }
     
-    objData->freed = main_get_bits(BIT_CRF_CloudRunner_Uncle_Freed);
+    objData->freed = mainGetBits(BIT_CRF_CloudRunner_Uncle_Freed);
     if (objData->freed == FALSE) {
-        player = get_player();
+        player = objGetPlayer();
         
         if (objData->soundHandle) {
-            func_80023D30(self, 0, 0.105f, 0);
+            objAnimSet(self, 0, 0.105f, 0);
             CFPrisonUncle_animate_head_seqJoint(self, player);
 
-            jawJoint = (SeqJoint*)func_80034804(self, 1);
-            if (rand_next(0, 8) != 0) {
+            jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
+            if (mathRnd(0, 8) != 0) {
                 jawJoint->pitch = -M_15_DEGREES;
             } else {
                 jawJoint->pitch = 0;
             }
 
-            if (gDLL_6_AMSFX->vtbl->is_playing(objData->soundHandle) == 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            if (dll_amSfx->IsPlaying(objData->soundHandle) == 0) {
+                dll_amSfx->Stop(objData->soundHandle);
                 objData->soundHandle = 0;
                 jawJoint->pitch = 0;
             }
         } else {
             CFPrisonUncle_reset_head_seqJoint(self);
 
-            if (rand_next(0, 30) == 0) { 
-                func_80034B94(self, &objData->headAnimators[1], dCloudRunnerChirps[rand_next(0, 3)]);
+            if (mathRnd(0, 30) == 0) { 
+                objExpr_func_80034B94(self, &objData->headAnimators[1], dCloudRunnerChirps[mathRnd(0, 3)]);
             }
         }
         
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             CFPrisonUncle_animate_head_seqJoint(self, player);
 
-            jawJoint = (SeqJoint*)func_80034804(self, 1);
+            jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
             jawJoint->pitch = -M_15_DEGREES;
 
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
-            func_80034BC0(self, &objData->headAnimators[1]);
+            objExpr_func_80034BC0(self, &objData->headAnimators[1]);
 
             if ((objData->soundHandle == 0) && (objData->talkWaitTimer <= 0) && 
-                player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)
+                player && (vec3Distance(&self->globalPosition, &player->globalPosition) < 200.0f)
             ) {
-                gDLL_6_AMSFX->vtbl->play(self, objData->voiceLines[objData->voiceLineIdx], MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+                dll_amSfx->Play(self, objData->voiceLines[objData->voiceLineIdx], MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
                 
-                if (rand_next(0, 100) < 50) {
+                if (mathRnd(0, 100) < 50) {
                     objData->voiceLineIdx++;
                 } else {
                     objData->voiceLineIdx--;
@@ -161,14 +161,14 @@ void CFPrisonUncle_control(Object* self) {
                     objData->voiceLineIdx = 0;
                 }
 
-                objData->talkWaitTimer = rand_next(1000, 5000);
+                objData->talkWaitTimer = mathRnd(1000, 5000);
             }
 
             if (objData->talkWaitTimer > 0) {
                 objData->talkWaitTimer -= gUpdateRate;
             }
 
-            func_80024108(self, 0.005f, gUpdateRate, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
         }
     } else {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -192,21 +192,21 @@ void CFPrisonUncle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
     objData = self->data;  
     
     //Draw just the Perch (and not the CloudRunner Uncle) after the Uncle's escaped
-    if (main_get_bits(BIT_CRF_CloudRunner_Uncle_Escaped)) {
+    if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Escaped)) {
 
-        if (objData->perchObj && track_obj_vis_check(objData->perchObj)) {
-            draw_object(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
+        if (objData->perchObj && trackObjVisCheck(objData->perchObj)) {
+            objprintDrawModel(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
         }
 
         return;
     }
     
     //Draw CloudRunner Uncle and Perch after the uncle's been freed
-    if (main_get_bits(BIT_CRF_CloudRunner_Uncle_Freed) && visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Freed) && visibility) {
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        if (objData->perchObj && track_obj_vis_check(objData->perchObj)) {
-            draw_object(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
+        if (objData->perchObj && trackObjVisCheck(objData->perchObj)) {
+            objprintDrawModel(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
         }
 
         return;
@@ -222,7 +222,7 @@ void CFPrisonUncle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
         }
 
         //Draw perch
-        draw_object(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
 
         //Attach CloudRunner Uncle to the perch
         {
@@ -244,15 +244,15 @@ void CFPrisonUncle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
         }
 
         //Draw CloudRunner Uncle
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else {
         //Draw the Perch and the CloudRunner Uncle after the Uncle's been freed
-        if (track_obj_vis_check(objData->perchObj)) {
-            draw_object(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
+        if (trackObjVisCheck(objData->perchObj)) {
+            objprintDrawModel(objData->perchObj, gdl, mtxs, vtxs, pols, 1.0f);
         }
 
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -284,7 +284,7 @@ int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
     if (animData->lastMessage == 2) {
         objData->magicDropped = TRUE;
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;
@@ -297,7 +297,7 @@ int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        obj_create((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objSetupObject((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 
     return 0;
@@ -305,7 +305,7 @@ int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
 
 // offset: 0x9F8 | func: 8
 void CFPrisonUncle_reset_head_seqJoint(Object* self) {
-    SeqJoint* headJoint = (SeqJoint*)func_80034804(self, 0);
+    SeqJoint* headJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
     headJoint->pitch = 0;
     headJoint->yaw = 0;
 }
@@ -314,5 +314,5 @@ void CFPrisonUncle_reset_head_seqJoint(Object* self) {
 void CFPrisonUncle_animate_head_seqJoint(Object* self, Object* player) {
     CFPrisonUncle_Data *objData = self->data;
     
-    func_80032CF8(self, player, objData->headAnimators, 35);
+    objExpr_func_80032CF8(self, player, objData->headAnimators, 35);
 }

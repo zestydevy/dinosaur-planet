@@ -3,10 +3,51 @@
 #include "macros.h"
 
 #define THREAD_STACK_CONTROLLER 1024
+// The maximum number of buffered controller snapshots.
+#define MAX_BUFFERED_CONT_SNAPSHOTS 4
+
+/**
+ * Represents a single snapshot of each controller.
+ *
+ * In addition to raw OSContPad snapshots, includes bitfields for
+ * buttons being pressed and released.
+ */
+typedef struct _ControllersSnapshot {
+    /**
+     * A raw controller pad snapshot for each controller.
+     */
+    OSContPad pads[MAXCONTROLLERS];
+
+    /**
+     * For each controller, a button bitfield where set button bits indicate that
+     * the button was just pressed down.
+     */
+    u16 buttonPresses[MAXCONTROLLERS];
+
+    /**
+     * For each controller, a button bitfield where set button bits indicate that
+     * the button was just released.
+     */
+    u16 buttonReleases[MAXCONTROLLERS];
+} ControllersSnapshot;
 
 /* -------- .data start -------- */
+/**
+ * If TRUE, no controllers are inserted.
+ *
+ * @see joyInit
+ */
 s32 gNoControllers = 0;
 u16 D_8008C8A4 = 0xFFFF;
+/**
+ * For each controller, a mask applied to their button state.
+ *
+ * Ex. If the mask is 0x0000 then all buttons will be reported as 0
+ * regardless of whether they are actually pressed.
+ *
+ * At the end of each input frame (see joyControllerThreadEntry) this
+ * is reset to 0xFFFF for each controller.
+ */
 u16 gButtonMask[MAXCONTROLLERS] = { 0xFFFF, 0xFFFF, 0xFFFF, 0xFFFF };
 u8 gIgnoreJoystick = 0;
 u8 D_8008C8B4 = 0;
@@ -14,48 +55,191 @@ u8 D_8008C8B4 = 0;
 
 // TODO: bss size for this file is correct but IDO reorders it
 /* -------- .bss start 800a7db0 -------- */
+/**
+ * An index of gContSnapshots specifying which snapshot buffer contains previous controller snapshots.
+ *
+ * The index of current controller snapshots can be found by doing: gPrevContSnapshotsI ^ 1.
+ */
 u8 gPrevContSnapshotsI;
+/**
+ * Whether the controller thread should apply controller inputs to globals like gContPads
+ * after collecting controller interrupts.
+ *
+ * @see gContThreadMesgQueue and joyControllerThreadEntry for more info.
+ */
 u8 gApplyContInputs;
+/**
+ * For the current and previous controller snapshots, the number of snapshots that are buffered.
+ *
+ * @details Which index is which is determined by gPrevContSnapshotsI.
+ */
 u8 gNumBufContSnapshots[2];
+/**
+ * Pointers to 2 arrays, where one is an array of current controller snapshots
+ * and the other is an array of previous controller snapshots.
+ *
+ * @details Which array is currently which is determined by gPrevContSnapshotsI.
+ * Each array is a buffer of up to 4 snapshots. This is done to avoid missing controller
+ * interrupt data as it comes in on the queue, by being able to collect more than one at
+ * a time when processing input.
+ *
+ * @see joyControllerThreadEntry
+ */
 ControllersSnapshot *gContSnapshots[2];
+/**
+ * A buffer of controller snapshots, gContSnapshots[0] is a pointer to this.
+ */
 ControllersSnapshot gContSnapshotsBuffer0[MAX_BUFFERED_CONT_SNAPSHOTS];
+/**
+ * A buffer of controller snapshots, gContSnapshots[1] is a pointer to this.
+ */
 ControllersSnapshot gContSnapshotsBuffer1[MAX_BUFFERED_CONT_SNAPSHOTS];
+/**
+ * The message queue associated with SI controller interrupts.
+ *
+ * This is the same message queue that is passed to osContInit.
+ */
 OSMesgQueue gContInterruptQueue;
+/**
+ * A message queue for signalling when the controller thread should process controller
+ * interrupts and potentially to apply them to the controller globals that the game
+ * reads from for normal gameplay.
+ *
+ * - For every non-1 value sent to this queue, the controller thread will set a flag saying
+ * that next time the queue gets a value of 1 sent, it will process controller interrupts
+ * AND apply them to globals like gContPads.
+ * - For every value of 1 sent to this queue, the controller thread will process controller
+ * interrupts and if a non-1 value was previously sent also apply them to globals like gContPads.
+ *
+ * While messages are not sent to this queue, the controller thread will block.
+ *
+ * Usually, 0xA, 0x1 is repeatedly sent each frame or so (not sure exactly when, but its related
+ * to game ticks) to process controller input.
+ *
+ * See joyControllerThreadEntry for details.
+ */
 OSMesgQueue gContThreadMesgQueue;
+/**
+ * When the controller thread applies controller inputs to input globals used by normal
+ * gameplay functions, a message is sent to this queue to signal this.
+ */
 OSMesgQueue gContThreadInputsAppliedQueue;
-OSMesg gContInterruptBuffer[CONT_INTERRUPT_BUFFER_LENGTH];
-OSMesg gContThreadMesgQueueBuffer[CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH];
-OSMesg gContThreadInputsAppliedQueueBuffer[CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH];
+OSMesg gContInterruptBuffer[2];
+OSMesg gContThreadMesgQueueBuffer[8];
+OSMesg gContThreadInputsAppliedQueueBuffer[1];
+/**
+ * Message sent to the gContInterruptQueue when an SI interrupt occurs.
+ */
 OSMesg gContInterruptMessage;
+/**
+ * The status and type of each controller (SI device).
+ */
 OSContStatus gContStatuses[MAXCONTROLLERS];
+/**
+ * Current inputs of each controller.
+ *
+ * @details This data is created by combining multiple buffered controller snapshots
+ * from gContSnapshots.
+ */
 OSContPad gContPads[MAXCONTROLLERS];
+/**
+ * For each controller, a bitfield of buttons that were just pressed.
+ */
 u16 gButtonPresses[MAXCONTROLLERS];
+/**
+ * For each controller, a bitfield of buttons that were just released.
+ */
 u16 gButtonReleases[MAXCONTROLLERS];
+/**
+ * Maps virtual controller ports to physical ports.
+ *
+ * Ex. gVirtualToPhysicalContPorts[virtualPort] = physicalPort
+ */
 u8 gVirtualContPortMap[MAXCONTROLLERS];
+/**
+ * Internal joystick X values per controller from last input frame used to set gMenuJoyXSign.
+ *
+ * @see gMenuJoyXSign, joyControllerThreadEntry
+ */
 s8 gLastJoyX[MAXCONTROLLERS];
+/**
+ * Internal joystick Y values per controller from last input frame used to set gMenuJoyYSign.
+ *
+ * @see gMenuJoyYSign, joyControllerThreadEntry
+ */
 s8 gLastJoyY[MAXCONTROLLERS];
+/**
+ * Increments from [0, gMenuJoystickDelay) while abs(joystick X) > 35.
+ * Once it reaches gMenuJoystickDelay - 1, resets back to 0.
+ */
 s8 gMenuJoyXHoldTimer[MAXCONTROLLERS];
+/**
+ * Increments from [0, gMenuJoystickDelay) while abs(joystick Y) > 35.
+ * Once it reaches gMenuJoystickDelay - 1, resets back to 0.
+ */
 s8 gMenuJoyYHoldTimer[MAXCONTROLLERS];
+/**
+ * For each controller, a value indicating that the joystick X axis is pushed
+ * in a direction and that for the current frame it should result in X-axis menu movement.
+ *
+ * @details The joystick must be held in a direction for gMenuJoystickDelay frames
+ * before the sign will be non-zero here, and it will remain non-zero just for the
+ * one frame until the stick is held for another gMenuJoystickDelay frames.
+ * This effectively allows the user to hold the joystick in a direction to move between
+ * menus without it being too fast.
+ *
+ * @see gMenuJoystickDelay, gMenuJoyXHoldTimer
+ */
 s8 gMenuJoyXSign[MAXCONTROLLERS];
+/**
+ * For each controller, a value indicating that the joystick Y axis is pushed
+ * in a direction and that for the current frame it should result in Y-axis menu movement.
+ *
+ * @details The joystick must be held in a direction for gMenuJoystickDelay frames
+ * before the sign will be non-zero here, and it will remain non-zero just for the
+ * one frame until the stick is held for another gMenuJoystickDelay frames.
+ * This effectively allows the user to hold the joystick in a direction to move between
+ * menus without it being too fast.
+ *
+ * @see gMenuJoystickDelay, gMenuJoyYHoldTimer
+ */
 s8 gMenuJoyYSign[MAXCONTROLLERS];
 OSThread gControllerThread;
 u64 gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)+1];
 OSScClient gContSchedulerClient;
+/**
+ * The address of this message is sent to gContThreadMesgQueue.
+ *
+ * @see gContThreadMesgQueue for more info.
+ */
 s16 gContQueue2Message;
 u8 _unk800A861A[0x1E]; // gap
+/**
+ * The number of controller input frames that a joystick axis must be held
+ * before menu movement will automatically occur.
+ *
+ * For ex. if the user move the joystick down, the menu selection will move
+ * instantly initially but then wait this many input frames before moving again
+ * while the joystick is held.
+ *
+ * Defaults to 5.
+ */
 s8 gMenuJoystickDelay;
 /* -------- .bss end 800a8640 -------- */
+
+void joyControllerThreadEntry(void *arg);
+s8 joyHandleStickDeadzone(s8 stick);
 
 /**
  * @returns The message queue associated with SI controller interrupts.
  * This is the same message queue that is passed to osContInit.
  * Offical name: joyMessageQ
  */
-OSMesgQueue *joy_get_mesgq(void) {
+OSMesgQueue *joyMessageQ(void) {
     return &gContInterruptQueue;
 }
 
-void joy_read_nonblocking(void) {
+void joyReadNonblocking(void) {
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
 }
@@ -67,7 +251,7 @@ void joy_read_nonblocking(void) {
  *
  * @see gContThreadMesgQueue
  */
-void joy_read(void) {
+void joyRead(void) {
     // Tell controller thread to apply controller inputs
     gContQueue2Message = 0xA;
     osSendMesg(&gContThreadMesgQueue, (OSMesg)&gContQueue2Message, OS_MESG_NOBLOCK);
@@ -77,7 +261,7 @@ void joy_read(void) {
 }
 
 // Official name: joyInit
-s32 joy_init(void) {
+s32 joyInit(void) {
     s32 lastControllerIndex;
     s32 i;
     // Bits 0-3 specify which controllers are inserted
@@ -89,7 +273,7 @@ s32 joy_init(void) {
     osCreateMesgQueue(
         &gContInterruptQueue,
         &gContInterruptBuffer[0],
-        CONT_INTERRUPT_BUFFER_LENGTH);
+        ARRAYCOUNT(gContInterruptBuffer));
 
     osSetEventMesg(OS_EVENT_SI, &gContInterruptQueue, gContInterruptMessage);
 
@@ -99,7 +283,7 @@ s32 joy_init(void) {
     osContStartReadData(&gContInterruptQueue);
 
     // Set default controller virtual->physical port mapping
-    joy_reset_map();
+    joyResetMap();
 
     // Initialize controller input globals and determine how many controllers are inserted
     gNoControllers = FALSE;
@@ -130,11 +314,11 @@ s32 joy_init(void) {
     return lastControllerIndex;
 }
 
-void joy_start_controller_thread(OSSched *scheduler) {
+void joyStartControllerThread(OSSched *scheduler) {
     osCreateMesgQueue(
         /*mq*/      &gContThreadMesgQueue,
         /*msg*/     &gContThreadMesgQueueBuffer[0],
-        /*count*/   CONT_THREAD_MESG_QUEUE_BUFFER_LENGTH
+        /*count*/   ARRAYCOUNT(gContThreadMesgQueueBuffer)
     );
 
     osScAddClient(scheduler, &gContSchedulerClient, &gContThreadMesgQueue, OS_SC_ID_VIDEO);
@@ -142,14 +326,14 @@ void joy_start_controller_thread(OSSched *scheduler) {
     osCreateMesgQueue(
         /*mq*/      &gContThreadInputsAppliedQueue,
         /*msg*/     &gContThreadInputsAppliedQueueBuffer[0],
-        /*count*/   CONT_THREAD_INPUTS_APPLIED_QUEUE_BUFFER_LENGTH
+        /*count*/   ARRAYCOUNT(gContThreadInputsAppliedQueueBuffer)
     );
 
     // Create and start controller thread
     osCreateThread(
         /*t*/       &gControllerThread,
         /*id*/      CONTROLLER_THREAD_ID,
-        /*entry*/   &joy_controller_thread_entry,
+        /*entry*/   &joyControllerThreadEntry,
         /*arg*/     NULL,
         /*sp*/      &gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)],
         /*pri*/     12
@@ -158,7 +342,7 @@ void joy_start_controller_thread(OSSched *scheduler) {
     osStartThread(&gControllerThread);
 }
 
-void joy_controller_thread_entry(void* arg) {
+void joyControllerThreadEntry(void* arg) {
     ControllersSnapshot* currSnap;
     ControllersSnapshot* compSnap;
     s16* message;
@@ -284,7 +468,7 @@ void joy_controller_thread_entry(void* arg) {
 }
 
 // Official name: joyResetMap
-void joy_reset_map(void) {
+void joyResetMap(void) {
     s32 i;
     for (i = 0; i < 4; i++) {
         gVirtualContPortMap[i] = i;
@@ -297,7 +481,7 @@ void joy_reset_map(void) {
  *
  * Official name: joyCreateMap
  */
-void joy_create_map(s8 activePlayers[MAXCONTROLLERS]) {
+void joyCreateMap(s8 activePlayers[MAXCONTROLLERS]) {
     int i;
     int k;
 
@@ -323,14 +507,14 @@ void joy_create_map(s8 activePlayers[MAXCONTROLLERS]) {
  *
  * Official name: joyGetController
  */
-u8 joy_get_controller(int virtualPort) {
+u8 joyGetController(int virtualPort) {
     return gVirtualContPortMap[virtualPort];
 }
 
 /**
  * Swaps the first 2 virtual controller ports.
  */
-void joy_swap_controllers(void) {
+void joySwapControllers(void) {
     u8 port0 = gVirtualContPortMap[0];
 
     gVirtualContPortMap[0] = gVirtualContPortMap[1];
@@ -338,7 +522,7 @@ void joy_swap_controllers(void) {
 }
 
 // Official name: joyGetButtons
-u16 joy_get_buttons(int port) {
+u16 joyGetButtons(int port) {
     if (port > 0) {
         return 0;
     }
@@ -346,7 +530,7 @@ u16 joy_get_buttons(int port) {
     return gContPads[gVirtualContPortMap[port]].button & gButtonMask[port];
 }
 
-u16 joy_get_buttons_buffered(int port, int buffer) {
+u16 joyGetButtonsBuffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -369,7 +553,7 @@ u16 joy_get_buttons_buffered(int port, int buffer) {
 }
 
 // Official name: joyGetPressed
-u16 joy_get_pressed(int port) {
+u16 joyGetPressed(int port) {
     if (port > 0) {
         return 0;
     }
@@ -377,7 +561,7 @@ u16 joy_get_pressed(int port) {
     return gButtonPresses[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-u16 joy_get_pressed_raw(int port) {
+u16 joyGetPressedRaw(int port) {
     if (port > 0) {
         return 0;
     }
@@ -385,7 +569,7 @@ u16 joy_get_pressed_raw(int port) {
     return gButtonPresses[gVirtualContPortMap[port]];
 }
 
-u16 joy_get_pressed_buffered(int port, int buffer) {
+u16 joyGetPressedBuffered(int port, int buffer) {
     ControllersSnapshot *snapshot;
 
     if (port > 0) {
@@ -405,7 +589,7 @@ u16 joy_get_pressed_buffered(int port, int buffer) {
 }
 
 // Official name: joyGetReleased
-u16 joy_get_released(int port) {
+u16 joyGetReleased(int port) {
     if (port > 0) {
         return 0;
     }
@@ -413,7 +597,7 @@ u16 joy_get_released(int port) {
     return gButtonReleases[gVirtualContPortMap[port]] & gButtonMask[port];
 }
 
-u16 joy_get_released_buffered(int port, int buffer) {
+u16 joyGetReleasedBuffered(int port, int buffer) {
     ControllersSnapshot *snapshot;
 
     if (port > 0) {
@@ -433,15 +617,15 @@ u16 joy_get_released_buffered(int port, int buffer) {
 }
 
 // Official name: joyGetStickX
-s8 joy_get_stick_x(int port) {
+s8 joyGetStickX(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return joy_handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_x);
+        return joyHandleStickDeadzone(gContPads[gVirtualContPortMap[port]].stick_x);
     }
 }
 
-s8 joy_get_stick_x_buffered(int port, int buffer) {
+s8 joyGetStickXBuffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -460,19 +644,19 @@ s8 joy_get_stick_x_buffered(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return joy_handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_x);
+    return joyHandleStickDeadzone(pads[gVirtualContPortMap[port]].stick_x);
 }
 
 // Official name: joyGetStickY
-s8 joy_get_stick_y(int port) {
+s8 joyGetStickY(int port) {
     if (port > 0) {
         return 0;
     } else {
-        return joy_handle_joystick_deadzone(gContPads[gVirtualContPortMap[port]].stick_y);
+        return joyHandleStickDeadzone(gContPads[gVirtualContPortMap[port]].stick_y);
     }
 }
 
-s8 joy_get_stick_y_buffered(int port, int buffer) {
+s8 joyGetStickYBuffered(int port, int buffer) {
     OSContPad *pads;
     ControllersSnapshot *snapshot;
 
@@ -491,10 +675,10 @@ s8 joy_get_stick_y_buffered(int port, int buffer) {
 
     pads = snapshot->pads;
 
-    return joy_handle_joystick_deadzone(pads[gVirtualContPortMap[port]].stick_y);
+    return joyHandleStickDeadzone(pads[gVirtualContPortMap[port]].stick_y);
 }
 
-void joy_get_stick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
+void joyGetStickMenuXYSign(int port, s8 *xSign, s8 *ySign) {
     *xSign = gMenuJoyXSign[gVirtualContPortMap[port]];
     *ySign = gMenuJoyYSign[gVirtualContPortMap[port]];
 }
@@ -511,7 +695,7 @@ void joy_get_stick_menu_xy_sign(int port, s8 *xSign, s8 *ySign) {
  *
  * Returns a joystick axis value between [-70, 70].
  */
-s8 joy_handle_joystick_deadzone(s8 stick) {
+s8 joyHandleStickDeadzone(s8 stick) {
     s8 adjustedStick;
 
     if (gIgnoreJoystick) {
@@ -544,27 +728,27 @@ s8 joy_handle_joystick_deadzone(s8 stick) {
 }
 
 // Official name: joySetSecurity
-void joy_set_security(void) {
+void joySetSecurity(void) {
     D_8008C8A4 = 0;
 }
 
-void joy_disable_buttons(int port, u16 buttons) {
+void joyDisableButtons(int port, u16 buttons) {
     gButtonMask[port] &= ~buttons;
 }
 
 // Clear joystick x/y to zero until the next controller read.
-void joy_reset_joystick(int _) {
+void joyDisableStick(int _) {
     gIgnoreJoystick = TRUE;
 }
 
-void joy_set_menu_joystick_delay(s8 delay) {
+void joySetMenuStickDelay(s8 delay) {
     gMenuJoystickDelay = delay;
 }
 
-void joy_reset_menu_joystick_delay(void) {
+void joyResetMenuStickDelay(void) {
     gMenuJoystickDelay = 5;
 }
 
-int ret1_800112d8(void) {
+int joy_func_800112d8(void) {
     return 1;
 }

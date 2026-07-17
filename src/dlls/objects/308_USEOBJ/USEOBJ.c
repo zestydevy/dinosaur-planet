@@ -60,8 +60,8 @@ void UseObj_setup(Object *self, UseObj_Setup *setup, s32 reset) {
     }
 
     objdata = self->data;
-    objdata->used = main_get_bits(setup->gamebitUsed);
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objdata->used = mainGetBits(setup->gamebitUsed);
+    objAddObjectType(self, OBJTYPE_UseObj);
 
     if ((setup->flags & USEOBJ_HideIfAlreadyUsed) && objdata->used) {
         self->opacity = 0;
@@ -76,12 +76,12 @@ void UseObj_control(Object *self) {
 
     objdata = self->data;
     setup = (UseObj_Setup*)self->setup;
-    objdata->used = main_get_bits(setup->gamebitUsed);
+    objdata->used = mainGetBits(setup->gamebitUsed);
 
     if (objdata->used == FALSE) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         if (setup->gamebitEnabled != NO_GAMEBIT) {
-            if (main_get_bits(setup->gamebitEnabled)) {
+            if (mainGetBits(setup->gamebitEnabled)) {
                 self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
             } else {
                 self->unkAF |= ARROW_FLAG_10_Greyed_Out;
@@ -101,15 +101,15 @@ void UseObj_control(Object *self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
             }
             if (!(setup->flags & USEOBJ_SeqControlsUsedBit)) {
-                main_set_bits(setup->gamebitUsed, TRUE);
+                mainSetBits(setup->gamebitUsed, TRUE);
             }
             if (setup->flags & USEOBJ_DisableAfterUse) {
-                main_set_bits(setup->gamebitEnabled, FALSE);
+                mainSetBits(setup->gamebitEnabled, FALSE);
             } else {
                 objdata->used = TRUE;
                 self->unkDC = 1;
             }
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     } else {
         if (self->unkDC == 0) {
@@ -138,20 +138,20 @@ void UseObj_control(Object *self) {
 // offset: 0x3B8 | func: 2 | export: 2
 void UseObj_update(Object *self) {
     if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 
 // offset: 0x410 | func: 3 | export: 3
 void UseObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x464 | func: 4 | export: 4
 void UseObj_free(Object *self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x4A4 | func: 5 | export: 5
@@ -172,7 +172,7 @@ static int UseObj_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     if (animObjData->lastMessage != 0) {
         if ((setup->flags & USEOBJ_SeqControlsUsedBit) && animObjData->lastMessage == 1) {
-            main_set_bits(setup->gamebitUsed, TRUE);
+            mainSetBits(setup->gamebitUsed, TRUE);
         }
         if (animObjData->lastMessage == 2) {
             if (setup->replayStartTime != 0) {

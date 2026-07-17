@@ -2,7 +2,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/camera.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/exception.h"
 #include "sys/map.h"
 #include "sys/objects.h"
@@ -39,15 +39,12 @@ u8 BYTE_800b2e22;
 u8 BYTE_800b2e23;
 // -------- .bss end 800b2e30 -------- //
 
-void func_800357B4(Object*, ModelInstance*, Model*);
-ModelInstance *func_80035AF4(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
-void func_80036890(Object*, s32);
-void func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
-// should be in model.h
-void func_80019730(ModelInstance* arg0, Model* arg1, Object* arg2, MtxF* arg3);
-void func_8001A8EC(ModelInstance* modelInst, Model* model, Object* obj, MtxF* arg3, Object* obj2);
+void objprint_func_800357B4(Object*, ModelInstance*, Model*);
+ModelInstance *objprintDrawChildModel(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
+void objprint_func_80036890(Object*, s32);
+void objprint_func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
 
-void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
+void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
     if (obj->stateFlags & OBJSTATE_DESTROYED) {
         return;
     }
@@ -67,31 +64,31 @@ void objprint_func(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object
     }
 
     update_pi_manager_array(2, obj->id);
-    dl_add_debug_info(*gdl, obj->id, "objects/objprint.c", 426);
+    diRcpTrace(*gdl, obj->id, "objects/objprint.c", 426);
     if (obj->dll != NULL) {
         if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
-            obj->dll->vtbl->print(obj, gdl, mtxs, vtxs, tris, visibility);
+            obj->dll->vtbl->Print(obj, gdl, mtxs, vtxs, tris, visibility);
         } else if (visibility != 0) {
-            draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
+            objprintDrawModel(obj, gdl, mtxs, vtxs, tris, 1.0f);
         }
     } else if (visibility != 0) {
-        draw_object(obj, gdl, mtxs, vtxs, tris, 1.0f);
+        objprintDrawModel(obj, gdl, mtxs, vtxs, tris, 1.0f);
     }
     if (obj->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH) {
-        obj_handle_model_switch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
+        objHandleModelSwitch(obj, obj->modelInsts[obj->modelInstIdx], obj->modelInsts[obj->modelInstIdx]->model);
     }
     if (obj->linkedObject != NULL && (obj->linkedObject->stateFlags & OBJSTATE_PENDING_MODEL_SWITCH)) {
-        obj_handle_model_switch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
+        objHandleModelSwitch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
-    dl_add_debug_info(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
+    diRcpTrace(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
     update_pi_manager_array(2, -1);
 }
 
-void func_80034FF0(MtxF* arg0) {
+void objprintSetModelMatrixOverride(MtxF* arg0) {
     PTR_DAT_800b2e1c = arg0;
 }
 
-void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
+void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
     s32 opacity;
     ModelInstance* modelInst;
     Model* model;
@@ -145,7 +142,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         blendB = blendG = blendR = 0xFF;
     }
     if (obj->def->numAnimatedFrames > 0) {
-        func_80036890(obj, 2);
+        objprint_func_80036890(obj, 2);
     }
     if (BYTE_80091754 != 0) {
         var_v0 = (blendR * SHORT_800b2e14) >> 8;
@@ -175,7 +172,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     }
     parentObj = obj->parent;
     if (parentObj != NULL) {
-        setup_rsp_matrices_for_object(&tempGdl, &tempMtxs, parentObj);
+        camSetupRSPMatricesForObject(&tempGdl, &tempMtxs, parentObj);
         spC4 = obj->srt.transl.f[0];
         spC0 = obj->srt.transl.f[1];
         spBC = obj->srt.transl.f[2];
@@ -199,34 +196,34 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             spDC.transl.f[0] += gWorldX;
             spDC.transl.f[2] += gWorldZ;
         }
-        camera_setup_object_srt_matrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(&tempGdl, &tempMtxs, &spDC, 1.0f, 0.0f, NULL);
         gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(obj->shadow->gdl));
-        dl_set_all_dirty();
-        tex_render_reset();
+        dlSetAllDirty();
+        texRenderReset();
     }
     if (!(obj->srt.flags & OBJFLAG_SHADOW_ONLY)) {
         if (!(modelInst->unk34 & 8)) {
             if ((model->animCount != 0) && !(model->unk71 & 2)) {
                 if (PTR_DAT_800b2e1c == 0) {
-                    func_8001943C(obj, &sp78, yPrescale, 0.0f);
-                    func_80019730(modelInst, model, obj, &sp78);
+                    mod_func_8001943C(obj, &sp78, yPrescale, 0.0f);
+                    mod_func_80019730(modelInst, model, obj, &sp78);
                 } else {
-                    func_80019730(modelInst, model, obj, PTR_DAT_800b2e1c);
+                    mod_func_80019730(modelInst, model, obj, PTR_DAT_800b2e1c);
                 }
             } else {
                 modelInst->unk34 ^= 1;
                 sp70 = modelInst->matrices[modelInst->unk34 & 1];
                 if (PTR_DAT_800b2e1c == 0) {
-                    func_8001943C(obj, sp70, yPrescale, 0.0f);
+                    mod_func_8001943C(obj, sp70, yPrescale, 0.0f);
                 } else {
                     bcopy((void* ) PTR_DAT_800b2e1c, sp70, 0x40);
                 }
-                add_matrix_to_pool(sp70, 1);
+                camAddMatrixToPool(sp70, 1);
             }
             modelInst->unk34 ^= 2;
             if ((obj->def->flags & OBJDEF_FLAG10) || (model->blendshapes != NULL)) {
                 if (model->blendshapes != NULL) {
-                    func_8001B100(modelInst);
+                    mod_func_8001B100(modelInst);
                 }
                 if (obj->def->flags & OBJDEF_FLAG10) {
                     func_8001DF60(obj, modelInst);
@@ -239,10 +236,10 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
                 func_8001F094(modelInst);
             }
             if (obj->unk74 != NULL) {
-                func_80036438(obj);
+                objprintUpdateLockIconCoords(obj);
             }
             if (model->hitSphereCount != 0) {
-                func_8001A8EC(modelInst, model, obj, 0, obj);
+                mod_func_8001A8EC(modelInst, model, obj, 0, obj);
             } else if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20)) {
                 if (obj->objhitInfo->unk9F != 0) {
                     obj->objhitInfo->unk9F--;
@@ -250,34 +247,34 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
             }
         }
         if (model->unk71 & 4) {
-            dl_set_env_color(&tempGdl, blendR, blendG, blendB, BYTE_800b2e23);
+            dlSetEnvColor(&tempGdl, blendR, blendG, blendB, BYTE_800b2e23);
         }
-        dl_set_prim_color(&tempGdl, blendR, blendG, blendB, opacity);
+        dlSetPrimColor(&tempGdl, blendR, blendG, blendB, opacity);
         if (!(obj->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment(tempGdl++, SEGMENT_3, modelInst->matrices[modelInst->unk34 & 1]);
             gSPSegment(tempGdl++, SEGMENT_5, modelInst->vertices[((s32) modelInst->unk34 >> 1) & 1]);
             if (opacity == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
-                    load_model_display_list(model, modelInst);
+                    modLoadModelDisplayList(model, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             } else {
                 if (!(modelInst->unk34 & 0x10)) {
-                    load_model_display_list2(model, modelInst);
+                    modLoadModelDisplayList2(model, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             }
             gSPDisplayList(tempGdl++, OS_PHYSICAL_TO_K0(modelInst->displayList));
-            dl_set_all_dirty();
-            tex_render_reset();
+            dlSetAllDirty();
+            texRenderReset();
         }
         if (obj->linkedObject != NULL) {
-            func_80035AF4(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
+            objprintDrawChildModel(&tempGdl, &tempMtxs, &tempVtxs, &tempTris, obj, modelInst, &sp78, 0, 
                 obj->linkedObject, obj->stateFlags & OBJSTATE_UNK_ATTACH_INDEX_MASK, (u8)opacity);
         }
     }
     if ((obj->objhitInfo != NULL) && (obj->objhitInfo->unk5A & 0x20) && (modelInst->unk14 != NULL)) {
-        func_800357B4(obj, modelInst, modelInst->model);
+        objprint_func_800357B4(obj, modelInst, modelInst->model);
     }
     modelInst->unk34 |= 8;
     if (parentObj != NULL) {
@@ -285,7 +282,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
         obj->srt.transl.f[1] = spC0;
         obj->srt.transl.f[2] = spBC;
         obj->srt.yaw = spBA;
-        camera_load_parent_projection(&tempGdl);
+        camLoadParentProjection(&tempGdl);
     }
     *gdl = tempGdl;
     *mtxs = tempMtxs;
@@ -293,7 +290,7 @@ void draw_object(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** t
     *tris = tempTris;
 }
 
-void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
+void objprint_func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     f32* temp_v0_2;
     Vec3f* var_s0;
     MtxF* var_v1;
@@ -321,18 +318,17 @@ void func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
         return;
     }
 
-    matrix_from_srt(&sp54, &arg0->parent->srt);
+    mathYprXyzMtx(&sp54, &arg0->parent->srt);
     var_s0 = arg1->unk14->unk0;
     for (i = 0; i < arg2->jointCount; i++) {
-        vec3_transform(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], &var_s0->f[0], &var_s0->f[1], &var_s0->f[2]);
+        mathMtxXFMF(&sp54, var_s0->f[0], var_s0->f[1], var_s0->f[2], &var_s0->f[0], &var_s0->f[1], &var_s0->f[2]);
         var_s0->f[0] -= gWorldX;
         var_s0->f[2] -= gWorldZ;
         var_s0 += 1;
     }
 }
 
-void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6)
-{
+void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6) {
     Gfx *mygdl;
     Mtx *outRspMtxs;
     void *d;
@@ -359,14 +355,14 @@ void func_800359D0(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangl
     gSPSegment(mygdl++, SEGMENT_5, modelInst2->vertices[(modelInst2->unk34 >> 1) & 0x1]);
     gSPDisplayList(mygdl++, OS_K0_TO_PHYSICAL(modelInst2->displayList));
 
-    dl_set_all_dirty();
-    tex_render_reset();
+    dlSetAllDirty();
+    texRenderReset();
 
     *gdl = mygdl;
     *rspMtxs = outRspMtxs;
 }
 
-ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
+ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
     MtxF* sp74;
     s32 sp70;
     ModelInstance* modelInst;
@@ -378,7 +374,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
     D_800B2E10 = 0;
 
     if (arg8->def->numAnimatedFrames > 0) {
-        func_80036890(arg8, 2);
+        objprint_func_80036890(arg8, 2);
     }
     modelInst = arg8->modelInsts[arg8->modelInstIdx];
     if (modelInst != NULL && !(arg5->unk34 & 8)) {
@@ -392,30 +388,30 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             sp4C.yaw = arg4->def->pAttachPoints[arg9].rot.s[0];
             sp4C.pitch = arg4->def->pAttachPoints[arg9].rot.s[1];
             sp4C.roll = arg4->def->pAttachPoints[arg9].rot.s[2];
-            matrix_from_srt(arg6, &sp4C);
-            matrix_concat_4x3(arg6, (MtxF*)&((f32*)arg5->matrices[arg5->unk34 & 1])[sp70 << 4], arg6);
+            mathYprXyzMtx(arg6, &sp4C);
+            mathMtxCat4x3F(arg6, (MtxF*)&((f32*)arg5->matrices[arg5->unk34 & 1])[sp70 << 4], arg6);
         } else {
             // required to match
         }
         if (sp64->animCount != 0) {
             D_800B2E10 = arg6;
-            func_80019730(modelInst, sp64, arg8, arg6);
+            mod_func_80019730(modelInst, sp64, arg8, arg6);
             sp74 = modelInst->matrices[modelInst->unk34 & 1];
-            func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
+            objprint_func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
         } else {
             modelInst->unk34 ^= 1;
             arg7 = modelInst->matrices[modelInst->unk34 & 1];
             for (i = 0; i < 16; i++) {
                 ((f32*)arg7->m)[i] = ((f32*)arg6->m)[i];
             }
-            func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
-            add_matrix_to_pool(arg7, 1);
+            objprint_func_80036058(arg8, arg4, modelInst, arg0, arg1, arg2);
+            camAddMatrixToPool(arg7, 1);
             D_800B2E10 = sp74 = arg7;
         }
         modelInst->unk34 ^= 2;
         if ((arg8->def->flags & OBJDEF_FLAG10) || (sp64->blendshapes != NULL)) {
             if (sp64->blendshapes != NULL) {
-                func_8001B100(modelInst);
+                mod_func_8001B100(modelInst);
             }
             func_8001DF60(arg8, modelInst);
         }
@@ -423,23 +419,23 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
             func_8001F094(modelInst);
         }
         if (sp64->hitSphereCount != 0) {
-            func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
+            mod_func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
         }
         if (!(arg4->srt.flags & OBJFLAG_SKIP_MODEL_DL)) {
             gSPSegment((*arg0)++, SEGMENT_3, sp74);
             gSPSegment((*arg0)++, SEGMENT_5, modelInst->vertices[(modelInst->unk34 >> 1) & 1]);
             if ((u8) arg10 == 0xFF) {
                 if (modelInst->unk34 & 0x10) {
-                    load_model_display_list(sp64, modelInst);
+                    modLoadModelDisplayList(sp64, modelInst);
                     modelInst->unk34 ^= 0x10;
                 }
             } else if (!(modelInst->unk34 & 0x10)) {
-                load_model_display_list2(sp64, modelInst);
+                modLoadModelDisplayList2(sp64, modelInst);
                 modelInst->unk34 ^= 0x10;
             }
             gSPDisplayList((*arg0)++, OS_PHYSICAL_TO_K0(modelInst->displayList));
-            dl_set_all_dirty();
-            tex_render_reset();
+            dlSetAllDirty();
+            texRenderReset();
             // @fake
             if (D_800B2E10) {}
         }
@@ -447,7 +443,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         arg8->srt.transl.f[1] = D_800B2E10->m[3][1];
         arg8->srt.transl.f[2] = D_800B2E10->m[3][2];
         if (arg8->parent != NULL) {
-            transform_point_by_object(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
+            camTransformPointByObject(arg8->srt.transl.f[0], arg8->srt.transl.f[1], arg8->srt.transl.f[2], arg8->globalPosition.f, &arg8->globalPosition.f[1], &arg8->globalPosition.f[2], arg8->parent);
         } else {
             arg8->srt.transl.f[0] += gWorldX;
             arg8->srt.transl.f[2] += gWorldZ;
@@ -457,11 +453,11 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
         }
         if (arg8->def->numAttachPoints >= 2 && arg8->controlNo == OBJCONTROL_Weapon) {
             if (arg8->parent != NULL) {
-                camera_load_parent_projection(arg0);
+                camLoadParentProjection(arg0);
             }
             ((DLL_IGROUP_48 *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
             if (arg8->parent != NULL) {
-                setup_rsp_matrices_for_object(arg0, arg1, arg8->parent);
+                camSetupRSPMatricesForObject(arg0, arg1, arg8->parent);
             }
         }
     }
@@ -469,7 +465,7 @@ ModelInstance *func_80035AF4(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** a
     return modelInst;
 }
 
-void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     MtxF* tempMtx;
     s32 j;
     s32 boneId;
@@ -491,9 +487,9 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
             sp7C.f[0] = obj->def->pAttachPoints[j + 1].pos.f[0];
             sp7C.f[1] = obj->def->pAttachPoints[j + 1].pos.f[1];
             sp7C.f[2] = obj->def->pAttachPoints[j + 1].pos.f[2];
-            vec3_transform(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
+            mathMtxXFMF(tempMtx, sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2]);
             if (otherObj->parent != NULL) {
-                transform_point_by_object(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
+                camTransformPointByObject(sp7C.f[0], sp7C.f[1], sp7C.f[2], &sp7C.f[0], &sp7C.f[1], &sp7C.f[2], otherObj->parent);
             } else {
                 sp7C.f[0] += gWorldX;
                 sp7C.f[2] += gWorldZ;
@@ -508,9 +504,9 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
             sp70.f[0] = obj->def->pAttachPoints[j].pos.f[0];
             sp70.f[1] = obj->def->pAttachPoints[j].pos.f[1];
             sp70.f[2] = obj->def->pAttachPoints[j].pos.f[2];
-            vec3_transform(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
+            mathMtxXFMF(tempMtx, sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2]);
             if (otherObj->parent != NULL) {
-                transform_point_by_object(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
+                camTransformPointByObject(sp70.f[0], sp70.f[1], sp70.f[2], &sp70.f[0], &sp70.f[1], &sp70.f[2], otherObj->parent);
             } else {
                 sp70.f[0] += gWorldX;
                 sp70.f[2] += gWorldZ;
@@ -528,13 +524,13 @@ void func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx*
         sp7C.f[0] -= sp70.f[0];
         sp7C.f[1] -= sp70.f[1];
         sp7C.f[2] -= sp70.f[2];
-        obj->srt.yaw = arctan2_f(sp7C.x, sp7C.z);
-        obj->srt.pitch = 0x4000 - arctan2_f(sp7C.y, sqrtf(SQ(sp7C.z) + SQ(sp7C.x)));
+        obj->srt.yaw = mathAtan2f(sp7C.x, sp7C.z);
+        obj->srt.pitch = 0x4000 - mathAtan2f(sp7C.y, sqrtf(SQ(sp7C.z) + SQ(sp7C.x)));
         obj->srt.roll = 0;
     }
 }
 
-void func_80036438(Object* arg0) {
+void objprintUpdateLockIconCoords(Object* arg0) {
     ObjDefLockData* sp11C;
     ObjectStruct74* sp118;
     MtxF* temp_s4;
@@ -561,28 +557,28 @@ void func_80036438(Object* arg0) {
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
             if (sp11C->flags & 0x10) {
-                vec3_transform(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+                mathMtxXFMF(temp_s4, 0.0f, 0.0f, 0.0f, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
                 sp118[i].refPoint.f[0] += temp_fs0;
                 sp118[i].refPoint.f[1] += temp_fs1;
                 sp118[i].refPoint.f[2] += temp_fs2;
             } else {
-                vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+                mathMtxXFMF(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             }
             if (arg0->parent == NULL) {
                 sp118[i].drawPoint.f[0] += gWorldX;
                 sp118[i].drawPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].drawPoint, &sp118[i].drawPoint, arg0->parent->matrixIdx);
+                camTransformPointByObjectMatrix(&sp118[i].drawPoint, &sp118[i].drawPoint, arg0->parent->matrixIdx);
             }
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
+            mathMtxXFMF(temp_s4, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
             if (arg0->parent == NULL) {
                 sp118[i].refPoint.f[0] += gWorldX;
                 sp118[i].refPoint.f[2] += gWorldZ;
             } else {
-                transform_point_by_object_matrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
+                camTransformPointByObjectMatrix(&sp118[i].refPoint, &sp118[i].refPoint, arg0->parent->matrixIdx);
             }
         } else {
             spA8.transl.f[0] = arg0->globalPosition.f[0];
@@ -598,25 +594,25 @@ void func_80036438(Object* arg0) {
                 spA8.roll = arg0->srt.roll;
             }
             spA8.scale = 1.0f;
-            matrix_from_srt(&spC0, &spA8);
+            mathYprXyzMtx(&spC0, &spA8);
             temp_fs0 = sp11C[i].unk00 * 2;
             temp_fs1 = sp11C[i].unk02 * 2;
             temp_fs2 = sp11C[i].unk04 * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
+            mathMtxXFMF(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].drawPoint.f[0], &sp118[i].drawPoint.f[1], &sp118[i].drawPoint.f[2]);
             temp_fs0 = sp11C[i].unk06 * 2;
             temp_fs1 = sp11C[i].unk08 * 2;
             temp_fs2 = sp11C[i].unk0a * 2;
-            vec3_transform(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
+            mathMtxXFMF(&spC0, temp_fs0, temp_fs1, temp_fs2, &sp118[i].refPoint.f[0], &sp118[i].refPoint.f[1], &sp118[i].refPoint.f[2]);
         }
     }
 }
 
 #ifndef NON_MATCHING
-void func_80036890(Object* arg0, s32 arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/func_80036890.s")
+void objprint_func_80036890(Object* arg0, s32 arg1);
+#pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func_80036890.s")
 #else
 // https://decomp.me/scratch/cjUgO
-void func_80036890(Object* arg0, s32 arg1) {
+void objprint_func_80036890(Object* arg0, s32 arg1) {
     s32 sp6C; // a1
     Gfx* temp_a1_2;
     s32 sp64;
@@ -692,7 +688,7 @@ void func_80036890(Object* arg0, s32 arg1) {
                                 var_v1 = temp_a2;
                                 for (var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++, var_v1 = var_v1->next);
                                 temp_a1_2++;
-                                temp_a1_2->words.w1 = OS_PHYSICAL_TO_K0(var_v1 + 1);
+                                temp_a1_2->words.w1 = (unsigned int)OS_PHYSICAL_TO_K0(var_v1 + 1);
                                 temp_a1_2++;
                                 gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
                                 temp_a1_2++;
@@ -718,7 +714,7 @@ void func_80036890(Object* arg0, s32 arg1) {
 
 #endif
 
-void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
+void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     s32 sp6C;
     s32 sp68;
     s32 sp64;
@@ -747,10 +743,10 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         sp44.roll = 0;
         sp44.pitch = 0;
         sp44.scale = 1.0f;
-        camera_setup_object_srt_matrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(arg1, arg2, &sp44, 1.0f, 0.0f, NULL);
         gSPDisplayList((*arg1)++, OS_PHYSICAL_TO_K0(arg0->shadow->gdl));
-        dl_set_all_dirty();
-        tex_render_reset();
+        dlSetAllDirty();
+        texRenderReset();
         sp64 = 1;
         if (sp68 == 0xFF) {
             sp64 = 2;
@@ -762,7 +758,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
         }
     } else {
         if (arg0->def->flags & OBJDEF_FLAG20) {
-            dl_set_prim_color(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
+            dlSetPrimColor(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
         } else if (sp64 != 0) {
             func_8001F848(arg1);
         }
@@ -780,15 +776,15 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             case OBJ_TriggerCylinder:
                 sp60 = arg0->srt.scale;
                 arg0->srt.scale = 2.0f;
-                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 arg0->srt.scale = sp60;
                 break;
             default:
-                camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+                camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
                 break;
             }
         } else {
-            camera_check_convex_hull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
+            camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
             func_8001F848(arg1);
@@ -796,7 +792,7 @@ void func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     }
 }
 
-void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
+void objprint_func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
     SRT shadowTransform;
 
     if (object->shadow->gdl) {
@@ -814,19 +810,19 @@ void func_80036E5C(Object* object, Gfx** gdl, Mtx** mtx) {
         shadowTransform.pitch = 0;
         shadowTransform.scale = 0.05f;
 
-        camera_setup_object_srt_matrix(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
+        camSetupObjectSRTMatrix(gdl, mtx, &shadowTransform, 1.0f, 0.0f, NULL);
         gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(object->shadow->gdl));
 
         if (object->parent) {
-            setup_rsp_matrices_for_object(gdl, mtx, object->parent);
+            camSetupRSPMatricesForObject(gdl, mtx, object->parent);
         }
-        dl_set_all_dirty();
-        tex_render_reset();
+        dlSetAllDirty();
+        texRenderReset();
     }
 }
 
 /** Sets a multiplier colour (generally lowers model's brightness) */
-void func_80036F6C(s16 r, s16 g, s16 b) {
+void objprintSetMultiplierColor(s16 r, s16 g, s16 b) {
     SHORT_800b2e14 = r;
     SHORT_800b2e16 = g;
     SHORT_800b2e18 = b;
@@ -834,7 +830,7 @@ void func_80036F6C(s16 r, s16 g, s16 b) {
 }
 
 /** Sets a blend colour (can increase a model's brightness) */
-void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
+void objprintSetBlendColor(s16 r, s16 g, s16 b, u8 a) {
     BYTE_800b2e20 = r;
     BYTE_800b2e21 = g;
     BYTE_800b2e22 = b;
@@ -842,7 +838,7 @@ void func_80036FBC(s16 r, s16 g, s16 b, u8 a) {
     BYTE_800b2e23 = a & 0xFF;
 }
 
-void func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
+void objprint_func_80037020(f32 aX, f32 aY, f32 aZ, f32 bX, f32 bY, f32 bZ, f32* outX, f32* outY, f32* outZ) {
     f32 dotProduct;
 
     dotProduct = (aX * bX) + (aY * bY) + (aZ * bZ);

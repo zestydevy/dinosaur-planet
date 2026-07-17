@@ -18,7 +18,7 @@ void dll_72_ctor(void* dll) {
 
     i = 0;
     while (dTexTiles[i].animProgress != -1) {
-        dTexTiles[i].tex = tex_load_deferred(i + TEXTABLE_1EE);
+        dTexTiles[i].tex = texLoadTexture(i + TEXTABLE_1EE);
         i++;
     }
 }
@@ -29,7 +29,7 @@ void dll_72_dtor(void* dll) {
     
     i = 0;
     while (dTexTiles[i].animProgress != -1) {
-        tex_free(dTexTiles[i].tex);
+        texFreeTexture(dTexTiles[i].tex);
         i++;
     }
 }
@@ -46,5 +46,5 @@ void dll_72_update2(void) {
 
 // offset: 0x114 | func: 2 | export: 2
 void dll_72_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
-    rcp_tile_write(gdl, dTexTiles, 160, 160, 0xFF, 0xFF, 0xFF, 0xFF);
+    rcpTileWrite(gdl, dTexTiles, 160, 160, 0xFF, 0xFF, 0xFF, 0xFF);
 }

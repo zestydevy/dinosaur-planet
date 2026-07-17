@@ -22,7 +22,7 @@ s32 D_80091720[] = { 0x0, 0xB, 0xC, 0xD, 0xE, 0xF, 0x10, 0x11, 0x12, 0x13 };
 s32 D_80091748[] = { 0, 0 };
 // -------- .data end 80091750 -------- //
 
-void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
+void objExpr_func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
     Object* target; // could also be SRT*
 
     //Handle player head aim
@@ -42,24 +42,24 @@ void func_800328F0(Object* obj, HeadAnimation* arg1, f32 arg2) {
         } else {
             arg1->aimIsActive = 0;
         }
-        func_80033B68(obj, arg1, arg2);
+        objExpr_func_80033B68(obj, arg1, arg2);
         return;
     }
 
     //Handle non-player head aim
-    func_80033B68(obj, arg1, 0.0f);
+    objExpr_func_80033B68(obj, arg1, 0.0f);
 }
 
 /** Manages character models' randomised blinks, by changing the frame of the eyelids' animated textures.
   * @bug: animation is framerate dependent
   */
-void func_80032A08(Object* obj, HeadAnimation* arg1) {
+void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
     TextureAnimator* eyelidR;
     TextureAnimator* eyelidL;
     s32 eyelidValue;
 
-    eyelidR = func_800348A0(obj, HEAD_ANIMATION_TAG_Eyelid_R, 0);
-    eyelidL = func_800348A0(obj, HEAD_ANIMATION_TAG_Eyelid_L, 0);
+    eyelidR = objExprGetTexAnimator(obj, HEAD_ANIMATION_TAG_Eyelid_R, 0);
+    eyelidL = objExprGetTexAnimator(obj, HEAD_ANIMATION_TAG_Eyelid_L, 0);
 
     if (!eyelidR || !eyelidL) {
         return;
@@ -72,7 +72,7 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
         if (arg1->blinkDelayTimer > 0) {
             //Wait for timer to run out
             arg1->blinkDelayTimer -= gUpdateRate;
-        } else if (rand_next(0, 1000) > 985) {
+        } else if (mathRnd(0, 1000) > 985) {
             //1.5% chance of going into a blink
             arg1->blinkState = BLINK_Animate;
             arg1->blinkDelayTimer = 0;
@@ -106,32 +106,32 @@ void func_80032A08(Object* obj, HeadAnimation* arg1) {
         break;
     }
 
-    func_80034678(obj, arg1, 0);
+    objExprEyeDart(obj, arg1, 0);
 }
 
-void func_80032B44(Object *obj, u32 arg1) {
+void objExpr_func_80032B44(Object *obj, u32 arg1) {
     s32 v0;
     s32 pad;
     s32 sp1C;
     s32 sp18;
 
-    v0 = gDLL_6_AMSFX->vtbl->func_DCC(arg1, 2, &sp18, &sp1C);
-    func_800339E0(obj, sp1C & 0xFF, v0, (f32) sp18);
-    v0 = gDLL_6_AMSFX->vtbl->func_DCC(arg1, 1, &sp18, &sp1C);
-    func_80033AA0(obj, sp1C & 0xFF, v0, (f32) sp18);
+    v0 = dll_amSfx->FuncDCC(arg1, 2, &sp18, &sp1C);
+    objExpr_func_800339E0(obj, sp1C & 0xFF, v0, (f32) sp18);
+    v0 = dll_amSfx->FuncDCC(arg1, 1, &sp18, &sp1C);
+    objExpr_func_80033AA0(obj, sp1C & 0xFF, v0, (f32) sp18);
 }
 
-void func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3) {
+void objExpr_func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s32 arg3) {
     s32 pad;
     s32 pad2;
     s16* sp1C;
 
-    sp1C = func_80034804(obj, 0);
+    sp1C = objExpr_func_80034804(obj, 0);
     if (sp1C == NULL) {
         return;
     }
 
-    arg2->headGoalAngle = ((arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
+    arg2->headGoalAngle = ((mathAtan2f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) & 0xFFFFu) & 0xFFFFu) - obj->srt.yaw;
     arg3 = (s16)(arg3 * 182.04f);
     if (arg3 < arg2->headGoalAngle) {
         arg2->headGoalAngle = arg3;
@@ -153,7 +153,7 @@ void func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators,
     s32 i;
 
     //Get head seqJoint
-    headJoint = (SeqJoint*)func_80034804(obj, 0);
+    headJoint = (SeqJoint*)objExpr_func_80034804(obj, 0);
     if (headJoint == NULL) {
         STUBBED_PRINTF(" WARNING EXPR: This Object has no Head ");
         return;
@@ -165,18 +165,17 @@ void func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators,
         headJoint->pitch >>= 1;
         return;
     }
-
     //Get head yaw/pitch angles, based on vector from target to self
     dx = obj->srt.transl.x - targetObj->srt.transl.x;
     dz = obj->srt.transl.z - targetObj->srt.transl.z;
     dy = obj->srt.transl.y - targetObj->srt.transl.y;
 
     lateralDistance = sqrtf(SQ(dx) + SQ(dz));
-    yawAngle = arctan2_f(dx, dz);
+    yawAngle = mathAtan2f(dx, dz);
 
     goalAngles[0] = (s16)yawAngle - (obj->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(goalAngles[0]);
-    goalAngles[1] = (arctan2_f(lateralDistance, dy) - (M_90_DEGREES - 1)) & 0xFFFF & 0xFFFF;
+    goalAngles[1] = (mathAtan2f(lateralDistance, dy) - (M_90_DEGREES - 1)) & 0xFFFF & 0xFFFF;
     
     //Convert maxAngle from degrees to angle16
     maxAngle = (s16) (maxAngle * M_1_DEGREE_F);
@@ -197,16 +196,16 @@ void func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators,
     headJoint->pitch = headAnimators[1].headGoalAngle;
 }
 
-s16 func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s16* arg3) {
+s16 objExpr_func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s16* arg3) {
     s16 var_a2;
     s16 var_s0;
     s16* temp_v0;
     s16 temp_ft1;
     s32 i;
 
-    var_s0 = arctan2_f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) - (obj->srt.yaw & 0xFFFF & 0xFFFF);
+    var_s0 = mathAtan2f(obj->srt.transl.x - otherObj->srt.transl.x, obj->srt.transl.z - otherObj->srt.transl.z) - (obj->srt.yaw & 0xFFFF & 0xFFFF);
     for (i = 0; i < 10 && var_s0 != 0; i++) {
-        temp_v0 = func_80034804(obj, D_80091720[i]);
+        temp_v0 = objExpr_func_80034804(obj, D_80091720[i]);
         temp_ft1 = arg3[0] * 182.04f;
         arg3++;
         var_a2 = var_s0;
@@ -227,7 +226,7 @@ s16 func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s16* arg3)
         }
         if (arg2 != NULL) {
             arg2->headGoalAngle = var_a2;
-            func_80034250(arg2, temp_v0);
+            objExpr_func_80034250(arg2, temp_v0);
             arg2++;
         } else {
             temp_v0[1] = var_a2;
@@ -237,7 +236,7 @@ s16 func_80032EBC(Object* obj, Object* otherObj, HeadAnimation* arg2, s16* arg3)
     return var_s0;
 }
 
-s16 func_80033044(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4) {
+s16 objExpr_func_80033044(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg3, s16* arg4) {
     f32 temp_fs0;
     f32 sp40;
     s16 var_a1;
@@ -251,13 +250,13 @@ s16 func_80033044(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
     sp40 = arg2->z - otherObj->srt.transl.z;
     var_s3 = obj->srt.yaw;
     for (i = 0; i < 10; i++) {
-        if (func_80034804(obj, D_80091720[i]) != NULL) {
+        if (objExpr_func_80034804(obj, D_80091720[i]) != NULL) {
             var_s3 += arg3[i].headGoalAngle;
         }
     }
-    var_s0 = (arctan2_f(temp_fs0, sp40) & 0xFFFF & 0xFFFF) - var_s3;
+    var_s0 = (mathAtan2f(temp_fs0, sp40) & 0xFFFF & 0xFFFF) - var_s3;
     for (i = 0; i < 10; i++) {
-        temp_v0 = func_80034804(obj, D_80091720[i]);
+        temp_v0 = objExpr_func_80034804(obj, D_80091720[i]);
         if (temp_v0 == NULL) {
             return var_s0;
         }
@@ -282,25 +281,25 @@ s16 func_80033044(Object* obj, Object* otherObj, Vec3f* arg2, HeadAnimation* arg
     return var_s0;
 }
 
-void func_80033224(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
+void objExpr_func_80033224(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     s16* temp_v0;
     s32 i;
 
     for (i = 0; i < arg2; i++) {
-        temp_v0 = func_80034804(arg0, arg1[i]);
+        temp_v0 = objExpr_func_80034804(arg0, arg1[i]);
         arg3->headStartAngle = temp_v0[1];
         arg3[1].headStartAngle = temp_v0[0];
         arg3 += 2;
     }
 }
 
-void func_800332A4(Object* obj, s32* seqJointIDs, s32 seqJointCount) {
+void objExpr_func_800332A4(Object* obj, s32* seqJointIDs, s32 seqJointCount) {
     SeqJoint* seqJoint;
     s32 i;
 
     //Animate all specified seqJoints back to their neutral pose
     for (i = 0; i < seqJointCount; i++) {
-        seqJoint = (SeqJoint*)func_80034804(obj, seqJointIDs[i]);
+        seqJoint = (SeqJoint*)objExpr_func_80034804(obj, seqJointIDs[i]);
         if (seqJoint == NULL) {
             STUBBED_PRINTF(" WARNING EXPR: Obj Has No Joint %i ", i);
             continue;
@@ -313,7 +312,7 @@ void func_800332A4(Object* obj, s32* seqJointIDs, s32 seqJointCount) {
     }
 }
 
-void func_80033350(HeadAnimation* arg0, s32 arg1, s16 arg2, s16 arg3) {
+void objExpr_func_80033350(HeadAnimation* arg0, s32 arg1, s16 arg2, s16 arg3) {
     s32 i;
 
     for (i = 0; i < arg1; i++) {
@@ -323,7 +322,7 @@ void func_80033350(HeadAnimation* arg0, s32 arg1, s16 arg2, s16 arg3) {
     }
 }
 
-s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
+s32 objExpr_func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     s16 *temp_v0;
     s32 temp_v0_2;
     s32 var_s1;
@@ -331,9 +330,9 @@ s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
 
     var_s1 = 0;
     for (i = 0; i < arg2; i++) {
-        temp_v0 = func_80034804(arg0, arg1[i]);
-        var_s1 += func_80034250(arg3, temp_v0);
-        temp_v0_2 = func_80034518(arg3 + 1, temp_v0, 10.0f, 500.0f);
+        temp_v0 = objExpr_func_80034804(arg0, arg1[i]);
+        var_s1 += objExpr_func_80034250(arg3, temp_v0);
+        temp_v0_2 = objExpr_func_80034518(arg3 + 1, temp_v0, 10.0f, 500.0f);
         arg3 += 2;
         var_s1 += temp_v0_2;
     }
@@ -341,7 +340,7 @@ s32 func_800333C8(Object* arg0, s32* arg1, s32 arg2, HeadAnimation* arg3) {
     return var_s1 == (arg2 * 2);
 }
 
-s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* anims, s16* arg4, f32 yOffset, s16 arg6, s16 arg7) {
+s32 objExpr_func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* anims, s16* arg4, f32 yOffset, s16 arg6, s16 arg7) {
     f32 dx;
     f32 dy;
     f32 dz; // fa1
@@ -365,16 +364,16 @@ s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* a
     dz = refPoint->z - lookat->srt.transl.z;
     dy = (refPoint->y + yOffset) - lookat->srt.transl.y;
     xzDist = sqrtf(SQ(dx) + SQ(dz));
-    sp84[0] = (s16)(u16)arctan2_f(dx, dz) - (obj->srt.yaw & 0xFFFF);
+    sp84[0] = (s16)(u16)mathAtan2f(dx, dz) - (obj->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(sp84[0]);
-    sp84[1] = arg7 - (-arctan2_f(xzDist, dy) & 0xFFFF);
+    sp84[1] = arg7 - (-mathAtan2f(xzDist, dy) & 0xFFFF);
     CIRCLE_WRAP(sp84[1]);
     if (D_800B2E00.unk0_0) {
         sp84[0] -= 0x8000;
         sp84[1] = -sp84[1];
     }
     for (i = 0; i < 10; i++) {
-        bone = func_80034804(obj, D_80091720[i]);
+        bone = objExpr_func_80034804(obj, D_80091720[i]);
         if (bone == NULL) {
             return sp6B;
         }
@@ -397,9 +396,9 @@ s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* a
         }
         if (anims != NULL) {
             anims->headGoalAngle = goal[0];
-            func_80034250(anims, bone);
+            objExpr_func_80034250(anims, bone);
             anims[1].headGoalAngle = goal[1];
-            func_80034518(anims + 1, bone, 10.0f, 500.0f);
+            objExpr_func_80034518(anims + 1, bone, 10.0f, 500.0f);
             anims += 2;
         } else {
             var_t3 = arg4 + 15;
@@ -446,7 +445,7 @@ s32 func_800334A4(Object* obj, Object* lookat, Vec3f* refPoint, HeadAnimation* a
     return sp84[0];
 }
 
-void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
+void objExpr_func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     ModelInstance* sp2C;
     ModelInstanceBlendshape* sp28;
 
@@ -459,7 +458,7 @@ void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     }
     if (arg2 != 0) {
         sp28 = sp28;
-        func_8001AF04(sp2C, (s32) sp28->id, arg1, 0.0f, 0, 1);
+        mod_func_8001AF04(sp2C, (s32) sp28->id, arg1, 0.0f, 0, 1);
         sp28->unk8 = arg3;
         return;
     }
@@ -470,7 +469,7 @@ void func_800339E0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     sp28->strength = 0.0f;
 }
 
-void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
+void objExpr_func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
     ModelInstance* sp24;
     ModelInstanceBlendshape* sp20;
     s32 a2;
@@ -481,7 +480,7 @@ void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
         if (arg2 != 0) {
             // @fake?
             if (arg1) {}
-            func_8001AF04(sp24, sp20->id, arg1 - 1, 0.0f, 2, 1);
+            mod_func_8001AF04(sp24, sp20->id, arg1 - 1, 0.0f, 2, 1);
             sp20->unk8 = arg3;
             return;
         }
@@ -494,11 +493,11 @@ void func_80033AA0(Object* obj, s32 arg1, s32 arg2, f32 arg3) {
 }
 
 /** Handles characters' procedural head turn animation */
-void func_80033B68(Object* obj, HeadAnimation* arg1, f32 arg2) {
+void objExpr_func_80033B68(Object* obj, HeadAnimation* arg1, f32 arg2) {
     s16* neckJoint;
     s32 var_v0;
 
-    neckJoint = func_80034804(obj, 0);
+    neckJoint = objExpr_func_80034804(obj, 0);
     if (neckJoint == NULL) {
         return;
     }
@@ -511,9 +510,9 @@ void func_80033B68(Object* obj, HeadAnimation* arg1, f32 arg2) {
         arg2 = -arg2;
     }
     if (arg2 <= 0.1f) {
-        func_80033C54(obj, arg1, arg2, neckJoint);
+        objExpr_func_80033C54(obj, arg1, arg2, neckJoint);
     } else {
-        func_80033FD8(obj, arg1, arg2, neckJoint);
+        objExpr_func_80033FD8(obj, arg1, arg2, neckJoint);
     }
     
     var_v0 = arg2 > 0.1f ? 1 : 0;
@@ -521,7 +520,7 @@ void func_80033B68(Object* obj, HeadAnimation* arg1, f32 arg2) {
 }
 
 /** Manages character models' randomised head turn animation (by rotating jointIDs specially marked in OBJECTS.bin) */
-void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
+void objExpr_func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
     s32 temp_v0;
     s32 pad2;
     s32 pad;
@@ -542,7 +541,7 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
             arg1->headAimUnk = 1.0f;
         } else {
             arg1->headTurnState = (sp28 << 8) | 1;
-            arg1->headTurnDelay = rand_next(100, 400);
+            arg1->headTurnDelay = mathRnd(100, 400);
             arg1->headGoalAngle = neckJoint[1];
         }
         break;
@@ -551,7 +550,7 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
         //Set up next head turn
         if (arg1->headTurnDelay < 0) {
             currentAngle = arg1->headGoalAngle;
-            arg1->headGoalAngle = rand_next(0, HEAD_TURN_LIMIT);
+            arg1->headGoalAngle = mathRnd(0, HEAD_TURN_LIMIT);
             if (currentAngle > 0) {
                 if ((currentAngle - arg1->headGoalAngle) < M_20_DEGREES) {
                     arg1->headGoalAngle += M_20_DEGREES;
@@ -575,7 +574,7 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
         }
         break;
     case HEAD_TURN_Animate:
-        if (arg1->aimIsActive || func_80034250(arg1, neckJoint)) {
+        if (arg1->aimIsActive || objExpr_func_80034250(arg1, neckJoint)) {
             arg1->headTurnState = sp28 << 8;
         }
         break;
@@ -583,7 +582,7 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
         if (arg1->aimIsActive == 0) {
             arg1->headTurnState = sp28 << 8;
         } else {
-            arg1->headGoalAngle = arctan2_f(obj->srt.transl.x - arg1->headAimX, obj->srt.transl.z - arg1->headAimZ) - (obj->srt.yaw & 0xFFFF);
+            arg1->headGoalAngle = mathAtan2f(obj->srt.transl.x - arg1->headAimX, obj->srt.transl.z - arg1->headAimZ) - (obj->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(arg1->headGoalAngle)
             if ((arg1->headGoalAngle > HEAD_TURN_LIMIT) || (arg1->headGoalAngle < -HEAD_TURN_LIMIT)) {
                 arg1->headTurnState = sp28 << 8;
@@ -610,7 +609,7 @@ void func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, s16* neckJoint) {
     }
 }
 
-void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
+void objExpr_func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
     s32 v0;
     s32 sp20;
 
@@ -625,23 +624,23 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
     switch (arg1->headTurnState & 0xFF) {
     case 0:
         arg1->headTurnState = sp20 << 8;
-        arg1->headTurnDelay = rand_next(0x32, 0xC8);
+        arg1->headTurnDelay = mathRnd(0x32, 0xC8);
         return;
     case 1:
         arg1->headTurnDelay -= gUpdateRate;
-        if (arg1->headTurnDelay < 0 && !(rand_next(0, 100) < 91)) {
+        if (arg1->headTurnDelay < 0 && !(mathRnd(0, 100) < 91)) {
             arg1->headTurnState = (sp20 << 8) | 5;
             if (arg1->aimIsActive != 0) {
-                if (rand_next(0, 0x64) > 0) {
+                if (mathRnd(0, 0x64) > 0) {
                     arg1->headGoalAngle = HEAD_TURN_LIMIT;
-                    if (rand_next(0, 1) == 0) {
+                    if (mathRnd(0, 1) == 0) {
                         arg1->headGoalAngle = -arg1->headGoalAngle;
                         return;
                     }
                 }
             } else {
                 arg1->headGoalAngle = HEAD_TURN_LIMIT;
-                if (rand_next(0, 1) == 0) {
+                if (mathRnd(0, 1) == 0) {
                     arg1->headGoalAngle = -arg1->headGoalAngle;
                     return;
                 }
@@ -653,10 +652,10 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
             arg1->headTurnDelay -= gUpdateRate;
             return;
         }
-        if (func_80034250(arg1, arg3) != 0) {
+        if (objExpr_func_80034250(arg1, arg3) != 0) {
             arg1->headTurnState = (sp20 << 8) | 6;
             arg1->headGoalAngle = -arg1->headGoalAngle;
-            arg1->headTurnDelay = rand_next(20, 100);
+            arg1->headTurnDelay = mathRnd(20, 100);
             return;
         }
         break;
@@ -665,10 +664,10 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
             arg1->headTurnDelay -= gUpdateRate;
             return;
         }
-        if (func_80034250(arg1, arg3) != 0) {
+        if (objExpr_func_80034250(arg1, arg3) != 0) {
             arg1->headTurnState = (sp20 << 8) | 4;
             arg1->headGoalAngle = 0;
-            arg1->headTurnDelay = rand_next(20, 100);
+            arg1->headTurnDelay = mathRnd(20, 100);
             return;
         }
         break;
@@ -677,7 +676,7 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
             arg1->headTurnDelay -= gUpdateRate;
             return;
         }
-        if (func_80034250(arg1, arg3) != 0) {
+        if (objExpr_func_80034250(arg1, arg3) != 0) {
             arg1->headTurnState = sp20 << 8;
             arg3[1] = 0;
         }
@@ -688,7 +687,7 @@ void func_80033FD8(Object* obj, HeadAnimation* arg1, f32 arg2, s16* arg3) {
 /** Smoothly interpolates neck joint from headStartAngle to headGoalAngle
   * Returns 1 when finished, or 0 while interpolating
   */
-s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
+s32 objExpr_func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     f32 spline[4];
     f32 tValue;
     f32 rotateSpeed;
@@ -713,7 +712,7 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     }
     
     //Get eased rotation speed (ease-in-out)
-    rotateSpeed = curves_hermite(spline, tValue, NULL);
+    rotateSpeed = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         rotateSpeed = -rotateSpeed;
     }
@@ -728,7 +727,7 @@ s32 func_80034250(HeadAnimation* arg0, s16* neckJoint) {
     return 0;
 }
 
-s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
+s32 objExpr_func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     f32 spline[4];
     f32 tValue;
     f32 var_fa0;
@@ -748,7 +747,7 @@ s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     } else if (tValue < 0.0f) {
         tValue = 0.0f;
     }
-    var_fa0 = curves_hermite(spline, tValue, NULL);
+    var_fa0 = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
@@ -761,7 +760,7 @@ s32 func_800343B8(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     return 0;
 }
 
-s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
+s32 objExpr_func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     f32 spline[4];
     f32 tValue;
     f32 var_fa0;
@@ -781,7 +780,7 @@ s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
     } else if (tValue < 0.0f) {
         tValue = 0.0f;
     }
-    var_fa0 = curves_hermite(spline, tValue, NULL);
+    var_fa0 = curvesHermite(spline, tValue, NULL);
     if (arg0->headGoalAngle < arg0->headStartAngle) {
         var_fa0 = -var_fa0;
     }
@@ -794,13 +793,13 @@ s32 func_80034518(HeadAnimation* arg0, s16* arg1, f32 arg2, f32 arg3) {
 }
 
 /** Manages character models' randomised eye dart animations (by adjusting the pupil textures' UVs) */
-void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
+/*static*/ void objExprEyeDart(Object* arg0, HeadAnimation* arg1, f32 arg2) {
     TextureAnimator* pupilL;
     TextureAnimator* pupilR;
     s32 animationFinished;
 
-    pupilL = func_800348A0(arg0, HEAD_ANIMATION_TAG_Pupil_R, 0);
-    pupilR = func_800348A0(arg0, HEAD_ANIMATION_TAG_Pupil_L, 0);
+    pupilL = objExprGetTexAnimator(arg0, HEAD_ANIMATION_TAG_Pupil_R, 0);
+    pupilR = objExprGetTexAnimator(arg0, HEAD_ANIMATION_TAG_Pupil_L, 0);
 
     if ((pupilL == NULL) || (pupilR == NULL)) {
         return;
@@ -820,13 +819,13 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
 
     //Set up the next eye dart animation
     if (animationFinished) {
-        arg1->eyeGoal = rand_next(-100, 10);
+        arg1->eyeGoal = mathRnd(-100, 10);
         if (arg1->eyeGoal < pupilL->positionU) {
             arg1->eyeSpeed = -5;
         } else {
             arg1->eyeSpeed = 5;
         }
-        arg1->eyeDelayTimer = rand_next(30, 100);
+        arg1->eyeDelayTimer = mathRnd(30, 100);
     }
 
     //Wait a random amount of time between darts
@@ -843,7 +842,7 @@ void func_80034678(Object* arg0, HeadAnimation* arg1, f32 arg2) {
 }
 
 /** objexpr_get_seq_joint? */
-s16* func_80034804(Object* obj, s32 sequenceJointID) {
+s16* objExpr_func_80034804(Object* obj, s32 sequenceJointID) {
     ObjDef* romdef;
     u8* seqBones;
     s32 index;
@@ -869,7 +868,7 @@ s16* func_80034804(Object* obj, s32 sequenceJointID) {
     return seqJoint;
 }
 
-TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {
+TextureAnimator* objExprGetTexAnimator(Object* obj, s32 texTag, s32 arg2) {
     u8 *texData;
     s32 i;
     s32 temp;
@@ -893,19 +892,19 @@ TextureAnimator* func_800348A0(Object* obj, s32 texTag, s32 arg2) {
     return animTexture;
 }
 
-s32* func_800349B0(void) {
+s32* objExpr_func_800349B0(void) {
     return D_80091720;
 }
 
-void func_800349C0(Object* arg0, HeadAnimation* arg1, s32 soundID, s16 arg3, s32 arg4, u8 arg5) {
+void objExpr_func_800349C0(Object* arg0, HeadAnimation* arg1, s32 soundID, s16 arg3, s32 arg4, u8 arg5) {
     u32 sp34;
 
     sp34 = arg1->headAimY;
-    if (arg5 != 0 || sp34 == 0 || !gDLL_6_AMSFX->vtbl->is_playing(sp34)) {
+    if (arg5 != 0 || sp34 == 0 || !dll_amSfx->IsPlaying(sp34)) {
         if (sp34 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(sp34);
+            dll_amSfx->Stop(sp34);
         }
-        gDLL_6_AMSFX->vtbl->play(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
+        dll_amSfx->Play(arg0, soundID, MAX_VOLUME, &sp34, 0, 0, 0);
         arg1->headAimZ = arg4;
         arg1->headGoalAngle = -arg3;
         arg1->headAimY = sp34;
@@ -913,22 +912,22 @@ void func_800349C0(Object* arg0, HeadAnimation* arg1, s32 soundID, s16 arg3, s32
     }
 }
 
-void func_80034B54(Object* arg0, HeadAnimation* arg1, s16* soundIDs, u8 arg3) {
-    func_800349C0(arg0, arg1, soundIDs[0], soundIDs[1], -1, arg3);
+void objExpr_func_80034B54(Object* arg0, HeadAnimation* arg1, s16* soundIDs, u8 arg3) {
+    objExpr_func_800349C0(arg0, arg1, soundIDs[0], soundIDs[1], -1, arg3);
 }
 
-void func_80034B94(Object* arg0, HeadAnimation* arg1, s32 soundID) {
-    func_800349C0(arg0, arg1, soundID , 0x500, -1, 0U);
+void objExpr_func_80034B94(Object* arg0, HeadAnimation* arg1, s32 soundID) {
+    objExpr_func_800349C0(arg0, arg1, soundID , 0x500, -1, 0U);
 }
 
-void func_80034BC0(Object* obj, HeadAnimation* arg1) {
+void objExpr_func_80034BC0(Object* obj, HeadAnimation* arg1) {
     s16* sp2C;
     u32 temp_s1;
     s32 sp24;
 
     temp_s1 = (u32) arg1->headAimY;
     sp24 = (s32) arg1->headAimZ;
-    sp2C = func_80034804(obj, 1);
+    sp2C = objExpr_func_80034804(obj, 1);
     if (arg1->aimIsActive != 0) {
         arg1->aimIsActive = 0;
     } else {
@@ -937,16 +936,16 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
             if (sp24 < 0) {
                 arg1->headAimX = 0.0f;
                 sp24 = sp24;
-                gDLL_6_AMSFX->vtbl->stop(temp_s1);
+                dll_amSfx->Stop(temp_s1);
                 arg1->headGoalAngle = 0;
                 arg1->headAimY = 0.0f;
                 arg1->headAimZ = -1.0f;
             }
             arg1->headAimZ = (f32) sp24;
         }
-        if (temp_s1 != 0 && !gDLL_6_AMSFX->vtbl->is_playing(temp_s1)) {
+        if (temp_s1 != 0 && !dll_amSfx->IsPlaying(temp_s1)) {
             arg1->headAimX = 0.0f;
-            gDLL_6_AMSFX->vtbl->stop(temp_s1);
+            dll_amSfx->Stop(temp_s1);
             arg1->headGoalAngle = 0;
             arg1->headAimY = 0.0f;
             arg1->headAimZ = -1.0f;
@@ -956,7 +955,7 @@ void func_80034BC0(Object* obj, HeadAnimation* arg1) {
     sp2C[0] = (sp2C[0] + arg1->headGoalAngle) >> 1;
 }
 
-void func_80034D94(u8 arg0, u8 arg1) {
+void objExpr_func_80034D94(u8 arg0, u8 arg1) {
     if (!arg0) {
         D_800B2E00.unk0_0 = arg1;
     } else {

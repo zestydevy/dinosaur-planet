@@ -35,10 +35,10 @@ void DRExplodeDoor_setup(Object* self, DRExplodeDoor_Setup* objSetup, s32 arg2) 
     }
     
     //Check if exploded previously
-    if (main_get_bits(objSetup->gamebitExplode)) {
+    if (mainGetBits(objSetup->gamebitExplode)) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
-        obj_free_tick(self);
+        objDisable(self);
     }
 
     //Set up objHits
@@ -59,13 +59,13 @@ void DRExplodeDoor_control(Object* self) {
     DLL_IModgfx* dll;
     
     //Explode when gamebit set (only allowed when objSetup->mode is 2)
-    if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && main_get_bits(objSetup->gamebitExplode)) {
-        dll = dll_load_deferred(DLL_ID_107, 1);
+    if ((objSetup->mode == DRExplodeDoor_MODE_Enable_Control_Function) && mainGetBits(objSetup->gamebitExplode)) {
+        dll = dllLoad(DLL_ID_107, 1);
         dll->vtbl->func0(self, 16, NULL, 2, -1, &modGfxArg);
-        dll_unload(dll);
+        dllFree(dll);
         
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
-        obj_free_tick(self);
+        dll_amSfx->Play(self, SOUND_8C7_Explosion_High, MAX_VOLUME, 0, 0, 0, 0);
+        objDisable(self);
     }
 }
 
@@ -80,20 +80,20 @@ void DRExplodeDoor_update(Object* self) {
     
     //Check for damage from barrel explosions, or for the explosion gamebit
     if (func_80025F40(self, NULL, NULL, &hitDamage) == Damage_Type_Explosion || 
-        main_get_bits(objSetup->gamebitExplode)
+        mainGetBits(objSetup->gamebitExplode)
     ) {
         bzero(&modGfxTrans, sizeof(SRT));
         modGfxTrans.scale = objSetup->explosionScale * 0.03125f;
         
-        modGfxDLL = dll_load_deferred(DLL_ID_180, 1);
+        modGfxDLL = dllLoad(DLL_ID_180, 1);
         modGfxDLL->vtbl->func0(self, objSetup->modGfxArg1, &modGfxTrans, 2, -1, &modGfxArg);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
         
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, 0, 0, 0, 0);
         self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
         self->srt.flags |= OBJFLAG_INVISIBLE;
         
-        main_set_bits(objSetup->gamebitExplode, 1);
+        mainSetBits(objSetup->gamebitExplode, 1);
         func_800267A4(self);
     }
 }
@@ -101,7 +101,7 @@ void DRExplodeDoor_update(Object* self) {
 // offset: 0x3EC | func: 3 | export: 3
 void DRExplodeDoor_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 // offset: 0x440 | func: 4 | export: 4

@@ -5,12 +5,12 @@
 #include "game/gamebits.h"
 #include "libnaudio/n_unkfuncs.h"
 #include "sys/audio/amAudio.h"
-#include "sys/asset_thread.h"
+#include "sys/asset.h"
 #include "sys/audio.h"
 #include "sys/joypad.h"
 #include "sys/crash.h"
 #include "sys/exception.h"
-#include "sys/fs.h"
+#include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"
@@ -21,7 +21,7 @@
 #include "sys/menu.h"
 #include "sys/fonts.h"
 #include "sys/boot.h"
-#include "sys/dl_debug.h"
+#include "sys/di_rcp.h"
 #include "sys/rsp_segment.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
@@ -142,46 +142,47 @@ u8 gDemoState;
 s8 gDemoFinished;
 /* -------- .bss end 800b09d0 -------- */
 
-void func_8001440C(s32 arg0);
-void clear_PlayerPosBuffer(void);
-void game_init(void);
-void init_bittable(void);
-void game_tick_no_expansion(void);
-void game_tick(void);
-void main_handle_map_change(void);
-void alloc_frame_buffers(void);
-void func_80013D80(void);
-s8 func_800143FC(void);
-void update_PlayerPosBuffer();
-void test_write(void);
-void check_dongle(void);
+void main_func_8001440C(s32 arg0);
+void mainClearPlayerPosBuffer(void);
+void mainInit(void);
+void mainInitBits(void);
+void mainTickNoExpansion(void);
+void mainTick(void);
+void mainHandleMapChange(void);
+void mainAllocFrameBuffers(void);
+void main_func_80013D80(void);
+s8 main_func_800143FC(void);
+void mainUpdatePlayerPosBuffer();
+void mainTestWrite(void);
+void mainCheckDongle(void);
 
-void mainproc(void *arg) {
+// official name: mainThread ?
+void mainThreadEntry(void *arg) {
 #ifndef NON_MATCHING
-    test_write(); // ROM write check
+    mainTestWrite(); // ROM write check
 #endif
-    game_init();
+    mainInit();
 
     while(TRUE) {
 #ifndef NON_MATCHING
-        check_dongle();  // copy protection check
+        mainCheckDongle();  // copy protection check
 #endif
         if (osMemSize != EXPANSION_RAM_SIZE) {
-            game_tick_no_expansion();
+            mainTickNoExpansion();
         } else {
-            game_tick();
+            mainTick();
         }
 
-        thread_timer_tick();
+        bootCheckStack();
     }
 }
 
-void game_init(void) {
+void mainInit(void) {
     s32 tvMode;
 
     mmInit();
-    rarezip_init();
-    create_asset_thread();
+    rarezipInit();
+    assetInit();
 
     if (0) {
     } else if (osTvType == OS_TV_PAL) {
@@ -194,105 +195,105 @@ void game_init(void) {
 
     osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
     start_pi_manager_thread();
-    init_filesystem();
-    gfxtask_init(&osscheduler_);
-    alloc_frame_buffers();
+    piInit();
+    rcpInit(&osscheduler_);
+    mainAllocFrameBuffers();
     if (0) {};
     gFrameBufIdx = 0;
     gCurGfx = gMainGfx[gFrameBufIdx];
-    gLastInsertedControllerIndex = joy_init();
-    joy_start_controller_thread(&osscheduler_);
+    gLastInsertedControllerIndex = joyInit();
+    joyStartControllerThread(&osscheduler_);
     start_crash_thread(&osscheduler_);
-    tex_init();
-    init_maps();
+    texInitTextures();
+    trackInit();
     func_8001CD00();
-    init_models();
-    init_dll_system();
-    init_objects();
+    modInit();
+    dllInit();
+    objInit();
     diPrintfInit();
     func_80053300();
-    shadows_init();
-    footsteps_init();
-    fonts_init();
-    menu_init();
-    init_audio(&osscheduler_, /*threadPriority=*/14);
-    init_global_map();
+    shadowsInit();
+    footstepsInit();
+    fontsInit();
+    menuInit();
+    amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
+    mapInitGlobalMap();
     if (osMemSize != EXPANSION_RAM_SIZE) {
-        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dll_load_deferred(DLL_ID_AMSEQ, 36);
-        gDLL_6_AMSFX = dll_load_deferred(DLL_ID_AMSFX, 18);
-        gDLL_21_Gametext = dll_load_deferred(DLL_ID_TEXT, 5);
-        gDLL_29_Gplay = dll_load_deferred(DLL_ID_GPLAY, 47);
-        gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2);
-        gDLL_28_ScreenFade = dll_load_deferred(DLL_ID_SCREEN_FADE, 4);
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);
+        gDLL_6_AMSFX = dllLoad(DLL_ID_AMSFX, 18);
+        gDLL_21_Gametext = dllLoad(DLL_ID_TEXT, 5);
+        gDLL_29_Gplay = dllLoad(DLL_ID_GPLAY, 47);
+        gDLL_31_Flash = dllLoad(DLL_ID_FLASH, 2);
+        gDLL_28_ScreenFade = dllLoad(DLL_ID_SCREEN_FADE, 4);
     } else {
-        gDLL_1_cmdmenu = dll_load_deferred(DLL_ID_CMDMENU, 15);
-        gDLL_2_Camera = dll_load_deferred(DLL_ID_CAMERA, 23);
-        gDLL_23 = dll_load_deferred(DLL_ID_23, 8);  // 0x12 in SFA
-        gDLL_18_objfsa = dll_load_deferred(DLL_ID_18, 22); // 0x0F in SFA
-        gDLL_3_Animation = dll_load_deferred(DLL_ID_ANIM, 29);
-        gDLL_28_ScreenFade = dll_load_deferred(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
-        gDLL_25 = dll_load_deferred(DLL_ID_25, 14);                    // not present in SFA
-        gDLL_7_Newday = dll_load_deferred(DLL_ID_NEWDAY, 15);
-        gDLL_8 = dll_load_deferred(DLL_ID_8, 12); // 0x06 in SFA
-        gDLL_9_Newclouds = dll_load_deferred(DLL_ID_NEWCLOUDS, 8);
-        gDLL_10_Newstars = dll_load_deferred(DLL_ID_NEWSTARS, 3);
-        gDLL_12_Minic = dll_load_deferred(DLL_ID_MINIC, 10);
-        gDLL_4_Race = dll_load_deferred(DLL_ID_RACE, 13);
-        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dll_load_deferred(DLL_ID_AMSEQ, 36);
-        gDLL_6_AMSFX = dll_load_deferred(DLL_ID_AMSFX, 18);
-        gDLL_11_Newlfx = dll_load_deferred(DLL_ID_NEWLFX, 7);
-        gDLL_13_Expgfx = dll_load_deferred(DLL_ID_EXPGFX, 10);
-        gDLL_14_Modgfx = dll_load_deferred(DLL_ID_MODGFX, 12);
-        gDLL_15_Projgfx = dll_load_deferred(DLL_ID_PROJGFX, 8);
-        gDLL_16 = dll_load_deferred(DLL_ID_16, 3);
-        gDLL_17_partfx = dll_load_deferred(DLL_ID_PARTFX, 2); // probably particle FX
-        gDLL_20_Screens = dll_load_deferred(DLL_ID_SCREENS, 3);
-        gDLL_21_Gametext = dll_load_deferred(DLL_ID_TEXT, 5);
-        gDLL_22_Subtitles = dll_load_deferred(DLL_ID_SUBTITLES, 7);
-        gDLL_24_Waterfx = dll_load_deferred(DLL_ID_WATERFX, 7);
-        gDLL_26_Curves = dll_load_deferred(DLL_ID_CURVES, 38);
-        gDLL_74_Picmenu = dll_load_deferred(DLL_ID_PICMENU, 7);
-        gDLL_27 = dll_load_deferred(DLL_ID_27, 9); // 0x15 in SFA
-        gDLL_29_Gplay = dll_load_deferred(DLL_ID_GPLAY, 36);
-        gDLL_56 = dll_load_deferred(DLL_ID_56, 10); // not present in SFA
-        gDLL_30_Task = dll_load_deferred(DLL_ID_TASK, 6);
-        gDLL_31_Flash = dll_load_deferred(DLL_ID_FLASH, 2); // param is 0x24 in SFA
-        gDLL_32 = dll_load_deferred(DLL_ID_32, 6);          // 0x18 in SFA
-        gDLL_33_BaddieControl = dll_load_deferred(DLL_ID_33, 22);         // 0x19 in SFA
-        gDLL_59_Minimap = dll_load_deferred(DLL_ID_MINIMAP, 2);
-        gDLL_54_pickup = dll_load_deferred(DLL_ID_54, 12); // 0x2F in SFA
-        gDLL_57 = dll_load_deferred(DLL_ID_57, 4);
-        gDLL_58 = dll_load_deferred(DLL_ID_58, 2);
+        gDLL_1_cmdmenu = dllLoad(DLL_ID_CMDMENU, 15);
+        gDLL_2_Camera = dllLoad(DLL_ID_CAMERA, 23);
+        gDLL_23 = dllLoad(DLL_ID_23, 8);  // 0x12 in SFA
+        gDLL_18_objfsa = dllLoad(DLL_ID_18, 22); // 0x0F in SFA
+        gDLL_3_Animation = dllLoad(DLL_ID_ANIM, 29);
+        gDLL_28_ScreenFade = dllLoad(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
+        gDLL_25 = dllLoad(DLL_ID_25, 14);                    // not present in SFA
+        gDLL_7_Newday = dllLoad(DLL_ID_NEWDAY, 15);
+        gDLL_8 = dllLoad(DLL_ID_8, 12); // 0x06 in SFA
+        gDLL_9_Newclouds = dllLoad(DLL_ID_NEWCLOUDS, 8);
+        gDLL_10_Newstars = dllLoad(DLL_ID_NEWSTARS, 3);
+        gDLL_12_Minic = dllLoad(DLL_ID_MINIC, 10);
+        gDLL_4_Race = dllLoad(DLL_ID_RACE, 13);
+        gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);
+        gDLL_6_AMSFX = dllLoad(DLL_ID_AMSFX, 18);
+        gDLL_11_Newlfx = dllLoad(DLL_ID_NEWLFX, 7);
+        gDLL_13_Expgfx = dllLoad(DLL_ID_EXPGFX, 10);
+        gDLL_14_Modgfx = dllLoad(DLL_ID_MODGFX, 12);
+        gDLL_15_Projgfx = dllLoad(DLL_ID_PROJGFX, 8);
+        gDLL_16 = dllLoad(DLL_ID_16, 3);
+        gDLL_17_partfx = dllLoad(DLL_ID_PARTFX, 2); // probably particle FX
+        gDLL_20_Screens = dllLoad(DLL_ID_SCREENS, 3);
+        gDLL_21_Gametext = dllLoad(DLL_ID_TEXT, 5);
+        gDLL_22_Subtitles = dllLoad(DLL_ID_SUBTITLES, 7);
+        gDLL_24_Waterfx = dllLoad(DLL_ID_WATERFX, 7);
+        gDLL_26_Curves = dllLoad(DLL_ID_CURVES, 38);
+        gDLL_74_Picmenu = dllLoad(DLL_ID_PICMENU, 7);
+        gDLL_27 = dllLoad(DLL_ID_27, 9); // 0x15 in SFA
+        gDLL_29_Gplay = dllLoad(DLL_ID_GPLAY, 36);
+        gDLL_56 = dllLoad(DLL_ID_56, 10); // not present in SFA
+        gDLL_30_Task = dllLoad(DLL_ID_TASK, 6);
+        gDLL_31_Flash = dllLoad(DLL_ID_FLASH, 2); // param is 0x24 in SFA
+        gDLL_32 = dllLoad(DLL_ID_32, 6);          // 0x18 in SFA
+        gDLL_33_BaddieControl = dllLoad(DLL_ID_33, 22);         // 0x19 in SFA
+        gDLL_59_Minimap = dllLoad(DLL_ID_MINIMAP, 2);
+        gDLL_54_pickup = dllLoad(DLL_ID_54, 12); // 0x2F in SFA
+        gDLL_57 = dllLoad(DLL_ID_57, 4);
+        gDLL_58 = dllLoad(DLL_ID_58, 2);
         gDLL_30_Task->vtbl->load_recently_completed();
     }
-    init_bittable();
+    mainInitBits();
     alSynFlag = 1;
-    start_audio_thread();
-    audio_func_80012224(0);
+    amGo();
+    am_func_80012224(0);
     if (0) {};
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
-    dl_init_debug_infos();
-    menu_set(MENU_POST);
+    diRcpTraceInit();
+    menuSet(MENU_POST);
     if (osMemSize == EXPANSION_RAM_SIZE) {
-        main_handle_map_change();
+        mainHandleMapChange();
     }
-    track_set_z_buffer_on(FALSE);
-    track_set_sky_on(FALSE);
+    trackSetZBufferOn(FALSE);
+    trackSetSkyOn(FALSE);
 }
 
-void game_tick(void) {
+void mainTick(void) {
     u8 clearFlags;
     u32 updateRate;
     Gfx **gdl;
 
     osSetTime(0);
-    dl_next_debug_info_set();
+    diRcpTraceReset();
 
     gdl = &gCurGfx;
 
     // unused return type
-    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    rcpF3DEX_2_XBUS(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -300,13 +301,13 @@ void game_tick(void) {
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    dl_add_debug_info(gCurGfx, 0, "main/main.c", 0x28E);
-    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-    fbfx_tick(&gCurGfx, gUpdateRate);
-    dl_set_all_dirty();
-    tex_render_reset();
+    diRcpTrace(gCurGfx, 0, "main/main.c", 0x28E);
+    segSetBase(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+    fbfxTick(&gCurGfx, gUpdateRate);
+    dlSetAllDirty();
+    texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0;
@@ -315,37 +316,37 @@ void game_tick(void) {
 
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0));
 
-    rsp_init(&gCurGfx);
+    rcpInitSp(&gCurGfx);
 
     clearFlags = CLEAR_ZBUFFER;
-    if (track_is_z_buffer_on() == FALSE) {
+    if (trackIsZBufferOn() == FALSE) {
         clearFlags = CLEAR_NONE;
-    } else if (track_is_sky_on() == FALSE) {
+    } else if (trackIsSkyOn() == FALSE) {
         clearFlags = CLEAR_COLOR | CLEAR_ZBUFFER;
     }
 
-    rcp_clear_screen(&gCurGfx, &gCurMtx, clearFlags);
-    voxmap_update_cache_timers();
-    func_80013D80();
-    audio_func_800121DC();
+    rcpClearScreen(&gCurGfx, &gCurMtx, clearFlags);
+    voxUpdateCacheTimers();
+    main_func_80013D80();
+    am_func_800121DC();
     gDLL_28_ScreenFade->vtbl->draw(gdl, &gCurMtx, &gCurVtx);
     gDLL_22_Subtitles->vtbl->func_578(gdl);
-    camera_tick();
-    func_800129E4();
+    camTick();
+    assetQueueTick();
     diPrintfAll(gdl);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    gfxtask_wait();
-    obj_do_deferred_free();
+    rcpWaitDP();
+    objDoDeferredFree();
     mmFreeTick();
 
     if (gPauseState == 0) {
-        camera_apply_alternate_trigger();
+        camApplyAlternateTrigger();
     }
 
-    gUpdateRate = vi_frame_sync(0);
+    gUpdateRate = viFrameSync(0);
     
     if (0) {}
 
@@ -360,17 +361,17 @@ void game_tick(void) {
     gUpdateRateMirrorF = gUpdateRateF;
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
-    main_handle_map_change();
+    mainHandleMapChange();
     write_c_file_label_pointers("main/main.c", 0x37C);
 }
 
-void game_tick_no_expansion(void) {
+void mainTickNoExpansion(void) {
     u32 updateRate;
     Gfx **tmp_s0;
 
     tmp_s0 = &gCurGfx;
 
-    gfxtask_run_xbus(gMainGfx[gFrameBufIdx], gCurGfx, 0);
+    rcpF3DEX_2_XBUS(gMainGfx[gFrameBufIdx], gCurGfx, 0);
 
     gFrameBufIdx ^= 1;
     gCurGfx = gMainGfx[gFrameBufIdx];
@@ -378,11 +379,11 @@ void game_tick_no_expansion(void) {
     gCurVtx = gMainVtx[gFrameBufIdx];
     gCurPol = gMainPol[gFrameBufIdx];
 
-    rsp_segment(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
-    rsp_segment(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
-    rsp_segment(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
-    dl_set_all_dirty();
-    tex_render_reset();
+    segSetBase(&gCurGfx, SEGMENT_MAIN, (void *)K0BASE);
+    segSetBase(&gCurGfx, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+    segSetBase(&gCurGfx, SEGMENT_ZBUFFER, gFrontDepthBuffer);
+    dlSetAllDirty();
+    texRenderReset();
 
     if (gDLBuilder->needsPipeSync != 0) {
         gDLBuilder->needsPipeSync = 0U;
@@ -391,19 +392,19 @@ void game_tick_no_expansion(void) {
 
     gDPSetDepthImage(gCurGfx++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
-    rsp_init(&gCurGfx);
-    menu_update1(); // ignored return value
-    menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
-    func_800129E4();
+    rcpInitSp(&gCurGfx);
+    menuUpdate1(); // ignored return value
+    menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+    assetQueueTick();
     gDLL_28_ScreenFade->vtbl->draw(tmp_s0, &gCurMtx, &gCurVtx);
 
     gDPFullSync(gCurGfx++);
     gSPEndDisplayList(gCurGfx++);
 
-    gfxtask_wait();
+    rcpWaitDP();
     mmFreeTick();
 
-    gUpdateRate = vi_frame_sync(0);
+    gUpdateRate = viFrameSync(0);
     updateRate = (u8)gUpdateRate;
     if ((s32)updateRate > 6) {
         gUpdateRate = 6;
@@ -416,57 +417,57 @@ void game_tick_no_expansion(void) {
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 }
 
-void func_80013D80(void) {
+void main_func_80013D80(void) {
     s32 button;
 
-    joy_disable_buttons(0, U_JPAD | R_JPAD);
+    joyDisableButtons(0, U_JPAD | R_JPAD);
     gDLL_2_Camera->vtbl->lock_icon_tick();
     gDLL_22_Subtitles->vtbl->func_4C0();
 
-    if (menu_update1() == 0) {
-        button = joy_get_pressed(0);
+    if (menuUpdate1() == 0) {
+        button = joyGetPressed(0);
 
         if (gPauseState != 0) {
-            draw_pause_screen_freeze_frame(&gCurGfx);
+            rcpDrawPauseScreenFreezeFrame(&gCurGfx);
         }
 
         if (gPauseState == 0) {
-            update_objects();
-            track_tick(0);
+            objTick();
+            trackTick(0);
 
-            if ((camera_is_alternate_active() == 0) 
+            if ((camIsAlternateActive() == 0) 
                     && (D_8008C94C == 0) 
-                    && (func_800143FC() == 0) 
+                    && (main_func_800143FC() == 0) 
                     && ((button & START_BUTTON) != 0) 
-                    && (main_get_bits(BIT_Menus_Selection_Blocked) == 0)) {
+                    && (mainGetBits(BIT_Menus_Selection_Blocked) == 0)) {
                 gPauseState = 1;
-                joy_disable_buttons(0, START_BUTTON);
-                menu_set(MENU_PAUSE);
+                joyDisableButtons(0, START_BUTTON);
+                menuSet(MENU_PAUSE);
             }
 
             gDLL_29_Gplay->vtbl->tick();
         } else {
-            update_obj_models();
+            objUpdateObjModels();
         }
 
         if (gPauseState == 0) {
-            update_PlayerPosBuffer();
+            mainUpdatePlayerPosBuffer();
         }
 
-        menu_update2();
+        menuUpdate2();
         func_800591EC();
-        func_8004A67C();
-        map_update_streaming();
-        func_800210DC();
+        map_func_8004A67C();
+        mapUpdateStreaming();
+        objHandleAnimseqActors();
 
         gDLL_4_Race->vtbl->func14();
 
         if (gPauseState == 0) {
-            track_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
+            trackDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol, &gCurVtx, &gCurPol);
         }
 
         gDLL_20_Screens->vtbl->draw(&gCurGfx);
-        menu_draw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
+        menuDraw(&gCurGfx, &gCurMtx, &gCurVtx, &gCurPol);
 
         D_8008C94C -= gUpdateRate;
 
@@ -476,24 +477,24 @@ void func_80013D80(void) {
     }
 }
 
-void func_80013FB4(void) {
-    vi_init(OS_VI_PAL_LPN1, NULL, FALSE);
-    track_set_z_buffer_on(FALSE);
-    track_set_sky_on(FALSE);
+void main_func_80013FB4(void) {
+    viInit(OS_VI_PAL_LPN1, NULL, FALSE);
+    trackSetZBufferOn(FALSE);
+    trackSetSkyOn(FALSE);
     gDLL_5_AMSEQ->vtbl->stop(3);
     gDLL_5_AMSEQ->vtbl->stop(0);
     gDLL_5_AMSEQ->vtbl->stop(1);
     gDLL_22_Subtitles->vtbl->func_448();
-    unpause();
-    main_change_map(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, /*don't change menu*/-1);
+    mainUnpause();
+    mainChangeMap(MAP_FRONT_END2, 0, PLAYER_KRYSTAL, /*don't change menu*/-1);
 }
 
-void main_handle_map_change(void) {
+void mainHandleMapChange(void) {
     if (gMainDoMapChange) {
         // "$$$$$  CHANGEMAP \n" (default.dol)
         mmSetDelay(0);
         if (D_8008CA30 != 0) {
-            rcp_set_screen_color(0, 0, 0);
+            rcpSetScreenColour(0, 0, 0);
             func_800668A4();
             map_func_800484A8();
 
@@ -505,10 +506,10 @@ void main_handle_map_change(void) {
         gMainDoMapChange = FALSE;
 
         mmSetDelay(0);
-        camera_init();
+        camInit();
 
         if (gMainMapChangeNextMenu >= 0) {
-            menu_set(gMainMapChangeNextMenu);
+            menuSet(gMainMapChangeNextMenu);
             gMainMapChangeNextMenu = -1;
         }
 
@@ -524,18 +525,18 @@ void main_handle_map_change(void) {
 }
 
 // officialName: mainChangeMap
-void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
+void mainChangeMap(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
     PlayerLocation *location;
 
     // "mainChangeMap(%d,%d,%d)\n" (default.dol)
 
-    func_8001440C(0);
+    main_func_8001440C(0);
 
     if (playerno <= PLAYER_NONE) {
         playerno = PLAYER_SABRE;
     }
 
-    clear_PlayerPosBuffer();
+    mainClearPlayerPosBuffer();
 
     gDLL_30_Task->vtbl->load_recently_completed();
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
@@ -549,20 +550,20 @@ void main_change_map(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
     gMainMapChangeNextMenu = menuID;
 }
 
-void func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
-    func_8001440C(0);
+void main_func_800142A0(f32 arg0, f32 arg1, f32 arg2) {
+    main_func_8001440C(0);
     map_func_800483BC(arg0, arg1, arg2);
-    clear_PlayerPosBuffer();
+    mainClearPlayerPosBuffer();
     gMainDoMapChange = TRUE;
 }
 
-void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
+void mainStartGame(f32 x, f32 y, f32 z, s32 playerno) {
     Vec3f pos;
     pos.x = x;
     pos.y = y;
     pos.z = z;
 
-    func_8001440C(0);
+    main_func_8001440C(0);
 
     gDLL_29_Gplay->vtbl->init_save(-1, NULL);
     gDLL_29_Gplay->vtbl->set_playerno(playerno);
@@ -570,33 +571,35 @@ void main_start_game(f32 x, f32 y, f32 z, s32 playerno) {
     gDLL_29_Gplay->vtbl->start_loaded_game();
 }
 
-void func_800143A4(void) {
+void main_func_800143A4(void) {
     map_func_80048034();
     gMainDoMapChange = TRUE;
 }
 
-Gfx *func_800143D0(Gfx **arg0) {
+Gfx *main_func_800143D0(Gfx **arg0) {
     *arg0 = gMainGfx[gFrameBufIdx];
     return gCurGfx;
 }
 
-s8 func_800143FC(void) {
+s8 main_func_800143FC(void) {
     return D_8008C940;
 }
 
-void func_8001440C(s32 arg0) {
+void main_func_8001440C(s32 arg0) {
     D_8008C940 = arg0;
 }
 
-s8 get_pause_state(void) {
+// official name: mainGetPauseMode ?
+s8 mainGetPauseState(void) {
     return gPauseState;
 }
 
-void unpause(void) {
+void mainUnpause(void) {
     gPauseState = 0;
 }
 
-void set_pause_state(s32 state) {
+// official name: mainSetPauseMode ?
+void mainSetPauseState(s32 state) {
     gPauseState = state;
 }
 
@@ -605,7 +608,7 @@ void set_pause_state(s32 state) {
 #define MAIN_POL_BUF_SIZE (sizeof(Triangle) * 50)
 #define MAIN_VTX_BUF_SIZE (sizeof(Vertex) * 480)
 
-void alloc_frame_buffers(void) {
+void mainAllocFrameBuffers(void) {
     // in default.dol these have names as well.
     // alloc graphic display list command buffers. ("main:gfx" in default.dol)
     gMainGfx[0] = mmAlloc(MAIN_GFX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
@@ -624,16 +627,16 @@ void alloc_frame_buffers(void) {
     gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 
-void func_80014508(s8 arg0) {
+void main_func_80014508(s8 arg0) {
     D_8008C94C = arg0;
 }
 
 /**
  * @returns TRUE if no controllers are inserted.
- * @pre game_init must be called first.
- * @see game_init, joy_init
+ * @pre mainInit must be called first.
+ * @see mainInit, joyInit
  */
-s32 are_no_controllers_inserted(void) {
+s32 mainAreNoControllersInserted(void) {
     if (gLastInsertedControllerIndex == -1) {
         // No controllers are inserted
         return TRUE;
@@ -642,7 +645,7 @@ s32 are_no_controllers_inserted(void) {
     }
 }
 
-s32 ret1_8001454c(void) {
+s32 main_ret1_8001454c(void) {
     return 1;
 }
 
@@ -653,7 +656,7 @@ void func_initing_rumblepak(void) {
     _depth2Cents(0);
 }
 
-void test_write(void) {
+void mainTestWrite(void) {
     HW_REG2(0x1C000C02, u16) = 0x4040;
 }
 
@@ -661,7 +664,7 @@ void test_write(void) {
  * Probe the copy protection dongle for the correct magic string and
  * if failed, wipe a majority of RAM to prevent RAM viewing.
  */
-void check_dongle(void) {
+void mainCheckDongle(void) {
     // attempt to get the first magic short from the dongle. if it is
     // connected, this will retrieve correctly.
     u32 head = ACCESS_1;
@@ -693,19 +696,19 @@ void check_dongle(void) {
     }
 }
 
-OSSched *get_ossched(void) {
+OSSched *mainGetScheduler(void) {
     return &osscheduler_;
 }
 
-void init_bittable(void) {
-    queue_alloc_load_file((void **)&gFile_BITTABLE, BITTABLE_BIN);
+void mainInitBits(void) {
+    assetRomLoad((void **)&gFile_BITTABLE, BITTABLE_BIN);
     // @bug: This should be dividing by 4 (not 2) since each entry is 4 bytes long
-    gSizeBittable = get_file_size(BITTABLE_BIN) >> 1;
+    gSizeBittable = piRomGetFileSize(BITTABLE_BIN) >> 1;
     gGplayState = gDLL_29_Gplay->vtbl->get_state();
 }
 
 // offical name: mainSetBits
-void main_set_bits(s32 entry, u32 value) {
+void mainSetBits(s32 entry, u32 value) {
     u8 *bitString;
     u8 _pad[12]; // fake match
     s32 idx;
@@ -750,7 +753,7 @@ void main_set_bits(s32 entry, u32 value) {
 }
 
 // offical name: mainGetBits
-u32 main_get_bits(s32 entry) {
+u32 mainGetBits(s32 entry) {
     u8 *bitString;
     u32 value;
     s32 idx;
@@ -800,16 +803,16 @@ u32 main_get_bits(s32 entry) {
     return value;
 }
 
-s32 main_increment_bits(s32 entry) {
+s32 mainIncrementBits(s32 entry) {
     s32 val;
     s32 maxVal;
 
-    val = main_get_bits(entry) + 1;
+    val = mainGetBits(entry) + 1;
 
     maxVal = 1 << ((gFile_BITTABLE[entry].field_0x2 & 0x1f) + 1);
 
     if (val < maxVal) {
-        main_set_bits(entry, val);
+        mainSetBits(entry, val);
     } else {
         val -= 1;
     }
@@ -817,16 +820,16 @@ s32 main_increment_bits(s32 entry) {
     return val;
 }
 
-s32 main_decrement_bits(s32 entry) {
-    s32 val = main_get_bits(entry);
+s32 mainDecrementBits(s32 entry) {
+    s32 val = mainGetBits(entry);
     if (val != 0) {
-        main_set_bits(entry, --val);
+        mainSetBits(entry, --val);
         return val;
     }
     return 0;
 }
 
-s32 create_temp_dll(s32 id) {
+s32 mainCreateTempDLL(s32 id) {
     u32 idx;
 
     idx = 0;
@@ -843,12 +846,12 @@ s32 create_temp_dll(s32 id) {
         STUBBED_PRINTF(" WARNING : temp dll no %i is alreadly created \n");
     }
 
-    gTempDLLInsts[idx] = dll_load_deferred(id, 1);
+    gTempDLLInsts[idx] = dllLoad(id, 1);
 
     return 1;
 }
 
-s32 remove_temp_dll(s32 id) {
+s32 mainRemoveTempDLL(s32 id) {
     u32 idx;
 
     idx = 0;
@@ -866,35 +869,35 @@ s32 remove_temp_dll(s32 id) {
         return 0;
     }
 
-    if (dll_unload(gTempDLLInsts[idx])) {
+    if (dllFree(gTempDLLInsts[idx])) {
         gTempDLLInsts[idx] = NULL;
     }
 
     return 1;
 }
 
-void main_load_frontend(void) {
+void mainLoadFrontend(void) {
     if (gDLL_76 == 0) {
-        gDLL_75 = dll_load_deferred(DLL_ID_75, 10);
-        gDLL_76 = dll_load_deferred(DLL_ID_76, 3);
+        gDLL_75 = dllLoad(DLL_ID_75, 10);
+        gDLL_76 = dllLoad(DLL_ID_76, 3);
     }
 }
 
-void main_unload_frontend(void) {
+void mainUnloadFrontend(void) {
     if (gDLL_76 != 0) {
-        dll_unload(gDLL_75);
+        dllFree(gDLL_75);
         gDLL_75 = 0;
-        dll_unload(gDLL_76);
+        dllFree(gDLL_76);
         gDLL_76 = 0;
     }
 }
 
-void main_demo_reset(void) {
+void mainDemoReset(void) {
     gDemoState = 0;
     gDemoFinished = 0;
 }
 
-void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
+void mainDemoStart(f32 x, f32 y, f32 z, s32 playerno) {
     gDemoState++;
 
     if (gDemoState >= 5) {
@@ -902,34 +905,34 @@ void main_demo_start(f32 x, f32 y, f32 z, s32 playerno) {
         gDemoFinished = 1;
     }
 
-    main_start_game(x, y, z, playerno);
+    mainStartGame(x, y, z, playerno);
 }
 
-s32 main_demo_next(void) {
+s32 mainDemoNext(void) {
     s32 _v1 = gDemoState + 1;
     if (_v1 >= 5)
         _v1 = 0;
     return _v1;
 }
 
-u8 main_demo_state(void) {
+u8 mainDemoState(void) {
     return gDemoState;
 }
 
-u8 main_demo_finished(void) {
+u8 mainDemoFinished(void) {
     return gDemoFinished;
 }
 
-void clear_PlayerPosBuffer(void) {
+void mainClearPlayerPosBuffer(void) {
     bzero(&PlayerPosBuffer, PLAYER_POSBUF_SIZE * sizeof(struct Vec3_Int));
     PlayerPosBuffer_index = 0;
 }
 
-void update_PlayerPosBuffer(void) {
+void mainUpdatePlayerPosBuffer(void) {
     Object *player;
     struct Vec3_Int *pos;
 
-    player = get_player();
+    player = objGetPlayer();
     pos = (struct Vec3_Int *)&PlayerPosBuffer[PlayerPosBuffer_index];
     D_800AE674 += gUpdateRate;
 
@@ -945,7 +948,7 @@ void update_PlayerPosBuffer(void) {
     }
 }
 
-void func_80014D34(f32 param1, f32 *outX, f32 *outY, f32 *outZ) {
+void mainGetBufferedPlayerPos(f32 param1, f32 *outX, f32 *outY, f32 *outZ) {
     struct Vec3_Int *pos;
     u32 var;
     s32 i;

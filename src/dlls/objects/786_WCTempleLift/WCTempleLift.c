@@ -41,7 +41,7 @@ void dll_786_control(Object *self) {
             for (i = 0; i < self->polyhits->unk10F; i++) {
                 obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
-                    player = get_player();
+                    player = objGetPlayer();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
                         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                         objdata->unk4 = 1;
@@ -55,7 +55,7 @@ void dll_786_control(Object *self) {
             for (i = 0; i < self->polyhits->unk10F; i++) {
                 obj = self->polyhits->unk100[i];
                 if (obj->id == 0) {
-                    player = get_player();
+                    player = objGetPlayer();
                     if ((objdata->unk0 <= 0.0f) && (((DLL_210_Player*)player->dll)->vtbl->func70(player) == 0x21)) {
                         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
                         objdata->unk4 = 0;
@@ -73,7 +73,7 @@ void dll_786_update(Object *self) { }
 // offset: 0x290 | func: 3 | export: 3
 void dll_786_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

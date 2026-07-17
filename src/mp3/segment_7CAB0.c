@@ -4,7 +4,7 @@
 #include "intrinsics.h"
 #include "constants.h"
 
-f32 mp3_func_8007BEB0(f32 arg0) {
+f32 mp3Func8007BEB0(f32 arg0) {
     f32 sp1C;
     f32 sp18;
     f32 sp14;

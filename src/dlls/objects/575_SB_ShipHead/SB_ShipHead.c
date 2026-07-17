@@ -29,8 +29,8 @@ void SB_ShipHead_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SB_ShipHead_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    obj_add_object_type(self, OBJTYPE_Baddie);
-    obj_init_mesg_queue(self, 10);
+    objAddObjectType(self, OBJTYPE_Baddie);
+    objInitMesgQueue(self, 10);
 }
 
 // offset: 0x7C | func: 1 | export: 1
@@ -67,19 +67,19 @@ void SB_ShipHead_control(Object *self) {
     parentDC = parent->unkDC;
     if (parent->id == OBJ_WL_Galleon) {
         if (self->modelInstIdx != 1) {
-            obj_set_model(self, 1);
+            objSetModel(self, 1);
         }
         self->objhitInfo->unk58 &= ~1;
         if (parentDC != 10) {
-            func_80024108(self, 0.005f, gUpdateRateF, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         } else {
-            func_800240BC(self, 0);
+            objAnimSetProgress(self, 0);
         }
         return;
     }
     objdata = self->data;
     if (!objdata->cloudrunner) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i = objIndex; i < objCount; i++) {
             if (objects[i]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i];
@@ -87,13 +87,13 @@ void SB_ShipHead_control(Object *self) {
             }
         }
     }
-    if (obj_recv_mesg(self, &outMesgID, &outSender, &outMesgArg)) {
+    if (objRecvMesg(self, &outMesgID, &outSender, &outMesgArg)) {
         switch (outMesgID) {
         case 0x130001:
-            dll = dll_load_deferred(DLL_ID_194, 1);
+            dll = dllLoad(DLL_ID_194, 1);
             ((DLL_194*)dll)->vtbl->base.func0(self, 0, NULL, 1, -1, 8, 0);
             if (dll != NULL) {
-                dll_unload(dll);
+                dllFree(dll);
             }
             break;
         case 0x130002:
@@ -106,7 +106,7 @@ void SB_ShipHead_control(Object *self) {
     }
     if ((self->unkE0 <= 0) && ((parentDC == 3) || (parentDC == 4) || (parentDC == 5)) && (func_80025F40(self, &hitBy, NULL, NULL) != 0) && (hitBy->id != OBJ_SB_FireBall)) {
         objdata->counter = 255;
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_179_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(NULL, SOUND_179_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func7(parent);
         self->unkE0 = 300;
     }
@@ -114,7 +114,7 @@ void SB_ShipHead_control(Object *self) {
         self->unkE0 -= gUpdateRate;
     }
     if (parentDC >= 8) {
-        obj_set_model(self, 1);
+        objSetModel(self, 1);
     }
     if (parentDC == 8) {
         self->unkDC++;
@@ -124,13 +124,13 @@ void SB_ShipHead_control(Object *self) {
     }
     if ((parentDC == 5) && (_data_0[0] != 5)) {
         self->unkDC += gUpdateRate;
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_17A_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(NULL, SOUND_17A_Galleon_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->srt.transl.y += 50.0f;
         self->srt.transl.z -= 300.0f;
-        get_object_child_position(self, &ox, &oy, &oz);
+        camGetObjectChildPosition(self, &ox, &oy, &oz);
         self->srt.transl.y -= 50.0f;
         self->srt.transl.z += 300.0f;
-        fireballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_FireBall);
+        fireballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_FireBall);
         fireballSetup->loadDistance = 0xFF;
         fireballSetup->fadeDistance = 0xFF;
         fireballSetup->loadFlags = 2;
@@ -138,8 +138,8 @@ void SB_ShipHead_control(Object *self) {
         fireballSetup->x = ox;
         fireballSetup->y = oy;
         fireballSetup->z = oz;
-        fireballObj = obj_create(fireballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
-        player = get_player();
+        fireballObj = objSetupObject(fireballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        player = objGetPlayer();
         dx = player->globalPosition.x - fireballObj->srt.transl.x;
         dy = (player->globalPosition.y - 30.0f) - fireballObj->srt.transl.y;
         dz = player->globalPosition.z - fireballObj->srt.transl.z;
@@ -151,19 +151,19 @@ void SB_ShipHead_control(Object *self) {
         fireballObj->unkE0 = (s32)objdata->cloudrunner;
     }
     if (sp3B == 1) {
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
-        player = get_player();
-        minifireSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_MiniFire);
+        dll_amSfx->Play(NULL, SOUND_17A_Galleon_Roar, 43, NULL, NULL, 0, NULL);
+        player = objGetPlayer();
+        minifireSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_MiniFire);
         minifireSetup->x = player->globalPosition.x + 100.0f;
-        minifireSetup->y = rand_next(-6, 6) + player->globalPosition.y + 50.0f;
-        minifireSetup->z = rand_next(-6, 6) + player->globalPosition.z + 45.0f;
+        minifireSetup->y = mathRnd(-6, 6) + player->globalPosition.y + 50.0f;
+        minifireSetup->z = mathRnd(-6, 6) + player->globalPosition.z + 45.0f;
         minifireSetup->loadFlags = 2;
         minifireSetup->fadeFlags = 1;
         minifireSetup->loadDistance = 0xFF;
         minifireSetup->fadeDistance = 0xFF;
-        obj_create(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        objSetupObject(minifireSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     }
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     _data_0[0] = parentDC;
 }
 
@@ -191,9 +191,9 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
         objdata = self->data;
         temp_v1 = objdata->counter;
         if (temp_v1 != 0) {
-            func_80036F6C(0xFF, 0xFF - temp_v1, 0xFF - temp_v1);
+            objprintSetMultiplierColor(0xFF, 0xFF - temp_v1, 0xFF - temp_v1);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if ((self->parent) && (self->parent->id == OBJ_SB_Galleon)) {
             temp_v0 = ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func10(self->parent);
             if ((temp_v0 != 0) && (temp_v0 != 2)) {
@@ -202,14 +202,14 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
                 transform.roll = 0;
                 transform.pitch = 0;
                 transform.scale = 1.0f;
-                if (func_80031F6C(self, 2, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) {
-                    if (rand_next(0, 3) == 0) {
+                if (objGetAttachPointWorldSpace(self, 2, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) {
+                    if (mathRnd(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A3, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
-                    if (rand_next(0, 3) == 0) {
+                    if (mathRnd(0, 3) == 0) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A6, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
-                    if ((func_80031F6C(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (rand_next(0, 6) == 0)) {
+                    if ((objGetAttachPointWorldSpace(self, 8, &transform.transl.x, &transform.transl.y, &transform.transl.z, 0) == 0) && (mathRnd(0, 6) == 0)) {
                         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_A4, &transform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
                     }
                 }
@@ -220,7 +220,7 @@ void SB_ShipHead_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xA28 | func: 4 | export: 4
 void SB_ShipHead_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0xA68 | func: 5 | export: 5

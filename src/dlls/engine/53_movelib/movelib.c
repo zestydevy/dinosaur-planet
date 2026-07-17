@@ -43,7 +43,7 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
     s32* sp34;
     HeadAnimation* var_a3;
 
-    sp34 = func_800349B0();
+    sp34 = objExpr_func_800349B0();
     if (arg1->objhitInfo != NULL) {
         if (arg1->objhitInfo->unk5A & 2) {
             sp38 = arg1->objhitInfo->unk56 * 4.0f;
@@ -55,12 +55,12 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
     } else {
         sp38 = 30.0f;
     }
-    sp3E = func_80031DD8(arg0, arg1, NULL);
-    sp3C = func_800334A4(arg0, arg1, &arg3->headRefPoint, 
+    sp3E = objAngleToObjectXZ(arg0, arg1, NULL);
+    sp3C = objExpr_func_800334A4(arg0, arg1, &arg3->headRefPoint, 
                          (arg3->unk4A9 & 8) ? NULL : arg3->unk1C, 
                          arg3->unk454, sp38, 8, arg3->unk4A4);
     if (!(arg3->unk4A9 & 8)) {
-        arg3->unk490 = !func_800333C8(arg0, sp34, arg3->jointCount, arg3->unk1C);
+        arg3->unk490 = !objExpr_func_800333C8(arg0, sp34, arg3->jointCount, arg3->unk1C);
     }
     arg3->unk490 = 0;
     if ((arg3->unk4A9 & 2) && (sp3C != 0)) {
@@ -80,12 +80,12 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
         *arg4 = 0.005f;
     } else if (*arg2 != 0) {
         if (sp3E > 0 && arg0->curModAnimId != arg5[1]) {
-            func_80023D30(arg0, arg5[1], 0.0f, 0);
-            func_80024D74(arg0, 30);
+            objAnimSet(arg0, arg5[1], 0.0f, 0);
+            objAnim_func_80024D74(arg0, 30);
         }
         if (sp3E < 0 && arg0->curModAnimId != arg5[0]) {
-            func_80023D30(arg0, arg5[0], 0.0f, 0);
-            func_80024D74(arg0, 30);
+            objAnimSet(arg0, arg5[0], 0.0f, 0);
+            objAnim_func_80024D74(arg0, 30);
         }
         if (sp3C == 0) {
             sp3E = sp3E > 0 ? (sp3E / 20) : (sp3E / 20);
@@ -100,10 +100,10 @@ static s32 movelib_func_18(Object* arg0, Object* arg1, s32* arg2, MoveLibData* a
 
 // offset: 0x3B4 | func: 1
 static void movelib_func_3B4(Object* arg0, Object* arg1, MoveLibData* arg2, s16* arg3) {
-    s32* temp_a1 = func_800349B0();
+    s32* temp_a1 = objExpr_func_800349B0();
     switch (arg2->unk498) {
     case 3:
-        func_80033224(arg0, temp_a1, arg2->jointCount, arg2->unk1C);
+        objExpr_func_80033224(arg0, temp_a1, arg2->jointCount, arg2->unk1C);
         arg2->unk490 = 0;
         arg2->unk498 = 2;
         /* fallthrough */
@@ -135,35 +135,35 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
     maxLookAtSearchDist = 1000.0f;
     lookatYOffset = 30.0f;
     sp5A = 0;
-    sp54 = func_800349B0();
-    get_player();
+    sp54 = objExpr_func_800349B0();
+    objGetPlayer();
     if (data->unk499 == 0) {
         if ((data->unk4A9 & 1) && (data->unk498 != 8)) {
             data->unk498 = 8;
             if (!(data->unk4A9 & 8)) {
-                func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                 data->unk490 = 0x50;
-                func_80033350(data->unk1C, data->jointCount, 0, 0);
+                objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
             } else {
-                func_800332A4(obj, func_800349B0(), data->jointCount);
+                objExpr_func_800332A4(obj, objExpr_func_800349B0(), data->jointCount);
             }
         } else if (!(data->unk4A9 & 1) && (data->unk498 == 8)) {
             data->unk498 = 0;
             if (!(data->unk4A9 & 8)) {
-                func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                 data->unk490 = 0x50;
             }
         }
         if (data->unk498 > 1) {
             if ((data->unk490 != 0) && !(data->unk4A9 & 8)) {
-                data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
                 return;
             }
-            func_800332A4(obj, func_800349B0(), data->jointCount);
+            objExpr_func_800332A4(obj, objExpr_func_800349B0(), data->jointCount);
             return;
         }
         if (data->lookat == NULL) {
-            lookat = obj_get_nearest_type_to(OBJTYPE_LookAt, obj, &maxLookAtSearchDist);
+            lookat = objGetNearestTypeTo(OBJTYPE_LookAt, obj, &maxLookAtSearchDist);
         } else {
             lookat = data->lookat;
         }
@@ -187,17 +187,17 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
             }
             if ((data->unk4AC != -1) && (lookat == data->prevLookat)) {
                 if (((data->unk4B4 -= gUpdateRate) <= 0) && ((data->unk4B4 + gUpdateRate) > 0)) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 0x50;
-                    func_80033350(data->unk1C, data->jointCount, 0, 0);
+                    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
                     data->unk498 = 0;
                     return;
                 }
                 if (data->unk490 != 0) {
-                    data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                    data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
                 }
                 if (data->unk4B4 < -data->unk4B0) {
-                    data->unk4B4 = rand_next(data->unk4B0, data->unk4AC);
+                    data->unk4B4 = mathRnd(data->unk4B0, data->unk4AC);
                 }
                 if (data->unk4B4 < 0) {
                     return;
@@ -219,28 +219,28 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
                 }
             }
             if (lookat != NULL) {
-                sp5A = func_80031DD8(obj, lookat, NULL);
+                sp5A = objAngleToObjectXZ(obj, lookat, NULL);
             }
             if (data->unk4A9 & 0x10) {
-                func_80034D94(0, 1);
+                objExpr_func_80034D94(0, 1);
                 sp5A -= 0x8000;
             }
             if ((((sp5A >= 0) ? sp5A : -sp5A) >= 0x5555) || (lookat == NULL)) {
                 if ((data->unk498 != 0) || ((lookat == NULL) && (data->prevLookat != NULL))) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 0xA;
-                    func_80033350(data->unk1C, data->jointCount, 0, 0);
+                    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
                     data->unk498 = 0;
                 }
             } else {
                 if ((lookat != data->prevLookat) || (data->unk498 == 0)) {
-                    func_80033224(obj, sp54, data->jointCount, data->unk1C);
+                    objExpr_func_80033224(obj, sp54, data->jointCount, data->unk1C);
                     data->unk490 = 1;
                 }
                 if (data->unk4A9 & 8) {
                     data->unk490 = 0;
                 }
-                func_800334A4(obj, lookat, &data->headRefPoint, 
+                objExpr_func_800334A4(obj, lookat, &data->headRefPoint, 
                               data->unk490 != 0 ? data->unk1C : NULL, 
                               data->unk454, lookatYOffset, 8, data->unk4A4);
                 data->unk498 = 1;
@@ -248,7 +248,7 @@ void movelib_func_4B8(Object* obj, MoveLibData* data) {
             data->prevLookat = lookat;
             data->lookat = NULL;
             if (!(data->unk4A9 & 8) && (data->unk490 != 0)) {
-                data->unk490 = !func_800333C8(obj, sp54, data->jointCount, data->unk1C);
+                data->unk490 = !objExpr_func_800333C8(obj, sp54, data->jointCount, data->unk1C);
             }
         }
     }
@@ -282,9 +282,9 @@ void movelib_func_BA4(Object* obj, MoveLibData* data, s16 arg2, s16 arg3, s32 jo
     data->unk4.x = 0.0f;
     data->unk0 = 0/*.0f*/;
     data->unk4AC = -1;
-    func_800332A4(obj, func_800349B0(), jointCount);
-    func_80033224(obj, func_800349B0(), jointCount, data->unk1C);
-    func_80033350(data->unk1C, data->jointCount, 0, 0);
+    objExpr_func_800332A4(obj, objExpr_func_800349B0(), jointCount);
+    objExpr_func_80033224(obj, objExpr_func_800349B0(), jointCount, data->unk1C);
+    objExpr_func_80033350(data->unk1C, data->jointCount, 0, 0);
     movelib_func_1E70(data, data_0, data_0, 8);
 }
 
@@ -295,9 +295,9 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
     s16 sp38[3];
 
     if (arg1->unk499 != 0) {
-        func_800332A4(arg0, func_800349B0(), arg1->jointCount);
-        func_80031F6C(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
-        func_80031F6C(arg0, arg2 + 1, &sp4C.f[0], &sp4C.f[1], &sp4C.f[2], 0);
+        objExpr_func_800332A4(arg0, objExpr_func_800349B0(), arg1->jointCount);
+        objGetAttachPointWorldSpace(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
+        objGetAttachPointWorldSpace(arg0, arg2 + 1, &sp4C.f[0], &sp4C.f[1], &sp4C.f[2], 0);
         arg1->unk4.x = ((sp4C.f[0] + (3.0f * sp3C.x)) * 0.25f);
         arg1->unk4.y = sp3C.y;
         arg1->unk4.z = ((sp4C.f[2] + (3.0f * sp3C.z)) * 0.25f);
@@ -307,10 +307,10 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
         sp38[0] = -arg0->srt.roll;
         sp38[1] = -arg0->srt.pitch;
         sp38[2] = -arg0->srt.yaw;
-        rotate_vec3((const SRT*)sp38, arg1->unk4.f);
+        mathRotateRPY((const SRT*)sp38, arg1->unk4.f);
         arg1->unk499 = 0;
     }
-    func_80031F6C(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
+    objGetAttachPointWorldSpace(arg0, arg2, &sp3C.x, &sp3C.y, &sp3C.z, 0);
     arg1->headRefPoint.x = sp3C.x;
     arg1->headRefPoint.y = sp3C.y;
     arg1->headRefPoint.z = sp3C.z;
@@ -322,7 +322,7 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
     s16 sp38[2];
     s16* temp_v0_3;
 
-    temp_v0 = get_player();
+    temp_v0 = objGetPlayer();
     sp38[0] = arg3;
     sp38[1] = arg4;
     arg0->objhitInfo->unk58 |= 1;
@@ -339,10 +339,10 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
     if (arg1->unk62 == 5) {
         if ((arg2->unk498 >= 2) && (arg2->unk498 < 8)) {
             movelib_func_3B4(arg0, temp_v0, arg2, sp38);
-            func_80024108(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
+            objAnimAdvance(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
                 arg1->unk7A |= 8;
-                temp_v0_3 = func_80034804(arg0, 0);
+                temp_v0_3 = objExpr_func_80034804(arg0, 0);
                 arg1->unk120 = temp_v0_3[1];
                 arg1->unk122 = temp_v0_3[0];
                 arg2->unk498 = 0;
@@ -361,13 +361,13 @@ static void movelib_func_106C(Object* actor, Object* animObj, AnimObj_Data* anim
     MoveLibData* sp2C;
     s32* sp28;
 
-    sp28 = func_800349B0();
+    sp28 = objExpr_func_800349B0();
     sp2C = actor->data;
     gDLL_2_Camera->vtbl->set_target_object(NULL);
     sp2C->unk498 = 0;
-    func_80033224(actor, sp28, sp2C->jointCount, sp2C->unk1C);
+    objExpr_func_80033224(actor, sp28, sp2C->jointCount, sp2C->unk1C);
     sp2C->unk490 = 0x50;
-    func_80033350(sp2C->unk1C, sp2C->jointCount, 0, 0);
+    objExpr_func_80033350(sp2C->unk1C, sp2C->jointCount, 0, 0);
 }
 
 // offset: 0x1130 | func: 9 | export: 10
@@ -405,16 +405,16 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
         CIRCLE_WRAP(var_a0);
         arg0->srt.yaw = (s16) (s32) ((f32) arg0->srt.yaw + ((((f32) var_a0 + 0.5f) * (arg2 * gUpdateRateF)) / sp38));
     }
-    obj_move(arg0, arg0->velocity.x, arg0->velocity.f[1], arg0->velocity.f[2]);
+    objMove(arg0, arg0->velocity.x, arg0->velocity.f[1], arg0->velocity.f[2]);
     if (arg3 != -1) {
         if (arg3 != arg0->curModAnimId) {
-            func_80023D30(arg0, arg3, 0.0f, 0U);
+            objAnimSet(arg0, arg3, 0.0f, 0U);
         }
-        var_a0 = (u16)arctan2_f(sp3C.f[0], sp3C.f[2]);
+        var_a0 = (u16)mathAtan2f(sp3C.f[0], sp3C.f[2]);
         var_a0 = arg0->srt.yaw - (var_a0 & 0xFFFF);
         CIRCLE_WRAP(var_a0);
-        arg2 *= -fcos16_precise(var_a0);
-        func_8002493C(arg0, arg2, arg4);
+        arg2 *= -mathCosfInterp(var_a0);
+        objGetAnimChange(arg0, arg2, arg4);
     }
     
     return 0;
@@ -443,14 +443,14 @@ s32 movelib_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* ar
             *arg6 |= 0x10;
         }
     }
-    func_8002493C(arg0, arg3, arg5);
+    objGetAnimChange(arg0, arg3, arg5);
     if ((*arg6 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp38, 0) == 0)) {
         arg0->srt.transl.y -= sp38;
     }
     if (*arg6 & 2) {
         xDiff = arg0->srt.transl.x - arg0->prevLocalPosition.x;
         zDiff = arg0->srt.transl.z - arg0->prevLocalPosition.z;
-        arg0->srt.yaw += ((s16)(arctan2_f(xDiff, zDiff) + 0x8000) - arg0->srt.yaw) >> 3;
+        arg0->srt.yaw += ((s16)(mathAtan2f(xDiff, zDiff) + 0x8000) - arg0->srt.yaw) >> 3;
     }
     return sp3C;
 }
@@ -498,12 +498,12 @@ static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(&arg0->srt, &arg2->unk18);
+        mathRotateYPR(&arg0->srt, &arg2->unk18);
         STUBBED_PRINTF(" Tangent 1 %f %f %f \n", &arg2->unk18.x, &arg2->unk18.y, &arg2->unk18.z);
         sp40[2] = 0;
         sp40[1] = (s16) arg1->unk2D;
         sp40[0] = (s16) arg1->unk2C;
-        rotate_vec_inv((const SRT*)&sp40, &arg2->unk24);
+        mathRotateYPR((const SRT*)&sp40, &arg2->unk24);
         STUBBED_PRINTF(" Tangent 2 %f %f %f \n", &arg2->unk24.x, &arg2->unk24.y, &arg2->unk24.z);
         *tValue = 0.0f;
         arg2->unk34 = movelib_func_1A1C(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
@@ -519,17 +519,17 @@ static s32 movelib_func_17F4(Object* arg0, DLL53Func17F4Arg1* arg1, DLL53Func17F
     spline[1] = arg2->unkC.x;
     spline[2] = arg2->unk18.x;
     spline[3] = arg2->unk24.x;
-    arg0->srt.transl.x = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.x = curvesHermite(spline, *tValue, NULL);
     spline[0] = arg2->unk0.y;
     spline[1] = arg2->unkC.y;
     spline[2] = arg2->unk18.y;
     spline[3] = arg2->unk24.y;
-    arg0->srt.transl.y = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.y = curvesHermite(spline, *tValue, NULL);
     spline[0] = arg2->unk0.z;
     spline[1] = arg2->unkC.z;
     spline[2] = arg2->unk18.z;
     spline[3] = arg2->unk24.z;
-    arg0->srt.transl.z = curves_hermite(spline, *tValue, NULL);
+    arg0->srt.transl.z = curvesHermite(spline, *tValue, NULL);
     return sp3C;
 }
 
@@ -560,21 +560,21 @@ static f32 movelib_func_1A1C(DLL53Func17F4Arg2* arg0, Vec3f* arg1, Vec3f* arg2, 
         spline[1] = arg2->x;
         spline[2] = arg1->x;
         spline[3] = arg3->x;
-        temp_fv0 = curves_hermite(spline, tValue, NULL);
+        temp_fv0 = curvesHermite(spline, tValue, NULL);
         temp_fs1 = temp_fv0 - var_fs2;
         
         spline[0] = arg0->unk0.y;
         spline[1] = arg2->y;
         spline[2] = arg1->y;
         spline[3] = arg3->y;
-        temp_fv0_2 = curves_hermite(spline, tValue, NULL);
+        temp_fv0_2 = curvesHermite(spline, tValue, NULL);
         temp_fs2 = temp_fv0_2 - spA4;
         
         spline[0] = arg0->unk0.z;
         spline[1] = arg2->z;
         spline[2] = arg1->z;
         spline[3] = arg3->z;
-        temp_fv0_3 = curves_hermite(spline, tValue, NULL);
+        temp_fv0_3 = curvesHermite(spline, tValue, NULL);
         temp_fv1 = temp_fv0_3 - spA0;
         
         var_fs5 += sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp_fv1));
@@ -623,11 +623,11 @@ s32 movelib_func_1CC8(s32 arg0, SRT* arg1) {
         arg1->transl.x = sp30->pos.x;
         arg1->transl.y = sp30->pos.y;
         arg1->transl.z = sp30->pos.z;
-        temp_v0_3 = obj_get_nearest_type(OBJTYPE_LookAt, &arg1->transl, &sp2C);
+        temp_v0_3 = objGetNearestType(OBJTYPE_LookAt, &arg1->transl, &sp2C);
         if (temp_v0_3 != NULL) {
             xDist = temp_v0_3->srt.transl.x - arg1->transl.x;
             zDist = temp_v0_3->srt.transl.z - arg1->transl.z;
-            arg1->yaw = (s16) (arctan2s(xDist, zDist) + 0x8000);
+            arg1->yaw = (s16) (mathAtan2(xDist, zDist) + 0x8000);
         } else {
             arg1->yaw = (s16) (sp30->unk2C << 8);
         }
@@ -696,7 +696,7 @@ s32 movelib_get_vtx_world_pos(Object* obj, s32 vtx, Vec3f* outPos) {
     outPos->x = (f32) verts[vtx].v.ob[0];
     outPos->y = (f32) verts[vtx].v.ob[1];
     outPos->z = (f32) verts[vtx].v.ob[2];
-    vec3_transform((MtxF*)(((f32*)modelInst->matrices[modelInst->unk34 & 1]) + (*joint << 4)),
+    mathMtxXFMF((MtxF*)(((f32*)modelInst->matrices[modelInst->unk34 & 1]) + (*joint << 4)),
         outPos->x, 
         outPos->y, 
         outPos->z, 

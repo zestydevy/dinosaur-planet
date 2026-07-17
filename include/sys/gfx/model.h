@@ -234,30 +234,31 @@ typedef struct {
 /*0004*/    Model *model;
 } ModelSlot;
 
-void init_models(void);
-void func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4, s32 param5, s32 param6);
-void func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
-void func_8001B084(ModelInstance *modelInst, f32 updateRate);
-Animation* anim_load(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
-s32 modanim_load(Model* model, s32 id, u8* data);
-void anim_destroy(Animation*);
-void func_800199A8(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4);
-void func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9);
-void func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
-void func_8001B100(ModelInstance* modelInst);
-void load_model_display_list(Model *model, ModelInstance *modelInst);
-void load_model_display_list2(Model *model, ModelInstance *modelInst);
-void patch_model_display_list_for_textures(Model* model);
-s32 model_load_anim_remap_table(s32 modelID, s32 arg1, s32 animCount);
-void model_setup_anim_playback(ModelInstance* arg0, AnimState* animState);
-ModelInstance* createModelInstance(Model* model, s32 flags, s32 arg2);
-u32 model_get_stats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting);
-ModelInstance *model_load_create_instance(s32 id, u32 flags);
-void destroy_model_instance(ModelInstance *modelInst);
-ModelInstance* func_80017D2C(s32 arg0, s32 arg1);
+void modInit(void);
+void mod_func_8001AF04(ModelInstance *modelInst, s32 param2, s32 param3, f32 param4, s32 param5, s32 param6);
+void mod_func_8001AFCC(ModelInstance *modelInst, s32 param2, f32 param3);
+void mod_func_8001B084(ModelInstance *modelInst, f32 updateRate);
+Animation* modLoadAnim(s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model* model);
+Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
+void modFreeAnim(Animation*);
+void mod_func_800199A8(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4);
+void mod_func_80019FC0(MtxF *arg0, ModelInstance *modelInst, AnimState *animState, f32 arg3, u32 arg4, u8 animIdx0, u8 arg6, u8 animIdx1, u8 flags, s16 arg9);
+void mod_func_8001A3FC(ModelInstance *modelInst, u32 selector, s32 idx, f32 arg3, f32 scale, Vec3f *arg5, s16 *arg6);
+void mod_func_8001B100(ModelInstance* modelInst);
+void modLoadModelDisplayList(Model *model, ModelInstance *modelInst);
+void modLoadModelDisplayList2(Model *model, ModelInstance *modelInst);
+void modPatchModelDisplayListForTextures(Model* model);
+s32 modLoadAnimRemapTable(s32 modelID, s32 arg1, s32 animCount);
+void modSetupAnimPlayback(ModelInstance* arg0, AnimState* animState);
+u32 modGetStats(Model* model, s32 settingsBitfield, ModelStats* stats, s32 blendshapeSetting);
+ModelInstance *modLoadModelActual(s32 id, u32 flags);
+void modFreeModel(ModelInstance *modelInst);
+ModelInstance* modLoadModel(s32 arg0, s32 arg1);
 // TODO: replace struct Object with just Object
-void func_8001A8EC(ModelInstance* modelInst, Model* model, struct Object* obj, MtxF* arg3, struct Object* obj2);
-void func_80019730(ModelInstance* arg0, Model* arg1, struct Object* arg2, MtxF* arg3);
-void func_8001AC44(ModelInstance*, Model*, struct Object*, MtxF*, MtxF*, u32, f32);
+void mod_func_8001A8EC(ModelInstance* modelInst, Model* model, struct Object* obj, MtxF* arg3, struct Object* obj2);
+void mod_func_80019730(ModelInstance* arg0, Model* arg1, struct Object* arg2, MtxF* arg3);
+void mod_func_8001AC44(ModelInstance*, Model*, struct Object*, MtxF*, MtxF*, u32, f32);
+void mod_func_8001943C(struct Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
+void mod_func_8001A1D4(Model *model, AnimState *animState, s32 count);
 
 #endif //_SYS_GFX_MODEL_H

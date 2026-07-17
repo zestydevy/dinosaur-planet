@@ -129,19 +129,19 @@ typedef struct Unk80006908 {
     f32 unk20;
 } Unk80006908;
 
-f32 curves_b_spline(f32* spline, f32 t, f32* rate);
-void curves_b_spline_converter(f32* in, f32* out);
-f32 curves_hermite(f32* spline, f32 t, f32* rate);
-void curves_hermite_converter(f32* in, f32* out);
-f32 curves_bezier(f32* spline, f32 t, f32* rate);
-void curves_bezier_converter(f32* in, f32* out);
-f32 curves_catmull_rom(f32* s, f32 t, f32* rate);
-void curves_catmull_rom_converter(f32* in, f32* out);
-f32 curves_linear(f32* s, f32 t, f32* rate);
-void curves_linear_converter(f32* in, f32* out);
+f32 curvesBSpline(f32* spline, f32 t, f32* rate);
+void curvesBSplineConverter(f32* in, f32* out);
+f32 curvesHermite(f32* spline, f32 t, f32* rate);
+void curvesHermiteConverter(f32* in, f32* out);
+f32 curvesBezier(f32* spline, f32 t, f32* rate);
+void curvesBezierConverter(f32* in, f32* out);
+f32 curvesCatmullRom(f32* s, f32 t, f32* rate);
+void curvesCatmullRomConverter(f32* in, f32* out);
+f32 curvesLinear(f32* s, f32 t, f32* rate);
+void curvesLinearConverter(f32* in, f32* out);
 
-void curves_move(CurvesStruct *arg0);
-void curves_setup_move_network_curve(CurvesStruct *arg0);
+void curvesMove(CurvesStruct *arg0);
+void curvesSetupMoveNetworkCurve(CurvesStruct *arg0);
 f32 curves_func_80006E04(Unk80006784 *, f32);
 f32 curves_func_80006CFC(Unk80006784 *, f32, f32);
 s32 curves_func_800053B0(CurvesStruct* arg0, f32 arg1);

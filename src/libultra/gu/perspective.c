@@ -11,8 +11,8 @@ void guPerspectiveF(float mf[4][4], u16 *perspNorm, float fovy, float aspect, fl
 	guMtxIdentF(mf);
 
 	//fovy *= 3.1415926f / 180.0f;
-	//cot = fcos16_precise (fovy/2) / fsin16_precise (fovy/2);
-	cot = fcos16_precise (fovy*91.022003173828125f) / fsin16_precise (fovy*91.022003173828125f);
+	//cot = mathCosfInterp (fovy/2) / mathSinfInterp (fovy/2);
+	cot = mathCosfInterp (fovy*91.022003173828125f) / mathSinfInterp (fovy*91.022003173828125f);
 
 	mf[0][0] = cot / aspect;
 	mf[1][1] = cot;

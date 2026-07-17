@@ -51,23 +51,23 @@ typedef struct {
 /*2E*/ u8 _unk2E[0x30 - 0x2E];
 } Route;
 
-void route_init(Route *route);
-void route_free(Route *route);
-s32 route_setup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal, s32 arg5);
+void routeInit(Route *route);
+void routeFree(Route *route);
+s32 routeSetup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal, s32 arg5);
 /**
  * return values:
  *  1: route found
  *  0: ran out of iterations, inconclusive
  * -1: no route found
  */
-s32 route_find(Route* route, s32 maxIterations);
+s32 routeFind(Route* route, s32 maxIterations);
 /** Reconstruct route, returns number of nodes in route */
-s32 route_reconstruct(Route* route);
+s32 routeReconstruct(Route* route);
 /** 
  * Get next node in route
  *
- * Assumes route_reconstruct was previously called.
+ * Assumes routeReconstruct was previously called.
  */
-CurveSetup* route_next(Route* route);
+CurveSetup* routeNext(Route* route);
 
 #endif

@@ -13,9 +13,9 @@ void PollenFragment_setup(Object* self, PollenFragment_Setup* objSetup, s32 arg2
     PollenFragment_Data* objData = self->data;
     
     func_800267A4(self);
-    objData->lifetime = rand_next(180, 300);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_B02_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_B03_Acid_Hiss_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+    objData->lifetime = mathRnd(180, 300);
+    dll_amSfx->Play(self, SOUND_B02_Gas_Disperse_Burst, MAX_VOLUME, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(self, SOUND_B03_Acid_Hiss_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
 }
 
 // offset: 0xF4 | func: 1 | export: 1
@@ -33,7 +33,7 @@ void PollenFragment_control(Object* self) {
             self->opacity -= gUpdateRate * 4;
         } else {
             self->opacity = 0;
-            obj_destroy_object(self);
+            objFreeObject(self);
             return;
         }
     }
@@ -43,8 +43,8 @@ void PollenFragment_control(Object* self) {
     self->velocity.z *= 0.95f;
     self->velocity.y *= 0.95f;
     self->velocity.y += 0.001f * gUpdateRateF;
-    gDLL_6_AMSFX->vtbl->set_vol(objData->soundHandle, self->opacity / 2);
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    dll_amSfx->SetVol(objData->soundHandle, self->opacity / 2);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Objhits
     func_80026128(self, 21, 1, 0);
@@ -63,13 +63,13 @@ void PollenFragment_update(Object *self) { }
 // offset: 0x2FC | func: 3 | export: 3
 void PollenFragment_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x350 | func: 4 | export: 4
 void PollenFragment_free(Object* self, s32 arg1) {
-    camera_disable_y_offset();
+    camIgnoreShake();
 }
 
 // offset: 0x390 | func: 5 | export: 5

@@ -24,7 +24,7 @@ void WL_LaserTarget_dtor(void* dll) { }
 void WL_LaserTarget_setup(Object* self, WL_LaserTarget_Setup* objSetup, s32 reset) {
     WL_LaserTarget_Data* objData = self->data;
     
-    self->modelInstIdx = main_get_bits(objSetup->gamebitA);
+    self->modelInstIdx = mainGetBits(objSetup->gamebitA);
     objData->timer = objSetup->onDuration;
     objData->switchedOn = FALSE;
 }
@@ -45,14 +45,14 @@ void WL_LaserTarget_control(Object* self) {
     
     //Reset after timer runs out
     if ((objData->timer <= 0) && objData->switchedOn) {
-        if (main_get_bits(objSetup->gamebitA)) {
-            obj_set_model(self, 0);
-            main_set_bits(objSetup->gamebitA, FALSE);
-            main_set_bits(objSetup->gamebitB, FALSE);
+        if (mainGetBits(objSetup->gamebitA)) {
+            objSetModel(self, 0);
+            mainSetBits(objSetup->gamebitA, FALSE);
+            mainSetBits(objSetup->gamebitB, FALSE);
         } else {
-            obj_set_model(self, 1);
-            main_set_bits(objSetup->gamebitA, TRUE);
-            main_set_bits(objSetup->gamebitB, TRUE);
+            objSetModel(self, 1);
+            mainSetBits(objSetup->gamebitA, TRUE);
+            mainSetBits(objSetup->gamebitB, TRUE);
         }
         objData->switchedOn = FALSE;
         objData->timer = objSetup->onDuration;
@@ -71,7 +71,7 @@ void WL_LaserTarget_update(Object* self) { }
 // offset: 0x1E8 | func: 3 | export: 3
 void WL_LaserTarget_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

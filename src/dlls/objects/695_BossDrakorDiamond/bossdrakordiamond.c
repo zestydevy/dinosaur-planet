@@ -32,7 +32,7 @@ void BossDrakorDiamond_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void BossDrakorDiamond_setup(Object* self, BossDrakorDiamond_Setup* objSetup, s32 reset) {
-    dModGfxDLL = dll_load_deferred(DLL_ID_158, 1);
+    dModGfxDLL = dllLoad(DLL_ID_158, 1);
     sTimer = 0.0f;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED;
     self->animCallback = BossDrakorDiamond_anim_callback;
@@ -62,7 +62,7 @@ void BossDrakorDiamond_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs,
 // offset: 0x14C | func: 4 | export: 4
 void BossDrakorDiamond_free(Object* self, s32 onlySelf) {
     if (dModGfxDLL != NULL) {
-        dll_unload(dModGfxDLL);
+        dllFree(dModGfxDLL);
         dModGfxDLL = NULL;
     }
 }

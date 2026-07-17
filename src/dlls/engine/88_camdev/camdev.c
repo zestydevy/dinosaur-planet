@@ -37,8 +37,8 @@ void camdev_func_78(Cam* cam) {
     Object* sp30;
 
     sp30 = cam->player;
-    sp56 = joy_get_buttons(0);
-    if (joy_get_pressed(0) & L_TRIG) {
+    sp56 = joyGetButtons(0);
+    if (joyGetPressed(0) & L_TRIG) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
         return;
     }
@@ -71,10 +71,10 @@ void camdev_func_78(Cam* cam) {
     }
     cam->srt.yaw += var_v0;
     cam->srt.pitch += var_v1;
-    sp40 = fsin16_precise((s16) (cam->srt.yaw - 0x4000));
-    sp3C = fcos16_precise((s16) (cam->srt.yaw - 0x4000));
-    sp38 = fcos16_precise(cam->srt.pitch);
-    temp_ft4 = fsin16_precise(cam->srt.pitch);
+    sp40 = mathSinfInterp((s16) (cam->srt.yaw - 0x4000));
+    sp3C = mathCosfInterp((s16) (cam->srt.yaw - 0x4000));
+    sp38 = mathCosfInterp(cam->srt.pitch);
+    temp_ft4 = mathSinfInterp(cam->srt.pitch);
     temp_ft4 = temp_ft4 * sState->zoom;
     temp_fv1 = sState->zoom * sp38;
     temp_fa1 = temp_fv1 * sp3C;

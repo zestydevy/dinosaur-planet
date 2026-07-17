@@ -5,7 +5,10 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
+#include "sys/joypad.h"
+#include "sys/map.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 
 typedef struct {
     ObjSetup base;
@@ -53,7 +56,7 @@ void WL_Column_control(Object* self) {
     s32 i;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     
     if (objData->state == WL_Column_STATE_0_Resting) {
         //Advance state when player interacts
@@ -93,7 +96,7 @@ void WL_Column_control(Object* self) {
             }
             
             //Save position
-            map_save_object(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y + 10.0f, self->srt.transl.z);
+            mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y + 10.0f, self->srt.transl.z);
         }
     } else {
         func_800267A4(self);
@@ -101,9 +104,9 @@ void WL_Column_control(Object* self) {
         
         //Let go when pressing A
         {
-            if (joy_get_pressed(0) & A_BUTTON) {
+            if (joyGetPressed(0) & A_BUTTON) {
                 objData->sendPlayerMessage = FALSE;
-                joy_disable_buttons(0, A_BUTTON);
+                joyDisableButtons(0, A_BUTTON);
             }
             
             if (self->unkE0 == 1) {
@@ -119,7 +122,7 @@ void WL_Column_control(Object* self) {
         
         //Send a message to the player while carried
         if (objData->sendPlayerMessage) {
-            obj_send_mesg(player, 0x100008, self, (void*)((objData->messageArgHi << 0x10) | (objData->messageArgLo & 0xFFFF)));
+            objSendMesg(player, 0x100008, self, (void*)((objData->messageArgHi << 0x10) | (objData->messageArgLo & 0xFFFF)));
         }
     }
 }
@@ -145,7 +148,7 @@ void WL_Column_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
         }
     }
     
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }
 
 // offset: 0x3E0 | func: 4 | export: 4
@@ -176,7 +179,7 @@ int WL_Column_handle_player_interaction(Object* self, Object* player, WL_Column_
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (self->unkE0 == 0)) {
         objData->messageArgLo = 0;
         objData->messageArgHi = 40;
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         nextState = WL_Column_STATE_1_Lifted;
     }
     

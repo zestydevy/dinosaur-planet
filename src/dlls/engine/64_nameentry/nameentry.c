@@ -70,7 +70,7 @@ void dll_64_ctor(void *dll) {
     s32 i;
     
     itemCount = ARRAYCOUNT(sMenuItems);
-    sBackgroundTexture = tex_load_deferred(0x2DE);
+    sBackgroundTexture = texLoadTexture(0x2DE);
 
     if (sGameTextChunk == NULL) {
         sGameTextChunk = gDLL_21_Gametext->vtbl->get_chunk(GAMETEXT_0ED_Menu_Name_Entry);
@@ -81,7 +81,7 @@ void dll_64_ctor(void *dll) {
         sMenuItems[i].text = sGameTextChunk->strings[i];
     }
 
-    sLetterBgBoxTexture = tex_load_deferred(0x316);
+    sLetterBgBoxTexture = texLoadTexture(0x316);
     gDLL_74_Picmenu->vtbl->set_items(sMenuItems, itemCount, 
         /*defaultItem*/0, 
         /*sounds*/NULL, 
@@ -121,8 +121,8 @@ s32 dll_64_update1() {
                 }
                 name[sNumNameLetters] = '\0';
 
-                gDLL_29_Gplay->vtbl->init_save(get_save_game_idx(), name);
-                menu_set(MENU_GAME_SELECT);
+                gDLL_29_Gplay->vtbl->init_save(menuGetSaveGameIdx(), name);
+                menuSet(MENU_GAME_SELECT);
                 sNameLettersRedrawFrames = 2;
             }
         } else {
@@ -145,31 +145,31 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     s32 uly;
     s32 lry;
     
-    font_window_set_coords(1, 0, 0, 
-        GET_VIDEO_WIDTH(vi_get_current_size()), 
-        GET_VIDEO_HEIGHT(vi_get_current_size()));
-    font_window_flush_strings(1);
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowSetCoords(1, 0, 0, 
+        GET_VIDEO_WIDTH(viGetCurrentSize()), 
+        GET_VIDEO_HEIGHT(viGetCurrentSize()));
+    fontWindowFlushStrings(1);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
 
     if (sMainRedrawFrames != 0) {
-        rcp_screen_full_write(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
+        rcpScreenFullWrite(gdl, sBackgroundTexture, 0, 0, 0, 0, 0xFF, SCREEN_WRITE_CYC_COPY);
         
-        font_window_set_text_colour(1, 255, 255, 255, 0, 255);
-        font_window_add_string_xy(1, 320, 73, sGameTextChunk->strings[0x1E], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
+        fontWindowAddStringXY(1, 320, 73, sGameTextChunk->strings[0x1E], 1, ALIGN_TOP_CENTER);
 
-        font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-        font_window_add_string_xy(1, 315, 68, sGameTextChunk->strings[0x1E], 2, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(1, 315, 68, sGameTextChunk->strings[0x1E], 2, ALIGN_TOP_CENTER);
 
-        font_window_use_font(1, FONT_FUN_FONT);
-        font_window_set_text_colour(1, 183, 139, 97, 255, 255);
+        fontWindowUseFont(1, FONT_FUN_FONT);
+        fontWindowSetTextColour(1, 183, 139, 97, 255, 255);
 
-        font_window_add_string_xy(1, 320, 405, sGameTextChunk->strings[0x1F], 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0, 0, 0, 255, 255);
-        font_window_add_string_xy(1, 318, 403, sGameTextChunk->strings[0x1F], 2, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, 320, 405, sGameTextChunk->strings[0x1F], 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 255, 255);
+        fontWindowAddStringXY(1, 318, 403, sGameTextChunk->strings[0x1F], 2, ALIGN_TOP_CENTER);
     } else {
         // Always redraw background in case picmenu redraws
-        func_80010158(&ulx, &lrx, &uly, &lry);
-        rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
+        menu_func_80010158(&ulx, &lrx, &uly, &lry);
+        rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, uly, lry, 0xFF, SCREEN_WRITE_CYC_COPY);
     }
 
     gDLL_74_Picmenu->vtbl->draw(gdl);
@@ -178,13 +178,13 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
         if (sMainRedrawFrames == 0) {
             // Make sure we at least redraw the background behind the name letters
             lry = (sLetterBgBoxTexture->height | ((sLetterBgBoxTexture->widthHeightHi & 0xF) << 8));
-            rcp_screen_scroll_write(gdl, sBackgroundTexture, 0, 0, 110, lry + 110, 0xFF, SCREEN_WRITE_CYC_COPY);
+            rcpScreenScrollWrite(gdl, sBackgroundTexture, 0, 0, 110, lry + 110, 0xFF, SCREEN_WRITE_CYC_COPY);
         }
 
         dll_64_draw_letters(gdl, 179, 110);
     }
 
-    font_window_draw(gdl, NULL, NULL, 1);
+    fontWindowDraw(gdl, NULL, NULL, 1);
 
     sMainRedrawFrames -= 1;
     if (sMainRedrawFrames < 0) {
@@ -200,8 +200,8 @@ void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
 static void dll_64_clean_up() {
     gDLL_74_Picmenu->vtbl->clear_items();
     mmFree(sGameTextChunk);
-    tex_free(sLetterBgBoxTexture);
-    tex_free(sBackgroundTexture);
+    texFreeTexture(sLetterBgBoxTexture);
+    texFreeTexture(sBackgroundTexture);
 }
 
 static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y) {
@@ -213,17 +213,17 @@ static void dll_64_draw_letters(Gfx **gdl, s32 x, s32 y) {
     x2 = x;
 
     for (i = 0; i < 5; i++) {
-        rcp_screen_full_write(gdl, sLetterBgBoxTexture, x2, y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
+        rcpScreenFullWrite(gdl, sLetterBgBoxTexture, x2, y, 0, 0, 0xFF, SCREEN_WRITE_TRANSLUCENT);
         x2 += 52;
     }
 
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_set_text_colour(1, 255, 255, 255, 0, 255);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowSetTextColour(1, 255, 255, 255, 0, 255);
     
     x2 = x;
 
     for (i = 0; i < sNumNameLetters; i++) {
-        font_window_add_string_xy(1, x2 + 30, y + 12, letterPtr, 2, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, x2 + 30, y + 12, letterPtr, 2, ALIGN_TOP_CENTER);
         x2 += 52;
         letterPtr += 2;
     }

@@ -1,10 +1,11 @@
 #include "PR/ultratypes.h"
+#include "sys/debug.h"
 #include "sys/di_comm.h"
 #include "macros.h"
 
 s8 gDebugEnabled = 0;
 
-void debug_toggle(s8 enabled) {
+void debugToggle(s8 enabled) {
     gDebugEnabled = enabled;
 
     if (gDebugEnabled) {
@@ -14,11 +15,11 @@ void debug_toggle(s8 enabled) {
     }
 }
 
-s8 debug_is_enabled() {
+s8 debugIsEnabled(void) {
     return gDebugEnabled;
 }
 
-s32 debug_tick() {
+s32 debugTick(void) {
     if (!gDebugEnabled) {
         return 0;
     } else {

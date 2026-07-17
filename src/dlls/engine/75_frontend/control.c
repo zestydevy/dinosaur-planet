@@ -41,7 +41,7 @@ void frontend_ctor(void *dll) {
     u32 i;
 
     for (i = 0; i < ARRAYCOUNT(sTextures); i++) {
-        sTextures[i] = tex_load_deferred(dTextureIDs[i]);
+        sTextures[i] = texLoadTexture(dTextureIDs[i]);
     }
 }
 
@@ -49,7 +49,7 @@ void frontend_ctor(void *dll) {
 void frontend_dtor(void *dll) {
     u32 i;
     for (i = 0; i < ARRAYCOUNT(sTextures); i++) {
-        tex_free(sTextures[i]);
+        texFreeTexture(sTextures[i]);
     }
 }
 
@@ -147,13 +147,13 @@ void frontend_update(FrontEndControl* ctrl) {
     s32 lry;
 
     if (ctrl->redrawFrames != 0) {
-        func_80010158(&ulx, &lrx, &uly, &lry);
+        menu_func_80010158(&ulx, &lrx, &uly, &lry);
         if (ctrl->type == FRONTEND_CONTROL_Slider) {
             lry += 4;
         } else if (ctrl->type == FRONTEND_CONTROL_Checkbox) {
             lry += 4;
         }
-        func_800100D4(ulx, lrx, uly, lry);
+        menu_func_800100D4(ulx, lrx, uly, lry);
     }
     
     if ((ctrl->flags & FRONTEND_FLAG_1_Highlighted) == FALSE) {
@@ -166,25 +166,25 @@ void frontend_update(FrontEndControl* ctrl) {
 
     switch (ctrl->type) {
     case FRONTEND_CONTROL_List:
-        joy_get_stick_menu_xy_sign(0, &joyX, &joyY);
+        joyGetStickMenuXYSign(0, &joyX, &joyY);
         if (joyX < 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value--;
             ctrl->flags |= FRONTEND_FLAG_4_Moved_Left;
         } else if (joyX > 0) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value++;
             ctrl->flags |= FRONTEND_FLAG_8_Moved_Right;
         }
         break;
     case FRONTEND_CONTROL_Slider:
-        joyX = (s8)((joy_get_stick_x(0) * gUpdateRateF) / 40.0f);
+        joyX = (s8)((joyGetStickX(0) * gUpdateRateF) / 40.0f);
         ctrl->value += joyX;
         break;
     default:
     case FRONTEND_CONTROL_Checkbox:
-        if (!(ctrl->flags & FRONTEND_FLAG_20_Locked) && (joy_get_pressed(0) & A_BUTTON)) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
+        if (!(ctrl->flags & FRONTEND_FLAG_20_Locked) && (joyGetPressed(0) & A_BUTTON)) {
+            dll_amSfx->Play(NULL, SOUND_PICMENU_MOVE, MAX_VOLUME, NULL, NULL, 0, NULL);
             ctrl->value ^= 1;
         }
         break;
@@ -277,7 +277,7 @@ void frontend_slider_draw(FrontEndSlider* ctrl, Gfx** gdl) {
     s32 screenX;
     f32 tValue;
     
-    rcp_screen_full_write(gdl, 
+    rcpScreenFullWrite(gdl, 
         sTextures[FRONTEND_TEXTURE_0_Slider_Track], 
         ctrl->x, ctrl->y, 
         0, 0, 
@@ -287,7 +287,7 @@ void frontend_slider_draw(FrontEndSlider* ctrl, Gfx** gdl) {
     tValue = (f32)(ctrl->value - ctrl->min) / (ctrl->max - ctrl->min);
     screenX = ctrl->x + (ctrl->width) * tValue;
     
-    rcp_screen_full_write(gdl, 
+    rcpScreenFullWrite(gdl, 
         sTextures[(ctrl->flags & 1) ? FRONTEND_TEXTURE_1_Slider_Handle_HL : FRONTEND_TEXTURE_2_Slider_Handle], 
         screenX, ctrl->y  - 6, 
         0, 0, 0xFF, 0);
@@ -318,7 +318,7 @@ void frontend_checkbox_draw(FrontEndCheckbox* ctrl, Gfx** gdl) {
         opacity = 0xFF;
     }
     
-    rcp_screen_full_write(gdl, sTextures[textureIdx], 
+    rcpScreenFullWrite(gdl, sTextures[textureIdx], 
         ctrl->x, ctrl->y, 
         0, 0, 
         opacity, 0);
@@ -326,47 +326,47 @@ void frontend_checkbox_draw(FrontEndCheckbox* ctrl, Gfx** gdl) {
 
 // offset: 0xA00 | func: 14
 void frontend_list_draw(FrontEndList* ctrl, Gfx** gdl) {
-    font_window_use_font(1, FONT_FUN_FONT);
-    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+    fontWindowUseFont(1, FONT_FUN_FONT);
+    fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
 
     //Print currently-displayed list item
     {
         //Different colour when selected
         if (ctrl->flags & FRONTEND_FLAG_1_Highlighted) {
-            font_window_set_text_colour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
         } else {
-            font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
         }
-        font_window_add_string_xy(1, ctrl->x, ctrl->y, ctrl->strings[ctrl->value], 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, ctrl->x, ctrl->y, ctrl->strings[ctrl->value], 1, ALIGN_TOP_CENTER);
 
         //Print drop-shadow
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
-        font_window_add_string_xy(1, ctrl->x - 1, ctrl->y - 1, ctrl->strings[ctrl->value], 2, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, 0x96);
+        fontWindowAddStringXY(1, ctrl->x - 1, ctrl->y - 1, ctrl->strings[ctrl->value], 2, ALIGN_TOP_CENTER);
         
-        font_get_text_width(1, ctrl->strings[ctrl->value], 0, FONT_FUN_FONT);
+        fontGetTextWidth(1, ctrl->strings[ctrl->value], 0, FONT_FUN_FONT);
     }
 
     //Left/right navigation arrows
     {
         //Print left navigation arrow
         if (ctrl->flags & FRONTEND_FLAG_4_Moved_Left) {
-            font_window_set_text_colour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
         } else {
-            font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
         }
-        font_window_add_string_xy(1, (ctrl->x - ctrl->halfWidth) - 2, ctrl->y, &dLeftArrowChar, 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, (ctrl->x - ctrl->halfWidth) - 2, ctrl->y, &dLeftArrowChar, 1, ALIGN_TOP_CENTER);
         
         //Print right navigation arrow
         if (ctrl->flags & FRONTEND_FLAG_8_Moved_Right) {
-            font_window_set_text_colour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xFF, 0xD7, 0x3D, 0xFF, 0xFF);
         } else {
-            font_window_set_text_colour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
+            fontWindowSetTextColour(1, 0xB7, 0x8B, 0x61, 0xFF, 0xFF);
         }
-        font_window_add_string_xy(1, ctrl->x + ctrl->halfWidth, ctrl->y, &dRightArrowChar, 1, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, ctrl->x + ctrl->halfWidth, ctrl->y, &dRightArrowChar, 1, ALIGN_TOP_CENTER);
 
         //Print drop-shadows for navigation arrows
-        font_window_set_text_colour(1, 0, 0, 0, 0xFF, 0x96);
-        font_window_add_string_xy(1, (ctrl->x - ctrl->halfWidth) - 3, ctrl->y, &dLeftArrowChar, 2, ALIGN_TOP_CENTER);
-        font_window_add_string_xy(1, (ctrl->x + ctrl->halfWidth) - 1, ctrl->y, &dRightArrowChar, 2, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0, 0, 0, 0xFF, 0x96);
+        fontWindowAddStringXY(1, (ctrl->x - ctrl->halfWidth) - 3, ctrl->y, &dLeftArrowChar, 2, ALIGN_TOP_CENTER);
+        fontWindowAddStringXY(1, (ctrl->x + ctrl->halfWidth) - 1, ctrl->y, &dRightArrowChar, 2, ALIGN_TOP_CENTER);
     }
 }

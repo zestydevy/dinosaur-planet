@@ -180,7 +180,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         return;
     }
     
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objData->unk0, 0);
 
     fxBitfield = objData->unk51C;
@@ -190,7 +190,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     
     for (i = 0; i < 4; i++){
         if ((1 << i) & fxBitfield) {
-            func_80031F6C(self, i + 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
+            objGetAttachPointWorldSpace(self, i + 2, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z, 0);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_676, &fxTransform, 0x210001, -1, 0);
         }
     }
@@ -198,7 +198,7 @@ void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0x5B4 | func: 4 | export: 4
 void dll_658_free(Object *self, s32 arg1) {
-    remove_temp_dll(0x35);
+    mainRemoveTempDLL(0x35);
 }
 
 // offset: 0x5F8 | func: 5 | export: 5
@@ -227,7 +227,7 @@ s32 dll_658_func_61C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
     }
     
     if (temp_v1->unk4 != NO_GAMEBIT) {
-        if (main_get_bits(temp_v1->unk4)) {
+        if (mainGetBits(temp_v1->unk4)) {
             return 4;
         }
     }
@@ -251,14 +251,14 @@ s32 dll_658_func_ACC(Object* self, PointBack_funcACC_UnkArg1* arg1, s32 arg2) {
     
     distance = 300.0f;
     if (arg1 != NULL) {
-        objects[0] = get_player();
-        objects[1] = get_sidekick();
-        objects[2] = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
+        objects[0] = objGetPlayer();
+        objects[1] = objGetSidekick();
+        objects[2] = objGetNearestTypeTo(OBJTYPE_Baddie, self, &distance);
 
         result = 0;
         for (i = 0; i < 3; i++) {
             if (objects[i] != NULL) {
-                result |= vec3_distance(&self->globalPosition, &objects[i]->globalPosition) < 200.0f;
+                result |= vec3Distance(&self->globalPosition, &objects[i]->globalPosition) < 200.0f;
             }
         }
         
@@ -280,18 +280,18 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
 
     if (arg1 == 0) {
         if (self->curModAnimId != 0xD) {
-            func_80023D30(self, 0xD, 0, 0);
+            objAnimSet(self, 0xD, 0, 0);
         }
         
-        func_80024108(self, 0.004f, gUpdateRate, 0);
-        if (main_get_bits(BIT_DB_Nest_Egg_Added) && main_get_bits(BIT_DB_Nest_Added_All_Eggs)) {
+        objAnimAdvance(self, 0.004f, gUpdateRate, 0);
+        if (mainGetBits(BIT_DB_Nest_Egg_Added) && mainGetBits(BIT_DB_Nest_Added_All_Eggs)) {
             objData = self->data;
             objData->unk524++;
             return 1;
         }
         
-        main_get_bits(BIT_428); //@bug: called without being stored/used
-        if (main_get_bits(BIT_428) >= 4) {
+        mainGetBits(BIT_428); //@bug: called without being stored/used
+        if (mainGetBits(BIT_428) >= 4) {
             return 1;
         }
     }
@@ -309,26 +309,26 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
 
     if (arg1 != NULL) {
         if (arg1->unk8E == 1) {
-            joy_get_pressed(0); //@bug: called without being used/stored
+            joyGetPressed(0); //@bug: called without being used/stored
             
-            if (joy_get_pressed(0) & B_BUTTON) {
-                main_set_bits(BIT_42A, 1);
+            if (joyGetPressed(0) & B_BUTTON) {
+                mainSetBits(BIT_42A, 1);
             } else {
                 return 1;
             }
         }
         arg1->unk8E = 0;
         
-    } else if (main_get_bits(BIT_42A)) {
-        main_set_bits(BIT_41F, 0);
-        main_set_bits(BIT_DB_Nest_Added_All_Eggs, 0);
-        main_set_bits(BIT_428, 0);
-        main_set_bits(BIT_420, 0);
-        main_set_bits(BIT_422, 0);
-        main_set_bits(BIT_423, 0);
-        main_set_bits(BIT_427, 0);
-        main_set_bits(BIT_42A, 0);
-        main_set_bits(BIT_426, 0);
+    } else if (mainGetBits(BIT_42A)) {
+        mainSetBits(BIT_41F, 0);
+        mainSetBits(BIT_DB_Nest_Added_All_Eggs, 0);
+        mainSetBits(BIT_428, 0);
+        mainSetBits(BIT_420, 0);
+        mainSetBits(BIT_422, 0);
+        mainSetBits(BIT_423, 0);
+        mainSetBits(BIT_427, 0);
+        mainSetBits(BIT_42A, 0);
+        mainSetBits(BIT_426, 0);
         
         _bss_0[0].unk6 = 13;
         _bss_0[1].unk6 = -1;
@@ -423,12 +423,12 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         arg2->unk24.z = 0.0f;
         arg2->unk18.x = -150.0f;
         arg2->unk24.x = -150.0f;
-        rotate_vec_inv(&self->srt, &arg2->unk18);
+        mathRotateYPR(&self->srt, &arg2->unk18);
         
         rot[2] = 0;
         rot[1] = arg1->unk2D;
         rot[0] = arg1->unk2C;
-        rotate_vec_inv((SRT*)&rot, &arg2->unk24);
+        mathRotateYPR((SRT*)&rot, &arg2->unk24);
         
         *arg3 = 0.0f;
         arg2->unk34 = dll_658_func_1C24(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
@@ -444,19 +444,19 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
     spline[1] = arg2->unkC.x;
     spline[2] = arg2->unk18.x;
     spline[3] = arg2->unk24.x;
-    self->srt.transl.x = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.x = curvesHermite(spline, *arg3, 0);
     
     spline[0] = arg2->unk0.y;
     spline[1] = arg2->unkC.y;
     spline[2] = arg2->unk18.y;
     spline[3] = arg2->unk24.y;
-    self->srt.transl.y = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.y = curvesHermite(spline, *arg3, 0);
     
     spline[0] = arg2->unk0.z;
     spline[1] = arg2->unkC.z;
     spline[2] = arg2->unk18.z;
     spline[3] = arg2->unk24.z;
-    self->srt.transl.z = curves_hermite(spline, *arg3, 0);
+    self->srt.transl.z = curvesHermite(spline, *arg3, 0);
     
     return returnVal;
 }
@@ -493,21 +493,21 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
             sp7C[1] = arg2->x;
             sp7C[2] = arg1->x;
             sp7C[3] = arg3->x;
-            resultX = curves_hermite(sp7C, tValue, 0);
+            resultX = curvesHermite(sp7C, tValue, 0);
             dx = resultX - baseX;
             
             sp7C[0] = arg0->unk0.y;
             sp7C[1] = arg2->y;
             sp7C[2] = arg1->y;
             sp7C[3] = arg3->y;
-            resultY = curves_hermite(sp7C, tValue, 0);
+            resultY = curvesHermite(sp7C, tValue, 0);
             dy = resultY - baseY;
             
             sp7C[0] = arg0->unk0.z;
             sp7C[1] = arg2->z;
             sp7C[2] = arg1->z;
             sp7C[3] = arg3->z;
-            resultZ = curves_hermite(sp7C, tValue, 0);
+            resultZ = curvesHermite(sp7C, tValue, 0);
             dz = resultZ - baseZ;
             
             sum += sqrtf(SQ(dx) + SQ(dy) + SQ(dz));
@@ -537,18 +537,18 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
     for (outValue = 0, i = 0; i < arg1->unk1B; i++){
         switch (arg1->unk13[i]) {
         case 0:
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_A50_Dinosaur_Grunt, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_A50_Dinosaur_Grunt, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 7:
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_AC8_Ground_Impact, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_AC8_Ground_Impact, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 9:
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_AC9_Impact_Crumbling, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_AC9_Impact_Crumbling, MAX_VOLUME, 0, 0, 0, 0);
             continue;
         case 10:
-            func_80034B54(self, 
+            objExpr_func_80034B54(self, 
                 &objData->unk4B8, 
-                &_data_10.unk0[rand_next(0, 2)].soundID, 
+                &_data_10.unk0[mathRnd(0, 2)].soundID, 
                 0);
             continue;
         case 1:
@@ -567,7 +567,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
     }
     
     if (outValue) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_A73, MAX_VOLUME, 0, 0, 0, 0);
+        dll_amSfx->Play(self, SOUND_A73, MAX_VOLUME, 0, 0, 0, 0);
     }
     
     return outValue;
@@ -577,7 +577,7 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
 void dll_658_func_23CC(Object* self, s16 seqBoneID, s16 arg2, s16 arg3) {
     s16 *seqBone;
     
-    seqBone = func_80034804(self, seqBoneID);
+    seqBone = objExpr_func_80034804(self, seqBoneID);
     
     if (!seqBone){
         return;

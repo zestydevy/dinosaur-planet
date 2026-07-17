@@ -31,16 +31,16 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
     func_80000450(self, self, 0x1FD, 0, 0, 0);
     func_80000450(self, self, 0x1FE, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->set(self, 0xD5, 0, 0, 0);
-    main_set_bits(BIT_572_KT_FightProgress, 0);
-    main_set_bits(BIT_56E, 1);
-    main_set_bits(BIT_KT_Player_In_Segment_2, 1);
-    main_set_bits(BIT_KT_Player_In_Segment_1, 1);
+    mainSetBits(BIT_572_KT_FightProgress, 0);
+    mainSetBits(BIT_56E, 1);
+    mainSetBits(BIT_KT_Player_In_Segment_2, 1);
+    mainSetBits(BIT_KT_Player_In_Segment_1, 1);
     objdata->unk0 = 600.0f;
-    main_set_bits(BIT_55A, 1);
-    main_set_bits(BIT_54A, 2);
-    main_set_bits(BIT_54E, 2);
-    main_set_bits(BIT_552, 1);
-    main_set_bits(BIT_556, 1);
+    mainSetBits(BIT_55A, 1);
+    mainSetBits(BIT_54A, 2);
+    mainSetBits(BIT_54E, 2);
+    mainSetBits(BIT_552, 1);
+    mainSetBits(BIT_556, 1);
     self->unkDC = 0;
 }
 
@@ -49,36 +49,36 @@ void KT_RexLevel_control(Object *self) {
     s32 ktFightProgress;
 
     if (self->unkDC == 0) {
-        main_set_bits(BIT_55E, 1);
+        mainSetBits(BIT_55E, 1);
         self->unkDC = 1;
     }
-    ktFightProgress = main_get_bits(BIT_572_KT_FightProgress);
+    ktFightProgress = mainGetBits(BIT_572_KT_FightProgress);
     if (_bss_0 != (ktFightProgress ^ 0)) {
         if (ktFightProgress & 1) {
             // KTrex is doing a full charge around the arena
-            main_set_bits(BIT_54A, 0);
-            main_set_bits(BIT_54E, 0);
-            main_set_bits(BIT_552, 0);
-            main_set_bits(BIT_556, 0);
+            mainSetBits(BIT_54A, 0);
+            mainSetBits(BIT_54E, 0);
+            mainSetBits(BIT_552, 0);
+            mainSetBits(BIT_556, 0);
         } else {
             // KTrex is back to his normal state, raise floor switches again
-            main_set_bits(BIT_55C, 1);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_699_KT_RaisingFloorSwitches, MAX_VOLUME, NULL, NULL, 0, NULL);
+            mainSetBits(BIT_55C, 1);
+            dll_amSfx->Play(self, SOUND_699_KT_RaisingFloorSwitches, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     }
-    if (main_get_bits(BIT_55C)) {
-        if (main_get_bits(BIT_55A)) {
-            main_set_bits(BIT_54A, 2);
-            main_set_bits(BIT_54E, 2);
-            main_set_bits(BIT_552, 1);
-            main_set_bits(BIT_556, 1);
-        } else if (main_get_bits(BIT_55B)) {
-            main_set_bits(BIT_54A, 1);
-            main_set_bits(BIT_54E, 1);
-            main_set_bits(BIT_552, 2);
-            main_set_bits(BIT_556, 2);
+    if (mainGetBits(BIT_55C)) {
+        if (mainGetBits(BIT_55A)) {
+            mainSetBits(BIT_54A, 2);
+            mainSetBits(BIT_54E, 2);
+            mainSetBits(BIT_552, 1);
+            mainSetBits(BIT_556, 1);
+        } else if (mainGetBits(BIT_55B)) {
+            mainSetBits(BIT_54A, 1);
+            mainSetBits(BIT_54E, 1);
+            mainSetBits(BIT_552, 2);
+            mainSetBits(BIT_556, 2);
         }
-        main_set_bits(BIT_55C, 0);
+        mainSetBits(BIT_55C, 0);
     }
     _bss_0 = ktFightProgress;
 }
@@ -89,7 +89,7 @@ void KT_RexLevel_update(Object *self) { }
 // offset: 0x47C | func: 3 | export: 3
 void KT_RexLevel_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

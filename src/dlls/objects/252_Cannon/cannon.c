@@ -147,12 +147,12 @@ dummy_label1: ;
             //Create explosion of debris
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5, NULL, 4, -1, NULL);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
-            obj_destroy_object(obj);
-            obj_destroy_object(self);
+            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
+            objFreeObject(obj);
+            objFreeObject(self);
             return;
 
         //Fire a cannonball once the timer runs down
@@ -164,12 +164,12 @@ dummy_label1: ;
         break;
     case Cannon_STATE_Firing:
         //Fire a cannonball
-        get_object_child_position(self, &x, &y, &z);
-        cannonballSetup = obj_alloc_setup(sizeof(CannonBall_Setup), OBJ_CannonBall);
+        camGetObjectChildPosition(self, &x, &y, &z);
+        cannonballSetup = objAllocSetup(sizeof(CannonBall_Setup), OBJ_CannonBall);
         cannonballSetup->x = x;
         cannonballSetup->y = y + 30.0f;
         cannonballSetup->z = z;
-        obj = obj_create(cannonballSetup, 5, -1, -1, NULL);
+        obj = objSetupObject(cannonballSetup, 5, -1, -1, NULL);
 
         //Get the cannon's worldSpace yaw
         yaw = self->srt.yaw;
@@ -179,22 +179,22 @@ dummy_label1: ;
         yaw += 0x4000;
 
         //Set the cannonball's lateral velocity and position offset based on the cannon's yaw
-        obj->velocity.f[0] = fsin16_precise(yaw) * 7.0f;
-        obj->velocity.f[2] = fcos16_precise(yaw) * 7.0f;
-        obj->srt.transl.f[0] += fsin16_precise(yaw) * 80.0f;
-        obj->srt.transl.f[2] += fcos16_precise(yaw) * 80.0f;
+        obj->velocity.f[0] = mathSinfInterp(yaw) * 7.0f;
+        obj->velocity.f[2] = mathCosfInterp(yaw) * 7.0f;
+        obj->srt.transl.f[0] += mathSinfInterp(yaw) * 80.0f;
+        obj->srt.transl.f[2] += mathCosfInterp(yaw) * 80.0f;
 
         //Set the cannonball's max lifetime
         obj->unkDC = 300;
 
         //Shake the screen
-        camera_enable_y_offset();
-        camera_set_shake_offset(0.9f);
+        camUseShake();
+        camSetShakeOffset(0.9f);
 
         //Create blast sound/particle effects
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_69, NULL, 4, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_2, NULL, 4, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
     
         objData->state = Cannon_STATE_Lowering;
         objData->timer = 20;
@@ -226,15 +226,15 @@ dummy_label3: ;
             
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_9, NULL, 4, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5, NULL, 4, -1, NULL);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //@bug? Possibly meant for `Cannon_STATE_Firing`, so the cannon doesn't get destroyed by its own attack?
             dObjectRef = obj;
 
             //Send an object message, then destroy both the attacking object and the cannon
-            obj_send_mesg_many(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
-            obj_destroy_object(obj);
-            obj_destroy_object(self);
+            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
+            objFreeObject(obj);
+            objFreeObject(self);
             return;
 
         //Go back down below deck once the timer runs down
@@ -264,7 +264,7 @@ void Cannon_update(Object *self) { }
 // offset: 0x894 | func: 3 | export: 3
 void Cannon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -51,7 +51,7 @@ void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 reset) {
     self->animCallback = DBPlaceHolder_anim_callback;
     objdata->flags = DBPlaceHolder_FLAG_0_None;
 
-    if (main_get_bits(setup->gamebit1)) {
+    if (mainGetBits(setup->gamebit1)) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags |= DBPlaceHolder_FLAG_1;
 
@@ -76,23 +76,23 @@ void DBPlaceHolder_control(Object *self) {
     setup = (DBPlaceHolder_Setup*)self->setup;
     objdata = self->data;
 
-    if ((setup->stealable == TRUE) && !(objdata->flags & DBPlaceHolder_FLAG_4_StealerWormTarget) && main_get_bits(setup->gamebit2)) {
-        obj_add_object_type(self, OBJTYPE_39);
+    if ((setup->stealable == TRUE) && !(objdata->flags & DBPlaceHolder_FLAG_4_StealerWormTarget) && mainGetBits(setup->gamebit2)) {
+        objAddObjectType(self, OBJTYPE_39);
         objdata->flags |= DBPlaceHolder_FLAG_4_StealerWormTarget;
     }
 
     if (objdata->flags & DBPlaceHolder_FLAG_2_Interacted) {
-        main_set_bits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebit1, 1);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags &= ~DBPlaceHolder_FLAG_2_Interacted;
         objdata->flags |= DBPlaceHolder_FLAG_1;
     }
 
-    if (!(objdata->flags & DBPlaceHolder_FLAG_1) && (self->unkAF & ARROW_FLAG_1_Interacted) && main_get_bits(setup->gamebit2)) {
-        player = get_player();
+    if (!(objdata->flags & DBPlaceHolder_FLAG_1) && (self->unkAF & ARROW_FLAG_1_Interacted) && mainGetBits(setup->gamebit2)) {
+        player = objGetPlayer();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
-        self->srt.yaw = arctan2s(x, z);
+        self->srt.yaw = mathAtan2(x, z);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags |= DBPlaceHolder_FLAG_2_Interacted;
         gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
@@ -127,13 +127,13 @@ void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
             self->srt.scale = 0.00001f;
         }
 
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x3CC | func: 4 | export: 4
 void DBPlaceHolder_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_39);
+    objFreeObjectType(self, OBJTYPE_39);
 }
 
 // offset: 0x40C | func: 5 | export: 5
@@ -151,7 +151,7 @@ int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
     DBPlaceHolder_Setup *setup = (DBPlaceHolder_Setup*)self->setup;
 
     if (animObjData->lastMessage == 2) {
-        main_set_bits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebit1, 1);
     }
 
     return 0;

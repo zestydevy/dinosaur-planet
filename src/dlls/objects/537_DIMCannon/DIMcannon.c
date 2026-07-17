@@ -82,27 +82,27 @@ void dll_537_dtor(void *dll) { }
 void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
     DLL537_Data* objData;
 
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
 
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1314(self, (DIMCannonBall_Setup*)objSetup);
     } else {
-        obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+        objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
         objData = self->data;
         self->unkAF |= 8;
         self->animCallback = dll_537_func_A94;
         self->srt.yaw = objSetup->unk28 << 8;
-        _data_0 = dll_load_deferred(DLL_ID_137, 1);
+        _data_0 = dllLoad(DLL_ID_137, 1);
         
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk27 = 60;
             objData->unk24 = 5;
-        } else if (main_get_bits(objSetup->unk1C)) {
+        } else if (mainGetBits(objSetup->unk1C)) {
             objData->unk24 = 4;
         }
     }
 
-    obj_add_object_type(self, OBJTYPE_Baddie);
+    objAddObjectType(self, OBJTYPE_Baddie);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -126,7 +126,7 @@ void dll_537_control(Object* self) {
     u32 var_v0;
 
     objSetup = (DLL537_Setup*)self->setup;
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1430(self);
@@ -134,7 +134,7 @@ void dll_537_control(Object* self) {
     }
     
     if (self->unkAF & ARROW_FLAG_8_No_Targetting) {
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     }
@@ -160,7 +160,7 @@ void dll_537_control(Object* self) {
     if ((var_v0 = objData->unk26)) {
         objData->unk0 = sidekick;
     } else {
-        player = get_player();
+        player = objGetPlayer();
         if (((DLL_Unknown*)player->dll)->vtbl->func[7].withOneArgS32(player)) {
             objData->unk0 = NULL;
         } else {
@@ -169,7 +169,7 @@ void dll_537_control(Object* self) {
     }
     
     if ((self->curModAnimId == 1) && (self->animProgress >= 1.0f)) {
-        func_80023D30(self, 0, 0, 0);
+        objAnimSet(self, 0, 0, 0);
     }
     
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
@@ -192,9 +192,9 @@ void dll_537_control(Object* self) {
         break;
     case 4:
         dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if ((objData->unk0 != NULL) && (main_get_bits(objSetup->unk1E) == 0) && (vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
+        } else if ((objData->unk0 != NULL) && (mainGetBits(objSetup->unk1E) == 0) && (vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
             objData->unk24 = 1;
         }
         objData->unk25 = 0;
@@ -202,9 +202,9 @@ void dll_537_control(Object* self) {
         objData->unk22 = 0;
         break;
     case 1:
-        if (main_get_bits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->unk1A)) {
             objData->unk24 = 5;
-        } else if (main_get_bits(objSetup->unk1E)) {
+        } else if (mainGetBits(objSetup->unk1E)) {
             objData->unk24 = 4;
         } else {
             if (objData->unk0 != NULL) {
@@ -220,13 +220,13 @@ void dll_537_control(Object* self) {
                     objData->unk22 -= gUpdateRate;
                 }
                 
-                objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
+                objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
                 if ((objData->unk10 < (f32) SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
-                    sidekick = get_sidekick();
+                    sidekick = objGetSidekick();
                     if (sidekick != NULL) {
                         ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
                     }
-                    main_set_bits(objSetup->unk20, 1);
+                    mainSetBits(objSetup->unk20, 1);
                     objData->unk24 = 6;
                 } else {
                     dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
@@ -245,20 +245,20 @@ void dll_537_control(Object* self) {
             objData->unk4.x = objData->unk0->srt.transl.x;
             objData->unk4.y = objData->unk0->srt.transl.y;
             objData->unk4.z = objData->unk0->srt.transl.z;
-            objData->unk10 = vec3_distance_xz_squared(&self->globalPosition, &objData->unk0->globalPosition);
+            objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
             if (((objSetup->unk26 * 90000.0f) / 100.0f) < objData->unk10) {
-                main_set_bits(objSetup->unk22, 1);
+                mainSetBits(objSetup->unk22, 1);
                 objData->unk24 = 1;
             }
         }
         break;
     case 2:
         if ((objData->unk10 < SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
-            sidekick = get_sidekick();
+            sidekick = objGetSidekick();
             if (sidekick != NULL) {
                 ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
             }
-            main_set_bits(objSetup->unk20, 1);
+            mainSetBits(objSetup->unk20, 1);
             objData->unk24 = 6;
         }
         break;
@@ -269,7 +269,7 @@ void dll_537_control(Object* self) {
     } else {
         var_fv0 = 0.025f;
     }
-    func_80024108(self, var_fv0, gUpdateRateF, 0);
+    objAnimAdvance(self, var_fv0, gUpdateRateF, 0);
 }
 
 #endif
@@ -284,11 +284,11 @@ void dll_537_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     if (self->id != OBJ_DIMCannonBall) {
         objData = self->data;
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-            func_80031F6C(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objGetAttachPointWorldSpace(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
         }
     } else if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -297,10 +297,10 @@ void dll_537_free(Object* self, s32 arg1) {
     if (self->id == OBJ_DIMCannonBall) {
         dll_537_func_1640(self);
     } else {
-        dll_unload(_data_0);
+        dllFree(_data_0);
     }
     
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0xA48 | func: 5 | export: 5
@@ -342,9 +342,9 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
             s16* jointAngle;
             s32 angle;
             
-            jointAngle = func_80034804(self, 0);
+            jointAngle = objExpr_func_80034804(self, 0);
             angle = -*jointAngle;
-            self->srt.yaw -= joy_get_stick_x(0) * 4;
+            self->srt.yaw -= joyGetStickX(0) * 4;
 
             if (objData->unk20 > 0) {
                 objData->unk20 -= gUpdateRate;
@@ -354,7 +354,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 objData->unk22 -= gUpdateRate;
             }
             
-            if ((joy_get_buttons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
+            if ((joyGetButtons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
                 angle += 800;
             } else {
                 angle -= 1200;
@@ -367,12 +367,12 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 angle = 0;
             }
             
-            if ((joy_get_released(0) & A_BUTTON) && (objData->unk20 <= 0)) {
+            if ((joyGetReleased(0) & A_BUTTON) && (objData->unk20 <= 0)) {
                 objData->unk25 = 1;
             }
             dll_537_func_1150(self);
             
-            if (joy_get_pressed(0) & Z_TRIG) {
+            if (joyGetPressed(0) & Z_TRIG) {
                 gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
                 objData->unk24 = 5;
                 objData->unk27 = 60;
@@ -390,7 +390,7 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
         self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->lastMessage == 1) {
             objSetup = (DLL537_Setup*)self->setup;
-            main_set_bits(objSetup->unk18, 1);
+            mainSetBits(objSetup->unk18, 1);
         }
         
         animData->lastMessage = 0;
@@ -432,7 +432,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
         return;
     }
 
-    sp78 = func_80034804(self, 0);
+    sp78 = objExpr_func_80034804(self, 0);
     
     temp_fs2 = 2500.0f;
     arg4 = sqrtf(arg4);
@@ -442,7 +442,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     
     var_s2 = 0;
     if (temp_fs2 >= 0) {
-        var_s1 = arctan2_f(temp_fs1, sqrtf(temp_fs2)) >> 1;
+        var_s1 = mathAtan2f(temp_fs1, sqrtf(temp_fs2)) >> 1;
     } else {
         var_s1 = 0x2000;
         var_s2 = 1;
@@ -459,7 +459,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
         f32 temp = 4.0f;
         temp_fs0 = (temp * 1.1f) * temp_fv0_2;
 
-        sp70 = fsin16_precise(var_s1) * 50.0f;
+        sp70 = mathSinfInterp(var_s1) * 50.0f;
         temp_fv1 = SQ(sp70) - temp_fs0;
         
         
@@ -476,7 +476,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
                 sp70--;
         }
 
-        temp_fs1 = fcos16_precise(var_s1) * 50.0f;
+        temp_fs1 = mathCosfInterp(var_s1) * 50.0f;
         temp_fs0 = temp_fs1 * temp_fv1;
         
         var_s1 += var_s3;
@@ -504,7 +504,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
 
     arg1 -= self->srt.transl.x;
     arg3 -= self->srt.transl.z;
-    dYaw = arctan2_f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
+    dYaw = mathAtan2f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
 
     CIRCLE_WRAP(dYaw);
     if (dYaw > 0x1000) {
@@ -535,9 +535,9 @@ void dll_537_func_1150(Object* self) {
     objSetup = (DLL537_Setup*)self->setup;
     
     if (objData->unk25 && (objData->unk20 <= 0)) {
-        angle = func_80034804(self, 0);
+        angle = objExpr_func_80034804(self, 0);
         
-        shotSetup = (DIMCannonBall_Setup*)obj_alloc_setup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
+        shotSetup = (DIMCannonBall_Setup*)objAllocSetup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
         shotSetup->base.loadFlags = objSetup->base.loadFlags;
         shotSetup->base.byte6 = objSetup->base.byte6;
         shotSetup->base.byte5 = objSetup->base.byte5;
@@ -546,10 +546,10 @@ void dll_537_func_1150(Object* self) {
         shotSetup->base.y = objData->unk14.y;
         shotSetup->base.z = objData->unk14.z;
         shotSetup->unk18 = self->srt.yaw >> 8;
-        shotSetup->unk1A = fsin16_precise(*angle) * 50.0f;
-        shotSetup->unk1C = fcos16_precise(*angle) * 50.0f;
+        shotSetup->unk1A = mathSinfInterp(*angle) * 50.0f;
+        shotSetup->unk1C = mathCosfInterp(*angle) * 50.0f;
         
-        shot = obj_create((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
+        shot = objSetupObject((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
         shot->unkC4 = self;
         
         objData->unk25 = 0;
@@ -558,10 +558,10 @@ void dll_537_func_1150(Object* self) {
         if (objData->unk24 == 3) {
             objData->unk20 = 100;
         } else {
-            objData->unk20 = rand_next(objSetup->unk29, objSetup->unk2A);
+            objData->unk20 = mathRnd(objSetup->unk29, objSetup->unk2A);
         }
         
-        func_80023D30(self, 1, 0, 0);
+        objAnimSet(self, 1, 0, 0);
     }
 }
 
@@ -576,9 +576,9 @@ void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
     self->srt.yaw = objSetup->unk18 << 8;
     verticalSpeed = objSetup->unk1A * 0.1f;
     lateralSpeed = objSetup->unk1C * 0.1f;
-    self->velocity.x = fsin16_precise(self->srt.yaw) * lateralSpeed;
+    self->velocity.x = mathSinfInterp(self->srt.yaw) * lateralSpeed;
     self->velocity.y = -verticalSpeed;
-    self->velocity.z = fcos16_precise(self->srt.yaw) * lateralSpeed;
+    self->velocity.z = mathCosfInterp(self->srt.yaw) * lateralSpeed;
     
     self->unkDC = 0;
 
@@ -606,30 +606,30 @@ void dll_537_func_1430(Object* self) {
     Unk_Data* objData;
     
     self->velocity.y += -0.022f * gUpdateRateF;
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
 
     objHits = self->objhitInfo;
     if (objHits != NULL) {
         func_80026128(self, 5, 1, 0);
         if ((objHits->unk48 != NULL) && (objHits->unk48 != self->unkC4)) {
             dll_537_func_16AC(self);
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
     }
     
     if (self->objhitInfo->unk9D != 0) {
         dll_537_func_16AC(self);
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     self->unkDC += gUpdateRate;
     if (self->unkDC > 1200) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     objData = self->data;
     
-    self->srt.pitch = arctan2_f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
+    self->srt.pitch = mathAtan2f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
     
     if (objData->unk0 != 0) {
         _data_0->vtbl->func0(self, 2, 0, 0x10002, -1, 0);
@@ -650,7 +650,7 @@ void dll_537_func_16AC(Object* self) {
 
     objData = self->data;
     
-    explosion = (DIMExplosion_Setup*)obj_alloc_setup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    explosion = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
     explosion->base.loadFlags = objData->unk4; //Is objData storing an objSetup here? The offsets match as it's setting up the explosion's objSetup
     explosion->base.byte6 = objData->unk6;
     explosion->base.byte5 = objData->unk5;
@@ -658,5 +658,5 @@ void dll_537_func_16AC(Object* self) {
     explosion->base.x = self->srt.transl.x;
     explosion->base.y = self->srt.transl.y;
     explosion->base.z = self->srt.transl.z;
-    obj_create((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+    objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
 }

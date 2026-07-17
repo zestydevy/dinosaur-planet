@@ -21,7 +21,7 @@ void SHswaplift_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SHswaplift_setup(Object *self, SHswaplift_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
-    if (map_world_xz_to_map_id(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
+    if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         self->unkDC = MAP_SWAPSTONE_CIRCLE;
     }
 }
@@ -46,12 +46,12 @@ void SHswaplift_control(Object *self) {
 
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             if (self->unkDC == MAP_SWAPSTONE_CIRCLE) {
-                main_set_bits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
+                mainSetBits(BIT_Play_Seq_0107_Rocky_Intro_Unused, 1);
             } else {
-                main_set_bits(BIT_Play_Seq_035F_Rocky_Intro, 1);
+                mainSetBits(BIT_Play_Seq_035F_Rocky_Intro, 1);
             }
 
-            joy_disable_buttons(0, A_BUTTON);
+            joyDisableButtons(0, A_BUTTON);
         }
     } else {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -64,7 +64,7 @@ void SHswaplift_update(Object *self) { }
 // offset: 0x194 | func: 3 | export: 3
 void SHswaplift_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

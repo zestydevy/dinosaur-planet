@@ -29,24 +29,24 @@ void dll_506_setup(Object* self, ObjSetup* setup, s32 arg2) {
 void dll_506_control(Object* self) {
     DLL506_Setup* objSetup = (DLL506_Setup*) self->setup;
 
-    if ((objSetup->unk20 != NO_GAMEBIT) && (main_get_bits(objSetup->unk20) == 0)) {
+    if ((objSetup->unk20 != NO_GAMEBIT) && (mainGetBits(objSetup->unk20) == 0)) {
         self->unkAF |= 8;
         return;
     }
-    if (main_get_bits(BIT_Inventory_Purple_Mushrooms) == 0) {
+    if (mainGetBits(BIT_Inventory_Purple_Mushrooms) == 0) {
         self->unkAF |= 0x10;
     } else {
         self->unkAF &= ~0x10;
     }
     if ((self->unkAF & 1) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Purple_Mushrooms)) {
-        main_decrement_bits(BIT_Inventory_Purple_Mushrooms);
-        main_set_bits(objSetup->unk1E, 1);
+        mainDecrementBits(BIT_Inventory_Purple_Mushrooms);
+        mainSetBits(objSetup->unk1E, 1);
         self->unkAF |= 0x8;
     }
-    if (main_get_bits(objSetup->unk1E) == 0) {
+    if (mainGetBits(objSetup->unk1E) == 0) {
         self->unkAF &= ~0x8;
     }
-    func_80036438(self);
+    objprintUpdateLockIconCoords(self);
 }
 
 // offset: 0x184 | func: 2 | export: 2

@@ -48,9 +48,9 @@ void NWMultiSeq_setup(Object* self, NWMultiSeq_Setup* setup, s32 reset) {
     self->animCallback = NWMultiSeq_anim_callback;
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
     objdata = self->data;
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objAddObjectType(self, OBJTYPE_UseObj);
     for (i = 0; i < 8; i++) {
-        if ((setup->playedBits[i] == -1) || (main_get_bits(setup->playedBits[i]) == 0)) {
+        if ((setup->playedBits[i] == -1) || (mainGetBits(setup->playedBits[i]) == 0)) {
             break;
         }
     }
@@ -75,7 +75,7 @@ void NWMultiSeq_control(Object* self) {
 
     if (objdata->flags & NWMULTISEQ_FLAG_SeqPlayed) {
         if (setup->playedBits[objdata->state] != -1) {
-            main_set_bits(setup->playedBits[objdata->state], 1);
+            mainSetBits(setup->playedBits[objdata->state], 1);
         }
         objdata->flags &= ~NWMULTISEQ_FLAG_SeqPlayed;
         objdata->state++;
@@ -93,7 +93,7 @@ void NWMultiSeq_control(Object* self) {
         if (setup->playBits[objdata->state] == -1) {
             objdata->state = 8;
         } else {
-            if (main_get_bits(setup->playBits[objdata->state]) != 0) {
+            if (mainGetBits(setup->playBits[objdata->state]) != 0) {
                 if (setup->seqIndices[objdata->state] != -1) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(setup->seqIndices[objdata->state], self, -1);
                 }
@@ -103,7 +103,7 @@ void NWMultiSeq_control(Object* self) {
     }
     i = objdata->state - 1;
     while (i >= 0) {
-        if ((setup->playedBits[i] == -1) || (main_get_bits(setup->playedBits[i]) != 0)) {
+        if ((setup->playedBits[i] == -1) || (mainGetBits(setup->playedBits[i]) != 0)) {
             break;
         }
         objdata->state--;
@@ -117,13 +117,13 @@ void NWMultiSeq_update(Object *self) { }
 // offset: 0x344 | func: 3 | export: 3
 void NWMultiSeq_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x398 | func: 4 | export: 4
 void NWMultiSeq_free(Object* self, s32 onlySelf) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x3D8 | func: 5 | export: 5
@@ -157,7 +157,7 @@ static int NWMultiSeq_anim_callback(Object* actor, Object* animObj, AnimObj_Data
             nextState = objdata->state + 1;
             if (nextState < 8) {
                 if ((setup->playBits[nextState] != -1) && (setup->playBits[nextState] != setup->playBits[objdata->state])) {
-                    if (main_get_bits(setup->playBits[nextState]) != 0) {
+                    if (mainGetBits(setup->playBits[nextState]) != 0) {
                         gDLL_3_Animation->vtbl->end_obj_sequence(actor->seqSlot);
                     }
                 }

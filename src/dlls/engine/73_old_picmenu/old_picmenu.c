@@ -1,4 +1,4 @@
-// NOTE: seems to be the DLL that some older menus used for text list printing/selection, which was once located at `dll_throw_fault`'s address
+// NOTE: seems to be the DLL that some older menus used for text list printing/selection, which was once located at `dllThrowFault`'s address
 
 #include "PR/os.h"
 #include "common.h"
@@ -29,11 +29,11 @@ void dll_73_dtor(void *dll) { }
 
 // offset: 0x6C | func: 0 | export: 0
 void dll_73_init_text_window(s32 y) {
-    font_window_set_coords(1, 0, 0, 
-        GET_VIDEO_WIDTH(vi_get_current_size()), 
-        GET_VIDEO_HEIGHT(vi_get_current_size())
+    fontWindowSetCoords(1, 0, 0, 
+        GET_VIDEO_WIDTH(viGetCurrentSize()), 
+        GET_VIDEO_HEIGHT(viGetCurrentSize())
     );
-    font_window_flush_strings(1);
+    fontWindowFlushStrings(1);
     sTextY = y;
     sTotalItems = 0;
     sValueExit = DLL73_ACTION_None;
@@ -43,15 +43,15 @@ void dll_73_init_text_window(s32 y) {
 void dll_73_init_text_window_with_margin(s32 marginX, s32 y) {
     u32 halfWidth;
 
-    halfWidth = (GET_VIDEO_WIDTH(vi_get_current_size()) - marginX) / 2;
+    halfWidth = (GET_VIDEO_WIDTH(viGetCurrentSize()) - marginX) / 2;
     
-    font_window_set_coords(1, halfWidth, 0, 
-        GET_VIDEO_WIDTH(vi_get_current_size()) - halfWidth, 
-        GET_VIDEO_HEIGHT(vi_get_current_size())
+    fontWindowSetCoords(1, halfWidth, 0, 
+        GET_VIDEO_WIDTH(viGetCurrentSize()) - halfWidth, 
+        GET_VIDEO_HEIGHT(viGetCurrentSize())
     );
     
-    font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-    font_window_flush_strings(1);
+    fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+    fontWindowFlushStrings(1);
     sTextY = y;
     sTotalItems = 0;
     sValueExit = DLL73_ACTION_None;
@@ -80,17 +80,17 @@ void dll_73_add_string(s32 valueEnter, char* text, s32 lineHeight, s32 selectedI
             opacity = (s32) ((1.0f - tValue) * 255.0f);
         }
         
-        font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, (s32)opacity);
-        font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
-        font_window_add_string_xy(1, -0x8000, sTextY, text, 1, ALIGN_TOP_CENTER);
-        font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, (s32)opacityRemainder);
-        font_window_use_font(1, FONT_DINO_MEDIUM_FONT_OUT);
+        fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0, (s32)opacity);
+        fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
+        fontWindowAddStringXY(1, -0x8000, sTextY, text, 1, ALIGN_TOP_CENTER);
+        fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0, (s32)opacityRemainder);
+        fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_OUT);
     } else {
-        font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
-        font_window_use_font(1, FONT_DINO_MEDIUM_FONT_OUT);
+        fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+        fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_OUT);
     }
     
-    font_window_add_string_xy(1, -0x8000, sTextY, text, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, -0x8000, sTextY, text, 1, ALIGN_TOP_CENTER);
     sTextY += lineHeight;
     sTotalItems++;
 }
@@ -106,7 +106,7 @@ void dll_73_add_string_x(s32 valueEnter, char* text, s32 x, s32 lineHeight, s32 
         sValueEnter = valueEnter;
     }
     
-    font_window_add_string_xy(1, x, sTextY, text, 1, ALIGN_TOP_CENTER);
+    fontWindowAddStringXY(1, x, sTextY, text, 1, ALIGN_TOP_CENTER);
     sTextY += lineHeight;
     sTotalItems++;
 }
@@ -130,7 +130,7 @@ s16 dll_73_handle_joystick_and_buttons(s32* idx) {
     
     //Handle moving up/down menu with joystick
     {
-        joy_get_stick_menu_xy_sign(0, &joyX, &joyY);
+        joyGetStickMenuXYSign(0, &joyX, &joyY);
         if (joyY < 0) {
             *idx = *idx + 1;
         } else if (joyY > 0) {
@@ -149,10 +149,10 @@ s16 dll_73_handle_joystick_and_buttons(s32* idx) {
     
     //Check for button presses
     if (dButtonsEnabled) {
-        joyPressed = joy_get_pressed(0);
+        joyPressed = joyGetPressed(0);
         
         if (joyPressed & (A_BUTTON | START_BUTTON)) {
-            if (main_get_bits(BIT_Menus_Selection_Blocked) == FALSE) {
+            if (mainGetBits(BIT_Menus_Selection_Blocked) == FALSE) {
                 return sValueEnter;
             }
         }
@@ -168,11 +168,11 @@ s16 dll_73_handle_joystick_and_buttons(s32* idx) {
 
 // offset: 0x6D0 | func: 6 | export: 6
 void dll_73_set_font_and_colour(s32 dimmed) {
-    font_window_set_text_colour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
+    fontWindowSetTextColour(1, 0xFF, 0xFF, 0xFF, 0, 0xFF);
     if (dimmed == FALSE) {
-        font_window_use_font(1, FONT_DINO_MEDIUM_FONT_IN);
+        fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_IN);
     } else {
-        font_window_use_font(1, FONT_DINO_MEDIUM_FONT_OUT);
+        fontWindowUseFont(1, FONT_DINO_MEDIUM_FONT_OUT);
     }
 }
 

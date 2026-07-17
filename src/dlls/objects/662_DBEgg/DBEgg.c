@@ -57,7 +57,7 @@ void dll_662_update(Object* self) {
     objData = self->data;
     
     if ((damageType == 0x11) && (objData->unk10C != 4)) {
-        player = get_player();
+        player = objGetPlayer();
         otherObj = (Object*) ((DLL_210_Player*)player->dll)->vtbl->func78(player);
         if (((DLL_Unknown*)otherObj->dll)->vtbl->func[10].withThreeArgsS32((s32)otherObj, 0x10, NULL) != 2) {
             self->objhitInfo->unk58 &= ~1;
@@ -82,14 +82,14 @@ void dll_662_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 
     if (visibility) {
         if ((objdata->unk10C != 0xC) && (objdata->unk10C != 4) && (objdata->unk10C != 0xB)) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
 
 // offset: 0xF44 | func: 4 | export: 4
 void dll_662_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_38);
+    objFreeObjectType(self, OBJTYPE_38);
 }
 
 // offset: 0xF84 | func: 5 | export: 5
@@ -122,7 +122,7 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
     accelerationX = 0.0f;
     accelerationZ = 0.0f;
 
-    for (objects = obj_get_all_of_type(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
+    for (objects = objGetAllOfType(OBJTYPE_Riverflow, &count), i = 0; i < count; i++) {
         riverFlow = objects[i];
         dy = riverFlow->srt.transl.y - self->srt.transl.y;
         if ((dy <= 7.0f) && (dy >= -7.0f)) {
@@ -135,8 +135,8 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
                 delta = (range - delta) / range;
                 delta *= riverFlow->srt.scale * 10.0f;
                 
-                accelerationX += fsin16_precise(riverFlow->srt.yaw) * delta;
-                accelerationZ += fcos16_precise(riverFlow->srt.yaw) * delta;
+                accelerationX += mathSinfInterp(riverFlow->srt.yaw) * delta;
+                accelerationZ += mathCosfInterp(riverFlow->srt.yaw) * delta;
             }
         }
     }
@@ -166,17 +166,17 @@ void dll_662_func_1670(Object* self) {
     DBEgg_Data* objdata;
     DBEgg_Setup* setup;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata = self->data;
     setup = (DBEgg_Setup*)self->setup;
 
-    obj_free_object_type(self, OBJTYPE_38);
+    objFreeObjectType(self, OBJTYPE_38);
     objdata->unk10C = 3;
-    main_set_bits(BIT_DB_Picked_Up_Egg, 1);
+    mainSetBits(BIT_DB_Picked_Up_Egg, 1);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    main_set_bits(setup->unk1C, 1);
+    mainSetBits(setup->unk1C, 1);
 
-    obj_send_mesg(player, 0x7000A, self, (void* )0x10000);
+    objSendMesg(player, 0x7000A, self, (void* )0x10000);
 }
 
 // offset: 0x1744 | func: 10
@@ -204,7 +204,7 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
     self->srt.scale = objSetup->unk1A * 0.015625f;
     self->srt.scale *= self->def->scale;
 
-    if (main_get_bits(objSetup->unk1C)) {
+    if (mainGetBits(objSetup->unk1C)) {
         objData->unk10C = 3;
     } else {
         objData->unk10C = 1;
@@ -232,9 +232,9 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
         }
     }
 
-    obj_add_object_type(self, 0x26);
+    objAddObjectType(self, 0x26);
     
-    if (main_get_bits(objSetup->unk24)) {
+    if (mainGetBits(objSetup->unk24)) {
         objData->unk10C = 5;
     } else {
         objData->unk10C = 0xC;
@@ -261,18 +261,18 @@ void dll_662_func_1954(Object* self) {
     outMesgArg = 0;
     objData = self->data;
     
-    while (obj_recv_mesg(self, &outMessageID, &sender, (void*)&outMesgArg)) {
+    while (objRecvMesg(self, &outMessageID, &sender, (void*)&outMesgArg)) {
         if (outMessageID == 0x11) {
             switch (outMesgArg) {
             case 0x12:  
                 objData->unk10C = 0xB;
                 break;
             case 0x11:   
-                temp = fsin16_precise(sender->srt.yaw);
-                self->velocity.f[0] = rand_next(0x11, 0x1B) * -temp * 0.3f;
-                temp = fcos16_precise(sender->srt.yaw);
-                self->velocity.f[2] = rand_next(0x11, 0x1B) * -temp * 0.3f;
-                self->velocity.f[1] = rand_next(0x11, 0x1B) * 0.3f;
+                temp = mathSinfInterp(sender->srt.yaw);
+                self->velocity.f[0] = mathRnd(0x11, 0x1B) * -temp * 0.3f;
+                temp = mathCosfInterp(sender->srt.yaw);
+                self->velocity.f[2] = mathRnd(0x11, 0x1B) * -temp * 0.3f;
+                self->velocity.f[1] = mathRnd(0x11, 0x1B) * 0.3f;
                 /* fallthrough */
             case 0x10: 
                 objData->unk10C = 5;

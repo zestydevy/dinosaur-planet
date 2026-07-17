@@ -23,7 +23,7 @@ void FirePole_setup(Object* self, FirePole_Setup* setup, s32 reset) {
     SRT fxTransform;
 
     objID = setup->base.objId;
-    obj_add_object_type(self, OBJTYPE_Torch);
+    objAddObjectType(self, OBJTYPE_Torch);
     if (objID == OBJ_FirePole) {
         self->srt.yaw = setup->yaw << 8;
         self->srt.pitch = 0;
@@ -36,9 +36,9 @@ void FirePole_setup(Object* self, FirePole_Setup* setup, s32 reset) {
 
         fxTransform.transl.y = 2.0f;
 
-        modGfxDLL = dll_load_deferred(DLL_ID_121, 1);
+        modGfxDLL = dllLoad(DLL_ID_121, 1);
         modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
-        dll_unload(modGfxDLL);
+        dllFree(modGfxDLL);
     }
 }
 
@@ -52,7 +52,7 @@ void FirePole_update(Object *self) { }
 // offset: 0x150 | func: 3 | export: 3
 void FirePole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -60,7 +60,7 @@ void FirePole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void FirePole_free(Object* self, s32 onlySelf) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
-    obj_free_object_type(self, OBJTYPE_Torch);
+    objFreeObjectType(self, OBJTYPE_Torch);
 }
 
 // offset: 0x22C | func: 5 | export: 5

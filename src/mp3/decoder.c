@@ -2069,7 +2069,7 @@ s8 D_800C2C58[34 * 256 * sizeof(s8)];
 // ------ .bss end 800c4e60 ------ //
 
 // mp3dec_init in pd
-s32 mp3_dec_init(void) {
+s32 mp3DecInit(void) {
     s32 i;
     s32 sp258;
     s32 sp254;
@@ -2191,17 +2191,17 @@ s32 mp3_dec_init(void) {
         return 0;
     }
     for (i = 0; i < 8192; i++) {
-        D_800C01C8[i] = mp3_func_80077900(i, 1.3333333730697632f);
+        D_800C01C8[i] = mp3Func80077900(i, 1.3333333730697632f);
     }
     for (i = 0; i < 256; i++) {
-        D_800C01D0[i] = mp3_func_80077900(2.0f, i * -0.5f);
-        D_800C05D0[i] = mp3_func_80077900(2.0f, i * -2.0f);
+        D_800C01D0[i] = mp3Func80077900(2.0f, i * -0.5f);
+        D_800C05D0[i] = mp3Func80077900(2.0f, i * -2.0f);
     }
     return 1;
 }
 
 // mp3dec00040164 in pd
-s32 mp3_dec_8006e0a0(struct asistream* stream, s32 gr, s32 ch) {
+s32 mp3Dec8006e0a0(struct asistream* stream, s32 gr, s32 ch) {
     s32 sp1BC;
     s32 sp1B8;
     s32 sp1B4;
@@ -2240,7 +2240,7 @@ s32 mp3_dec_8006e0a0(struct asistream* stream, s32 gr, s32 ch) {
 		sp1B8 = D_8009FF68[sp1BC].unk0[1];
 	}
 
-	sp60 = mp3_func_80077900(2, (stream->global_gain[gr][ch] - 210.0f) * 0.25f);
+	sp60 = mp3Func80077900(2, (stream->global_gain[gr][ch] - 210.0f) * 0.25f);
 	scale = stream->scalefac_scale[gr][ch];
 
 	for (sfb = 0; sfb < 22; sfb++) {
@@ -2336,7 +2336,7 @@ s32 mp3_dec_8006e0a0(struct asistream* stream, s32 gr, s32 ch) {
 }
 
 // mp3dec_unpack_scale_fac in pd
-s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
+s32 mp3DecUnpackScaleFac(struct asistream *stream, s32 gr, s32 ch) {
 	s32 i;
 	s32 sfb;
 	s32 window;
@@ -2346,7 +2346,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 			for (sfb = 0; sfb < 8; sfb++) {
 				stream->scalefac[gr][ch].l[sfb] =
 					D_800A012C[0][stream->scalefac_compress[gr][ch]]
-					? mp3util_get_bits(stream->unk1c, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
+					? mp3UtilGetBits(stream->unk1c, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
 					: 0;
 			}
 
@@ -2354,7 +2354,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 				for (window = 0; window < 3; window++) {
 					stream->scalefac[gr][ch].s[window][sfb] =
 						D_800A012C[0][stream->scalefac_compress[gr][ch]]
-						? mp3util_get_bits(stream->unk1c, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
+						? mp3UtilGetBits(stream->unk1c, &stream->unk2020, D_800A012C[0][stream->scalefac_compress[gr][ch]])
 						: 0;
 				}
 			}
@@ -2363,7 +2363,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 				for (window = 0; window < 3; window++) {
 					stream->scalefac[gr][ch].s[window][sfb] =
 						D_800A012C[1][stream->scalefac_compress[gr][ch]]
-						? mp3util_get_bits(stream->unk1c, &stream->unk2020, D_800A012C[1][stream->scalefac_compress[gr][ch]])
+						? mp3UtilGetBits(stream->unk1c, &stream->unk2020, D_800A012C[1][stream->scalefac_compress[gr][ch]])
 						: 0;
 				}
 			}
@@ -2373,7 +2373,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 					for (window = 0; window < 3; window++) {
 						stream->scalefac[gr][ch].s[window][sfb] =
 							D_800A012C[i][stream->scalefac_compress[gr][ch]]
-							? mp3util_get_bits(stream->unk1c, &stream->unk2020, D_800A012C[i][stream->scalefac_compress[gr][ch]])
+							? mp3UtilGetBits(stream->unk1c, &stream->unk2020, D_800A012C[i][stream->scalefac_compress[gr][ch]])
 							: 0;
 					}
 				}
@@ -2389,7 +2389,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 				for (sfb = D_800A0124[i]; sfb < D_800A0124[i + 1]; sfb++) {
 					stream->scalefac[gr][ch].l[sfb] =
 						D_800A012C[i < 2 ? 0 : 1][stream->scalefac_compress[gr][ch]]
-						? mp3util_get_bits(stream->unk1c, &stream->unk2020, D_800A012C[i < 2 ? 0 : 1][stream->scalefac_compress[gr][ch]])
+						? mp3UtilGetBits(stream->unk1c, &stream->unk2020, D_800A012C[i < 2 ? 0 : 1][stream->scalefac_compress[gr][ch]])
 						: 0;
 				}
 			} else {
@@ -2406,7 +2406,7 @@ s32 mp3_dec_unpack_scale_fac(struct asistream *stream, s32 gr, s32 ch) {
 }
 
 // mp3dec00041600 in pd
-s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
+s32 mp3Dec8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
     const s32 sp70[2][3][3][4] = {
         { 
             { { 6,  5,  5, 5 }, { 9,  9,  9,  9 }, { 6,  9,  9,  9 } }, 
@@ -2502,7 +2502,7 @@ s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
             sp20 = sp60[i];
             sp1C = (1 << sp20) - 1;
             for (j = 0; j < sp28[i]; j++) {
-                stream->scalefac[0][arg2].l[sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                stream->scalefac[0][arg2].l[sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
                 if (arg2 != 0) {
                     stream->unk3efc[sp24] = sp1C;
                 }
@@ -2515,9 +2515,9 @@ s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
                 sp20 = sp60[i];
                 sp1C = (1 << sp20) - 1;
                 for (j = 0; j < sp28[i]; j += 3) {
-                    stream->scalefac[0][arg2].s[0][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
-                    stream->scalefac[0][arg2].s[1][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
-                    stream->scalefac[0][arg2].s[2][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[0][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[1][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[2][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
                     if (arg2 != 0) {
                         stream->unk3f14[sp24] = sp1C;
                     }
@@ -2528,7 +2528,7 @@ s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
             sp20 = sp60[0];
             sp1C = (1 << sp20) - 1;
             for (j = 0; j < 6; j++) {
-                stream->scalefac[0][arg2].l[sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                stream->scalefac[0][arg2].l[sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
                 if (arg2 != 0) {
                     stream->unk3efc[sp24] = sp1C;
                 }
@@ -2540,9 +2540,9 @@ s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
                 sp20 = sp60[i];
                 sp1C = (1 << sp20) - 1;
                 for (j = 0; j < sp28[i]; j += 3) {
-                    stream->scalefac[0][arg2].s[0][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
-                    stream->scalefac[0][arg2].s[1][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
-                    stream->scalefac[0][arg2].s[2][sp24] = sp20 ? mp3util_get_bits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[0][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[1][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
+                    stream->scalefac[0][arg2].s[2][sp24] = sp20 ? mp3UtilGetBits(stream->unk1c, &stream->unk2020, sp20) : 0;
                     if (arg2 != 0) {
                         stream->unk3f14[sp24] = sp1C;
                     }
@@ -2555,7 +2555,7 @@ s32 mp3_dec_8006f530(struct asistream* stream, UNK_TYPE_32 arg1, s32 arg2) {
 }
 
 // mp3dec00042238 in pd
-s32 mp3_dec_func_80070168(struct asistream* stream, s32 arg1, s32 arg2) {
+s32 mp3DecFunc80070168(struct asistream* stream, s32 arg1, s32 arg2) {
     s32 sp64;
     s32 sp60;
     s32 sp54[3];
@@ -2573,9 +2573,9 @@ s32 mp3_dec_func_80070168(struct asistream* stream, s32 arg1, s32 arg2) {
 
     sp64 = stream->unk2020;
     if (stream->version != 0) {
-        mp3_dec_unpack_scale_fac(stream, arg1, arg2);
+        mp3DecUnpackScaleFac(stream, arg1, arg2);
     } else {
-        mp3_dec_8006f530(stream, arg1, arg2);
+        mp3Dec8006f530(stream, arg1, arg2);
     }
     sp60 = stream->big_value[arg1][arg2] * 2;
     sp50 = D_8009FE10[stream->version][stream->samplerateindex];
@@ -2615,12 +2615,12 @@ s32 mp3_dec_func_80070168(struct asistream* stream, s32 arg1, s32 arg2) {
             sp44 += sp2C;
             sp48 = sp30;
         } else {
-            sp48 = mp3_util_func_80077D20(stream->unk1c, &stream->unk2020, sp38, sp48, sp34, sp30, (void**)&sp44, (void**)&sp40);
+            sp48 = mp3UtilFunc80077D20(stream->unk1c, &stream->unk2020, sp38, sp48, sp34, sp30, (void**)&sp44, (void**)&sp40);
         }
     }
     sp38 = stream->count1table_select[arg1][arg2] + 0x20;
     sp28 = stream->part2_3_length[arg1][arg2] + sp64;
-    sp48 = mp3_util_func_80077ED0(stream->unk1c, &stream->unk2020, sp38, sp48, sp28, (void**)&sp44, (void**)&sp40);
+    sp48 = mp3UtilFunc80077ED0(stream->unk1c, &stream->unk2020, sp38, sp48, sp28, (void**)&sp44, (void**)&sp40);
     stream->unk2020 = sp28;
     if (sp48 > 0x240) {
         stream->unk465c[arg2] = 0x240;
@@ -2637,7 +2637,7 @@ s32 mp3_dec_func_80070168(struct asistream* stream, s32 arg1, s32 arg2) {
 }
 
 // mp3dec000427d8 in pd
-s32 mp3_dec_func_800706f8(struct asistream* stream, s32 arg1) {
+s32 mp3Dec800706f8(struct asistream* stream, s32 arg1) {
     const s16* sp14;
     f32* sp10;
     f32* spC;
@@ -2665,7 +2665,7 @@ s32 mp3_dec_func_800706f8(struct asistream* stream, s32 arg1) {
 }
 
 // mp3dec_reduce_aliases in pd
-s32 mp3_dec_reduce_aliases(struct asistream *stream, s32 arg1, s32 arg2) {
+s32 mp3DecReduceAliases(struct asistream *stream, s32 arg1, s32 arg2) {
     s32 i;
 
     if (stream->window_switching[arg1][arg2] != 0 && stream->block_type[arg1][arg2] == 2) {
@@ -2714,7 +2714,7 @@ s32 mp3_dec_reduce_aliases(struct asistream *stream, s32 arg1, s32 arg2) {
 }
 
 // mp3dec_set_side_info in pd
-s32 mp3_dec_set_side_info(struct asistream* stream) {
+s32 mp3DecSetSideInfo(struct asistream* stream) {
     s32 sp34;
     s32 sp30;
     s32 sp2C;
@@ -2736,20 +2736,20 @@ s32 mp3_dec_set_side_info(struct asistream* stream) {
     stream->numchannels = stream->channelmode == CHANNELMODE_SINGLEMONO ? 1 : 2;
     stream->numgranules = stream->version != VERSION_2 ? 2 : 1;
     if (stream->version != VERSION_2) {
-        stream->main_data_begin = mp3util_get_bits(stream->buffer, &stream->offset, 9);
+        stream->main_data_begin = mp3UtilGetBits(stream->buffer, &stream->offset, 9);
         stream->numchannels == 1 
-            ? mp3util_get_bits(stream->buffer, &stream->offset, 5)
-            : mp3util_get_bits(stream->buffer, &stream->offset, 3);
+            ? mp3UtilGetBits(stream->buffer, &stream->offset, 5)
+            : mp3UtilGetBits(stream->buffer, &stream->offset, 3);
     } else {
-        stream->main_data_begin = mp3util_get_bits(stream->buffer, &stream->offset, 8);
+        stream->main_data_begin = mp3UtilGetBits(stream->buffer, &stream->offset, 8);
         stream->numchannels == 1 
-            ? mp3util_get_bits(stream->buffer, &stream->offset, 1)
-        : mp3util_get_bits(stream->buffer, &stream->offset, 2);
+            ? mp3UtilGetBits(stream->buffer, &stream->offset, 1)
+        : mp3UtilGetBits(stream->buffer, &stream->offset, 2);
     }
     if (stream->version != VERSION_2) {
         for (sp30 = 0; sp30 < stream->numchannels; sp30++) {
             for (sp2C = 0; sp2C < 4; sp2C++) {
-                stream->scfsi[sp30][sp2C] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
+                stream->scfsi[sp30][sp2C] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
             }
         }
     }
@@ -2760,35 +2760,35 @@ s32 mp3_dec_set_side_info(struct asistream* stream) {
     }
     for (sp24 = 0; sp24 < stream->numgranules; sp24++) {
         for (sp30 = 0; sp30 < stream->numchannels; sp30++) {
-            stream->part2_3_length[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 0xC);
-            stream->big_value[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 9);
-            stream->global_gain[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 8);
-            stream->scalefac_compress[sp24][sp30] = sp28 != 0 ? mp3util_get_bits(stream->buffer, &stream->offset, sp28) : 0;
-            stream->window_switching[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
+            stream->part2_3_length[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 0xC);
+            stream->big_value[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 9);
+            stream->global_gain[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 8);
+            stream->scalefac_compress[sp24][sp30] = sp28 != 0 ? mp3UtilGetBits(stream->buffer, &stream->offset, sp28) : 0;
+            stream->window_switching[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
             if (stream->window_switching[sp24][sp30] != 0) {
-                stream->block_type[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 2);
-                stream->mixed_block_flag[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
+                stream->block_type[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
+                stream->mixed_block_flag[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
                 for (sp20 = 0; sp20 < 2; sp20++) {
-                    stream->table_select[sp24][sp30][sp20] = mp3util_get_bits(stream->buffer, &stream->offset, 5);
+                    stream->table_select[sp24][sp30][sp20] = mp3UtilGetBits(stream->buffer, &stream->offset, 5);
                 }
                 stream->table_select[sp24][sp30][2] = 0;
                 for (sp1C = 0; sp1C < 3; sp1C++) {
-                    stream->subblock_gain[sp24][sp30][sp1C] = mp3util_get_bits(stream->buffer, &stream->offset, 3);
+                    stream->subblock_gain[sp24][sp30][sp1C] = mp3UtilGetBits(stream->buffer, &stream->offset, 3);
                 }
             } else {
                 stream->block_type[sp24][sp30] = 0;
                 stream->mixed_block_flag[sp24][sp30] = 0;
                 for (sp20 = 0; sp20 < 3; sp20++) {
-                    stream->table_select[sp24][sp30][sp20] = mp3util_get_bits(stream->buffer, &stream->offset, 5);
+                    stream->table_select[sp24][sp30][sp20] = mp3UtilGetBits(stream->buffer, &stream->offset, 5);
                 }
-                stream->region0_count[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 4);
-                stream->region1_count[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 3);
+                stream->region0_count[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 4);
+                stream->region1_count[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 3);
             }
             if (stream->version != VERSION_2) {
-                stream->preflag[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
+                stream->preflag[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
             }
-            stream->scalefac_scale[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-            stream->count1table_select[sp24][sp30] = mp3util_get_bits(stream->buffer, &stream->offset, 1);
+            stream->scalefac_scale[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+            stream->count1table_select[sp24][sp30] = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
         }
     }
     stream->bitrate = g_BitRateTable[stream->version][stream->bitrateindex];
@@ -2803,7 +2803,7 @@ s32 mp3_dec_set_side_info(struct asistream* stream) {
 }
 
 // mp3dec_decode_frame in pd
-s32 mp3_dec_decode_frame(struct asistream* stream) {
+s32 mp3DecDecodeFrame(struct asistream* stream) {
 	s32 sp954;
 	s32 gr = 0;
 	s32 ch;
@@ -2821,7 +2821,7 @@ s32 mp3_dec_decode_frame(struct asistream* stream) {
 	s32 sp20;
 
 	sp934 = stream->unk2070[stream->unk3ba0];
-	sp954 = mp3_main_func_80071cf0(stream);
+	sp954 = mp3MainFunc80071cf0(stream);
 
 	if (sp954 == -1) {
 		return 0;
@@ -2834,11 +2834,11 @@ s32 mp3_dec_decode_frame(struct asistream* stream) {
 	}
 
 	for (ch = 0; ch < stream->numchannels; ch++) {
-		mp3_dec_func_80070168(stream, gr, ch);
-		mp3_dec_8006e0a0(stream, gr, ch);
+		mp3DecFunc80070168(stream, gr, ch);
+		mp3Dec8006e0a0(stream, gr, ch);
 	}
 
-	mp3_dec_func_800706f8(stream, gr);
+	mp3Dec800706f8(stream, gr);
 
 	if (stream->window_switching[gr][0] != 0 && stream->block_type[gr][0] == 2) {
 		sp948 = 32;
@@ -2848,7 +2848,7 @@ s32 mp3_dec_decode_frame(struct asistream* stream) {
 	}
 
 	for (ch = 0; ch < stream->numchannels; ch++) {
-		mp3_dec_reduce_aliases(stream, gr, ch);
+		mp3DecReduceAliases(stream, gr, ch);
 
 		if (stream->window_switching[gr][ch] != 0
 				&& stream->block_type[gr][ch] == 2
@@ -2862,11 +2862,11 @@ s32 mp3_dec_decode_frame(struct asistream* stream) {
 
 		if (sp940 == 2) {
 			for (i = 0; i < 2; i++) {
-				mp3_func_80078F70(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i]);
+				mp3Func80078F70(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i]);
 			}
 		} else {
 			for (i = 0; i < 2; i++) {
-				mp3_func_80078070(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i], sine_block[sp940]);
+				mp3Func80078070(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i], sine_block[sp940]);
 			}
 		}
 
@@ -2878,11 +2878,11 @@ s32 mp3_dec_decode_frame(struct asistream* stream) {
 
 		if (sp940 == 2) {
 			for (i = 2; i < sp948; i++) {
-				mp3_func_80078F70(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i]);
+				mp3Func80078F70(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i]);
 			}
 		} else {
 			for (i = 2; i < sp948; i++) {
-				mp3_func_80078070(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i], sine_block[sp940]);
+				mp3Func80078070(&stream->unk4f64[ch][i], i, &sp34[i], &stream->unk6a64[ch][i], sine_block[sp940]);
 			}
 		}
 

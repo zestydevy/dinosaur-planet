@@ -48,22 +48,22 @@ void dll_698_control(Object *self) {
 
     objdata = self->data;
     if ((objdata->unk2 != 0) || (objdata->unk4 != 0)) {
-        matrix_from_srt(&sp4C, &self->srt);
+        mathYprXyzMtx(&sp4C, &self->srt);
         sp40.f[0] = 0.0f;
         sp40.f[1] = 0.0f;
         sp40.f[2] = 1000.0f;
-        vec3_transform(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
+        mathMtxXFMF(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
         dll_698_func_6E4(self, &sp40);
         if (objdata->unk4 != 0) {
             objdata->unk4 -= (s16) gUpdateRateF;
             if (objdata->unk4 <= 0) {
                 objdata->unk4 = 0;
                 gDLL_14_Modgfx->vtbl->func10(self);
-                gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
-                gDLL_6_AMSFX->vtbl->stop(objdata->unkC);
+                dll_amSfx->Stop(objdata->unk8);
+                dll_amSfx->Stop(objdata->unkC);
                 objdata->unk8 = 0;
                 objdata->unkC = 0;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9A1, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_9A1, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
         if (objdata->unk2 != 0) {
@@ -75,13 +75,13 @@ void dll_698_control(Object *self) {
             }
         }
         if ((objdata->unk8 != 0) || (objdata->unkC != 0)) {
-            camera = get_camera();
+            camera = camGet();
             sp40.f[0] = 0.0f;
             sp40.f[1] = 0.0f;
-            sp34 = vec3_distance(&self->srt.transl, (Vec3f* ) &camera->tx);
+            sp34 = vec3Distance(&self->srt.transl, (Vec3f* ) &camera->tx);
             sp40.f[2] = sp34;
-            vec3_transform(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
-            sp38 = vec3_distance_xz(&sp40, &camera->srt.transl);
+            mathMtxXFMF(&sp4C, sp40.f[0], sp40.f[1], sp40.f[2], &sp40.f[0], &sp40.f[1], &sp40.f[2]);
+            sp38 = vec3DistanceXZ(&sp40, &camera->srt.transl);
             if (objdata->unk8 != 0) {
                 objdata->unk10 = (s16) (s32) ((2.0f - ((2.0f * sp38) / sp34)) * 127.0f);
                 if (objdata->unk10 < 0) {
@@ -90,8 +90,8 @@ void dll_698_control(Object *self) {
                 if (objdata->unk10 >= 0x80) {
                     objdata->unk10 = 0x7F;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objdata->unk8, objdata->unk10);
-                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk8, 1.0625f - ((f32) objdata->unk10 * (1.0f / 1024.0f)));
+                dll_amSfx->SetVol(objdata->unk8, objdata->unk10);
+                dll_amSfx->SetPitch(objdata->unk8, 1.0625f - ((f32) objdata->unk10 * (1.0f / 1024.0f)));
             }
             if (objdata->unkC != 0) {
                 objdata->unk12 = (s16) (s32) ((2.0f - (sp38 / sp34)) * 127.0f);
@@ -101,8 +101,8 @@ void dll_698_control(Object *self) {
                 if (objdata->unk12 >= 0x80) {
                     objdata->unk12 = 0x7F;
                 }
-                gDLL_6_AMSFX->vtbl->set_vol(objdata->unkC, (objdata->unk12 >> 1));
-                gDLL_6_AMSFX->vtbl->set_pitch(objdata->unkC, ((f32) objdata->unk12 * (1.0f / 1024.0f)) + 0.9365f);
+                dll_amSfx->SetVol(objdata->unkC, (objdata->unk12 >> 1));
+                dll_amSfx->SetPitch(objdata->unkC, ((f32) objdata->unk12 * (1.0f / 1024.0f)) + 0.9365f);
             }
         }
     }
@@ -145,14 +145,14 @@ void dll_698_func_564(Object *arg0, s32 arg1, s32 arg2) {
     objdata->unk0 = arg2;
     objdata->unk2 = arg1;
     objdata->unk4 = 0;
-    sp30 = dll_load_deferred(DLL_ID_177, 1);
+    sp30 = dllLoad(DLL_ID_177, 1);
     sp30->vtbl->func0(arg0, 0, 0, 4, -1, 0);
-    dll_unload(sp30);
+    dllFree(sp30);
     objdata->unk10 = 1;
     objdata->unk12 = 1;
-    objdata->unk8 = gDLL_6_AMSFX->vtbl->play(NULL, SOUND_98F, (u8) objdata->unk10, NULL, NULL, 0, NULL);
-    objdata->unkC = gDLL_6_AMSFX->vtbl->play(NULL, SOUND_990, (u8) objdata->unk12, NULL, NULL, 0, NULL);
-    gDLL_6_AMSFX->vtbl->play(arg0, SOUND_9A0, MAX_VOLUME, NULL, NULL, 0, NULL);
+    objdata->unk8 = dll_amSfx->Play(NULL, SOUND_98F, (u8) objdata->unk10, NULL, NULL, 0, NULL);
+    objdata->unkC = dll_amSfx->Play(NULL, SOUND_990, (u8) objdata->unk12, NULL, NULL, 0, NULL);
+    dll_amSfx->Play(arg0, SOUND_9A0, MAX_VOLUME, NULL, NULL, 0, NULL);
 }
 
 // offset: 0x6E4 | func: 8
@@ -168,7 +168,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
     SRT sp84;
     s32 i;
 
-    objList = get_world_objects(&objIdx, &objListLength);
+    objList = objGetObjects(&objIdx, &objListLength);
     while (objIdx < objListLength) {
         if (self != objList[objIdx]) {
             switch (objList[objIdx]->id) {
@@ -181,7 +181,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
                     if (self->srt.transl.y < objList[objIdx]->srt.transl.y) {
                         var_fv1 = -var_fv1;
                     }
-                    if (var_fv1 >= 0.0f && vec3_distance(&objList[objIdx]->srt.transl, &sp9C) < 100.0f) {
+                    if (var_fv1 >= 0.0f && vec3Distance(&objList[objIdx]->srt.transl, &sp9C) < 100.0f) {
                         sp84.transl.x = sp9C.x;
                         sp84.transl.y = sp9C.y;
                         sp84.transl.z = sp9C.z;

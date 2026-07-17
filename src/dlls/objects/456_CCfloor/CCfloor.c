@@ -42,9 +42,9 @@ void CCfloor_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
     //Lock object's X/Z coords to camera, with an offset based on the camera's yaw
     //The idea seems to be to create an ocean plane following the camera
-    self->srt.transl.x = cam->srt.transl.f[0] - (fsin16_precise(cam->srt.yaw) * (objSetup->radius * 0x10));
+    self->srt.transl.x = cam->srt.transl.f[0] - (mathSinfInterp(cam->srt.yaw) * (objSetup->radius * 0x10));
     self->srt.transl.y = objSetup->base.y - objSetup->yOffset; //locked y coord, ignoring camera
-    self->srt.transl.z = cam->srt.transl.f[2] + (fcos16_precise(cam->srt.yaw) * (objSetup->radius * 0x10));
+    self->srt.transl.z = cam->srt.transl.f[2] + (mathCosfInterp(cam->srt.yaw) * (objSetup->radius * 0x10));
    
     //Undo previous by just locking the object's coords directly to the camera
     self->srt.transl.x = cam->srt.transl.x;

@@ -64,7 +64,7 @@ void picmenu_ctor(void *self) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
-        sTextures[i].texture = tex_load_deferred(sTextures[i].textureID);
+        sTextures[i].texture = texLoadTexture(sTextures[i].textureID);
     }
 
     sOpacity = 255;
@@ -74,7 +74,7 @@ void picmenu_dtor(void *self) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(sTextures); i++) {
-        tex_free(sTextures[i].texture);
+        texFreeTexture(sTextures[i].texture);
     }
 }
 
@@ -104,7 +104,7 @@ void picmenu_set_items(PicMenuItem *items, s32 count,
         item = &sItems[i];
 
         if (items[i].texture.asID != -1) {
-            item->texture.asPtr = tex_load_deferred(items[i].texture.asID);
+            item->texture.asPtr = texLoadTexture(items[i].texture.asID);
         } else {
             item->texture.asPtr = NULL;
         }
@@ -156,7 +156,7 @@ void picmenu_clear_items(void) {
 
     for (i = 0; i < sItemCount; i++) {
         if (sItems[i].texture.asPtr != NULL) {
-            tex_free(sItems[i].texture.asPtr);
+            texFreeTexture(sItems[i].texture.asPtr);
         }
     }
 
@@ -181,7 +181,7 @@ PicMenuAction picmenu_update() {
 
     ret = PICMENU_ACTION_NONE;
 
-    joy_get_stick_menu_xy_sign(0, &joyXSign, &joyYSign);
+    joyGetStickMenuXYSign(0, &joyXSign, &joyYSign);
     if (joyYSign != 0) {
         joyXSign = 0;
     }
@@ -192,14 +192,14 @@ PicMenuAction picmenu_update() {
             sHighlightAlpha = 255;
 
             if (sSounds->moveSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
         } else if (joyYSign > 0 && item->upLink != -1 && !(sItems[item->upLink].flags & PICMENU_INTANGIBLE)) {
             sSelectedItem = item->upLink;
             sHighlightAlpha = 255;
 
             if (sSounds->moveSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
         }
         
@@ -210,14 +210,14 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             } else if (joyXSign > 0 && item->rightLink != -1) {
                 sItems[sSelectedItem].overrideWith = item->rightLink;
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             }
         } else {
@@ -226,7 +226,7 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
                 
             } else if (joyXSign > 0 && item->rightLink != -1 && !(sItems[item->rightLink].flags & PICMENU_INTANGIBLE)) {
@@ -234,7 +234,7 @@ PicMenuAction picmenu_update() {
                 sHighlightAlpha = 255;
 
                 if (sSounds->moveSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(0, sSounds->moveSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
             }
         }
@@ -248,23 +248,23 @@ PicMenuAction picmenu_update() {
     }
 
     if (sAllowButtons) {
-        buttons = joy_get_pressed(0);
+        buttons = joyGetPressed(0);
         if (buttons & (A_BUTTON | START_BUTTON)) {
-            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && (main_get_bits(BIT_Menus_Selection_Blocked) == FALSE)) {
-                joy_disable_buttons(0, A_BUTTON | START_BUTTON);
+            if (!(sItems[sSelectedItem].flags & PICMENU_DISABLED) && (mainGetBits(BIT_Menus_Selection_Blocked) == FALSE)) {
+                joyDisableButtons(0, A_BUTTON | START_BUTTON);
 
                 if (sSounds->selectSoundID > -1) {
-                    gDLL_6_AMSFX->vtbl->play(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                    dll_amSfx->Play(0, sSounds->selectSoundID, MAX_VOLUME, 0, 0, 0, 0);
                 }
 
                 ret = PICMENU_ACTION_SELECT;
             }            
         } else if (buttons & B_BUTTON) {
             if (sSounds->backSoundID > -1) {
-                gDLL_6_AMSFX->vtbl->play(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
+                dll_amSfx->Play(0, sSounds->backSoundID, MAX_VOLUME, 0, 0, 0, 0);
             }
 
-            joy_disable_buttons(0, B_BUTTON);
+            joyDisableButtons(0, B_BUTTON);
 
             ret = PICMENU_ACTION_BACK;
         }
@@ -334,7 +334,7 @@ void picmenu_draw(Gfx **gdl) {
                 }
 
                 while (item->bgTextureIndices[k] != -1 && k < ARRAYCOUNT_S(item->bgTextureIndices)) {
-                    rcp_screen_full_write(gdl, sTextures[item->bgTextureIndices[k]].texture, 
+                    rcpScreenFullWrite(gdl, sTextures[item->bgTextureIndices[k]].texture, 
                         x, y, 0, 0, opacity, SCREEN_WRITE_TRANSLUCENT);
                     x += sTextures[item->bgTextureIndices[k]].width;
                     k++;
@@ -359,14 +359,14 @@ void picmenu_draw(Gfx **gdl) {
                         opacity = (sOpacity << 8) >> 8;
                     }
 
-                    font_window_set_text_colour(1, 
+                    fontWindowSetTextColour(1, 
                         r,
                         g,
                         b, 
                         255, 
                         opacity);
                 } else {
-                    font_window_set_text_colour(1, 
+                    fontWindowSetTextColour(1, 
                         sTextColorR, 
                         sTextColorG, 
                         sTextColorB,
@@ -374,33 +374,33 @@ void picmenu_draw(Gfx **gdl) {
                         opacity);
                 }
             } else {
-                font_window_set_text_colour(1, 255, 255, 255, 0, opacity);
+                fontWindowSetTextColour(1, 255, 255, 255, 0, opacity);
             }
 
-            font_window_use_font(1, item->fontID);
-            font_window_add_string_xy(1, item->textX, item->textY, item->text, 2, 
+            fontWindowUseFont(1, item->fontID);
+            fontWindowAddStringXY(1, item->textX, item->textY, item->text, 2, 
                 item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
 
             if (!(item->flags & PICMENU_USE_TEXT_COLOR) && i == sSelectedItem) {
-                font_window_set_text_colour(1, 255, 255, 255, 0, ((sHighlightAlpha + 1) * sOpacity) >> 8);
-                font_window_use_font(1, item->highlightFontID);
-                font_window_add_string_xy(1, item->textX, item->textY, item->text, 1, 
+                fontWindowSetTextColour(1, 255, 255, 255, 0, ((sHighlightAlpha + 1) * sOpacity) >> 8);
+                fontWindowUseFont(1, item->highlightFontID);
+                fontWindowAddStringXY(1, item->textX, item->textY, item->text, 1, 
                     item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
             }
 
             if (item->flags & PICMENU_RAISED_EFFECT) {
-                font_window_set_text_colour(1, 0, 0, 0, 255, (sOpacity * 150) >> 8);
-                font_window_add_string_xy(1, item->textX - 1, item->textY - 1, item->text, 3, 
+                fontWindowSetTextColour(1, 0, 0, 0, 255, (sOpacity * 150) >> 8);
+                fontWindowAddStringXY(1, item->textX - 1, item->textY - 1, item->text, 3, 
                     item->flags & PICMENU_ALIGN_TEXT_CENTER ? ALIGN_TOP_CENTER : ALIGN_TOP_LEFT);
             }
 
             if (item->texture.asPtr != NULL) {
                 if (item->flags & PICMENU_HAS_BACKGROUND) {
-                    rcp_screen_full_write(gdl, item->texture.asPtr,
+                    rcpScreenFullWrite(gdl, item->texture.asPtr,
                         item->itemX + 11, item->itemY, 0, 0, 
                         item->flags & PICMENU_TRANSPARENT ? 128 : 255, SCREEN_WRITE_TRANSLUCENT);
                 } else {
-                    rcp_screen_full_write(gdl, item->texture.asPtr,
+                    rcpScreenFullWrite(gdl, item->texture.asPtr,
                         item->itemX, item->itemY, 0, 0, 
                         item->flags & PICMENU_TRANSPARENT ? 128 : 255, SCREEN_WRITE_TRANSLUCENT);
                 }
@@ -498,7 +498,7 @@ void picmenu_calculate_redraw_area() {
                 height = tex->height | ((tex->widthHeightHi & 0xF) << 8);
                 y = item->itemY;
             } else {
-                height = font_get_y_spacing(item->fontID) + 2;
+                height = fontGetYSpacing(item->fontID) + 2;
                 y = item->textY - 2;
             }
 
@@ -512,7 +512,7 @@ void picmenu_calculate_redraw_area() {
         }
     }
 
-    func_800100D4(0, 640, minY, maxY);
+    menu_func_800100D4(0, 640, minY, maxY);
 }
 
 // this is just missing some optimized-out control flow i think
@@ -542,7 +542,7 @@ void picmenu_calculate_items_to_redraw() {
         selectedItemHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
         selectedItemY = item1->itemY;
     } else {
-        selectedItemHeight = font_get_y_spacing(item1->fontID) + 2;
+        selectedItemHeight = fontGetYSpacing(item1->fontID) + 2;
         selectedItemY = item1->textY - 2;
     }
 
@@ -560,7 +560,7 @@ void picmenu_calculate_items_to_redraw() {
                 otherItemHeight = tex2->height | ((tex2->widthHeightHi & 0xF) << 8);
                 otherItemY = item2->itemY;
             } else {
-                otherItemHeight = font_get_y_spacing(item2->fontID) + 2;
+                otherItemHeight = fontGetYSpacing(item2->fontID) + 2;
                 otherItemY = item2->textY - 2;
             }
 
@@ -579,7 +579,7 @@ static u16 picmenu_calculate_auto_width(const char *text, s32 fontID) {
     u16 width;
     u16 var;
 
-    width = font_get_text_width(1, text, 0, fontID) + 40;
+    width = fontGetTextWidth(1, text, 0, fontID) + 40;
     var = (width % 20);
     if (var != 0) {
         width = (width - var) + 20;
@@ -607,9 +607,9 @@ static void picmenu_generate_item_background(PicMenuItem *item) {
     pxRemaining = (pxRemaining - sTextures[0].width) - sTextures[1].width;
     while (pxRemaining != 0) {
         if (pxRemaining >= 80) {
-            item->bgTextureIndices[i] = rand_next(2, 5);
+            item->bgTextureIndices[i] = mathRnd(2, 5);
         } else if (pxRemaining >= 40) {
-            item->bgTextureIndices[i] = rand_next(4, 5);
+            item->bgTextureIndices[i] = mathRnd(4, 5);
         } else {
             item->bgTextureIndices[i] = 5;
         }

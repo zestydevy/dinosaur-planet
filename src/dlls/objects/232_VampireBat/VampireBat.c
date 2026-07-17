@@ -84,7 +84,7 @@ void dll_232_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     bat->unk8 = setup->base.z;
     bat->unk18 = 0;
     bat->unk1C = 0;
-    func_80023D30(self, 0, 0, 0);
+    objAnimSet(self, 0, 0, 0);
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
@@ -117,7 +117,7 @@ void dll_232_control(Object* self) {
     setup = (Baddie_Setup*)self->setup;
     sp84 = self->shadow;
     bat = baddie->objdata;
-    sp78 = get_player();
+    sp78 = objGetPlayer();
     if (self->unkDC == 0) {
         if (self->unkE0 == 0) {
             self->srt.transl.f[0] = setup->base.x;
@@ -138,7 +138,7 @@ void dll_232_control(Object* self) {
             if (var_fv0 > 0.1f) {
                 var_fv0 = 0.1f;
             }
-            func_80024108(self, var_fv0, gUpdateRateF, NULL);
+            objAnimAdvance(self, var_fv0, gUpdateRateF, NULL);
             sp6C.f[0] = bat->unk0 - sp78->srt.transl.f[0];
             sp6C.f[1] = bat->unk4 - sp78->srt.transl.f[1];
             sp6C.f[2] = bat->unk8 - sp78->srt.transl.f[2];
@@ -201,7 +201,7 @@ void dll_232_update(Object *self) { }
 // offset: 0x834 | func: 4 | export: 3
 void dll_232_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if ((visibility != 0) && (self->unkDC == 0)) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -211,10 +211,10 @@ void dll_232_free(Object* self, s32 a1) {
     Object* temp_a0;
 
     baddie = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     temp_a0 = self->linkedObject;
     if (temp_a0 != NULL) {
-        obj_destroy_object(temp_a0);
+        objFreeObject(temp_a0);
         self->linkedObject = NULL;
     }
     gDLL_33_BaddieControl->vtbl->free(self, baddie, 0x20U);
@@ -250,9 +250,9 @@ static s32 dll_232_func_978(Object* self, ObjFSA_Data* fsa, f32 arg2) {
         self->velocity.f[0] = -self->velocity.f[0];
         self->velocity.f[1] += 5.0f;
         self->velocity.f[2] = -self->velocity.f[2];
-        bat->unk24 = rand_next(-0xFA0, 0xFA0);
-        bat->unk22 = rand_next(-0xFA0, 0xFA0);
-        bat->unk26 = rand_next(-0xFA0, 0xFA0);
+        bat->unk24 = mathRnd(-0xFA0, 0xFA0);
+        bat->unk22 = mathRnd(-0xFA0, 0xFA0);
+        bat->unk26 = mathRnd(-0xFA0, 0xFA0);
         fsa->logicState = 3;
     }
     self->objhitInfo->unk5E = 0;
@@ -304,11 +304,11 @@ static void dll_232_func_AB8(Object* self, Bat_Data* bat) {
         self->velocity.f[2] = -6.0f;
     }
     temp_t0 = self->srt.yaw;
-    res = atan2f_to_s(self->velocity.f[0], self->velocity.f[2]);
+    res = Arctanf(self->velocity.f[0], self->velocity.f[2]);
     self->srt.yaw = res;
     temp_t0 = self->srt.yaw - temp_t0;
     self->srt.roll += ((self->srt.roll - (temp_t0)) >> 2);
-    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
 }
 
 // offset: 0xCF0 | func: 12
@@ -320,11 +320,11 @@ static s32 dll_232_func_CF0(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
     baddie = self->data;
     bat = baddie->objdata;
-    sp26 = rand_next(-0x8000, 0x7FFF);
+    sp26 = mathRnd(-0x8000, 0x7FFF);
     sp20 = baddie->unk3E2 * 0.75f;
-    bat->unkC = (fsin16(sp26) * sp20) + bat->unk0;
-    bat->unk10 = rand_next(0x1E, 0x64) + bat->unk4;
-    bat->unk14 = (fcos16(sp26) * sp20) + bat->unk8;
+    bat->unkC = (Sinf(sp26) * sp20) + bat->unk0;
+    bat->unk10 = mathRnd(0x1E, 0x64) + bat->unk4;
+    bat->unk14 = (Cosf(sp26) * sp20) + bat->unk8;
     dll_232_func_AB8(self, bat);
 
     if (baddie->unk3B6 == 1) {
@@ -364,10 +364,10 @@ static s32 dll_232_func_EC8(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     self->srt.yaw += bat->unk24;
     self->srt.pitch += bat->unk22;
     self->srt.roll += bat->unk26;
-    obj_move(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
+    objMove(self, self->velocity.f[0], self->velocity.f[1], self->velocity.f[2]);
     if (bat->unk1C <= 0.0f) {
-        obj_send_mesg_many(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
-        obj_destroy_object(self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000U, self);
+        objFreeObject(self);
         return 5;
     }
     return 0;

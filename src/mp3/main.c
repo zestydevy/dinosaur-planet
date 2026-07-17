@@ -12,7 +12,7 @@ u32 D_80096790 = 0;
 struct asistream g_AsiStream; // 0x800c4e60
 // -------- .bss end -------- //
 
-s32 mp3_main_func_80071cf0(struct asistream *stream) {
+s32 mp3MainFunc80071cf0(struct asistream *stream) {
     s32 sp1C;
     s32 sp18;
 
@@ -31,7 +31,7 @@ s32 mp3_main_func_80071cf0(struct asistream *stream) {
     return stream->unk201c - stream->unk3f88;
 }
 
-s32 mp3_main_func_80071e18(struct asistream *stream, s32 arg1) {
+s32 mp3MainFunc80071e18(struct asistream *stream, s32 arg1) {
     s32 sp24;
     s32 sp20;
     s32 sp1C;
@@ -69,20 +69,20 @@ s32 mp3_main_func_80071e18(struct asistream *stream, s32 arg1) {
     }
     stream->unk18 += 2;
     stream->offset = 0xC;
-    stream->version = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->layer = mp3util_get_bits(stream->buffer, &stream->offset, 2);
-    stream->crctype = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->bitrateindex = mp3util_get_bits(stream->buffer, &stream->offset, 4);
-    stream->samplerateindex = mp3util_get_bits(stream->buffer, &stream->offset, 2);
-    stream->haspadding = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->privatebit = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->channelmode = mp3util_get_bits(stream->buffer, &stream->offset, 2);
-    stream->channelmodeext = mp3util_get_bits(stream->buffer, &stream->offset, 2);
-    stream->copyright = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->isoriginal = mp3util_get_bits(stream->buffer, &stream->offset, 1);
-    stream->emphasis = mp3util_get_bits(stream->buffer, &stream->offset, 2);
+    stream->version = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->layer = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
+    stream->crctype = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->bitrateindex = mp3UtilGetBits(stream->buffer, &stream->offset, 4);
+    stream->samplerateindex = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
+    stream->haspadding = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->privatebit = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->channelmode = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
+    stream->channelmodeext = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
+    stream->copyright = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->isoriginal = mp3UtilGetBits(stream->buffer, &stream->offset, 1);
+    stream->emphasis = mp3UtilGetBits(stream->buffer, &stream->offset, 2);
     if ((stream->bitrateindex == 0xF) || (stream->samplerateindex == 3)) { /* bad/reserved values */
-        return mp3_main_func_80071e18(stream, -1);
+        return mp3MainFunc80071e18(stream, -1);
     }
     if (stream->doneinitial == 0) {
         stream->doneinitial = 1;
@@ -99,7 +99,7 @@ s32 mp3_main_func_80071e18(struct asistream *stream, s32 arg1) {
                (stream->samplerateindex != stream->initialsamplerateindex) || 
                (stream->channelmode != stream->initialchannelmode) || 
                (stream->isoriginal != stream->initialisoriginal)) {
-        return mp3_main_func_80071e18(stream, -1);
+        return mp3MainFunc80071e18(stream, -1);
     }
     stream->unk2068 = 4;
     if (stream->crctype == CRC_PROTECTED) {
@@ -112,8 +112,8 @@ s32 mp3_main_func_80071e18(struct asistream *stream, s32 arg1) {
         stream->unk2068 = 6;
     }
     if (stream->layer == LAYER_3) {
-        stream->decoderframefunc = mp3_dec_decode_frame;
-        stream->setsideinfofunc = mp3_dec_set_side_info;
+        stream->decoderframefunc = mp3DecDecodeFrame;
+        stream->setsideinfofunc = mp3DecSetSideInfo;
     } else if (stream->layer == LAYER_2) {
         return FALSE;
     } else if (stream->layer == LAYER_1) {
@@ -125,15 +125,15 @@ s32 mp3_main_func_80071e18(struct asistream *stream, s32 arg1) {
     return TRUE;
 }
 
-u32 mp3_main_init(void) {
+u32 mp3MainInit(void) {
     if (D_80096790++) {
         return 2;
     }
-    mp3_dec_init();
+    mp3DecInit();
     return 0;
 }
 
-struct asistream* mp3_main_func_80072380(s32 arg0, mp3_dmafunc dmafunc, s32 filesize) {
+struct asistream* mp3MainFunc80072380(s32 arg0, mp3_dmafunc dmafunc, s32 filesize) {
     struct asistream *stream = &g_AsiStream;
     if (stream == NULL) {
         return NULL;
@@ -147,13 +147,13 @@ struct asistream* mp3_main_func_80072380(s32 arg0, mp3_dmafunc dmafunc, s32 file
     stream->unk201c = 0;
     stream->unk2020 = 0;
     stream->unk3ba0 = 0;
-    mp3_main_func_80071e18(stream, 0);
+    mp3MainFunc80071e18(stream, 0);
     stream->unk8474 = 0;
     bzero(stream->unk6a64[0], 0x900);
     return stream;
 }
 
-s32 mp3_main_func_8007245c(struct asistream *streamptr, u16 **arg1, s32 *numchannels) {
+s32 mp3MainFunc8007245c(struct asistream *streamptr, u16 **arg1, s32 *numchannels) {
     struct asistream *stream;
     s32 result;
 
@@ -162,7 +162,7 @@ s32 mp3_main_func_8007245c(struct asistream *streamptr, u16 **arg1, s32 *numchan
     if (stream->unk3ba0 >= ARRAYCOUNT_S(stream->unk2070)) {
         stream->unk3ba0 = 0;
     }
-    if (mp3_main_func_80071e18(stream, stream->unk8474) == 0) {
+    if (mp3MainFunc80071e18(stream, stream->unk8474) == 0) {
         g_Mp3Vars.state = 3;
         return 0;
     }

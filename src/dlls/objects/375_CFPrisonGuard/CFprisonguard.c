@@ -1,10 +1,15 @@
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "sys/main.h"
+#include "sys/math.h"
+#include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/segment_1050.h"
 
 typedef struct {
@@ -63,11 +68,11 @@ void CFPrisonGuard_setup(Object* self, CFPrisonGuard_Setup* objSetup, s32 reset)
     self->srt.yaw = objSetup->yaw << 8;
     self->animCallback = (void*)CFPrisonGuard_anim_callback;
     
-    obj_init_mesg_queue(self, 4);
+    objInitMesgQueue(self, 4);
     
     objData->uncleEscapedPrev = TRUE;
 
-    if (main_get_bits(BIT_CRF_CloudRunner_Uncle_Freed)) {
+    if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Freed)) {
         objData->flags |= CFPrisonGuard_FLAG_4_Dead;
     }
     
@@ -83,19 +88,19 @@ void CFPrisonGuard_control(Object* self) {
     u32 keyCollected;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (CFPrisonGuard_Setup*)self->setup;
     
-    if (main_get_bits(BIT_CRF_CloudRunner_Uncle_Escaped) || (objData->flags & CFPrisonGuard_FLAG_4_Dead)) {
+    if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Escaped) || (objData->flags & CFPrisonGuard_FLAG_4_Dead)) {
         STUBBED_PRINTF(" Removing Guard ");
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        obj_free_tick(self);
+        objDisable(self);
     }
     
-    keyCollected = main_get_bits(BIT_CRF_Prison_Key_1);
+    keyCollected = mainGetBits(BIT_CRF_Prison_Key_1);
 
-    distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+    distance = vec3Distance(&self->globalPosition, &player->globalPosition);
     
     //Catch the player if they're nearby and not using the Illusion Spell
     if ((keyCollected == FALSE) && 
@@ -129,7 +134,7 @@ void CFPrisonGuard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
     CFPrisonGuard_Data* objData = self->data;
     
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 
     //Handle dying effects
@@ -150,7 +155,7 @@ void CFPrisonGuard_free(Object* self, s32 onlySelf) {
     CFPrisonGuard_Data* objData = self->data;
 
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+        dll_amSfx->Stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -205,11 +210,11 @@ label1: ;
     
     func_8002674C(self);
 
-    bitValUncleEscaped = main_get_bits(BIT_CRF_CloudRunner_Uncle_Escaped);
-    bitValBoneHeadFreed = main_get_bits(BIT_CRF_BoneHead_Guardian_Freed);
+    bitValUncleEscaped = mainGetBits(BIT_CRF_CloudRunner_Uncle_Escaped);
+    bitValBoneHeadFreed = mainGetBits(BIT_CRF_BoneHead_Guardian_Freed);
 
     //Wake up and end sequence when the CloudRunner Uncle is freed
-    if ((objData->flags & CFPrisonGuard_FLAG_2_Asleep) && main_get_bits(BIT_CRF_CloudRunner_Uncle_Freed)) {
+    if ((objData->flags & CFPrisonGuard_FLAG_2_Asleep) && mainGetBits(BIT_CRF_CloudRunner_Uncle_Freed)) {
         objData->flags &= ~CFPrisonGuard_FLAG_2_Asleep;
         return 4;
     }
@@ -227,11 +232,11 @@ label2:
     }
 
     guardDetectedPlayer = FALSE;
-    player = get_player();
+    player = objGetPlayer();
 
     switch (objData->state) {
     case CFPrisonGuard_STATE_0:
-        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &player->globalPosition);
         if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->sightRange)) {
             if (((DLL_210_Player*)player->dll)->vtbl->func50(player) != BIT_Spell_Illusion) {
                 guardDetectedPlayer = TRUE;
@@ -254,7 +259,7 @@ label2:
         }
         break;
     case CFPrisonGuard_STATE_1:
-        distance = vec3_distance(&self->globalPosition, &player->globalPosition);
+        distance = vec3Distance(&self->globalPosition, &player->globalPosition);
         if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->sightRange)) {
             if (((DLL_210_Player*)player->dll)->vtbl->func50(player) != BIT_Spell_Illusion) {
                 guardDetectedPlayer = TRUE;
@@ -283,11 +288,11 @@ label2:
 
     if (objData->soundHandle == 0) {
         if ((self->curModAnimId == 0x203) || (self->curModAnimId == 0x205)) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_1C9_SharpClaw_Snore_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_1C9_SharpClaw_Snore_Loop, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
         }
     } else {
         if ((self->curModAnimId != 0x203) && (self->curModAnimId != 0x205)) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            dll_amSfx->Stop(objData->soundHandle);
             objData->soundHandle = 0;
         }
     }
@@ -308,7 +313,7 @@ label2:
 
     animData->unk62 = 0;
     
-    while (obj_recv_mesg(self, &outMessageID, &outSender, (void*)&outMesgArg)) {
+    while (objRecvMesg(self, &outMessageID, &outSender, (void*)&outMesgArg)) {
     }
     
     if (animData->lastMessage == 1) {

@@ -41,7 +41,7 @@ void WL_LevelControl_dtor(void *dll) { }
 void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     WL_LevelControl_Data* objData;
 
-    obj_add_object_type(self, OBJTYPE_LevelControl);
+    objAddObjectType(self, OBJTYPE_LevelControl);
     objData = self->data;
 
     objData->galleonIsLoaded = FALSE;
@@ -70,7 +70,7 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
         func_80000860(self, self, 0xA5, 0);
         func_80000860(self, self, 0xA6, 0);
-        main_set_bits(BIT_Krystal_Foodbag_M, 1);
+        mainSetBits(BIT_Krystal_Foodbag_M, 1);
         break;
     case WM_Setup7_Spirit7_8_Krystal_GP_Sabre_SW:
         func_80000860(self, self, 0xE4, 0);
@@ -119,13 +119,13 @@ void WL_LevelControl_update(Object *self) { }
 // offset: 0x3A0 | func: 3 | export: 3
 void WL_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x3F4 | func: 4 | export: 4
 void WL_LevelControl_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_LevelControl);
+    objFreeObjectType(self, OBJTYPE_LevelControl);
     if (self){} // @fake
 }
 
@@ -147,12 +147,12 @@ static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl
     s32 galleonNotFound;
 
     //Return early if Krystal already saw the Galleon leave with Kyte
-    if (main_get_bits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
+    if (mainGetBits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte)) {
         return;
     }
 
     //Try to find the Galleon
-    objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+    objs = objGetAllOfType(OBJTYPE_MobileMap, &count);
     for (galleonNotFound = TRUE, i = 0; i < count; i++) {
         if ((objs[i]->id == OBJ_WL_Galleon) || (objs[i]->id == OBJ_SB_Galleon)) {
             galleonNotFound = FALSE;
@@ -165,7 +165,7 @@ static void WL_LevelControl_load_galleon_if_needed(Object* self, WL_LevelControl
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, WM_ObjGroup1_Galleon) == 0) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, WM_ObjGroup1_Galleon, 1);
         }
-        main_set_bits(BIT_WL_Load_Unload_Galleon, 1);
+        mainSetBits(BIT_WL_Load_Unload_Galleon, 1);
         objData->galleonIsLoaded = TRUE;
         objData->flags |= WL_LevelControl_FLAG_Galleon_Docked;
     }
@@ -179,11 +179,11 @@ static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelContr
     s32 i;
 
     //Check a gamebit that's set as Krystal leaves via the cave corridor after meeting with Randorn
-    krystalIsLeaving = main_get_bits(BIT_WM_Near_Cave_Exit_Krystal_Side);
+    krystalIsLeaving = mainGetBits(BIT_WM_Near_Cave_Exit_Krystal_Side);
 
     //Unload the Galleon if its load gamebit is false
     if ((objData->flags & WL_LevelControl_FLAG_Galleon_Docked) && 
-        (main_get_bits(BIT_WL_Load_Unload_Galleon) == FALSE)
+        (mainGetBits(BIT_WL_Load_Unload_Galleon) == FALSE)
     ) {
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, WM_ObjGroup1_Galleon)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, WM_ObjGroup1_Galleon, 0);
@@ -193,7 +193,7 @@ static void WL_LevelControl_unload_galleon_if_needed(Object* self, WL_LevelContr
 
     //Search for the Galleon once (@bug?: does nothing with this)
     if (((objData->flags & WL_LevelControl_FLAG_Galleon_Leaving_Search) == FALSE) && krystalIsLeaving) {
-        objs = obj_get_all_of_type(OBJTYPE_MobileMap, &count);
+        objs = objGetAllOfType(OBJTYPE_MobileMap, &count);
         for (i = 0; i < count; i++) {
             if (objs[i]->id == OBJ_WL_Galleon) {
                 i = count; //index break
@@ -218,11 +218,11 @@ static void WL_LevelControl_setup1_tick(Object* self) {
 
     //Count how many of the switches have been hit in Krystal's laser corridor
     switchesHit = 0;
-    switchesHit += main_get_bits(BIT_WM_Force_Field_1_Disabled);
-    switchesHit += main_get_bits(BIT_WM_Force_Field_2_Disabled);
-    switchesHit += main_get_bits(BIT_WM_Force_Field_3_Disabled);
+    switchesHit += mainGetBits(BIT_WM_Force_Field_1_Disabled);
+    switchesHit += mainGetBits(BIT_WM_Force_Field_2_Disabled);
+    switchesHit += mainGetBits(BIT_WM_Force_Field_3_Disabled);
     if ((switchesHit == 3) && (dSetup1KrystalSwitchesHit != 3)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B89_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     dSetup1KrystalSwitchesHit = switchesHit;
 
@@ -256,17 +256,17 @@ static void WL_LevelControl_setup2_tick(Object* self) {
     Object* player;
     Object* foodbag;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Set up the visit (only runs once)
-    if (dInitSpirit1Visit && (main_get_bits(BIT_Play_Seq_0180_Release_Spirit_1) == FALSE)) {
+    if (dInitSpirit1Visit && (mainGetBits(BIT_Play_Seq_0180_Release_Spirit_1) == FALSE)) {
         //Ensure the player has relevant spells
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
 
-        player = get_player(); //@bug: already assigned
+        player = objGetPlayer(); //@bug: already assigned
 
-        main_set_bits(BIT_FC, 1);
+        mainSetBits(BIT_FC, 1);
 
         //Restore some magic and make sure the player has the 1st Spirit
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
@@ -281,9 +281,9 @@ static void WL_LevelControl_setup2_tick(Object* self) {
     }
 
     //If Krystal has the Medium Food Bag and it doesn't have any green apples, add 10 of them (@debug code related to Randorn?)
-    if (main_get_bits(BIT_Krystal_Foodbag_M)) {
+    if (mainGetBits(BIT_Krystal_Foodbag_M)) {
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
-        if (foodbag && (main_get_bits(BIT_Green_Apple_Count) == 0)) {
+        if (foodbag && (mainGetBits(BIT_Green_Apple_Count) == 0)) {
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
@@ -308,7 +308,7 @@ static void WL_LevelControl_setup3_tick(Object* self) {
     Object* player;
 
     //Set up the visit (only runs once)
-    if ((main_get_bits(BIT_Spirit_2_Release_Sabre) == FALSE) & dInitSpirit2Visit) {
+    if ((mainGetBits(BIT_Spirit_2_Release_Sabre) == FALSE) & dInitSpirit2Visit) {
         //Use envFxActions
         func_80000860(self, self, 0xE4, 0);
         func_80000860(self, self, 0xE5, 0);
@@ -316,11 +316,11 @@ static void WL_LevelControl_setup3_tick(Object* self) {
         func_80000450(self, self, 0x278, 0, 0, 0);
 
         //Ensure the player has relevant spells
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 2nd Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
@@ -351,14 +351,14 @@ static void WL_LevelControl_setup4_tick(Object* self) {
     objData = self->data;
 
     //Set up the visit (only runs once)
-    if (dInitSpirit3Visit && (main_get_bits(BIT_317) == FALSE)) {
+    if (dInitSpirit3Visit && (mainGetBits(BIT_317) == FALSE)) {
         //Ensure the player has relevant spells, and set other gamebit
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
-        main_set_bits(BIT_Set_During_Spirit_Release_1, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Set_During_Spirit_Release_1, 1);
 
         //Restore some magic and make sure the player has the 3rd Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_3, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
@@ -376,12 +376,12 @@ static void WL_LevelControl_setup4_tick(Object* self) {
        positioned in Randorn's room, which might be relevant.
     */
     for (i = 0; i < 6; i++) {
-        enemiesDefeated += main_get_bits(i + BIT_WM_Killed_SharpClaw_2573);
+        enemiesDefeated += mainGetBits(i + BIT_WM_Killed_SharpClaw_2573);
     }
 
     //Use different envFxActions based on how many enemies (likely Skeetlas?) were defeated
     //(Dim the player and reintroduce fog as value increases, making the room gradually brighter)
-    useGradualEnvFx = main_get_bits(BIT_2C4);
+    useGradualEnvFx = mainGetBits(BIT_2C4);
     if (useGradualEnvFx && (enemiesDefeated != objData->enemiesDefeated)) {
         objData->enemiesDefeated = enemiesDefeated;
         func_80000860(self, self, (objData->enemiesDefeated + 0xF4), 0);
@@ -419,71 +419,71 @@ static void WL_LevelControl_setup5_tick(Object* self) {
     
     count = 0;
     distance = 10000.0f;
-    player = get_player();
+    player = objGetPlayer();
     objData = self->data;
 
     //Set up the visit (only runs once)
-    if (dInitSpirit4Visit && (main_get_bits(BIT_318) == FALSE)) {
+    if (dInitSpirit4Visit && (mainGetBits(BIT_318) == FALSE)) {
         //Ensure the player has relevant spells
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
-        main_set_bits(BIT_Spell_Illusion, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Illusion, 1);
 
         //Restore some magic and make sure the player has the 4th Spirit
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
-        main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
+        mainSetBits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
 
         dInitSpirit4Visit = FALSE;
     }
 
     //Disable HITS line (TO-DO: find where this line is)
-    if (main_get_bits(BIT_2DB)) {
+    if (mainGetBits(BIT_2DB)) {
         func_80059038(0x18, 0, 0);
     }
 
     //Delete the dock's GuardClaw after dropping a crate from above
-    if (main_get_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw)) {
-        main_set_bits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
-        main_set_bits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
+    if (mainGetBits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw)) {
+        mainSetBits(BIT_CFExplodeTunnel_Trigger_31B6F, 1);
+        mainSetBits(BIT_WM_Setup5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
 
-        guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
+        guardClaw = objGetNearestTypeTo(OBJTYPE_Baddie, self, &distance);
         if (guardClaw != NULL) {
             //@bug: may potentially delete a Skeetla instead, since they're also objType4
-            obj_destroy_object(guardClaw);
+            objFreeObject(guardClaw);
         }
 
         objData->timer = 30;
     }
 
     //Search through the objects, and delete the hall's SharpClaw and GuardClaw
-    if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws)) {
-        objects = obj_get_all_of_type(OBJTYPE_Baddie, &count);
+    if (mainGetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws)) {
+        objects = objGetAllOfType(OBJTYPE_Baddie, &count);
         for (i = 0; i < count; i++) {
             someObjsetup = objects[i]->setup;
             if ((someObjsetup->uID == 0x296E) ||    //SharpClaw
                 (someObjsetup->uID == 0x296F)       //GuardClaw
             ) {
-                obj_destroy_object(objects[i]);
+                objFreeObject(objects[i]);
             }
         }
-        main_set_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 0);
+        mainSetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 0);
     }
 
     //Handle Sabre entering the hall with the GuardClaw
-    if (main_get_bits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall)) {
+    if (mainGetBits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall)) {
         lastUsedSpell = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
 
         //Warp the player away if they're not using the Illusion or Forcefield Spells
         if ((lastUsedSpell != BIT_Spell_Illusion) && 
             (lastUsedSpell != BIT_Spell_Forcefield) && 
-            (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp) == FALSE)
+            (mainGetBits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp) == FALSE)
         ) {
-            warpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
+            mapWarpPlayer(WARP_WM_SABRE_KRAZOA_CORRIDOR, /*fadeToBlack=*/FALSE);
         }
 
-        main_set_bits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall, 0);
+        mainSetBits(BIT_WM_Setup5_Sabre_Entered_GuardClaw_Hall, 0);
     }
 
     /* Handle removing the GuardClaw hall's warp-away behaviour (and deleting the SharpClaw)
@@ -491,16 +491,16 @@ static void WL_LevelControl_setup5_tick(Object* self) {
        NOTE: BIT_2FA intended to be set upon depositing Spirit 4?
              Doesn't seem to get set in practice.
     */
-    if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone)) {
-        if (main_get_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws) == 0) {
-            main_set_bits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 1);
+    if (mainGetBits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone)) {
+        if (mainGetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws) == 0) {
+            mainSetBits(BIT_WM_Setup5_Sabre_Hall_Delete_Claws, 1);
         }
 
         objData->timer -= (s16)gUpdateRate;
         if (objData->timer <= 0) {
             objData->timer = 0;
-            main_set_bits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone, 0);
-            main_set_bits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp, 1);
+            mainSetBits(BIT_WM_Setup5_Sabre_Hall_GuardClaw_Gone, 0);
+            mainSetBits(BIT_WM_Setup5_Sabre_Hall_Disable_GuardClaw_Warp, 1);
             objData->timer = 30;
         }
     }
@@ -520,10 +520,10 @@ static void WL_LevelControl_setup6_tick(Object* self) {
     Object* player;
     Object* foodbag;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Set up the visit (only runs once)
-    if (dInitSpirit6Visit && (main_get_bits(BIT_Play_Seq_020D) == FALSE)) {
+    if (dInitSpirit6Visit && (mainGetBits(BIT_Play_Seq_020D) == FALSE)) {
         //Add 10 green apples, and 1 red and brown apple to the food bag (@debug code related to Randorn?)
         foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->set_capacity(foodbag);
@@ -541,8 +541,8 @@ static void WL_LevelControl_setup6_tick(Object* self) {
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Brown_Apple);
 
         //Ensure the player has relevant spells
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 6th Spirit
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_6, TRUE);
@@ -563,17 +563,17 @@ static void WL_LevelControl_setup7_tick(Object* self) {
     WL_LevelControl_Data* objData;
     Object* player;
 
-    get_player();
+    objGetPlayer();
     objData = (WL_LevelControl_Data*)self->data;
 
     //Set up the visit (only runs once)
-    if (dInitSpirit7Visit && (main_get_bits(BIT_Play_Seq_020D) == FALSE)) {
+    if (dInitSpirit7Visit && (mainGetBits(BIT_Play_Seq_020D) == FALSE)) {
         //Ensure the player has relevant spells
-        main_set_bits(BIT_Spell_Projectile, 1);
-        main_set_bits(BIT_Spell_Forcefield, 1);
+        mainSetBits(BIT_Spell_Projectile, 1);
+        mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 7th Spirit
-        player = get_player();
+        player = objGetPlayer();
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_7, TRUE);
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
 
@@ -585,10 +585,10 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         func_80000860(self, self, 0x32, 0);
         func_80000860(self, self, 0x33, 0);
         
-        main_set_bits(BIT_221, 1);
+        mainSetBits(BIT_221, 1);
     }
 
-    if (main_get_bits(BIT_WM_Setup5_Interval_Behaviour)) {
+    if (mainGetBits(BIT_WM_Setup5_Interval_Behaviour)) {
         /* Over 11.666 seconds, set BIT_36D at rapid intervals:
            starting with period of 0.5s, and getting one frame more frequent each time.
 
@@ -600,7 +600,7 @@ static void WL_LevelControl_setup7_tick(Object* self) {
             if (objData->timer != 0) {
                 objData->timer -= (s16)gUpdateRate;
                 if (objData->timer <= 0) {
-                    main_set_bits(BIT_36D, 1);
+                    mainSetBits(BIT_36D, 1);
                     if (objData->interval > 10) {
                         objData->interval -= 1;
                     }
@@ -612,10 +612,10 @@ static void WL_LevelControl_setup7_tick(Object* self) {
 
     //Open/close the door to Randorn's hall erratically
     //NOTE: Randorn's door isn't set up to appear in setup 7, so this behaviour can't be seen
-    if (rand_next(0, 30) == 0) {
-        main_set_bits(BIT_WM_Randorn_Door_OpenClose, 1);
+    if (mathRnd(0, 30) == 0) {
+        mainSetBits(BIT_WM_Randorn_Door_OpenClose, 1);
     }
-    if (rand_next(0, 10) == 0) {
-        main_set_bits(BIT_WM_Randorn_Door_OpenClose, 0);
+    if (mathRnd(0, 10) == 0) {
+        mainSetBits(BIT_WM_Randorn_Door_OpenClose, 0);
     }
 }

@@ -246,7 +246,7 @@ void SnowWorm_setup(Object* self, SnowWorm_Setup* objSetup, s32 reset) {
         baddie->unk3E2 = 110;
     }
     
-    func_80023D30(self, 8, 0.0f, 0);
+    objAnimSet(self, 8, 0.0f, 0);
     
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     
@@ -267,8 +267,8 @@ void SnowWorm_control(Object* self) {
         if (((baddie->fsa.logicState != SnowWorm_LSTATE_3) || (baddie->unk3B0 & 1)) && (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID))) {
             gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 0xE, 8, 0x102, 0x26, 20.0f);
             baddie->unk3B6 = 0;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-            func_80023D30(self, 8, 0.0f, 0x10);
+            dll_amSfx->Play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objAnimSet(self, 8, 0.0f, 0x10);
             baddie->fsa.unk33A = 0;
             self->opacity = OBJECT_OPACITY_MAX;
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -319,10 +319,10 @@ void SnowWorm_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
     } 
     
     if (baddie->unk3E8) {
-        func_80036FBC(0xC8, 0, 0, baddie->unk3E8);
+        objprintSetBlendColor(0xC8, 0, 0, baddie->unk3E8);
     }
     
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     SnowWorm_func_10D8(self, baddie);
     
     if (baddie->unk3B2 & 0x60) {
@@ -339,11 +339,11 @@ void SnowWorm_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 void SnowWorm_free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
-    camera_disable_y_offset();
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    camIgnoreShake();
+    objFreeObjectType(self, OBJTYPE_Baddie);
 
     if (self->linkedObject) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
     
@@ -388,7 +388,7 @@ void SnowWorm_receive_message(Object* self, u8 message) {
 // offset: 0x908 | func: 10
 void SnowWorm_func_908(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     SnowWorm_DataActual* objData = baddie->objdata;
-    Object* player = get_player();
+    Object* player = objGetPlayer();
     Vec3f d;
     SRT fxTransform;
     s32 i;
@@ -456,10 +456,10 @@ void SnowWorm_func_CE8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     objData->unk46 += gUpdateRate;
     
     if ((objData->unk46 >= 300)) {
-        objData->unk46 = rand_next(0, 200);
+        objData->unk46 = mathRnd(0, 200);
         
         if (fsa->animState == SnowWorm_ASTATE_7 || fsa->animState == SnowWorm_ASTATE_8) {
-            gDLL_6_AMSFX->vtbl->play(self, dBattleSounds[rand_next(3, 4)], 0x46, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dBattleSounds[mathRnd(3, 4)], 0x46, NULL, NULL, 0, NULL);
         }
     } 
     
@@ -513,7 +513,7 @@ void SnowWorm_func_10D8(Object* self, Baddie* baddie) {
 
     objData = baddie->objdata;
     
-    memcpy(&mtx, func_80032170(self, 1), sizeof(MtxF));
+    memcpy(&mtx, objGetAttachPointBoneMatrix(self, 1), sizeof(MtxF));
     mtx.m[3][0] = mtx.m[3][1] = mtx.m[3][2] = 0;
     
     if (self->id == OBJ_SnowWormLarge) {
@@ -529,26 +529,26 @@ void SnowWorm_func_10D8(Object* self, Baddie* baddie) {
     }
 
     if (baddie->fsa.animState != SnowWorm_ASTATE_4) {
-        func_80031F6C(self, 2, &objData->fxTransform.transl.x, &objData->fxTransform.transl.y, &objData->fxTransform.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 2, &objData->fxTransform.transl.x, &objData->fxTransform.transl.y, &objData->fxTransform.transl.z, 0);
     } else {
-        func_80031F6C(self, 0, &objData->fxTransform.transl.x, &objData->fxTransform.transl.y, &objData->fxTransform.transl.z, 0);
+        objGetAttachPointWorldSpace(self, 0, &objData->fxTransform.transl.x, &objData->fxTransform.transl.y, &objData->fxTransform.transl.z, 0);
     }
     
     objData->fxTransform.transl.f[1] = self->srt.transl.y + 8.0f;
-    objData->fxTransform.transl.f[0] -= fsin16_precise(self->srt.yaw) * 10.0f * sp64;
-    objData->fxTransform.transl.f[2] -= fcos16_precise(self->srt.yaw) * 10.0f * sp64;
+    objData->fxTransform.transl.f[0] -= mathSinfInterp(self->srt.yaw) * 10.0f * sp64;
+    objData->fxTransform.transl.f[2] -= mathCosfInterp(self->srt.yaw) * 10.0f * sp64;
     
     transform.transl.f[0] = 0.0f;
     transform.transl.f[1] = -15.0f;
     transform.transl.f[2] = -20.0f;
     
-    func_80031F6C(self, 0, &transform.transl.x, &transform.transl.y, &transform.transl.z, 1);
+    objGetAttachPointWorldSpace(self, 0, &transform.transl.x, &transform.transl.y, &transform.transl.z, 1);
     
     if (objData->flags & SnowWorm_FLAG_2) {
         v.f[0] = -8.0f;
         v.f[1] = 40.0f;
         v.f[2] = -20.0f;
-        vec3_transform(&mtx, v.f[0], v.f[1], v.f[2], &v.x, &v.y, &v.z);
+        mathMtxXFMF(&mtx, v.f[0], v.f[1], v.f[2], &v.x, &v.y, &v.z);
         memcpy(&objData->throwVelocity, &v, sizeof(Vec3f));
         memcpy(&objData->throwOrigin, &transform, sizeof(SRT));
         objData->flags |= SnowWorm_FLAG_1;
@@ -600,8 +600,8 @@ void SnowWorm_func_1374(Object* self, Baddie* baddie) {
     }
     
     if (objData->flags & SnowWorm_FLAG_10) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(2.0f * shakeFactor);
+        camUseShake();
+        camSetShakeOffset(2.0f * shakeFactor);
         
         for (i = 0; i < 40; i++) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_57, fxTransform, 0x200001, -1, colourRGB);
@@ -609,8 +609,8 @@ void SnowWorm_func_1374(Object* self, Baddie* baddie) {
     }
     
     if (objData->flags & SnowWorm_FLAG_20) {
-        camera_enable_y_offset();
-        camera_set_shake_offset(3.0f * shakeFactor);
+        camUseShake();
+        camSetShakeOffset(3.0f * shakeFactor);
         
         for (i = 0; i < 40; i++) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_57, fxTransform, 0x200001, -1, colourRGB);
@@ -632,7 +632,7 @@ void SnowWorm_throw_ice_ball(Object* self, SnowWorm_DataActual* objData) {
     ChukaChuck_Setup* iceSetup;
     Object* ice;
 
-    iceSetup = obj_alloc_setup(sizeof(ChukaChuck_Setup), OBJ_IceBall);
+    iceSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_IceBall);
     iceSetup->base.x = objData->throwOrigin.transl.x;
     iceSetup->base.y = objData->throwOrigin.transl.y;
     iceSetup->base.z = objData->throwOrigin.transl.z;
@@ -642,7 +642,7 @@ void SnowWorm_throw_ice_ball(Object* self, SnowWorm_DataActual* objData) {
     iceSetup->base.fadeDistance = 0xFF;
     iceSetup->unk1E = -1;
     iceSetup->unk20 = -1;
-    ice = obj_create(&iceSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
+    ice = objSetupObject(&iceSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
     
     if (ice != NULL) {
         ice->velocity.x = objData->throwVelocity.x;
@@ -670,12 +670,12 @@ s32 SnowWorm_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 8, 0.0f, 0);
+        objAnimSet(self, 8, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
     if (fsa->enteredAnimState) {
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         self->opacity = OBJECT_OPACITY_MAX;
         fsa->unk341 = 1;
@@ -696,7 +696,7 @@ s32 SnowWorm_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->flags |= SnowWorm_FLAG_8;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dRoarSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dRoarSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     
@@ -716,12 +716,12 @@ s32 SnowWorm_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk4.mode = 1;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xB, 0.0f, 0);
+        objAnimSet(self, 0xB, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
     if (fsa->enteredAnimState) {
-        main_set_bits(baddie->unk39E, 1);
+        mainSetBits(baddie->unk39E, 1);
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         self->opacity = OBJECT_OPACITY_MAX;
         fsa->unk341 = 1;
@@ -742,7 +742,7 @@ s32 SnowWorm_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->flags |= SnowWorm_FLAG_8;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dRoarSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dRoarSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     
@@ -757,7 +757,7 @@ s32 SnowWorm_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     
     if ((fsa->prevAnimState != 4) && fsa->enteredAnimState) {
-        func_80023D30(self, 0xE, 0.0f, 0);
+        objAnimSet(self, 0xE, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -771,8 +771,8 @@ s32 SnowWorm_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->unk33A) {
-        main_set_bits(baddie->unk39E, 0);
-        func_80023D30(self, 8, 0.0f, 0);
+        mainSetBits(baddie->unk39E, 0);
+        objAnimSet(self, 8, 0.0f, 0);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;
@@ -780,7 +780,7 @@ s32 SnowWorm_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(3, 4), dBattleSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(3, 4), dBattleSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -804,7 +804,7 @@ s32 SnowWorm_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 4, 0.0f, 0);
+        objAnimSet(self, 4, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -816,7 +816,7 @@ s32 SnowWorm_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     objData->flags |= (SnowWorm_FLAG_4 | SnowWorm_FLAG_8);
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dHurtSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dHurtSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -830,7 +830,7 @@ s32 SnowWorm_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     baddie = self->data;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 9, 0.0f, 0);
+        objAnimSet(self, 9, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -868,16 +868,16 @@ s32 SnowWorm_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     func_80028D2C(self);
     if (fsa->enteredAnimState) {
-        if (rand_next(0, 1)) {
-            dRoarSoundIdxA = rand_next(0, 2);
+        if (mathRnd(0, 1)) {
+            dRoarSoundIdxA = mathRnd(0, 2);
             if (fsa->enteredAnimState) {
-                func_80023D30(self, 6, 0.0f, 0);
+                objAnimSet(self, 6, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         } else {
             dRoarSoundIdxA = 3;
             if (fsa->enteredAnimState) {
-                func_80023D30(self, 0xA, 0.0f, 0);
+                objAnimSet(self, 0xA, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         }
@@ -920,14 +920,14 @@ s32 SnowWorm_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        dRoarSoundIdxB = rand_next(0, 2);
-        if (rand_next(0, 1)) {
+        dRoarSoundIdxB = mathRnd(0, 2);
+        if (mathRnd(0, 1)) {
             if (fsa->enteredAnimState) {
-                func_80023D30(self, 7, 0.0f, 0);
+                objAnimSet(self, 7, 0.0f, 0);
                 fsa->unk33A = 0;
             }
         } else if (fsa->enteredAnimState) {
-            func_80023D30(self, 3, 0.0f, 0);
+            objAnimSet(self, 3, 0.0f, 0);
             fsa->unk33A = 0;
         }
         
@@ -964,7 +964,7 @@ s32 SnowWorm_anim_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (fsa->enteredAnimState) {
         if (fsa->enteredAnimState) { //?
-            func_80023D30(self, 0xF, 0.0f, 0);
+            objAnimSet(self, 0xF, 0.0f, 0);
             fsa->unk33A = 0;
         }
         fsa->unk341 = 1;
@@ -998,7 +998,7 @@ s32 SnowWorm_anim_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->animTickDelta = 0.01f;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 5, 0.0f, 0);
+        objAnimSet(self, 5, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -1019,7 +1019,7 @@ s32 SnowWorm_anim_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->animTickDelta = 0.01f;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xA, 0.0f, 0);
+        objAnimSet(self, 0xA, 0.0f, 0);
         fsa->unk33A = 0;
     }
 
@@ -1029,7 +1029,7 @@ s32 SnowWorm_anim_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData = baddie->objdata;
         fsa->unk308 &= ~1;
         objData->flags |= SnowWorm_FLAG_2;
-        gDLL_6_AMSFX->vtbl->play(self, dRoarSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dRoarSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
@@ -1048,18 +1048,18 @@ s32 SnowWorm_anim_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     objData->flags |= SnowWorm_FLAG_4;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 0, 0.0f, 0U);
+        objAnimSet(self, 0, 0.0f, 0U);
         fsa->unk33A = 0;
     }
     
     if (fsa->enteredAnimState) {
-        weapon = get_player()->linkedObject;
+        weapon = objGetPlayer()->linkedObject;
         if (((DLL_Unknown*)weapon->dll)->vtbl->func[16].withOneArgS32(weapon)) {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[rand_next(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dHurtSounds[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     fsa->unk341 = 3;
@@ -1080,7 +1080,7 @@ s32 SnowWorm_anim_state_11(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         
         if (fsa->enteredAnimState) {
-            func_80023D30(self, 2, 0.0f, 0);
+            objAnimSet(self, 2, 0.0f, 0);
             fsa->unk33A = 0;
         }
         
@@ -1119,11 +1119,11 @@ s32 SnowWorm_anim_state_12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (baddie->unk3B8 > 50) {
         if (fsa->enteredAnimState) {
-            func_80023D30(self, 4, 0.0f, 0);
+            objAnimSet(self, 4, 0.0f, 0);
             fsa->unk33A = 0;
         }
     } else if (fsa->enteredAnimState) {
-        func_80023D30(self, 0xE, 0.0f, 0);
+        objAnimSet(self, 0xE, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
@@ -1140,7 +1140,7 @@ s32 SnowWorm_anim_state_12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk278 = self->animProgress + -1.0f;
     }
     
-    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, rand_next(0, 1), dHurtSounds);
+    gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dHurtSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, 0, dBattleSounds);
     
     return 0;
@@ -1156,19 +1156,19 @@ s32 SnowWorm_anim_state_13(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk27C = 0.0f;
     
     if (fsa->enteredAnimState) {
-        func_80023D30(self, 1, 0.0f, 0);
+        objAnimSet(self, 1, 0.0f, 0);
         fsa->unk33A = 0;
     }
     
     if ((fsa->unk34A & 1) == FALSE) {
-        gDLL_6_AMSFX->vtbl->play(self, dWeaponHitSounds[rand_next(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->play(self, dHurtSounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, dHurtSounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
     }
     
     if (((fsa->unk34A & 2) == FALSE) && (self->animProgress > 0.3f)) {
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 2;
         gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
     }
@@ -1245,9 +1245,9 @@ s32 SnowWorm_logic_state_2_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate)
         func_800267A4(self);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     } else if (fsa->unk33A) {
-        obj_send_mesg_many(0, 3, self, 0xE0000, self);
+        objSendMesgMany(0, 3, self, 0xE0000, self);
         if (self->setup == NULL) {
-            obj_destroy_object(self);
+            objFreeObject(self);
         }
         
         return FSA_NEXTSTATE_SYNC(SnowWorm_LSTATE_3);
@@ -1263,8 +1263,8 @@ s32 SnowWorm_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         baddie = self->data;
         baddie->unk3B4 = 0;
-        main_set_bits(baddie->unk39E, 0);
-        main_set_bits(baddie->unk39C, 1);
+        mainSetBits(baddie->unk39E, 0);
+        mainSetBits(baddie->unk39C, 1);
     }
     
     return 0;
@@ -1330,7 +1330,7 @@ s32 SnowWorm_logic_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     bcopy(&self->srt.transl, sp3C, sizeof(Vec3f));
     bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
-    func_80009024(sp3C, &baddie->unk374);
+    vox_func_80009024(sp3C, &baddie->unk374);
     
     if (sp3C->unk25 == 0) {
         gDLL_18_objfsa->vtbl->func6(self, fsa, sp3C->unk18.x, sp3C->unk18.z, 0.0f, 0.0f, 60.0f);

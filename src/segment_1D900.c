@@ -279,7 +279,7 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
                 sp68.pitch = 0;
                 sp68.scale = 1.0f;
                 sp68.yaw = -D_800B1860[i]->yaw;
-                rotate_vec3(&sp68, &sp8C);
+                mathRotateRPY(&sp68, &sp8C);
                 sp80.x = sp8C;
                 sp80.y = sp90;
                 sp80.z = sp94;
@@ -287,7 +287,7 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
                 D_800B1858[i].y = sp80.y;
                 D_800B1858[i].z = sp80.z;
             } else {
-                inverse_transform_point_by_object(D_800B1858[i].pos.x, D_800B1858[i].pos.y, D_800B1858[i].pos.z, &sp8C, &sp90, &sp94, obj->parent);
+                camInverseTransformPointByObject(D_800B1858[i].pos.x, D_800B1858[i].pos.y, D_800B1858[i].pos.z, &sp8C, &sp90, &sp94, obj->parent);
                 D_800B1858[i].x = sp8C;
                 D_800B1858[i].y = sp90;
                 D_800B1858[i].z = sp94;
@@ -619,7 +619,7 @@ void func_8001F094(ModelInstance* arg0) {
         return;
     }
 
-    camera = get_main_camera();
+    camera = camGetMain();
     spF0 = arg0->model;
     spEC = camera->srt.transl.f[0] - gWorldX;
     spE8 = camera->srt.transl.f[1];
@@ -673,7 +673,7 @@ void func_8001F094(ModelInstance* arg0) {
                     temp_ft4 = D_800BB198.f[2] - spBC->m[3][2];
                     temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(temp_fa1) + SQ(temp_ft4));
                 }
-                vec3_transform_no_translate(spBC, &spD8, &spD8);
+                mathMtxFastXFMF(spBC, &spD8, &spD8);
                 temp_fv0 = VECTOR_MAGNITUDE(spD8);
                 if (temp_fv0 != 0.0f) {
                     var_fv1 = 1.0f / temp_fv0;
@@ -724,7 +724,7 @@ void func_8001F4C0(Block* block, s32 blockX, s32 blockZ) {
     f32 temp;
     f32 temp2;
 
-    camera = get_main_camera();
+    camera = camGetMain();
     
     sp9C.f[2] = camera->srt.transl.f[0] - ((blockX * 640.0f) + gWorldX);
     sp9C.f[1] = camera->srt.transl.f[1];
@@ -791,5 +791,5 @@ void func_8001F81C(u8 *arg0, u8 *arg1, u8 *arg2) {
 }
 
 void func_8001F848(Gfx **gdl) {
-    dl_set_prim_color(gdl, D_800B1830, D_800B1831, D_800B1832, 0xFF);
+    dlSetPrimColor(gdl, D_800B1830, D_800B1831, D_800B1832, 0xFF);
 }

@@ -33,7 +33,7 @@ void cannon_claw_control(Object* self) {
     DIMCannon_Setup* cannonSetup;
     Object* sidekick;
 
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     //Do nothing when not being drawn
     if (self->unkDC) {
@@ -43,16 +43,16 @@ void cannon_claw_control(Object* self) {
     //Handle animation
     {
         if (self->curModAnimId != 0x208) {
-            func_80023D30(self, 0x208, 0, 0);
+            objAnimSet(self, 0x208, 0, 0);
         }
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     }
 
     //Handle damage
     if (func_80025F40(self, NULL, 0, 0)) {
         if (self->parent) {
             cannonSetup = (DIMCannon_Setup*)self->parent->setup;
-            main_set_bits(cannonSetup->gamebit, TRUE);
+            mainSetBits(cannonSetup->gamebit, TRUE);
 
             //@bug: missing null check for the sidekick
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
@@ -65,7 +65,7 @@ void cannon_claw_control(Object* self) {
     //Check if cannon's gamebit is set
     if (self->parent) {
         cannonSetup = (DIMCannon_Setup*)self->parent->setup;
-        if (main_get_bits(cannonSetup->gamebit)) {
+        if (mainGetBits(cannonSetup->gamebit)) {
             cannon_claw_die(self);
         }
     }
@@ -87,7 +87,7 @@ void cannon_claw_update(Object* self) { }
 // offset: 0x20C | func: 4 | export: 3
 void cannon_claw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility && self->unkDC == 0) {
-		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 

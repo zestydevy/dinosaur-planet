@@ -84,7 +84,7 @@ void SCTotemPole_control(Object* self) {
     }
     
     //Get lateral player distance
-    player = get_player();
+    player = objGetPlayer();
     dx = self->srt.transl.x - player->srt.transl.x;
     dz = self->srt.transl.z - player->srt.transl.z;
     objData->playerDistance = sqrtf(SQ(dx) + SQ(dz));
@@ -98,7 +98,7 @@ void SCTotemPole_control(Object* self) {
             
             //Start a wooden creaking loop when near the spinning pole
             if (objSetup->base.uID == SCTotemPole_Square) {
-                objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_786_Wooden_Ratcheting_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+                objData->soundHandle = dll_amSfx->Play(self, SOUND_786_Wooden_Ratcheting_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
         }
     } else if (objData->prevPlayerDistance < objData->vocalsDistance) {
@@ -114,7 +114,7 @@ void SCTotemPole_control(Object* self) {
         
         //Stop the spinning pole's creaking wood loop
         if (objData->soundHandle != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+            dll_amSfx->Stop(objData->soundHandle);
             objData->soundHandle = 0;
         }
     }
@@ -139,7 +139,7 @@ void SCTotemPole_update(Object *self) { }
 // offset: 0x3E8 | func: 3 | export: 3
 void SCTotemPole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -149,7 +149,7 @@ void SCTotemPole_free(Object* self, s32 arg1) {
     u32 soundHandle = objData->soundHandle;
 
     if (soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle);
+        dll_amSfx->Stop(soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -173,7 +173,7 @@ Object* SCTotemPole_find_level_control(Object* self) {
     s32 index;
     s32 count;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
             return objects[index];
         }

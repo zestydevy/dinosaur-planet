@@ -80,7 +80,7 @@ void BalloonBaddie_setup(Object *self, BalloonBaddie_Setup *setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->curveStruct, self, objdata->attackRange, (s32*)&_data_0, -1) == 0) {
             objdata->flags |= BALLOONBADDIE_1;
         }
-        objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->soundHandle = dll_amSfx->Play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -109,8 +109,8 @@ void BalloonBaddie_control(Object* self) {
             self->opacity = OBJECT_OPACITY_MAX;
             self->unkAF &= ~8;
             objdata->flags |= BALLOONBADDIE_RESPAWNED;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
-            objdata->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objdata->soundHandle = dll_amSfx->Play(self, SOUND_B74_Gentle_Magic_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
     } else {
         if (objdata->fadeoutTimer > 0.0f) {
@@ -130,15 +130,15 @@ void BalloonBaddie_control(Object* self) {
             if (func_8002601C(self, &sp60, &sp40, &sp3C, &sp50, &sp4C, &sp48) != 0) {
                 // balloonbaddie killed, start fade timer, start respawn timer
                 if (objdata->soundHandle) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+                    dll_amSfx->Stop(objdata->soundHandle);
                     objdata->soundHandle = 0;
                 }
                 objdata->flags |= (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2);
                 objdata->fadeoutTimer = 1.0f;
                 self->unkAF |= 8;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_B75_Water_Splash_Big, MAX_VOLUME, NULL, NULL, 0, NULL);
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_331, NULL, PARTFXFLAG_2, -1, NULL);
                 gDLL_33_BaddieControl->vtbl->drop_collectable(self, setup->unk18, -1, 0);
                 gDLL_29_Gplay->vtbl->add_time(setup->base.uID, setup->respawnTimer * 60);
@@ -148,10 +148,10 @@ void BalloonBaddie_control(Object* self) {
             objdata->particleTimer -= gUpdateRateF;
             if (objdata->particleTimer < 0.0f) {
                 gDLL_17_partfx->vtbl->spawn(self, PARTICLE_Green_Slime_Drop, NULL, PARTFXFLAG_2, -1, NULL);
-                objdata->particleTimer = rand_next(30, 120);
+                objdata->particleTimer = mathRnd(30, 120);
             }
         }
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         if (objdata->player) {
             VECTOR_SUBTRACT(objdata->player->globalPosition, self->globalPosition, delta);
             objdata->distToPlayer = VECTOR_MAGNITUDE(delta);
@@ -190,7 +190,7 @@ void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
     objdata = self->data;
     if (visibility && self->unkDC == BALLOONBADDIE_ALIVE) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         // dying particles
         if (objdata->flags & (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2)) {
             if (objdata->flags & BALLOONBADDIE_DEATHFX1) {
@@ -214,13 +214,13 @@ void BalloonBaddie_free(Object* self, s32 a1) {
     BalloonBaddie_Data* objdata;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (objdata->curveStruct) {
         mmFree(objdata->curveStruct);
         objdata->curveStruct = NULL;
     }
     if (objdata->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+        dll_amSfx->Stop(objdata->soundHandle);
     }
 }
 
@@ -255,8 +255,8 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
     objdata->theta[1] += (u16)(256.0f * gUpdateRateF);
     objdata->theta[2] += (u16)(512.0f * gUpdateRateF);
 
-    self->srt.roll = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[1])) * 1000.0f;
-    self->srt.pitch = (fsin16_precise(objdata->theta[0]) + fsin16_precise(objdata->theta[2])) * 1000.0f;
+    self->srt.roll = (mathSinfInterp(objdata->theta[0]) + mathSinfInterp(objdata->theta[1])) * 1000.0f;
+    self->srt.pitch = (mathSinfInterp(objdata->theta[0]) + mathSinfInterp(objdata->theta[2])) * 1000.0f;
 
     if (objdata->flags & BALLOONBADDIE_CHASE) {
         self->velocity.x += (objdata->player->srt.transl.x - self->srt.transl.x) * 0.001f;
@@ -268,7 +268,7 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     } else {
         self->velocity.x += (curveStruct->unk0.unk68.x - self->srt.transl.x) * 0.001f;
-        self->velocity.y += (curveStruct->unk0.unk68.y + ((fsin16_precise((s16) objdata->theta[0]) + fsin16_precise((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
+        self->velocity.y += (curveStruct->unk0.unk68.y + ((mathSinfInterp((s16) objdata->theta[0]) + mathSinfInterp((s16) objdata->theta[1])) * 10.0f) - self->srt.transl.y) * 0.001f;
         self->velocity.z += (curveStruct->unk0.unk68.z - self->srt.transl.z) * 0.001f;
     }
 
@@ -293,10 +293,10 @@ void BalloonBaddie_more_control(Object* self, BalloonBaddie_Data* objdata) {
         self->velocity.z = -BALLOONBADDIE_MAX_SPEED;
     }
 
-    obj_move(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
-    func_80024108(self, objdata->unkC, gUpdateRateF, &sp50);
+    objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
+    objAnimAdvance(self, objdata->unkC, gUpdateRateF, &sp50);
 
-    angle = arctan2_f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
+    angle = mathAtan2f(self->globalPosition.x - objdata->player->globalPosition.x, self->globalPosition.z - objdata->player->globalPosition.z) - ((u16)self->srt.yaw);
     CIRCLE_WRAP(angle)
     self->srt.yaw += (s32)((angle * gUpdateRateF) / 12.0f);
 }

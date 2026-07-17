@@ -1,6 +1,8 @@
 //NOTE: this is an unused object, distinct from WM_Platform
 
 #include "common.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 
 typedef struct {
     ObjSetup base;
@@ -49,13 +51,13 @@ void WM_MovePlatform_control(Object* self) {
     s32 i;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     collisionInfo = NULL;
     speed = 1.0f;
     collisionY = 0.0f;
     
     //Check if the player's on/near the platform
-    if ((vec3_distance_xz(&player->globalPosition, &self->globalPosition) < objData->playerRange) && (objData->playerOnPlatform == FALSE)) {
+    if ((vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < objData->playerRange) && (objData->playerOnPlatform == FALSE)) {
         objData->playerOnPlatform = TRUE;
     }
     
@@ -71,11 +73,11 @@ void WM_MovePlatform_control(Object* self) {
 
     //Control platform using joystick(!) (not transformed with respect to camera, though)
     self->velocity.y += -0.04f;
-    self->velocity.x += joy_get_stick_y(0) * 0.001f;
-    self->velocity.z += joy_get_stick_x(0) * 0.001f;
+    self->velocity.x += joyGetStickY(0) * 0.001f;
+    self->velocity.z += joyGetStickX(0) * 0.001f;
     
     //Use D-pad left to boost upwards, creating a flurry of flame particles!
-    if (joy_get_buttons(0) & L_JPAD) {
+    if (joyGetButtons(0) & L_JPAD) {
         objData->accelerationY += 0.0015f; //@framerate-dependent
         fxTransform.scale = objData->accelerationY * 4.0f;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1A5, &fxTransform, 2, -1, NULL);
@@ -142,7 +144,7 @@ void WM_MovePlatform_control(Object* self) {
         }
         self->velocity.z += dSpeed;
         
-        if (joy_get_buttons(0) & L_JPAD) {
+        if (joyGetButtons(0) & L_JPAD) {
             speed = 1.0f;
         }
         
@@ -164,7 +166,7 @@ void WM_MovePlatform_update(Object* self) { }
 // offset: 0x6F0 | func: 3 | export: 3
 void WM_MovePlatform_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

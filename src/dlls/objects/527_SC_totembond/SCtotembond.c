@@ -72,8 +72,8 @@ void SCTotemBond_control(Object* self) {
     Object* sidekick;
 
     objData = self->data;
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     
     if (objData->flags & SCTotemBond_FLAG_Init_Minigame) {
         SCTotemBond_init_minigame(self, objData);
@@ -87,13 +87,13 @@ void SCTotemBond_control(Object* self) {
         ((DLL_210_Player*)player->dll)->vtbl->func71(player, &self->srt.transl, &self->srt, 0);
         
         //Rotate pole when gamebit set
-        if (main_get_bits(BIT_LFV_Flame_Game_Rotate_Pole)) {
-            main_set_bits(BIT_LFV_Flame_Game_Rotate_Pole, 0);
+        if (mainGetBits(BIT_LFV_Flame_Game_Rotate_Pole)) {
+            mainSetBits(BIT_LFV_Flame_Game_Rotate_Pole, 0);
             if (SCTotemBond_pick_new_direction(self, objData)) {
                 objData->flags |= SCTotemBond_FLAG_All_Directions_Defended;
             }
             
-            objData->soundHandle = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
+            objData->soundHandle = dll_amSfx->Play(self, SOUND_796_Pole_Rotate, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         //Rotate towards goal direction
@@ -101,7 +101,7 @@ void SCTotemBond_control(Object* self) {
             self->srt.yaw -= 256.0f * gUpdateRateF;
             if ((u16)self->srt.yaw / M_90_DEGREES == objData->directionIndex) {
                 //Set gamebit to enable the direction's Flame target
-                main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+                mainSetBits(dActivateGamebits[objData->directionIndex], 1);
             }
         }
         
@@ -117,7 +117,7 @@ void SCTotemBond_update(Object *self) { }
 // offset: 0x2C4 | func: 3 | export: 3
 void SCTotemBond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -126,7 +126,7 @@ void SCTotemBond_free(Object* self, s32 arg1) {
     SCTotemBond_Data* objData = self->data;
     
     if (objData->soundHandle != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objData->soundHandle);
+        dll_amSfx->Stop(objData->soundHandle);
         objData->soundHandle = 0;
     }
 }
@@ -183,10 +183,10 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         objSetup = (SCTotemBond_Setup*)self->setup;
         angle = i << 0xE; //degrees: 0, 90, 180, 270
         
-        setupLF = obj_alloc_setup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
-        setupLF->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
+        setupLF = objAllocSetup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
+        setupLF->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupLF->base.y = self->srt.transl.y;
-        setupLF->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
+        setupLF->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupLF->base.loadFlags = objSetup->base.loadFlags;
         setupLF->base.byte5 = objSetup->base.byte5;
         setupLF->base.byte6 = objSetup->base.byte6;
@@ -198,10 +198,10 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupLF->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         setupLF->unk32 = 1;
         
-        setupFlame = obj_alloc_setup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
-        setupFlame->base.x = (fsin16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
+        setupFlame = objAllocSetup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
+        setupFlame->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupFlame->base.y = self->srt.transl.y;
-        setupFlame->base.z = (fcos16_precise(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
+        setupFlame->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
         setupFlame->base.loadFlags = objSetup->base.loadFlags;
         setupFlame->base.byte5 = objSetup->base.byte5;
         setupFlame->base.byte6 = objSetup->base.byte6;
@@ -214,8 +214,8 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupFlame->unk1E = 7;
         setupFlame->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         
-        obj_create((ObjSetup*)setupLF, 5, -1, -1, 0);
-        obj_create((ObjSetup*)setupFlame, 5, -1, -1, 0);
+        objSetupObject((ObjSetup*)setupLF, 5, -1, -1, 0);
+        objSetupObject((ObjSetup*)setupFlame, 5, -1, -1, 0);
         
         lfIndex++;
         if (lfIndex >= 4) {
@@ -230,7 +230,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* kyte;
 
     //Make sure Kyte has at least 1 unit of Flame energy
-    kyte = get_sidekick();
+    kyte = objGetSidekick();
     if (kyte != NULL) {
         objData->flameEnergyCount = ((DLL_ISidekick*)kyte->dll)->vtbl->get_red_food_count(kyte);
         if (objData->flameEnergyCount <= 0) {
@@ -245,7 +245,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
 
     //Create minigame objects, and enable first Flame target
     SCTotemBond_create_lightfoot_and_flame_targets(self, objData, -70.0f);
-    main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+    mainSetBits(dActivateGamebits[objData->directionIndex], 1);
 
     //Hide totem (for first-person view)
     self->opacity = 0;
@@ -255,11 +255,11 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     objData->flags |= SCTotemBond_FLAG_Minigame_Active;
     
     //Set Kyte's initial flight curve
-    main_set_bits(BIT_Kyte_Flight_Curve, 0x83);
+    mainSetBits(BIT_Kyte_Flight_Curve, 0x83);
     
     //Create restart point
-    player = get_player();
-    gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, map_get_layer());
+    player = objGetPlayer();
+    gDLL_29_Gplay->vtbl->restart_set(&player->srt.transl, player->srt.yaw, mapGetLayer());
 }
 
 
@@ -267,7 +267,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
 void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     Object* player;
 
-    player = get_player();
+    player = objGetPlayer();
     
     gDLL_29_Gplay->vtbl->restart_clear();
     gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 3, 0, NULL, 0, Cam_Ease_None);
@@ -277,7 +277,7 @@ void SCTotemBond_finish_minigame(Object* self, SCTotemBond_Data* objData) {
     func_8002674C(self);
     
     if (objData->flags & SCTotemBond_FLAG_All_Directions_Defended) {
-        main_set_bits(BIT_LightFoot_Village_Krystal_Freed, 1);
+        mainSetBits(BIT_LightFoot_Village_Krystal_Freed, 1);
     }
     objData->flags = SCTotemBond_FLAG_None;
 }
@@ -296,7 +296,7 @@ s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
     u8 i;
 
     for (i = 0, directions = 0; i < 4; i++) {
-        if (main_get_bits(dFinishedGamebits[i]) == 0) {
+        if (mainGetBits(dFinishedGamebits[i]) == 0) {
             directionsAvailable[directions++] = i;
         }
     }
@@ -305,9 +305,9 @@ s32 SCTotemBond_pick_new_direction(Object* self, SCTotemBond_Data* objData) {
         return 1;
     }
     
-    random = directionsAvailable[rand_next(0, directions - 1)];
+    random = directionsAvailable[mathRnd(0, directions - 1)];
     if (objData->directionIndex == random) {
-        main_set_bits(dActivateGamebits[objData->directionIndex], 1);
+        mainSetBits(dActivateGamebits[objData->directionIndex], 1);
     }
     objData->directionIndex = random;
     
@@ -324,7 +324,7 @@ void SCTotemBond_set_level_state(Object* self, u8 value) {
     s32 index;
     s32 count;
 
-    for (objects = get_world_objects(&index, &count); index < count; index++) {
+    for (objects = objGetObjects(&index, &count); index < count; index++) {
         if ((self != objects[index]) && (objects[index]->id == OBJ_SC_levelcontrol)) {
             ((DLL_519_SC_Levelcontrol*)objects[index]->dll)->vtbl->func7(objects[index], value);
             return;

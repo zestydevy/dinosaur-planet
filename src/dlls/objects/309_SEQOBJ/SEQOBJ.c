@@ -61,11 +61,11 @@ void SeqObj_setup(Object* self, SeqObj_Setup* objSetup, s32 arg2) {
         self->modelInstIdx = 0;
     }
     
-    obj_add_object_type(self, OBJTYPE_UseObj);
+    objAddObjectType(self, OBJTYPE_UseObj);
     
     objData->flags = SEQOBJ_FLAG_None;
     if (objSetup->gamebitHasPlayed != NO_GAMEBIT) {
-        if (main_get_bits(objSetup->gamebitHasPlayed)) {
+        if (mainGetBits(objSetup->gamebitHasPlayed)) {
             objData->flags |= SEQOBJ_FLAG_PlayedBefore;
             if (objSetup->replayStartTime != 0) {
                 // Seqobj has already played before and should replay on load. This is used to restore
@@ -93,11 +93,11 @@ void SeqObj_control(Object* self) {
     if (objData->flags & SEQOBJ_FLAG_Anim_Callback_Ran) {
         if (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) {
             if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit) == FALSE) {
-                main_set_bits(objSetup->gamebitPlay, FALSE);
+                mainSetBits(objSetup->gamebitPlay, FALSE);
             }
         } else {
             if (objSetup->playbackOptions & SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence) {
-                main_set_bits(objSetup->gamebitHasPlayed, TRUE);
+                mainSetBits(objSetup->gamebitHasPlayed, TRUE);
             }
             objData->flags |= SEQOBJ_FLAG_PlayedBefore;
         }
@@ -106,13 +106,13 @@ void SeqObj_control(Object* self) {
     }
     
     if ((objData->flags & SEQOBJ_FLAG_PlayedBefore) == FALSE) {
-        if (main_get_bits(objSetup->gamebitHasPlayed)) {
+        if (mainGetBits(objSetup->gamebitHasPlayed)) {
             // Played bit changed at runtime, swap state
             objData->flags |= SEQOBJ_FLAG_PlayedBefore;
         }
 
         // Wait for play gamebit to trigger seqobj
-        playBitValue = main_get_bits(objSetup->gamebitPlay);
+        playBitValue = mainGetBits(objSetup->gamebitPlay);
         if (playBitValue != objData->lastPlayBitValue) {
             objData->lastPlayBitValue = playBitValue;
 
@@ -124,7 +124,7 @@ void SeqObj_control(Object* self) {
                 // Mark seqobj as having been played at least once
                 if ((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) == FALSE && 
                     (objSetup->playbackOptions & (SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd | SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence)) == FALSE) {
-                    main_set_bits(objSetup->gamebitHasPlayed, TRUE);
+                    mainSetBits(objSetup->gamebitHasPlayed, TRUE);
                 }
             }
         }
@@ -142,7 +142,7 @@ void SeqObj_control(Object* self) {
         }
 
         if (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) {
-            if (main_get_bits(objSetup->gamebitHasPlayed) == FALSE) {
+            if (mainGetBits(objSetup->gamebitHasPlayed) == FALSE) {
                 // Played bit changed at runtime, swap state
                 objData->flags &= ~SEQOBJ_FLAG_PlayedBefore;
             }
@@ -156,13 +156,13 @@ void SeqObj_update(Object *self) { }
 // offset: 0x3C4 | func: 3 | export: 3
 void SeqObj_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x418 | func: 4 | export: 4
 void SeqObj_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_UseObj);
+    objFreeObjectType(self, OBJTYPE_UseObj);
 }
 
 // offset: 0x458 | func: 5 | export: 5
@@ -194,12 +194,12 @@ static int SeqObj_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
             case 1:
                 if (((objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayedBit) == FALSE) && 
                      (objSetup->playbackOptions & SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd)) {
-                    main_set_bits(objSetup->gamebitHasPlayed, TRUE);
+                    mainSetBits(objSetup->gamebitHasPlayed, TRUE);
                 }
                 break;
             case 2:
                 if (objSetup->warpID) {
-                    warpPlayer(objSetup->warpID, 0);
+                    mapWarpPlayer(objSetup->warpID, 0);
                 }
                 break;
         }

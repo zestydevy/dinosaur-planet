@@ -37,7 +37,7 @@ void CRSpellStone_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CRSpellStone_setup(Object *self, CRSpellStone_Setup *objSetup, s32 arg2) {
     CRSpellStone_Data* objData = self->data;
-    obj_add_object_type(self, OBJTYPE_32);
+    objAddObjectType(self, OBJTYPE_32);
     objData->state = CRSpellStone_STATE_Visible;
     self->animCallback = CRSpellStone_anim_callback;
 }
@@ -56,22 +56,22 @@ void CRSpellStone_control(Object* self) {
         self->srt.yaw += 0x100;
     }
 
-    if (main_get_bits(objSetup->gamebitVehicleHit) != 0) {
+    if (mainGetBits(objSetup->gamebitVehicleHit) != 0) {
         STUBBED_PRINTF(" DO Win BIT ");
-        main_set_bits(dWinBits[objSetup->gamebitIndexWin], 1);
+        mainSetBits(dWinBits[objSetup->gamebitIndexWin], 1);
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        obj_free_tick(self);
+        objDisable(self);
     } else {
-        if (main_get_bits(objSetup->gamebitFreeTick) != 0) {
+        if (mainGetBits(objSetup->gamebitFreeTick) != 0) {
             self->srt.flags |= OBJFLAG_INVISIBLE;
-            obj_free_tick(self);
+            objDisable(self);
         }
 
         if ((objData->state == CRSpellStone_STATE_Rescued) && 
-            (vec3_distance(&self->globalPosition, &get_player()->globalPosition) < 105.0f)
+            (vec3Distance(&self->globalPosition, &objGetPlayer()->globalPosition) < 105.0f)
         ) {
             STUBBED_PRINTF("\n\n Hit By ONVEHICLE HIT \n\n");
-            main_set_bits(objSetup->gamebitVehicleHit, 1);
+            mainSetBits(objSetup->gamebitVehicleHit, 1);
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
     }
@@ -85,13 +85,13 @@ void CRSpellStone_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     CRSpellStone_Data* objData = self->data;
     
     if (visibility && objData->state != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x288 | func: 4 | export: 4
 void CRSpellStone_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_32);
+    objFreeObjectType(self, OBJTYPE_32);
 }
 
 // offset: 0x2C8 | func: 5 | export: 5

@@ -11,10 +11,10 @@ void dll_566_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_566_setup(Object* self, ObjSetup* setup, s32 arg2) {
-    obj_set_update_priority(self, OBJPRIORITY_MOBILE_MAP);
+    objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = dll_566_func_194;
-    func_80023D30(self, 0, 0.0f, 0U);
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimSet(self, 0, 0.0f, 0U);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
 }
 
 // offset: 0xB4 | func: 1 | export: 1
@@ -26,8 +26,8 @@ void dll_566_update(Object *self) { }
 // offset: 0xCC | func: 3 | export: 3
 void dll_566_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        func_80024108(self, 0.005f, gUpdateRateF, NULL);
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -28,13 +28,13 @@ void DFlevelcontrol_setup(Object *self, ObjSetup *setup, s32 arg2) {
     DFlevelcontrol_Data *objdata;
 
     objdata = self->data;
-    if (main_get_bits(BIT_10D)) {
+    if (mainGetBits(BIT_10D)) {
         objdata->state = 2;
     } else {
         objdata->state = 0;
     }
-    objdata->unk1 = main_get_bits(BIT_342);
-    main_set_bits(BIT_8DE, 1-objdata->unk1);
+    objdata->unk1 = mainGetBits(BIT_342);
+    mainSetBits(BIT_8DE, 1-objdata->unk1);
     objdata->mapID = -1;
 }
 
@@ -44,33 +44,33 @@ void DFlevelcontrol_control(Object *self) {
     Object *player;
 
     objdata = self->data;
-    player = get_player();
-    gDLL_6_AMSFX->vtbl->water_falls_control();
+    player = objGetPlayer();
+    dll_amSfx->WaterFallsControl();
     if (objdata->mapID != MAP_DISCOVERY_FALLS) {
-        if (map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
+        if (mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z) != MAP_DISCOVERY_FALLS) {
             return;
         }
         DFlevelcontrol_func_388(self);
     }
-    objdata->mapID = map_world_xz_to_map_id(player->srt.transl.x, player->srt.transl.z);
-    if ((objdata->unk1 == 0) && (main_get_bits(BIT_342))) {
-        main_set_bits(BIT_Kyte_Flight_Curve, 0x46);
-        main_set_bits(BIT_8DE, 0);
+    objdata->mapID = mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z);
+    if ((objdata->unk1 == 0) && (mainGetBits(BIT_342))) {
+        mainSetBits(BIT_Kyte_Flight_Curve, 0x46);
+        mainSetBits(BIT_8DE, 0);
         objdata->unk1 = 1;
     }
     switch (objdata->state) {
     case 0:
-        if (main_get_bits(BIT_DF_Shrine_Door_Light_Activated_One) &&
-            main_get_bits(BIT_DF_Shrine_Door_Light_Activated_Two) &&
-            main_get_bits(BIT_DF_Shrine_Door_Light_Activated_Three) &&
-            main_get_bits(BIT_DF_Shrine_Door_Light_Activated_Four)) {
+        if (mainGetBits(BIT_DF_Shrine_Door_Light_Activated_One) &&
+            mainGetBits(BIT_DF_Shrine_Door_Light_Activated_Two) &&
+            mainGetBits(BIT_DF_Shrine_Door_Light_Activated_Three) &&
+            mainGetBits(BIT_DF_Shrine_Door_Light_Activated_Four)) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 11, 1);
             objdata->state++;
         }
         break;
     case 1:
         if (gDLL_29_Gplay->vtbl->get_obj_group_status(self->mapID, 11)) {
-            main_set_bits(BIT_4A1, 1);
+            mainSetBits(BIT_4A1, 1);
             objdata->state++;
         }
         break;
@@ -83,7 +83,7 @@ void DFlevelcontrol_update(Object *self) { }
 // offset: 0x300 | func: 3 | export: 3
 void DFlevelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -104,10 +104,10 @@ u32 DFlevelcontrol_get_data_size(Object *self, u32 a1) {
 void DFlevelcontrol_func_388(Object *self) {
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     DFlevelcontrol_func_420(self, 1);
     if (((DLL_210_Player*)player->dll)->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_1)) {
-        main_set_bits(BIT_DF_Returned_From_Shrine_With_Spirit, 1);
+        mainSetBits(BIT_DF_Returned_From_Shrine_With_Spirit, 1);
     }
 }
 
@@ -115,7 +115,7 @@ void DFlevelcontrol_func_388(Object *self) {
 void DFlevelcontrol_func_420(Object *self, s32 arg1) {
     Object *player;
 
-    player = get_player();
+    player = objGetPlayer();
     func_80000860(self, player, 0x35, 0);
     func_80000860(self, player, 0x36, 0);
     func_80000860(self, player, 0x37, 0);
