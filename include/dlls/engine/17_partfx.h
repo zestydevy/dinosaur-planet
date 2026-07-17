@@ -288,6 +288,6 @@ DLL_INTERFACE(DLL_17) {
 /*2*/ s32 (*func2)(s32 arg0);
 };
 
-#define dll_partFX (gDLL_17_partfx->vtbl)
+#define dll_partfx (gDLL_17_partfx->vtbl)
 
 #endif // _DLL_17_H

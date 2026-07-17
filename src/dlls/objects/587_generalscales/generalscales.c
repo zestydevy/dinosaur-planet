@@ -187,14 +187,14 @@ void GeneralScales_handleMaskMessages(Object* self) {
         break;
     case 2:
         sVanishMask.state = ModelMask_STATE_2_Contracting;
-        dll_partFX->spawn(self, PARTICLE_556, NULL, 2, -1, NULL);
+        dll_partfx->spawn(self, PARTICLE_556, NULL, 2, -1, NULL);
         dll_amSfx->Play(self, SOUND_B63, MAX_VOLUME, NULL, NULL, 0, NULL);
         dll_amSfx->Play(self, SOUND_B64, MAX_VOLUME, NULL, NULL, 0, NULL);
         sVanishMask.maskY = 0.0f;
         break;
     case 3:
         sVanishMask.state = ModelMask_STATE_3_Expanding;
-        dll_partFX->spawn(self, PARTICLE_556, NULL, 2, -1, &fxParams);
+        dll_partfx->spawn(self, PARTICLE_556, NULL, 2, -1, &fxParams);
         dll_amSfx->Play(self, SOUND_B63, MAX_VOLUME, NULL, NULL, 0, NULL);
         dll_amSfx->Play(self, SOUND_B64, MAX_VOLUME, NULL, NULL, 0, NULL);
         sVanishMask.maskY = MASK_HEIGHT;
@@ -322,14 +322,14 @@ void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, T
         
         i = 8;
         while (i--) {
-            dll_partFX->spawn(self, PARTICLE_55E, &srt, 2, -1, NULL);
+            dll_partfx->spawn(self, PARTICLE_55E, &srt, 2, -1, NULL);
         }
         
         srt.transl.y = 30.0f - (sVanishMask.maskY * 0.05f);
 
         i = 8;
         while (i--) {
-            dll_partFX->spawn(self, PARTICLE_55E, &srt, 2, -1, NULL);
+            dll_partfx->spawn(self, PARTICLE_55E, &srt, 2, -1, NULL);
         }
     }
     
