@@ -52,7 +52,7 @@ void CannonClaw_obj_Control(Object* self) {
     if (func_80025F40(self, NULL, 0, 0)) {
         if (self->parent) {
             cannonSetup = (DIMCannon_Setup*)self->parent->setup;
-            mainSetBits(cannonSetup->gamebit, TRUE);
+            mainSetBits(cannonSetup->gamebitCannonClawDead, TRUE);
 
             //@bug: missing null check for the sidekick
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
@@ -65,7 +65,7 @@ void CannonClaw_obj_Control(Object* self) {
     //Check if cannon's gamebit is set
     if (self->parent) {
         cannonSetup = (DIMCannon_Setup*)self->parent->setup;
-        if (mainGetBits(cannonSetup->gamebit)) {
+        if (mainGetBits(cannonSetup->gamebitCannonClawDead)) {
             CannonClaw_die(self);
         }
     }
