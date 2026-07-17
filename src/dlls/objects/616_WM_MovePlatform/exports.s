@@ -8,10 +8,10 @@ _exports:
 .dword WM_MovePlatform_dtor
 
 # export table
-/*0*/ .dword WM_MovePlatform_setup
-/*1*/ .dword WM_MovePlatform_control
-/*2*/ .dword WM_MovePlatform_update
-/*3*/ .dword WM_MovePlatform_print
-/*4*/ .dword WM_MovePlatform_free
-/*5*/ .dword WM_MovePlatform_get_model_flags
-/*6*/ .dword WM_MovePlatform_get_data_size
+/*0*/ .dword WM_MovePlatform_obj_Setup
+/*1*/ .dword WM_MovePlatform_obj_Control
+/*2*/ .dword WM_MovePlatform_obj_Update
+/*3*/ .dword WM_MovePlatform_obj_Print
+/*4*/ .dword WM_MovePlatform_obj_Free
+/*5*/ .dword WM_MovePlatform_obj_GetModelFlags
+/*6*/ .dword WM_MovePlatform_obj_GetDataSize

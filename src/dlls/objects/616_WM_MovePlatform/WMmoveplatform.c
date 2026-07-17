@@ -23,7 +23,7 @@ void WM_MovePlatform_ctor(void* dll) { }
 void WM_MovePlatform_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WM_MovePlatform_setup(Object* self, WM_MovePlatform_Setup* objSetup, s32 reset) {
+void WM_MovePlatform_obj_Setup(Object* self, WM_MovePlatform_Setup* objSetup, s32 reset) {
     WM_MovePlatform_Data* objData = self->data;
     
     self->srt.scale *= 0.25f;
@@ -35,7 +35,7 @@ void WM_MovePlatform_setup(Object* self, WM_MovePlatform_Setup* objSetup, s32 re
 }
 
 // offset: 0x74 | func: 1 | export: 1
-void WM_MovePlatform_control(Object* self) {
+void WM_MovePlatform_obj_Control(Object* self) {
     WM_MovePlatform_Data* objData;
     Object* player;
     f32 distance;
@@ -161,24 +161,24 @@ void WM_MovePlatform_control(Object* self) {
 }
 
 // offset: 0x6E4 | func: 2 | export: 2
-void WM_MovePlatform_update(Object* self) { }
+void WM_MovePlatform_obj_Update(Object* self) { }
 
 // offset: 0x6F0 | func: 3 | export: 3
-void WM_MovePlatform_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WM_MovePlatform_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x744 | func: 4 | export: 4
-void WM_MovePlatform_free(Object* self, s32 onlySelf) { }
+void WM_MovePlatform_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x754 | func: 5 | export: 5
-u32 WM_MovePlatform_get_model_flags(Object* self) {
+u32 WM_MovePlatform_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x764 | func: 6 | export: 6
-u32 WM_MovePlatform_get_data_size(Object* self, u32 offsetAddr) {
+u32 WM_MovePlatform_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(WM_MovePlatform_Data);
 }
