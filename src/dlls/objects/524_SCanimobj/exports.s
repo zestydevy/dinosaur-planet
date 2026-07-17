@@ -8,10 +8,10 @@ _exports:
 .dword SCAnimObj_dtor
 
 # export table
-/*0*/ .dword SCAnimObj_setup
-/*1*/ .dword SCAnimObj_control
-/*2*/ .dword SCAnimObj_update
-/*3*/ .dword SCAnimObj_print
-/*4*/ .dword SCAnimObj_free
-/*5*/ .dword SCAnimObj_get_model_flags
-/*6*/ .dword SCAnimObj_get_data_size
+/*0*/ .dword SCAnimObj_obj_Setup
+/*1*/ .dword SCAnimObj_obj_Control
+/*2*/ .dword SCAnimObj_obj_Update
+/*3*/ .dword SCAnimObj_obj_Print
+/*4*/ .dword SCAnimObj_obj_Free
+/*5*/ .dword SCAnimObj_obj_GetModelFlags
+/*6*/ .dword SCAnimObj_obj_GetDataSize

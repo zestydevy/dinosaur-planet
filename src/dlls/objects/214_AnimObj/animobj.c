@@ -1,22 +1,22 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dll.h"
+#include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "game/objects/object.h"
 #include "types.h"
 
 // offset: 0x0 | ctor
-void animobj_ctor(void *dll) { }
+void AnimObj_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void animobj_dtor(void *dll) { }
+void AnimObj_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
+void AnimObj_obj_Setup(Object* self, AnimObj_Setup* setup, s32 reset) {
     AnimObj_Data *objdata;
 
     objSetPriority(self, OBJPRIORITY_ANIM);
@@ -30,26 +30,26 @@ void animobj_setup(Object *self, AnimObj_Setup *setup, s32 arg2) {
     objdata->unk28 = -1;
 
     if (self->unkDC == 0 && setup->sequenceIdBitfield != 1){
-        gDLL_3_Animation->vtbl->init_curve(objdata, setup);
+        dll_anim->init_curve(objdata, setup);
         self->unkDC = setup->sequenceIdBitfield + 1;
     } else {
         if (self->unkDC != 0 && (setup->sequenceIdBitfield + 1 != self->unkDC)){
-            gDLL_3_Animation->vtbl->free_curve(objdata);
+            dll_anim->free_curve(objdata);
             if (setup->sequenceIdBitfield != -1){
-                gDLL_3_Animation->vtbl->init_curve(objdata, setup);
+                dll_anim->init_curve(objdata, setup);
             }
             self->unkDC = setup->sequenceIdBitfield + 1;
         }
     }
 
     if (self->shadow){
-        self->shadow->distFadeMaxOpacity = 0x64;
-        self->shadow->distFadeMinOpacity = 0x96;
+        self->shadow->distFadeMaxOpacity = 100;
+        self->shadow->distFadeMinOpacity = 150;
     }
 }
 
 // offset: 0x19C | func: 1 | export: 1
-void animobj_control(Object *self) {
+void AnimObj_obj_Control(Object* self) {
     s32 index;
     AnimObj_Data *objdata;
     AnimObj_Setup *setup;
@@ -60,12 +60,12 @@ void animobj_control(Object *self) {
     s32 count;
     Object **objects;
 
-    setup = (AnimObj_Setup *) self->setup;
+    setup = (AnimObj_Setup*) self->setup;
     if (!setup || setup->sequenceIdBitfield == -1) {
         return;
     }
 
-    index = gDLL_3_Animation->vtbl->tick_obj(self, gUpdateRate);
+    index = dll_anim->tick_obj(self, gUpdateRate);
     if (!index || self->seqSlot != SEQSLOT_ANIMOBJ) {
         return;
     }
@@ -91,28 +91,28 @@ void animobj_control(Object *self) {
 
     if (matches < 2 && matchObject && matchObject->seqSlot != SEQSLOT_NONE) {
         matchObject->seqSlot = SEQSLOT_NONE;
-        gDLL_3_Animation->vtbl->end_obj_sequence(new_var);
+        dll_anim->end_obj_sequence(new_var);
     }
     self->seqSlot = SEQSLOT_NONE;
 }
 
 // offset: 0x318 | func: 2 | export: 2
-void animobj_update(Object *self) { }
+void AnimObj_obj_Update(Object* self) { }
 
 // offset: 0x324 | func: 3 | export: 3
-void animobj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void AnimObj_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x378 | func: 4 | export: 4
-void animobj_free(Object *self, s32 arg1) {
+void AnimObj_obj_Free(Object* self, s32 onlySelf) {
     AnimObj_Data *objdata;
     s32 i;
 
     objdata = self->data;
-    gDLL_3_Animation->vtbl->free_curve(objdata);
+    dll_anim->free_curve(objdata);
     for (i = 0; i < 4; i++){
         if (objdata->sfxHandles[i]){
             dll_amSfx->Stop(objdata->sfxHandles[i]);
@@ -126,11 +126,11 @@ void animobj_free(Object *self, s32 arg1) {
 }
 
 // offset: 0x484 | func: 5 | export: 5
-u32 animobj_get_model_flags(Object *self) {
+u32 AnimObj_obj_GetModelFlags(Object* self) {
     return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8;
 }
 
 // offset: 0x494 | func: 6 | export: 6
-u32 animobj_get_data_size(Object *self, s32 arg1) {
+u32 AnimObj_obj_GetDataSize(Object* self, s32 offsetAddr) {
     return sizeof(AnimObj_Data);
 }
