@@ -8,10 +8,6 @@
 #include "sys/objprint.h"
 
 typedef struct {
-    AnimObj_Data unk0;
-} DLL587_Data;
-
-typedef struct {
     f32 maskY;
     u8 state;
 } ModelMask;
@@ -22,6 +18,10 @@ typedef enum {
     ModelMask_STATE_2_Contracting,
     ModelMask_STATE_3_Expanding
 } ModelMask_States;
+
+typedef struct {
+    AnimObj_Data animData;
+} GeneralScales_Data;
 
 static ModelMask sVanishMask; //Used for Scales' belt teleport effect
 
@@ -169,7 +169,7 @@ u32 GeneralScales_obj_GetModelFlags(Object* self) {
 
 // offset: 0x534 | func: 6 | export: 6
 u32 GeneralScales_obj_GetDataSize(Object* self, u32 offsetAddr) {
-    return sizeof(DLL587_Data);
+    return sizeof(GeneralScales_Data);
 }
 
 // offset: 0x548 | func: 7
