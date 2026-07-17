@@ -6,9 +6,9 @@
 #include "sys/objanim.h"
 #include "sys/objmsg.h"
 
-static int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static void CFPrisonUncle_animate_head_seqJoint(Object* self, Object* player);
-static void CFPrisonUncle_reset_head_seqJoint(Object* self);
+static int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void CFPrisonUncle_animateHeadJoints(Object* self, Object* player);
+static void CFPrisonUncle_resetHeadJoint(Object* self);
 
 typedef struct {
     Object* perchObj;
@@ -55,12 +55,12 @@ void CFPrisonUncle_ctor(void *dll) { }
 void CFPrisonUncle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFPrisonUncle_setup(Object* self, ObjSetup* setup, s32 reset) {
+void CFPrisonUncle_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
     CFPrisonUncle_Data* objData;
 
     objInitMesgQueue(self, 1);
     objData = self->data;
-    self->animCallback = CFPrisonUncle_anim_callback;
+    self->animCallback = CFPrisonUncle_animCallback;
 
     //@bug: should this be 0x1CF and 0x1D0? 0x1D1 is silent, and an earlier recording of 0x1CF was heard in the One Hour Footage.
     objData->voiceLines[0] = SOUND_1D0_CRF_Uncle_Get_Me_Out;
@@ -75,7 +75,7 @@ void CFPrisonUncle_setup(Object* self, ObjSetup* setup, s32 reset) {
 }
 
 // offset: 0xC4 | func: 1 | export: 1
-void CFPrisonUncle_control(Object* self) {
+void CFPrisonUncle_obj_Control(Object* self) {
     CFPrisonUncle_Data* objData;
     s32 i;
     Object* messageSender;
@@ -112,7 +112,7 @@ void CFPrisonUncle_control(Object* self) {
         
         if (objData->soundHandle) {
             objAnimSet(self, 0, 0.105f, 0);
-            CFPrisonUncle_animate_head_seqJoint(self, player);
+            CFPrisonUncle_animateHeadJoints(self, player);
 
             jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
             if (mathRnd(0, 8) != 0) {
@@ -127,7 +127,7 @@ void CFPrisonUncle_control(Object* self) {
                 jawJoint->pitch = 0;
             }
         } else {
-            CFPrisonUncle_reset_head_seqJoint(self);
+            CFPrisonUncle_resetHeadJoint(self);
 
             if (mathRnd(0, 30) == 0) { 
                 objExpr_func_80034B94(self, &objData->headAnimators[1], dCloudRunnerChirps[mathRnd(0, 3)]);
@@ -135,7 +135,7 @@ void CFPrisonUncle_control(Object* self) {
         }
         
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
-            CFPrisonUncle_animate_head_seqJoint(self, player);
+            CFPrisonUncle_animateHeadJoints(self, player);
 
             jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
             jawJoint->pitch = -M_15_DEGREES;
@@ -179,10 +179,10 @@ void CFPrisonUncle_control(Object* self) {
 }
 
 // offset: 0x590 | func: 2 | export: 2
-void CFPrisonUncle_update(Object *self) { }
+void CFPrisonUncle_obj_Update(Object *self) { }
 
 // offset: 0x59C | func: 3 | export: 3
-void CFPrisonUncle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFPrisonUncle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     s32 boneIdx;
     ModelInstance* modelInstance;
     MtxF* mtx;
@@ -258,20 +258,20 @@ void CFPrisonUncle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 }
 
 // offset: 0x8C0 | func: 4 | export: 4
-void CFPrisonUncle_free(Object *self, s32 onlySelf) { }
+void CFPrisonUncle_obj_Free(Object *self, s32 onlySelf) { }
 
 // offset: 0x8D0 | func: 5 | export: 5
-u32 CFPrisonUncle_get_model_flags(Object* self) {
+u32 CFPrisonUncle_obj_GetModelFlags(Object* self) {
     return MODFLAGS_8 | MODFLAGS_1;
 }
 
 // offset: 0x8E0 | func: 6 | export: 6
-u32 CFPrisonUncle_get_data_size(Object *self, u32 offsetAddr) {
+u32 CFPrisonUncle_obj_GetDataSize(Object *self, u32 offsetAddr) {
     return sizeof(CFPrisonUncle_Data);
 }
 
 // offset: 0x8F4 | func: 7
-int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     CFPrisonUncle_Data* objData;
     BoneDust_Setup* dustSetup;
 
@@ -304,14 +304,14 @@ int CFPrisonUncle_anim_callback(Object* self, Object* animObj, AnimObj_Data* ani
 }
 
 // offset: 0x9F8 | func: 8
-void CFPrisonUncle_reset_head_seqJoint(Object* self) {
+void CFPrisonUncle_resetHeadJoint(Object* self) {
     SeqJoint* headJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
     headJoint->pitch = 0;
     headJoint->yaw = 0;
 }
 
 // offset: 0xA3C | func: 9
-void CFPrisonUncle_animate_head_seqJoint(Object* self, Object* player) {
+void CFPrisonUncle_animateHeadJoints(Object* self, Object* player) {
     CFPrisonUncle_Data *objData = self->data;
     
     objExpr_func_80032CF8(self, player, objData->headAnimators, 35);
