@@ -2,10 +2,11 @@
 
 The Dinosaur Planet decompilation style guide.
 
+For cases not covered by this guide, prefer the existing style currently used throughout the codebase.
+
 - [Naming](#naming)
-    - [Global Functions (core code)](#global-functions-core-code)
-    - [Global Functions (DLL code)](#global-functions-dll-code)
-    - [Static Functions](#static-functions)
+    - [Functions (core code)](#functions-core-code)
+    - [Functions (DLL code)](#functions-dll-code)
     - [Variables](#variables)
     - [Types](#types)
     - [Macros/Defines](#macrosdefines)
@@ -15,7 +16,7 @@ The Dinosaur Planet decompilation style guide.
 
 ## Naming
 
-### Global Functions (core code)
+### Functions (core code)
 
 `camelCase` with a prefix. The prefix should be short and identify the subsystem/file.
 
@@ -24,34 +25,34 @@ Examples:
 - `texLoadTexture`
 - `mainGetBits`
 
-Official function names and prefixes should be used where possible. These will be in the same style. If an official name is particularly confusing, a custom name may be used instead.
+Official function names and prefixes should be used where possible. For global functions these will be in the same style. If an official name is particularly confusing, a custom name may be used instead.
 
-### Global Functions (DLL code)
+Note that **static** functions should also start with a prefix, **except** for:
+- Library code (use the official function names regardless of format).
+- Functions where the official name is known (if the official name is not particularly unique, a custom prefixed name may be used instead.)
 
-Exports:
-`<prefix>[_subPrefix]_<FuncName>` where:
-- `prefix` - A (generally) `camelCase` prefix that represents the name of the DLL (this is similar to core code global functions). Example: `amSfx`.
+### Functions (DLL code)
+
+**Exports:** `<prefix>[_subPrefix]_<FuncName>` where:
+- `prefix` - A prefix that represents the name of the DLL (this is similar to core code global functions). Example: `amSfx`. May be `PascalCase`.
 - `_subPrefix`- For exports that implement a nested interface (i.e. a more generic interface not specific to that DLL), the sub prefix is a `camelCase` prefix identifying that interface. Examples: `_obj`, `_vehicle`.
 - `FuncName` - The rest of the function name in `PascalCase`.
 - Examples:
-    - `amSfx_Play` (self interface)
-    - `BWlog_obj_Setup` (object interface)
-    - `BWlog_vehicle_GetRacePosition` (vehicle interface)
+    - `amSfx_Play` (own interface)
+    - `BWlog_obj_Setup` (generic object interface)
+    - `BWlog_vehicle_GetRacePosition` (generic vehicle interface)
 
-Constructors/destructors:
-`<prefix>_<ctor or dtor>`.
+**Constructors/destructors:** `<prefix>_<ctor or dtor>`.
 - `prefix` - The same prefix used by exports.
 - Examples: `amSfx_ctor`, `amSfx_dtor`.
 
-Global DLL functions are special as they represent DLL constructors, destructors, and exports. Export functions implement a DLL interface and as such the name of the interface should be included in the function name. In cases where an export implements a nested interface, an identifier for that interface is also included.
+**Statics:** `<prefix>_<funcName>` where:
+- `prefix` - The same prefix used by exports.
+- `funcName` - The rest of the function name in `camelCase`. Note that static functions start this segment with a lowercase character and global (export) functions start with an uppercase character.
 
-Official function names should be adapted to this format where possible. For example: `amSfxPlay` (official) -> `amSfx_Play`.
+Global DLL functions are special as they represent DLL constructors, destructors, and exports. Export functions implement a DLL interface and as such the naming convention states which interface is being implemented when relevant (i.e. when not a DLL's own interface).
 
-### Static Functions
-
-`camelCase` *without* a prefix. Avoid starting the name with a word that may collide with the prefix of global functions (e.g. don't start a static function name with `obj`).
-
-Note that for core code, it is generally not recommended to mark functions as static even if the function logically should be static. In those cases, the global function naming style should be preferred, unless the official function name is known.
+Official function names should be adapted to this format where possible. For example: `amSfxPlay` (official, export) -> `amSfx_Play`.
 
 ### Variables
 
