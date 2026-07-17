@@ -16,6 +16,8 @@ typedef struct Unk80026DF4 {
     f32 unk10;
 } Unk80026DF4;
 
+#define EMPTY_UNK80026DF4 {0, 0, 0, 0, 0, 0, 0}
+
 // size: 0x6C
 typedef struct Unk80027934 {
     Vec4f unk0[4];
