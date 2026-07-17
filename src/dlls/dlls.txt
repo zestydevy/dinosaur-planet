@@ -90,7 +90,7 @@
 220 = objects/220_Chuka
 221 = objects/221_ChukaChuck
 222 = objects/222_SnowWormSmall
-223 = objects/223_cannon_claw
+223 = objects/223_CannonClaw
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed

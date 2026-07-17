@@ -1,7 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 
-#include "dlls/objects/223_cannon_claw.h"
+#include "dlls/objects/223_CannonClaw.h"
 #include "dlls/objects/537_DIMcannon.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/interaction_arrow.h"
@@ -14,22 +14,22 @@
 #include "sys/objprint.h"
 #include "types.h"
 
-static void cannon_claw_die(Object* self);
+static void CannonClaw_die(Object* self);
 
 // offset: 0x0 | ctor
-void cannon_claw_ctor(void* dll) { }
+void CannonClaw_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void cannon_claw_dtor(void* dll) { }
+void CannonClaw_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void cannon_claw_setup(Object* self, ObjSetup* setup, s32 reset) {
+void CannonClaw_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
     self->srt.yaw = -M_180_DEGREES;
     self->srt.transl.y = setup->y + 2.0f;  
 }
 
 // offset: 0x4C | func: 1 | export: 1
-void cannon_claw_control(Object* self) {
+void CannonClaw_obj_Control(Object* self) {
     DIMCannon_Setup* cannonSetup;
     Object* sidekick;
 
@@ -58,7 +58,7 @@ void cannon_claw_control(Object* self) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
         }
         
-        cannon_claw_die(self);
+        CannonClaw_die(self);
         return;
     }
 
@@ -66,13 +66,13 @@ void cannon_claw_control(Object* self) {
     if (self->parent) {
         cannonSetup = (DIMCannon_Setup*)self->parent->setup;
         if (mainGetBits(cannonSetup->gamebit)) {
-            cannon_claw_die(self);
+            CannonClaw_die(self);
         }
     }
 }
 
 // offset: 0x1B4 | func: 2
-static void cannon_claw_die(Object* self) {
+static void CannonClaw_die(Object* self) {
     //Stop being drawn
     self->unkDC = 1;
 
@@ -82,24 +82,24 @@ static void cannon_claw_die(Object* self) {
 }
 
 // offset: 0x200 | func: 3 | export: 2
-void cannon_claw_update(Object* self) { }
+void CannonClaw_obj_Update(Object* self) { }
 
 // offset: 0x20C | func: 4 | export: 3
-void cannon_claw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CannonClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility && self->unkDC == 0) {
 		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 
 // offset: 0x26C | func: 5 | export: 4
-void cannon_claw_free(Object* self, s32 onlySelf) { }
+void CannonClaw_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x27C | func: 6 | export: 5
-u32 cannon_claw_get_model_flags(Object* self) {
+u32 CannonClaw_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x28C | func: 7 | export: 6
-u32 cannon_claw_get_data_size(Object* self, u32 offsetAddr) {
+u32 CannonClaw_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return 0;
 }
