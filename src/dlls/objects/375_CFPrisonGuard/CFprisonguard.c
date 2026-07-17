@@ -51,7 +51,7 @@ typedef enum {
     CFPrisonGuard_OBJSEQ_2_Fooled_by_Disguise
 } CFPrisonGuard_ObjSeqs;
 
-static int CFPrisonGuard_anim_callback(Object* self, Object* animObj, AnimObj_Data* animData/*, s8 prevCallbackValue */);
+static int CFPrisonGuard_animCallback(Object* self, Object* animObj, AnimObj_Data* animData/*, s8 prevCallbackValue */);
 
 // offset: 0x0 | ctor
 void CFPrisonGuard_ctor(void* dll) { }
@@ -60,13 +60,13 @@ void CFPrisonGuard_ctor(void* dll) { }
 void CFPrisonGuard_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFPrisonGuard_setup(Object* self, CFPrisonGuard_Setup* objSetup, s32 reset) {
+void CFPrisonGuard_obj_Setup(Object* self, CFPrisonGuard_Setup* objSetup, s32 reset) {
     CFPrisonGuard_Data* objData = self->data;
     
     objData->flags = CFPrisonGuard_FLAG_1_First_Tick;
     
     self->srt.yaw = objSetup->yaw << 8;
-    self->animCallback = (void*)CFPrisonGuard_anim_callback;
+    self->animCallback = (void*)CFPrisonGuard_animCallback;
     
     objInitMesgQueue(self, 4);
     
@@ -80,7 +80,7 @@ void CFPrisonGuard_setup(Object* self, CFPrisonGuard_Setup* objSetup, s32 reset)
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void CFPrisonGuard_control(Object* self) {
+void CFPrisonGuard_obj_Control(Object* self) {
     CFPrisonGuard_Data* objData;
     Object* player;
     f32 distance;
@@ -120,7 +120,7 @@ void CFPrisonGuard_control(Object* self) {
 }
 
 // offset: 0x274 | func: 2 | export: 2
-void CFPrisonGuard_update(Object* self) {
+void CFPrisonGuard_obj_Update(Object* self) {
     CFPrisonGuard_Data* objData = self->data;
     
     if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Bullet) {
@@ -130,7 +130,7 @@ void CFPrisonGuard_update(Object* self) {
 }
 
 // offset: 0x2D0 | func: 3 | export: 3
-void CFPrisonGuard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFPrisonGuard_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     CFPrisonGuard_Data* objData = self->data;
     
     if (visibility) {
@@ -151,7 +151,7 @@ void CFPrisonGuard_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 }
 
 // offset: 0x42C | func: 4 | export: 4
-void CFPrisonGuard_free(Object* self, s32 onlySelf) {
+void CFPrisonGuard_obj_Free(Object* self, s32 onlySelf) {
     CFPrisonGuard_Data* objData = self->data;
 
     if (objData->soundHandle != 0) {
@@ -161,17 +161,17 @@ void CFPrisonGuard_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x494 | func: 5 | export: 5
-u32 CFPrisonGuard_get_model_flags(Object* self) {
+u32 CFPrisonGuard_obj_GetModelFlags(Object* self) {
     return MODFLAGS_EVENTS | MODFLAGS_8 | MODFLAGS_1;
 }
 
 // offset: 0x4A4 | func: 6 | export: 6
-u32 CFPrisonGuard_get_data_size(Object* self, u32 offsetAddr) {
+u32 CFPrisonGuard_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(CFPrisonGuard_Data);
 }
 
 // offset: 0x4B8 | func: 7
-int CFPrisonGuard_anim_callback(Object* self, Object* animObj, AnimObj_Data* animData/*, s8 prevCallbackValue */) {
+int CFPrisonGuard_animCallback(Object* self, Object* animObj, AnimObj_Data* animData/*, s8 prevCallbackValue */) {
     Object* outSender;
     Object* player;
     CFPrisonGuard_Data* objData;
