@@ -23,9 +23,9 @@ MANUAL_FUNCTION_DEFS = {
     0x800813BC: { "name": "proutSyncPrintf", "size": 0x64 },
 
     # These functions are supposed to fallthrough to the next function
-    0x80016178: { "name": "cos16_precise", "size": 0x60 },
-    0x800161d8: { "name": "cos16", "size": 0x44 },
-    0x800162f4: { "name": "fcos16", "size": 0x54 },
+    0x80016178: { "name": "mathCosInterp", "size": 0x60 },
+    0x800161d8: { "name": "mathCos", "size": 0x44 },
+    0x800162f4: { "name": "Cosf", "size": 0x54 },
 
     # 0x8001B4F0-0x8001C8D4 is handwritten assembly that trips up recomp, split it into a bunch of
     # functions that don't technically exist to get recomp working. This will basically make problematic
