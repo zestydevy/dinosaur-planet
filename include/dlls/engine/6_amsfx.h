@@ -796,6 +796,9 @@ enum SoundID {
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B63 = 0xB63,
+    SOUND_B64 = 0xB64,
+
     SOUND_B6B_Magic_Gliss_Mid = 0xB6B, //MagicDust (when collected)
     SOUND_B6C_Magic_Gliss_Large = 0xB6C, //MagicDust (when collected)
     SOUND_B6D_Magic_Gliss_Huge = 0xB6D, //MagicDust (when collected)
