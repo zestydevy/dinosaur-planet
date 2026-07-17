@@ -29,7 +29,7 @@ typedef enum {
     WL_Column_STATE_2_Dropped
 } WL_Column_States;
 
-static int WL_Column_handle_player_interaction(Object* self, Object* player, WL_Column_Data* objData);
+static int WL_Column_handlePlayerInteraction(Object* self, Object* player, WL_Column_Data* objData);
 
 // offset: 0x0 | ctor
 void WL_Column_ctor(void* dll) { }
@@ -38,13 +38,13 @@ void WL_Column_ctor(void* dll) { }
 void WL_Column_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_Column_setup(Object* self, WL_Column_Setup* objSetup, s32 reset) {
+void WL_Column_obj_Setup(Object* self, WL_Column_Setup* objSetup, s32 reset) {
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = -M_180_DEGREES;
 }
 
 // offset: 0x38 | func: 1 | export: 1
-void WL_Column_control(Object* self) {
+void WL_Column_obj_Control(Object* self) {
     Object* player;
     WL_Column_Data* objData;
     f32 y;
@@ -60,7 +60,7 @@ void WL_Column_control(Object* self) {
     
     if (objData->state == WL_Column_STATE_0_Resting) {
         //Advance state when player interacts
-        objData->state = WL_Column_handle_player_interaction(self, player, objData);
+        objData->state = WL_Column_handlePlayerInteraction(self, player, objData);
         if (objData->state != WL_Column_STATE_0_Resting) {
             objData->sendPlayerMessage = TRUE;
         }
@@ -128,10 +128,10 @@ void WL_Column_control(Object* self) {
 }
 
 // offset: 0x314 | func: 2 | export: 2
-void WL_Column_update(Object* self) { }
+void WL_Column_obj_Update(Object* self) { }
 
 // offset: 0x320 | func: 3 | export: 3
-void WL_Column_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_Column_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (self->unkE0) {
         if (visibility != -1) {
             return;
@@ -152,10 +152,10 @@ void WL_Column_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
 }
 
 // offset: 0x3E0 | func: 4 | export: 4
-void WL_Column_free(Object* self, s32 onlySelf) { }
+void WL_Column_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x3F0 | func: 5 | export: 5
-s32 WL_Column_get_model_flags(Object* self) {
+s32 WL_Column_obj_getModelFlags(Object* self) {
     //This suggests this DLL was once used by `WL_Column` and `WL_Column_Top` (they use DLL 313 now instead)
     if (self->id == OBJ_WL_Column_Top) {
         return MODFLAGS_SHADOW;
@@ -167,12 +167,12 @@ s32 WL_Column_get_model_flags(Object* self) {
 
 
 // offset: 0x414 | func: 6 | export: 6
-u32 WL_Column_get_data_size(Object* self, u32 offsetAddr) {
+u32 WL_Column_obj_getDataSize(Object* self, u32 offsetAddr) {
     return sizeof(WL_Column_Data);
 }
 
 // offset: 0x428 | func: 7
-int WL_Column_handle_player_interaction(Object* self, Object* player, WL_Column_Data* objData) {
+int WL_Column_handlePlayerInteraction(Object* self, Object* player, WL_Column_Data* objData) {
     s32 nextState;
 
     nextState = WL_Column_STATE_0_Resting;

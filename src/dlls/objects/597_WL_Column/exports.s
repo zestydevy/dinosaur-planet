@@ -8,10 +8,10 @@ _exports:
 .dword WL_Column_dtor
 
 # export table
-/*0*/ .dword WL_Column_setup
-/*1*/ .dword WL_Column_control
-/*2*/ .dword WL_Column_update
-/*3*/ .dword WL_Column_print
-/*4*/ .dword WL_Column_free
-/*5*/ .dword WL_Column_get_model_flags
-/*6*/ .dword WL_Column_get_data_size
+/*0*/ .dword WL_Column_obj_Setup
+/*1*/ .dword WL_Column_obj_Control
+/*2*/ .dword WL_Column_obj_Update
+/*3*/ .dword WL_Column_obj_Print
+/*4*/ .dword WL_Column_obj_Free
+/*5*/ .dword WL_Column_obj_getModelFlags
+/*6*/ .dword WL_Column_obj_getDataSize
