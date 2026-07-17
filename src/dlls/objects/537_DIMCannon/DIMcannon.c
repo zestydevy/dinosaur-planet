@@ -67,8 +67,10 @@ typedef struct {
 } Unk_Data;
 
 static int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
+static void dll_537_func_DAC(Object* self, f32 x, f32 y, f32 z, f32 arg4);
 static void dll_537_func_1150(Object* self);
 static void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup);
+static void dll_537_func_1430(Object* self);
 static void dll_537_func_1640(Object* self);
 static void dll_537_func_16AC(Object* self);
 
@@ -107,14 +109,6 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x178 | func: 1 | export: 1
-void dll_537_control(Object *self);
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/537_DIMCannon/dll_537_control.s")
-#else
-
-static void dll_537_func_1430(Object* self);
-static void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
-
 void dll_537_control(Object* self) {
     DLL537_Data* objData;
     DLL537_Setup* objSetup; //50
@@ -272,8 +266,6 @@ void dll_537_control(Object* self) {
     objAnimAdvance(self, var_fv0, gUpdateRateF, 0);
 }
 
-#endif
-
 // offset: 0x8F0 | func: 2 | export: 2
 void dll_537_update(Object *self) { }
 
@@ -404,41 +396,32 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
 }
 
 // offset: 0xDAC | func: 8
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/537_DIMCannon/dll_537_func_DAC.s")
-#else
-void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
-    s32 pad2;
-    f32 temp_fv1;
-    f32 var_fs1;
+void dll_537_func_DAC(Object* self, f32 x, f32 y, f32 z, f32 arg4) {
+    s32 pad2[4];
+    f32 var_fa1;
     s32 var_s1;
-    // f32 pad;
     s32 var_s2;
-    f32 temp_fv0_2; //temp_fv0_2
-    f32 temp_fs0; //sp 80
-    s16* sp78; //78
+    SeqJoint* sp78; //78
     s32 dYaw;
     f32 sp70; //70
+    f32 temp_fv0_2;
     s32 var_s3;
-    f32 temp_fa0;
     f32 temp_fs1;
     f32 temp_fs2;
-    s32 pad = 0;
+    f32 var_fv1;
     DLL537_Data* objData; //58
-
     
     objData = self->data;
     if (objData->unk22 > 0) {
         return;
     }
 
-    sp78 = objExpr_func_80034804(self, 0);
+    sp78 = (SeqJoint*)objExpr_func_80034804(self, 0);
     
     temp_fs2 = 2500.0f;
     arg4 = sqrtf(arg4);
     temp_fs1 = arg4 * 2.2f;
-
-    temp_fs0 = (temp_fs2 = SQ(temp_fs2) - SQ(temp_fs1));
+    temp_fs2 = SQ(temp_fs2) - SQ(temp_fs1);
     
     var_s2 = 0;
     if (temp_fs2 >= 0) {
@@ -448,7 +431,7 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
         var_s2 = 1;
     }
     
-    temp_fv0_2 = (objData->unk14.y - arg2) - 10.0f;
+    temp_fv0_2 = (objData->unk14.y - y) - 10.0f;
     if (temp_fv0_2 > 0.0f) {
         var_s3 = -0xB6;
     } else {
@@ -457,36 +440,32 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     
     while (var_s2 == 0) {
         f32 temp = 4.0f;
-        temp_fs0 = (temp * 1.1f) * temp_fv0_2;
 
         sp70 = mathSinfInterp(var_s1) * 50.0f;
-        temp_fv1 = SQ(sp70) - temp_fs0;
-        
-        
-        if (temp_fs0 <= SQ(sp70)) {
+        temp_fs1 = SQ(sp70) - ((temp * -1.1f) * temp_fv0_2);
+
+        if (((temp * -1.1f) * temp_fv0_2) <= SQ(sp70)) {
             f32 temp1 = -1.1f;
             f32 temp2 = -1.1f;
 
-            temp_fv1 = sqrtf(temp_fv1);
-            if (temp1 + temp2) {  
+            temp_fs1 = sqrtf(temp_fs1);
+            if (sp70) {}
+            if ((temp1 + temp2) != 0.0f) { 
             }
-
-                //fake
-                sp70++;
-                sp70--;
         }
 
-        temp_fs1 = mathCosfInterp(var_s1) * 50.0f;
-        temp_fs0 = temp_fs1 * temp_fv1;
+        var_fv1 = mathCosfInterp(var_s1) * 50.0f * temp_fs1;
         
         var_s1 += var_s3;
         
-        if ((arg4 < temp_fs0) && (var_s3 > 0)) {
+        if ((arg4 < var_fv1) && (var_s3 > 0)) {
             var_s2 = 1;
         }
-        if ((temp_fs0 < arg4) && (var_s3 < 0)) {
+        
+        if ((var_fv1 < arg4) && (var_s3 < 0)) {
             var_s2 = 1;
         }
+        
         if (var_s1 > 0x2000) {
             var_s1 = 0x2000;
             var_s2 = 1;
@@ -497,14 +476,14 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     }
 
     var_s1 = -var_s1;
-    var_s1 -= (*sp78 & 0xFFFF);
+    var_s1 -= (sp78->pitch & 0xFFFF);
     CIRCLE_WRAP(var_s1);
     
-    *sp78 += (var_s1 >> 2);
+    sp78->pitch += var_s1 >> 2;
 
-    arg1 -= self->srt.transl.x;
-    arg3 -= self->srt.transl.z;
-    dYaw = mathAtan2f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
+    x -= self->srt.transl.f[0];
+    z -= self->srt.transl.f[2];
+    dYaw = ((s16)mathAtan2f(x, z)) - (self->srt.yaw & 0xFFFF);
 
     CIRCLE_WRAP(dYaw);
     if (dYaw > 0x1000) {
@@ -513,15 +492,19 @@ void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     if (dYaw < -0x1000) {
         dYaw = -0x1000;
     }
-    if ((dYaw < 0x800) && (dYaw >= -0x7FF)) {
+
+    if (temp_fs1){}
+    
+    if ((dYaw < 0x800) && (dYaw > -0x800)) {
         objData->unk25 = 1;
     }
+    
     if (objData->unk10 < 10000.0f) {
-        objData->unk25 = pad;
+        objData->unk25 = 0;
     }
+    
     self->srt.yaw += dYaw >> 2;
 }
-#endif
 
 // offset: 0x1150 | func: 9
 void dll_537_func_1150(Object* self) {
