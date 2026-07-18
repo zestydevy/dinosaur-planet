@@ -1,8 +1,10 @@
 //"baby_snowworm.c" appears to have been Rare's filename
 
 #include "common.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/222_SnowWormSmall.h"
+#include "dlls/objects/251_weapons.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
@@ -18,7 +20,7 @@ typedef struct {
     f32 soundTimer;
     f32 soundTimerThreshold;
     u8 flags;
-    u8 unk9;
+    u8 battleFlags;
 } SnowWormSmall_DataActual;
 
 typedef struct {
@@ -27,31 +29,35 @@ typedef struct {
 } SnowWormSmall_Data;
 
 typedef enum {
-    SnowWormSmall_ASTATE_0,
-    SnowWormSmall_ASTATE_1,
-    SnowWormSmall_ASTATE_2,
-    SnowWormSmall_ASTATE_3,
-    SnowWormSmall_ASTATE_4,
-    SnowWormSmall_ASTATE_5,
-    SnowWormSmall_ASTATE_6
+    SnowWormSmall_ASTATE_0_Pop_Out_of_Ground,
+    SnowWormSmall_ASTATE_1_Burst_Into_Ground,
+    SnowWormSmall_ASTATE_2_Bite_Attack,
+    SnowWormSmall_ASTATE_3_Stand_Still,
+    SnowWormSmall_ASTATE_4_Stand_and_Spit,
+    SnowWormSmall_ASTATE_5_Hit,
+    SnowWormSmall_ASTATE_6_Dying
 } SnowWormSmall_AnimStates;
 
 typedef enum {
-    SnowWormSmall_LSTATE_0,
-    SnowWormSmall_LSTATE_1,
-    SnowWormSmall_LSTATE_2,
-    SnowWormSmall_LSTATE_3,
-    SnowWormSmall_LSTATE_4,
-    SnowWormSmall_LSTATE_5
+    SnowWormSmall_LSTATE_0_Top,
+    SnowWormSmall_LSTATE_1_Hit,
+    SnowWormSmall_LSTATE_2_Dying,
+    SnowWormSmall_LSTATE_3_Dead,
+    SnowWormSmall_LSTATE_4_Dormant,
+    SnowWormSmall_LSTATE_5_Engage
 } SnowWormSmall_LogicStates;
 
 typedef enum {
-    SnowWormSmall_FLAG_0 = 0,
-    SnowWormSmall_FLAG_1 = 1,
+    SnowWormSmall_FLAG_Throw_Ice = 1,
     SnowWormSmall_FLAG_2 = 2,
     SnowWormSmall_FLAG_4 = 4,
     SnowWormSmall_FLAG_8 = 8
 } SnowWormSmall_Flags;
+
+typedef enum {
+    SnowWormSmall_BATTLE_FLAG_1_Prioritise_Spit = 1,
+    SnowWormSmall_BATTLE_FLAG_2_Projectile_Struck = 2 //Successfully struck the player/sidekick
+} SnowWormSmall_BattleFlags;
 
 /*0x0*/ static u32 dHurtSounds[] = {
     SOUND_5FF_Cry_Hurt, SOUND_600_Cry_Hurt, SOUND_601_Worm_Croak
@@ -70,34 +76,34 @@ typedef enum {
     SOUND_25C_Melee_Attack_Deflected
 };
 /*0x40*/ static s32 dHitAnimStateMap[] = {
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_2, //NOTE: different!
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5, 
-    SnowWormSmall_ASTATE_5
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_2_Bite_Attack, //NOTE: different!
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit, 
+    SnowWormSmall_ASTATE_5_Hit
 };
 
 /*0xB0*/ static s8 dHitDamageMap[] = {
@@ -110,54 +116,54 @@ typedef enum {
 /*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[7];
 /*0x20*/ static ObjFSA_StateCallback sLogicStateCallbacks[6];
 
-static void SnowWormSmall_init_fsa_callbacks(void);
+static void SnowWormSmall_initFSACallbacks(void);
 static void SnowWormSmall_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void SnowWormSmall_func_BF8(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void SnowWormSmall_func_F50(Object* self, Baddie* baddie);
-static void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie);
-static s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static void SnowWormSmall_throwIceBall(Object* self, Baddie* baddie);
+static s32 SnowWormSmall_animState0PopOutOfGround(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState1BurstIntoGround(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState2BiteAttack(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState3StandStill(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState4StandAndSpit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState5Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_animState6Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState4Dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SnowWormSmall_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-void SnowWormSmall_init_fsa_callbacks(void) {
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_0] = SnowWormSmall_anim_state_0;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_1] = SnowWormSmall_anim_state_1;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_2] = SnowWormSmall_anim_state_2;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_3] = SnowWormSmall_anim_state_3;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_4] = SnowWormSmall_anim_state_4;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_5] = SnowWormSmall_anim_state_5;
-    sAnimStateCallbacks[SnowWormSmall_ASTATE_6] = SnowWormSmall_anim_state_6;
+void SnowWormSmall_initFSACallbacks(void) {
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_0_Pop_Out_of_Ground] = SnowWormSmall_animState0PopOutOfGround;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_1_Burst_Into_Ground] = SnowWormSmall_animState1BurstIntoGround;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_2_Bite_Attack]       = SnowWormSmall_animState2BiteAttack;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_3_Stand_Still]       = SnowWormSmall_animState3StandStill;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_4_Stand_and_Spit]    = SnowWormSmall_animState4StandAndSpit;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_5_Hit]               = SnowWormSmall_animState5Hit;
+    sAnimStateCallbacks[SnowWormSmall_ASTATE_6_Dying]             = SnowWormSmall_animState6Dying;
     
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_0] = SnowWormSmall_logic_state_0;
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_1] = SnowWormSmall_logic_state_1;
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_2] = SnowWormSmall_logic_state_2;
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_3] = SnowWormSmall_logic_state_3;
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_4] = SnowWormSmall_logic_state_4;
-    sLogicStateCallbacks[SnowWormSmall_LSTATE_5] = SnowWormSmall_logic_state_5;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_0_Top]     = SnowWormSmall_logicState0Top;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_1_Hit]     = SnowWormSmall_logicState1Hit;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_2_Dying]   = SnowWormSmall_logicState2Dying;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_3_Dead]    = SnowWormSmall_logicState3Dead;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_4_Dormant] = SnowWormSmall_logicState4Dormant;
+    sLogicStateCallbacks[SnowWormSmall_LSTATE_5_Engage]  = SnowWormSmall_logicState5Engage;
 }
 
 // offset: 0xC0 | ctor
 void SnowWormSmall_ctor(void* dll) {
-    SnowWormSmall_init_fsa_callbacks();
+    SnowWormSmall_initFSACallbacks();
 }
 
 // offset: 0x100 | dtor
 void SnowWormSmall_dtor(void* dll) { }
 
 // offset: 0x10C | func: 1 | export: 0
-void SnowWormSmall_setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset) {
+void SnowWormSmall_obj_Setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset) {
     u8 flags;
     SnowWormSmall_DataActual* objData;
     Baddie* baddie;
@@ -180,14 +186,14 @@ void SnowWormSmall_setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset)
 
     objAnimSet(self, 8, 0.0f, 0);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_0);
-    baddie->fsa.logicState = SnowWormSmall_LSTATE_0;
+    gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_0_Pop_Out_of_Ground);
+    baddie->fsa.logicState = SnowWormSmall_LSTATE_0_Top;
     baddie->fsa.unk4.mode = 0;
     func_800267A4(self);
 }
 
 // offset: 0x250 | func: 2 | export: 1
-void SnowWormSmall_control(Object* self) {
+void SnowWormSmall_obj_Control(Object* self) {
     Baddie* baddie;
     SnowWormSmall_Setup* objSetup;
     ObjFSA_Data* fsa;
@@ -198,7 +204,7 @@ void SnowWormSmall_control(Object* self) {
     fsa = &baddie->fsa;
     
     if (self->unkDC) {
-        if (((baddie->fsa.logicState != SnowWormSmall_LSTATE_3) || (baddie->unk3B0 & SnowWormSmall_LSTATE_1)) && 
+        if (((baddie->fsa.logicState != SnowWormSmall_LSTATE_3_Dead) || (baddie->unk3B0 & SnowWormSmall_LSTATE_1_Hit)) && 
             (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->baddie.base.uID))
         ) {
             gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 7, 6, 0x102, 0x26, 20.0f);
@@ -216,7 +222,7 @@ void SnowWormSmall_control(Object* self) {
         self->srt.transl.x = objSetup->baddie.base.x;
         self->srt.transl.y = objSetup->baddie.base.y;
         self->srt.transl.z = objSetup->baddie.base.z;
-        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->baddie.unk2E, self, -1);
+        dll_anim->start_obj_sequence(objSetup->baddie.unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }
@@ -243,10 +249,10 @@ void SnowWormSmall_control(Object* self) {
 }
 
 // offset: 0x4F0 | func: 3 | export: 2
-void SnowWormSmall_update(Object* self) { }
+void SnowWormSmall_obj_Update(Object* self) { }
 
 // offset: 0x4FC | func: 4 | export: 3
-void SnowWormSmall_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SnowWormSmall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if (!visibility) {
@@ -273,7 +279,7 @@ void SnowWormSmall_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 }
 
 // offset: 0x6E8 | func: 5 | export: 4
-void SnowWormSmall_free(Object* self, s32 onlySelf) {
+void SnowWormSmall_obj_Free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
     objFreeObjectType(self, OBJTYPE_Baddie);
@@ -287,23 +293,23 @@ void SnowWormSmall_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x78C | func: 6 | export: 5
-u32 SnowWormSmall_get_model_flags(Object* self) {
+u32 SnowWormSmall_obj_GetModelFlags(Object* self) {
     return MODFLAGS_EVENTS | MODFLAGS_8 | MODFLAGS_1;
 }
 
 // offset: 0x79C | func: 7 | export: 6
-u32 SnowWormSmall_get_data_size(Object* self, u32 offsetAddr) {
+u32 SnowWormSmall_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(SnowWormSmall_Data);
 }
 
 // offset: 0x7B0 | func: 8 | export: 7
-SnowWormSmall_AnimStates SnowWormSmall_get_anim_state(Object* self, s32 unused) {
+SnowWormSmall_AnimStates SnowWormSmall_GetAnimState(Object* self, s32 unused) {
     Baddie* baddie = self->data;
     return baddie->fsa.animState;
 }
 
 // offset: 0x7C4 | func: 9 | export: 8
-void SnowWormSmall_receive_message(Object* self, u8 message, s32 unused) {
+void SnowWormSmall_ReceiveMessage(Object* self, u8 message, s32 unused) {
     Baddie* baddie;
     SnowWormSmall_DataActual* objData;
 
@@ -311,11 +317,12 @@ void SnowWormSmall_receive_message(Object* self, u8 message, s32 unused) {
     
     switch (message) {
     case 0x80:
+        //Handle spit attack landing successfully
         objData = baddie->objdata;
-        objData->unk9 |= 2;
+        objData->battleFlags |= SnowWormSmall_BATTLE_FLAG_2_Projectile_Struck;
         dll_amSfx->Play(self, dBattleSounds[1], MAX_VOLUME, NULL, NULL, 0, NULL);
-        gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_1);
-        baddie->fsa.logicState = SnowWormSmall_LSTATE_4;
+        gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, SnowWormSmall_ASTATE_1_Burst_Into_Ground);
+        baddie->fsa.logicState = SnowWormSmall_LSTATE_4_Dormant;
         baddie->fsa.enteredLogicState = TRUE;
         break;
     case 0x81:
@@ -354,7 +361,7 @@ void SnowWormSmall_func_8B8(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     
     if (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, dHitAnimStateMap, dHitDamageMap, 1, &baddie->unk3A8, &sFXTransform)) {
         weapon = player->linkedObject;
-        scaleIdx = ((DLL_Unknown*)weapon->dll)->vtbl->func[19].withOneArgS32(weapon);
+        scaleIdx = ((DLL_251_Weapons*)weapon->dll)->vtbl->func19(weapon);
         if (scaleIdx > 3) {
             scaleIdx = 3;
         }
@@ -427,8 +434,8 @@ void SnowWormSmall_func_F50(Object* self, Baddie* baddie) {
 
     objData = baddie->objdata;
     
-    if (objData->flags & SnowWormSmall_FLAG_1) {
-        SnowWormSmall_throw_ice_ball(self, baddie);
+    if (objData->flags & SnowWormSmall_FLAG_Throw_Ice) {
+        SnowWormSmall_throwIceBall(self, baddie);
     }
     
     if (objData->flags & SnowWormSmall_FLAG_2) {
@@ -441,11 +448,11 @@ void SnowWormSmall_func_F50(Object* self, Baddie* baddie) {
         }
     }
     
-    objData->flags = SnowWormSmall_FLAG_0;
+    objData->flags = 0;
 }
 
 // offset: 0x106C | func: 14
-void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie) {
+void SnowWormSmall_throwIceBall(Object* self, Baddie* baddie) {
     ChukaChuck_Setup* chuckSetup;
     Object* chuck;
     f32 throwFactor;
@@ -481,7 +488,7 @@ void SnowWormSmall_throw_ice_ball(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x11E4 | func: 15
-static void SnowWormSmall_get_ally_info(Object* self, s32* oAlliesLowestAnimState, s32* oNumAllies, s32* oNumAlliesInAnimState4) {
+static void SnowWormSmall_getAllyInfo(Object* self, s32* oAlliesLowestAnimState, s32* oNumAllies, s32* oNumAlliesSpitting) {
     s32 index;
     s32 count;
     Object* obj;
@@ -489,7 +496,7 @@ static void SnowWormSmall_get_ally_info(Object* self, s32* oAlliesLowestAnimStat
     s32 animState;
 
     *oNumAllies = 0;
-    *oNumAlliesInAnimState4 = 0;
+    *oNumAlliesSpitting = 0;
     *oAlliesLowestAnimState = 0;
     
     for (objects = objGetObjects(&index, &count); index < count; index++) {
@@ -497,21 +504,21 @@ static void SnowWormSmall_get_ally_info(Object* self, s32* oAlliesLowestAnimStat
         if ((self != obj) && (obj->id == OBJ_SnowWormSmall)) {
             *oNumAllies += 1;
             obj = objects[index];
-            animState = ((DLL_222_SnowWormSmall*)obj->dll)->vtbl->get_anim_state(obj, 0);
+            animState = ((DLL_222_SnowWormSmall*)obj->dll)->vtbl->GetAnimState(obj, 0);
             
             if (*oAlliesLowestAnimState < animState) {
                 *oAlliesLowestAnimState = animState;
             }
 
-            if (animState == SnowWormSmall_ASTATE_4) {
-                *oNumAlliesInAnimState4 += 1;
+            if (animState == SnowWormSmall_ASTATE_4_Stand_and_Spit) {
+                *oNumAlliesSpitting += 1;
             }
         }
     }
 }
 
 // offset: 0x132C | func: 16
-static void SnowWormSmall_worm_to_worm_communication(Object* self) {
+static void SnowWormSmall_wormToWormCommunication(Object* self) {
     s32 index;
     s32 count;
     Object* obj;
@@ -520,13 +527,13 @@ static void SnowWormSmall_worm_to_worm_communication(Object* self) {
     for (objects = objGetObjects(&index, &count); index < count; index++) {
         obj = objects[index];
         if ((self != obj) && (obj->id == OBJ_SnowWormSmall)) {
-            ((DLL_222_SnowWormSmall*)obj->dll)->vtbl->receive_message(obj, 0x81, 0);
+            ((DLL_222_SnowWormSmall*)obj->dll)->vtbl->ReceiveMessage(obj, 0x81, 0);
         }
     }
 }
 
 // offset: 0x13F8 | func: 17
-s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState0PopOutOfGround(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad;
     Baddie* baddie;
     SnowWormSmall_DataActual* objData;
@@ -575,7 +582,7 @@ s32 SnowWormSmall_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x164C | func: 18
-s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState1BurstIntoGround(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     SnowWormSmall_DataActual* objData;
 
@@ -605,7 +612,7 @@ s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk33D = 0;
         baddie->unk3B6 = 0;
         
-        if ((objData->unk9 & 2) == FALSE) {
+        if ((objData->battleFlags & SnowWormSmall_BATTLE_FLAG_2_Projectile_Struck) == FALSE) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
         }
     }
@@ -616,7 +623,7 @@ s32 SnowWormSmall_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x17DC | func: 19
-s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState2BiteAttack(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     baddie = self->data;
@@ -631,7 +638,7 @@ s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        SnowWormSmall_worm_to_worm_communication(self);
+        SnowWormSmall_wormToWormCommunication(self);
         
         if (mathRnd(0, 1)) {
             if (fsa->enteredAnimState) {
@@ -658,7 +665,7 @@ s32 SnowWormSmall_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1A1C | func: 20
-s32 SnowWormSmall_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState3StandStill(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         func_8002674C(self);
     }
@@ -680,7 +687,7 @@ s32 SnowWormSmall_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1B04 | func: 21
-s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState4StandAndSpit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     SnowWormSmall_DataActual* objData;
     Baddie* baddie;
 
@@ -696,7 +703,7 @@ s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
     
     if (fsa->enteredAnimState) {
-        SnowWormSmall_worm_to_worm_communication(self);
+        SnowWormSmall_wormToWormCommunication(self);
     }
     
     fsa->animTickDelta = 0.01f;
@@ -710,7 +717,7 @@ s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->unk308 & 1) {
         objData = baddie->objdata;
         fsa->unk308 &= ~1;
-        objData->flags |= SnowWormSmall_FLAG_1;
+        objData->flags |= SnowWormSmall_FLAG_Throw_Ice;
         dll_amSfx->Play(self, dChirpSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
@@ -718,7 +725,7 @@ s32 SnowWormSmall_anim_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1C80 | func: 22
-s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState5Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Object* weapon;
 
     if (fsa->enteredAnimState) {
@@ -727,10 +734,10 @@ s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->enteredAnimState) {
-        SnowWormSmall_worm_to_worm_communication(self);
+        SnowWormSmall_wormToWormCommunication(self);
 
         weapon = objGetPlayer()->linkedObject;
-        if (((DLL_Unknown*)weapon->dll)->vtbl->func[16].withOneArgS32(weapon)) {
+        if (((DLL_251_Weapons*)weapon->dll)->vtbl->func16(weapon)) {
             dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         } else {
             dll_amSfx->Play(self, dWeaponHitSounds[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -746,7 +753,7 @@ s32 SnowWormSmall_anim_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1E80 | func: 23
-s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_animState6Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     baddie = self->data;
@@ -778,16 +785,16 @@ s32 SnowWormSmall_anim_state_6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x20A4 | func: 24
-s32 SnowWormSmall_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->target != NULL) {
         if (fsa->enteredLogicState) {
             fsa->unk27C = 0.0f;
             fsa->unk278 = 0.0f;
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_0);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_0_Pop_Out_of_Ground);
         }
         
         if (fsa->unk33A) {
-            return 6;
+            return FSA_NEXTSTATE_SYNC(SnowWormSmall_LSTATE_5_Engage);
         }
     }
     
@@ -795,18 +802,20 @@ s32 SnowWormSmall_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 }
 
 // offset: 0x2134 | func: 25
-s32 SnowWormSmall_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->hitpoints <= 0) {
-        return 3;
+        return FSA_NEXTSTATE_SYNC(SnowWormSmall_LSTATE_2_Dying);
     }
+
     if (fsa->unk33A != 0) {
-        return 6;
+        return FSA_NEXTSTATE_SYNC(SnowWormSmall_LSTATE_5_Engage);
     }
+
     return 0;
 }
 
 // offset: 0x2170 | func: 26
-s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     SnowWormSmall_DataActual* objData;
     Baddie* baddie;
 
@@ -816,25 +825,27 @@ s32 SnowWormSmall_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
         objData = baddie->objdata;
         objData->soundTimer = 0.0f;
         objData->soundTimerThreshold = 0.0f;
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_6);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_6_Dying);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;
         func_800267A4(self);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     } else if (fsa->unk33A) {
-        objSendMesgMany(0, 3, self, 0xE0000, self);
+        objSendMesgMany(0, 1 | 2, self, 0xE0000, self);
+
         if (self->setup == NULL) {
             objFreeObject(self);
         }
-        return 4;
+
+        return FSA_NEXTSTATE_SYNC(SnowWormSmall_LSTATE_3_Dead);
     }
     
     return 0;
 }
 
 // offset: 0x227C | func: 27
-s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
 
     if (fsa->enteredLogicState) {
@@ -842,11 +853,11 @@ s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
         baddie->unk3B4 = 0;
 
         if (baddie->unk39E != NO_GAMEBIT) {
-            mainSetBits(baddie->unk39E, 0);
+            mainSetBits(baddie->unk39E, FALSE);
         }
         
         if (baddie->unk39C != NO_GAMEBIT) {
-            mainSetBits(baddie->unk39C, 1);
+            mainSetBits(baddie->unk39C, TRUE);
         }
     }
     
@@ -854,14 +865,14 @@ s32 SnowWormSmall_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 }
 
 // offset: 0x2318 | func: 28
-s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState4Dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     SnowWormSmall_DataActual* objData;
 
     baddie = self->data;
     
     if (fsa->enteredLogicState) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_1_Burst_Into_Ground);
         objData = baddie->objdata;
         objData->soundTimer = 0.0f;
         objData->soundTimerThreshold = 0.0f;
@@ -871,13 +882,13 @@ s32 SnowWormSmall_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
 }
 
 // offset: 0x2390 | func: 29
-s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 SnowWormSmall_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     SnowWormSmall_DataActual* objData;
     s32 random;
     s32 alliesLowestAnimState;
     s32 numAllies;
-    s32 numAlliesInAnimState4;
+    s32 numAlliesSpitting;
 
     baddie = self->data;
     
@@ -885,29 +896,29 @@ s32 SnowWormSmall_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
         objData = baddie->objdata;
 
         if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1)) {
-            objData->unk9 &= ~2;
-            return 5;
+            objData->battleFlags &= ~SnowWormSmall_BATTLE_FLAG_2_Projectile_Struck;
+            return FSA_NEXTSTATE_SYNC(SnowWormSmall_LSTATE_4_Dormant);
         }
 
-        SnowWormSmall_get_ally_info(self, &alliesLowestAnimState, &numAllies, &numAlliesInAnimState4);
+        SnowWormSmall_getAllyInfo(self, &alliesLowestAnimState, &numAllies, &numAlliesSpitting);
         
         random = mathRnd(0, baddie->unk3B8);
         
-        if ((alliesLowestAnimState >= SnowWormSmall_ASTATE_5) || (objData->unk9 & 1)) {
+        if ((alliesLowestAnimState >= SnowWormSmall_ASTATE_5_Hit) || (objData->battleFlags & SnowWormSmall_BATTLE_FLAG_1_Prioritise_Spit)) {
             if (baddie->unk3B0 & 2) {
-                objData->unk9 |= 1;
+                objData->battleFlags |= SnowWormSmall_BATTLE_FLAG_1_Prioritise_Spit;
             }
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4_Stand_and_Spit);
         } else if (random > 32) {
-            if (numAlliesInAnimState4 > 1) {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2);
+            if (numAlliesSpitting > 1) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2_Bite_Attack);
             } else {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4);
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_4_Stand_and_Spit);
             }
         } else if (random > 16) {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_2_Bite_Attack);
         } else {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_3);
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SnowWormSmall_ASTATE_3_Stand_Still);
         }
     }
     

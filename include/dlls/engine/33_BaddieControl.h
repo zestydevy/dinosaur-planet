@@ -25,8 +25,8 @@ typedef struct {
 /*000*/ ObjFSA_Data fsa;
 /*34C*/ Unk80009024 unk34C;
 /*374*/ Unk80008E40 unk374;
-/*39C*/ s16 unk39C; // gamebitID
-/*39E*/ s16 unk39E; // gamebitID
+/*39C*/ s16 unk39C; // gamebitID (set when baddie dies?)
+/*39E*/ s16 unk39E; // gamebitID (unset when baddie dies?)
 /*3A0*/ s16 unk3A0;
 /*3A2*/ s16 unk3A2;
 /*3A4*/ s16 unk3A4;
@@ -127,5 +127,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*22*/ void (*change_weapon)(Object* obj, Baddie* baddie);
 /*23*/ f32 (*get_health_ratio)(Object* obj); // Gets current health on a scale from 0-1
 };
+
+#define dll_baddieControl (gDLL_33_BaddieControl->vtbl)
 
 #endif // _DLL_33_H

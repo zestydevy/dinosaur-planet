@@ -8,8 +8,8 @@
 
 DLL_INTERFACE(DLL_222_SnowWormSmall) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*07*/ s32 (*get_anim_state)(Object* self, s32 unused);
-    /*08*/ u8 (*receive_message)(Object* self, u8 message, s32 unused);
+    /*07*/ s32 (*GetAnimState)(Object* self, s32 unused);
+    /*08*/ u8 (*ReceiveMessage)(Object* self, u8 message, s32 unused);
 };
 
 #endif //_DLLS_222_H
