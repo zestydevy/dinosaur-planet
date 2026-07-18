@@ -77,7 +77,8 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             sym_name: str = sym.name
             sym_name = SYMBOL_RENAMES.get(sym_name, sym_name)
 
-            if sym_name.startswith("L8"):
+            if sym_name.startswith("L8") or sym_name.startswith("."):
+                # Local asm label
                 continue
             if sym_name.endswith(".NON_MATCHING"):
                 # Non-matching functions have a duplicate symbol with a .NON_MATCHING suffix, ignore these
