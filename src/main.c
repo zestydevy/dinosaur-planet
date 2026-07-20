@@ -9,7 +9,7 @@
 #include "sys/audio.h"
 #include "sys/joypad.h"
 #include "sys/crash.h"
-#include "sys/exception.h"
+#include "sys/di_cpu.h"
 #include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
@@ -194,7 +194,7 @@ void mainInit(void) {
     }
 
     osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
-    start_pi_manager_thread();
+    diCpuTraceInit();
     piInit();
     rcpInit(&osscheduler_);
     mainAllocFrameBuffers();
@@ -362,7 +362,7 @@ void mainTick(void) {
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
     mainHandleMapChange();
-    write_c_file_label_pointers("main/main.c", 0x37C);
+    diCpuTraceFile("main/main.c", 0x37C);
 }
 
 void mainTickNoExpansion(void) {

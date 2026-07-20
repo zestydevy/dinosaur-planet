@@ -29,7 +29,7 @@ void crash_thread_entry(void *arg);
 /**
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
  *
- * Identical to stop_active_app_threads.
+ * Identical to diCpuStopActiveAppThreads.
  */
 void stop_active_app_threads_2();
 

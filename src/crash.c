@@ -92,12 +92,12 @@ void crash_thread_entry(void *arg) {
     osViSwapBuffer(gFrontFramebuffer);
 
     // Stop all threads and do video crash handling stuff
-    stop_active_app_threads();
-    check_video_mode_crash_and_clear_framebuffer();
+    diCpuStopActiveAppThreads();
+    diCpuCrashScreenInit();
 
     // Display state from before the last NMI reset
     dllReplaceLoadedDLLs(gCrashDllListCopy->loadedDllList, gCrashDllListCopy->loadedDllCount);
-    some_crash_print(threads.threads, 2, 0);
+    diCpuDrawCpuInfo(threads.threads, 2, 0);
 
     // Halt
     while (TRUE) { }

@@ -27,7 +27,7 @@
 #include "sys/gfx/textable.h"
 #include "sys/gfx/animation.h"
 #include "sys/gfx/model.h"
-#include "sys/exception.h"
+#include "sys/di_cpu.h"
 #include "sys/crash.h"
 #include "sys/asset.h"
 #include "sys/generic_stack.h"

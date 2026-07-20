@@ -3,7 +3,7 @@
 #include "game/objects/object_id.h"
 #include "sys/camera.h"
 #include "sys/di_rcp.h"
-#include "sys/exception.h"
+#include "sys/di_cpu.h"
 #include "sys/map.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -63,7 +63,7 @@ void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, O
         return;
     }
 
-    update_pi_manager_array(2, obj->id);
+    diCpuTraceObject(2, obj->id);
     diRcpTrace(*gdl, obj->id, "objects/objprint.c", 426);
     if (obj->dll != NULL) {
         if (!(obj->stateFlags & OBJSTATE_PRINT_DISABLED)) {
@@ -81,7 +81,7 @@ void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, O
         objHandleModelSwitch(obj->linkedObject, obj->linkedObject->modelInsts[obj->modelInstIdx], obj->linkedObject->modelInsts[obj->modelInstIdx]->model);
     }
     diRcpTrace(*gdl, (u32) -obj->id, "objects/objprint.c", 489);
-    update_pi_manager_array(2, -1);
+    diCpuTraceObject(2, -1);
 }
 
 void objprintSetModelMatrixOverride(MtxF* arg0) {

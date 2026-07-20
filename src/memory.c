@@ -1,14 +1,13 @@
 #include "PR/libaudio.h"
 #include "PR/os.h"
 #include "libultra/audio/synthInternals.h"
+#include "sys/di_cpu.h"
 #include "sys/memory.h"
 #include "sys/interrupt_util.h"
 #include "sys/print.h"
 #include "constants.h"
 #include "macros.h"
 #include "memory_regions.h"
-
-extern s32 get_stack_();
 
 #define ALIGN16(a) (((u32)(a) & 0xF) ? (((u32)(a) & ~0xF) + 0x10) : (u32)(a))
 #define S32_MAX 0x7FFFFFFF
@@ -101,7 +100,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
     void *ptr;
 
     if (size == 0) {
-        get_stack_();
+        diCpuTraceCurrentStack();
         ptr = NULL;
         return ptr;
     }
@@ -109,7 +108,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
         // >= 4500 bytes -> pool 0
         ptr = mmAllocR(0, size, tag, name);
         if (ptr == NULL) {
-            get_stack_();
+            diCpuTraceCurrentStack();
             // @bug ? If no expansion pack is in, memory pool 1 won't exist
             ptr = mmAllocR(1, size, tag, name);
         }
@@ -117,7 +116,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
         // >= 1024 bytes -> pool 1
         ptr = mmAllocR(1, size, tag, name);
         if (ptr == NULL) {
-            get_stack_();
+            diCpuTraceCurrentStack();
             ptr = mmAllocR(2, size, tag, name);
         }
     } else {
@@ -125,7 +124,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
         ptr = mmAllocR(2, size, tag, name);
     }
     if (ptr == NULL) {
-        get_stack_();
+        diCpuTraceCurrentStack();
     }
     return ptr;
 }
@@ -142,7 +141,7 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
     u32 *canary;
 
     if (newSize <= 0) {
-        get_stack_();
+        diCpuTraceCurrentStack();
         return NULL;
     }
     newSize = (s32)ALIGN16(newSize);

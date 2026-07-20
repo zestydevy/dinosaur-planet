@@ -101,8 +101,8 @@ segments:
     - [0x5FFB0, c, assert]
     - [0x5FFE0, c, print]
     - [0x62B30, c, debug]
-    - [0x62BA0, c, exception]
-    - [0x63EA0, asm, get_stack_]
+    - [0x62BA0, c, di_cpu]
+    - [0x63EA0, c, di_cpu_stack]
     - [0x63EB0, c, di_rcp]
     - [0x64320, c, di_comm]
     - [0x645A0, c, libnaudio/n_sl]
@@ -336,7 +336,7 @@ segments:
     - [0x93CB0, .data, libultra/io/vimgr]
     - [0x93CE0, .data, print]
     - [0x93DF0, .data, debug]
-    - [0x93E00, .data, exception]
+    - [0x93E00, .data, di_cpu]
     - [0x94410, .data, di_rcp]
     - [0x94420, .data, developer_names]
     - [0x94460, .data, di_comm]
@@ -414,7 +414,7 @@ segments:
     - [0x9B990, .rodata, assert]
     - [0x9B9F0, .rodata, print]
     - [0x9BC70, .rodata, debug]
-    - [0x9BC90, .rodata, exception]
+    - [0x9BC90, .rodata, di_cpu]
     - [0x9C270, .rodata, di_rcp]
     - [0x9C2A0, .rodata, developer_names]
     - [0x9C320, .rodata, di_comm]
@@ -491,7 +491,7 @@ segments:
     # - { type: .bss, vram: 0x800bce70, name: libultra/io/vimgr }
     # - { type: .bss, vram: 0x800be110, name: libultra/flash }
     # - { type: .bss, vram: 0x800be1d0, name: print }
-    # - { type: .bss, vram: 0x800beb10, name: exception }
+    # - { type: .bss, vram: 0x800beb10, name: di_cpu }
     # - { type: .bss, vram: 0x800bfe70, name: di_rcp }
     # - { type: .bss, vram: 0x800bfe80, name: audio/speaker }
     # - { type: .bss, vram: 0x800bfe90, name: libnaudio/n_sndplayer }

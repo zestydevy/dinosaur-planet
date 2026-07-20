@@ -1,14 +1,29 @@
+#include "sys/di_cpu.h"
+
 #include "PR/os_internal.h"
-#include "macros.h"
-#include "sys/crash.h"
 #include "libc/stdarg.h"
-#include "common.h"
+#include "libc/string.h"
+#include "sys/crash.h"
+#include "sys/vi.h"
+#include "sys/print.h"
+#include "macros.h"
 
 typedef struct {
     u32 code1;
     u32 code2;
     char *text;
 } CrashErrString;
+
+typedef enum {
+    CRASH_TEXTCOLOR_WHITE = 0,
+    CRASH_TEXTCOLOR_BLUE = 1,
+    CRASH_TEXTCOLOR_CYAN = 2,
+    CRASH_TEXTCOLOR_GREEN = 3,
+    CRASH_TEXTCOLOR_YELLOW = 4,
+    CRASH_TEXTCOLOR_RED = 5,
+    CRASH_TEXTCOLOR_MAGENTA = 6,
+    CRASH_TEXTCOLOR_BLACK = 7
+} CrashTextColor;
 
 /* 
 	FORMAT : 
@@ -218,86 +233,74 @@ CrashErrString errStringArray_fpsr[] = {
     { 0x00000003, 0x00000003, "RM" },
     { 0x00000000, 0x00000000, "" },
 };
-char *crash_screen_strings[] = {
+char *gDiObjFuncNames[] = {
     "setup",
     "control",
     "print",
     "update",
     "free"
 };
-typedef enum {
-    CRASH_TEXTCOLOR_WHITE = 0,
-    CRASH_TEXTCOLOR_BLUE = 1,
-    CRASH_TEXTCOLOR_CYAN = 2,
-    CRASH_TEXTCOLOR_GREEN = 3,
-    CRASH_TEXTCOLOR_YELLOW = 4,
-    CRASH_TEXTCOLOR_RED = 5,
-    CRASH_TEXTCOLOR_MAGENTA = 6,
-    CRASH_TEXTCOLOR_BLACK = 7
-} CrashTextColor;
 s32 gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
 s32 gSomeCrashVideoFlag = 0;
 s32 D_800937f8[3] = {0};
-u8 gCFileLabelIndex = 0;
-u8 gCFileLabelFlag = 0;
+u8 gDiCpuTraceBufIdx = 0;
+u8 gDiCpuTraceInitd = 0;
 
-// Length of gCFileLabels and gSomeCFileInts
-#define C_FILE_LABELS_LENGTH 10
+#define DI_CPU_FILE_TRACE_BUFFER_LEN 10
+
+#define DI_CPU_OS_EVENT_FAULT 8
+#define DI_CPU_OS_EVENT_CPU_BREAK 2
 
 /* -------- .bss start 800beb10 -------- */
-u64 gPiManagerThreadStack[STACKSIZE(OS_PIM_STACKSIZE)];
-OSThread gPiManagerThread;
-s32 gPiManagerArray[5];
-OSMesgQueue gPiManagerEventQueue;
-OSMesg gPiManagerEventQueueBuffer[8];
-OSMesg gPiManagerCmdQueueBuffer[8];
-OSMesgQueue gPiManagerCmdQueue;
+u64 gDiCpuThreadStack[STACKSIZE(OS_PIM_STACKSIZE)];
+OSThread gDiCpuThread;
+s32 gCurrObjFuncTrace[5];
+OSMesgQueue gDiCpuTraceEventQueue;
+OSMesg gDiCpuTraceEventQueueBuffer[8];
+OSMesg gDiCpuPiManagerCmdQueueBuffer[8];
+OSMesgQueue gDiCpuPiManagerCmdQueue;
 OSMesgQueue gCrashControllerMesgQueue;
 OSContPad gCrashContPadArray1[MAXCONTROLLERS];
 OSContPad gCrashContPadArray2[MAXCONTROLLERS];
 u16 gCrashButtons[MAXCONTROLLERS];
-const char *gCFileLabels[C_FILE_LABELS_LENGTH];
-s32 gSomeCFileInts[C_FILE_LABELS_LENGTH]; // line numbers
+const char *gDiCpuTraceFilenames[DI_CPU_FILE_TRACE_BUFFER_LEN];
+s32 gDiCpuTraceLineNumbers[DI_CPU_FILE_TRACE_BUFFER_LEN]; // line numbers
 /* -------- .bss end 800bfe70 -------- */
 
-void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4);
-void crash_copy_control_inputs(void);
-void crash_print_line(s32 x, s32 y, char *fmt, ...);
+void diCpuThreadMain(void *arg);
+void diCpuPrintCause(s32 x, s32 y, u32 param3, CrashErrString *param4);
+void diCpuReadController(void);
+void diCpuXYPrintf(s32 x, s32 y, char *fmt, ...);
+void diCpuClearFramebuffer(void);
+void diCpuHandleThreadFault(void);
 
-/**
- * Sets `gPiManagerArray[index] = value`, unless index is out of range
- * in which case this function does nothing.
- */
-void update_pi_manager_array(s32 index, s32 value) {
-    if (index >= 0 && index < ARRAYCOUNT_S(gPiManagerArray)) {
-        gPiManagerArray[index] = value;
+void diCpuTraceObject(s32 index, s32 objID) {
+    if (index >= 0 && index < ARRAYCOUNT_S(gCurrObjFuncTrace)) {
+        gCurrObjFuncTrace[index] = objID;
     }
 }
 
 // official name: diCpuTraceInit (probably)
-void start_pi_manager_thread(void) {
+void diCpuTraceInit(void) {
     int i;
 
     osCreateThread(
-        /*t*/       &gPiManagerThread,
+        /*t*/       &gDiCpuThread,
         /*id*/      -1,
-        /*entry*/   &pi_manager_entry,
+        /*entry*/   &diCpuThreadMain,
         /*arg*/     NULL,
-        /*sp*/      &gPiManagerThreadStack[STACKSIZE(OS_PIM_STACKSIZE)],
+        /*sp*/      &gDiCpuThreadStack[STACKSIZE(OS_PIM_STACKSIZE)],
         /*pri*/     OS_PRIORITY_MAX
     );
 
-    osStartThread(&gPiManagerThread);
+    osStartThread(&gDiCpuThread);
 
-    for (i = 0; i < ARRAYCOUNT_S(gPiManagerArray); ++i) {
-        gPiManagerArray[i] = -1;
+    for (i = 0; i < ARRAYCOUNT_S(gCurrObjFuncTrace); ++i) {
+        gCurrObjFuncTrace[i] = -1;
     }
 }
 
-#define PI_OS_EVENT_FAULT 8
-#define PI_OS_EVENT_CPU_BREAK 2
-
-void pi_manager_entry(void *arg) {
+/*static*/ void diCpuThreadMain(void *arg) {
     OSMesg msg;
     s32 evtFlags;
 
@@ -305,43 +308,43 @@ void pi_manager_entry(void *arg) {
 
     // Listen for OS_EVENT_FAULT and OS_EVENT_CPU_BREAK
     osCreateMesgQueue(
-        /*mq*/      &gPiManagerEventQueue,
-        /*msg*/     &gPiManagerEventQueueBuffer[0],
-        /*count*/   ARRAYCOUNT(gPiManagerEventQueueBuffer)
+        /*mq*/      &gDiCpuTraceEventQueue,
+        /*msg*/     &gDiCpuTraceEventQueueBuffer[0],
+        /*count*/   ARRAYCOUNT(gDiCpuTraceEventQueueBuffer)
     );
 
-    osSetEventMesg(OS_EVENT_FAULT, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_FAULT);
-    osSetEventMesg(OS_EVENT_CPU_BREAK, &gPiManagerEventQueue, (OSMesg)PI_OS_EVENT_CPU_BREAK);
+    osSetEventMesg(OS_EVENT_FAULT, &gDiCpuTraceEventQueue, (OSMesg)DI_CPU_OS_EVENT_FAULT);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &gDiCpuTraceEventQueue, (OSMesg)DI_CPU_OS_EVENT_CPU_BREAK);
 
     // Start system PI manager thread (if not already started)
     osCreatePiManager(
         /*pri*/         OS_PRIORITY_PIMGR,
-        /*cmdQ*/        &gPiManagerCmdQueue,
-        /*cmdBuf*/      &gPiManagerCmdQueueBuffer[0],
-        /*cmdMsgCnt*/   ARRAYCOUNT(gPiManagerCmdQueueBuffer)
+        /*cmdQ*/        &gDiCpuPiManagerCmdQueue,
+        /*cmdBuf*/      &gDiCpuPiManagerCmdQueueBuffer[0],
+        /*cmdMsgCnt*/   ARRAYCOUNT(gDiCpuPiManagerCmdQueueBuffer)
     );
 
     while (TRUE) {
         // Wait for event
-        osRecvMesg(&gPiManagerEventQueue, &msg, OS_MESG_BLOCK);
+        osRecvMesg(&gDiCpuTraceEventQueue, &msg, OS_MESG_BLOCK);
 
         evtFlags |= (s32)msg;
 
         // If a CPU break or CPU fault occurred...
-        if ((evtFlags & PI_OS_EVENT_FAULT) || (evtFlags & PI_OS_EVENT_CPU_BREAK)) {
+        if ((evtFlags & DI_CPU_OS_EVENT_FAULT) || (evtFlags & DI_CPU_OS_EVENT_CPU_BREAK)) {
             // Only handle a fault once per message, but if a break is received, this should run
             // every time a fault or break is received again regardless of which
-            evtFlags &= ~PI_OS_EVENT_FAULT;
+            evtFlags &= ~DI_CPU_OS_EVENT_FAULT;
 
-            // Stop app threads and do some crash stuff
-            stop_active_app_threads();
-            check_video_mode_crash_and_clear_framebuffer();
-            crash_controller_getter();
+            // Stop app threads and display crash screen
+            diCpuStopActiveAppThreads();
+            diCpuCrashScreenInit();
+            diCpuHandleThreadFault();
         }
     }
 }
 
-void stop_active_app_threads(void) {
+void diCpuStopActiveAppThreads(void) {
     OSThread *thread;
 
     thread = __osGetActiveQueue();
@@ -356,7 +359,7 @@ void stop_active_app_threads(void) {
     }
 }
 
-void crash_controller_getter(void) {
+void diCpuHandleThreadFault(void) {
     // Find first faulted/broke active thread
     OSThread *thread = __osGetActiveQueue();
 
@@ -371,261 +374,254 @@ void crash_controller_getter(void) {
 
     // Get current controller state
     osContGetReadData(&gCrashContPadArray1[0]);
-
     // TODO: Why isn't this called before osContGetReadData?
     osContStartReadData(&gCrashControllerMesgQueue);
+    bcopy(&gCrashContPadArray1[0], &gCrashContPadArray2[0], sizeof(OSContPad) * MAXCONTROLLERS);
 
-    // Copy gCrashContPadArray1 -> gCrashContPadArray2
-    bcopy(
-        &gCrashContPadArray1[0],
-        &gCrashContPadArray2[0],
-        sizeof(OSContPad) * MAXCONTROLLERS
-    );
-
-    // Print some crash info
-    some_crash_print(&thread, 1, 0);
+    // Display crash screen
+    diCpuDrawCpuInfo(&thread, 1, 0);
 }
 
-void some_crash_print(OSThread** threads, s32 count, s32 offset) {
+void diCpuDrawCpuInfo(OSThread** threads, s32 threadsCount, s32 threadsIdx) {
     OSThread* thread;
     __OSThreadContext* ctx;
-    s32 temp_s1;
+    s32 pcDLLNo;
     s32 j;
-    s32 var_s2;
+    s32 raDLLNo;
     u32 raDllStart;
     u32 raDllEnd;
-    s32* var_s0;
+    s32 _pad;
     u32 pcDllStart;
     u32 pcDllEnd;
-    u32 temp_a3;
-    u32 var_a3;
+    s32 y;
+    u32 addr;
 
     while (1) {
-        thread = threads[offset];
-        var_s2 = dllFindExecutingDLL((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
-        temp_s1 = dllFindExecutingDLL(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
-        clear_framebuffer_current();
+        thread = threads[threadsIdx];
+        raDLLNo = dllFindExecutingDLL((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
+        pcDLLNo = dllFindExecutingDLL(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
+        diCpuClearFramebuffer();
         gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
-        crash_print_line(0xCC, 0xD6, "CPU + DLL INFO");
+        diCpuXYPrintf(204, 214, "CPU + DLL INFO");
         gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
         ctx = &thread->context;
-        crash_print_line(0x10, 0x18, "fault in thread %d", thread->id);
+        diCpuXYPrintf(16, 24, "fault in thread %d", thread->id);
         gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
-        crash_print_line(0x10, 0x22, "epc\t\t\t\t%08x", ctx->pc);
-        if (temp_s1 != -1) {
+        diCpuXYPrintf(16, 34, "epc\t\t\t\t%08x", ctx->pc);
+        if (pcDLLNo != -1) {
             gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
-            var_a3 = thread->context.pc;
-            if ((var_a3 >= (u32) pcDllStart) && ((u32) pcDllEnd >= var_a3)) {
-                var_a3 -= (u32)pcDllStart;
+            addr = thread->context.pc;
+            if ((addr >= (u32) pcDllStart) && ((u32) pcDllEnd >= addr)) {
+                addr -= (u32)pcDllStart;
             }
-            crash_print_line(0x10, 0x28, "dll epc\t\t%08x  (in DLL #%d)", var_a3, temp_s1);
+            diCpuXYPrintf(16, 40, "dll epc\t\t%08x  (in DLL #%d)", addr, pcDLLNo);
             gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
         }
-        temp_a3 = ctx->cause;
-        if (temp_a3 == -1U) {
-            crash_print_line(0x10, 0x2E, "cause\t\tmmAlloc(%d,%8x)\n",  (u32)ctx->a0, (u32)ctx->a1);
+        if (ctx->cause == -1U) {
+            diCpuXYPrintf(16, 46, "cause\t\tmmAlloc(%d,%8x)\n",  (u32)ctx->a0, (u32)ctx->a1);
         } else {
-            crash_print_line(0x10, 0x2E, "cause\t\t\t%08x", temp_a3);
-            get_err_string(0xA8, 0x2E, ctx->cause, errStringArray_cause);
+            diCpuXYPrintf(16, 46, "cause\t\t\t%08x", ctx->cause);
+            diCpuPrintCause(168, 46, ctx->cause, errStringArray_cause);
         }
-        crash_print_line(0x10, 0x34, "sr\t\t\t\t%08x", ctx->sr);
-        crash_print_line(0x10, 0x3A, "badvaddr\t%08x", ctx->badvaddr);
+        diCpuXYPrintf(16, 52, "sr\t\t\t\t%08x", ctx->sr);
+        diCpuXYPrintf(16, 58, "badvaddr\t%08x", ctx->badvaddr);
         gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
-        if (var_s2 != -1) {
-            var_a3 = (u32)thread->context.ra;
-            if ((var_a3 >= (u32) raDllStart) && ((u32) raDllEnd >= var_a3)) {
-                var_a3 -= (u32)raDllStart;
+        if (raDLLNo != -1) {
+            addr = (u32)thread->context.ra;
+            if ((addr >= (u32) raDllStart) && ((u32) raDllEnd >= addr)) {
+                addr -= (u32)raDllStart;
             }
-            crash_print_line(0x10, 0x40, "ra\t\t\t\t%08x  (in DLL #%d)", var_a3, var_s2);
-            crash_print_line(0x10, 0x4C, "dll start\t%08x", raDllStart);
-            crash_print_line(0x10, 0x52, "dll end\t\t%08x", raDllEnd);
+            diCpuXYPrintf(16, 64, "ra\t\t\t\t%08x  (in DLL #%d)", addr, raDLLNo);
+            diCpuXYPrintf(16, 76, "dll start\t%08x", raDllStart);
+            diCpuXYPrintf(16, 82, "dll end\t\t%08x", raDllEnd);
         } else {
             gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
-            crash_print_line(0x10, 0x40, "ra\t\t\t\t%08x", (u32)ctx->ra);
+            diCpuXYPrintf(16, 64, "ra\t\t\t\t%08x", (u32)ctx->ra);
         }
         gCrashPaletteSelector = CRASH_TEXTCOLOR_YELLOW;
-        var_s2 = 0x5E;
+        y = 94;
         for (j = 0; j < 5; j++) {
-            if (gPiManagerArray[j] != -1) {
-                crash_print_line(0x10, var_s2, "Fault in object: (%s) (%d) ", crash_screen_strings[j], gPiManagerArray[j]);
-                var_s2 += 6;
+            if (gCurrObjFuncTrace[j] != -1) {
+                diCpuXYPrintf(16, y, "Fault in object: (%s) (%d) ", gDiObjFuncNames[j], gCurrObjFuncTrace[j]);
+                y += 6;
             }
         }
         gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "at %08x v0 %08x v1 %08x", (u32)ctx->at, (u32)ctx->v0, (u32)ctx->v1);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "a0 %08x a1 %08x a2 %08x", (u32)ctx->a0, (u32)ctx->a1, (u32)ctx->a2);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "a3 %08x t0 %08x t1 %08x", (u32)ctx->a3, (u32)ctx->t0, (u32)ctx->t1);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "t2 %08x t3 %08x t4 %08x", (u32)ctx->t2, (u32)ctx->t3, (u32)ctx->t4);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "t5 %08x t6 %08x t7 %08x", (u32)ctx->t5, (u32)ctx->t6, (u32)ctx->t7);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "s0 %08x s1 %08x s2 %08x", (u32)ctx->s0, (u32)ctx->s1, (u32)ctx->s2);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "s3 %08x s4 %08x s5 %08x", (u32)ctx->s3, (u32)ctx->s4, (u32)ctx->s5);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "s6 %08x s7 %08x t8 %08x", (u32)ctx->s6, (u32)ctx->s7, (u32)ctx->t8);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "t9 %08x gp %08x sp %08x", (u32)ctx->t9, (u32)ctx->gp, (u32)ctx->sp);
-        var_s2 += 6;
-        crash_print_line(0x10, var_s2, "s8 %08x", (u32)ctx->s8);
+        y += 6;
+        diCpuXYPrintf(16, y, "at %08x v0 %08x v1 %08x", (u32)ctx->at, (u32)ctx->v0, (u32)ctx->v1);
+        y += 6;
+        diCpuXYPrintf(16, y, "a0 %08x a1 %08x a2 %08x", (u32)ctx->a0, (u32)ctx->a1, (u32)ctx->a2);
+        y += 6;
+        diCpuXYPrintf(16, y, "a3 %08x t0 %08x t1 %08x", (u32)ctx->a3, (u32)ctx->t0, (u32)ctx->t1);
+        y += 6;
+        diCpuXYPrintf(16, y, "t2 %08x t3 %08x t4 %08x", (u32)ctx->t2, (u32)ctx->t3, (u32)ctx->t4);
+        y += 6;
+        diCpuXYPrintf(16, y, "t5 %08x t6 %08x t7 %08x", (u32)ctx->t5, (u32)ctx->t6, (u32)ctx->t7);
+        y += 6;
+        diCpuXYPrintf(16, y, "s0 %08x s1 %08x s2 %08x", (u32)ctx->s0, (u32)ctx->s1, (u32)ctx->s2);
+        y += 6;
+        diCpuXYPrintf(16, y, "s3 %08x s4 %08x s5 %08x", (u32)ctx->s3, (u32)ctx->s4, (u32)ctx->s5);
+        y += 6;
+        diCpuXYPrintf(16, y, "s6 %08x s7 %08x t8 %08x", (u32)ctx->s6, (u32)ctx->s7, (u32)ctx->t8);
+        y += 6;
+        diCpuXYPrintf(16, y, "t9 %08x gp %08x sp %08x", (u32)ctx->t9, (u32)ctx->gp, (u32)ctx->sp);
+        y += 6;
+        diCpuXYPrintf(16, y, "s8 %08x", (u32)ctx->s8);
         gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
-        crash_print_line(0x60, 0xDC, "press button for stack trace");
+        diCpuXYPrintf(96, 220, "press button for stack trace");
         while (1) {
-            crash_copy_control_inputs();
+            diCpuReadController();
             if (gCrashButtons[0] == 0) {
                 continue;
             }
-            if (count == 1) {
-                print_stack_trace(threads, count, offset);
+            if (threadsCount == 1) {
+                diCpuDrawStackTrace(threads, threadsCount, threadsIdx);
                 continue;
             }
 
             break;
         }
 
-        offset++;
-        if (offset >= count) {
-            offset = 0;
+        threadsIdx++;
+        if (threadsIdx >= threadsCount) {
+            threadsIdx = 0;
         }
     }
 }
 
-void print_stack_trace(OSThread** threads, s32 arg1, s32 arg2) {
+void diCpuDrawStackTrace(OSThread** threads, s32 threadsCount, s32 threadsIdx) {
     OSThread* thread;
     __OSThreadContext* ctx;
-    s32 temp_v0_2;
-    u32 *var_s2;
-    s32 var_s3;
-    s32 sp60;
-    s32 var_s4;
-    u32 *var_s0;
+    s32 dllno;
+    u32 *sp;
+    s32 y;
+    s32 maxFrames;
+    s32 frameno;
+    u32 *pc;
     void* sp54;
     void* sp50;
-    u32 *var_s1;
+    u32 *ra;
 
-    sp60 = 0x1C;
-    var_s4 = 0;
-    thread = threads[arg2];
-    clear_framebuffer_current();
+    maxFrames = 28;
+    frameno = 0;
+    thread = threads[threadsIdx];
+    diCpuClearFramebuffer();
     gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
-    crash_print_line(0xDC, 0xD6, "STACK TRACE");
+    diCpuXYPrintf(220, 214, "STACK TRACE");
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
-    crash_print_line(0x10, 0x18, "Fault in thread %d", thread->id);
+    diCpuXYPrintf(16, 24, "Fault in thread %d", thread->id);
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
     ctx = &thread->context;
-    crash_print_line(0x50, 0xDC, "press button for FPU registers");
-    var_s1 = (u32*) ctx->ra;
-    var_s0 = (u32*) ctx->pc;
-    var_s2 = (u32*) ctx->sp;
+    diCpuXYPrintf(80, 220, "press button for FPU registers");
+    ra = (u32*) ctx->ra;
+    pc = (u32*) ctx->pc;
+    sp = (u32*) ctx->sp;
     gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
-    crash_print_line(0x10, 0x24, "J#\tPC\t\t\t\tSP");
-    crash_print_line(0xC8, 0x24, "DLL#\tDLL ADDR");
+    diCpuXYPrintf(16, 36, "J#\tPC\t\t\t\tSP");
+    diCpuXYPrintf(200, 36, "DLL#\tDLL ADDR");
     gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
-    crash_print_line(0x10, 0x2A, "%02d\t%08x\t%08x", 0, var_s0, var_s2);
-    temp_v0_2 = dllFindExecutingDLL(var_s1, &sp54, &sp50);
-    if (temp_v0_2 != -1) {
+    diCpuXYPrintf(16, 42, "%02d\t%08x\t%08x", 0, pc, sp);
+    dllno = dllFindExecutingDLL((u32)ra, &sp54, &sp50);
+    if (dllno != -1) {
         gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
-        crash_print_line(0xC8, 0x2A, "%d", temp_v0_2);
-        crash_print_line(0xF0, 0x2A, "%08x", sp54);
+        diCpuXYPrintf(200, 42, "%d", dllno);
+        diCpuXYPrintf(240, 42, "%08x", sp54);
         gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
     }
-    var_s3 = 48;
-    var_s4++;
-    while (var_s0 != NULL && sp60 > var_s4) {
-        if ((var_s0[0] & 0xFC1FFFFF) == 0xF809) {
-            var_s1 = var_s0[1];
-            var_s0 += 1;
+    y = 48;
+    frameno++;
+    while (pc != NULL && maxFrames > frameno) {
+        if ((pc[0] & 0xFC1FFFFF) == 0x0000F809) { // jalr $ra, $zero
+            ra = (u32*)pc[1];
+            pc += 1;
             continue;
         }
 
-        switch (var_s0[0] >> 0x10) {
-            case 0xDFBF:
-                var_s1 = (var_s2 + (((u32) (var_s0[0] & 0xFFFF) >> 2)))[1];
+        switch (pc[0] >> 16) {
+            case 0xDFBF: // ld $ra, imm($sp)
+                ra = (u32*)(sp + (((u32) (pc[0] & 0xFFFF) >> 2)))[1];
                 break;
-            case 0x8FBF:
-                // @fake *0
-                var_s1 = (var_s2 + (((u32) (var_s0[0] & 0xFFFF)) >> 2))[var_s0[0] * 0];
+            case 0x8FBF: // lw $ra, imm($sp)
+                // @fake *0 (the index is just [0])
+                ra = (u32*)(sp + (((u32) (pc[0] & 0xFFFF)) >> 2))[pc[0] * 0];
                 break;
-            case 0x3E0:
-                if ((var_s0[0] & 0xFFFF) != 8) {
+            case 0x03E0: // jr $ra (check is split across the case and the following if statement, 0x03E00008)
+                if ((pc[0] & 0xFFFF) != 0x0008) {
                     break;
                 }
 
-                // ????????
-                if ((u32)&var_s0[1]) {
-                    switch (var_s0[1] >> 0x10) {
-                        case 0x27BD:
-                            var_s2 += ((u32) (var_s0[1] & 0xFFFF) >> 2);
+                // @bug? This was probably supposed to be `if (pc[1])` to check if the delay slot is a nop
+                if ((u32)&pc[1]) {
+                    // Check delay slot
+                    switch (pc[1] >> 16) {
+                        case 0x27BD: // addiu $sp, $sp, imm
+                            sp += ((u32) (pc[1] & 0xFFFF) >> 2);
                             break;
                     }
                 }
-                var_s0 = var_s1;
-                if (var_s1) {
-                    crash_print_line(0x10, var_s3, "%02d\t%08x\t%08x", var_s4, var_s1, var_s2);
-                    temp_v0_2 = dllFindExecutingDLL(var_s1, &sp54, &sp50);
-                    if (temp_v0_2 != -1) {
+                pc = ra;
+                if (ra) {
+                    diCpuXYPrintf(16, y, "%02d\t%08x\t%08x", frameno, ra, sp);
+                    dllno = dllFindExecutingDLL((u32)ra, &sp54, &sp50);
+                    if (dllno != -1) {
                         gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
-                        crash_print_line(0xC8, var_s3, "%d", temp_v0_2);
-                        crash_print_line(0xF0, var_s3, "%08x", sp54);
+                        diCpuXYPrintf(200, y, "%d", dllno);
+                        diCpuXYPrintf(240, y, "%08x", sp54);
                         gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
                     }
-                    var_s3 += 6;
-                    var_s4 += 1;
+                    y += 6;
+                    frameno += 1;
                 }
                 continue;
-            case 0x27BD:
-                var_s2 += ((u32) (var_s0[0] & 0xFFFF) >> 2);
+            case 0x27BD: // addiu $sp, $sp, imm
+                sp += ((u32) (pc[0] & 0xFFFF) >> 2);
                 break;
         }
-        var_s0 += 1;
+        pc += 1;
     }
     while (1) {
-        crash_copy_control_inputs();
+        diCpuReadController();
         if (gCrashButtons[0]) {
-            other_crash_print(threads, arg1, arg2);
+            diCpuDrawFpuInfo(threads, threadsCount, threadsIdx);
         }
     }
 }
 
-void other_crash_print(OSThread **threads, s32 count, s32 threadIdx) {
+void diCpuDrawFpuInfo(OSThread **threads, s32 threadsCount, s32 threadsIdx) {
     OSThread *thread;
     __OSThreadContext *context;
 
-    thread = threads[threadIdx];
+    thread = threads[threadsIdx];
     context = &thread->context;
 
-    clear_framebuffer_current();
+    diCpuClearFramebuffer();
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
-    crash_print_line(244, 214, "FPU INFO");
+    diCpuXYPrintf(244, 214, "FPU INFO");
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
-    crash_print_line(16, 24, "Fault in thread %d", thread->id);
+    diCpuXYPrintf(16, 24, "Fault in thread %d", thread->id);
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
-    crash_print_line(16, 34, "fpcsr : %08x", context->fpcsr);
-    get_err_string(16, 40, context->fpcsr, &errStringArray_cause[59]);
+    diCpuXYPrintf(16, 34, "fpcsr : %08x", context->fpcsr);
+    diCpuPrintCause(16, 40, context->fpcsr, errStringArray_fpsr);
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
-    crash_print_line(16, 50, "FPU Register dump diabled");
+    diCpuXYPrintf(16, 50, "FPU Register dump diabled");
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
-    crash_print_line(80, 220, "press button for CPU registers");
+    diCpuXYPrintf(80, 220, "press button for CPU registers");
 
     while (1) {
         do {
-            crash_copy_control_inputs();
+            diCpuReadController();
         } while (gCrashButtons[0] == 0);
 
-        some_crash_print(threads, count, threadIdx);
+        diCpuDrawCpuInfo(threads, threadsCount, threadsIdx);
     }
 }
 
-void crash_copy_control_inputs(void) {
+void diCpuReadController(void) {
     s32 i;
 
     osContGetReadData(gCrashContPadArray1);
@@ -636,26 +632,24 @@ void crash_copy_control_inputs(void) {
     bcopy(gCrashContPadArray1, gCrashContPadArray2, sizeof(OSContPad) * MAXCONTROLLERS);
 }
 
-void check_video_mode_crash_and_clear_framebuffer() {
-    int i;
+void diCpuCrashScreenInit(void) {
+    s32 i;
 
     gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
 
-    // Set a video crash flag if video mode is between 4-6
     if (viGetMode() > 3 && viGetMode() < 7) {
         gSomeCrashVideoFlag = 1;
     } else {
         gSomeCrashVideoFlag = 0;
     }
 
-    // Clear framebuffer 100 times
     for (i = 0; i != 100; ++i) {
-        clear_framebuffer_current();
+        diCpuClearFramebuffer();
     }
 }
 
 // blits a single glyph to the framebuffer
-void crash_blit_glyph(s32 col, s32 row, u8* glyph) {
+void diCpuDrawGlyph(s32 col, s32 row, u8* glyph) {
     u32 width;
     s32 var_a3;
     s32 i;
@@ -690,7 +684,7 @@ void crash_blit_glyph(s32 col, s32 row, u8* glyph) {
 // iterates over the string and displays each character
 // supports newline, tab, space
 // offsets indexes into the glyphs table by -165 because characters with ID < 33 (165 / 5) don't exist
-void crash_display_line(s32 x, s32 y, char *str) {
+void diCpuXYPrintLine(s32 x, s32 y, char *str) {
     char c;
 
     while (*str != '\0') {
@@ -704,7 +698,7 @@ void crash_display_line(s32 x, s32 y, char *str) {
         } else if (c <= ' ') {
             x += 4;
         } else if (c > ' ' && c <= 'z') {
-            crash_blit_glyph(x, y, (u8 *)&gCrashFont[c * 5 - 165]);
+            diCpuDrawGlyph(x, y, (u8 *)&gCrashFont[c * 5 - 165]);
             x += 8;
         }
     }
@@ -713,7 +707,7 @@ void crash_display_line(s32 x, s32 y, char *str) {
 }
 
 // official name: cpuXYPrintf (probably)
-void crash_print_line(s32 x, s32 y, char *fmt, ...) {
+void diCpuXYPrintf(s32 x, s32 y, char *fmt, ...) {
     s32 var;
     va_list ap;
     char str[252]; // exact length could vary between 249-252
@@ -738,10 +732,10 @@ void crash_print_line(s32 x, s32 y, char *fmt, ...) {
         y *= 2;
     }
 
-    crash_display_line(x, y, str);
+    diCpuXYPrintLine(x, y, str);
 }
 
-void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4) {
+void diCpuPrintCause(s32 x, s32 y, u32 param3, CrashErrString *param4) {
     s32 bvar;
     char str[260]; // length is anywhere between 253-260
     s32 len;
@@ -769,17 +763,13 @@ void get_err_string(s32 x, s32 y, u32 param3, CrashErrString *param4) {
 
     sprintf(str + len, ")");
     len = strlen(str);
-    crash_print_line(x, y, str);
+    diCpuXYPrintf(x, y, str);
 }
-
-static const char str_8009b650[] = "recent ";
-static const char str_8009b658[] = "       ";
-static const char str_8009b660[] = "%s:%d\n";
 
 /**
  * Sets all values of gFrontFramebuffer to 0.
  */
-void clear_framebuffer_current() {
+void diCpuClearFramebuffer(void) {
     u32 resEncoded = viGetCurrentSize();
     s32 valuesLeft = GET_VIDEO_WIDTH(resEncoded) * (GET_VIDEO_HEIGHT(resEncoded) & 0xffff);
     u16 *framebufferPtr = gFrontFramebuffer;
@@ -790,48 +780,51 @@ void clear_framebuffer_current() {
     }
 }
 
-void write_c_file_label_pointers(const char *cFileLabel, s32 line) {
-    // If gCFileLabelFlag is zero, then zero out gCFileLabels and gSomeCFileInts
-    if (gCFileLabelFlag == 0) {
-        for (gCFileLabelFlag = 0; gCFileLabelFlag < C_FILE_LABELS_LENGTH; ++gCFileLabelFlag) {
-            gCFileLabels[gCFileLabelFlag] = NULL;
-            gSomeCFileInts[gCFileLabelFlag] = 0;
+void diCpuTraceFile(const char *filename, s32 lineno) {
+    // Clear buffers on first call
+    if (gDiCpuTraceInitd == 0) {
+        for (gDiCpuTraceInitd = 0; gDiCpuTraceInitd < DI_CPU_FILE_TRACE_BUFFER_LEN; ++gDiCpuTraceInitd) {
+            gDiCpuTraceFilenames[gDiCpuTraceInitd] = NULL;
+            gDiCpuTraceLineNumbers[gDiCpuTraceInitd] = 0;
         }
 
-        gCFileLabelFlag = 1;
+        gDiCpuTraceInitd = 1;
     }
 
-    // Store C file label at next position in gCFileLabels
-    gCFileLabelIndex = gCFileLabelIndex + 1;
-
-    if (gCFileLabelIndex == C_FILE_LABELS_LENGTH) {
-        gCFileLabelIndex = 0;
+    // Store filename and lineno (circular buffer)
+    gDiCpuTraceBufIdx += 1;
+    if (gDiCpuTraceBufIdx == DI_CPU_FILE_TRACE_BUFFER_LEN) {
+        gDiCpuTraceBufIdx = 0;
     }
 
-    gCFileLabels[gCFileLabelIndex] = cFileLabel;
-    gSomeCFileInts[gCFileLabelIndex] = line;
+    gDiCpuTraceFilenames[gDiCpuTraceBufIdx] = filename;
+    gDiCpuTraceLineNumbers[gDiCpuTraceBufIdx] = lineno;
 }
 
-s32 func_800631E0(void) {
-    s32 labelsIndex;
+static const char str_8009b650[] = "recent ";
+static const char str_8009b658[] = "       ";
+static const char str_8009b660[] = "%s:%d\n";
+
+s32 diCpu_func_800631E0(void) {
+    s32 bufIdx;
     s32 i;
     s32 max;
 
-    labelsIndex = gCFileLabelIndex;
-    for (i = 0; i < C_FILE_LABELS_LENGTH; i++) {
+    bufIdx = gDiCpuTraceBufIdx;
+    for (i = 0; i < DI_CPU_FILE_TRACE_BUFFER_LEN; i++) {
         const char *label;
 
-        labelsIndex++;
-        if ((labelsIndex ^ 0) == (max = C_FILE_LABELS_LENGTH)) {
-            labelsIndex = 0;
+        bufIdx++;
+        if ((bufIdx ^ 0) == (max = DI_CPU_FILE_TRACE_BUFFER_LEN)) {
+            bufIdx = 0;
         }
-        label = gCFileLabels[labelsIndex];
-        if (gCFileLabelIndex){}
+        label = gDiCpuTraceFilenames[bufIdx];
+        if (gDiCpuTraceBufIdx){}
         if (label) {
             // maybe?
-            STUBBED_PRINTF(label);
+            // STUBBED_PRINTF(label);
         }
     }
 
-    return labelsIndex ^ 0;
+    return bufIdx ^ 0;
 }

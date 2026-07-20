@@ -6,7 +6,7 @@
 #include "sys/gfx/model.h"
 #include "sys/asset.h"
 #include "sys/dll.h"
-#include "sys/exception.h"
+#include "sys/di_cpu.h"
 #include "sys/linked_list.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -219,7 +219,7 @@ void objTick(void) {
     gDLL_3_Animation->vtbl->update_camera();
     gDLL_2_Camera->vtbl->tick(gUpdateRate);
 
-    write_c_file_label_pointers("objects/objects.c", 361);
+    diCpuTraceFile("objects/objects.c", 361);
 }
 
 void objDoNothing_80020A40(void) {}
@@ -539,14 +539,14 @@ Object *objSetupObjectActual(ObjSetup *setup, u32 initFlags, s32 mapID, s32 para
 
     objId = setup->objId;
 
-    update_pi_manager_array(0, objId);
+    diCpuTraceObject(0, objId);
 
     if (initFlags & OBJINIT_BY_TABIDX) {
         tabIdx = objId;
     } else {
         if (objId > gObjIndexCount) {
             STUBBED_PRINTF("objSetupObjectActual objtype out of range %d/%d\n", objId, gObjIndexCount);
-            update_pi_manager_array(0, -1);
+            diCpuTraceObject(0, -1);
             return NULL;
         }
 
@@ -786,7 +786,7 @@ void objAddObject(Object *obj, u32 initFlags) {
         mapLoadMobileMap(obj->def->mobileMapID, obj);
     }
 
-    update_pi_manager_array(0, -1);
+    diCpuTraceObject(0, -1);
 
     if (obj->def->flags & OBJDEF_IS_MOBILE_MAP) {
         objAddObjectType(obj, OBJTYPE_MobileMap);
@@ -828,7 +828,7 @@ void objAddObject(Object *obj, u32 initFlags) {
         objAddObjectType(obj, OBJTYPE_56);
     }
 
-    write_c_file_label_pointers("objects/objects.c", 1143);
+    diCpuTraceFile("objects/objects.c", 1143);
 }
 
 u32 objCalcMemSize(Object *obj, ObjDef *def, u32 modflags) {
@@ -1116,7 +1116,7 @@ void objControlObject(Object *obj) {
             obj->objhitInfo->unk62 = 0;
         }
     } else {
-        update_pi_manager_array(1, obj->id);
+        diCpuTraceObject(1, obj->id);
 
         if (!(obj->srt.flags & OBJFLAG_MANUAL_PREV_POSITIONS)) {
             obj->prevLocalPosition.x = obj->srt.transl.x;
@@ -1152,12 +1152,12 @@ void objControlObject(Object *obj) {
 
         obj->unkAF &= ~(0x1 | 0x2 | 0x4);
 
-        update_pi_manager_array(1, -1);
+        diCpuTraceObject(1, -1);
     }
 }
 
 void objUpdateObject(Object *obj) {
-    update_pi_manager_array(3, obj->id);
+    diCpuTraceObject(3, obj->id);
 
     if (obj->dll != NULL && !(obj->stateFlags & OBJSTATE_UPDATE_DISABLED)) {
         obj->dll->vtbl->Update(obj);
@@ -1166,7 +1166,7 @@ void objUpdateObject(Object *obj) {
             &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z);
     }
 
-    update_pi_manager_array(3, -1);
+    diCpuTraceObject(3, -1);
 }
 
 u32 objAllocDLLData(Object *obj, u32 addr) {
@@ -1509,9 +1509,9 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
     /*sp+0x30*/ s32 numStackObjs;
 
     if (obj->dll != NULL) {
-        update_pi_manager_array(4, obj->id);
+        diCpuTraceObject(4, obj->id);
         obj->dll->vtbl->Free(obj, onlySelf);
-        update_pi_manager_array(4, -1);
+        diCpuTraceObject(4, -1);
         dllFree(obj->dll);
     }
 
