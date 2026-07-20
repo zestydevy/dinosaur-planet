@@ -77,7 +77,7 @@ segments:
     - [0x334F0, c, objexpr]
     - [0x359E0, c, objprint]
     - [0x37C90, c, pi]
-    - [0x38020, c, crash]
+    - [0x38020, c, reset]
     - [0x38380, c, rcp]
     - [0x3A190, c, route]
     - [0x3AFB0, c, rarezip]
@@ -320,7 +320,7 @@ segments:
     - [0x92310, .data, objlib]
     - [0x92320, .data, objexpr]
     - [0x92350, .data, objprint]
-    - [0x92370, .data, crash]
+    - [0x92370, .data, reset]
     - [0x92380, .data, rcp]
     - [0x924B0, .data, rarezip]
     - [0x924D0, .data, scheduler]
@@ -475,7 +475,7 @@ segments:
     # - { type: .bss, vram: 0x800b2e00, name: objexpr }
     # - { type: .bss, vram: 0x800b2e10, name: objprint }
     # - { type: .bss, vram: 0x800b2e30, name: pi }
-    # - { type: .bss, vram: 0x800b2ed0, name: crash }
+    # - { type: .bss, vram: 0x800b2ed0, name: reset }
     # - { type: .bss, vram: 0x800b3790, name: rcp }
     # - { type: .bss, vram: 0x800b4920, name: route }
     # - { type: .bss, vram: 0x800b4930, name: rarezip }

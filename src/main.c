@@ -7,8 +7,9 @@
 #include "sys/audio/amAudio.h"
 #include "sys/asset.h"
 #include "sys/audio.h"
+#include "sys/dll.h"
 #include "sys/joypad.h"
-#include "sys/crash.h"
+#include "sys/reset.h"
 #include "sys/di_cpu.h"
 #include "sys/pi.h"
 #include "sys/memory.h"
@@ -23,6 +24,7 @@
 #include "sys/boot.h"
 #include "sys/di_rcp.h"
 #include "sys/rsp_segment.h"
+#include "sys/thread.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
 #include "sys/segment_1D900.h"
@@ -32,6 +34,7 @@
 #include "dll.h"
 #include "constants.h"
 #include "dongle.h"
+#include "macros.h"
 
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
@@ -193,7 +196,8 @@ void mainInit(void) {
         tvMode = OS_VI_NTSC_LAN1;
     }
 
-    osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
+    osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 
+        OS_SCHEDULER_THREAD_PRIORITY, tvMode, 1);
     diCpuTraceInit();
     piInit();
     rcpInit(&osscheduler_);
@@ -203,7 +207,7 @@ void mainInit(void) {
     gCurGfx = gMainGfx[gFrameBufIdx];
     gLastInsertedControllerIndex = joyInit();
     joyStartControllerThread(&osscheduler_);
-    start_crash_thread(&osscheduler_);
+    resetInit(&osscheduler_);
     texInitTextures();
     trackInit();
     func_8001CD00();
@@ -216,7 +220,7 @@ void mainInit(void) {
     footstepsInit();
     fontsInit();
     menuInit();
-    amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
+    amCreateAudioMgr(&osscheduler_, AUDIO_THREAD_PRIORITY);
     mapInitGlobalMap();
     if (osMemSize != EXPANSION_RAM_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);

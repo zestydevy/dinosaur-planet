@@ -5,6 +5,7 @@
 #include "sys/interrupt_util.h"
 #include "sys/map.h"
 #include "sys/objects.h"
+#include "sys/thread.h"
 #include "sys/voxmap.h"
 #include "macros.h"
 

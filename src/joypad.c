@@ -336,7 +336,7 @@ void joyStartControllerThread(OSSched *scheduler) {
         /*entry*/   &joyControllerThreadEntry,
         /*arg*/     NULL,
         /*sp*/      &gControllerThreadStack[STACKSIZE(THREAD_STACK_CONTROLLER)],
-        /*pri*/     12
+        /*pri*/     CONTROLLER_THREAD_PRIORITY
     );
 
     osStartThread(&gControllerThread);

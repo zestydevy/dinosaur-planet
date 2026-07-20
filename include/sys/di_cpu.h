@@ -10,11 +10,11 @@ void diCpuTraceInit(void);
  * Stops all active application threads (those with priorities between 1 and OS_PRIORITY_APPMAX).
  */
 void diCpuStopActiveAppThreads(void);
-void diCpuDrawCpuInfo(OSThread **threads, s32 count, s32 offset);
-void diCpuDrawStackTrace(OSThread**, s32, s32);
-void diCpuDrawFpuInfo(OSThread **threads, s32 count, s32 threadIdx);
+void diCpuDrawCpuInfo(OSThread** threads, s32 threadsCount, s32 threadsIdx);
+void diCpuDrawStackTrace(OSThread** threads, s32 threadsCount, s32 threadsIdx);
+void diCpuDrawFpuInfo(OSThread **threads, s32 threadsCount, s32 threadsIdx);
 void diCpuCrashScreenInit(void);
-void diCpuTraceFile(const char *cFileLabel, s32 line);
+void diCpuTraceFile(const char *filename, s32 lineno);
 
 void* diCpuTraceCurrentStack(void);
 

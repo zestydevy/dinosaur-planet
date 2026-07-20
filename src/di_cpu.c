@@ -3,7 +3,8 @@
 #include "PR/os_internal.h"
 #include "libc/stdarg.h"
 #include "libc/string.h"
-#include "sys/crash.h"
+#include "sys/dll.h"
+#include "sys/thread.h"
 #include "sys/vi.h"
 #include "sys/print.h"
 #include "macros.h"
@@ -286,11 +287,11 @@ void diCpuTraceInit(void) {
 
     osCreateThread(
         /*t*/       &gDiCpuThread,
-        /*id*/      -1,
+        /*id*/      DI_CPU_THREAD_ID,
         /*entry*/   &diCpuThreadMain,
         /*arg*/     NULL,
         /*sp*/      &gDiCpuThreadStack[STACKSIZE(OS_PIM_STACKSIZE)],
-        /*pri*/     OS_PRIORITY_MAX
+        /*pri*/     DI_CPU_THREAD_PRIORITY
     );
 
     osStartThread(&gDiCpuThread);

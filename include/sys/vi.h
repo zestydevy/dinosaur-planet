@@ -22,7 +22,7 @@ extern u16 *gBackDepthBuffer;
 extern s32 gDisplayHertz;
 extern f32 gAspectRatio; //1.121212 for PAL, 1.333 for NTSC/MPAL.
 
-void viInit(s32 videoMode, OSSched* scheduler, s32 someBool);
+void viInit(s32 videoMode, OSSched* scheduler, s32 doOneTimeInit);
 /**
  * Returns gVideoMode.
  */

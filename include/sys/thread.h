@@ -3,9 +3,6 @@
 #ifndef _SYS_THREAD_H
 #define _SYS_THREAD_H
 
-#include "ultra64.h"
-#include "PR/sched.h"
-
 #define IDLE_THREAD_SIZE 0x40
 #define IDLE_THREAD_ID 1
 #define IDLE_THREAD_PRIORITY OS_PRIORITY_IDLE
@@ -15,22 +12,21 @@
 #define MAIN_THREAD_PRIORITY 10
 
 #define OS_SCHEDULER_THREAD_ID 5
+#define OS_SCHEDULER_THREAD_PRIORITY 13
+
 #define CONTROLLER_THREAD_ID 98
+#define CONTROLLER_THREAD_PRIORITY 12
 
-#define CRASH_THREAD_ID 100
-#define CRASH_THREAD_PRIORITY 0x80
+#define RESET_THREAD_ID 100
+#define RESET_THREAD_PRIORITY 0x80
 
-extern OSThread* __osRunningThread;
-extern OSThread* __osRunQueue;
-// this needs double checking. its address is within gMainThreadStack....
-extern u64 gIdleThreadStack[];
-extern u64 gMainThreadStack[];
-extern OSThread gIdleThread;
-extern OSThread gMainThread;
+#define ASSET_THREAD_ID 99
+#define ASSET_THREAD_PRIORITY 11
 
-/**
- * @returns The address of s->interruptQ.
- */
-OSMesgQueue *osScGetInterruptQ(OSSched *s);
+#define AUDIO_THREAD_ID 4
+#define AUDIO_THREAD_PRIORITY 14
+
+#define DI_CPU_THREAD_ID (-1)
+#define DI_CPU_THREAD_PRIORITY OS_PRIORITY_MAX
 
 #endif //_SYS_THREAD_H

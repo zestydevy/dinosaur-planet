@@ -6,6 +6,7 @@
 #include "sys/audio/speaker.h"
 #include "sys/audio.h"
 #include "sys/pi.h"
+#include "sys/thread.h"
 #include "sys/vi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -147,7 +148,7 @@ void amCreateAudioMgr(OSSched* sched, OSPri threadPriority) {
     osCreateMesgQueue(&__am_audioReplyMsgQ, __am_audioReplyMsgBuf, MAX_MESGS);
     osCreateMesgQueue(&__am_audioFrameMsgQ, __am_audioFrameMsgBuf, MAX_MESGS);
     osCreateMesgQueue(&audDMAMessageQ, audDMAMessageBuf, NUM_DMA_MESSAGES);
-    osCreateThread(&gAudioThread, 4, __amMain, NULL, 
+    osCreateThread(&gAudioThread, AUDIO_THREAD_ID, __amMain, NULL, 
         &gAudioThreadStack[STACKSIZE(AUDIO_THREAD_STACK_SIZE)], threadPriority);
     
     speakerSetMode(4);

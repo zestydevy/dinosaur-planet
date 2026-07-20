@@ -34,4 +34,9 @@
  */
 #define DEPTH_BUFFER_ADDR 0x80200000
 
+/** Static regions to persist some memory across NMI resets (for debugging). */
+#define RESET_ASSET_THREAD_COPY ((OSThread *)0x807FF000)
+#define RESET_MAIN_THREAD_COPY ((OSThread *)0x807FF230)
+#define RESET_DLL_LIST_COPY ((void *)0x807FF460)
+
 #endif
