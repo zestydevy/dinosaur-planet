@@ -137,11 +137,11 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
 }
 
 // offset: 0x1B4 | func: 3
-void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4, s16 arg5, f32 arg6, s32 objID) {
+void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 yaw, s16 pitch, f32 speed, s32 objID) {
     ObjSetup *setup;
     Object *projectile;
 
-    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid (TODO: use KamerianFlame_Setup)
     setup->x = x;
     setup->y = y;
     setup->z = z;
@@ -151,11 +151,11 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->fadeDistance = 0xFF;
     projectile = objSetupObject(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
-        projectile->srt.pitch = arg5;
-        projectile->srt.yaw = arg4;
-        projectile->velocity.x = Cosf(arg5) * Sinf(arg4) * arg6;
-        projectile->velocity.y = Sinf(arg5) * arg6;
-        projectile->velocity.z = Cosf(arg5) * Cosf(arg4) * arg6;
+        projectile->srt.pitch = pitch;
+        projectile->srt.yaw = yaw;
+        projectile->velocity.x = Cosf(pitch) * Sinf(yaw) * speed;
+        projectile->velocity.y = Sinf(pitch) * speed;
+        projectile->velocity.z = Cosf(pitch) * Cosf(yaw) * speed;
         projectile->unkC4 = self;
     }
 }

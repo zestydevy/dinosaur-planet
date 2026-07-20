@@ -122,9 +122,8 @@ void DIMCannon_obj_Control(Object* self) {
     Object* player;
     Object* sidekick;
     f32 animSpeed;
-    u8 temp_v0;
-    Object* cannonPtr;
     u32 distracted;
+    Object* cannonPtr;
 
     objSetup = (DIMCannon_Setup*)self->setup;
     sidekick = objGetSidekick();
@@ -598,7 +597,7 @@ void DIMCannon_fireWhenReady(Object* self) {
         shotSetup->velocityY = mathSinfInterp(barrelJoint->pitch) * 50.0f;
         shotSetup->velocityX = mathCosfInterp(barrelJoint->pitch) * 50.0f;
         
-        shot = objSetupObject((ObjSetup*)shotSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, NULL);
+        shot = objSetupObject(&shotSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, NULL);
         shot->unkC4 = self;
     }
     
@@ -721,5 +720,5 @@ Object* DIMCannon_createCannonBallExplosion(Object* self) {
     boomSetup->base.x = self->srt.transl.x;
     boomSetup->base.y = self->srt.transl.y;
     boomSetup->base.z = self->srt.transl.z;
-    return objSetupObject((ObjSetup*)boomSetup, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, self->parent);
+    return objSetupObject(&boomSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, self->parent);
 }

@@ -313,5 +313,5 @@ Object* DRbullet_create_lfxEmitter(Object* self, s32 arg1) {
     lfxSetup->base.z = self->srt.transl.z;
     lfxSetup->unk1E = arg1;
     lfxSetup->unk22 = -1;
-    return objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

@@ -310,7 +310,7 @@ Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
     dustSetup->base.loadDistance = 0xFF;
     dustSetup->base.fadeDistance = 0xFF;
     
-    return objSetupObject((ObjSetup*)dustSetup, 5, self->mapID, -1, self->parent);
+    return objSetupObject(&dustSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0xC40 | func: 12

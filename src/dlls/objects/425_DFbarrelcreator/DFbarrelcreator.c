@@ -45,7 +45,7 @@ void DFbarrelcreator_control(Object* self) {
     barrel->base.x = self->srt.transl.x;
     barrel->base.y = self->srt.transl.y - 30.0f;
     barrel->base.z = self->srt.transl.z;
-    objSetupObject((ObjSetup*)barrel, 5, self->mapID, -1, NULL);
+    objSetupObject((ObjSetup*)barrel, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
 }
 
 // offset: 0x140 | func: 2 | export: 2

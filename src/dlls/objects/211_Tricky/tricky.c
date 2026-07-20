@@ -432,7 +432,7 @@ void dll_211_control(Object* self) {
             temp_v0_2->x = self->globalPosition.x;
             temp_v0_2->y = self->globalPosition.y;
             temp_v0_2->z = self->globalPosition.z;
-            objData->unk28 = objSetupObject(temp_v0_2, 5, -1, -1, self->parent);
+            objData->unk28 = objSetupObject(temp_v0_2, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
             dll_211_func_9024(objData, &objData->unk28->globalPosition);
             objData->unk1A = 0;
             objData->unk18 = 14;
@@ -3267,7 +3267,7 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
         temp_v0->base.loadFlags = 2;
         temp_v0->base.byte5 = 1;
         temp_v0->timer = i * 10;
-        objData->unk5E4[i] = objSetupObject(&temp_v0->base, 5, self->mapID, -1, self->parent);
+        objData->unk5E4[i] = objSetupObject(&temp_v0->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     }
     temp_v0_2 = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     temp_v0_2->base.loadFlags = 2;
@@ -3288,7 +3288,7 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
     temp_v0_2->bank = 1;
     temp_v0_2->indexInBank = 0x4A;
     temp_v0_2->fxRate = -0x1E;
-    objData->unk5F0 = objSetupObject(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
+    objData->unk5F0 = objSetupObject(&temp_v0_2->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0x9200 | func: 83

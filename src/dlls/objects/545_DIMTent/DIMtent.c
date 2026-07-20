@@ -174,7 +174,7 @@ void DIMTent_obj_Control(Object* self) {
             cogSetup->gamebitCount = NO_GAMEBIT;
             cogSetup->objHitsValue = 5;
             cogSetup->yaw = self->srt.yaw >> 8;
-            objSetupObject((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
+            objSetupObject(&cogSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
         }
     }
 }

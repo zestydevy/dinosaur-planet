@@ -166,7 +166,7 @@ void campfire_control(Object* self) {
             lfxSetup->unk18 = 2400;
             lfxSetup->unk1A = 2400;
             lfxSetup->unk1C = 200;
-            objData->light = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+            objData->light = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         }
     }
 }

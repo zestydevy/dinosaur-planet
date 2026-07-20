@@ -214,8 +214,8 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupFlame->unk1E = 7;
         setupFlame->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         
-        objSetupObject((ObjSetup*)setupLF, 5, -1, -1, 0);
-        objSetupObject((ObjSetup*)setupFlame, 5, -1, -1, 0);
+        objSetupObject(&setupLF->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, 0);
+        objSetupObject(&setupFlame->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, 0);
         
         lfIndex++;
         if (lfIndex >= 4) {

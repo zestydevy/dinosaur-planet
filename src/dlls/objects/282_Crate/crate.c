@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/objtype.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -162,8 +163,8 @@ void crate_control(Object* self) {
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitSecondary = NO_GAMEBIT;
             objSetupObject(
-                (ObjSetup*)foodSetup, 
-                5, 
+                &foodSetup->base, 
+                OBJINIT_STANDALONE | OBJINIT_FLAG4, 
                 self->mapID, 
                 -1, 
                 self->parent

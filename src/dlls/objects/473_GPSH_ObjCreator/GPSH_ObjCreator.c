@@ -118,9 +118,9 @@ void GPSH_ObjCreator_control(Object* self) {
                 pickObjSetup->base.y = self->srt.transl.y;
                 pickObjSetup->base.z = self->srt.transl.z;
                 pickObjSetup->base.objId = objdata->type + OBJ_GPSHpickobjroot;
-                pickObjSetup->unk18 = (s8) (self->srt.yaw >> 8);
+                pickObjSetup->unk18 = self->srt.yaw >> 8;
                 pickObjSetup->unk1A = data_0[objdata->type];
-                objSetupObject((ObjSetup*)pickObjSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
+                objSetupObject(&pickObjSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent)
                     ->modelInstIdx = 0;
                 objdata->timer = 100;
                 objdata->timerRate = 0;
@@ -139,7 +139,7 @@ void GPSH_ObjCreator_control(Object* self) {
                 flybaddieSetup->base.byte6 = setup->base.byte6;
                 flybaddieSetup->base.fadeDistance = setup->base.fadeDistance;
                 flybaddieSetup->unk1A = -0x3C;
-                objSetupObject((ObjSetup*)flybaddieSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+                objSetupObject(&flybaddieSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
                 objdata->timer = 100;
                 objdata->timerRate = 0;
             }

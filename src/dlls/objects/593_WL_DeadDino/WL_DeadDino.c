@@ -318,5 +318,5 @@ static Object* WL_DeadDino_createMagicDust(Object* self) {
     magicSetup->base.loadDistance = 0xFF;
     magicSetup->base.fadeDistance = 0xFF;
     magicSetup->base.objId = OBJ_MagicDustMid;
-    return objSetupObject((ObjSetup*)magicSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+    return objSetupObject(&magicSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
 }

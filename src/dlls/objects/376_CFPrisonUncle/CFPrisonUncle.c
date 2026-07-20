@@ -297,7 +297,7 @@ int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* anim
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        objSetupObject((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objSetupObject(&dustSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 
     return 0;

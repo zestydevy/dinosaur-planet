@@ -63,7 +63,7 @@ void Barrel_control(Object* self) {
             explosionSetup->base.x = self->srt.transl.x;
             explosionSetup->base.y = self->srt.transl.y;
             explosionSetup->base.z = self->srt.transl.z;
-            objSetupObject((ObjSetup*)explosionSetup, 5, self->mapID, -1, self->parent);
+            objSetupObject(&explosionSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);

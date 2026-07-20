@@ -191,7 +191,7 @@ Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scro
     flameSetup->rotateSpeed = rotateSpeed; 
     flameSetup->yaw = yaw;
     flameSetup->scrollSpeed = scrollSpeed;
-    return objSetupObject((ObjSetup*)flameSetup, 5, -1, -1, self->parent);
+    return objSetupObject(&flameSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
 }
 
 // offset: 0x614 | func: 8

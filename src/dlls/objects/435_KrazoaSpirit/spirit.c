@@ -137,7 +137,7 @@ void Spirit_control(Object* self) {
         lfxSetup->unk1A = 0;
         lfxSetup->unk1C = 0;
         lfxSetup->unk24 = 0;
-        data_lfxEmitter = objSetupObject((ObjSetup *) lfxSetup, 5, self->mapID, -1, self->parent);
+        data_lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         objData->lastMessage = 0;
     } else if (objData->lastMessage == 2) {
         if (data_lfxEmitter) {
