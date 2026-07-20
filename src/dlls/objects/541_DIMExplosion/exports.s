@@ -8,10 +8,10 @@ _exports:
 .dword DIMExplosion_dtor
 
 # export table
-/*0*/ .dword DIMExplosion_setup
-/*1*/ .dword DIMExplosion_control
-/*2*/ .dword DIMExplosion_update
-/*3*/ .dword DIMExplosion_print
-/*4*/ .dword DIMExplosion_free
-/*5*/ .dword DIMExplosion_get_model_flags
-/*6*/ .dword DIMExplosion_get_data_size
+/*0*/ .dword DIMExplosion_obj_Setup
+/*1*/ .dword DIMExplosion_obj_Control
+/*2*/ .dword DIMExplosion_obj_Update
+/*3*/ .dword DIMExplosion_obj_Print
+/*4*/ .dword DIMExplosion_obj_Free
+/*5*/ .dword DIMExplosion_obj_GetModelFlags
+/*6*/ .dword DIMExplosion_obj_GetDataSize
