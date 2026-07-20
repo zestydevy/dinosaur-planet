@@ -8,7 +8,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "dll.h"
 
 #include "dlls/objects/469_ECSHshrine.h"
@@ -586,13 +586,13 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
         if (aData->messages[i] != 0) {
             switch (aData->messages[i]) {
             case 1:
-                func_80000860(self, self, 0xCB, 0);
+                envfxAction(self, self, 0xCB, 0);
                 break;
             case 2:
                 if (D_80092A7C[0] == -1) {
-                    func_80000860(self, self, 0x14, 0);
+                    envfxAction(self, self, 0x14, 0);
                 } else {
-                    func_80000860(self, self, D_80092A7C[0], 0);
+                    envfxAction(self, self, D_80092A7C[0], 0);
                 }
                 break;
             case 3:

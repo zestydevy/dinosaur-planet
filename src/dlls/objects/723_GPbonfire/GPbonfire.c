@@ -17,7 +17,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "dll.h"
 #include "types.h"
 
@@ -172,9 +172,9 @@ void GPbonfire_control(Object* self) {
                 objdata->currentState |= 2;
             }
             if ((objdata->currentState & 2) && !(objdata->previousState & 2)) {
-                func_80000450(self, self, 0x59, 0, 0, 0);
+                lfxAction(self, self, 0x59, 0, 0, 0);
             } else if (!(objdata->currentState & 2) && (objdata->previousState & 2)) {
-                func_80000450(self, self, 0x5A, 0, 0, 0);
+                lfxAction(self, self, 0x5A, 0, 0, 0);
             }
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, NULL, PARTFXFLAG_2, -1, NULL);
 

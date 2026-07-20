@@ -4,7 +4,7 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/vi.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 
 typedef struct {
 /*00*/ s32 _unk0;
@@ -122,10 +122,10 @@ int SB_Lamp_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjDa
     }
     if ((range1 < 75.0f) && (objdata->unk33 == 1)) {
         objdata->unk33 = 0;
-        func_80000450(self, self, 92, 0, 0, 0);
+        lfxAction(self, self, 92, 0, 0, 0);
     } else if ((range1 > 75.0f) && (objdata->unk33 == 0)) {
         objdata->unk33 = 1;
-        func_80000450(self, self, 93, 0, 0, 0);
+        lfxAction(self, self, 93, 0, 0, 0);
     }
     if ((self->opacity > 128) && (range2 < 400.0f)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8C, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);

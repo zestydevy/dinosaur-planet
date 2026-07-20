@@ -8,7 +8,7 @@
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "dll.h"
 
 typedef struct {
@@ -311,13 +311,13 @@ static int CCSH_Shrine_anim_callback(Object* actor, Object* animObj, AnimObj_Dat
                 objdata->unkF = 7;
                 break;
             case 1:
-                func_80000860(actor, actor, 0xC3, 0);
+                envfxAction(actor, actor, 0xC3, 0);
                 break;
             case 2:
                 if (*D_80092A7C == -1) {
-                    func_80000860(actor, actor, 0x14, 0);
+                    envfxAction(actor, actor, 0x14, 0);
                 } else {
-                    func_80000860(actor, actor, *D_80092A7C, 0);
+                    envfxAction(actor, actor, *D_80092A7C, 0);
                 }
                 break;
             case 3:

@@ -8,7 +8,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "dll.h"
 #include "types.h"
 
@@ -255,7 +255,7 @@ void DFPLift_free(Object *self, s32 a1) {
         objdata->soundHandle = 0;
     }
 
-    func_80000450(self, self, 0, 0, 0, 0);
+    lfxAction(self, self, 0, 0, 0, 0);
 }
 
 // offset: 0x8F8 | func: 5 | export: 5

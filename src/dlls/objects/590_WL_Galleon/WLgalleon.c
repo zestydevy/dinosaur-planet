@@ -13,7 +13,7 @@
 #include "types.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 
 typedef struct {
     u8 unk0;
@@ -219,9 +219,9 @@ static int WLgalleon_anim_callback(Object* self, Object* animObj, AnimObj_Data* 
                 break;
             case 2:
                 //Setting envFxActions
-                func_80000450(self, self, 0x77, 0, 0, 0);
-                func_80000450(self, self, 0x78, 0, 0, 0);
-                func_80000450(self, self, 0x80, 0, 0, 0);
+                lfxAction(self, self, 0x77, 0, 0, 0);
+                lfxAction(self, self, 0x78, 0, 0, 0);
+                lfxAction(self, self, 0x80, 0, 0, 0);
                 break;
             case 3:
                 gDLL_23->vtbl->func_4C(0, 0x1e, 0x50);

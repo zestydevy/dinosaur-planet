@@ -1,6 +1,6 @@
 #include "common.h"
 #include "sys/objtype.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 
 typedef struct{
     s32 _unk0;
@@ -112,10 +112,10 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
     objGetNearestTypeTo(OBJTYPE_56, self, &sp70);
     if ((sp70 < setup->unk1A) && (objdata->unk33 == 1)) {
         objdata->unk33 = 0;
-        func_80000450(self, self, 0x5C, 0, 0, 0);
+        lfxAction(self, self, 0x5C, 0, 0, 0);
     } else if ((setup->unk1A < sp70) && (objdata->unk33 == 0)) {
         objdata->unk33 = 1;
-        func_80000450(self, self, 0x5D, 0, 0, 0);
+        lfxAction(self, self, 0x5D, 0, 0, 0);
     }
     if ((self->opacity >= 0x81) && (sp60 < 400.0f)) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_8C, NULL, PARTFXFLAG_10000 | PARTFXFLAG_2, -1, NULL);
@@ -158,7 +158,7 @@ void dll_405_free(Object* self, s32 a1) {
     }
     objdata->unk4 = NULL;
     if (objdata->unk33 == 0) {
-        func_80000450(self, self, 0x5DU, 0, 0, 0);
+        lfxAction(self, self, 0x5DU, 0, 0, 0);
     }
 }
 

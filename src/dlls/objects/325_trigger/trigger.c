@@ -16,8 +16,8 @@
 #include "sys/objtype.h"
 #include "sys/footsteps.h"
 #include "sys/segment_1D900.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 #include "dll_def.h"
 #include "types.h"
@@ -628,11 +628,11 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_ENV_FX:
             // "Trigger [%d], Environment Effect, Action Num [%d], Range [%d]"
-            func_80000860(self, activator, (cmd->param2 | (cmd->param1 << 8)), activatorDistSquared);
+            envfxAction(self, activator, (cmd->param2 | (cmd->param1 << 8)), activatorDistSquared);
             break;
         case TRG_CMD_LIGHTING:
             // "Trigger [%d], Lighting,           Action      [%d], Range [%d], PassDir [%d]"
-            func_80000450(self, activator, (cmd->param2 | (cmd->param1 << 8)), dir, activatorDistSquared, 0);
+            lfxAction(self, activator, (cmd->param2 | (cmd->param1 << 8)), dir, activatorDistSquared, 0);
             break;
         case TRG_CMD_ANIM_SEQ:
             switch (cmd->param1) {

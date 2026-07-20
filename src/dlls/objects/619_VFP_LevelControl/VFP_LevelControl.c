@@ -8,8 +8,8 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/print.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 #include "types.h"
 
@@ -40,19 +40,19 @@ void VFP_LevelControl_setup(Object* self, ObjSetup* setup, s32 a2) {
     case 2:
         break;
     case 0:
-        func_80000860(self, self, 0x105, 0);
-        func_80000860(self, self, 0x106, 0);
-        func_80000860(self, self, 0x107, 0);
+        envfxAction(self, self, 0x105, 0);
+        envfxAction(self, self, 0x106, 0);
+        envfxAction(self, self, 0x107, 0);
         break;
     case 3:
-        func_80000860(self, self, 0x105, 0);
-        func_80000860(self, self, 0x106, 0);
-        func_80000860(self, self, 0x107, 0);
-        func_80000450(self, self, 0x166, 0, 0, 0);
-        func_80000450(self, self, 0x167, 0, 0, 0);
-        func_80000450(self, self, 0x168, 0, 0, 0);
-        func_80000450(self, self, 0x169, 0, 0, 0);
-        func_80000450(self, self, 0x174, 0, 0, 0);
+        envfxAction(self, self, 0x105, 0);
+        envfxAction(self, self, 0x106, 0);
+        envfxAction(self, self, 0x107, 0);
+        lfxAction(self, self, 0x166, 0, 0, 0);
+        lfxAction(self, self, 0x167, 0, 0, 0);
+        lfxAction(self, self, 0x168, 0, 0, 0);
+        lfxAction(self, self, 0x169, 0, 0, 0);
+        lfxAction(self, self, 0x174, 0, 0, 0);
         break;
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
@@ -75,15 +75,15 @@ void VFP_LevelControl_control(Object* self) {
             _data_0 -= (s16)gUpdateRateF;
             if (_data_0 <= 0) {
                 _data_0 = 0;
-                func_80000860(self, self, 0x105, 0);
-                func_80000860(self, self, 0x106, 0);
-                func_80000860(self, self, 0x107, 0);
-                func_80000450(self, self, 0x166, 0, 0, 0);
-                func_80000450(self, self, 0x167, 0, 0, 0);
-                func_80000450(self, self, 0x168, 0, 0, 0);
-                func_80000450(self, self, 0x169, 0, 0, 0);
-                func_80000450(self, self, 0x174, 0, 0, 0);
-                func_80000450(self, self, 0x178, 0, 0, 0);
+                envfxAction(self, self, 0x105, 0);
+                envfxAction(self, self, 0x106, 0);
+                envfxAction(self, self, 0x107, 0);
+                lfxAction(self, self, 0x166, 0, 0, 0);
+                lfxAction(self, self, 0x167, 0, 0, 0);
+                lfxAction(self, self, 0x168, 0, 0, 0);
+                lfxAction(self, self, 0x169, 0, 0, 0);
+                lfxAction(self, self, 0x174, 0, 0, 0);
+                lfxAction(self, self, 0x178, 0, 0, 0);
                 mainSetBits(BIT_SpellStone_DIM, 1);
             }
         }
@@ -96,15 +96,15 @@ void VFP_LevelControl_control(Object* self) {
             if (_data_0 <= 0) {
                 _data_0 = 0;
                 mainSetBits(BIT_DB_Unlock_Act_Two, 1);
-                func_80000860(self, self, 0x105, 0);
-                func_80000860(self, self, 0x106, 0);
-                func_80000860(self, self, 0x107, 0);
-                func_80000450(self, self, 0x166, 0, 0, 0);
-                func_80000450(self, self, 0x167, 0, 0, 0);
-                func_80000450(self, self, 0x168, 0, 0, 0);
-                func_80000450(self, self, 0x169, 0, 0, 0);
-                func_80000450(self, self, 0x174, 0, 0, 0);
-                func_80000450(self, self, 0x178, 0, 0, 0);
+                envfxAction(self, self, 0x105, 0);
+                envfxAction(self, self, 0x106, 0);
+                envfxAction(self, self, 0x107, 0);
+                lfxAction(self, self, 0x166, 0, 0, 0);
+                lfxAction(self, self, 0x167, 0, 0, 0);
+                lfxAction(self, self, 0x168, 0, 0, 0);
+                lfxAction(self, self, 0x169, 0, 0, 0);
+                lfxAction(self, self, 0x174, 0, 0, 0);
+                lfxAction(self, self, 0x178, 0, 0, 0);
                 mainSetBits(BIT_SpellStone_WC, 1);
                 mainSetBits(BIT_SpellStone_DIM_Activated, 1);
             }
@@ -118,14 +118,14 @@ void VFP_LevelControl_control(Object* self) {
                 _data_0 = 0;
                 mainSetBits(BIT_DB_Unlock_Act_Two, 1);
                 mainSetBits(BIT_DB_Unlock_Act_Three, 1);
-                func_80000860(self, self, 0x105, 0);
-                func_80000860(self, self, 0x106, 0);
-                func_80000860(self, self, 0x107, 0);
-                func_80000450(self, self, 0x166, 0, 0, 0);
-                func_80000450(self, self, 0x167, 0, 0, 0);
-                func_80000450(self, self, 0x168, 0, 0, 0);
-                func_80000450(self, self, 0x169, 0, 0, 0);
-                func_80000450(self, self, 0x174, 0, 0, 0);
+                envfxAction(self, self, 0x105, 0);
+                envfxAction(self, self, 0x106, 0);
+                envfxAction(self, self, 0x107, 0);
+                lfxAction(self, self, 0x166, 0, 0, 0);
+                lfxAction(self, self, 0x167, 0, 0, 0);
+                lfxAction(self, self, 0x168, 0, 0, 0);
+                lfxAction(self, self, 0x169, 0, 0, 0);
+                lfxAction(self, self, 0x174, 0, 0, 0);
                 mainSetBits(BIT_SpellStone_DR, 1);
             }
         }

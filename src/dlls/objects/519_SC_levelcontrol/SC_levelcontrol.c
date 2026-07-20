@@ -12,8 +12,8 @@
 #include "sys/menu.h"
 #include "sys/map.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "types.h"
 #include "sys/rand.h"
 
@@ -27,7 +27,7 @@
     BIT_SC_Hit_Village_Tree_Two,
     BIT_SC_Hit_Village_Tree_Three
 };
-// passed to func_80000860
+// passed to envfxAction
 /*0x8*/ static u16 _data_8[SOMESIZE] = {
     0x0050, 0x01b3, 0x0050, 0x01b3, 0x01b6, 0x01b9, 0x01bc,
     0x01bc, 0x01b6, 0x01b3, 0x0050, 0x0050, 0x0050, 0x01b3,
@@ -55,7 +55,7 @@
     0x01c3, 0x01c3, 0x01a8, 0x01a8, 0x01c3, 0x01c3, 0x01c3,
     0x01c3, 0x01c3, 0x01c3, 0x01c3, 0x01c3, 0x01c3, 0x01c3
 };
-// passed to func_80000450
+// passed to lfxAction
 /*0xE8*/ static u16 _data_E8[SOMESIZE] = {
     0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5,
     0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5, 0x01e5,
@@ -201,7 +201,7 @@ void SC_levelcontrol_free(Object *self, s32 arg1) {
 
     objdata = self->data;
     if (arg1 == 0) {
-        func_80000860(self, objGetPlayer(), 0x1C3, 0);
+        envfxAction(self, objGetPlayer(), 0x1C3, 0);
     }
     mainSetBits(BIT_SC_UNKNOWN_2BA, objdata->index1);
     menu_func_8000FA2C();
@@ -336,25 +336,25 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
             objdata->index1 = 0;
         }
 
-        func_80000860(self, player, _data_40[objdata->index1], 0);
-        func_80000860(self, player, _data_8[objdata->index1], 0);
-        func_80000860(self, player, _data_78[objdata->index1], 0);
+        envfxAction(self, player, _data_40[objdata->index1], 0);
+        envfxAction(self, player, _data_8[objdata->index1], 0);
+        envfxAction(self, player, _data_78[objdata->index1], 0);
 
         if (_data_B0[objdata->index1] != 0) {
-            func_80000860(self, player, _data_B0[objdata->index1], 0);
+            envfxAction(self, player, _data_B0[objdata->index1], 0);
         }
 
-        func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
-        func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
+        lfxAction(self, player, _data_E8[objdata->index1], 0, 0, 0);
+        lfxAction(self, player, _data_120[objdata->index1], 0, 0, 0);
 
         if (isNighttime) {
             gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
-            func_80000450(self, player, 0x1E3, 0, 0, 0);
+            lfxAction(self, player, 0x1E3, 0, 0, 0);
         } else {
             gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
             gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
-            func_80000450(self, player, 0x1E4, 0, 0, 0);
+            lfxAction(self, player, 0x1E4, 0, 0, 0);
         }
 
         mainSetBits(BIT_SC_UNKNOWN_2BA, objdata->index1);
@@ -373,25 +373,25 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
                 if (objdata->index1 >= SOMESIZE) {
                     objdata->index1 = 0;
                 }
-                func_80000860(self, player, _data_40[objdata->index1], 0);
+                envfxAction(self, player, _data_40[objdata->index1], 0);
                 mainSetBits(BIT_SC_UNKNOWN_2BA, objdata->index1);
             }
             if (objdata->unk3 == 49) {
                 if (_data_B0[objdata->index1] != 0) {
-                    func_80000860(self, player, _data_B0[objdata->index1], 0);
+                    envfxAction(self, player, _data_B0[objdata->index1], 0);
                 }
             }
             if (objdata->unk3 == 39) {
-                func_80000860(self, player, _data_8[objdata->index1], 0);
+                envfxAction(self, player, _data_8[objdata->index1], 0);
             }
             if (objdata->unk3 == 29) {
-                func_80000860(self, player, _data_78[objdata->index1], 0);
+                envfxAction(self, player, _data_78[objdata->index1], 0);
             }
             if (objdata->unk3 == 19) {
-                func_80000450(self, player, _data_E8[objdata->index1], 0, 0, 0);
+                lfxAction(self, player, _data_E8[objdata->index1], 0, 0, 0);
             }
             if (objdata->unk3 == 9) {
-                func_80000450(self, player, _data_120[objdata->index1], 0, 0, 0);
+                lfxAction(self, player, _data_120[objdata->index1], 0, 0, 0);
             }
         }
         if (objdata->unk3 <= 0) {
@@ -400,13 +400,13 @@ void SC_levelcontrol_func_BBC(Object *self, u8 arg1) {
                     gDLL_5_AMSEQ2->vtbl->set(self, 0xEC, 0, 0, 0);
                     gDLL_5_AMSEQ2->vtbl->set(self, 0xBA, 0, 0, 0);
                 }
-                func_80000450(self, player, 0x1E3, 0, 0, 0);
+                lfxAction(self, player, 0x1E3, 0, 0, 0);
             } else {
                 if (objdata->unk2 == 0) {
                     gDLL_5_AMSEQ2->vtbl->set(self, 0x12, 0, 0, 0);
                     gDLL_5_AMSEQ2->vtbl->set(self, 0xB9, 0, 0, 0);
                 }
-                func_80000450(self, player, 0x1E4, 0, 0, 0);
+                lfxAction(self, player, 0x1E4, 0, 0, 0);
             }
             objdata->unk3 = 0;
         }

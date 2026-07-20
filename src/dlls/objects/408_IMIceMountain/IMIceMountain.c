@@ -6,8 +6,8 @@
 #include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "sys/vi.h"
 
 #include "dlls/objects/408_IMIceMountain.h"
@@ -135,13 +135,13 @@ int IMIceMountain_anim_callback(Object *self, Object *animObj, AnimObj_Data *ani
 
     for (i = 0; i < animObjData->messageCount; i++) {
         if (animObjData->messages[i] == 1) {
-            func_80000860(self, self, 0xA3, 0);
-            func_80000860(self, self, 0x9E, 0);
-            func_80000860(self, self, 0x104, 0);
-            func_80000450(self, self, 0x15B, 0, 0, 0);
-            func_80000450(self, self, 0x15A, 0, 0, 0);
-            func_80000450(self, self, 0x17C, 0, 0, 0);
-            func_80000450(self, self, 0x17B, 0, 0, 0);
+            envfxAction(self, self, 0xA3, 0);
+            envfxAction(self, self, 0x9E, 0);
+            envfxAction(self, self, 0x104, 0);
+            lfxAction(self, self, 0x15B, 0, 0, 0);
+            lfxAction(self, self, 0x15A, 0, 0, 0);
+            lfxAction(self, self, 0x17C, 0, 0, 0);
+            lfxAction(self, self, 0x17B, 0, 0, 0);
             gDLL_12_Minic->vtbl->func6(1);
         }
     }
@@ -178,13 +178,13 @@ void IMIceMountain_do_act1(Object *self) {
         }
 
         if (self->unkDC == 0) {
-            func_80000860(self, self, 0xA3, 0);
-            func_80000860(self, self, 0x9E, 0);
-            func_80000860(self, self, 0x119, 0);
-            func_80000450(self, self, 0x15B, 0, 0, 0);
-            func_80000450(self, self, 0x15C, 0, 0, 0);
-            func_80000450(self, self, 0x17C, 0, 0, 0);
-            func_80000450(self, self, 0x17B, 0, 0, 0);
+            envfxAction(self, self, 0xA3, 0);
+            envfxAction(self, self, 0x9E, 0);
+            envfxAction(self, self, 0x119, 0);
+            lfxAction(self, self, 0x15B, 0, 0, 0);
+            lfxAction(self, self, 0x15C, 0, 0, 0);
+            lfxAction(self, self, 0x17C, 0, 0, 0);
+            lfxAction(self, self, 0x17B, 0, 0, 0);
             gDLL_12_Minic->vtbl->func6(1);
             self->unkDC = 1;
         }

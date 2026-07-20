@@ -6,7 +6,7 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/vi.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/730_CRSpellstone.h"
 
@@ -112,7 +112,7 @@ void CRCloudRace_do(Object *self) {
     case STATE_Race_Won:
         mainSetBits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 0);
         if (mainGetBits(BIT_Played_Seq_02A9_CF_Race_End)) {
-            func_80000450(self, player, 464, 0, 0, 0);
+            lfxAction(self, player, 464, 0, 0, 0);
         }
         break;
     case STATE_Restart_Race:

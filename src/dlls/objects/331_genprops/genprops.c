@@ -2,7 +2,7 @@
 #include "game/gamebits.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 
 /*0x0*/ static Object* _data_0 = NULL;
 /*0x4*/ static u16 _data_4[] = {
@@ -588,10 +588,10 @@ void dll_331_control(Object* self) {
         distance = sqrtf(SQ(dx) + SQ(dz) + SQ(dy));
         if ((distance < 75.0f) && (objData->lampBool == TRUE)) {
             objData->lampBool = FALSE;
-            func_80000450(self, self, 0x5C, 0, 0, 0);
+            lfxAction(self, self, 0x5C, 0, 0, 0);
         } else if ((distance > 75.0f) && (objData->lampBool == FALSE)) {
             objData->lampBool = TRUE;
-            func_80000450(self, self, 0x5D, 0, 0, 0);
+            lfxAction(self, self, 0x5D, 0, 0, 0);
         }
         break;
     }

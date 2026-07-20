@@ -2,8 +2,8 @@
 #include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "game/gamebits.h"
 #include "dlls/objects/210_player.h"
 
@@ -116,8 +116,8 @@ void DFlevelcontrol_func_420(Object *self, s32 arg1) {
     Object *player;
 
     player = objGetPlayer();
-    func_80000860(self, player, 0x35, 0);
-    func_80000860(self, player, 0x36, 0);
-    func_80000860(self, player, 0x37, 0);
-    func_80000450(self, player, 0x24, 0, 0, 0);
+    envfxAction(self, player, 0x35, 0);
+    envfxAction(self, player, 0x36, 0);
+    envfxAction(self, player, 0x37, 0);
+    lfxAction(self, player, 0x24, 0, 0, 0);
 }

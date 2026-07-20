@@ -20,7 +20,7 @@
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/segment_13D0.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/framebuffer_fx.h"
 #include "sys/gfx/projgfx.h"
 #include "macros.h"
@@ -1656,7 +1656,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
         if (evt->type == ANIM_EVT_ENVFX) {
             switch ((evt->params >> 0xC) & 0xF) {
             case ANIM_EVT_ENVFX_APPLY:
-                func_80000860(actor, actor, evt->params & 0xFFF, 0);
+                envfxAction(actor, actor, evt->params & 0xFFF, 0);
                 break;
             case ANIM_EVT_ENVFX_WARP:
                 mapWarpPlayer(evt->params & 0xFFF, 0);
@@ -1701,7 +1701,7 @@ static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, 
             gDLL_5_AMSEQ2->vtbl->set(animObj, (evt->params & 0xFFF) + 1, STUBBED_STR("anim.c"), 0, STUBBED_STR("(e->val&0xfff)+1"));
             break;
         case ANIM_EVT_ENVFX_APPLY:
-            func_80000860(actor, actor, evt->params & 0xFFF, 0);
+            envfxAction(actor, actor, evt->params & 0xFFF, 0);
             break;
         case ANIM_EVT_ENVFX_WARP:
             if (arg3_8) { break; }

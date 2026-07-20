@@ -2448,3 +2448,9 @@ D_800991D0 = 0x800991D0; // type:f32 size:0x4
 D_800991D4 = 0x800991D4; // type:f32 size:0x4
 D_800991D8 = 0x800991D8; // type:f32 size:0x4
 D_800991DC = 0x800991DC; // type:f32 size:0x4
+
+lfxAction = 0x80000450; // type:func
+lfxRestoreAction = 0x80000608; // type:func
+
+envfxAction = 0x80000860; // type:func
+envfxRestoreAction = 0x800009C8; // type:func

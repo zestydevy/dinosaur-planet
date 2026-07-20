@@ -3,7 +3,7 @@
 #include "macros.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "dlls/objects/251_weapons.h"
 
 typedef struct {
@@ -161,7 +161,7 @@ void dll_251_free(Object* self, s32 arg1) {
     }
     
     if (objData->unk74 != 0) {
-        func_80000450(self, self, 1, 0, 0, 0);
+        lfxAction(self, self, 1, 0, 0, 0);
     }
     
     gDLL_13_Expgfx->vtbl->func5(self);

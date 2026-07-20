@@ -15,7 +15,7 @@
 #include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "dll.h"
@@ -1156,10 +1156,10 @@ static s32 DRearthwalk_func_32EC(Object* self, u8 arg1) {
         // fallthrough
         case 1:
             objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
-            func_80000450(self, self, 0x22C, 0, 0, 0);
+            lfxAction(self, self, 0x22C, 0, 0, 0);
             break;
         case 2:
-            func_80000450(self, self, 0x22E, 0, 0, 0);
+            lfxAction(self, self, 0x22E, 0, 0, 0);
             objdata->unkA58 &= ~0x80;
             //Set Mind Read text
             gDLL_22_Subtitles->vtbl->func_21C0(self->id, GAMETEXT_0D0_DR_Mind_Read_messages_5);

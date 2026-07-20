@@ -2,8 +2,8 @@
 #include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 
 static int MMP_levelcontrol_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
@@ -28,10 +28,10 @@ void MMP_levelcontrol_control(Object *self) {
     if (self->unkDC != 0) {
         player = objGetPlayer();
         dll_amSfx->WaterFallsSetFlags(0x10);
-        func_80000860(self, player, 0x13A, 0);
-        func_80000860(self, player, 0x138, 0);
-        func_80000860(self, player, 0x139, 0);
-        func_80000450(self, player, 0x1DC, 0, 0, 0);
+        envfxAction(self, player, 0x13A, 0);
+        envfxAction(self, player, 0x138, 0);
+        envfxAction(self, player, 0x139, 0);
+        lfxAction(self, player, 0x1DC, 0, 0, 0);
         gDLL_5_AMSEQ2->vtbl->set(self, 0xF, 0, 0, 0);
         self->unkDC = 0;
     }
@@ -74,13 +74,13 @@ int MMP_levelcontrol_anim_callback(Object *self, Object *animObj, AnimObj_Data *
     for (i = 0; i < animObjData->messageCount; i++) {
         switch (animObjData->messages[i]) {
         case 1:
-            func_80000860(self, player, 0x13B, 0);
-            func_80000450(self, player, 0x263, 0, 0, 0);
-            func_80000450(self, player, 0x264, 0, 0, 0);
+            envfxAction(self, player, 0x13B, 0);
+            lfxAction(self, player, 0x263, 0, 0, 0);
+            lfxAction(self, player, 0x264, 0, 0, 0);
             break;
         case 2:
-            func_80000860(self, player, 0x138, 0);
-            func_80000450(self, player, 0x1DC, 0, 0, 0);
+            envfxAction(self, player, 0x138, 0);
+            lfxAction(self, player, 0x1DC, 0, 0, 0);
             break;
         default:
             break;

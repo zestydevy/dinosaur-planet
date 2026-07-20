@@ -15,8 +15,8 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/segment_53F00.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 #include "types.h"
 #include "sys/rand.h"
@@ -59,22 +59,22 @@ void WL_LevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
     case WM_Setup3_Spirit2_Sabre_DB:
         break;
     case WM_Setup4_Spirit3_Krystal_MMP:
-        func_80000860(self, self, 0xA5, 0);
-        func_80000860(self, self, 0xA6, 0);
+        envfxAction(self, self, 0xA5, 0);
+        envfxAction(self, self, 0xA6, 0);
         objData->enemiesDefeated = -1;
         break;
     case WM_Setup5_Spirit4_Sabre_WC:
-        func_80000860(self, self, 0xE4, 0);
-        func_80000860(self, self, 0xE5, 0);
+        envfxAction(self, self, 0xE4, 0);
+        envfxAction(self, self, 0xE5, 0);
         break;
     case WM_Setup6_Spirit5_6_Krystal_CC_Sabre_WG:
-        func_80000860(self, self, 0xA5, 0);
-        func_80000860(self, self, 0xA6, 0);
+        envfxAction(self, self, 0xA5, 0);
+        envfxAction(self, self, 0xA6, 0);
         mainSetBits(BIT_Krystal_Foodbag_M, 1);
         break;
     case WM_Setup7_Spirit7_8_Krystal_GP_Sabre_SW:
-        func_80000860(self, self, 0xE4, 0);
-        func_80000860(self, self, 0xE5, 0);
+        envfxAction(self, self, 0xE4, 0);
+        envfxAction(self, self, 0xE5, 0);
         objData->intervalBehaviourTimer = 700;
         objData->interval = 30;
         objData->timer = objData->interval;
@@ -273,9 +273,9 @@ static void WL_LevelControl_setup2_tick(Object* self) {
         ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
 
         //Use envFxActions
-        func_80000860(self, self, 0x204, 0);
-        func_80000860(self, self, 0x205, 0);
-        func_80000860(self, self, 0x206, 0);
+        envfxAction(self, self, 0x204, 0);
+        envfxAction(self, self, 0x205, 0);
+        envfxAction(self, self, 0x206, 0);
 
         dInitSpirit1Visit = FALSE;
     }
@@ -310,10 +310,10 @@ static void WL_LevelControl_setup3_tick(Object* self) {
     //Set up the visit (only runs once)
     if ((mainGetBits(BIT_Spirit_2_Release_Sabre) == FALSE) & dInitSpirit2Visit) {
         //Use envFxActions
-        func_80000860(self, self, 0xE4, 0);
-        func_80000860(self, self, 0xE5, 0);
-        func_80000450(self, self, 0x275, 0, 0, 0);
-        func_80000450(self, self, 0x278, 0, 0, 0);
+        envfxAction(self, self, 0xE4, 0);
+        envfxAction(self, self, 0xE5, 0);
+        lfxAction(self, self, 0x275, 0, 0, 0);
+        lfxAction(self, self, 0x278, 0, 0, 0);
 
         //Ensure the player has relevant spells
         mainSetBits(BIT_Spell_Projectile, 1);
@@ -327,9 +327,9 @@ static void WL_LevelControl_setup3_tick(Object* self) {
         dInitSpirit2Visit = FALSE;
     } else if (dInitSpirit2Visit) {
         //Use envFxActions
-        func_80000860(self, self, 0xE4, 0);
-        func_80000860(self, self, 0xE5, 0);
-        func_80000450(self, self, 0x275, 0, 0, 0);
+        envfxAction(self, self, 0xE4, 0);
+        envfxAction(self, self, 0xE5, 0);
+        lfxAction(self, self, 0x275, 0, 0, 0);
         dInitSpirit2Visit = FALSE;
     }
 }
@@ -384,15 +384,15 @@ static void WL_LevelControl_setup4_tick(Object* self) {
     useGradualEnvFx = mainGetBits(BIT_2C4);
     if (useGradualEnvFx && (enemiesDefeated != objData->enemiesDefeated)) {
         objData->enemiesDefeated = enemiesDefeated;
-        func_80000860(self, self, (objData->enemiesDefeated + 0xF4), 0);
-        func_80000450(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
+        envfxAction(self, self, (objData->enemiesDefeated + 0xF4), 0);
+        lfxAction(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
     } else if (useGradualEnvFx != dUseGradualEnvFx) {
         if (useGradualEnvFx) {
-            func_80000860(self, self, (objData->enemiesDefeated + 0xF4), 0);
-            func_80000450(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
+            envfxAction(self, self, (objData->enemiesDefeated + 0xF4), 0);
+            lfxAction(self, self, ((objData->enemiesDefeated / 2) + 0x13C), 0, 0, 0);
         } else {
-            func_80000860(self, self, 0xFB, 0);
-            func_80000450(self, self, 0x144, 0, 0, 0);
+            envfxAction(self, self, 0xFB, 0);
+            lfxAction(self, self, 0x144, 0, 0, 0);
         }
     }
 
@@ -582,8 +582,8 @@ static void WL_LevelControl_setup7_tick(Object* self) {
         objData->timer = 1;
 
         //Use envFxActions
-        func_80000860(self, self, 0x32, 0);
-        func_80000860(self, self, 0x33, 0);
+        envfxAction(self, self, 0x32, 0);
+        envfxAction(self, self, 0x33, 0);
         
         mainSetBits(BIT_221, 1);
     }

@@ -19,8 +19,8 @@
 #include "sys/rarezip.h"
 #include "sys/segment_1D900.h"
 #include "sys/segment_53F00.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 #include "macros.h"
 #include "gbi_extra.h"
@@ -2841,38 +2841,38 @@ void map_func_8004773C(void) {
         sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == -2) {
             if (sp40->unk0 != -1) {
-                func_80000608(player, player, sp40->unk0, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk0, 0, 0, 0);
             }
             if (sp40->unk2 != -1) {
-                func_80000608(player, player, sp40->unk2, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk2, 0, 0, 0);
             }
             if (sp40->unk4 != -1) {
-                func_80000608(player, player, sp40->unk4, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk4, 0, 0, 0);
             }
             if (sp40->unk6 != -1) {
-                func_80000608(player, player, sp40->unk6, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk6, 0, 0, 0);
             }
             if (sp40->unk8 != -1) {
-                func_80000608(player, player, sp40->unk8, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk8, 0, 0, 0);
             }
             if (sp40->unkA != -1) {
-                func_80000608(player, player, sp40->unkA, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkA, 0, 0, 0);
             }
             if (sp40->unkC != -1) {
-                func_80000608(player, player, sp40->unkC, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkC, 0, 0, 0);
             }
             if (sp40->unkE != -1) {
-                func_80000608(player, player, sp40->unkE, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkE, 0, 0, 0);
             }
             func_8001EBD0(sp40->isInside & 1);
             if (sp3C->unk4 != -1) {
-                func_800009C8(player, player, sp3C->unk4, 0);
+                envfxRestoreAction(player, player, sp3C->unk4, 0);
             }
             if (sp3C->unk6 != -1) {
-                func_800009C8(player, player, sp3C->unk6, 0);
+                envfxRestoreAction(player, player, sp3C->unk6, 0);
             }
             if (sp3C->unk8 != -1) {
-                func_800009C8(player, player, sp3C->unk8, 0);
+                envfxRestoreAction(player, player, sp3C->unk8, 0);
             }
             gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
             for (i = 0; i < 4; i++) {
@@ -2895,19 +2895,19 @@ void map_func_8004773C(void) {
                 sp4C.srt.transl.x = sp3C->unk10;
                 sp4C.srt.transl.y = sp3C->unk14;
                 sp4C.srt.transl.z = sp3C->unk18;
-                func_80000860(&sp4C, player, sp3C->unkA, 0);
+                envfxAction(&sp4C, player, sp3C->unkA, 0);
             }
             if (sp3C->unkC != -1) {
                 sp4C.srt.transl.x = sp3C->unk1C;
                 sp4C.srt.transl.y = sp3C->unk20;
                 sp4C.srt.transl.z = sp3C->unk24;
-                func_80000860(&sp4C, player, sp3C->unkC, 0);
+                envfxAction(&sp4C, player, sp3C->unkC, 0);
             }
             if (sp3C->unkE != -1) {
                 sp4C.srt.transl.x = sp3C->unk28;
                 sp4C.srt.transl.y = sp3C->unk2C;
                 sp4C.srt.transl.z = sp3C->unk30;
-                func_80000860(&sp4C, player, sp3C->unkE, 0);
+                envfxAction(&sp4C, player, sp3C->unkE, 0);
             }
             gDLL_7_Newday->vtbl->func9(sp3C->unk0);
         }

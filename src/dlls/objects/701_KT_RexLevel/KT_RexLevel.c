@@ -3,8 +3,8 @@
 #include "dll.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "game/gamebits.h"
 
 /*0x0*/ static u32 _data_0[] = { 0x00000002, 0x00000003, 0x00000000, 0x00000000 };
@@ -26,10 +26,10 @@ void KT_RexLevel_setup(Object *self, ObjSetup *setup, s32 arg2) {
     KT_RexLevel_Data *objdata;
 
     objdata = self->data;
-    func_80000860(self, self, 0x18E, 0);
-    func_80000860(self, self, 0x18F, 0);
-    func_80000450(self, self, 0x1FD, 0, 0, 0);
-    func_80000450(self, self, 0x1FE, 0, 0, 0);
+    envfxAction(self, self, 0x18E, 0);
+    envfxAction(self, self, 0x18F, 0);
+    lfxAction(self, self, 0x1FD, 0, 0, 0);
+    lfxAction(self, self, 0x1FE, 0, 0, 0);
     gDLL_5_AMSEQ2->vtbl->set(self, 0xD5, 0, 0, 0);
     mainSetBits(BIT_572_KT_FightProgress, 0);
     mainSetBits(BIT_56E, 1);

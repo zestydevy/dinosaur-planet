@@ -4,7 +4,7 @@
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "sys/joypad.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/objprint.h"
 #include "sys/gfx/modgfx.h"
 #include "game/gamebits.h"
@@ -132,7 +132,7 @@ void Transporter_control(Object *self) {
                 (self->unkAF & ARROW_FLAG_1_Interacted)
             ) {
                 joyDisableButtons(0, A_BUTTON);
-                func_80000860(self, self, 187, 0);
+                envfxAction(self, self, 187, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 objdata->isOutbound = TRUE;
                 self->unkDC = objdata->durationPoweringUp;
@@ -292,7 +292,7 @@ void Transporter_control(Object *self) {
     if (objdata->timerEnvFxAction && objdata->runTimersPostPowerUp) {
         objdata->timerEnvFxAction -= gUpdateRate;
         if (objdata->timerEnvFxAction <= 0) {
-            func_80000860(self, self, D_80092A7C[0], 0);
+            envfxAction(self, self, D_80092A7C[0], 0);
             objdata->timerEnvFxAction = 0;
         }
     }

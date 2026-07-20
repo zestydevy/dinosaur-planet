@@ -14,7 +14,7 @@
 #include "sys/objanim.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "types.h"
 
 // This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
@@ -57,8 +57,8 @@ void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     data->createLightning = 0;
     if (!mainGetBits(BIT_SB_Battle_Started)) {
-        func_80000450(self, self, 0x58, 0, 0, 0);
-        func_80000450(self, self, 0x6D, 0, 0, 0);
+        lfxAction(self, self, 0x58, 0, 0, 0);
+        lfxAction(self, self, 0x6D, 0, 0, 0);
     }
 }
 

@@ -4,7 +4,7 @@
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/objexpr.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/segment_1D900.h"
 
 #include "prevent_bss_reordering.h"
@@ -361,7 +361,7 @@ void WL_Crystal_control(Object* self) {
                     }
                     mainSetBits(BIT_38D, 0);
                     mainSetBits(BIT_WM_Quan_Ata_Lachu_Sun, 1);
-                    func_80000860(self, self, 0x31, 0);
+                    envfxAction(self, self, 0x31, 0);
                     camSetShakeOffset(4.8f);
                 }
             }
@@ -411,8 +411,8 @@ void WL_Crystal_control(Object* self) {
                 fxTimer1 -= gUpdateRate;
                 if (fxTimer1 <= 0) {
                     fxTimer1 = 0;
-                    func_80000860(self, self, 0x30, 0);
-                    func_80000860(self, self, 0x34, 0);
+                    envfxAction(self, self, 0x30, 0);
+                    envfxAction(self, self, 0x34, 0);
                 }
             }
             if (mathRnd(0, 8) == 0) {
