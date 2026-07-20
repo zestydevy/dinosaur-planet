@@ -638,6 +638,8 @@ enum SoundID {
 
     SOUND_7F6_Firefly_Twinkle_Loop = 0x7F6,
 
+    SOUND_809_Mechanical_Ratcheting_Loop = 0x809,
+
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
