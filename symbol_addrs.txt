@@ -2042,7 +2042,7 @@ generic_stack_func_8000B260 = 0x8000B260; // type:func
 genericStackIsFull = 0x8000B29C; // type:func
 genericStackIsEmpty = 0x8000B2B8; // type:func
 
-fit_aabb_around_cubes = 0x80053438; // type:func
+trackIntersectBuildAABB = 0x80053438; // type:func
 
 curvesLinear = 0x80005060; // type:func
 
@@ -2454,3 +2454,36 @@ lfxRestoreAction = 0x80000608; // type:func
 
 envfxAction = 0x80000860; // type:func
 envfxRestoreAction = 0x800009C8; // type:func
+
+gPLlist = 0x80092E70;
+gLineList = 0x80092E74;
+gPointList = 0x80092E78;
+gLineIndex = 0x80092E7C;
+gLastLines = 0x80092E84;
+gLineListCount = 0x800BB4D6;
+gPointListCount = 0x800BB4D8;
+gPLindex = 0x800BB268;
+gPLindexCount = 0x800BB3A8;
+gPLlistCount = 0x800BB264;
+gBgBlockList = 0x800BB200;
+
+trackIntersectInit = 0x80053300; // type:func
+trackIntersect_func_800533D8 = 0x800533D8; // type:func
+trackIntersectGetBlockList = 0x80053408; // type:func
+trackIntersectGetPLIndices = 0x8005341C; // type:func
+trackIntersectBroadphase = 0x80053750; // type:func
+trackGetIntersect = 0x8005509C; // type:func
+trackIntersect_func_80056BCC = 0x80056BCC; // type:func
+trackGetHeight = 0x80057F1C; // type:func
+trackGetHeightNearest = 0x80058680; // type:func
+trackGetHeightFloor = 0x800588D4; // type:func
+trackGetHeightCeiling = 0x80058B1C; // type:func
+trackIntersectMarkBlocksDirty = 0x80058F3C; // type:func
+trackIntersectNeedsUpdate = 0x80058F50; // type:func
+trackIntersectInitialized = 0x80058F7C; // type:func
+trackIntersectLastLineTick = 0x80058FE8; // type:func
+trackToggleHitLine = 0x80059038; // type:func
+trackIntersectTick = 0x800591EC; // type:func
+trackIntersectModLineBuild = 0x800596BC; // type:func
+trackGetLineIntersect = 0x80059C40; // type:func
+trackIntersect_func_8005B5B8 = 0x8005B5B8; // type:func

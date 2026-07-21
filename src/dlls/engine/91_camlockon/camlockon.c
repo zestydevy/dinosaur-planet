@@ -264,7 +264,7 @@ static void camlockon_func_BC0(Cam* cam) {
 
 // offset: 0xC58 | func: 5
 static void camlockon_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3) {
-    Unk80027934 sp54;
+    TrackIntersectResult sp54;
     AABBs32 sp3C;
     Vec3f sp30;
 
@@ -274,9 +274,9 @@ static void camlockon_func_C58(Cam* cam, f32 arg1, f32 arg2, f32 arg3) {
     sp54.unk50[0] = -1;
     sp54.unk54[0] = 4;
     sp54.unk40[0] = 4.5f;
-    fit_aabb_around_cubes(&sp3C, &sp30, &cam->srt.transl, &sp54.unk40[0], 1);
-    func_80053750(cam->player, &sp3C, 0);
-    func_8005509C(cam->player, sp30.f, cam->srt.transl.f, 1, &sp54, 0);
+    trackIntersectBuildAABB(&sp3C, &sp30, &cam->srt.transl, &sp54.unk40[0], 1);
+    trackIntersectBroadphase(cam->player, &sp3C, 0);
+    trackGetIntersect(cam->player, sp30.f, cam->srt.transl.f, 1, &sp54, 0);
 }
 
 // offset: 0xD34 | func: 6

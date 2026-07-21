@@ -68,7 +68,7 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
     f32 var_fa1;
     s32 temp_s0;
     s32 var_v1;
-    Unk80027934 sp70;
+    TrackIntersectResult sp70;
     AABBs32 sp58;
     CamControl_Module* camnormal;
     s32 _pad;
@@ -128,9 +128,9 @@ void attentioncam_func_18(Cam* cam, s32 arg1, AttentionCam_Params* data) {
         sp70.unk40[0] = 4.5f;
         sp70.unk50[0] = -1;
         sp70.unk54[0] = 3;
-        fit_aabb_around_cubes(&sp58, &player->srt.transl, &sp120, &sp70.unk40[0], 1);
-        func_80053750(player, &sp58, 1);
-        func_8005509C(player, sp114.f, sp120.f, 1, &sp70, 0);
+        trackIntersectBuildAABB(&sp58, &player->srt.transl, &sp120, &sp70.unk40[0], 1);
+        trackIntersectBroadphase(player, &sp58, 1);
+        trackGetIntersect(player, sp114.f, sp120.f, 1, &sp70, 0);
         player->srt.transl.y -= sState->unkC;
     }
     spEC = 0;
@@ -388,7 +388,7 @@ static void attentioncam_func_1374(Cam* cam, Object* arg1) {
     Vec3f spC0;
     Vec3f spB4;
     AABBs32 sp9C;
-    Unk80027934 sp30;
+    TrackIntersectResult sp30;
 
     spD0 = mathSinfInterp(arg1->srt.yaw);
     spCC = mathCosfInterp(arg1->srt.yaw);
@@ -402,9 +402,9 @@ static void attentioncam_func_1374(Cam* cam, Object* arg1) {
     sp30.unk40[0] = 4.5f;
     sp30.unk50[0] = -1;
     sp30.unk54[0] = 3;
-    fit_aabb_around_cubes(&sp9C, &spC0, &spB4, &sp30.unk40[0], 1);
-    func_80053750(arg1, &sp9C, 0);
-    func_8005509C(arg1, spC0.f, spB4.f, 1, &sp30, 0);
+    trackIntersectBuildAABB(&sp9C, &spC0, &spB4, &sp30.unk40[0], 1);
+    trackIntersectBroadphase(arg1, &sp9C, 0);
+    trackGetIntersect(arg1, spC0.f, spB4.f, 1, &sp30, 0);
     cam->srt.transl.x = spB4.x;
     cam->srt.transl.y = spB4.y;
     cam->srt.transl.z = spB4.z;

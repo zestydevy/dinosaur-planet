@@ -3166,7 +3166,7 @@ static void dll_211_func_8BEC(Object* self) {
         }
     }
     if (objData->unk4C & 0x2000) {
-        func_80058680(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp38, 0);
+        trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp38, 0);
         self->srt.transl.y -= sp38;
         objData->unkCC.mode = 0;
     }

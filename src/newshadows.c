@@ -7,7 +7,7 @@
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
 #include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "macros.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
@@ -447,10 +447,10 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     for (i = 0, j = 0; i < 8; i++, j++) {
         VECTOR_ADD(obj->globalPosition, sp244[i], sp1C0[j]);
     }
-    fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
-    func_80053750(obj, &sp68, 1);
-    func_80053408(&sp8C);
-    func_800533D8(&sp2B4, &sp88);
+    trackIntersectBuildAABB(&sp68, sp1C0, sp1C0, sp48, 8);
+    trackIntersectBroadphase(obj, &sp68, 1);
+    trackIntersectGetBlockList(&sp8C);
+    trackIntersect_func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
     sp2B4 = shadows_func_80052300(
         obj,
@@ -630,10 +630,10 @@ void shadowsUpdateObjBox(Object* arg0) {
         for (i = 0, j = 0; i < 8; i++, j++) {
             VECTOR_ADD(arg0->globalPosition, sp24C[i], sp1EC[j]);
         }
-        fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
-        func_80053750(arg0, &sp70, 1);
-        func_80053408(&spA0);
-        func_800533D8(&sp2B4, &sp9C);
+        trackIntersectBuildAABB(&sp70, sp1EC, sp1EC, sp50, 8);
+        trackIntersectBroadphase(arg0, &sp70, 1);
+        trackIntersectGetBlockList(&spA0);
+        trackIntersect_func_800533D8(&sp2B4, &sp9C);
         sp2B4 = shadows_func_80052300(arg0, sp9C, D_800BA1A0, 
             D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_WATER_SURFACE);
         D_800BB174 += sp2B4 * 3;
@@ -1624,7 +1624,7 @@ s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3*
 
     for (i = 0; i < arg4; i++) {
         var_s3 = &arg3[i];
-        if (shadows_func_80051F64(arg1, arg2, var_s3->unkA, var_s3->unk16) == 1) {
+        if (shadows_func_80051F64(arg1, arg2, var_s3->vX, var_s3->vZ) == 1) {
             sp70.x = arg1;
             sp70.y = arg0->srt.transl.y;
             sp70.z = arg2;
@@ -1633,15 +1633,15 @@ s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3*
             sp64.z = arg2;
             if (arg5 != NULL) {
                 f0 = 0.00012208521f;
-                arg5->x = var_s3->unk4 * f0;
-                arg5->y = var_s3->unk6 * f0;
-                arg5->z = var_s3->unk8 * f0;
+                arg5->x = var_s3->nX * f0;
+                arg5->y = var_s3->nY * f0;
+                arg5->z = var_s3->nZ * f0;
                 arg5->w = var_s3->unk0;
                 return 1;
             }
-            sp44.x = var_s3->unk4 * 0.00012208521f;
-            sp44.y = var_s3->unk6 * 0.00012208521f;
-            sp44.z = var_s3->unk8 * 0.00012208521f;
+            sp44.x = var_s3->nX * 0.00012208521f;
+            sp44.y = var_s3->nY * 0.00012208521f;
+            sp44.z = var_s3->nZ * 0.00012208521f;
             sp44.w = var_s3->unk0;
             shadows_func_800528AC(&sp70, &sp64, &sp58, &sp44);
             return sp58.y - sp70.y;
@@ -1748,7 +1748,7 @@ s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* 
         sp34 -= arg5;
         sp30 -= arg6;
     }
-    temp_v0 = func_8005341C(&sp44);
+    temp_v0 = trackIntersectGetPLIndices(&sp44);
     temp_t2 = &temp_v0[sp44];
     sp44 = 0;
     var_a2 = 0;
@@ -1767,21 +1767,21 @@ s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* 
                 if (var_v1 == FALSE) {
                     continue;
                 }
-                arg3->x = arg1[sp44].unkA[0] - sp34;
-                arg3->y = arg1[sp44].unk10[0] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[0] - sp30;
+                arg3->x = arg1[sp44].vX[0] - sp34;
+                arg3->y = arg1[sp44].vY[0] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[0] - sp30;
                 arg3++;
-                arg3->x = arg1[sp44].unkA[1] - sp34;
-                arg3->y = arg1[sp44].unk10[1] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[1] - sp30;
+                arg3->x = arg1[sp44].vX[1] - sp34;
+                arg3->y = arg1[sp44].vY[1] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[1] - sp30;
                 arg3++;
-                arg3->x = arg1[sp44].unkA[2] - sp34;
-                arg3->y = arg1[sp44].unk10[2] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[2] - sp30;
+                arg3->x = arg1[sp44].vX[2] - sp34;
+                arg3->y = arg1[sp44].vY[2] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[2] - sp30;
                 arg3++;
-                arg2[var_a2].pos.x = arg1[sp44].unk4 * 0.00012208521f;
-                arg2[var_a2].pos.y = arg1[sp44].unk6 * 0.00012208521f;
-                arg2[var_a2].pos.z = arg1[sp44].unk8 * 0.00012208521f;
+                arg2[var_a2].pos.x = arg1[sp44].nX * 0.00012208521f;
+                arg2[var_a2].pos.y = arg1[sp44].nY * 0.00012208521f;
+                arg2[var_a2].pos.z = arg1[sp44].nZ * 0.00012208521f;
                 arg2[var_a2].unk10 = arg1[sp44].unk2F;
                 if (1) {}
                 var_a2++;

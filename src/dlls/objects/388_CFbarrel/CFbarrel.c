@@ -14,7 +14,7 @@
 #include "sys/objmsg.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 #include "macros.h"
 
@@ -183,11 +183,11 @@ void CFbarrel_control(Object* self) {
 void CFbarrel_update(Object* self) {
     CFbarrel_Data* objdata = self->data;
     f32 sp90[3];
-    Func_80059C40_Struct sp3C;
+    TrackLineIntersectResult sp3C;
 
     if ((objdata->unk13 == 0) && (objdata->unk14 == 0)) {
         if (objdata->unkC != NULL) {
-            func_8005B5B8(self, objdata->unkC, 1);
+            trackIntersect_func_8005B5B8(self, objdata->unkC, 1);
             objdata->unkC = 0;
         }
         if (objdata->unk3E_0) {
@@ -208,7 +208,7 @@ void CFbarrel_update(Object* self) {
             objdata->unk18.z *= 0.5f;
         }
         if (objdata->unk11 == 0) {
-            if (func_80059C40(&self->prevLocalPosition, &self->srt.transl, 4.0f, 1, &sp3C, self, 8, -1, 0xFF, 0) != 0) {
+            if (trackGetLineIntersect(&self->prevLocalPosition, &self->srt.transl, 4.0f, 1, &sp3C, self, 8, -1, 0xFF, 0) != 0) {
                 STUBBED_PRINTF(" Line IDNO %i \n", sp3C.unk51);
                 if ((objdata->unk3E_0) && (sp3C.unk51 == 3)) {
                     CFbarrel_func_1948(self, 0);
@@ -284,7 +284,7 @@ static void CFbarrel_func_AD4(Object* self) {
     f32 temp;
     f32 spB0;
     f32 spAC;
-    Func_80057F1C_Struct** spA8;
+    TrackHeightResult** spA8;
     s16 sp98[] = {0xffff, 0x0000, 0x0000, 0x0001, 0x0001, 0x0000, 0x0000, 0xffff};
     s16 sp90[] = {0x0002, 0x0003, 0x0000, 0x0001};
     s32* temp_v0_2;
@@ -309,7 +309,7 @@ static void CFbarrel_func_AD4(Object* self) {
 
         var_s2 += 0x3FD2;
 
-        temp_v0 = func_80057F1C(self, 
+        temp_v0 = trackGetHeight(self, 
                                 self->srt.transl.x + spB8, 
                                 self->srt.transl.y + temp,
                                 self->srt.transl.z + spB0, 
@@ -318,7 +318,7 @@ static void CFbarrel_func_AD4(Object* self) {
             var_fa0 = 10000.0f;
 
             for (var_v1 = 0; var_v1 < temp_v0; var_v1++) {
-                temp_fv1 = self->srt.transl.y - spA8[var_v1]->unk0[0];
+                temp_fv1 = self->srt.transl.y - spA8[var_v1]->y;
                 if (
                     (temp_fv1 > 0.0f && temp_fv1 < (var_fa0 >= 0 ? var_fa0 : -var_fa0)) || 
                     (temp_fv1 <= 0.0f && temp_fv1 > -20.0f)
@@ -358,7 +358,7 @@ static void CFbarrel_func_AD4(Object* self) {
     if (var_s4 > 0) {
         STUBBED_PRINTF(" Landed On World Obj ");
         objdata->unk3D &= ~0x1;
-        obj = spA8[spC8]->unk10;
+        obj = spA8[spC8]->obj;
         if (obj != NULL) {
             if ((obj->def->flags & OBJDEF_IS_MOBILE_MAP) && !(obj->def->flags & OBJDEF_MOBILE_MAP_NEVER_PLAYER_PARENT)) {
                 objdata->unkC = obj;

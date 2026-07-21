@@ -66,7 +66,7 @@ void dll_662_update(Object* self) {
         }
     }
     
-    if ((objData->unk10C != 9) && (func_80059C40(&self->prevLocalPosition, &self->srt.transl, 8.0f, 1, NULL, self, 8, -1, 0xFFU, 0) != 0)) {
+    if ((objData->unk10C != 9) && (trackGetLineIntersect(&self->prevLocalPosition, &self->srt.transl, 8.0f, 1, NULL, self, 8, -1, 0xFFU, 0) != 0)) {
         self->velocity.f[0] -= (0.95f * self->velocity.f[0]);
         self->velocity.f[2] -= (0.95f * self->velocity.f[2]);
     }

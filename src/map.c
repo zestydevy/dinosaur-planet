@@ -18,7 +18,7 @@
 #include "sys/print.h"
 #include "sys/rarezip.h"
 #include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/lfx.h"
 #include "sys/envfx.h"
 #include "dll.h"
@@ -2769,7 +2769,7 @@ void map_func_8004773C(void) {
     gDLL_3_Animation->vtbl->init();
     camApplyAlternateTrigger();
     camApplyAlternateTrigger();
-    func_80053300();
+    trackIntersectInit();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         currentT1 = gBlockIndices[i];
@@ -2825,7 +2825,7 @@ void map_func_8004773C(void) {
     gTrackFlags |= (TRACKFLAG_UPDATE_STREAMING_IMMEDIATE | TRACKFLAG_UNK4);
     map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
     gTrackFlags &= ~TRACKFLAG_UNK4;
-    func_800591EC();
+    trackIntersectTick();
     objLoadPlayer();
     D_800B4A58 = 0;
 
@@ -3359,7 +3359,7 @@ void blockEmplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
         blockComputeVertexColors(block, 0, 0, 1);
     }
 
-    func_80058F3C();
+    trackIntersectMarkBlocksDirty();
 }
 
 void blockSetupDLGroups(Block *block) {
@@ -3571,7 +3571,7 @@ void blockFree(s32 blockIndex) {
             mmFree((u32*)block->unk1C);
         }
         
-        func_80058F3C();
+        trackIntersectMarkBlocksDirty();
         mmFree(block);
     }
 }

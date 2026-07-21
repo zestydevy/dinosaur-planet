@@ -153,12 +153,12 @@ void SHmushroom_control(Object* self) {
 	s32 pad;
 	f32 playerDistanceSquared;
 	s32 count;
-	Func_80057F1C_Struct** spBC;
+	TrackHeightResult** spBC;
 	SHmushroom_Data* objData;
 	f32 sidekickDistanceSquared;
 	Object* player;
 	u32 outMesgID;
-	Func_80059C40_Struct sp58;
+	TrackLineIntersectResult sp58;
 	s32 temp;
 
 	objData = self->data;
@@ -243,10 +243,10 @@ void SHmushroom_control(Object* self) {
 
 	if (objData->flags & SHmushroom_FLAG_Moving) {
 		//Snap Y to ground
-		count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spBC, 0, 0);
+		count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spBC, 0, 0);
 		for (i = 0; i < count; i++) {
-			if (spBC[i]->unk0[0] < (self->srt.transl.y + 10.0f)) {
-				self->srt.transl.y = spBC[i]->unk0[0];
+			if (spBC[i]->y < (self->srt.transl.y + 10.0f)) {
+				self->srt.transl.y = spBC[i]->y;
 				break;
 			}
 		}
@@ -258,7 +258,7 @@ void SHmushroom_control(Object* self) {
 		   Considering the "MUSHROOM: trapped" string, maybe the mushroom's intended to stop fleeing
 		   if its path around the pond is blocked by dropping the cave stalactites?
 		*/
-		temp = func_80059C40(&self->prevLocalPosition, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFF, 0x14);
+		temp = trackGetLineIntersect(&self->prevLocalPosition, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFF, 0x14);
 		if ((objSetup->index == 4) && (temp) && (sp58.unk50 == 0xD)) {
 			objData->flags |= SHmushroom_FLAG_No_Fleeing;
 			STUBBED_PRINTF("MUSHROOM: trapped!!!!\n");
@@ -326,7 +326,7 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 	v.y = self->srt.transl.y;
 	v.z = self->srt.transl.z - (distance * dx);
 
-	if (func_80059C40(&self->srt.transl, &v, 0.1f, 3, NULL, self, 8, -1, 0xFF, 0)) {
+	if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 3, NULL, self, 8, -1, 0xFF, 0)) {
 		angle1 = angle;
 		angle2 = angle;
 
@@ -347,7 +347,7 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 			v.z = self->srt.transl.z - (sp90[0] * distance);
 
 			angle1 += M_20_DEGREES;
-			if (func_80059C40(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
+			if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
 				return angle1;
 			}
 
@@ -358,7 +358,7 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 			v.z = self->srt.transl.z - (sp90[1] * distance);
 
 			angle2 -= M_20_DEGREES;
-			if (func_80059C40(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
+			if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
 				return angle2;
 			}
 		}

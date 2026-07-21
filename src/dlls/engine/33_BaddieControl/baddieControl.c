@@ -13,7 +13,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/voxmap.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 
 // baddieControl.c (default.dol)
@@ -50,7 +50,7 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
     u8 spD3;
     u8 var_s5;
     s16 spD0;
-    Func_80059C40_Struct sp7C;
+    TrackLineIntersectResult sp7C;
     u16 i;
 
     var_s5 = 0;
@@ -79,7 +79,7 @@ s32 BaddieControl_func_18(Object* obj, ObjFSA_Data* fsa, f32 arg2) {
                 var_s0 = 1;
             }
         }
-        if ((var_s0 != 0) && (func_80059C40(&obj->srt.transl, &spD8, 1.0f, 0, &sp7C, obj, fsa->unk4.unk259, -1, 0, 0) != 0)) {
+        if ((var_s0 != 0) && (trackGetLineIntersect(&obj->srt.transl, &spD8, 1.0f, 0, &sp7C, obj, fsa->unk4.unk259, -1, 0, 0) != 0)) {
             var_s0 = 0;
         }
 
@@ -373,7 +373,7 @@ s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead
 // offset: 0xF60 | func: 11 | export: 16
 s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
     Object* player;
-    Func_80059C40_Struct sp48;
+    TrackLineIntersectResult sp48;
     Vec3f sp3C;
     s32 var_v1;
 
@@ -393,7 +393,7 @@ s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
                         sp3C.x = player->srt.transl.x;
                         sp3C.y = player->srt.transl.y + 10.0f;
                         sp3C.z = player->srt.transl.z;
-                        if (func_80059C40(&arg0->srt.transl, &sp3C, 1.0f, 0, &sp48, arg0, 4, -1, 0U, 0) != 0) {
+                        if (trackGetLineIntersect(&arg0->srt.transl, &sp3C, 1.0f, 0, &sp48, arg0, 4, -1, 0U, 0) != 0) {
                             var_v1 = 1;
                         }
                     }
@@ -420,7 +420,7 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
     Vec3s16 pPlayerS;
     Vec3s16 pBaddieS;
     Vec3f pTemp;
-    Func_80059C40_Struct sp68;
+    TrackLineIntersectResult sp68;
     u8 temp_t3;
     u8 sp66;
     
@@ -470,7 +470,7 @@ Object* BaddieControl_func_10F4(Object* baddieObj, ObjFSA_Data* fsa, f32 distanc
 
                 temp_t3 = vox_func_80008048(&pPlayerS, &pBaddieS, NULL, &sp66, 0);
                 if ((sp66 == 1) || (temp_t3 != 0)) {
-                    if (func_80059C40(&baddieObj->srt.transl, &pTemp, 1.0f, 0, &sp68, baddieObj, 4, -1, 0, 0) != 0) {
+                    if (trackGetLineIntersect(&baddieObj->srt.transl, &pTemp, 1.0f, 0, &sp68, baddieObj, 4, -1, 0, 0) != 0) {
                         stop = FALSE;
                     }
                 } else {

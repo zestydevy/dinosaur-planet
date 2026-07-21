@@ -496,7 +496,7 @@ void CRSnowBike_control(Object* self) {
                         objData->pitch = self->srt.pitch;
                         objData->roll = self->srt.roll;
                         CRSnowBike_update_collision_points(self, objData);
-                        func_80058680(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &yOffset, 0);
+                        trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &yOffset, 0);
                         self->srt.transl.y -= yOffset;
                         objData->flags &= ~CRSnowBike_FLAG_2_Driving_In_Void;
                     }
@@ -1794,7 +1794,7 @@ void CRSnowBike_handle_collisions(Object* self, CRSnowBike_Data* objData, DLL27_
                         &wsPoint[i].x, &wsPoint[i].y, &wsPoint[i].z);
 
                 //Check for collisions
-                if (func_80059C40(&objData->wsCollisionCoords[i], &wsPoint[i], dCollisionRadii[i], 
+                if (trackGetLineIntersect(&objData->wsCollisionCoords[i], &wsPoint[i], dCollisionRadii[i], 
                     0, NULL, self, 8, 1, 0xFF, 0) == 0
                 ) {
                     //Unset bit if there's no collision

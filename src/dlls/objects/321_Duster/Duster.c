@@ -9,7 +9,7 @@
 #include "sys/objects.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 #include "sys/rand.h"
 #include "game/gamebits.h"
@@ -82,7 +82,7 @@ void Duster_control(Object *self) {
     s32 count;
     Object *player;
     SRT srt;
-    Func_80057F1C_Struct **sp54;
+    TrackHeightResult **sp54;
     s32 i;
     Duster_Data *objdata;
     PlayerStats *stats;
@@ -101,11 +101,11 @@ void Duster_control(Object *self) {
         self->velocity.y += -0.12f * gUpdateRateF;
     }
     objdata->unkE = FALSE;
-    count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
+    count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp54, 0, 0);
 
     for (i = 0; i < count; i++) {
-        if (sp54[i]->unk0[0] < self->srt.transl.y + 140.0f) {
-            self->srt.transl.y = sp54[i]->unk0[0];
+        if (sp54[i]->y < self->srt.transl.y + 140.0f) {
+            self->srt.transl.y = sp54[i]->y;
             break;
         }
     }
@@ -187,10 +187,10 @@ void Duster_control(Object *self) {
 void Duster_update(Object *self) {
     Duster_Data *objdata;
     s32 _pad;
-    Func_80059C40_Struct sp3C;
+    TrackLineIntersectResult sp3C;
 
     objdata = self->data;
-    if (func_80059C40(
+    if (trackGetLineIntersect(
         &self->prevLocalPosition,
         &self->srt.transl,
         30.0f,

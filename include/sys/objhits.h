@@ -16,16 +16,6 @@ typedef struct Unk80026DF4 {
     f32 unk10;
 } Unk80026DF4;
 
-// size: 0x6C
-typedef struct Unk80027934 {
-    Vec4f unk0[4];
-    f32 unk40[4];
-    s8 unk50[4];
-    s8 unk54[4];
-    Object* unk58[4];
-    s16 unk68;
-} Unk80027934;
-
 // siuze: 0x1C
 typedef struct Unk800B19A0 {
     f32 unk0;
@@ -138,7 +128,6 @@ void func_80028D90(void);
 void func_8002B410(Object *, s32);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
-s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 updateRate);
@@ -180,5 +169,6 @@ void objHitUpdateHitModels(s32 arg0);
 void func_80025E58(void);
 void func_8002B6EC(void);
 void func_800267C4(Object* obj);
+Object **func_80025DD4(s32 *arg0);
 
 #endif

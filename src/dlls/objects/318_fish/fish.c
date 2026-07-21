@@ -8,7 +8,7 @@
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dll.h"
@@ -138,7 +138,7 @@ static void fish_initialise(Object* self) {
     objdata->maxSpeedApproachingWall = setup->maxLateralSpeed / 1000.0f;
     objdata->lateralSpeed = 0.0f;
 
-    if (func_80058B1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objdata->surfaceY, 0)) {
+    if (trackGetHeightCeiling(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objdata->surfaceY, 0)) {
         objdata->surfaceY = (setup->base.y + objdata->surfaceY) - setup->surfaceOffsetY;
         objdata->bubbleFXParams[0] = setup->surfaceOffsetY / 0.05f;
         objdata->bubbleFXParams[1] = (setup->scale / 100.0f) * 20.0f;
@@ -403,7 +403,7 @@ static s32 fish_is_jump_possible(Object *self) {
     vNow.y = self->srt.transl.y;
     vNow.z = self->srt.transl.z;
 
-    if (func_80059C40(&vNow, &vFuture, 0.1f, 1, NULL, self, 4, -1, 0xFF, 0)) {
+    if (trackGetLineIntersect(&vNow, &vFuture, 0.1f, 1, NULL, self, 4, -1, 0xFF, 0)) {
         return FALSE;
     } else {
         return TRUE;
@@ -492,7 +492,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         delta.y += self->srt.transl.y;
         delta.z += self->srt.transl.z;
 
-        if (func_80059C40(&self->srt.transl, &delta, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
+        if (trackGetLineIntersect(&self->srt.transl, &delta, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
             objdata->animSpeed = 0.06f;
 
             if (objdata->yawSpeed > 0) {
@@ -536,7 +536,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         self->srt.transl.y += delta.y;
         self->srt.transl.z += delta.z;
 
-        if (func_80059C40(&self->srt.transl, &vFuture, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
+        if (trackGetLineIntersect(&self->srt.transl, &vFuture, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
             fish_handle_approaching_wall(self, &vFuture, &eulerRotation);
 
             if (objdata->lateralSpeed < objdata->maxSpeedApproachingWall) {

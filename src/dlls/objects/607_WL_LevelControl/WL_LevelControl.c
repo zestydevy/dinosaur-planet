@@ -14,7 +14,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/lfx.h"
 #include "sys/envfx.h"
 #include "dll.h"
@@ -440,7 +440,7 @@ static void WL_LevelControl_setup5_tick(Object* self) {
 
     //Disable HITS line (TO-DO: find where this line is)
     if (mainGetBits(BIT_2DB)) {
-        func_80059038(0x18, 0, 0);
+        trackToggleHitLine(0x18, 0, 0);
     }
 
     //Delete the dock's GuardClaw after dropping a crate from above

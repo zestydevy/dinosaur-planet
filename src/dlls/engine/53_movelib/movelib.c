@@ -7,7 +7,7 @@
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 #include "macros.h"
 
@@ -388,7 +388,7 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
         arg0->srt.transl.x = arg1->transl.x;
         arg0->srt.transl.f[1] = arg1->transl.f[1];
         arg0->srt.transl.f[2] = arg1->transl.f[2];
-        if ((*arg5 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.f[1], arg0->srt.transl.f[2], &sp34, 0U) == 0)) {
+        if ((*arg5 & 1) && (trackGetHeightNearest(arg0, arg0->srt.transl.x, arg0->srt.transl.f[1], arg0->srt.transl.f[2], &sp34, 0U) == 0)) {
             arg0->srt.transl.f[1] -= sp34;
         }
         return 1;
@@ -397,7 +397,7 @@ s32 movelib_func_1130(Object* arg0, SRT* arg1, f32 arg2, s32 arg3, f32* arg4, u8
     arg0->velocity.x = sp3C.f[0] * (arg2 * gUpdateRateF);
     arg0->velocity.f[1] = sp3C.f[1] * (arg2 * gUpdateRateF);
     arg0->velocity.f[2] = sp3C.f[2] * (arg2 * gUpdateRateF);
-    if ((*arg5 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.f[1], arg0->srt.transl.f[2], &sp34, 0U) == 0)) {
+    if ((*arg5 & 1) && (trackGetHeightNearest(arg0, arg0->srt.transl.x, arg0->srt.transl.f[1], arg0->srt.transl.f[2], &sp34, 0U) == 0)) {
         arg0->srt.transl.f[1] -= sp34;
     }
     if (*arg5 & 2) {
@@ -444,7 +444,7 @@ s32 movelib_func_14F4(Object* arg0, UnkCurvesStruct* arg1, DLL53Func17F4Arg2* ar
         }
     }
     objGetAnimChange(arg0, arg3, arg5);
-    if ((*arg6 & 1) && (func_80058680(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp38, 0) == 0)) {
+    if ((*arg6 & 1) && (trackGetHeightNearest(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp38, 0) == 0)) {
         arg0->srt.transl.y -= sp38;
     }
     if (*arg6 & 2) {

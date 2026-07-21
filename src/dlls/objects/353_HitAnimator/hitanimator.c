@@ -1,7 +1,5 @@
 #include "common.h"
 
-u32 func_80058F50(void);
-
 typedef struct {
     s8 active;
     u8 flags;
@@ -109,11 +107,11 @@ void HitAnimator_control(Object* self) {
 
     //Animate any HITS lines with the target animatorID
     if (objSetup->mode & HitAnimator_Mode_HITS) {
-        if (func_80058F50()) {
+        if (trackIntersectNeedsUpdate()) {
             objData->flags |= HitAnimator_Flag_HITS_Animate_Needed;
         }
-        if ((objData->flags & HitAnimator_Flag_HITS_Animate_Needed) && !func_80058F50()) {
-            func_80059038(objSetup->hitsAnimatorID, self->parent, objData->active);
+        if ((objData->flags & HitAnimator_Flag_HITS_Animate_Needed) && !trackIntersectNeedsUpdate()) {
+            trackToggleHitLine(objSetup->hitsAnimatorID, self->parent, objData->active);
             objData->flags &= ~HitAnimator_Flag_HITS_Animate_Needed;
         }
     }

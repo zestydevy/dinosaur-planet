@@ -373,7 +373,7 @@ void LanternFireFly_send(Object* self) {
     objData->fxRange = 1.0f;
     objData->varianceZ = objSetup->varianceZ;
     objData->unk73 = 0;
-    func_8005B5B8(self, NULL, 1);
+    trackIntersect_func_8005B5B8(self, NULL, 1);
     
     player = objGetPlayer();
     coordsPlayer.x = player->globalPosition.x;

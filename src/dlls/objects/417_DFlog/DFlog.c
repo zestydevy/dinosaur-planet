@@ -11,7 +11,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 
 typedef struct {
@@ -674,8 +674,8 @@ static void dll_417_func_E8C(Object* self) {
 
 // offset: 0x1E9C | func: 24
 static f32 dll_417_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
-    Func_80057F1C_Struct** sp74;
-    Func_80057F1C_Struct* temp_v0_4;
+    TrackHeightResult** sp74;
+    TrackHeightResult* temp_v0_4;
     f32 temp_fv0;
     f32 sp68;
     f32 temp_fv0_9;
@@ -694,31 +694,31 @@ static f32 dll_417_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
     } else {
         sp68 = -(-temp_fv0);
     }
-    temp_v0 = func_80057F1C(arg0, arg2, arg0->srt.transl.y, arg3, &sp74, 0, 0);
+    temp_v0 = trackGetHeight(arg0, arg2, arg0->srt.transl.y, arg3, &sp74, 0, 0);
     if (temp_v0 != 0) {
         var_a3 = 0;
         var_ft4 = 0.0f;
         var_a1 = -1;
-        if (sp74[0]->unk0[0] <= arg1) {
-            var_fa1 = arg1 - sp74[0]->unk0[0];
+        if (sp74[0]->y <= arg1) {
+            var_fa1 = arg1 - sp74[0]->y;
         } else {
-            var_fa1 = -(arg1 - sp74[0]->unk0[0]);
+            var_fa1 = -(arg1 - sp74[0]->y);
         }
 
         for (var_v1 = 0; var_v1 < temp_v0; var_v1++) {
             if (sp74[var_v1]->unk14 == 0xE) {
-                if (sp74[var_v1]->unk0[0] <= arg1) {
-                    var_fv1 = arg1 - sp74[var_v1]->unk0[0];
+                if (sp74[var_v1]->y <= arg1) {
+                    var_fv1 = arg1 - sp74[var_v1]->y;
                 } else {
-                    var_fv1 = -(arg1 - sp74[var_v1]->unk0[0]);
+                    var_fv1 = -(arg1 - sp74[var_v1]->y);
                 }
                 if ((var_fv1 < var_ft4) || (var_a1 == -1)) {
                     var_ft4 = var_fv1;
                     var_a1 = var_v1;
                 }
             }
-            var_fv1 = arg1 - sp74[var_v1]->unk0[0];
-            if (sp74[var_v1]->unk0[0] <= arg1) {
+            var_fv1 = arg1 - sp74[var_v1]->y;
+            if (sp74[var_v1]->y <= arg1) {
                 var_fv0_2 = var_fv1;
             } else {
                 var_fv0_2 = -var_fv1;
@@ -730,18 +730,18 @@ static f32 dll_417_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
         }
         
         if (var_a1 != -1) {
-            sp68 = sp74[var_a1]->unk0[0];
+            sp68 = sp74[var_a1]->y;
         }
         temp_v0_4 = sp74[var_a3];
-        temp_fv0_9 = arg1 - temp_v0_4->unk0[0];
-        if (sp68 < temp_v0_4->unk0[0]) {
+        temp_fv0_9 = arg1 - temp_v0_4->y;
+        if (sp68 < temp_v0_4->y) {
             if (temp_fv0_9 >= 0.0f) {
                 var_fv1 = temp_fv0_9;
             } else {
                 var_fv1 = -temp_fv0_9;
             }
             if ((var_fv1 < 10.0f) && (temp_v0_4->unk14 != 0xE)) {
-                sp68 = temp_v0_4->unk0[0] + 4.0f;
+                sp68 = temp_v0_4->y + 4.0f;
             }
         }
     } else {

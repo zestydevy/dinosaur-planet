@@ -28,7 +28,7 @@
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
 #include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/map.h"
 #include "sys/map_enums.h"
 #include "dll.h"
@@ -215,7 +215,7 @@ void mainInit(void) {
     dllInit();
     objInit();
     diPrintfInit();
-    func_80053300();
+    trackIntersectInit();
     shadowsInit();
     footstepsInit();
     fontsInit();
@@ -459,7 +459,7 @@ void main_func_80013D80(void) {
         }
 
         menuUpdate2();
-        func_800591EC();
+        trackIntersectTick();
         map_func_8004A67C();
         mapUpdateStreaming();
         objHandleAnimseqActors();

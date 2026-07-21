@@ -10,7 +10,7 @@
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/newshadows.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 
 typedef struct {
@@ -200,7 +200,7 @@ static void dll_698_func_6E4(Object *self, Vec3f *arg1) {
                     /* fallthrough */
                 case OBJ_BossDrakorAster:
                     VECTOR_SUBTRACT(*arg1, self->srt.transl, spA8);
-                    if (func_80056BCC(&self->srt.transl, &spA8, &spB4, &spC0, &objList[objIdx]->srt.transl, 
+                    if (trackIntersect_func_80056BCC(&self->srt.transl, &spA8, &spB4, &spC0, &objList[objIdx]->srt.transl, 
                                       SQ((f32) objList[objIdx]->objhitInfo->unk52 * 4.0f)) != 0) {
                         func_8002635C(objList[objIdx], self, Damage_Type_Sword_Staff_Strike1, 1, 1);
                     }

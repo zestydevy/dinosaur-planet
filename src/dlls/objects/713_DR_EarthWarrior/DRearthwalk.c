@@ -630,7 +630,7 @@ s32 DRearthwalk_func_19DC(Object* self, Object* rider) {
         sp48.z = self->srt.transl.z;
         sp48.x += mathSinfInterp(self->srt.yaw - 0x4000) * 100.0f;
         sp48.z += mathCosfInterp(self->srt.yaw - 0x4000) * 100.0f;
-        if (func_80059C40(&self->srt.transl, &sp48, 10.0f, 1, NULL, self, 8, -1, 0xFF, 0) != 0) {
+        if (trackGetLineIntersect(&self->srt.transl, &sp48, 10.0f, 1, NULL, self, 8, -1, 0xFF, 0) != 0) {
             objdata->unkA5E = 1;
         } else {
             objdata->unkA5E = 0;

@@ -151,7 +151,7 @@ void objTick(void) {
 
     nextFieldOffset = gObjUpdateList.nextFieldOffset; // == 0x38, &obj->next
 
-    func_80058FE8();
+    trackIntersectLastLineTick();
 
     objUpdateObjModels();
     objHitUpdateHitModels(gNumObjs);
@@ -1357,7 +1357,7 @@ ObjDef *objLoadObjdef(s32 tabIdx) {
         if (def->modLineNo > -1) {
             STUBBED_PRINTF("ob %d fileno %d\n", tabIdx, def->modLineNo);
             def->pModLines = objLoadObjdefModlines(def->modLineNo, &def->modLineCount);
-            func_800596BC(def);
+            trackIntersectModLineBuild(def);
         }
 
         gLoadedObjDefs[tabIdx] = def;

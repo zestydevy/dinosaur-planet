@@ -84,7 +84,7 @@ static void curveFish_initialise(Object* self) {
     objSetup = (curveFish_Setup*)self->setup;
     curveType = dCurveType;
 
-    if (func_80058B1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objData->surfaceY, 0)) {
+    if (trackGetHeightCeiling(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objData->surfaceY, 0)) {
         objData->surfaceY = (self->srt.transl.y + objData->surfaceY) - objSetup->surfaceOffsetY;
         gDLL_26_Curves->vtbl->func_4288((&objData->curves), self, 100.0f, &curveType, -1);
         objData->state = CurveFish_STATE_1_Fade_In;

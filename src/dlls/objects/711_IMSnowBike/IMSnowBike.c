@@ -11,7 +11,7 @@
 #include "sys/objanim.h"
 #include "sys/objprint.h"
 #include "sys/objlib.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/rand.h"
 #include "dll.h"
 #include "prevent_bss_reordering2.h"
@@ -378,7 +378,7 @@ void dll_711_control(Object *self) {
                             objdata->unk3CE = self->srt.pitch;
                             objdata->unk3D0 = self->srt.roll;
                             dll_711_func_3C30(self, objdata);
-                            func_80058680(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spB8, 0);
+                            trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spB8, 0);
                             self->srt.transl.y -= spB8;
                             objdata->flags &= ~SNOWBIKEFLAG_2;
                         }
@@ -1318,7 +1318,7 @@ static void dll_711_func_3780(Object *self, IMSnowBike_Data *objdata, DLL27_Data
                 mathMtxXFMF(&spDC, 
                                _data_40[var_s2].x, _data_40[var_s2].y, _data_40[var_s2].z, 
                                &sp88[var_s2].x, &sp88[var_s2].y, &sp88[var_s2].z);
-                if (func_80059C40(&objdata->unk32C[var_s2], &sp88[var_s2], _data_7C[var_s2], 
+                if (trackGetLineIntersect(&objdata->unk32C[var_s2], &sp88[var_s2], _data_7C[var_s2], 
                                   0, NULL, self, 8, -1, 0xFF, 0) == 0) {
                     sp87 &= ~(1 << var_s2);
                 } else {

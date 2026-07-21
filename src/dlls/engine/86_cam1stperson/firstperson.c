@@ -5,7 +5,7 @@
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/memory.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll.h"
 
 // official filename: firstperson.c
@@ -340,7 +340,7 @@ void cam1stperson_func_1008(Cam* cam) {
     Vec3f spD8;
     Vec3f spCC;
     AABBs32 spB4;
-    Unk80027934 sp48;
+    TrackIntersectResult sp48;
 
     player = cam->player;
     sState->unk10[0] = cam->srt.transl.x;
@@ -375,9 +375,9 @@ void cam1stperson_func_1008(Cam* cam) {
     sp48.unk40[0] = 4.5f;
     sp48.unk50[0] = -1;
     sp48.unk54[0] = 4;
-    fit_aabb_around_cubes(&spB4, &spD8, &spCC, &sp48.unk40[0], 1);
-    func_80053750(player, &spB4, 1);
-    func_8005509C(player, spD8.f, spCC.f, 1, &sp48, 0);
+    trackIntersectBuildAABB(&spB4, &spD8, &spCC, &sp48.unk40[0], 1);
+    trackIntersectBroadphase(player, &spB4, 1);
+    trackGetIntersect(player, spD8.f, spCC.f, 1, &sp48, 0);
     sState->unk10[1] = spCC.x;
     sState->unk20[1] = spCC.y;
     sState->unk30[1] = spCC.z;

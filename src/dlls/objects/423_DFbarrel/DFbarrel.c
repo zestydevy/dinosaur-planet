@@ -107,7 +107,7 @@ void DFbarrel_handle_movement(Object* self) {
     f32 dz;
     f32 range;
     f32 diffMagnitude;
-    Func_80057F1C_Struct** collisionInfo;
+    TrackHeightResult** collisionInfo;
     Vec3f position;
     f32 minDiffMagnitude;
     f32 yDiff;
@@ -160,13 +160,13 @@ void DFbarrel_handle_movement(Object* self) {
         objData->velocityY = self->velocity.y;
         
         //Find the nearest water plane
-        count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
+        count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
         if (count) {
             delta = 10000.0f;
             
             for (i = 0; i < count; i++){
                 if (collisionInfo[i]->unk14 == 14) { //water only?            
-                    yDiff = self->srt.transl.y - collisionInfo[i]->unk0[0];
+                    yDiff = self->srt.transl.y - collisionInfo[i]->y;
                     if (yDiff >= 0) {
                         diffMagnitude = yDiff;
                     } else {
@@ -201,7 +201,7 @@ void DFbarrel_handle_movement(Object* self) {
 
     objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
 
-    func_80059C40(&position, &self->srt.transl, 10.0f, 0, NULL, self, 8, -1, 0xFF, 0);
+    trackGetLineIntersect(&position, &self->srt.transl, 10.0f, 0, NULL, self, 8, -1, 0xFF, 0);
 }
 
 // offset: 0x960 | func: 8

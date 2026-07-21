@@ -535,7 +535,7 @@ void camnormal_func_1A58(Cam* cam, s32 arg1, s32 arg2, f32* arg3, f32* arg4) {
     f32 var_fv0;
     s32 temp_v0;
     s32 var_a1;
-    Func_80057F1C_Struct** sp80;
+    TrackHeightResult** sp80;
     AABBs32 sp68;
     Object* sp64;
 
@@ -544,39 +544,39 @@ void camnormal_func_1A58(Cam* cam, s32 arg1, s32 arg2, f32* arg3, f32* arg4) {
         cam->unk34.unk50[0] = -1;
         cam->unk34.unk40[0] = 4.5f;
         cam->unk34.unk54[0] = arg2;
-        fit_aabb_around_cubes(&sp68, &cam->positionMirror, &cam->srt.transl, cam->unk34.unk40, 1);
-        func_80053750(sp64, &sp68, 1);
-        func_8005509C(sp64, &cam->positionMirror.x, &cam->srt.transl.x, 1, &cam->unk34, 0);
+        trackIntersectBuildAABB(&sp68, &cam->positionMirror, &cam->srt.transl, cam->unk34.unk40, 1);
+        trackIntersectBroadphase(sp64, &sp68, 1);
+        trackGetIntersect(sp64, &cam->positionMirror.x, &cam->srt.transl.x, 1, &cam->unk34, 0);
     }
     if (arg1 & 2) {
-        temp_v0 = func_80057F1C(sp64, cam->srt.transl.x, cam->srt.transl.y, cam->srt.transl.z, &sp80, 0, 0);
+        temp_v0 = trackGetHeight(sp64, cam->srt.transl.x, cam->srt.transl.y, cam->srt.transl.z, &sp80, 0, 0);
         *arg3 = -100000.0f;
         *arg4 = 100000.0f;
         var_ft5 = 100000.0f;
         var_ft4 = 100000.0f;
         for (var_a1 = 0; var_a1 < temp_v0; var_a1++) {
-            if (sp80[var_a1]->unk0[2] < -0.707f) {
-                if ((cam->srt.transl.y - 10.0f) < sp80[var_a1]->unk0[0]) {
-                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->unk0[0];
+            if (sp80[var_a1]->norm[1] < -0.707f) {
+                if ((cam->srt.transl.y - 10.0f) < sp80[var_a1]->y) {
+                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->y;
                     if (var_fv0 < 0.0f) {
                         var_fv0 = -var_fv0;
                     }
                     if (var_fv0 < var_ft4) {
-                        *arg4 = sp80[var_a1]->unk0[0];
+                        *arg4 = sp80[var_a1]->y;
                         var_ft4 = var_fv0;
                     }
                 }
             }
         }
         for (var_a1 = 0; var_a1 < temp_v0; var_a1++) {
-            if (sp80[var_a1]->unk0[2] > 0.707f) {
-                if (sp80[var_a1]->unk0[0] < (cam->srt.transl.y + 10.0f)) {
-                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->unk0[0];
+            if (sp80[var_a1]->norm[1] > 0.707f) {
+                if (sp80[var_a1]->y < (cam->srt.transl.y + 10.0f)) {
+                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->y;
                     if (var_fv0 < 0.0f) {
                         var_fv0 = -var_fv0;
                     }
                     if (var_fv0 < var_ft5) {
-                        *arg3 = sp80[var_a1]->unk0[0];
+                        *arg3 = sp80[var_a1]->y;
                         var_ft5 = var_fv0;
                     }
                 }
@@ -822,7 +822,7 @@ static void camnormal_func_2A5C(Cam* cam, Object* obj) {
     Vec3f p1[1];
     Vec3f p2[1];
     AABBs32 aabb;
-    Unk80027934 sp30;
+    TrackIntersectResult sp30;
 
     spD0 = mathSinfInterp(obj->srt.yaw);
     spCC = mathCosfInterp(obj->srt.yaw);
@@ -836,9 +836,9 @@ static void camnormal_func_2A5C(Cam* cam, Object* obj) {
     sp30.unk50[0] = -1;
     sp30.unk54[0] = 3;
     sp30.unk40[0] = 4.5f;
-    fit_aabb_around_cubes(&aabb, p1, p2, &sp30.unk40[0], 1);
-    func_80053750(obj, &aabb, 0);
-    func_8005509C(obj, p1[0].f, p2[0].f, 1, &sp30, 0);
+    trackIntersectBuildAABB(&aabb, p1, p2, &sp30.unk40[0], 1);
+    trackIntersectBroadphase(obj, &aabb, 0);
+    trackGetIntersect(obj, p1[0].f, p2[0].f, 1, &sp30, 0);
     cam->srt.transl.x = p2[0].x;
     cam->srt.transl.y = p2[0].y;
     cam->srt.transl.z = p2[0].z;

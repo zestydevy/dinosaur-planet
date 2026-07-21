@@ -76,7 +76,7 @@ Object* putdown_get_nearest_placed_food_of_type(Object* foodbag, Object* target,
             foodPosition.x = placedObjects->objects[index]->srt.transl.x;
             foodPosition.y = placedObjects->objects[index]->srt.transl.y;
             foodPosition.z = placedObjects->objects[index]->srt.transl.z;
-            if (!func_80059C40(&target->srt.transl, &foodPosition, 0.1f, 0, 0, foodbag, 8, -1, 0xFF, 0)){
+            if (!trackGetLineIntersect(&target->srt.transl, &foodPosition, 0.1f, 0, 0, foodbag, 8, -1, 0xFF, 0)){
                 //TODO: verify DLL interface used by placed food
                 if (((DLL_IFoodbag*) placedObjects->objects[index]->dll)->vtbl->is_obtained(placedObjects->objects[index]) == 0){
                     placed_objects[index] = placedObjects->objects[index];

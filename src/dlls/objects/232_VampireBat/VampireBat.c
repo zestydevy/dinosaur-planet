@@ -156,7 +156,7 @@ void dll_232_control(Object* self) {
             }
             sp84->tr.f[0] = self->srt.transl.f[0];
             sp84->tr.f[2] = self->srt.transl.f[2];
-            if (func_800588D4(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &bat->unk1C, 0) != 0) {
+            if (trackGetHeightFloor(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &bat->unk1C, 0) != 0) {
                 sp84->tr.f[1] = self->srt.transl.f[1] - bat->unk1C;
             }
             if (baddie->fsa.target != NULL) {

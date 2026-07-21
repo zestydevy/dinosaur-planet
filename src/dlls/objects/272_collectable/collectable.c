@@ -522,7 +522,7 @@ void collectable_handle_animation_and_fx(Object* self) {
 // offset: 0x10C8 | func: 9
 void collectable_handle_motion(Object* self) {
     Collectable_Data* objdata;
-    Func_80057F1C_Struct** sp50;
+    TrackHeightResult** sp50;
     f32 dt;
     f32 maxFound;
     f32 sampleValue;
@@ -531,11 +531,11 @@ void collectable_handle_motion(Object* self) {
 
     objdata = self->data;
 
-    count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp50, 0, 0);
+    count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp50, 0, 0);
 
     maxFound = -10000.0f;
     for (i = 0; i < count; i++){
-        sampleValue = sp50[i]->unk0[0];
+        sampleValue = sp50[i]->y;
         if ((sampleValue < (self->srt.transl.y + 30.0f)) && (maxFound < sampleValue)) {
             maxFound = sampleValue;
         }

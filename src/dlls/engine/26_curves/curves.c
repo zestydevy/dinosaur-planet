@@ -4,7 +4,7 @@
 #include "sys/objects.h"
 #include "sys/rand.h"
 #include "sys/voxmap.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "macros.h"
 
 #define MAX_ROMCURVES 1300
@@ -1508,7 +1508,7 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     CurveSetup *temp_s0;
     CurveSetup *spDC;
     CurveSetup *spD8;
-    Func_80059C40_Struct sp84;
+    TrackLineIntersectResult sp84;
 
     spDC = NULL;
     spD8 = NULL;
@@ -1534,7 +1534,7 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
                     vox_func_80007EE0(&spF0, &sp104);
                     temp_t5 = vox_func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
-                    if (((spE6 == 1) || (temp_t5 != 0)) && (func_80059C40(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
+                    if (((spE6 == 1) || (temp_t5 != 0)) && (trackGetLineIntersect(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
                         var_fs2 = temp_fs0;
                         spDC = temp_s0;
                     }
@@ -1546,7 +1546,7 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
                     vox_func_80007EE0(&spF0, &sp104);
                     temp_t5 = vox_func_80008048(&sp104, &spFC, NULL, &spE6, 0);
     
-                    if (((spE6 == 1) || (temp_t5 != 0)) && (func_80059C40(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
+                    if (((spE6 == 1) || (temp_t5 != 0)) && (trackGetLineIntersect(&arg0->srt.transl, &spF0, 1.0f, 0, &sp84, arg0, (s8) arg4, -1, 0U, 0) == 0)) {
                         var_fs3 = temp_fs0;
                         spD8 = temp_s0;
                     }

@@ -2027,18 +2027,18 @@ static void anim_snap_obj_to_ground(Object* animObj, AnimObj_Setup* setup) {
 s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z, f32* yOut, f32 ySetup) {
     s32 lowestIndex;
     f32 sampleY;
-    Func_80057F1C_Struct** sp5C;
+    TrackHeightResult** sp5C;
     f32 lowestFound;
     s32 sampleCount;
     s32 index;
 
-    sampleCount = func_80057F1C(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
+    sampleCount = trackGetHeight(animObj, x, animObj->globalPosition.f[1], z, &sp5C, 0, 1);
     if (sampleCount) {
         lowestIndex = 0;
         lowestFound = 1000.0f;
         for (index = 0; index < sampleCount; index++) {
-            if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
-                sampleY = y - sp5C[index]->unk0[0];
+            if ((parent == sp5C[index]->obj) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->norm[1] > 0.0f)) {
+                sampleY = y - sp5C[index]->y;
                 if (sampleY < 0.0f) {
                     sampleY = -sampleY;
                 }
@@ -2049,7 +2049,7 @@ s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z,
             }
         }
 
-        *yOut = sp5C[lowestIndex]->unk0[0];
+        *yOut = sp5C[lowestIndex]->y;
         if (parent) {
             *yOut -= animObj->parent->srt.transl.y;
         }
@@ -2060,8 +2060,8 @@ s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z,
         lowestFound = 1000.0f;
         lowestIndex = 0;
         for (index = 0; index < sampleCount; index++) {
-           if ((parent == sp5C[index]->unk10) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->unk0[2] > 0.0f)) {
-                sampleY = y + 5.0f - sp5C[index]->unk0[0];
+           if ((parent == sp5C[index]->obj) && (sp5C[index]->unk14 != 0xE) && (sp5C[index]->norm[1] > 0.0f)) {
+                sampleY = y + 5.0f - sp5C[index]->y;
                 if (sampleY < 0.0f) {
                     sampleY = -sampleY;
                 }
@@ -2072,7 +2072,7 @@ s32 anim_find_obj_ground_y(Object* animObj, Object *parent, f32 x, f32 y, f32 z,
             }
         }
 
-        *yOut = sp5C[lowestIndex]->unk0[0];
+        *yOut = sp5C[lowestIndex]->y;
         if (parent) {
             *yOut -= animObj->parent->srt.transl.y;
         }

@@ -8,7 +8,7 @@
 #include "types.h"
 #include "game/objects/object.h"
 #include "sys/map.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 
 // Might be incorrect definition but size should be correct
 typedef struct Unk8004FA58 {

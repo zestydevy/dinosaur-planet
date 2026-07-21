@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "sys/camera.h"
+#include "sys/intersect.h"
 #include "sys/objhits.h"
 #include "types.h"
 #include "unktypes.h"
@@ -32,7 +33,7 @@ typedef struct {
 /*000*/    SRT srt;                 //Camera transform
 /*018*/    Vec3f initialCoords;     //Camera's initial coordinates
 /*024*/    u8 _unk24[0x34 - 0x24];
-/*034*/    Unk80027934 unk34;
+/*034*/    TrackIntersectResult unk34;
 /*0A0*/    Object* player;
 /*0A4*/    Vec3f positionMirror;    //Mirror of camera's position
 /*0B0*/    f32 fov;                 //Field of view

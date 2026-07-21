@@ -9,7 +9,7 @@
 #include "game/objects/object_id.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "types.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
@@ -65,7 +65,7 @@ void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
 
     self->stateFlags |= OBJSTATE_WORLD_MTX_IGNORE_SCALE;
 
-    func_80059038(0, self, 0);
+    trackToggleHitLine(0, self, 0);
 
     for (index = 0; index < 5; index++){
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mobileMapID, index, 0);
@@ -127,7 +127,7 @@ void WLgalleon_control(Object* self) {
         player->srt.transl.x = -121.0f;
         player->srt.transl.y = 116.0f; //@bug: slightly too high above Galleon, causes fall sound
         player->srt.transl.z = 5.0f;
-        func_8005B5B8(player, self, 0);
+        trackIntersect_func_8005B5B8(player, self, 0);
         ((DLL_Unknown*)player->dll)->vtbl->func[68].withOneArg((s32)player);
         self->unkE0 = 1;
         return;

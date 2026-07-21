@@ -89,7 +89,7 @@ segments:
     - [0x41BD0, c, map]
     - [0x4E070, c, newshadows]
     - [0x535C0, asm, segment_535C0] # shadow hasm?
-    - [0x53F00, c, segment_53F00] # track/intersect.c ?
+    - [0x53F00, c, intersect] # track/intersect
     - [0x5C470, c, shadowtex] # more shadow code
     - [0x5D380, c, footsteps]
     - [0x5E010, c, vi]
@@ -329,7 +329,7 @@ segments:
     - [0x93660, .data, map]
     - [0x937D0, .data, newshadows]
     - [0x938C0, data, segment_535C0]
-    - [0x93A70, .data, segment_53F00]
+    - [0x93A70, .data, intersect]
     - [0x93A90, .data, shadowtex]
     - [0x93AC0, .data, footsteps]
     - [0x93C10, .data, vi]
@@ -406,7 +406,7 @@ segments:
     - [0x9B110, .rodata, map]
     - [0x9B5D0, .rodata, newshadows]
     - [0x9B650, rodata, segment_535C0]
-    - [0x9B670, .rodata, segment_53F00]
+    - [0x9B670, .rodata, intersect]
     - [0x9B870, .rodata, shadowtex]
     - [0x9B8C0, .rodata, footsteps]
     - [0x9B8E0, .rodata, vi]
@@ -484,7 +484,7 @@ segments:
     # - { type: .bss, vram: 0x800b49e0, name: framebuffer_fx }
     # - { type: .bss, vram: 0x800b49f0, name: map }
     # - { type: .bss, vram: 0x800b97e0, name: newshadows }
-    # - { type: .bss, vram: 0x800bb200, name: segment_53F00 }
+    # - { type: .bss, vram: 0x800bb200, name: intersect }
     # - { type: .bss, vram: 0x800bb540, name: shadowtex }
     # - { type: .bss, vram: 0x800bb590, name: footsteps }
     # - { type: .bss, vram: 0x800bcc90, name: vi }

@@ -3,8 +3,6 @@
 #include "game/gamebits.h"
 #include "macros.h"
 
-int func_80058F50(void);
-
 typedef struct {
     ObjSetup base;
     s8 yaw;
@@ -56,8 +54,8 @@ void PortalSpellDoor_setup(Object* self, PortalSpellDoor_Setup* objSetup, s32 ar
     //Check if door is already open
     if (mainGetBits(objSetup->gamebitActivated)) {
         //Remove HITS line
-        if (objSetup->hitsAnimatorID && !func_80058F50()) {
-            func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
+        if (objSetup->hitsAnimatorID && !trackIntersectNeedsUpdate()) {
+            trackToggleHitLine(objSetup->hitsAnimatorID, self->parent, 0);
         }
         self->srt.flags |= OBJFLAG_INVISIBLE;
         self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_CONTROL_DISABLED);
@@ -91,8 +89,8 @@ void PortalSpellDoor_control(Object* self) {
         mainSetBits(objSetup->gamebitActivated, TRUE);
 
         //Remove HITS line
-        if (objSetup->hitsAnimatorID && !func_80058F50()) {
-            func_80059038(objSetup->hitsAnimatorID, self->parent, 0);
+        if (objSetup->hitsAnimatorID && !trackIntersectNeedsUpdate()) {
+            trackToggleHitLine(objSetup->hitsAnimatorID, self->parent, 0);
         }
     } else if ((((DLL_210_Player*)player->dll)->vtbl->func50(player) == BIT_Spell_Portal) && (objData->timer == -1)) {
         //Start countdown to door transformation

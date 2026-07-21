@@ -72,7 +72,7 @@ void DIMBoulder_control(Object* self) {
     f32 pad4;
     s32 updateRate;
     s32 volume;
-    Unk80027934 sp4C;
+    TrackIntersectResult sp4C;
     AABBs32 bounds;
 
     objData = self->data;
@@ -110,11 +110,11 @@ void DIMBoulder_control(Object* self) {
         sp4C.unk50[0] = -1;
         sp4C.unk54[0] = 5;
         sp4C.unk40[0] = 55.0f;
-        fit_aabb_around_cubes(&bounds, &pA, &pB, sp4C.unk40, 1);
-        func_80053750(self, &bounds, 0);
+        trackIntersectBuildAABB(&bounds, &pA, &pB, sp4C.unk40, 1);
+        trackIntersectBroadphase(self, &bounds, 0);
 
         //Bounce off ground (reflect velocity using surface normal)
-        if (func_8005509C(self, &self->prevLocalPosition.x, &self->srt.transl.x, 1, &sp4C, 0) != 0) {
+        if (trackGetIntersect(self, &self->prevLocalPosition.x, &self->srt.transl.x, 1, &sp4C, 0) != 0) {
             unitV.f[0] = -self->velocity.f[0];
             unitV.f[1] = -self->velocity.f[1];
             unitV.f[2] = -self->velocity.f[2];

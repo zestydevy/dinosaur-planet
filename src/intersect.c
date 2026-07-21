@@ -1,19 +1,14 @@
-#include "common.h"
+#include "sys/intersect.h"
+
 #include "dlls/objects/210_player.h"
+#include "sys/camera.h"
+#include "sys/memory.h"
 #include "sys/newshadows.h"
 #include "sys/objtype.h"
-#include "sys/segment_53F00.h"
+#include "dll.h"
+#include "macros.h"
 
-static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
-static const char str_8009aaa0[] = "1: track/intersect.c: OVERFLOW error\n";
-static const char str_8009aac8[] = "2: track/intersect.c: OVERFLOW error\n";
-static const char str_8009aaf0[] = "3: track/intersect.c: OVERFLOW error\n";
-static const char str_8009ab18[] = "TrackGetHeight()-Overflow!!!\n";
-static const char str_8009ab38[] = "trackIntersect: FUNC OVERFLOW %d\n";
-static const char str_8009ab5c[] = "intersectModLineBuild point list overflow, %d/%d\n";
-static const char str_8009ab90[] = "trackIntersect: FUNC OVERFLOW %d\n";
-static const char str_8009abb4[] = "insertPoint array overrun %d/%d\n";
-static const char str_8009abd8[] = "NO FREE LAST LINE\n";
+/** @file official filename: track/intersect.c */
 
 typedef struct {
     s16 unk0;
@@ -28,11 +23,10 @@ typedef struct {
     u8 unk15;
 } Unk8005B17C;
 
-s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* arg2, f32* arg3, f32* arg4, s32 arg5, Unk80027934* arg6, u8 arg7);
-s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, Vec3f *, s32, Unk80027934*, u8);
+s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* arg2, f32* arg3, f32* arg4, s32 arg5, TrackIntersectResult* arg6, u8 checkingObj);
+s32 func_800564C8(UnkFunc80051D68Arg3 *, UnkFunc80051D68Arg3 *, Vec3f *, s32, TrackIntersectResult*, u8);
 void func_80058F8C(void);
-s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5);
-s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, s8 arg8, Object* arg9);
+s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, TrackLineIntersectResult* arg4, Object* arg5, s8 arg6, s8 arg7, s8 arg8, Object* arg9);
 Unk8005B17C* func_8005B17C(Object*, Object*, u8);
 Unk8005B17C* func_8005B204(Object*, Object*, u8);
 s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg4, Vec4f* arg5, f32 arg6, u8 arg7);
@@ -40,38 +34,30 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
 s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, f32 arg5, u8 arg6);
 s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, Vec4f* arg5);
 s32 func_8005A2BC(f32 arg0, f32 arg1, f32 arg2, s32 arg3, s16* arg4);
-
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3*, s32, s32, s32, s32, s32, s32, u8);
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3*, Unk8005341C*, ModelInstance*, f32, f32, f32, f32, f32, f32, u8);
-void func_80054DF8(UnkFunc80051D68Arg3*, UnkFunc80051D68Arg3*, u8);
-void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5);
-void func_80058D54(Vec4f* arg0, Vec4f* arg1, Vec4f* arg2, s32 arg3, s32 arg4, s32 arg5, f32* arg6, f32* arg7, f32* arg8, f32* arg9);
+void func_80054DF8(UnkFunc80051D68Arg3* pl, UnkFunc80051D68Arg3* plEnd, u8 flags);
+void func_80058144(UnkFunc80051D68Arg3* plStart, UnkFunc80051D68Arg3* plEnd, Unk8005341C* plIdx, f32 x, f32 z, s32 arg5);
+void func_80058D54(Vec4f* vX, Vec4f* vY, Vec4f* vZ, s32 p0, s32 p1, s32 p2, f32* outNx, f32* outNy, f32* outNz, f32* arg9);
 s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5);
 
-// move to objhits.h
-Object **func_80025DD4(s32 *arg0);
-
-// Move to map.h
-s8* mapGetBlockGridLayer(s32 arg0);
-
 // .bss 800bb200-800bb540
-Vec3s32 D_800BB200[8];
+Vec3s32 gBgBlockList[8];
 UnkFunc80051D68Arg3* D_800BB260;
-s16 D_800BB264;
-Unk8005341C D_800BB268[2]; // unknown size, maybe 14
-u8 _bss_800BB288[0x800BB3A8 - 0x800BB288]; // 0x120
-u8 D_800BB3A8; // count for D_800BB268
+s16 gPLlistCount;
+Unk8005341C gPLindex[20];
+u8 gPLindexCount; // count for gPLindex
 u8 _bss_800BB3AC[0x800BB3B0-0x800BB3AC];
-Func_80057F1C_Struct D_800BB3B0[10];
-Func_80057F1C_Struct* D_800BB4A0;
+TrackHeightResult D_800BB3B0[10];
+TrackHeightResult* D_800BB4A0;
 u32 _bss_800BB4A4;
-Func_80057F1C_Struct* D_800BB4A8;
+TrackHeightResult* D_800BB4A8;
 u8 _bss_800BB4B0[0x800BB4D0-0x800BB4B0]; // 0x24
-Func_80057F1C_Struct** D_800BB4D0;
+TrackHeightResult** D_800BB4D0;
 s8 D_800BB4D4;
 u8 _bss_800BB4D5;
-s16 D_800BB4D6;
-s16 D_800BB4D8;
+s16 gLineListCount;
+s16 gPointListCount;
 // nothing here
 u16 D_800BB4E0[38];
 f32 D_800BB52C;
@@ -82,47 +68,47 @@ s8 D_800BB539;
 u8 D_800BB53A;
 
 // .data 80092E70-80092E90
-UnkFunc80051D68Arg3 *D_80092E70 = NULL; // 250 length
-ModLineReencoded* D_80092E74 = NULL; // 400 length
-Vec3f *D_80092E78 = NULL; // 400 length
-s16 *D_80092E7C = NULL;
+UnkFunc80051D68Arg3 *gPLlist = NULL; // 250 length
+ModLineReencoded* gLineList = NULL; // 400 length
+Vec3f *gPointList = NULL; // 400 length
+s16 *gLineIndex = NULL;
 s8 D_80092E80 = 0;
-Unk8005B17C* D_80092E84 = NULL;
+Unk8005B17C* gLastLines = NULL;
 
 #define SOME_MIN 100000
 // Idk where this random 34 is coming from, hex value is 0xFFFE7960
 #define SOME_MAX (2 ^ 32) - SOME_MIN - 34
 
-void func_80053300(void) {
-    if (D_80092E70 == NULL) {
-        D_80092E70 = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, 0);
-        D_80092E74 = mmAlloc(400*sizeof(ModLineReencoded), COLOUR_TAG_YELLOW, 0);
-        D_80092E78 = mmAlloc(4800, COLOUR_TAG_YELLOW, 0);
-        D_80092E7C = mmAlloc(800, COLOUR_TAG_YELLOW, 0);
-        D_80092E84 = mmAlloc(20*sizeof(Unk8005B17C), COLOUR_TAG_YELLOW, 0);
+void trackIntersectInit(void) {
+    if (gPLlist == NULL) {
+        gPLlist = mmAlloc(250*sizeof(UnkFunc80051D68Arg3), COLOUR_TAG_YELLOW, ALLOC_NAME("int:pllist"));
+        gLineList = mmAlloc(400*sizeof(ModLineReencoded), COLOUR_TAG_YELLOW, ALLOC_NAME("int:linelist"));
+        gPointList = mmAlloc(4800, COLOUR_TAG_YELLOW, ALLOC_NAME("int:pointlist"));
+        gLineIndex = mmAlloc(800, COLOUR_TAG_YELLOW, ALLOC_NAME("int:lineindex"));
+        gLastLines = mmAlloc(20*sizeof(Unk8005B17C), COLOUR_TAG_YELLOW, ALLOC_NAME("int:lastlines"));
     }
     func_80058F8C();
-    D_800BB4D6 = 0;
-    D_800BB4D8 = 0;
+    gLineListCount = 0;
+    gPointListCount = 0;
     D_800BB539 = 0;
     D_800BB538 = 0;
 }
 
-void func_800533D8(s32* arg0, UnkFunc80051D68Arg3** arg1) {
-    *arg0 = D_800BB268[D_800BB3A8].unk4;
-    *arg1 = D_80092E70;
+void trackIntersect_func_800533D8(s32* arg0, UnkFunc80051D68Arg3** arg1) {
+    *arg0 = gPLindex[gPLindexCount].unk4;
+    *arg1 = gPLlist;
 }
 
-void func_80053408(Vec3s32** arg0) {
-    *arg0 = D_800BB200;
+void trackIntersectGetBlockList(Vec3s32** blockList) {
+    *blockList = gBgBlockList;
 }
 
-Unk8005341C* func_8005341C(s32* arg0) {
-    *arg0 = D_800BB3A8;
-    return D_800BB268;
+Unk8005341C* trackIntersectGetPLIndices(s32* count) {
+    *count = gPLindexCount;
+    return gPLindex;
 }
 
-void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength) {
+void trackIntersectBuildAABB(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f32 *cubeRadiusArray, s32 arrayLength) {
     aabb->min.x = 1000000;
     aabb->max.x = -1000000;
     aabb->min.y = 1000000;
@@ -202,7 +188,12 @@ void fit_aabb_around_cubes(AABBs32 *aabb, Vec3f *posArray1, Vec3f *posArray2, f3
     }
 }
 
-void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
+/** 
+ * Do broadphase intersect checks.
+ *
+ * Determines which block shape and mobile map model vertices are within the given AABB. 
+ */
+void trackIntersectBroadphase(Object* obj, AABBs32* aabb, u8 flags) {
     UnkFunc80051D68Arg3* s2;
     Model* temp_a0_2;
     ModelInstance* temp_a2;
@@ -226,22 +217,24 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
     f32 temp_fv1_3;
     s16 i;
 
-    temp_fs0 = arg1->min.x - 5;
-    temp_fs1 = arg1->max.x + 5;
-    temp_fs2 = arg1->min.y - 5;
-    temp_fs3 = arg1->max.y + 5;
-    temp_fs4 = arg1->min.z - 5;
-    temp_fs5 = arg1->max.z + 5;
-    var_s0 = &D_800BB268[1];
-    D_800BB268->unk0 = 0;
-    D_800BB268->unk4 = 0;
-    D_800BB260 = D_80092E70 + 250;
-    if (!(arg2 & 0x10)) {
-        s2 = func_80053B24(D_80092E70, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+    temp_fs0 = aabb->min.x - 5;
+    temp_fs1 = aabb->max.x + 5;
+    temp_fs2 = aabb->min.y - 5;
+    temp_fs3 = aabb->max.y + 5;
+    temp_fs4 = aabb->min.z - 5;
+    temp_fs5 = aabb->max.z + 5;
+    var_s0 = &gPLindex[1]; // mobile maps start at index 1, index 0 is for blocks
+    gPLindex->unk0 = 0;
+    gPLindex->unk4 = 0;
+    D_800BB260 = gPLlist + 250;
+    // Build PLlist
+    if (!(flags & 0x10)) {
+        s2 = func_80053B24(gPLlist, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, flags);
     } else {
-        s2 = D_80092E70;
+        s2 = gPLlist;
     }
-    if ((arg2 & 1) && arg0 != NULL) {
+    // Check mobile maps(?)
+    if ((flags & 1) && obj != NULL) {
         spB8 = s2;
         objects = func_80025DD4(&objCount);
         for (i = 0; i < objCount; i++) {
@@ -257,33 +250,50 @@ void func_80053750(Object* arg0, AABBs32* arg1, u8 arg2) {
                     ) {
                             var_s0->unkC = (MtxF* ) &((f32*)curObj->polyhits)[(curObj->polyhits->unk10C + 2) << 4];
                             var_s0->unk8 = (MtxF* ) &((f32*)curObj->polyhits)[curObj->polyhits->unk10C << 4];
-                            var_s0->unk4 = ((s32)s2 - (s32)D_80092E70) / 52;
+                            var_s0->unk4 = ((s32)s2 - (s32)gPLlist) / 52;
                             var_s0->unk0 = curObj;
-                            s2 = func_8005471C(s2, var_s0, temp_a2, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, arg2);
+                            /* default.dol
+                            if (var_s0 >= &gPLindex[ARRAYCOUNT(gPLindex)]) {
+                                STUBBED_PRINTF("PLindex overflow!!\n");
+                            }
+                            */
+                            s2 = func_8005471C(s2, var_s0, temp_a2, temp_fs0, temp_fs2, temp_fs4, temp_fs1, temp_fs3, temp_fs5, flags);
                             var_s0 += 1;
                     }
                 }
             }
         }
-        func_80054DF8(spB8, s2, arg2);
+        func_80054DF8(spB8, s2, flags);
     }
-    D_800BB264 = ((s32)s2 - (s32)D_80092E70) / 52;
-    D_800BB3A8 = var_s0 - D_800BB268;
-    var_s0->unk4 = D_800BB264;
+    gPLlistCount = ((s32)s2 - (s32)gPLlist) / 52;
+    /* default.dol
+    if (gPLlistCount >= 250) { // length of gPLlist alloc, corrected for dp
+        STUBBED_PRINTF("PLlist overflow!! - %d\n", gPLlist);
+    }
+    */
+    gPLindexCount = var_s0 - gPLindex;
+    /* default.dol
+    if (gPLindexCount >= ARRAYCOUNT(gPLindex)) {
+        STUBBED_PRINTF("PLindex overflow!! - %d\n", gPLindexCount);
+    }
+    */
+    var_s0->unk4 = gPLlistCount;
 }
 
+/** Finds block triangles within the given bounds. */
 #ifndef NON_MATCHING
+static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/segment_53F00/func_80053B24.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/intersect/func_80053B24.s")
 #else
-// N64: https://decomp.me/scratch/s5P5f
+// N64: https://decomp.me/scratch/SMq1i
 // default.dol: https://decomp.me/scratch/pyduQ
 
 
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     Block* temp_s0;
     Block* temp_v0;
-    Block *sp138[8];
+    Block *blocks[8];
     f32 temp_fs1;
     Vtx_t* sp128[3];
     Vtx_t *sp124;
@@ -293,7 +303,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     f32 temp_fs0;
     f32 temp_fs2;
     s32 sp10C;
-    s32 sp108;
+    s32 numBlocks;
     s32 temp_s4; // sp104
     s32 temp_s5; // sp100
     s32 temp_s7; // spFC
@@ -343,47 +353,49 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     temp_s7 = floorf(arg3 / BLOCKS_GRID_UNIT_F);
     temp_s5 = floorf(arg4 / BLOCKS_GRID_UNIT_F);
     temp_s3 = floorf(arg6 / BLOCKS_GRID_UNIT_F);
-    sp108 = 0;
+    numBlocks = 0;
     for (sp118 = 0; sp118 < 5; sp118++) {
         if ((temp_v0 = mapGetBlockFromGrid(temp_s4, temp_s7, sp118)) != NULL) {
-            sp138[sp108] = temp_v0;
-            D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
-            D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
-            sp108++;
+            blocks[numBlocks] = temp_v0;
+            gBgBlockList[numBlocks].x = temp_s4 * BLOCKS_GRID_UNIT;
+            gBgBlockList[numBlocks].z = temp_s7 * BLOCKS_GRID_UNIT;
+            numBlocks++;
         }
         if (temp_s5 != temp_s4) {
             if ((temp_v0 = mapGetBlockFromGrid(temp_s5, temp_s7, sp118)) != NULL) {
-                sp138[sp108] = temp_v0;
-                D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
-                D_800BB200[sp108].z = temp_s7 * BLOCKS_GRID_UNIT;
-                sp108++;
+                blocks[numBlocks] = temp_v0;
+                gBgBlockList[numBlocks].x = temp_s5 * BLOCKS_GRID_UNIT;
+                gBgBlockList[numBlocks].z = temp_s7 * BLOCKS_GRID_UNIT;
+                numBlocks++;
             }
         }
         if (temp_s3 != temp_s7) {
             if ((temp_v0 = mapGetBlockFromGrid(temp_s4, temp_s3, sp118)) != NULL) {
-                sp138[sp108] = temp_v0;
-                D_800BB200[sp108].x = temp_s4 * BLOCKS_GRID_UNIT;
-                D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
-                sp108++;
+                blocks[numBlocks] = temp_v0;
+                gBgBlockList[numBlocks].x = temp_s4 * BLOCKS_GRID_UNIT;
+                gBgBlockList[numBlocks].z = temp_s3 * BLOCKS_GRID_UNIT;
+                numBlocks++;
             }
             if (temp_s5 != temp_s4) {
                 if ((temp_v0 = mapGetBlockFromGrid(temp_s5, temp_s3, sp118)) != NULL) {
-                    sp138[sp108] = temp_v0;
-                    D_800BB200[sp108].x = temp_s5 * BLOCKS_GRID_UNIT;
-                    D_800BB200[sp108].z = temp_s3 * BLOCKS_GRID_UNIT;
-                    sp108++;
+                    blocks[numBlocks] = temp_v0;
+                    gBgBlockList[numBlocks].x = temp_s5 * BLOCKS_GRID_UNIT;
+                    gBgBlockList[numBlocks].z = temp_s3 * BLOCKS_GRID_UNIT;
+                    numBlocks++;
                 }
             }
         }
     }
-
-    for (sp118 = 0; sp118 < sp108; sp118++) {
-        temp_s4 = arg1 - D_800BB200[sp118].x;
-        temp_s5 = arg4 - D_800BB200[sp118].x;
-        temp_s7 = arg3 - D_800BB200[sp118].z;
-        temp_s3 = arg6 - D_800BB200[sp118].z;
-        D_800BB200[sp118].x += D_80092A60;
-        D_800BB200[sp118].z += D_80092A64;
+    if (numBlocks > 8) {
+        STUBBED_PRINTF("Sorry Background Block list has been exceeded\n");
+    }
+    for (sp118 = 0; sp118 < numBlocks; sp118++) {
+        temp_s4 = arg1 - gBgBlockList[sp118].x;
+        temp_s5 = arg4 - gBgBlockList[sp118].x;
+        temp_s7 = arg3 - gBgBlockList[sp118].z;
+        temp_s3 = arg6 - gBgBlockList[sp118].z;
+        gBgBlockList[sp118].x += D_80092A60;
+        gBgBlockList[sp118].z += D_80092A64;
         if (temp_s4 < 0) {
             temp_s4 = 0;
         }
@@ -396,9 +408,9 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
         if (temp_s3 > BLOCKS_GRID_UNIT) {
             temp_s3 = BLOCKS_GRID_UNIT;
         }
-        xDiff = D_800BB200[sp118].x - D_800BB200->x;
-        zDiff = D_800BB200[sp118].z - D_800BB200->z;
-        temp_s0 = sp138[sp118];
+        xDiff = gBgBlockList[sp118].x - gBgBlockList->x;
+        zDiff = gBgBlockList[sp118].z - gBgBlockList->z;
+        temp_s0 = blocks[sp118];
         var_v0 = 1;
         sp122 = 0;
         for (var_t0 = 0; var_t0 < BLOCKS_GRID_UNIT; var_t0 += 80) {
@@ -413,6 +425,12 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
             }
             var_v0 <<= 1;
         }
+        /* default.dol
+        if (sp122 == 0 || !(sp122 & 0xFF00)) { // condition from default.dol, may be wrong
+            STUBBED_PRINTF("Mask Error - %d (%d,%d)-(%d,%d)\n\n",
+                sp118, temp_s4, temp_s7, temp_s5, temp_s3);
+        }
+        */
         sp9C = &temp_s0->shapes[temp_s0->shapeCount];
         for (var_s3 = temp_s0->shapes; var_s3 < sp9C; var_s3++) {
             if (var_s3->flags & 0x2000) {
@@ -484,9 +502,9 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                             if (var_a1_3 < minZ) {
                                 minZ = var_a1_3;
                             }
-                            arg0->unkA[var_t0] = var_a0_3 + xDiff;
-                            arg0->unk10[var_t0] = var_v1_2;
-                            arg0->unk16[var_t0] = var_a1_3 + zDiff;
+                            arg0->vX[var_t0] = var_a0_3 + xDiff;
+                            arg0->vY[var_t0] = var_v1_2;
+                            arg0->vZ[var_t0] = var_a1_3 + zDiff;
                         }
                         if (
                             lowerY >= minY &&
@@ -497,23 +515,23 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                             maxZ >= temp_s7
                         ) {
                             if (var_s3->animatorID != 0) {
-                                temp_fs0 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
-                                temp_fs1 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
-                                temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
+                                temp_fs0 = (arg0->vY[0] * (arg0->vZ[1] - arg0->vZ[2])) + (arg0->vY[1] * (arg0->vZ[2] - arg0->vZ[0])) + (arg0->vY[2] * (arg0->vZ[0] - arg0->vZ[1]));
+                                temp_fs1 = (arg0->vZ[0] * (arg0->vX[1] - arg0->vX[2])) + (arg0->vZ[1] * (arg0->vX[2] - arg0->vX[0])) + (arg0->vZ[2] * (arg0->vX[0] - arg0->vX[1]));
+                                temp_fs2 = (arg0->vX[0] * (arg0->vY[1] - arg0->vY[2])) + (arg0->vX[1] * (arg0->vY[2] - arg0->vY[0])) + (arg0->vX[2] * (arg0->vY[0] - arg0->vY[1]));
                                 temp_fv0 = sqrtf(SQ(temp_fs0) + SQ(temp_fs1) + SQ(temp_fs2));
                                 if (temp_fv0 > 0.0f) {
                                     temp_fv1 = 8191.0f / temp_fv0;
-                                    arg0->unk4 = temp_fs0 * temp_fv1;
-                                    arg0->unk6 = temp_fs1 * temp_fv1;
-                                    arg0->unk8 = temp_fs2 * temp_fv1;
+                                    arg0->nX = temp_fs0 * temp_fv1;
+                                    arg0->nY = temp_fs1 * temp_fv1;
+                                    arg0->nZ = temp_fs2 * temp_fv1;
                                 }
                             } else {
-                                arg0->unk4 = temp_s0->encodedTris[sp11C].d0 >> 0x12;
-                                arg0->unk6 = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
-                                arg0->unk8 = temp_s0->encodedTris[sp11C].d1 >> 0x12;
+                                arg0->nX = temp_s0->encodedTris[sp11C].d0 >> 0x12;
+                                arg0->nY = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
+                                arg0->nZ = temp_s0->encodedTris[sp11C].d1 >> 0x12;
                             }
-                            if ((!(arg7 & 8) || !(arg0->unk6 >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->unk6 < 5791.037f))) {
-                                arg0->unk0 = -((arg0->unk6 * arg0->unk10[0]) + ((arg0->unk4 * arg0->unkA[0]) + (arg0->unk16[0] * arg0->unk8))) * (1.0f / 8191.0f);
+                            if ((!(arg7 & 8) || !(arg0->nY >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->nY < 5791.037f))) {
+                                arg0->unk0 = -((arg0->nY * arg0->vY[0]) + ((arg0->nX * arg0->vX[0]) + (arg0->vZ[0] * arg0->nZ))) * (1.0f / 8191.0f);
                                 temp = (sp11C) * 9;
                                 for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
                                     arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
@@ -531,6 +549,12 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                                 arg0->unk30 = (highestYIndex << 4) | lowestYIndex;
                                 arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
                                 arg0++;
+                                /* default.dol
+                                if (arg0 >= ?) {
+                                    STUBBED_PRINTF("PLlist overflow!!\n");
+                                    return ?;
+                                }
+                                */
                             }
                         }
                     }
@@ -640,9 +664,9 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
                         if (currVtx->v.ob[2] < minZ) {
                             minZ = currVtx->v.ob[2];
                         }
-                        arg0->unkA[i] = currVtx->v.ob[0];
-                        arg0->unk10[i] = currVtx->v.ob[1];
-                        arg0->unk16[i] = currVtx->v.ob[2];
+                        arg0->vX[i] = currVtx->v.ob[0];
+                        arg0->vY[i] = currVtx->v.ob[1];
+                        arg0->vZ[i] = currVtx->v.ob[2];
                     }
                     if (!(lowerY < minY) && !(maxY < upperY) && !(lowerX < minX) && !(maxX < upperX) && !(lowerZ < minZ) && !(maxZ < upperZ)) {
                         if (sp7C->edgeVectors != NULL) {
@@ -676,45 +700,51 @@ UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1,
     return arg0;
 }
 
-void func_80054DF8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, u8 arg2) {
-    f32 temp_fv0;
-    f32 temp_fv1;
-    f32 temp_fs0;
-    f32 temp_fs1;
-    f32 temp_fs2;
-    s16* temp_s1;
-    s16* temp_s2;
-    s16* temp_s3;
+void func_80054DF8(UnkFunc80051D68Arg3* pl, UnkFunc80051D68Arg3* plEnd, u8 flags) {
+    f32 magnitude;
+    f32 nx;
+    f32 ny;
+    f32 nz;
+    s16* vX;
+    s16* vY;
+    s16* vZ;
 
-    while (arg0 < arg1) {
-        temp_fs1 = (arg0->unk10[0] * (arg0->unk16[1] - arg0->unk16[2])) + (arg0->unk10[1] * (arg0->unk16[2] - arg0->unk16[0])) + (arg0->unk10[2] * (arg0->unk16[0] - arg0->unk16[1]));
-        temp_fs0 = (arg0->unk16[0] * (arg0->unkA[1] - arg0->unkA[2])) + (arg0->unk16[1] * (arg0->unkA[2] - arg0->unkA[0])) + (arg0->unk16[2] * (arg0->unkA[0] - arg0->unkA[1]));
-        temp_fs2 = (arg0->unkA[0] * (arg0->unk10[1] - arg0->unk10[2])) + (arg0->unkA[1] * (arg0->unk10[2] - arg0->unk10[0])) + (arg0->unkA[2] * (arg0->unk10[0] - arg0->unk10[1]));
-        temp_s1 = arg0->unkA;
-        temp_s2 = arg0->unk10;
-        temp_s3 = arg0->unk16;
-        temp_fv0 = sqrtf(SQ(temp_fs1) + SQ(temp_fs0) + SQ(temp_fs2));
-        if (temp_fv0 > 0.0f) {
-            temp_fv1 = 1.0f / temp_fv0;
-            temp_fs1 *= temp_fv1;
-            temp_fs0 *= temp_fv1;
-            temp_fs2 *= temp_fv1;
+    while (pl < plEnd) {
+        // Calculate surface normal of triangle (alternate form of equation)
+        // nx = (y0 * (z1 - z2)) + (y1 * (z2 - z0)) + (y2 * (z0 - z1))
+        // ny = (z0 * (x1 - x2)) + (z1 * (x2 - x0)) + (z2 * (x0 - x1))
+        // nz = (x0 * (y1 - y2)) + (x1 * (y2 - y0)) + (x2 * (y0 - y1))
+        nx = (pl->vY[0] * (pl->vZ[1] - pl->vZ[2])) + (pl->vY[1] * (pl->vZ[2] - pl->vZ[0])) + (pl->vY[2] * (pl->vZ[0] - pl->vZ[1]));
+        ny = (pl->vZ[0] * (pl->vX[1] - pl->vX[2])) + (pl->vZ[1] * (pl->vX[2] - pl->vX[0])) + (pl->vZ[2] * (pl->vX[0] - pl->vX[1]));
+        nz = (pl->vX[0] * (pl->vY[1] - pl->vY[2])) + (pl->vX[1] * (pl->vY[2] - pl->vY[0])) + (pl->vX[2] * (pl->vY[0] - pl->vY[1]));
+        vX = pl->vX;
+        vY = pl->vY;
+        vZ = pl->vZ;
+        // Normalize
+        magnitude = sqrtf(SQ(nx) + SQ(ny) + SQ(nz));
+        if (magnitude > 0.0f) {
+            nx *= (1.0f / magnitude);
+            ny *= (1.0f / magnitude);
+            nz *= (1.0f / magnitude);
         }
-        if ((arg2 & 8) && (temp_fs0 >= 0.707f)) {
-            arg0->unk2F |= 0x10;
+        if ((flags & 8) && (ny >= 0.707f)) {
+            // Floor
+            pl->unk2F |= 0x10;
         }
-        if ((arg2 & 4) && (temp_fs0 < 0.707f)) {
-            arg0->unk2F |= 0x10;
+        if ((flags & 4) && (ny < 0.707f)) {
+            // Ceiling
+            pl->unk2F |= 0x10;
         }
-        arg0->unk4 = temp_fs1 * 8191.0f;
-        arg0->unk6 = temp_fs0 * 8191.0f;
-        arg0->unk8 = temp_fs2 * 8191.0f;
-        arg0->unk0 = -((*temp_s1 * temp_fs1) + (*temp_s2 * temp_fs0) + (*temp_s3 * temp_fs2));
-        arg0++;
+        pl->nX = nx * 8191.0f;
+        pl->nY = ny * 8191.0f;
+        pl->nZ = nz * 8191.0f;
+        // Negated dot product
+        pl->unk0 = -((*vX * nx) + (*vY * ny) + (*vZ * nz));
+        pl++;
     }
 }
 
-s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
+s32 trackGetIntersect(Object *obj, f32* prevPos, f32* currPos, s32 posCount, TrackIntersectResult* result, u8 flags) {
     Unk8005341C* var_s3;
     Unk8005341C* target;
     f32 spA0[4 * 3];
@@ -724,54 +754,55 @@ s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg
     s16 var_s2;
     u8 temp_v0_3;
     u8 var_s5;
-    Object* sp64;
+    Object* worldObj;
 
     sp6F = 0;
-    arg4->unk68 = 0;
-    var_s3 = D_800BB268;
-    target = &D_800BB268[D_800BB3A8];
-    if ((u32) target >= (u32) ((u8*)&D_800BB268 + 1)) {
+    result->unk68 = 0;
+    var_s3 = gPLindex;
+    target = &gPLindex[gPLindexCount];
+    if ((u32) target >= (u32) ((u8*)&gPLindex + 1)) {
         do {
-            sp64 = var_s3->unk0;
-            if (sp64 != NULL) {
-                for (var_s1 = 0, var_s2 = 0; var_s2 < arg3;) {
+            worldObj = var_s3->unk0;
+            if (worldObj != NULL) {
+                // mobile map
+                for (var_s1 = 0, var_s2 = 0; var_s2 < posCount;) {
                     mathMtxXFMF(
                         var_s3->unk8,
-                        arg1[var_s1 + 0], arg1[var_s1 + 1], arg1[var_s1 + 2],
+                        prevPos[var_s1 + 0], prevPos[var_s1 + 1], prevPos[var_s1 + 2],
                         &sp70[var_s1 + 0], &sp70[var_s1 + 1], &sp70[var_s1 + 2]
                     );
                     mathMtxXFMF(
                         var_s3->unk8,
-                        arg2[var_s1 + 0], arg2[var_s1 + 1], arg2[var_s1 + 2],
+                        currPos[var_s1 + 0], currPos[var_s1 + 1], currPos[var_s1 + 2],
                         &spA0[var_s1 + 0], &spA0[var_s1 + 1], &spA0[var_s1 + 2]
                     );
                     var_s1 += 3;\
                     var_s2++;
                 }
-                if (arg5 & 2) {
-                    sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], (Vec3f*)&spA0[0], arg3, arg4, 1);
+                if (flags & 2) {
+                    sp6F |= func_800564C8(&gPLlist[var_s3->unk4], &gPLlist[var_s3[1].unk4], (Vec3f*)&spA0[0], posCount, result, 1);
                 } else {
-                    temp_v0_3 = func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], &sp70[0], &spA0[0], arg3, arg4, 1);
+                    temp_v0_3 = func_80055458(worldObj, &gPLlist[var_s3->unk4], &gPLlist[var_s3[1].unk4], &sp70[0], &spA0[0], posCount, result, 1);
                     if (temp_v0_3) {
-                        func_80026184(sp64, arg0);
+                        func_80026184(worldObj, obj);
                         sp6F |= temp_v0_3;
                     }
                 }
-                for (var_s1 = 0, var_s2 = 0, var_s5 = 1; var_s2 < arg3; var_s2++) {
+                for (var_s1 = 0, var_s2 = 0, var_s5 = 1; var_s2 < posCount; var_s2++) {
                     if (sp6F & var_s5) {
                         mathMtxXFMF(
                             var_s3->unkC,
                             spA0[var_s1 + 0], spA0[var_s1 + 1], spA0[var_s1 + 2],
-                            &arg2[var_s1 + 0], &arg2[var_s1 + 1], &arg2[var_s1 + 2]
+                            &currPos[var_s1 + 0], &currPos[var_s1 + 1], &currPos[var_s1 + 2]
                         );
                     }
                     var_s5 <<= 1;
                     var_s1 += 3;
                 }
-            } else if (arg5 & 2) {
-                sp6F |= func_800564C8(&D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], (Vec3f*)arg2, arg3, arg4, 0);
+            } else if (flags & 2) {
+                sp6F |= func_800564C8(&gPLlist[var_s3->unk4], &gPLlist[var_s3[1].unk4], (Vec3f*)currPos, posCount, result, 0);
             } else {
-                sp6F |= func_80055458(sp64, &D_80092E70[var_s3->unk4], &D_80092E70[var_s3[1].unk4], arg1, arg2, arg3, arg4, 0);
+                sp6F |= func_80055458(worldObj, &gPLlist[var_s3->unk4], &gPLlist[var_s3[1].unk4], prevPos, currPos, posCount, result, 0);
             }
             var_s3 += 1;
         } while ((u32) var_s3 < (u32) target);
@@ -779,7 +810,8 @@ s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg
     return sp6F;
 }
 
-s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* arg2, f32* arg3, f32* arg4, s32 arg5, Unk80027934* arg6, u8 arg7) {
+// official name: trackGetIntersect2 ?
+s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* arg2, f32* arg3, f32* arg4, s32 arg5, TrackIntersectResult* arg6, u8 checkingObj) {
     u8 sp1DF;
     u8 sp1DE;
     u8 var_a1;
@@ -826,12 +858,12 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
     u8 spB5;
     s8 spB4;
 
-    if (arg7) {
+    if (checkingObj) {
         sp124 = 0.0f;
         sp120 = 0.0f;
     } else {
-        sp124 = D_800BB200->x;
-        sp120 = D_800BB200->z;
+        sp124 = gBgBlockList->x;
+        sp120 = gBgBlockList->z;
     }
     sp1D8 = 0;
     sp1D6 = 0;
@@ -868,10 +900,19 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
             var_s2 = arg1;
             for (;(u32) var_s2 < (u32) arg2; var_s2++) {
                 if (!(var_s2->unk2F & 0x10)) {
-                    sp168.f[0] = var_s2->unk4 * (1.0f / 8191.0f);
-                    sp168.f[1] = var_s2->unk6 * (1.0f / 8191.0f);
-                    sp168.f[2] = var_s2->unk8 * (1.0f / 8191.0f);
+                    sp168.f[0] = var_s2->nX * (1.0f / 8191.0f);
+                    sp168.f[1] = var_s2->nY * (1.0f / 8191.0f);
+                    sp168.f[2] = var_s2->nZ * (1.0f / 8191.0f);
                     sp168.f[3] = var_s2->unk0;
+                    /* default.dol
+                    if (sp168.f[0] == 0.0f && sp168.f[1] == 0.0f && sp168.f[2] == 0.0f) {
+                        if (? == 0) {
+                            STUBBED_PRINTF("trackGetIntersect2: Bad ABC (not reporting any more)\n");
+                        }
+                        ? = 1;
+                        break;
+                    }
+                    */
                     temp_fa0 = (sp168.f[3] + DOT_PRODUCT(sp168, sp19C)) - temp_fs2;
                     if (sp1DA || (temp_fa0 <= 0.0f)) {
                         var_fv0 = sp168.f[3] + DOT_PRODUCT(sp168, sp1A8);
@@ -895,30 +936,30 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                             sp184.f[0] = sp184.f[0] + sp1A8.f[0];\
                             sp184.f[1] = sp184.f[1] + sp1A8.f[1];\
                             sp184.f[2] = sp184.f[2] + sp1A8.f[2];\
-                            if (sp184.f[1] < (var_s2->unk10[var_s2->unk30 & 0xF] - (temp_fs2 + 0.1f))) {
+                            if (sp184.f[1] < (var_s2->vY[var_s2->unk30 & 0xF] - (temp_fs2 + 0.1f))) {
                                 continue;
                             }
-                            if ((var_s2->unk10[var_s2->unk30 >> 4] + (temp_fs2 + 0.1f)) < sp184.f[1]) {
+                            if ((var_s2->vY[var_s2->unk30 >> 4] + (temp_fs2 + 0.1f)) < sp184.f[1]) {
                                 continue;
                             }
                             sp138.f[0] = var_s2->unk1C[0];
                             sp138.f[1] = var_s2->unk1C[1];
                             sp138.f[2] = var_s2->unk1C[2];
-                            sp138.f[3] = ((sp184.f[2] * sp138.f[2]) + ((sp138.f[0] * sp184.f[0]) + (sp138.f[1] * sp184.f[1]))) - ((var_s2->unk16[0] * sp138.f[2]) + ((var_s2->unk10[0] * sp138.f[1]) + (sp138.f[0] * var_s2->unkA[0])));
+                            sp138.f[3] = ((sp184.f[2] * sp138.f[2]) + ((sp138.f[0] * sp184.f[0]) + (sp138.f[1] * sp184.f[1]))) - ((var_s2->vZ[0] * sp138.f[2]) + ((var_s2->vY[0] * sp138.f[1]) + (sp138.f[0] * var_s2->vX[0])));
                             if (var_fs4 < sp138.f[3]) {
                                 continue;
                             }
                             sp148.f[0] = var_s2->unk1C[3];
                             sp148.f[1] = var_s2->unk1C[4];
                             sp148.f[2] = var_s2->unk1C[5];
-                            sp148.f[3] = ((sp184.f[2] * sp148.f[2]) + ((sp148.f[0] * sp184.f[0]) + (sp148.f[1] * sp184.f[1]))) - ((var_s2->unk16[1] * sp148.f[2]) + ((var_s2->unk10[1] * sp148.f[1]) + (sp148.f[0] * var_s2->unkA[1])));
+                            sp148.f[3] = ((sp184.f[2] * sp148.f[2]) + ((sp148.f[0] * sp184.f[0]) + (sp148.f[1] * sp184.f[1]))) - ((var_s2->vZ[1] * sp148.f[2]) + ((var_s2->vY[1] * sp148.f[1]) + (sp148.f[0] * var_s2->vX[1])));
                             if (var_fs4 < sp148.f[3]) {
                                 continue;
                             }
                             sp158.f[0] = var_s2->unk1C[6];
                             sp158.f[1] = var_s2->unk1C[7];
                             sp158.f[2] = var_s2->unk1C[8];
-                            sp158.f[3] = ((sp184.f[2] * sp158.f[2]) + ((sp158.f[0] * sp184.f[0]) + (sp158.f[1] * sp184.f[1]))) - ((var_s2->unk16[2] * sp158.f[2]) + ((var_s2->unk10[2] * sp158.f[1]) + (sp158.f[0] * var_s2->unkA[2])));
+                            sp158.f[3] = ((sp184.f[2] * sp158.f[2]) + ((sp158.f[0] * sp184.f[0]) + (sp158.f[1] * sp184.f[1]))) - ((var_s2->vZ[2] * sp158.f[2]) + ((var_s2->vY[2] * sp158.f[1]) + (sp158.f[0] * var_s2->vX[2])));
                             if (var_fs4 < sp158.f[3]) {
                                 continue;
                             }
@@ -944,12 +985,12 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                         if (var_a1 >= 3) {
                                             var_a1 = 0;
                                         }
-                                        spE8.f[0] = var_s2->unkA[var_s0];
-                                        spE8.f[1] = var_s2->unk10[var_s0];
-                                        spE8.f[2] = var_s2->unk16[var_s0];
-                                        spF4.f[0] = var_s2->unkA[var_a1];
-                                        spF4.f[1] = var_s2->unk10[var_a1];
-                                        spF4.f[2] = var_s2->unk16[var_a1];
+                                        spE8.f[0] = var_s2->vX[var_s0];
+                                        spE8.f[1] = var_s2->vY[var_s0];
+                                        spE8.f[2] = var_s2->vZ[var_s0];
+                                        spF4.f[0] = var_s2->vX[var_a1];
+                                        spF4.f[1] = var_s2->vY[var_a1];
+                                        spF4.f[2] = var_s2->vZ[var_a1];
                                         VECTOR_SUBTRACT(spF4, spE8, sp100);
                                         sp10C.f[2] = vec3Normalize(&sp100);
                                         var_s4 = func_800567F4(&spE8, &sp1A8, &sp190, temp_fs0, &sp184, &sp168);
@@ -964,15 +1005,15 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                 sp138.f[0] = var_s2->unk1C[0];
                                 sp138.f[1] = var_s2->unk1C[1];
                                 sp138.f[2] = var_s2->unk1C[2];
-                                sp138.f[3] = ((sp1A8.f[2] * sp138.f[2]) + ((sp138.f[0] * sp1A8.f[0]) + (sp138.f[1] * sp1A8.f[1]))) - ((var_s2->unk16[0] * sp138.f[2]) + ((var_s2->unk10[0] * sp138.f[1]) + (sp138.f[0] * var_s2->unkA[0])));
+                                sp138.f[3] = ((sp1A8.f[2] * sp138.f[2]) + ((sp138.f[0] * sp1A8.f[0]) + (sp138.f[1] * sp1A8.f[1]))) - ((var_s2->vZ[0] * sp138.f[2]) + ((var_s2->vY[0] * sp138.f[1]) + (sp138.f[0] * var_s2->vX[0])));
                                 sp148.f[0] = var_s2->unk1C[3];
                                 sp148.f[1] = var_s2->unk1C[4];
                                 sp148.f[2] = var_s2->unk1C[5];
-                                sp148.f[3] = ((sp1A8.f[2] * sp148.f[2]) + ((sp148.f[0] * sp1A8.f[0]) + (sp148.f[1] * sp1A8.f[1]))) - ((var_s2->unk16[1] * sp148.f[2]) + ((var_s2->unk10[1] * sp148.f[1]) + (sp148.f[0] * var_s2->unkA[1])));
+                                sp148.f[3] = ((sp1A8.f[2] * sp148.f[2]) + ((sp148.f[0] * sp1A8.f[0]) + (sp148.f[1] * sp1A8.f[1]))) - ((var_s2->vZ[1] * sp148.f[2]) + ((var_s2->vY[1] * sp148.f[1]) + (sp148.f[0] * var_s2->vX[1])));
                                 sp158.f[0] = var_s2->unk1C[6];
                                 sp158.f[1] = var_s2->unk1C[7];
                                 sp158.f[2] = var_s2->unk1C[8];
-                                sp158.f[3] = ((sp1A8.f[2] * sp158.f[2]) + ((sp158.f[0] * sp1A8.f[0]) + (sp158.f[1] * sp1A8.f[1]))) - ((var_s2->unk16[2] * sp158.f[2]) + ((var_s2->unk10[2] * sp158.f[1]) + (sp158.f[0] * var_s2->unkA[2])));
+                                sp158.f[3] = ((sp1A8.f[2] * sp158.f[2]) + ((sp158.f[0] * sp1A8.f[0]) + (sp158.f[1] * sp1A8.f[1]))) - ((var_s2->vZ[2] * sp158.f[2]) + ((var_s2->vY[2] * sp158.f[1]) + (sp158.f[0] * var_s2->vX[2])));
                                 if (sp138.f[3] > 0.0f) {
                                     var_s3 |= 1;
                                 }
@@ -993,12 +1034,12 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
                                             if (var_a1 >= 3) {
                                                 var_a1 = 0;
                                             }
-                                            spE8.f[0] = var_s2->unkA[var_s0];
-                                            spE8.f[1] = var_s2->unk10[var_s0];
-                                            spE8.f[2] = var_s2->unk16[var_s0];
-                                            spF4.f[0] = var_s2->unkA[var_a1];
-                                            spF4.f[1] = var_s2->unk10[var_a1];
-                                            spF4.f[2] = var_s2->unk16[var_a1];
+                                            spE8.f[0] = var_s2->vX[var_s0];
+                                            spE8.f[1] = var_s2->vY[var_s0];
+                                            spE8.f[2] = var_s2->vZ[var_s0];
+                                            spF4.f[0] = var_s2->vX[var_a1];
+                                            spF4.f[1] = var_s2->vY[var_a1];
+                                            spF4.f[2] = var_s2->vZ[var_a1];
                                             VECTOR_SUBTRACT(spF4, spE8, sp100);
                                             sp10C.f[2] = vec3Normalize(&sp100);
                                             var_s4 = func_800567F4(&spE8, &sp1A8, &sp190, temp_fs0, &sp184, &sp168);
@@ -1089,7 +1130,7 @@ s32 func_80055458(Object* arg0, UnkFunc80051D68Arg3* arg1, UnkFunc80051D68Arg3* 
     return spB7 | (spB5 * 0x10);
 }
 
-s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, Unk80027934* arg4, u8 arg5) {
+s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* arg2, s32 arg3, TrackIntersectResult* arg4, u8 arg5) {
     f32 temp_fa0;
     f32 temp_fa1;
     f32 temp_fs4;
@@ -1115,8 +1156,8 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
         sp64 = 0;
         sp60 = 0;
     } else {
-        sp64 = D_800BB200->x;
-        sp60 = D_800BB200->z;
+        sp64 = gBgBlockList->x;
+        sp60 = gBgBlockList->z;
     }
     i = 0;
     temp2 = 0;
@@ -1135,9 +1176,9 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
             var_v1 = FALSE;
             temp = arg0;
             for (; (u32) temp < (u32) arg1; temp++) {
-                temp_fa1 = temp->unk4 * 0.00012208521f;
-                temp_fa0 = temp->unk6 * 0.00012208521f;
-                temp_ft4 = temp->unk8 * 0.00012208521f;
+                temp_fa1 = temp->nX * 0.00012208521f;
+                temp_fa0 = temp->nY * 0.00012208521f;
+                temp_ft4 = temp->nZ * 0.00012208521f;
                 temp_ft5 = temp->unk0;
                 if (temp_fa0 >= 0.707f) {
                     continue;
@@ -1145,11 +1186,11 @@ s32 func_800564C8(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Vec3f* a
 
                 temp_fv1 = ((temp_fa1 * var_fs1) + (temp_fa0 * temp_fs4) + (temp_ft4 * var_fs2) + temp_ft5) - sp7C;
                 if ((2.0f * -sp7C) <= temp_fv1 && temp_fv1 <= 0.0f) {
-                    if (temp_fs4 < (temp->unk10[temp->unk30 & 0xF] - sp78)) {
+                    if (temp_fs4 < (temp->vY[temp->unk30 & 0xF] - sp78)) {
                         continue;
                     }
 
-                    if ((temp->unk10[temp->unk30 >> 4] + sp78) < temp_fs4) {
+                    if ((temp->vY[temp->unk30 >> 4] + sp78) < temp_fs4) {
                         continue;
                     }
 
@@ -1233,8 +1274,8 @@ s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, 
                 return 3;
             }
             if (sp40 < 0.0f) {
-                if (func_80056BCC(arg1, arg2, arg4, arg5, arg0, arg0[3].f[1]) != 0) { return 1; }
-            } else if (func_80056BCC(arg1, arg2, arg4, arg5, &arg0[1], arg0[3].f[1]) != 0) {
+                if (trackIntersect_func_80056BCC(arg1, arg2, arg4, arg5, arg0, arg0[3].f[1]) != 0) { return 1; }
+            } else if (trackIntersect_func_80056BCC(arg1, arg2, arg4, arg5, &arg0[1], arg0[3].f[1]) != 0) {
                 return 2;
             }
         }
@@ -1242,7 +1283,7 @@ s32 func_800567F4(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, f32 arg3, Vec3f* arg4, 
     return 0;
 }
 
-s32 func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5) {
+s32 trackIntersect_func_80056BCC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3, Vec3f* arg4, f32 arg5) {
     f32 sp3C;
     f32 sp38;
     f32 temp_ft5;
@@ -1295,12 +1336,15 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
         arg2->f[2] = arg3->f[2];
         VECTOR_SUBTRACT((*arg2), (*arg1), sp58);
         vec3Normalize(&sp58);
-        // @fake
-        if (arg4) {}
-        for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+        i = 0;
+        while ((arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5) {
             arg2->f[0] -= sp58.f[0] * 0.1f;
             arg2->f[1] -= sp58.f[1] * 0.1f;
             arg2->f[2] -= sp58.f[2] * 0.1f;
+            i++;
+            if (i >= 0x65) {
+                break;
+            } else { } // @fake
         }
         return 1;
     }
@@ -1319,9 +1363,15 @@ s32 func_80056E50(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg
                 sp58.f[2] = 0.0f;
                 sp58.f[0] = 1.0f;
             }
-            for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+            i = 0;
+            while ((arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5) {
                 arg2->f[0] -= sp58.f[0] * 0.1f;
                 arg2->f[2] -= sp58.f[2] * 0.1f;
+                i++;
+                if (i >= 0x65) {
+                    STUBBED_PRINTF("1: track/intersect.c: OVERFLOW error\n");
+                    break;   
+                }
             }
         } else {
             sp54 += sp54; // used to be temp_ft5
@@ -1388,9 +1438,15 @@ s32 func_800573D8(f32 arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec4f* arg4, 
                     sp3C.f[2] = 0.0f;
                     sp3C.f[0] = 1.0f;
                 }
-                for (i = 0; i < 0x65 && (arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5; i++) {
+                i = 0;
+                while ((arg4->f[3] + DOT_PRODUCT((*arg2), (*arg4))) < arg5) {
                     arg2->f[0] -= sp3C.f[0] * 0.1f;
                     arg2->f[2] -= sp3C.f[2] * 0.1f;
+                    i++;
+                    if (i >= 0x65) {
+                        STUBBED_PRINTF("2: track/intersect.c: OVERFLOW error\n");
+                        break;
+                    }
                 }
                 break;
             case 1:
@@ -1475,9 +1531,15 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg
                 sp3C.f[2] = 0.0f;
                 sp3C.f[0] = 1.0f;
             }
-            for (i = 0; i < 0x65 && (arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5))) < arg6; i++) {
+            i = 0;
+            while ((arg5->f[3] + DOT_PRODUCT((*arg3), (*arg5))) < arg6) {
                 arg3->f[0] -= sp3C.f[0] * 0.1f;
                 arg3->f[2] -= sp3C.f[2] * 0.1f;
+                i++;
+                if (i >= 0x65) {
+                    STUBBED_PRINTF("3: track/intersect.c: OVERFLOW error\n");
+                    break;
+                }
             }
         } else {
             sp38 += sp38;
@@ -1501,115 +1563,122 @@ s32 func_80057A30(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, Vec3f* arg
     return 1;
 }
 
-s32 func_80057F1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Func_80057F1C_Struct*** arg4, s32 arg5, s32 arg6) {
-    AABBs32 sp78;
-    f32 sp74;
-    f32 sp70;
-    f32 sp6C;
-    Unk8005341C* var_s0;
-    Unk8005341C* temp_s4;
+// official name: trackGetHeight
+s32 trackGetHeight(Object* obj, f32 x, f32 y, f32 z, TrackHeightResult*** result, s32 arg5, s32 flags) {
+    AABBs32 aabb;
+    f32 lx;
+    f32 ly;
+    f32 lz;
+    Unk8005341C* plIdx;
+    Unk8005341C* plIdxEnd;
 
-    var_s0 = D_800BB268;
+    plIdx = gPLindex;
     if (arg5 >= 0) {
-        sp78.min.x = arg1;
-        sp78.max.x = arg1;
-        sp78.min.y = arg2 - 10000.0f;
-        sp78.max.y = arg2 + 10000.0f;
-        sp78.min.z = arg3;
-        sp78.max.z = arg3;
-        func_80053750(arg0, &sp78, arg6);
+        aabb.min.x = x;
+        aabb.max.x = x;
+        aabb.min.y = y - 10000.0f;
+        aabb.max.y = y + 10000.0f;
+        aabb.min.z = z;
+        aabb.max.z = z;
+        trackIntersectBroadphase(obj, &aabb, flags);
     } else {
         arg5 = 0;
     }
     D_800BB4A0 = D_800BB3B0;
     D_800BB4D0 = &D_800BB4A8;
     D_800BB4D4 = 0;
-    temp_s4 = &D_800BB268[D_800BB3A8];
-    while (var_s0 < temp_s4) {
-        if (var_s0->unk0 != NULL) {
-            mathMtxXFMF(var_s0->unk8, arg1, 0.0f, arg3, &sp74, &sp70, &sp6C);
-            func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, sp74, sp6C, arg5);
+    plIdxEnd = &gPLindex[gPLindexCount];
+    while (plIdx < plIdxEnd) {
+        if (plIdx->unk0 != NULL) {
+            // mobile map
+            mathMtxXFMF(plIdx->unk8, x, 0.0f, z, &lx, &ly, &lz);
+            func_80058144(&gPLlist[plIdx->unk4], &gPLlist[plIdx[1].unk4], plIdx, lx, lz, arg5);
         } else {
-            func_80058144(&D_80092E70[var_s0->unk4], &D_80092E70[var_s0[1].unk4], var_s0, arg1, arg3, arg5);
+            // block
+            func_80058144(&gPLlist[plIdx->unk4], &gPLlist[plIdx[1].unk4], plIdx, x, z, arg5);
         }
-        var_s0 += 1;
+        plIdx += 1;
     }
-    *arg4 = &D_800BB4A8;
+    *result = &D_800BB4A8;
     return D_800BB4D4;
 }
 
-void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005341C* arg2, f32 arg3, f32 arg4, s32 arg5) {
-    s32 sp134;
+// local helper for trackGetHeight
+void func_80058144(UnkFunc80051D68Arg3* plStart, UnkFunc80051D68Arg3* plEnd, Unk8005341C* plIdx, f32 x, f32 z, s32 anyAngle) {
+    s32 valid;
     u8 pad_sp118[0x134 - 0x118];
-    Vec4f sp108;
+    Vec4f vx;
     u8 pad_spFC[0x108 - 0xFC];
-    Vec4f spEC;
-    UnkFunc80051D68Arg3* var_s4;
-    Func_80057F1C_Struct *temp_a0;
-    Func_80057F1C_Struct* temp_a1;
-    Vec4f spD0;
+    Vec4f vy;
+    UnkFunc80051D68Arg3* pl;
+    TrackHeightResult *temp_a0;
+    TrackHeightResult* temp_a1;
+    Vec4f vz;
     f32 spCC;
-    f32 spC8;
+    f32 y;
     f32 spC4;
     s32 isSorted;
-    Vec3f spB4;
-    f32 spB0;
-    f32 spAC;
-    f32 spA8;
+    Vec3f normal;
+    f32 nx;
+    f32 ny;
+    f32 nz;
     f32 spA4;
-    s32 var_v0_2;
+    s32 i2;
     s32 i;
 
-    arg3 = arg3;
-    if (arg2->unk0 == NULL) {
-        arg3 -= (f32) D_800BB200->x;
-        arg4 -= (f32) D_800BB200->s[2];
+    x = x;
+    if (plIdx->unk0 == NULL) {
+        x -= (f32) gBgBlockList->x;
+        z -= (f32) gBgBlockList->z;
     }
-    for (var_s4 = arg0; (u32) var_s4 < (u32) arg1; var_s4++) {
-        if ((var_s4->unk2F & 0x10) && !(var_s4->unk2F & 4)) {
+    for (pl = plStart; (u32) pl < (u32) plEnd; pl++) {
+        if ((pl->unk2F & 0x10) && !(pl->unk2F & 4)) {
             continue;
         }
-        spB4.x = var_s4->unk4 * (1.0f / 8191.0f);
-        spB4.y = var_s4->unk6 * (1.0f / 8191.0f);
-        spB4.z = var_s4->unk8 * (1.0f / 8191.0f);
-        if ((spB4.y > 0.0f) || !((arg5 == 0) || (spB4.y == 0.0f))) {
-            spC8 = -((spB4.x * arg3) + (spB4.z * arg4) + var_s4->unk0) / spB4.y;
-            sp134 = 1;
+        normal.x = pl->nX * (1.0f / 8191.0f);
+        normal.y = pl->nY * (1.0f / 8191.0f);
+        normal.z = pl->nZ * (1.0f / 8191.0f);
+        if ((normal.y > 0.0f) || !((anyAngle == FALSE) || (normal.y == 0.0f))) { // isFloor || (anyAngle && !isWall)
+            // Project XZ onto triangle to get Y
+            y = -((normal.x * x) + (normal.z * z) + pl->unk0) / normal.y;
+            // Check if XZ is actually within the triangle?
+            valid = TRUE;
             for (i = 0; i < 3; i++) {
-                sp108.f[i] = var_s4->unkA[i];
-                spEC.f[i] = var_s4->unk10[i];
-                spD0.f[i] = var_s4->unk16[i];
+                vx.f[i] = pl->vX[i];
+                vy.f[i] = pl->vY[i];
+                vz.f[i] = pl->vZ[i];
             }
             for (i = 0; i < 3; i++) {
-                var_v0_2 = i + 1;
-                if (var_v0_2 >= 3) {
-                    var_v0_2 = 0;
+                i2 = i + 1;
+                if (i2 >= 3) {
+                    i2 = 0;
                 }
-                sp108.f[3] = (spB4.x * 10.0f) + sp108.f[i];
-                spEC.f[3] = (spB4.y * 10.0f) + spEC.f[i];
-                spD0.f[3] = (spB4.z * 10.0f) + spD0.f[i];
-                func_80058D54(&sp108, &spEC, &spD0, i, var_v0_2, 3, &spB0, &spAC, &spA8, &spA4);
-                if (((spB0 * arg3) + (spAC * spC8) + (spA8 * arg4) + spA4) > 0.2f) {
-                    sp134 = 0;
+                vx.f[3] = (normal.x * 10.0f) + vx.f[i];
+                vy.f[3] = (normal.y * 10.0f) + vy.f[i];
+                vz.f[3] = (normal.z * 10.0f) + vz.f[i];
+                func_80058D54(&vx, &vy, &vz, i, i2, 3, &nx, &ny, &nz, &spA4);
+                if (((nx * x) + (ny * y) + (nz * z) + spA4) > 0.2f) {
+                    valid = FALSE;
                     break;
                 }
             }
-            if (sp134 != 0) {
-                if (arg2->unk0 != NULL) {
-                    mathMtxXFMF(arg2->unkC, arg3, spC8, arg4, &spCC, &spC8, &spC4);
-                    mathMtxFastXFMF(arg2->unkC, &spB4, &spB4);
+            if (valid) {
+                if (plIdx->unk0 != NULL) {
+                    mathMtxXFMF(plIdx->unkC, x, y, z, &spCC, &y, &spC4);
+                    mathMtxFastXFMF(plIdx->unkC, &normal, &normal);
                 }
-                D_800BB4A0->unk0[0] = spC8;
-                D_800BB4A0->unk14 = var_s4->unk2E;
-                D_800BB4A0->unk0[1] = spB4.x;
-                D_800BB4A0->unk0[2] = spB4.y;
-                D_800BB4A0->unk0[3] = spB4.z;
-                D_800BB4A0->unk10 = arg2->unk0;
+                D_800BB4A0->y = y;
+                D_800BB4A0->unk14 = pl->unk2E;
+                D_800BB4A0->norm[0] = normal.x;
+                D_800BB4A0->norm[1] = normal.y;
+                D_800BB4A0->norm[2] = normal.z;
+                D_800BB4A0->obj = plIdx->unk0;
                 D_800BB4A0++;
                 D_800BB4D4++;
                 if (D_800BB4D4 > 9) {
+                    STUBBED_PRINTF("TrackGetHeight()-Overflow!!!\n");
                     // break
-                    var_s4 = arg1;
+                    pl = plEnd;
                 }
             }
         }
@@ -1619,13 +1688,13 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
         D_800BB4D0[i] = &D_800BB3B0[i];
     }
 
-    // Sort elements of D_800BB4D0
+    // Sort by Y-coordinate, descending
     do {
         isSorted = TRUE;
         for (i = 0; i < D_800BB4D4 - 1; i++) {
             temp_a0 = D_800BB4D0[i];
             temp_a1 = D_800BB4D0[i + 1];
-            if (temp_a0->unk0[0] < temp_a1->unk0[0]) {
+            if (temp_a0->y < temp_a1->y) {
                 D_800BB4D0[i] = D_800BB4D0[i + 1];
                 D_800BB4D0[i + 1] = temp_a0;
                 isSorted = FALSE;
@@ -1634,89 +1703,89 @@ void func_80058144(UnkFunc80051D68Arg3* arg0, UnkFunc80051D68Arg3* arg1, Unk8005
     } while (isSorted == FALSE);
 }
 
-s32 func_80058680(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5) {
-    f32 var_fa1;
-    f32 var_fv0;
-    s32 temp_v0;
-    s32 var_a1;
+s32 trackGetHeightNearest(Object* obj, f32 x, f32 y, f32 z, f32* height, u8 flags) {
+    f32 closestYDist;
+    f32 yDist;
+    s32 count;
+    s32 closest;
     s32 i;
-    Func_80057F1C_Struct** sp38;
+    TrackHeightResult** heights;
 
-    temp_v0 = func_80057F1C(arg0, arg1, arg2, arg3, &sp38, 0, arg5);
-    if (temp_v0 != 0) {
-        var_a1 = 0;
-        if (sp38[0]->unk0[0] <= arg2) {
-            var_fa1 = arg2 - sp38[0]->unk0[0];
+    count = trackGetHeight(obj, x, y, z, &heights, 0, flags);
+    if (count != 0) {
+        closest = 0;
+        if (heights[0]->y <= y) {
+            closestYDist = y - heights[0]->y;
         } else {
-            var_fa1 = -(arg2 - sp38[0]->unk0[0]);
+            closestYDist = -(y - heights[0]->y);
         }
-        for (i = 1; i < temp_v0; i++) {
-            if (sp38[i]->unk0[0] <= arg2) {
-                var_fv0 = arg2 - sp38[i]->unk0[0];
+        for (i = 1; i < count; i++) {
+            if (heights[i]->y <= y) {
+                yDist = y - heights[i]->y;
             } else {
-                var_fv0 = -(arg2 - sp38[i]->unk0[0]);
+                yDist = -(y - heights[i]->y);
             }
-            if (var_fv0 < var_fa1) {
-                var_fa1 = var_fv0;
-                var_a1 = i;
+            if (yDist < closestYDist) {
+                closestYDist = yDist;
+                closest = i;
             }
         }
-        *arg4 = arg2 - sp38[var_a1]->unk0[0];
+        *height = y - heights[closest]->y;
         return 0;
     }
 
-    *arg4 = 0.0f;
+    *height = 0.0f;
     return 1;
 }
 
-s32 func_800588D4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5) {
-    f32 temp_fv1;
-    f32 var_fa0;
-    s32 temp_v0;
+s32 trackGetHeightFloor(Object* obj, f32 x, f32 y, f32 z, f32* height, u8 flags) {
+    f32 yDiff;
+    f32 best;
+    s32 count;
     s32 i;
-    Func_80057F1C_Struct** sp44;
+    TrackHeightResult** heights;
 
-    temp_v0 = func_80057F1C(arg0, arg1, arg2, arg3, &sp44, 0, arg5);
-    if (temp_v0 != 0) {
-        var_fa0 = arg2 - sp44[0]->unk0[0];
-        for (i = 1; i < temp_v0; i++) {
-            temp_fv1 = arg2 - sp44[i]->unk0[0];
-            if ((temp_fv1 >= 0.0f) && ((var_fa0 < 0.0f) || (temp_fv1 < var_fa0))) {
-                var_fa0 = temp_fv1;
+    count = trackGetHeight(obj, x, y, z, &heights, 0, flags);
+    if (count != 0) {
+        best = y - heights[0]->y;
+        for (i = 1; i < count; i++) {
+            yDiff = y - heights[i]->y;
+            if ((yDiff >= 0.0f) && ((best < 0.0f) || (yDiff < best))) { // isBelow && (bestIsAbove || isCloser)
+                best = yDiff;
             }
         }
 
-        if (var_fa0 >= 0.0f) {
-            *arg4 = var_fa0;
+        if (best >= 0.0f) {
+            *height = best;
             return 1;
         }
 
-        *arg4 = 0.0f;
+        *height = 0.0f;
         return 0;
     }
 
-    *arg4 = 0.0f;
+    *height = 0.0f;
     return 0;
 }
 
-s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5) {
-    f32 temp_fv1;
-    f32 var_fa0;
-    s32 temp_v0;
+s32 trackGetHeightCeiling(Object* obj, f32 x, f32 y, f32 z, f32* height, u8 flags) {
+    f32 yDiff;
+    f32 best;
+    s32 count;
     s32 i;
-    Func_80057F1C_Struct** sp44;
+    TrackHeightResult** heights;
 
-    temp_v0 = func_80057F1C(arg0, arg1, arg2, arg3, &sp44, 0, arg5);
-    if (temp_v0 != 0) {
-        var_fa0 = sp44[0]->unk0[0] - arg2;
-        for (i = 1; i < temp_v0; i++) {
-            temp_fv1 = sp44[i]->unk0[0] - arg2;
-            if ((temp_fv1 >= 0.0f) && ((var_fa0 < 0.0f) || (temp_fv1 < var_fa0))) {
-                var_fa0 = temp_fv1;
+    count = trackGetHeight(obj, x, y, z, &heights, 0, flags);
+    if (count != 0) {
+        best = heights[0]->y - y;
+        for (i = 1; i < count; i++) {
+            yDiff = heights[i]->y - y;
+            if ((yDiff >= 0.0f) && ((best < 0.0f) || (yDiff < best))) {
+                best = yDiff;
             }
         }
-        if (var_fa0 >= 0.0f) {
-            *arg4 = var_fa0;
+        if (best >= 0.0f) {
+            *height = best;
             return 1;
         }
 
@@ -1726,37 +1795,38 @@ s32 func_80058B1C(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4, u8 arg5
     return 0;
 }
 
-void func_80058D54(Vec4f* arg0, Vec4f* arg1, Vec4f* arg2, s32 arg3, s32 arg4, s32 arg5, f32* arg6, f32* arg7, f32* arg8, f32* arg9) {
-    f32 sp5C;
-    f32 sp58;
-    f32 sp54;
-    f32 temp_fv0;
+void func_80058D54(Vec4f* vX, Vec4f* vY, Vec4f* vZ, s32 p0, s32 p1, s32 p2, f32* outNx, f32* outNy, f32* outNz, f32* arg9) {
+    f32 nx;
+    f32 ny;
+    f32 nz;
+    f32 mag;
 
-    sp5C = (arg1->f[arg3] * (arg2->f[arg4] - arg2->f[arg5])) + (arg1->f[arg4] * (arg2->f[arg5] - arg2->f[arg3])) + (arg1->f[arg5] * (arg2->f[arg3] - arg2->f[arg4]));
-    sp58 = (arg2->f[arg3] * (arg0->f[arg4] - arg0->f[arg5])) + (arg2->f[arg4] * (arg0->f[arg5] - arg0->f[arg3])) + (arg2->f[arg5] * (arg0->f[arg3] - arg0->f[arg4]));
-    sp54 = (arg0->f[arg3] * (arg1->f[arg4] - arg1->f[arg5])) + (arg0->f[arg4] * (arg1->f[arg5] - arg1->f[arg3])) + (arg0->f[arg5] * (arg1->f[arg3] - arg1->f[arg4]));
-    temp_fv0 = sqrtf(SQ(sp5C) + SQ(sp58) + SQ(sp54));
-    if (temp_fv0 > 0.0f) {
-        temp_fv0 = 1.0f / temp_fv0;
-        sp5C *= temp_fv0;
-        sp58 *= temp_fv0;
-        sp54 *= temp_fv0;
+    // Surface normal calculation (alternate form)
+    nx = (vY->f[p0] * (vZ->f[p1] - vZ->f[p2])) + (vY->f[p1] * (vZ->f[p2] - vZ->f[p0])) + (vY->f[p2] * (vZ->f[p0] - vZ->f[p1]));
+    ny = (vZ->f[p0] * (vX->f[p1] - vX->f[p2])) + (vZ->f[p1] * (vX->f[p2] - vX->f[p0])) + (vZ->f[p2] * (vX->f[p0] - vX->f[p1]));
+    nz = (vX->f[p0] * (vY->f[p1] - vY->f[p2])) + (vX->f[p1] * (vY->f[p2] - vY->f[p0])) + (vX->f[p2] * (vY->f[p0] - vY->f[p1]));
+    mag = sqrtf(SQ(nx) + SQ(ny) + SQ(nz));
+    if (mag > 0.0f) {
+        mag = 1.0f / mag;
+        nx *= mag;
+        ny *= mag;
+        nz *= mag;
     }
-    *arg9 = -((arg0->f[arg3] * sp5C) + (arg1->f[arg3] * sp58) + (arg2->f[arg3] * sp54));
-    *arg6 = sp5C;
-    *arg7 = sp58;
-    *arg8 = sp54;
+    *arg9 = -((vX->f[p0] * nx) + (vY->f[p0] * ny) + (vZ->f[p0] * nz));
+    *outNx = nx;
+    *outNy = ny;
+    *outNz = nz;
 }
 
-void func_80058F3C(void) {
+void trackIntersectMarkBlocksDirty(void) {
     D_800BB539 = 1;
 }
 
-int func_80058F50(void) {
+int trackIntersectNeedsUpdate(void) {
     return (D_800BB539 != 0) || (D_800BB538 != 0);
 }
 
-s8 func_80058F7C(void) {
+s8 trackIntersectInitialized(void) {
     return D_80092E80;
 }
 
@@ -1765,18 +1835,18 @@ void func_80058F8C(void) {
     Unk8005B17C* temp;
 
     for (index = 0; index < 20; index++){ 
-        temp = &D_80092E84[index];
+        temp = &gLastLines[index];
         temp->unk14 = 0;
     }
 }
 
-void func_80058FE8(void) {
+void trackIntersectLastLineTick(void) {
     s16 index;
     Unk8005B17C *temp;
 
     index = 0;
     while (index < 20){
-        temp = &D_80092E84[index];
+        temp = &gLastLines[index];
         if (temp->unk14){
             temp->unk14--;
         }
@@ -1785,21 +1855,21 @@ void func_80058FE8(void) {
 }
 
 /** Used by HitAnimators to toggle HITS lines */
-void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
+void trackToggleHitLine(s32 animatorID, Object* parentObject, s32 enableLines) {
     s16 lineCount;
     s32 index;
     ObjDef *objDef;
     ModLineReencoded*hitsLines;
 
-    hitsLines = D_80092E74;
+    hitsLines = gLineList;
 
     if (parentObject != NULL){
         objDef = parentObject->def;
         hitsLines = objDef->pIntersectPoints; //pointer to mobile map's encoded HITS lines? (MODLINES.bin)
         lineCount = objDef->modLineCount;
     } else {    
-        hitsLines = D_80092E74;
-        lineCount = D_800BB4D6;
+        hitsLines = gLineList;
+        lineCount = gLineListCount;
     }
 
     if (enableLines){
@@ -1817,7 +1887,9 @@ void func_80059038(s32 animatorID, Object* parentObject, s32 enableLines) {
     }
 }
 
-void func_800591EC(void) {
+// official name: trackIntersect ?
+// Collects and pre-processes hit lines from currently loaded blocks. 
+void trackIntersectTick(void) {
     s32 a3;
     f32 f0;
     Block* temp_v0_2;
@@ -1852,18 +1924,18 @@ void func_800591EC(void) {
     }
 
     D_800BB538 = 0;
-    D_800BB4D6 = 0;
-    D_800BB4D8 = 0;
+    gLineListCount = 0;
+    gPointListCount = 0;
     for (sp6F8 = 0; sp6F8 < 5; sp6F8++) {
         sp6D0 = mapGetBlockGridLayer(sp6F8);
         for (sp6FC = 0; sp6FC < BLOCKS_GRID_SPAN; sp6FC++) {
             for (sp700 = 0; sp700 < BLOCKS_GRID_SPAN; sp700++) {
                 gridIndex = (sp6FC << 4)  + sp700; // can't use the GRID_INDEX macro here, bitshift required
                 if (sp6D0[gridIndex] >= 0) {
-                    temp_v0_2 = (Block *)mapGetBlockByIndex(sp6D0[gridIndex]);
+                    temp_v0_2 = mapGetBlockByIndex(sp6D0[gridIndex]);
                     for (var_s6 = 0; var_s6 < temp_v0_2->hits_line_count; var_s6++) {
                         var_s0 = &temp_v0_2->ptr_hits_lines[var_s6];
-                        var_s2 = &D_80092E74[D_800BB4D6];
+                        var_s2 = &gLineList[gLineListCount];
                         var_s2->heightA = var_s0->heightA;
                         var_s2->heightB = var_s0->heightB;
                         var_s2->settingsB = var_s0->settingsB;
@@ -1872,38 +1944,36 @@ void func_800591EC(void) {
                         temp_fs0 = (sp700 * BLOCKS_GRID_UNIT_F) + gWorldX;
                         temp_fs1 = (sp6FC * BLOCKS_GRID_UNIT_F) + gWorldZ;
                         for (var_s1 = 0; var_s1 < 2; var_s1++) {
-                            var_s2->indexes[var_s1] = func_8005A2BC(var_s0->somePos[var_s1] + temp_fs0, var_s0->somePos[var_s1 + 2], f0 = var_s0->somePos[var_s1 + 4] + temp_fs1, D_800BB4D6, sp84);
+                            var_s2->indexes[var_s1] = func_8005A2BC(var_s0->somePos[var_s1] + temp_fs0, var_s0->somePos[var_s1 + 2], f0 = var_s0->somePos[var_s1 + 4] + temp_fs1, gLineListCount, sp84);
                         }
-                        D_800BB4D6 += 1;
+                        gLineListCount += 1;
                     }
                 }
             }
         }
     }
-    for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_s2 = &D_80092E74[var_a0];
+    for (var_a0 = 0; var_a0 < gLineListCount; var_a0++) {
+        var_s2 = &gLineList[var_a0];
         for (var_a2 = 0; var_a2 < 2; var_a2++) {
             if (sp84[var_s2->indexes[var_a2] * 2 + 0] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 0]) {
                 var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 0];
+            } else if (sp84[var_s2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 1]) {
+                var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 1];
             } else {
-                if (sp84[var_s2->indexes[var_a2] * 2 + 1] >= 0 && var_a0 != sp84[var_s2->indexes[var_a2] * 2 + 1]) {
-                    var_s2->indexes[var_a2 + 2] = sp84[var_s2->indexes[var_a2] * 2 + 1];
-                } else {
-                    var_s2->indexes[var_a2 + 2] = -1;
-                }
+                var_s2->indexes[var_a2 + 2] = -1;
             }
         }
     }
-    for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        D_80092E7C[var_a0] = var_a0;
+    for (var_a0 = 0; var_a0 < gLineListCount; var_a0++) {
+        gLineIndex[var_a0] = var_a0;
     }
     do {
         isSorted = TRUE;
-        for (var_a0 = 0; var_a0 < D_800BB4D6 - 1; var_a0++) {
-            if ((D_80092E74[ D_80092E7C[var_a0]].settingsB & 0x3F) < (D_80092E74[D_80092E7C[var_a0 + 1]].settingsB & 0x3F)) {
-                var_a1 = D_80092E7C[var_a0];
-                D_80092E7C[var_a0] = D_80092E7C[var_a0 + 1] & 0xFFFF;
-                D_80092E7C[var_a0 + 1] = var_a1;
+        for (var_a0 = 0; var_a0 < gLineListCount - 1; var_a0++) {
+            if ((gLineList[ gLineIndex[var_a0]].settingsB & 0x3F) < (gLineList[gLineIndex[var_a0 + 1]].settingsB & 0x3F)) {
+                var_a1 = gLineIndex[var_a0];
+                gLineIndex[var_a0] = gLineIndex[var_a0 + 1] & 0xFFFF;
+                gLineIndex[var_a0 + 1] = var_a1;
                 isSorted = FALSE;
             }
         }
@@ -1912,10 +1982,11 @@ void func_800591EC(void) {
         D_800BB4E0[var_a0] = 0xFFFF;
     }
     temp_a2 = -1;
-    for (var_a0 = 0; var_a0 < D_800BB4D6; var_a0++) {
-        var_a1_2 = D_80092E74[D_80092E7C[var_a0]].settingsB & 0x3F;
+    for (var_a0 = 0; var_a0 < gLineListCount; var_a0++) {
+        var_a1_2 = gLineList[gLineIndex[var_a0]].settingsB & 0x3F;
         if (var_a1_2 > 18) {
             var_a1_2 = 1;
+            STUBBED_PRINTF("trackIntersect: FUNC OVERFLOW %d\n", var_a1_2); // @bug: should be before the = 1
         }
         if (temp_a2 != var_a1_2) {
             D_800BB4E0[var_a1_2 * 2] = var_a0;
@@ -1926,13 +1997,24 @@ void func_800591EC(void) {
         }
     }
     if (temp_a2 != -1) {
-        D_800BB4E0[temp_a2 * 2 + 1] = D_800BB4D6;
+        D_800BB4E0[temp_a2 * 2 + 1] = gLineListCount;
     }
+    /* default.dol
+    if (gLineListCount < 0) {
+        STUBBED_PRINTF("trackIntersect: linefunctable overflow!!!\n");
+    }
+    if (gLineListCount > 400) { // comparison updated for dp
+        STUBBED_PRINTF("trackIntersect() MAX_LINEPOINTS overflow!!!\n");
+    }
+    if (gPointListCount > 400) { // comparison updated for dp
+        STUBBED_PRINTF("trackIntersect() MAX_LINEPOINTS overflow!!!\n");
+    }
+    */
     D_80092E80 = 1;
 }
 
-
-void func_800596BC(ObjDef* arg0) {
+// official name: intersectModLineBuild ?
+void trackIntersectModLineBuild(ObjDef* objdef) {
     ModLineReencoded* var_s2;
     ModLine* var_s0;
     ModLine* var_s7;
@@ -1952,28 +2034,29 @@ void func_800596BC(ObjDef* arg0) {
     f32 f0;
 
     D_800BB539 = 1;
-    D_800BB4D6 = 0;
-    D_800BB4D8 = 0;
-    var_s0 = arg0->pModLines;        
-    sp6C8 = arg0->modLineCount;
-    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, D_800BB4D6++) {
+    gLineListCount = 0;
+    gPointListCount = 0;
+    var_s0 = objdef->pModLines;        
+    sp6C8 = objdef->modLineCount;
+    for (var_s3 = 0; var_s3 < sp6C8; var_s3++, gLineListCount++) {
         var_s7 = &var_s0[var_s3];
-        var_s2 = &D_80092E74[D_800BB4D6];
+        var_s2 = &gLineList[gLineListCount];
         var_s2->heightA = var_s7->heightA;
         var_s2->heightB = var_s7->heightB;
         var_s2->settingsB = var_s7->settingsB;
         var_s2->settingsA = var_s7->settingsA;
         var_s2->animatorID = var_s7->animatorID;
         for (var_s1 = 0; var_s1 < 2; var_s1++) {
-            var_s2->indexes[var_s1] = func_8005A2BC(var_s7->somePos[var_s1], var_s7->somePos[var_s1 + 2], f0 = var_s7->somePos[var_s1 + 4], D_800BB4D6, sp68);
+            var_s2->indexes[var_s1] = func_8005A2BC(var_s7->somePos[var_s1], var_s7->somePos[var_s1 + 2], f0 = var_s7->somePos[var_s1 + 4], gLineListCount, sp68);
         }
 
-        if (D_800BB4D8 >= 400) {
+        if (gPointListCount >= 400) {
+            STUBBED_PRINTF("intersectModLineBuild point list overflow, %d/%d\n");
             break;
         }
     }
-    for (var_s3 = 0; var_s3 < D_800BB4D6; var_s3++) {
-        var_s2 = &D_80092E74[var_s3];
+    for (var_s3 = 0; var_s3 < gLineListCount; var_s3++) {
+        var_s2 = &gLineList[var_s3];
         for (var_s1 = 0; var_s1 < 2; var_s1++) {
             temp_v1_2 = &sp68[var_s2->indexes[var_s1] * 2];
             if (temp_v1_2[0] >= 0 && var_s3 != temp_v1_2[0]) {
@@ -1987,65 +2070,66 @@ void func_800596BC(ObjDef* arg0) {
             }
         }
     }
-    temp_a0 = (D_800BB4D6 * sizeof(ModLineReencoded)) + (D_800BB4D8 * sizeof(Vec3f)) + (38 * sizeof(u8));
+    temp_a0 = (gLineListCount * sizeof(ModLineReencoded)) + (gPointListCount * sizeof(Vec3f)) + (38 * sizeof(u8));
     if (temp_a0 == 0) {
         return;
     }
-    arg0->pIntersectPoints = mmAlloc(temp_a0, COLOUR_TAG_YELLOW, NULL);
-    arg0->nextIntersectLine = (Vec3f*)(arg0->pIntersectPoints + D_800BB4D6);
-    arg0->nextIntersectPoint = (u8*)((u8*)arg0->nextIntersectLine + (D_800BB4D8 * 0xC)); // this should use sizeof(Vec3f) instead of 0xC
+    objdef->pIntersectPoints = mmAlloc(temp_a0, COLOUR_TAG_YELLOW, ALLOC_NAME("int:wobjlist"));
+    objdef->nextIntersectLine = (Vec3f*)(objdef->pIntersectPoints + gLineListCount);
+    objdef->nextIntersectPoint = (u8*)((u8*)objdef->nextIntersectLine + (gPointListCount * 0xC)); // this should use sizeof(Vec3f) instead of 0xC
     for (var_s3 = 0; var_s3 < 38; var_s3++) {
-        arg0->nextIntersectPoint[var_s3] = 0xFF;
+        objdef->nextIntersectPoint[var_s3] = 0xFF;
     }
     var_s2_3 = -1;
-    for (var_s3 = 0; var_s3 < D_800BB4D6; var_s3++) {
+    for (var_s3 = 0; var_s3 < gLineListCount; var_s3++) {
         var_t0 = 0;
-        for (var_s1 = 0; var_s1 < D_800BB4D6; var_s1++) {
-            if ((D_80092E74[var_s1].settingsB & 0x3F) < (D_80092E74[var_t0].settingsB & 0x3F)) {
+        for (var_s1 = 0; var_s1 < gLineListCount; var_s1++) {
+            if ((gLineList[var_s1].settingsB & 0x3F) < (gLineList[var_t0].settingsB & 0x3F)) {
                 var_t0 = var_s1;
             }
         }
-        var_v0_2 = D_80092E74[var_t0].settingsB & 0x3F;
+        var_v0_2 = gLineList[var_t0].settingsB & 0x3F;
         if (var_v0_2 > 18) {
             var_v0_2 = 1;
+            STUBBED_PRINTF("trackIntersect: FUNC OVERFLOW %d\n", var_v0_2); // @bug: should be before the = 1
         }
         if (var_v0_2 != var_s2_3) {
-            arg0->nextIntersectPoint[var_v0_2 * 2 + 0] = var_s3;
+            objdef->nextIntersectPoint[var_v0_2 * 2 + 0] = var_s3;
             if (var_s2_3 != -1) {
-                arg0->nextIntersectPoint[var_s2_3 * 2 + 1] = var_s3;
+                objdef->nextIntersectPoint[var_s2_3 * 2 + 1] = var_s3;
             }
             var_s2_3 = var_v0_2;
         }
         for (var_a0_2 = 0; var_a0_2 < var_s3; var_a0_2++) {
-            if (var_t0 == arg0->pIntersectPoints[var_a0_2].indexC) {
-                arg0->pIntersectPoints[var_a0_2].indexC = var_s3;
+            if (var_t0 == objdef->pIntersectPoints[var_a0_2].indexC) {
+                objdef->pIntersectPoints[var_a0_2].indexC = var_s3;
             }
-            if (var_t0 == arg0->pIntersectPoints[var_a0_2].indexD) {
-                arg0->pIntersectPoints[var_a0_2].indexD = var_s3;
-            }
-        }
-        for (var_a0_2 = 0; var_a0_2 < D_800BB4D6; var_a0_2++) {
-            if (D_80092E74[var_a0_2].settingsB != 19) {
-                if (var_t0 == D_80092E74[var_a0_2].indexC) {
-                    D_80092E74[var_a0_2].indexC = var_s3;
-                }
-                if (var_t0 == D_80092E74[var_a0_2].indexD) {
-                    D_80092E74[var_a0_2].indexD = var_s3;
-                }
+            if (var_t0 == objdef->pIntersectPoints[var_a0_2].indexD) {
+                objdef->pIntersectPoints[var_a0_2].indexD = var_s3;
             }
         }
-        bcopy(&D_80092E74[var_t0], arg0->pIntersectPoints + (var_s3), sizeof(ModLineReencoded));
-        D_80092E74[var_t0].settingsB = 0x13;
+        for (var_a0_2 = 0; var_a0_2 < gLineListCount; var_a0_2++) {
+            if (gLineList[var_a0_2].settingsB != 19) {
+                if (var_t0 == gLineList[var_a0_2].indexC) {
+                    gLineList[var_a0_2].indexC = var_s3;
+                }
+                if (var_t0 == gLineList[var_a0_2].indexD) {
+                    gLineList[var_a0_2].indexD = var_s3;
+                }
+            }
+        }
+        bcopy(&gLineList[var_t0], objdef->pIntersectPoints + (var_s3), sizeof(ModLineReencoded));
+        gLineList[var_t0].settingsB = 0x13;
     }
     if (var_s2_3 != -1) {
-        arg0->nextIntersectPoint[var_s2_3 * 2 + 1] = (s8) D_800BB4D6;
+        objdef->nextIntersectPoint[var_s2_3 * 2 + 1] = (s8) gLineListCount;
     }
-    bcopy(D_80092E78, arg0->nextIntersectLine, D_800BB4D8 * sizeof(Vec3f));
-    D_800BB4D6 = 0;
-    D_800BB4D8 = 0;
+    bcopy(gPointList, objdef->nextIntersectLine, gPointListCount * sizeof(Vec3f));
+    gLineListCount = 0;
+    gPointListCount = 0;
 }
 
-s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, u8 arg8, s8 arg9) {
+s32 trackGetLineIntersect(Vec3f* pos1, Vec3f* pos2, f32 arg2, s32 arg3, TrackLineIntersectResult* result, Object* obj, s8 arg6, s8 arg7, u8 arg8, s8 arg9) {
     f32 spE0[2];
     s32 i;
     f32 distance;
@@ -2066,28 +2150,28 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
     Model *model;
 
     D_800BB53A = 0;
-    if (arg4 != NULL) {
-        arg4->unk50 = -1;
-        arg4->unk51 = -1;
+    if (result != NULL) {
+        result->unk50 = -1;
+        result->unk51 = -1;
     }
-    if (arg5 != NULL) {
-        parentObj = arg5->parent;
+    if (obj != NULL) {
+        parentObj = obj->parent;
     } else {
         parentObj = NULL;
     }
 
     if (parentObj != NULL) {
-        camTransformPointByObject(arg0->f[0], arg0->f[1], arg0->f[2], &spC0.f[0], &spC0.f[1], &spC0.f[2], parentObj);
-        camTransformPointByObject(arg1->f[0], arg1->f[1], arg1->f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], parentObj);
+        camTransformPointByObject(pos1->f[0], pos1->f[1], pos1->f[2], &spC0.f[0], &spC0.f[1], &spC0.f[2], parentObj);
+        camTransformPointByObject(pos2->f[0], pos2->f[1], pos2->f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], parentObj);
     } else {
-        bcopy(arg0, &spC0, sizeof(Vec3f));
-        bcopy(arg1, &spB4, sizeof(Vec3f));
+        bcopy(pos1, &spC0, sizeof(Vec3f));
+        bcopy(pos2, &spB4, sizeof(Vec3f));
     }
 
     objects = objGetAllOfType(OBJTYPE_MobileMap, &objectCount);
     for (i = 0; i < objectCount; i++) {
         currentObj = objects[i];
-        if (currentObj != arg5 && currentObj->matrixIdx >= 0 && currentObj->def->pIntersectPoints != NULL) {
+        if (currentObj != obj && currentObj->matrixIdx >= 0 && currentObj->def->pIntersectPoints != NULL) {
             if (currentObj->objhitInfo != NULL && !(currentObj->objhitInfo->unk58 & 1)) {
                 continue;
             }
@@ -2114,7 +2198,7 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
             }
 
             if (isInRange != FALSE) {
-                if (arg8 != 0xFF && (temp_v0_2 = func_8005B17C(arg5, currentObj, arg8), (temp_v0_2 != NULL))) {
+                if (arg8 != 0xFF && (temp_v0_2 = func_8005B17C(obj, currentObj, arg8), (temp_v0_2 != NULL))) {
                     spA8.f[0] = temp_v0_2->unk8.f[0];
                     spA8.f[1] = temp_v0_2->unk8.f[1];
                     spA8.f[2] = temp_v0_2->unk8.f[2];
@@ -2124,12 +2208,12 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
 
                 camInverseTransformPointByObject(spB4.f[0], spB4.f[1], spB4.f[2], &sp9C.f[0], &sp9C.f[1], &sp9C.f[2], currentObj);
                 
-                if (func_8005A3F8(&spA8, &sp9C, arg2, arg3, arg4, currentObj, arg6, arg7, arg9, arg5) != 0) {
+                if (func_8005A3F8(&spA8, &sp9C, arg2, arg3, result, currentObj, arg6, arg7, arg9, obj) != 0) {
                     camTransformPointByObject(sp9C.f[0], sp9C.f[1], sp9C.f[2], &spB4.f[0], &spB4.f[1], &spB4.f[2], currentObj);
                 }
 
                 if (arg8 != 0xFF) {
-                    temp_v0_2 = func_8005B204(arg5, currentObj, arg8);
+                    temp_v0_2 = func_8005B204(obj, currentObj, arg8);
                     if (temp_v0_2 != NULL) {
                         temp_v0_2->unk8.f[0] = sp9C.f[0];
                         temp_v0_2->unk8.f[1] = sp9C.f[1];
@@ -2140,69 +2224,71 @@ s32 func_80059C40(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
         }
     }
 
-    func_8005A3F8(&spC0, &spB4, arg2, arg3, arg4, NULL, arg6, arg7, arg9, arg5);
-    if ((D_800BB53A != 0) && (arg4 != NULL)) {
-        spE0[0] = arg4->unk38.f[1] - arg4->unkC;
-        spE0[1] = arg4->unk38.f[2] - arg4->unk10;
-        arg4->unk2C.f[0] = arg4->unk18 - arg4->unk14;
-        arg4->unk2C.f[1] = 0.0f;
-        arg4->unk2C.f[2] = arg4->unk4 - arg4->unk8;
-        dy = 1.0f / sqrtf(SQ(arg4->unk2C.x) + SQ(arg4->unk2C.z));
-        arg4->unk2C.f[0] *= dy;
-        arg4->unk2C.f[2] *= dy;
-        arg4->unk38.f[0] = -((arg4->unk14 * arg4->unk2C.z) + (arg4->unk2C.x * arg4->unk4));
-        if (arg4->unk0 != NULL) {
-            camTransformPointByObject(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, arg4->unk0);
-            camTransformPointByObject(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, arg4->unk0);
+    func_8005A3F8(&spC0, &spB4, arg2, arg3, result, NULL, arg6, arg7, arg9, obj);
+    if ((D_800BB53A != 0) && (result != NULL)) {
+        spE0[0] = result->unk38.f[1] - result->unkC;
+        spE0[1] = result->unk38.f[2] - result->unk10;
+        result->unk2C.f[0] = result->unk18 - result->unk14;
+        result->unk2C.f[1] = 0.0f;
+        result->unk2C.f[2] = result->unk4 - result->unk8;
+        dy = 1.0f / sqrtf(SQ(result->unk2C.x) + SQ(result->unk2C.z));
+        result->unk2C.f[0] *= dy;
+        result->unk2C.f[2] *= dy;
+        result->unk38.f[0] = -((result->unk14 * result->unk2C.z) + (result->unk2C.x * result->unk4));
+        if (result->unk0 != NULL) {
+            camTransformPointByObject(result->unk4, result->unkC, result->unk14, &result->unk4, &result->unkC, &result->unk14, result->unk0);
+            camTransformPointByObject(result->unk8, result->unk10, result->unk18, &result->unk8, &result->unk10, &result->unk18, result->unk0);
         }
         if (parentObj != NULL) {
-            camInverseTransformPointByObject(arg4->unk4, arg4->unkC, arg4->unk14, &arg4->unk4, &arg4->unkC, &arg4->unk14, parentObj);
-            camInverseTransformPointByObject(arg4->unk8, arg4->unk10, arg4->unk18, &arg4->unk8, &arg4->unk10, &arg4->unk18, parentObj);
+            camInverseTransformPointByObject(result->unk4, result->unkC, result->unk14, &result->unk4, &result->unkC, &result->unk14, parentObj);
+            camInverseTransformPointByObject(result->unk8, result->unk10, result->unk18, &result->unk8, &result->unk10, &result->unk18, parentObj);
         }
-        arg4->unk1C.f[0] = arg4->unk18 - arg4->unk14;
-        arg4->unk1C.f[1] = 0.0f;
-        arg4->unk1C.f[2] = arg4->unk4 - arg4->unk8;
-        dy = 1.0f / sqrtf(SQ(arg4->unk1C.x) + SQ(arg4->unk1C.z));
-        arg4->unk1C.f[0] *= dy;
-        arg4->unk1C.f[2] *= dy;
-        arg4->unk38.f[1] = spE0[0] + arg4->unkC;
-        arg4->unk38.f[2] = spE0[1] + arg4->unk10;
-        arg4->unk1C.f[3] = -((arg4->unk14 * arg4->unk1C.z) + (arg4->unk1C.x * arg4->unk4));
+        result->unk1C.f[0] = result->unk18 - result->unk14;
+        result->unk1C.f[1] = 0.0f;
+        result->unk1C.f[2] = result->unk4 - result->unk8;
+        dy = 1.0f / sqrtf(SQ(result->unk1C.x) + SQ(result->unk1C.z));
+        result->unk1C.f[0] *= dy;
+        result->unk1C.f[2] *= dy;
+        result->unk38.f[1] = spE0[0] + result->unkC;
+        result->unk38.f[2] = spE0[1] + result->unk10;
+        result->unk1C.f[3] = -((result->unk14 * result->unk1C.z) + (result->unk1C.x * result->unk4));
     }
 
     if (D_800BB53A != 0) {
         if (parentObj != NULL) {
-            camInverseTransformPointByObject(spB4.f[0], spB4.f[1], spB4.f[2], arg1->f, &arg1->f[1], &arg1->f[2], parentObj);
+            camInverseTransformPointByObject(spB4.f[0], spB4.f[1], spB4.f[2], pos2->f, &pos2->f[1], &pos2->f[2], parentObj);
         } else {
-            bcopy(&spB4, arg1, sizeof(Vec3f));
+            bcopy(&spB4, pos2, sizeof(Vec3f));
         }
     }
 
     return D_800BB53A;
 }
 
+// official name: insertPoint
 s32 func_8005A2BC(f32 arg0, f32 arg1, f32 arg2, s32 arg3, s16* arg4) {
     s32 i;
 
-    for (i = 0; i < D_800BB4D8; i++) {
-        if (arg0 == D_80092E78[i].f[0] && arg1 == D_80092E78[i].f[1] && arg2 == D_80092E78[i].f[2]) {
+    for (i = 0; i < gPointListCount; i++) {
+        if (arg0 == gPointList[i].f[0] && arg1 == gPointList[i].f[1] && arg2 == gPointList[i].f[2]) {
             arg4[i * 2 + 1] = arg3;
             return i;
         }
     }
-    D_80092E78[D_800BB4D8].f[0] = arg0;
-    D_80092E78[D_800BB4D8].f[1] = arg1;
-    D_80092E78[D_800BB4D8].f[2] = arg2;
-    arg4[D_800BB4D8 * 2 + 0] = arg3;
-    arg4[D_800BB4D8 * 2 + 1] = -1;
-    D_800BB4D8++;
-    if (D_800BB4D8 == 400) {
-        D_800BB4D8--;
+    gPointList[gPointListCount].f[0] = arg0;
+    gPointList[gPointListCount].f[1] = arg1;
+    gPointList[gPointListCount].f[2] = arg2;
+    arg4[gPointListCount * 2 + 0] = arg3;
+    arg4[gPointListCount * 2 + 1] = -1;
+    gPointListCount++;
+    if (gPointListCount == 400) {
+        STUBBED_PRINTF("insertPoint array overrun %d/%d\n", gPointListCount, 400);
+        gPointListCount--;
     }
-    return D_800BB4D8 - 1;
+    return gPointListCount - 1;
 }
 
-s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_Struct* arg4, Object* arg5, s8 arg6, s8 arg7, s8 arg8, Object* arg9) {
+s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, TrackLineIntersectResult* arg4, Object* arg5, s8 arg6, s8 arg7, s8 arg8, Object* arg9) {
     f32 sp1C0[2];
     f32 sp1B8[2];
     ModLineReencoded* var_a0_2;
@@ -2275,11 +2361,11 @@ s32 func_8005A3F8(Vec3f* arg0, Vec3f* arg1, f32 arg2, s32 arg3, Func_80059C40_St
             sp100 = D_800BB4E0[arg7 * 2 + 1];
         } else {
             sp104 = 0;
-            sp100 = D_800BB4D6;
+            sp100 = gLineListCount;
         }
-        spEC = D_80092E7C;
-        spE8 = D_80092E74;
-        spE0 = D_80092E78;
+        spEC = gLineIndex;
+        spE8 = gLineList;
+        spE0 = gPointList;
     }
     spDF = !(arg3 & 1);
     spDE = arg3 & 2;
@@ -2552,7 +2638,7 @@ Unk8005B17C* func_8005B17C(Object* arg0, Object* arg1, u8 arg2) {
     s16 i = 0;
 
     for (;i < 20; i++) {
-        temp_v1 = &D_80092E84[i];
+        temp_v1 = &gLastLines[i];
         if (temp_v1->unk14 == 0) {continue;}
         if (arg0 != temp_v1->unk0) {continue;}
         if (arg1 != temp_v1->unk4) {continue;}
@@ -2565,20 +2651,21 @@ Unk8005B17C* func_8005B17C(Object* arg0, Object* arg1, u8 arg2) {
     return NULL;
 }
 
-Unk8005B17C* func_8005B204(Object* arg0, Object* arg1, u8 arg2) {
+Unk8005B17C* func_8005B204(Object* obj, Object* worldObj, u8 arg2) {
     Unk8005B17C* temp_v1;
     s16 i = 0;
 
     for (;i < 20; i++) {
-        temp_v1 = &D_80092E84[i];
+        temp_v1 = &gLastLines[i];
         if (temp_v1->unk14 == 0) {
-            temp_v1->unk0 = arg0;
-            temp_v1->unk4 = arg1;
+            temp_v1->unk0 = obj;
+            temp_v1->unk4 = worldObj;
             temp_v1->unk15 = arg2;
             temp_v1->unk14 = 2;
             return temp_v1;
         }
     }
+    STUBBED_PRINTF("NO FREE LAST LINE\n");
     return NULL;
 }
 
@@ -2649,7 +2736,7 @@ s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5) {
 }
 
 //parent_object_to_mobile_map_object?
-void func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
+void trackIntersect_func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
     Object* parent;
     ObjectHitInfo* hitInfo;
     f32 speedY;

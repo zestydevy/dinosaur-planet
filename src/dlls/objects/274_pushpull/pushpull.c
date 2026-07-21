@@ -388,7 +388,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
     s8 spEB;
     s8 spEA;
     s32 i;
-    Func_80059C40_Struct sp90;
+    TrackLineIntersectResult sp90;
     s32 pad;
 
     objSetup = (DLL274_Setup*)self->setup;
@@ -404,7 +404,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
             for (i = 0; i < objData->unk88; i++) {
                 dll_274_func_2020(self, &mtx);
                 mathMtxXFMF(&mtx, var_s1[i].x, var_s1[i].y, var_s1[i].z, &spEC[i].x, &spEC[i].y, &spEC[i].z);
-                if (func_80059C40(&objData->unk48[i], &spEC[i], 0.5f, 1, &sp90, self, 8, 0xD, 3 + i, 0xA) == 0) {
+                if (trackGetLineIntersect(&objData->unk48[i], &spEC[i], 0.5f, 1, &sp90, self, 8, 0xD, 3 + i, 0xA) == 0) {
                     spEB &= ~(1 << i);
                 } else {
                     if ((sp90.unk51 != -1) && !(objData->unkD4 & 1)) {
