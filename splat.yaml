@@ -66,8 +66,8 @@ segments:
     - [0x17500, c, memory]
     - [0x18820, c, model]
     - [0x1C0F0, asm, model_asm]
-    - [0x1D900, c, segment_1D900]
-    - [0x20490, asm, segment_20490]
+    - [0x1D900, c, lighting]
+    - [0x20490, asm, lighting_asm]
     - [0x21150, c, object]
     - [0x24930, c, objanim]
     - [0x26900, c, objhits]
@@ -312,8 +312,8 @@ segments:
     - [0x8F6A0, .data, memory]
     - [0x8F6B0, .data, model]
     - [0x8F6D0, data, model_asm]
-    - [0x91860, .data, segment_1D900]
-    - [0x91950, data, segment_20490]
+    - [0x91860, .data, lighting]
+    - [0x91950, data, lighting_asm]
     - [0x92260, .data, object]
     - [0x922B0, .data, objanim]
     - [0x922E0, .data, objhits]
@@ -389,7 +389,7 @@ segments:
     - [0x99DB0, rodata, math_util]
     - [0x99DE0, .rodata, memory]
     - [0x99E40, .rodata, model]
-    - [0x9A0D0, .rodata, segment_1D900]
+    - [0x9A0D0, .rodata, lighting]
     - [0x9A0E0, .rodata, object]
     - [0x9a400, .rodata, objanim]
     - [0x9a460, .rodata, objhits]
@@ -467,7 +467,7 @@ segments:
     # - { type: .bss, vram: 0x800ae2a0, name: main }
     # - { type: .bss, vram: 0x800b09d0, name: memory }
     # - { type: .bss, vram: 0x800b17a0, name: model }
-    # - { type: .bss, vram: 0x800b1830, name: segment_1D900 }
+    # - { type: .bss, vram: 0x800b1830, name: lighting }
     # - { type: .bss, vram: 0x800b18e0, name: object }
     # - { type: .bss, vram: 0x800b1990, name: objhits }
     # - { type: .bss, vram: 0x800b28b0, name: objtype }

@@ -15,7 +15,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/footsteps.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "sys/lfx.h"
 #include "sys/envfx.h"
 #include "dll.h"
@@ -603,10 +603,10 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 6:
                 if (cmd->param2 > 0) {
-                    func_8001EBD0(1);
+                    lightSetInside(1);
                     // "Trigger [%d], newlightInside(1)" (default.dol)
                 } else {
-                    func_8001EBD0(0);
+                    lightSetInside(0);
                     // "Trigger [%d], newlightInside(0)" (default.dol)
                 }
                 break;

@@ -1,7 +1,7 @@
 #include "common.h"
 #include "sys/lfx.h"
 #include "sys/segment_13D0.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "macros.h"
 
 typedef struct {
@@ -208,7 +208,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
     u8 sp232;
     u8 sp231;
 
-    func_8001F81C(&sp233, &sp232, &sp231);
+    lightGetAmbient(&sp233, &sp232, &sp231);
     if (func_80000824(-1) == 1) {
         return 1;
     }

@@ -27,7 +27,7 @@
 #include "sys/thread.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "sys/intersect.h"
 #include "sys/map.h"
 #include "sys/map_enums.h"
@@ -210,7 +210,7 @@ void mainInit(void) {
     resetInit(&osscheduler_);
     texInitTextures();
     trackInit();
-    func_8001CD00();
+    lightInit();
     modInit();
     dllInit();
     objInit();

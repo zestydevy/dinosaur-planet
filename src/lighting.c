@@ -1,24 +1,10 @@
-#include "common.h"
+#include "sys/camera.h"
+#include "sys/main.h"
+#include "sys/memory.h"
 #include "sys/newshadows.h"
+#include "sys/lighting.h"
+#include "sys/lighting_asm.h"
 #include "unktypes.h"
-#include "sys/segment_1D900.h"
-#include "sys/segment_20490.h"
-
-// size: 0x1C
-typedef struct {
-    s16 x;
-    s16 y;
-    s16 z;
-    u8 pad6[0x10 - 0x6];
-    Vec3f pos;
-} Unk800B1858;
-// size: 0x1C?
-typedef struct {
-    s16 yaw;
-    u8 pad6[0xC - 0x2];
-    Vec3f pos;
-    u32 pad1C;
-} Unk800B1860;
 
 typedef struct {
     u8 unk0;
@@ -44,11 +30,11 @@ u8 D_80090C94 = 0;
 u8 D_80090C98 = 0;
 s8 D_80090C9C = 0;
 u8 D_80090CA0 = 0;
-u8 D_80090CA4 = 0;
+u8 gAmbientAdditiveSet = 0;
 s32 D_80090CA8 = 0;
 f32 D_80090CAC = 1.0f;
-u8 BYTE_80090cb0 = 0;
-f32 D_80090CB4 = 0.0f;
+u8 gInsideLighting = 0;
+f32 gInsideLightT = 0.0f;
 Struct80090CE8 D_80090CB8[16] = {0};
 Struct80090CE8 D_80090CE8[16] = {0};
 u8 D_80090D18 = 0;
@@ -59,9 +45,9 @@ Vec3s32 D_80090D24 = {{0, 0, 0}};
 // -------- .data end -------- // 80090D50
 
 // -------- .bss start 800b1830 -------- //
-u8 D_800B1830;
-u8 D_800B1831;
-u8 D_800B1832;
+u8 gAmbientR;
+u8 gAmbientG;
+u8 gAmbientB;
 f32 D_800B1834;
 f32 D_800B1838;
 f32 D_800B183C;
@@ -75,16 +61,16 @@ s8 D_800B1846;
 u8 D_800B1847;
 Unk800B1848 *D_800B1848;
 Unk800B1848 *D_800B184C;
-s16 D_800B1850;
-s16 D_800B1852;
-s16 D_800B1854;
+s16 gAmbientAdditiveR;
+s16 gAmbientAdditiveG;
+s16 gAmbientAdditiveB;
 Unk800B1858 *D_800B1858;
 Unk800B1860 *D_800B1860[30];
 // -------- .bss end 800b18e0 -------- //
 
-void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
+void light_func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
 
-void func_8001CD00(void) {
+void lightInit(void) {
     s32 j;
     s32 i;
     UNK_PTR* temp_v0;
@@ -94,7 +80,7 @@ void func_8001CD00(void) {
     D_800B1858 = temp_v0;
     D_800B1848 = (Unk800B1848 *) ((u32)temp_v0 + 0x348);
     for (i = -1, j = 0; i < 16; i++, j++) {
-        func_8001D548(
+        light_func_8001D548(
             D_80090CE8[j].unk0,
             D_80090CE8[j].unk1,
             D_80090CE8[j].unk2,
@@ -111,17 +97,17 @@ void func_8001CD00(void) {
     }
 }
 
-void func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
+void light_func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
     if (arg4 == 1) {
         D_80090C64 = 1.0f / arg3;
         D_80090C60 = 0.0f;
         if (D_80090C98 == 0) {
-            D_80090C80 = D_800B1830;
-            D_80090C84 = D_800B1831;
-            D_80090C88 = D_800B1832;
-            D_80090C68 = D_800B1830;
-            D_80090C6C = D_800B1831;
-            D_80090C70 = D_800B1832;
+            D_80090C80 = gAmbientR;
+            D_80090C84 = gAmbientG;
+            D_80090C88 = gAmbientB;
+            D_80090C68 = gAmbientR;
+            D_80090C6C = gAmbientG;
+            D_80090C70 = gAmbientB;
         }
         D_80090C74 = arg0;
         D_80090C78 = arg1;
@@ -162,7 +148,7 @@ void func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
     }
 }
 
-void func_8001D2A8(u8 arg0, u8 arg1, u8 arg2, s32 arg3) {
+void light_func_8001D2A8(u8 arg0, u8 arg1, u8 arg2, s32 arg3) {
     s32 var_t1;
     s32 var_t2;
     u8 *temp;
@@ -189,7 +175,7 @@ void func_8001D2A8(u8 arg0, u8 arg1, u8 arg2, s32 arg3) {
     }
 }
 
-void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7) {
+void light_func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7) {
     f32 temp_fv1;
     f32 var_fv0;
     s32 i;
@@ -234,7 +220,7 @@ void func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg
     }
 }
 
-void func_8001DF60(Object* obj, ModelInstance* modelInst) {
+void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
     s32 pad;
     s32 spA8;
     s32 i;
@@ -334,8 +320,8 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
         D_800B1844 = 1;
         sp9E = D_800B1842;
         sp9D = D_800B1843;
-        if (D_80090CB4 != 0.0f) {
-            sp98 = ((1.0f - sp98) * D_80090CB4) + sp98;
+        if (gInsideLightT != 0.0f) {
+            sp98 = ((1.0f - sp98) * gInsideLightT) + sp98;
         }
 
         D_800B1843 = obj->def->unk86 * sp98;
@@ -368,7 +354,16 @@ void func_8001DF60(Object* obj, ModelInstance* modelInst) {
             D_800B1842 = 0;
         }
     }
-    func_8001F890(modelInst->vertices[(modelInst->unk34 >> 1) & 1], modelInst->model->vertexGroups, spA8, modelInst->matrices[modelInst->unk34 & 1], (s32) D_800B1842, (s32) D_800B1843, D_800B1848, D_800B1858, obj->visRadius);
+    func_8001F890(
+        modelInst->vertices[(modelInst->unk34 >> 1) & 1], 
+        modelInst->model->vertexGroups, 
+        spA8, 
+        modelInst->matrices[modelInst->unk34 & 1], 
+        D_800B1842, 
+        D_800B1843, 
+        D_800B1848, 
+        D_800B1858, 
+        obj->visRadius);
     if (obj->def->unk87 & 0xF) {
         D_800B1844 = spA1;
         D_800B1843 = sp9D;
@@ -397,7 +392,7 @@ typedef struct {
     u8 unk1;
 } UnkSp30;
 
-void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
+void light_func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
     ModelFacebatch* faceBatch;
     Vtx* vtx;
     s32 sp5C;
@@ -430,9 +425,9 @@ void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
                 if (r == 0 && g == 0 && b == 0) {
                     continue;
                 }
-                temp = (D_800B1830 + r) >> 1;
-                temp2 = (D_800B1831 + g) >> 1;
-                temp3 = (D_800B1832 + b) >> 1;
+                temp = (gAmbientR + r) >> 1;
+                temp2 = (gAmbientG + g) >> 1;
+                temp3 = (gAmbientB + b) >> 1;
                 for (; fromVtxID < toVtxID; fromVtxID++) {
                     if ((arg1->vertices[fromVtxID].n.a == 0) || (arg1->vertices[fromVtxID].n.a == 1)) {
                         continue;
@@ -454,14 +449,14 @@ void func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
     }
 }
 
-void func_8001EAA4(u8 arg0, u8 arg1, u8 arg2, f32 arg3) {
-    D_800B1850 = (s16) (s32) -((f32) arg0 * arg3);
-    D_800B1852 = (s16) (s32) -((f32) arg1 * arg3);
-    D_800B1854 = (s16) (s32) -((f32) arg2 * arg3);
-    D_80090CA4 = 1;
+void lightDimAmbient(u8 r, u8 g, u8 b, f32 t) {
+    gAmbientAdditiveR = (s16) (s32) -((f32) r * t);
+    gAmbientAdditiveG = (s16) (s32) -((f32) g * t);
+    gAmbientAdditiveB = (s16) (s32) -((f32) b * t);
+    gAmbientAdditiveSet = 1;
 }
 
-void func_8001EB80(void) {
+void lightClearEmitters(void) {
     s32 i;
 
     D_800B1845 = 0;
@@ -471,26 +466,24 @@ void func_8001EB80(void) {
     }
 }
 
-// newlight_set_inside
-// officialName: newlightInside
-void func_8001EBD0(s32 arg0) {
-    BYTE_80090cb0 = (u8) arg0;
+// official name: newlightInside
+void lightSetInside(s32 inside) {
+    gInsideLighting = (u8) inside;
 }
 
-// newlight_get_inside
-u8 func_8001EBE0(void) {
-    return BYTE_80090cb0;
+u8 lightGetInside(void) {
+    return gInsideLighting;
 }
 
-void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 arg7, u8 arg8, u8 arg9) {
+void lightUpdateSkyLight(f32 dirX, f32 dirY, f32 dirZ, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 r, u8 g, u8 b) {
     static s16 D_80090D3C = 0;
-    static u8 D_80090D40 = 0;
-    s16 var_a0;
-    s16 var_v0;
-    s16 var_v1;
+    static u8 sPrevInsideLighting = 0;
+    s16 sumB;
+    s16 sumR;
+    s16 sumG;
     u8 temp;
-    Vec3f sp2C = VEC3F(0.0f, 198.0f, 19.0f);
-    f32 new_var;
+    Vec3f insideLightDir = VEC3F(0.0f, 198.0f, 19.0f);
+    f32 insideLightTransitionRate;
 
     if (D_80090CA8 != 0) {
         return;
@@ -506,87 +499,91 @@ void func_8001EBF0(f32 arg0, f32 arg1, f32 arg2, u8 arg3, u8 arg4, s8 arg5, s8 a
             arg6 -= 1;
         }
     }
-    if (D_80090D40 != BYTE_80090cb0) {
-        D_80090D40 = BYTE_80090cb0;
+    if (sPrevInsideLighting != gInsideLighting) {
+        sPrevInsideLighting = gInsideLighting;
     }
-    new_var = 0.003f;
-    if ((BYTE_80090cb0) && (D_80090CB4 != 1.0f)) {
-        D_80090CB4 += (gUpdateRateF * new_var);
-        if (D_80090CB4 > 1.0f) {
-            D_80090CB4 = 1.0f;
+    insideLightTransitionRate = 0.003f;
+    if ((gInsideLighting) && (gInsideLightT != 1.0f)) {
+        // Transition into inside lighting
+        gInsideLightT += (gUpdateRateF * insideLightTransitionRate);
+        if (gInsideLightT > 1.0f) {
+            gInsideLightT = 1.0f;
         }
-        D_800B1834 = ((sp2C.x - arg0) * D_80090CB4) + arg0;
-        D_800B1838 = ((sp2C.y - arg1) * D_80090CB4) + arg1;
-        D_800B183C = ((sp2C.z - arg2) * D_80090CB4) + arg2;
-    } else if (!BYTE_80090cb0 && (D_80090CB4 != 0.0f)) {
-        D_80090CB4 -= gUpdateRateF * new_var;
-        if (D_80090CB4 < 0.0f) {
-            D_80090CB4 = 0.0f;
+        D_800B1834 = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
+        D_800B1838 = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
+        D_800B183C = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
+    } else if (!gInsideLighting && (gInsideLightT != 0.0f)) {
+        // Transition out of inside lighting
+        gInsideLightT -= gUpdateRateF * insideLightTransitionRate;
+        if (gInsideLightT < 0.0f) {
+            gInsideLightT = 0.0f;
         }
-        D_800B1834 = ((sp2C.x - arg0) * D_80090CB4) + arg0;
-        D_800B1838 = ((sp2C.y - arg1) * D_80090CB4) + arg1;
-        D_800B183C = ((sp2C.z - arg2) * D_80090CB4) + arg2;
-    } else if (BYTE_80090cb0) {
-        D_800B1834 = sp2C.x;
-        D_800B1838 = sp2C.y;
-        D_800B183C = sp2C.z;
+        D_800B1834 = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
+        D_800B1838 = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
+        D_800B183C = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
+    } else if (gInsideLighting) {
+        // Fully in inside lighting
+        D_800B1834 = insideLightDir.x;
+        D_800B1838 = insideLightDir.y;
+        D_800B183C = insideLightDir.z;
     } else {
-        D_800B1834 = arg0;
-        D_800B1838 = arg1;
-        D_800B183C = arg2;
+        // Fully in outside lighting
+        D_800B1834 = dirX;
+        D_800B1838 = dirY;
+        D_800B183C = dirZ;
     }
     D_800B1842 = arg3;
     D_800B1843 = arg4;
     D_800B1840 = arg5;
     D_800B1841 = arg6;
-    D_800B1830 = arg7;
-    D_800B1831 = arg8;
-    D_800B1832 = arg9;
-    D_80090C8C = D_800B1830;
-    D_80090C90 = D_800B1831;
-    D_80090C94 = D_800B1832;
-    func_8001CDE4(0, 0, 0, 0, 0);
+    gAmbientR = r;
+    gAmbientG = g;
+    gAmbientB = b;
+    D_80090C8C = gAmbientR;
+    D_80090C90 = gAmbientG;
+    D_80090C94 = gAmbientB;
+    light_func_8001CDE4(0, 0, 0, 0, 0);
     if (D_80090C98 != 0) {
-        D_800B1830 = D_80090C68;
-        D_800B1831 = D_80090C6C;
-        D_800B1832 = D_80090C70;
+        gAmbientR = D_80090C68;
+        gAmbientG = D_80090C6C;
+        gAmbientB = D_80090C70;
     } else {
-        D_800B1830 = arg7;
-        D_800B1831 = arg8;
-        D_800B1832 = arg9;
+        gAmbientR = r;
+        gAmbientG = g;
+        gAmbientB = b;
     }
-    if (D_80090CA4 != 0) {
-        var_v0 = D_800B1830 + D_800B1850;
-        var_v1 = D_800B1831 + D_800B1852;
-        var_a0 = D_800B1832 + D_800B1854;
-        var_v0 = MIN(0xFF, var_v0);
-        var_v1 = MIN(0xFF, var_v1);
-        var_a0 = MIN(0xFF, var_a0);
-        var_v0 = MAX(0, var_v0);
-        var_v1 = MAX(0, var_v1);
-        var_a0 = MAX(0, var_a0);
-        D_800B1830 = var_v0;
-        D_800B1831 = var_v1;
-        D_800B1832 = var_a0;
+    if (gAmbientAdditiveSet != 0) {
+        sumR = gAmbientR + gAmbientAdditiveR;
+        sumG = gAmbientG + gAmbientAdditiveG;
+        sumB = gAmbientB + gAmbientAdditiveB;
+        sumR = MIN(0xFF, sumR);
+        sumG = MIN(0xFF, sumG);
+        sumB = MIN(0xFF, sumB);
+        sumR = MAX(0, sumR);
+        sumG = MAX(0, sumG);
+        sumB = MAX(0, sumB);
+        gAmbientR = sumR;
+        gAmbientG = sumG;
+        gAmbientB = sumB;
     }
     // @fake?
-    if (D_800B1830) {}
-    if (D_800B1831) {}
-    temp = D_800B1832;
+    if (gAmbientR) {}
+    if (gAmbientG) {}
+    temp = gAmbientB;
     if (temp) {}
-    if ((D_800B1830 != 0xFF) || (D_800B1831 != 0xFF) || (temp != 0xFF)) {
+    if ((gAmbientR != 0xFF) || (gAmbientG != 0xFF) || (temp != 0xFF)) {
         D_800B1844 = 1;
-        func_8001D2A8(D_800B1830, D_800B1831, temp, -1);
+        light_func_8001D2A8(gAmbientR, gAmbientG, temp, -1);
     } else {
         D_800B1844 = 0;
     }
-    D_80090CA4 = 0;
-    D_800B1850 = 0;
-    D_800B1852 = 0;
-    D_800B1854 = 0;
+    gAmbientAdditiveSet = 0;
+    gAmbientAdditiveR = 0;
+    gAmbientAdditiveG = 0;
+    gAmbientAdditiveB = 0;
 }
 
-void func_8001F094(ModelInstance* arg0) {
+void lightModelSphereMapping(ModelInstance* arg0) {
     Camera* camera;
     Model* spF0;
     f32 spEC;
@@ -696,7 +693,7 @@ void func_8001F094(ModelInstance* arg0) {
 }
 
 // update sphere mapping (e.g. ice reflections) for block
-void func_8001F4C0(Block* block, s32 blockX, s32 blockZ) {
+void lightBlockSphereMapping(Block* block, s32 blockX, s32 blockZ) {
     u8 pad[0x18];
     Vec3f sp9C;
     Vec3f sp88;
@@ -784,12 +781,12 @@ void func_8001F4C0(Block* block, s32 blockX, s32 blockZ) {
     }
 }
 
-void func_8001F81C(u8 *arg0, u8 *arg1, u8 *arg2) {
-    *arg0 = D_800B1830;
-    *arg1 = D_800B1831;
-    *arg2 = D_800B1832;
+void lightGetAmbient(u8 *r, u8 *g, u8 *b) {
+    *r = gAmbientR;
+    *g = gAmbientG;
+    *b = gAmbientB;
 }
 
-void func_8001F848(Gfx **gdl) {
-    dlSetPrimColor(gdl, D_800B1830, D_800B1831, D_800B1832, 0xFF);
+void lightAmbientDL(Gfx **gdl) {
+    dlSetPrimColor(gdl, gAmbientR, gAmbientG, gAmbientB, 0xFF);
 }

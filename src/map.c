@@ -17,7 +17,7 @@
 #include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rarezip.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "sys/intersect.h"
 #include "sys/lfx.h"
 #include "sys/envfx.h"
@@ -645,7 +645,7 @@ void trackTick(s32 arg0) {
         }
         gDLL_59_Minimap->vtbl->func0();
     }
-    func_8001EB80();
+    lightClearEmitters();
 }
 
 void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
@@ -818,7 +818,7 @@ void trackDrawMain(void) {
                         blockComputeVertexColors(block, x, z, 0);
                     }
                     if ((block->numSphereMappedShapes != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
-                        func_8001F4C0(block, x, z);
+                        lightBlockSphereMapping(block, x, z);
                     }
                 }
                 // Add to render list
@@ -930,7 +930,7 @@ void trackDrawRenderList(Mtx* rspMtxs, s8* visibilities) {
                 } else if (shape->flags & (RENDER_UNK40000000 | RENDER_UNK4000000 | RENDER_UNK2000000 | RENDER_UNK800000 | RENDER_UNK400000)) {
                     dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else {
-                    func_8001F848(&gMainDL);
+                    lightAmbientDL(&gMainDL);
                 }
             }
             renderFlags = shape->flags;
@@ -2864,7 +2864,7 @@ void map_func_8004773C(void) {
             if (sp40->unkE != -1) {
                 lfxRestoreAction(player, player, sp40->unkE, 0, 0, 0);
             }
-            func_8001EBD0(sp40->isInside & 1);
+            lightSetInside(sp40->isInside & 1);
             if (sp3C->unk4 != -1) {
                 envfxRestoreAction(player, player, sp3C->unk4, 0);
             }
@@ -3319,7 +3319,7 @@ void blockColorTableTick(void) {
     s32 i;
     u8 r, g, b;
 
-    func_8001F81C(&r, &g, &b);
+    lightGetAmbient(&r, &g, &b);
 
     for (i = 0; i < gBlockColorTableLength; i++) {
         if (gBlockColorTable[i].a != 0xFE) {
@@ -4977,7 +4977,7 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
 
     sp160 = D_80092BC0;
     sp78 = 0;
-    func_8001F81C(&sp7B, &sp7A, &sp79);
+    lightGetAmbient(&sp7B, &sp7A, &sp79);
     sp77 = sp7B;
     sp76 = sp7A;
     sp75 = sp79;

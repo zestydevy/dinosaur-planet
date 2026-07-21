@@ -3,7 +3,7 @@
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
 #include "sys/objtype.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 
 typedef struct {
     ObjSetup base;

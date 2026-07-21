@@ -6,7 +6,7 @@
 #include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "sys/intersect.h"
 #include "macros.h"
 
@@ -183,7 +183,7 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     static u8 _bss_800bb1b8[0x40];
     Vec3f sp1C;
 
-    if (func_8001EBE0() != 0) {
+    if (lightGetInside() != 0) {
         arg0 = 0.0f;
         arg1 = 198.0f;
         arg2 = 19.0f;

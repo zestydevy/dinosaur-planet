@@ -8,7 +8,7 @@
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/rsp_segment.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "sys/objprint.h"
 
 // -------- .data start 80091750 -------- //
@@ -115,7 +115,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     Vertex* tempVtxs;
     Triangle* tempTris;
 
-    func_8001F81C(&sp6F, &sp6E, &sp6D);
+    lightGetAmbient(&sp6F, &sp6E, &sp6D);
     tempGdl = *gdl;
     tempMtxs = *mtxs;
     tempVtxs = *vtxs;
@@ -131,7 +131,7 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
         opacity = 0xFF;
     }
     if (obj->def->flags & OBJDEF_SKY_LIT) {
-        if (func_8001EBE0() != 0) {
+        if (lightGetInside() != 0) {
             blendB = blendG = blendR = 0xFF;
         } else {
             blendR = sp6F;
@@ -226,14 +226,14 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
                     mod_func_8001B100(modelInst);
                 }
                 if (obj->def->flags & OBJDEF_FLAG10) {
-                    func_8001DF60(obj, modelInst);
+                    lightDynamicModelLighting(obj, modelInst);
                 }
             }
             if (obj->def->numAnimatedFrames != 0) {
-                func_8001E818(obj, model, modelInst);
+                light_func_8001E818(obj, model, modelInst);
             }
             if (model->envMapCount != 0) {
-                func_8001F094(modelInst);
+                lightModelSphereMapping(modelInst);
             }
             if (obj->unk74 != NULL) {
                 objprintUpdateLockIconCoords(obj);
@@ -413,10 +413,10 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
             if (sp64->blendshapes != NULL) {
                 mod_func_8001B100(modelInst);
             }
-            func_8001DF60(arg8, modelInst);
+            lightDynamicModelLighting(arg8, modelInst);
         }
         if (sp64->envMapCount != 0) {
-            func_8001F094(modelInst);
+            lightModelSphereMapping(modelInst);
         }
         if (sp64->hitSphereCount != 0) {
             mod_func_8001A8EC(modelInst, sp64, arg8, arg7, arg4);
@@ -754,13 +754,13 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     }
     if (arg0->def->flags & OBJDEF_FLAG1000) {
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
-            func_8001F848(arg1);
+            lightAmbientDL(arg1);
         }
     } else {
         if (arg0->def->flags & OBJDEF_FLAG20) {
             dlSetPrimColor(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
         } else if (sp64 != 0) {
-            func_8001F848(arg1);
+            lightAmbientDL(arg1);
         }
         temp_t0 = arg0->modelInsts[arg0->modelInstIdx];
         if (arg0->setup != NULL) {
@@ -787,7 +787,7 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
-            func_8001F848(arg1);
+            lightAmbientDL(arg1);
         }
     }
 }
