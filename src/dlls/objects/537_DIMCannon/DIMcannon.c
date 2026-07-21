@@ -689,17 +689,13 @@ void DIMCannon_freeCannonBall(Object* self) {
 
 // offset: 0x16AC | func: 13
 Object* DIMCannon_createCannonBallExplosion(Object* self) {
-    /*
-        TODO: something very strange is happening here... 
-        objData should be OBJ_DIMCannonBall's data, but `DIMCannon_obj_GetDataSize` says `DIMCannonBall_Data` has a size of 1!
-        The way this function reads from self->data also suggests it expects an ObjSetup struct to be there instead.
-        Could this be a bug, where they read from `self->data` instead of `self->setup` by mistake?
-        Might explain why the cannonball explosions are normally invisible!
-    */
     DIMCannonBall_Setup* objSetup; 
     DIMExplosion_Setup* boomSetup;
 
-    objSetup = (DIMCannonBall_Setup*)self->data; //@bug: accidentally reading from `self->data` instead of `self->setup`!
+    //@bug: accidentally reading from `self->data` instead of `self->setup` (causes explosions to become invisible)!
+    // We know `DIMCannonBall_Data` is only 1 byte long, and the parent->child
+    // inheritance pattern below suggests Rare expected to read from an ObjSetup:
+    objSetup = (DIMCannonBall_Setup*)self->data; 
     
     boomSetup = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
     boomSetup->base.loadFlags = objSetup->base.loadFlags;
