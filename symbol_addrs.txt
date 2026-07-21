@@ -2502,7 +2502,7 @@ lightDimAmbient = 0x8001EAA4; // type:func
 light_func_8001E818 = 0x8001E818; // type:func
 light_func_8001D548 = 0x8001D548; // type:func
 light_func_8001D2A8 = 0x8001D2A8; // type:func
-func_8001CDE4 = 0x8001CDE4; // type:func
+light_func_8001CDE4 = 0x8001CDE4; // type:func
 
 gInsideLightT = 0x80090CB4;
 sPrevInsideLighting = 0x80090D40;
