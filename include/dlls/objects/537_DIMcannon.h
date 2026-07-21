@@ -7,7 +7,7 @@
 /* ObjSetup for DIMCannon */
 typedef struct {
 /*00*/  ObjSetup base;
-/*18*/  s16 gamebitAnimMessage1;
+/*18*/  s16 gamebitSiloCoverOpen;
 /*1A*/  s16 gamebitCannonClawDead;
 /*1C*/  s16 gamebitCannonClawAboard;
 /*1E*/  s16 gamebitCannonClawTruce;

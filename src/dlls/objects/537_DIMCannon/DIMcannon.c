@@ -426,7 +426,7 @@ int DIMCannon_animCallback(Object* self, Object* animObj, AnimObj_Data* animData
         self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->lastMessage == 1) {
             objSetup = (DIMCannon_Setup*)self->setup;
-            mainSetBits(objSetup->gamebitAnimMessage1, TRUE);
+            mainSetBits(objSetup->gamebitSiloCoverOpen, TRUE);
         }
         
         animData->lastMessage = 0;
