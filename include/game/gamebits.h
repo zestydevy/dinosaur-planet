@@ -782,7 +782,7 @@ typedef enum {
     BIT_307 = 0x307, // len:1 group:1
     BIT_308 = 0x308, // len:1 group:1
     BIT_309 = 0x309, // len:1 group:1
-    BIT_30A = 0x30A, // len:1 group:1
+    BIT_CRF_Play_Seq_005D_Treasure_Room_Door_Opening_Sequences = 0x30A, // len:1 group:1
     BIT_30B = 0x30B, // len:1 group:1
     BIT_30C = 0x30C, // len:1 group:1
     BIT_30D = 0x30D, // len:1 group:1
@@ -1147,7 +1147,7 @@ typedef enum {
     BIT_474 = 0x474, // len:1 group:0
     BIT_475 = 0x475, // len:1 group:1
     BIT_476 = 0x476, // len:1 group:1
-    BIT_477 = 0x477, // len:1 group:1
+    BIT_477_CRF_Treasure_Room_Doors_Opened = 0x477, // len:1 group:1
     BIT_GP_Sharpclaw_Jetbike_Cutscene1 = 0x478, // len:1 group:0
     BIT_GP_Sharpclaw_Jetbike_Cutscene2 = 0x479, // len:1 group:1
     BIT_47A = 0x47A, // len:1 group:0

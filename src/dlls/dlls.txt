@@ -199,6 +199,7 @@
 385 = objects/385
 388 = objects/388_CFbarrel
 393 = objects/393_CFMainSlideDoor
+394 = objects/394_CFTreasureDoor
 395 = objects/395_CFAttractor
 396 = objects/396_CFSupTreasureCh
 398 = objects/398_CFMagicWall

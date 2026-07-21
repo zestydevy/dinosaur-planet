@@ -1,0 +1,15 @@
+.text = 0x0:
+CFTreasureDoor_ctor = 0x0;
+CFTreasureDoor_dtor = 0xC;
+CFTreasureDoor_obj_Setup = 0x18;
+CFTreasureDoor_obj_Control = 0x150;
+CFTreasureDoor_obj_Update = 0x480;
+CFTreasureDoor_obj_Print = 0x48C;
+CFTreasureDoor_obj_Free = 0x4E0;
+CFTreasureDoor_obj_GetModelFlags = 0x4F0;
+CFTreasureDoor_obj_GetDataSize = 0x500;
+
+.rodata = 0x568:
+
+.data = 0x578:
+dBabyPerchedGamebits = 0x0; // absolute:0x578
