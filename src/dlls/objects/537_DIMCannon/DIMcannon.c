@@ -57,17 +57,6 @@ typedef struct {
     u8 createModGfx;
 } DIMCannonBall_Data;
 
-typedef struct {
-    u8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    u8 unk4;
-    u8 unk5;
-    u8 unk6;
-    u8 unk7;
-} Unk_Data;
-
 static int DIMCannon_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 static void DIMCannon_aimCannonClaw(Object* self, f32 x, f32 y, f32 z, f32 targetDist);
 static void DIMCannon_fireWhenReady(Object* self);
@@ -707,16 +696,16 @@ Object* DIMCannon_createCannonBallExplosion(Object* self) {
         Could this be a bug, where they read from `self->data` instead of `self->setup` by mistake?
         Might explain why the cannonball explosions are normally invisible!
     */
-    Unk_Data* objData; 
+    DIMCannonBall_Setup* objSetup; 
     DIMExplosion_Setup* boomSetup;
 
-    objData = self->data;
+    objSetup = (DIMCannonBall_Setup*)self->data; //@bug: accidentally reading from `self->data` instead of `self->setup`!
     
     boomSetup = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
-    boomSetup->base.loadFlags = objData->unk4; //@bug?: the offsets here suggest that self->data is expected to hold an ObjSetup struct...?
-    boomSetup->base.loadDistance = objData->unk6;
-    boomSetup->base.fadeFlags = objData->unk5;
-    boomSetup->base.fadeDistance = objData->unk7;
+    boomSetup->base.loadFlags = objSetup->base.loadFlags;
+    boomSetup->base.loadDistance = objSetup->base.loadDistance;
+    boomSetup->base.fadeFlags = objSetup->base.fadeFlags;
+    boomSetup->base.fadeDistance = objSetup->base.fadeDistance;
     boomSetup->base.x = self->srt.transl.x;
     boomSetup->base.y = self->srt.transl.y;
     boomSetup->base.z = self->srt.transl.z;
