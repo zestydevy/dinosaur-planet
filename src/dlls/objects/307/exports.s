@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_307_ctor
-.dword dll_307_dtor
+.dword DLL307_ctor
+.dword DLL307_dtor
 
 # export table
-/*0*/ .dword dll_307_setup
-/*1*/ .dword dll_307_control
-/*2*/ .dword dll_307_update
-/*3*/ .dword dll_307_print
-/*4*/ .dword dll_307_free
-/*5*/ .dword dll_307_get_model_flags
-/*6*/ .dword dll_307_get_data_size
+/*0*/ .dword DLL307_obj_Setup
+/*1*/ .dword DLL307_obj_Control
+/*2*/ .dword DLL307_obj_Update
+/*3*/ .dword DLL307_obj_Print
+/*4*/ .dword DLL307_obj_Free
+/*5*/ .dword DLL307_obj_GetModelFlags
+/*6*/ .dword DLL307_obj_GetDataSize
