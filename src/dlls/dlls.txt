@@ -243,6 +243,7 @@
 459 = objects/459_CCkrazoaTablet
 460 = objects/460_CClevcontrol
 461 = objects/461_CCsandwormBoss
+462 = objects/462_CCcannonSwitch
 463 = objects/463_CCgasvent
 464 = objects/464_CCgasventControl
 465 = objects/465_CCdockDoor
