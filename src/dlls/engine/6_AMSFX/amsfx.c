@@ -84,13 +84,13 @@ enum AMSFXWaterFallsFlags {
 void amSfx_SetVol(u32 soundHandle, u8 volume);
 void amSfx_Stop(u32 arg0);
 s32 amSfx_GetDefault(u16 arg0, SoundDef* arg1);
-static s32 waterFallsFindSprays(void);
-static s32 makeHandle(s32 handle, char *filename, s32 lineNo);
-static s32 freeHandle(u32);
-static void func_1F78(void);
-static void func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut);
-static void func_22FC(f32 arg0, f32 arg1, f32 arg2, SoundDef* arg3, s8* outVolume);
-static void func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx);
+static s32 amSfx_waterFallsFindSprays(void);
+static s32 amSfx_makeHandle(s32 handle, char *filename, s32 lineNo);
+static s32 amSfx_freeHandle(u32);
+static void amSfx_func_1F78(void);
+static void amSfx_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut);
+static void amSfx_func_22FC(f32 arg0, f32 arg1, f32 arg2, SoundDef* arg3, s8* outVolume);
+static void amSfx_func_2438(f32 arg0, f32 arg1, s32 arg2, s8* outPan, s8* outFx);
 
 // offset: 0x0 | ctor
 void amSfx_ctor(void *dll) {
@@ -152,7 +152,7 @@ void amSfx_dtor(void *dll) {
     sWaterfallFlags = 0;
     for (i = 1; i < (sSndSlotsLen + 1); i++) {
         if (sSndSlots[i].sndpHandle) {
-            freeHandle(i);
+            amSfx_freeHandle(i);
         }
     }
     mmFree(sSndSlots);
@@ -165,7 +165,7 @@ void amSfx_Func338(void) {
     sndstate *temp_a0;
     s32 i;
 
-    func_1F78();
+    amSfx_func_1F78();
     for (i = 1; i < (sSndSlotsLen + 1); i++) {
         temp_a0 = sSndSlots[i].sndpHandle;
         // @fake
@@ -173,7 +173,7 @@ void amSfx_Func338(void) {
         if (temp_a0 != 0) {
             if (temp_a0 == (sndstate*)-1) {
                 if (sSndSlots[i].flags & SOUNDSLOT_PLAYING) {
-                    freeHandle(i);
+                    amSfx_freeHandle(i);
                 }
             } else if (temp_a0 == (sndstate*)-2) {
                 if (mp3IsBusy() == 0) {
@@ -223,14 +223,14 @@ u32 amSfx_Play(Object* obj, u16 soundID, u8 volume, u32* soundHandle, char *file
         handle = 0;
     }
 
-    handle = makeHandle(handle, filename, lineNo);
+    handle = amSfx_makeHandle(handle, filename, lineNo);
     sSndSlots[handle].soundID = soundID;
     sSndSlots[handle].source = obj;
     sSndSlots[handle].distVolume = MAX_VOLUME;
 
     if ((obj != NULL) && (soundDef.volumeFalloff & 3)) {
-        func_2240(obj, &x, &y, &z, &yaw);
-        func_22FC(x, y, z, &soundDef, &volumeCalc);
+        amSfx_func_2240(obj, &x, &y, &z, &yaw);
+        amSfx_func_22FC(x, y, z, &soundDef, &volumeCalc);
         sSndSlots[handle].distVolume = volumeCalc;
     }
 
@@ -333,7 +333,7 @@ void amSfx_SetPitch(u32 soundHandle, f32 pitch) {
 // offset: 0xA1C | func: 6 | export: 6
 void amSfx_Stop(u32 soundHandle) {
     if ((u32) sSndSlotsLen >= soundHandle) {
-        freeHandle(soundHandle);
+        amSfx_freeHandle(soundHandle);
     } else {
         STUBBED_PRINTF("amSfxStop: Warning,sound handle '%d' out of range.\n", soundHandle);
     }
@@ -351,7 +351,7 @@ void amSfx_StopObject(Object *obj) {
     if (1) {}
     for (i = 1; i < (sSndSlotsLen+1); i++) {
         if ((sSndSlots[i].flags & SOUNDSLOT_IN_USE) != 0 && obj == sSndSlots[i].source && sSndSlots[i].sndpHandle != NULL) {
-            freeHandle(i);
+            amSfx_freeHandle(i);
         }
     }
 }
@@ -484,7 +484,7 @@ void amSfx_SndPlayEx(Object* obj, u16 soundID, u32* soundHandle, char *filename,
         return;
     }
     
-    handle = makeHandle(handle, filename, lineNo);
+    handle = amSfx_makeHandle(handle, filename, lineNo);
     some_sound_func(_bss_0->bankArray[0], soundID, 0x4000, 0x40, 1.0f, 0, 1, &sSndSlots[handle].sndpHandle);
     sSndSlots[handle].soundID = -1 - soundID;
     sSndSlots[handle].source = obj;
@@ -536,10 +536,10 @@ void amSfx_FreeObject(Object *obj) {
             // @fake
             if (sSndSlots[i].sndpHandle) {}
             if (sSndSlots[i].sndpHandle != 0) {
-                freeHandle(i);
+                amSfx_freeHandle(i);
             }
         }
-        freeHandle(i);
+        amSfx_freeHandle(i);
         // @fake
         if (temp && (!obj)) {}
     }
@@ -654,7 +654,7 @@ void amSfx_WaterFallsControl(void) {
     player = objGetPlayer();
     mapID = mapWorldXZToMapID(player->srt.transl.x, player->srt.transl.z);
     if ((mapID != sWaterfallsLastMap) || (sWaterfallFlags & AMSFX_WATERFALLS_REFRESH)) {
-        waterFallsFindSprays();
+        amSfx_waterFallsFindSprays();
         sWaterfallsLastMap = mapID;
         sWaterfallFlags &= ~AMSFX_WATERFALLS_REFRESH;
     }
@@ -738,7 +738,7 @@ void amSfx_WaterFallsSetFlags(u8 flags) {
 }
 
 // offset: 0x1C38 | func: 21
-static s32 waterFallsFindSprays(void) {
+static s32 amSfx_waterFallsFindSprays(void) {
     Object* player;
     s32 offset;
     ObjSetup* setup;
@@ -770,7 +770,7 @@ static s32 waterFallsFindSprays(void) {
 }
 
 // offset: 0x1D58 | func: 22
-static s32 makeHandle(s32 handle, char *filename, s32 lineNo) {
+static s32 amSfx_makeHandle(s32 handle, char *filename, s32 lineNo) {
     SoundSlot* var_v0;
     s32 temp_a0;
     s32 i;
@@ -798,7 +798,7 @@ static s32 makeHandle(s32 handle, char *filename, s32 lineNo) {
 }
 
 // offset: 0x1E64 | func: 23
-static s32 freeHandle(u32 handle) {
+static s32 amSfx_freeHandle(u32 handle) {
     sndstate* sndpHandle;
 
     if (handle == 0) {
@@ -827,7 +827,7 @@ static s32 freeHandle(u32 handle) {
 }
 
 // offset: 0x1F78 | func: 24
-static void func_1F78(void) {
+static void amSfx_func_1F78(void) {
     Object* temp_a0;
     s32 i;
     f32 sp6C;
@@ -849,9 +849,9 @@ static void func_1F78(void) {
         if (temp_s0 == (sndstate* )-1) { continue; } 
         if (!(sSndSlots[i].def.volumeFalloff & 3)) { continue; }
         
-        func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
-        func_22FC(sp6C, sp68, sp64, &sSndSlots[i].def, &vol);
-        func_2438(sp6C, sp64, sp5A, &pan, &fx);
+        amSfx_func_2240(temp_a0, &sp6C, &sp68, &sp64, &sp5A);
+        amSfx_func_22FC(sp6C, sp68, sp64, &sSndSlots[i].def, &vol);
+        amSfx_func_2438(sp6C, sp64, sp5A, &pan, &fx);
         sSndSlots[i].distVolume = vol;
         if (pan != (s8) sSndSlots[i].unk14) {
             sSndSlots[i].unk14 = (u8) pan;
@@ -884,7 +884,7 @@ static void func_1F78(void) {
 }
 
 // offset: 0x2240 | func: 25
-static void func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
+static void amSfx_func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
     Camera* camera;
     f32 sp28;
     f32 sp24;
@@ -901,7 +901,7 @@ static void func_2240(Object* obj, f32* xo, f32* yo, f32* zo, u16* yawOut) {
 
 // offset: 0x22FC | func: 26
 //apply_volume_falloff?
-static void func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolume) {
+static void amSfx_func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolume) {
     f32 range;
     f32 distance;
 
@@ -932,7 +932,7 @@ static void func_22FC(f32 x, f32 y, f32 z, SoundDef* soundDef, s8* outVolume) {
 }
 
 // offset: 0x2438 | func: 27
-static void func_2438(f32 x, f32 z, s32 arg2, s8* outPan, s8* outFx) {
+static void amSfx_func_2438(f32 x, f32 z, s32 arg2, s8* outPan, s8* outFx) {
     f32 magnitude;
     s32 theta;
     s32 pad;

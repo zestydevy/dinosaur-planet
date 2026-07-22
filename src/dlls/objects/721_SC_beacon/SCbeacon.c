@@ -5,7 +5,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "sys/map_enums.h"
 #include "sys/objtype.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/common/sidekick.h"
@@ -128,9 +128,9 @@ void SCbeacon_control(Object* self) {
         
         //Use LightActions to emit a warm glow (or remove it)
         if ((objData->flags & SCbeacon_FLAG_Emit_Light) && !(objData->prevFlags & SCbeacon_FLAG_Emit_Light)) {
-            func_80000450(self, self, LIGHTACTION_59, 0, 0, 0);
+            lfxAction(self, self, LIGHTACTION_59, 0, 0, 0);
         } else if (!(objData->flags & SCbeacon_FLAG_Emit_Light) && (objData->prevFlags & SCbeacon_FLAG_Emit_Light)) {
-            func_80000450(self, self, LIGHTACTION_5A, 0, 0, 0);
+            lfxAction(self, self, LIGHTACTION_5A, 0, 0, 0);
         }
 
         //Create smoke
@@ -308,9 +308,9 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
         
         //Use LightActions to emit a warm glow (or remove it)
         if ((objData->flags & SCbeacon_FLAG_Emit_Light) && !(objData->prevFlags & SCbeacon_FLAG_Emit_Light)) {
-            func_80000450(self, self, LIGHTACTION_59, 0, 0, 0);
+            lfxAction(self, self, LIGHTACTION_59, 0, 0, 0);
         } else if (!(objData->flags & SCbeacon_FLAG_Emit_Light) && (objData->prevFlags & SCbeacon_FLAG_Emit_Light)) {
-            func_80000450(self, self, LIGHTACTION_5A, 0, 0, 0);
+            lfxAction(self, self, LIGHTACTION_5A, 0, 0, 0);
         }
 
         //Create smoke

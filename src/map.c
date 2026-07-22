@@ -17,10 +17,10 @@
 #include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rarezip.h"
-#include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lighting.h"
+#include "sys/intersect.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 #include "macros.h"
 #include "gbi_extra.h"
@@ -645,7 +645,7 @@ void trackTick(s32 arg0) {
         }
         gDLL_59_Minimap->vtbl->func0();
     }
-    func_8001EB80();
+    lightClearEmitters();
 }
 
 void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
@@ -818,7 +818,7 @@ void trackDrawMain(void) {
                         blockComputeVertexColors(block, x, z, 0);
                     }
                     if ((block->numSphereMappedShapes != 0) && (gTrackFlags & TRACKFLAG_UNK100)) {
-                        func_8001F4C0(block, x, z);
+                        lightBlockSphereMapping(block, x, z);
                     }
                 }
                 // Add to render list
@@ -930,7 +930,7 @@ void trackDrawRenderList(Mtx* rspMtxs, s8* visibilities) {
                 } else if (shape->flags & (RENDER_UNK40000000 | RENDER_UNK4000000 | RENDER_UNK2000000 | RENDER_UNK800000 | RENDER_UNK400000)) {
                     dlSetPrimColor(&gMainDL, 0xFF, 0xFF, 0xFF, 0xFF);
                 } else {
-                    func_8001F848(&gMainDL);
+                    lightAmbientDL(&gMainDL);
                 }
             }
             renderFlags = shape->flags;
@@ -2769,7 +2769,7 @@ void map_func_8004773C(void) {
     gDLL_3_Animation->vtbl->init();
     camApplyAlternateTrigger();
     camApplyAlternateTrigger();
-    func_80053300();
+    trackIntersectInit();
 
     for (i = 0; i < MAP_LAYER_COUNT; i++) {
         currentT1 = gBlockIndices[i];
@@ -2825,7 +2825,7 @@ void map_func_8004773C(void) {
     gTrackFlags |= (TRACKFLAG_UPDATE_STREAMING_IMMEDIATE | TRACKFLAG_UNK4);
     map_func_80046B58(savedPlayerLocation->vec.x, savedPlayerLocation->vec.y, savedPlayerLocation->vec.z);
     gTrackFlags &= ~TRACKFLAG_UNK4;
-    func_800591EC();
+    trackIntersectTick();
     objLoadPlayer();
     D_800B4A58 = 0;
 
@@ -2841,38 +2841,38 @@ void map_func_8004773C(void) {
         sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == -2) {
             if (sp40->unk0 != -1) {
-                func_80000608(player, player, sp40->unk0, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk0, 0, 0, 0);
             }
             if (sp40->unk2 != -1) {
-                func_80000608(player, player, sp40->unk2, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk2, 0, 0, 0);
             }
             if (sp40->unk4 != -1) {
-                func_80000608(player, player, sp40->unk4, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk4, 0, 0, 0);
             }
             if (sp40->unk6 != -1) {
-                func_80000608(player, player, sp40->unk6, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk6, 0, 0, 0);
             }
             if (sp40->unk8 != -1) {
-                func_80000608(player, player, sp40->unk8, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unk8, 0, 0, 0);
             }
             if (sp40->unkA != -1) {
-                func_80000608(player, player, sp40->unkA, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkA, 0, 0, 0);
             }
             if (sp40->unkC != -1) {
-                func_80000608(player, player, sp40->unkC, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkC, 0, 0, 0);
             }
             if (sp40->unkE != -1) {
-                func_80000608(player, player, sp40->unkE, 0, 0, 0);
+                lfxRestoreAction(player, player, sp40->unkE, 0, 0, 0);
             }
-            func_8001EBD0(sp40->isInside & 1);
+            lightSetInside(sp40->isInside & 1);
             if (sp3C->unk4 != -1) {
-                func_800009C8(player, player, sp3C->unk4, 0);
+                envfxRestoreAction(player, player, sp3C->unk4, 0);
             }
             if (sp3C->unk6 != -1) {
-                func_800009C8(player, player, sp3C->unk6, 0);
+                envfxRestoreAction(player, player, sp3C->unk6, 0);
             }
             if (sp3C->unk8 != -1) {
-                func_800009C8(player, player, sp3C->unk8, 0);
+                envfxRestoreAction(player, player, sp3C->unk8, 0);
             }
             gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
             for (i = 0; i < 4; i++) {
@@ -2895,19 +2895,19 @@ void map_func_8004773C(void) {
                 sp4C.srt.transl.x = sp3C->unk10;
                 sp4C.srt.transl.y = sp3C->unk14;
                 sp4C.srt.transl.z = sp3C->unk18;
-                func_80000860(&sp4C, player, sp3C->unkA, 0);
+                envfxAction(&sp4C, player, sp3C->unkA, 0);
             }
             if (sp3C->unkC != -1) {
                 sp4C.srt.transl.x = sp3C->unk1C;
                 sp4C.srt.transl.y = sp3C->unk20;
                 sp4C.srt.transl.z = sp3C->unk24;
-                func_80000860(&sp4C, player, sp3C->unkC, 0);
+                envfxAction(&sp4C, player, sp3C->unkC, 0);
             }
             if (sp3C->unkE != -1) {
                 sp4C.srt.transl.x = sp3C->unk28;
                 sp4C.srt.transl.y = sp3C->unk2C;
                 sp4C.srt.transl.z = sp3C->unk30;
-                func_80000860(&sp4C, player, sp3C->unkE, 0);
+                envfxAction(&sp4C, player, sp3C->unkE, 0);
             }
             gDLL_7_Newday->vtbl->func9(sp3C->unk0);
         }
@@ -3319,7 +3319,7 @@ void blockColorTableTick(void) {
     s32 i;
     u8 r, g, b;
 
-    func_8001F81C(&r, &g, &b);
+    lightGetAmbient(&r, &g, &b);
 
     for (i = 0; i < gBlockColorTableLength; i++) {
         if (gBlockColorTable[i].a != 0xFE) {
@@ -3359,7 +3359,7 @@ void blockEmplace(Block *block, s32 id, s32 param_3, s32 globalMapIdx) {
         blockComputeVertexColors(block, 0, 0, 1);
     }
 
-    func_80058F3C();
+    trackIntersectMarkBlocksDirty();
 }
 
 void blockSetupDLGroups(Block *block) {
@@ -3571,7 +3571,7 @@ void blockFree(s32 blockIndex) {
             mmFree((u32*)block->unk1C);
         }
         
-        func_80058F3C();
+        trackIntersectMarkBlocksDirty();
         mmFree(block);
     }
 }
@@ -4977,7 +4977,7 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
 
     sp160 = D_80092BC0;
     sp78 = 0;
-    func_8001F81C(&sp7B, &sp7A, &sp79);
+    lightGetAmbient(&sp7B, &sp7A, &sp79);
     sp77 = sp7B;
     sp76 = sp7A;
     sp75 = sp79;

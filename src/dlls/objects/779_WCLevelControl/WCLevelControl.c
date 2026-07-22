@@ -5,8 +5,8 @@
 #include "sys/menu.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dll.h"
 
 #define PUZZLE_UNIT 48
@@ -140,11 +140,11 @@ void WCLevelControl_control(Object *self) {
     u8 act;
 
     if (self->unkDC == 0) {
-        func_80000860(self, self, 0x1FB, 0);
-        func_80000860(self, self, 0x1FC, 0);
-        func_80000860(self, self, 0x149, 0);
-        func_80000450(self, self, 0x97, 0, 0, 0);
-        func_80000450(self, self, 0x24F, 0, 0, 0);
+        envfxAction(self, self, 0x1FB, 0);
+        envfxAction(self, self, 0x1FC, 0);
+        envfxAction(self, self, 0x149, 0);
+        lfxAction(self, self, 0x97, 0, 0, 0);
+        lfxAction(self, self, 0x24F, 0, 0, 0);
         self->unkDC = 1;
     }
     act = gDLL_29_Gplay->vtbl->get_act(self->mapID);

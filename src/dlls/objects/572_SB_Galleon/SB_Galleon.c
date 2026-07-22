@@ -6,8 +6,8 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "game/objects/object_id.h"
 #include "dll.h"
 #include "sys/main.h"
@@ -127,7 +127,7 @@ void SB_Galleon_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->soundHandle2 = 0;
     objdata->unk8E = 100;
     gDLL_29_Gplay->vtbl->set_act(self->mapID, 1);
-    func_80000450(self, self, 88, 0, 0, 0);
+    lfxAction(self, self, 88, 0, 0, 0);
 }
 
 #ifndef NON_MATCHING
@@ -423,7 +423,7 @@ void SB_Galleon_func_B88(Object *self) {
 
     if (objdata->unk8E != 0) {
         player = objGetPlayer();
-        func_80000860(player, objGetPlayer(), 148, 0);
+        envfxAction(player, objGetPlayer(), 148, 0);
         objdata->unk8E = 0;
     }
 

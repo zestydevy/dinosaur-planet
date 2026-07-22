@@ -4,7 +4,7 @@
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 
 typedef struct {
     f32 groundHeight;
@@ -60,7 +60,7 @@ void DIM2Icicle_control(Object* self) {
     DIM2Icicle_Setup* objSetup;
     s32 count;
     s32 i;
-    Func_80057F1C_Struct** collisionInfo;
+    TrackHeightResult** collisionInfo;
 
     objSetup = (DIM2Icicle_Setup*)self->setup;
     objData = self->data;
@@ -90,10 +90,10 @@ void DIM2Icicle_control(Object* self) {
     case DIM2Icicle_STATE_Falling:
         //Find ground
         if (objData->groundFound == FALSE) {
-            count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
+            count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
             for (i = 0, objData->groundHeight = -100000.0f; i < count; i++){
                 if (collisionInfo[i]->unk14 == 14) {
-                    objData->groundHeight = collisionInfo[i]->unk0[0];
+                    objData->groundHeight = collisionInfo[i]->y;
 
                     //Index break
                     i = count;

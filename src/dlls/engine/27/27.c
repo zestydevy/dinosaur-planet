@@ -4,10 +4,10 @@
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 
 /*0x0*/ static Object *bss_0;
-/*0x8*/ static Func_80057F1C_Struct bss_8[15];
+/*0x8*/ static TrackHeightResult bss_8[15];
 /*0x170*/ static s32 bss_170;   
 
 void dll_27_reset(Object* obj, DLL27_Data* data);
@@ -196,7 +196,7 @@ void dll_27_func_5A8(Object* arg0, DLL27_Data* arg1) {
         if (arg1->flags & DLL27FLAG_1000000) {
             var_a2 |= 0x20;
         }
-        func_80053750(arg0, &arg1->aabb, var_a2);
+        trackIntersectBroadphase(arg0, &arg1->aabb, var_a2);
     }
 }
 
@@ -328,8 +328,8 @@ static void dll_27_func_B68(Object *obj, DLL27_Data *data) {
 }
 
 // offset: 0xC7C | func: 8 | export: 6
-Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4) {
-    Func_80057F1C_Struct** sp4C;
+TrackHeightResult* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4) {
+    TrackHeightResult** sp4C;
     s32 var_v0;
     s32 i;
 
@@ -342,14 +342,14 @@ Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg
             var_v0 = -1;
         }
         
-        bss_170 = func_80057F1C(arg0, arg1, arg0->globalPosition.y, arg2, &sp4C, var_v0, 0);
+        bss_170 = trackGetHeight(arg0, arg1, arg0->globalPosition.y, arg2, &sp4C, var_v0, 0);
         
         for (i = 0; i < bss_170; i++) {
-            bss_8[i].unk0[0] = sp4C[i]->unk0[0];
-            bss_8[i].unk0[1] = sp4C[i]->unk0[1];
-            bss_8[i].unk0[2] = sp4C[i]->unk0[2];
-            bss_8[i].unk0[3] = sp4C[i]->unk0[3];
-            bss_8[i].unk10 = sp4C[i]->unk10;
+            bss_8[i].y = sp4C[i]->y;
+            bss_8[i].norm[0] = sp4C[i]->norm[0];
+            bss_8[i].norm[1] = sp4C[i]->norm[1];
+            bss_8[i].norm[2] = sp4C[i]->norm[2];
+            bss_8[i].obj = sp4C[i]->obj;
             bss_8[i].unk14 = sp4C[i]->unk14;
         }
     }
@@ -359,15 +359,15 @@ Func_80057F1C_Struct* dll_27_func_C7C(Object* arg0, f32 arg1, f32 arg2, s32* arg
 
 // offset: 0xDF4 | func: 9 | export: 8
 f32 dll_27_func_DF4(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
-    Func_80057F1C_Struct* temp_v0;
+    TrackHeightResult* temp_v0;
     s32 sp40;
     s32 i;
 
     temp_v0 = dll_27_func_C7C(arg0, arg1, arg3, &sp40, 1);
     
     for (i = 0; i < sp40; i++) {
-        if ((temp_v0[i].unk0[0] < (arg2 + arg4)) && (temp_v0[i].unk0[2] > 0.0f)) {
-            return temp_v0[i].unk0[0];
+        if ((temp_v0[i].y < (arg2 + arg4)) && (temp_v0[i].norm[1] > 0.0f)) {
+            return temp_v0[i].y;
         }
     }
     
@@ -468,7 +468,7 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
     data->hitsTouchBits = 0;
 
     for (i = 0, i2 = 0; i < numHitsTestPoints; i++, i2++) {
-        temp_t5 = func_80059C40(
+        temp_t5 = trackGetLineIntersect(
             &data->unk110[i2], 
             &data->unkE0[i2], 
             data->hitsTestRadii[i], 
@@ -510,7 +510,7 @@ static void dll_27_func_1278(Object* obj, DLL27_Data* data) {
 // offset: 0x151C | func: 14
 static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
     if (arg1->flags & DLL27FLAG_2) {
-        arg1->unk25C = func_8005509C(arg0, 
+        arg1->unk25C = trackGetIntersect(arg0, 
                                      arg1->unk38[0].f, arg1->unk8[0].f, arg1->numTestPoints >> 4, 
                                      &arg1->unk68, 0);
         arg1->unk25B = 0;
@@ -522,7 +522,7 @@ static void dll_27_func_151C(Object* arg0, DLL27_Data* arg1) {
 // offset: 0x15C0 | func: 15
 // does terrain checks
 static void dll_27_func_15C0(Object* obj, DLL27_Data* arg1) {
-    Func_80057F1C_Struct* temp_v0;
+    TrackHeightResult* temp_v0;
     s32 count;
     s32 j;
     s32 i;
@@ -554,13 +554,13 @@ static void dll_27_func_15C0(Object* obj, DLL27_Data* arg1) {
 
         for (j = 0; j < count; j++) {
             if (temp_v0[j].unk14 != 0xE) {
-                if ((floorFound == FALSE) && (temp_v0[j].unk0[0] < (obj->globalPosition.y + 5.0f)) && (temp_v0[j].unk0[2] > 0.707f)) {
-                    arg1->floorYList[i] = temp_v0[j].unk0[0];
+                if ((floorFound == FALSE) && (temp_v0[j].y < (obj->globalPosition.y + 5.0f)) && (temp_v0[j].norm[1] > 0.707f)) {
+                    arg1->floorYList[i] = temp_v0[j].y;
                     floorFound = TRUE;
-                    arg1->floorDistList[i] = (obj->globalPosition.y - temp_v0[j].unk0[0]);
+                    arg1->floorDistList[i] = (obj->globalPosition.y - temp_v0[j].y);
                 } else {
-                    if (((obj->globalPosition.y + 5.0f) <= temp_v0[j].unk0[0]) && (temp_v0[j].unk0[2] < 0.0f)) {
-                        arg1->unk1CC[i] = temp_v0[j].unk0[0];
+                    if (((obj->globalPosition.y + 5.0f) <= temp_v0[j].y) && (temp_v0[j].norm[1] < 0.0f)) {
+                        arg1->unk1CC[i] = temp_v0[j].y;
                     }
                 }
             }
@@ -577,11 +577,11 @@ static void dll_27_func_15C0(Object* obj, DLL27_Data* arg1) {
 
         for (j = 0; j < count; j++) {
             if (temp_v0[j].unk14 == 0xE) {
-                if ((temp_v0[j].unk0[0] < arg1->unk1CC[i]) && (arg1->floorYList[i] < temp_v0[j].unk0[0])) {
-                    arg1->waterYList[i] = temp_v0[j].unk0[0];
-                    arg1->waterNormalXList[i] = temp_v0[j].unk0[1];
-                    arg1->waterNormalYList[i] = temp_v0[j].unk0[2];
-                    arg1->waterNormalZList[i] = temp_v0[j].unk0[3];
+                if ((temp_v0[j].y < arg1->unk1CC[i]) && (arg1->floorYList[i] < temp_v0[j].y)) {
+                    arg1->waterYList[i] = temp_v0[j].y;
+                    arg1->waterNormalXList[i] = temp_v0[j].norm[0];
+                    arg1->waterNormalYList[i] = temp_v0[j].norm[1];
+                    arg1->waterNormalZList[i] = temp_v0[j].norm[2];
                 }
             }
         }
@@ -601,7 +601,7 @@ static void dll_27_func_15C0(Object* obj, DLL27_Data* arg1) {
 // offset: 0x1AA0 | func: 16
 // detect and resolve floor collision
 static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
-    Func_80057F1C_Struct* temp_v0;
+    TrackHeightResult* temp_v0;
     s32 sp48;
     f32 temp_fv1;
     f32 var_fa0;
@@ -613,13 +613,13 @@ static void dll_27_func_1AA0(Object* arg0, DLL27_Data* arg1) {
 
     for (temp_v1 = sp48 - 1; temp_v1 >= 0; temp_v1--) {
         if (temp_v0[temp_v1].unk14 != 0xE) {
-            if ((temp_fv1 <= temp_v0[temp_v1].unk0[0]) && 
-                ((temp_v0[temp_v1].unk0[0] - var_fa0) <= temp_fv1)) 
+            if ((temp_fv1 <= temp_v0[temp_v1].y) && 
+                ((temp_v0[temp_v1].y - var_fa0) <= temp_fv1)) 
             {
-                arg0->globalPosition.y = temp_v0[temp_v1].unk0[0];
-                arg1->floorNormalX = temp_v0[temp_v1].unk0[1];
-                arg1->floorNormalY = temp_v0[temp_v1].unk0[2];
-                arg1->floorNormalZ = temp_v0[temp_v1].unk0[3];
+                arg0->globalPosition.y = temp_v0[temp_v1].y;
+                arg1->floorNormalX = temp_v0[temp_v1].norm[0];
+                arg1->floorNormalY = temp_v0[temp_v1].norm[1];
+                arg1->floorNormalZ = temp_v0[temp_v1].norm[2];
                 arg1->unk25C |= 0x11;
                 arg1->unk25D += 1;
             }
@@ -752,13 +752,13 @@ static void dll_27_func_1D60(Object* arg0, DLL27_Data* arg1) {
 // offset: 0x214C | func: 19
 static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
     s32 spCC;
-    Func_80057F1C_Struct* temp_v0;
+    TrackHeightResult* temp_v0;
     f32 var_ft4;
     f32 var_ft5;
     s32 var_a0;
     f32 spB0[3];
     u8 count;
-    Unk80027934 sp40;
+    TrackIntersectResult sp40;
 
     count = arg1->numTestPoints >> 4;
 
@@ -785,16 +785,16 @@ static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
 
     for (var_a0 = 0; var_a0 < spCC; var_a0++) {
         if ((temp_v0[var_a0].unk14 != 0xE) && 
-            (temp_v0[var_a0].unk0[2] > 0.707f) && 
-            ((arg0->globalPosition.y <= temp_v0[var_a0].unk0[0])) && 
-            ((temp_v0[var_a0].unk0[0] - 50.0f) <= arg0->globalPosition.y)) 
+            (temp_v0[var_a0].norm[1] > 0.707f) && 
+            ((arg0->globalPosition.y <= temp_v0[var_a0].y)) && 
+            ((temp_v0[var_a0].y - 50.0f) <= arg0->globalPosition.y)) 
         {
-            arg0->globalPosition.y = temp_v0[var_a0].unk0[0];
-            arg1->floorNormalX = temp_v0[var_a0].unk0[1];
-            arg1->floorNormalY = temp_v0[var_a0].unk0[2];
-            arg1->floorNormalZ = temp_v0[var_a0].unk0[3];
+            arg0->globalPosition.y = temp_v0[var_a0].y;
+            arg1->floorNormalX = temp_v0[var_a0].norm[0];
+            arg1->floorNormalY = temp_v0[var_a0].norm[1];
+            arg1->floorNormalZ = temp_v0[var_a0].norm[2];
             arg1->unk25C |= 0x11;
-            arg1->unkD4 = temp_v0[var_a0].unk10;
+            arg1->unkD4 = temp_v0[var_a0].obj;
             arg1->unk68.unk50[0] = temp_v0[var_a0].unk14;
             arg1->unk25D += 1;
             break;
@@ -810,7 +810,7 @@ static void dll_27_func_214C(Object* arg0, DLL27_Data* arg1) {
         spB0[2] = var_ft5;
         sp40.unk40[0] = arg1->unk68.unk40[1];
         sp40.unk54[0] = 2;
-        func_8005509C(arg0, spB0, spB0, 1, &sp40, 3U);
+        trackGetIntersect(arg0, spB0, spB0, 1, &sp40, 3U);
         arg1->unk38[1].x = spB0[0];
         arg1->unk38[1].z = spB0[2];
         arg0->globalPosition.x = spB0[0];
@@ -835,7 +835,7 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     s32 var_a0;
     s32 var_t0;
     s32 var_s0;
-    Func_80057F1C_Struct** sp6C;
+    TrackHeightResult** sp6C;
     s32 v1;
 
     if ((arg1->numTestPoints >> 4) != 4) {
@@ -850,19 +850,19 @@ static void dll_27_func_2394(Object* arg0, DLL27_Data* arg1) {
     var_fa1 = 0.0f;
     for (sp84 = 0; sp84 < ((s32) arg1->numTestPoints >> 4); sp84++) {
         spB0[sp84] = arg1->unk38[sp84].y;
-        temp_v0 = func_80057F1C(arg0, arg1->unk38[sp84].x, arg0->globalPosition.y, arg1->unk38[sp84].z, &sp6C, -1, 0);
+        temp_v0 = trackGetHeight(arg0, arg1->unk38[sp84].x, arg0->globalPosition.y, arg1->unk38[sp84].z, &sp6C, -1, 0);
         var_s0 = 0;
         if (temp_v0 != 0) {
             for (var_a0 = 0; var_a0 < temp_v0; var_a0++) {
                 if (var_s0 == 0) {
-                    if ((sp6C[var_a0]->unk0[0] < (arg0->globalPosition.y + 50.0f)) && (sp6C[var_a0]->unk14 != 0xE)) {
-                        spB0[sp84] = sp6C[var_a0]->unk0[0];
+                    if ((sp6C[var_a0]->y < (arg0->globalPosition.y + 50.0f)) && (sp6C[var_a0]->unk14 != 0xE)) {
+                        spB0[sp84] = sp6C[var_a0]->y;
                         var_t0 += 1;
                         var_s0 = 1;
-                        var_fv1 += sp6C[var_a0]->unk0[1];
-                        var_fa0 += sp6C[var_a0]->unk0[2];
-                        var_fa1 += sp6C[var_a0]->unk0[3];
-                        var_ft4 += sp6C[var_a0]->unk0[0];
+                        var_fv1 += sp6C[var_a0]->norm[0];
+                        var_fa0 += sp6C[var_a0]->norm[1];
+                        var_fa1 += sp6C[var_a0]->norm[2];
+                        var_ft4 += sp6C[var_a0]->y;
                     }
                 }
             }

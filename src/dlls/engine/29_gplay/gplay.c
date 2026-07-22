@@ -12,7 +12,7 @@
 #include "sys/pi.h"
 #include "sys/menu.h"
 #include "sys/memory.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 #include "dll.h"
 #include "prevent_bss_reordering.h"
 
@@ -455,7 +455,7 @@ void gplay_savepoint(Vec3f *position, s16 yaw, s32 flags, s32 mapLayer) {
     if ((flags & GPLAY_SAVEPOINT_SkipMapSave) != 0) {
         bcopy(&sState.save.main, &sSavegame->asSave.main, sizeof(MainSaveData));
     } else {
-        if (func_8001EBE0() != 0) {
+        if (lightGetInside() != 0) {
             sState.save.map.lightActions[sState.save.file.playerno].isInside |= 1;
         } else {
             sState.save.map.lightActions[sState.save.file.playerno].isInside &= ~1;
@@ -495,7 +495,7 @@ void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
 
     bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
-    if (func_8001EBE0() != 0) {
+    if (lightGetInside() != 0) {
         sRestartSave->map.lightActions[sRestartSave->file.playerno].isInside |= 1;
     } else {
         sRestartSave->map.lightActions[sRestartSave->file.playerno].isInside &= ~1;

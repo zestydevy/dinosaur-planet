@@ -1,6 +1,6 @@
 #include "common.h"
 #include "sys/segment_13D0.h"
-#include "sys/segment_1D900.h"
+#include "sys/lighting.h"
 
 typedef struct {
     s16 unk0;
@@ -499,7 +499,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
     s16 spC8;
     s16 spC6;
 
-    func_8001F81C(&spCF, &spCE, &spCD);
+    lightGetAmbient(&spCF, &spCE, &spCD);
     spCA = (s16)((0xFF - spCF) / 3) + spCF;
     spC8 = (s16)((0xFF - spCE) / 3) + spCE;
     spC6 = (s16)((0xFF - spCD) / 3) + spCD;
@@ -747,7 +747,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
             }
         }
     }
-    func_8001F848(gdl);
+    lightAmbientDL(gdl);
     if (_data_68 != 0) {
         dll_13_func_52B4(gdl);
         _data_68 = 0;

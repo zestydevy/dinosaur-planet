@@ -79,7 +79,7 @@ static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
     Vec3f spBC;
     Vec3f spB0;
     AABBs32 sp98;
-    Unk80027934 sp2C;
+    TrackIntersectResult sp2C;
 
     spD4 = mathSinfInterp(arg1->srt.yaw);
     temp_ft2 = mathCosfInterp(arg1->srt.yaw) * 60.0f;
@@ -92,9 +92,9 @@ static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
     sp2C.unk50[0] = -1;
     sp2C.unk54[0] = 4;
     sp2C.unk40[0] = 4.5f;
-    fit_aabb_around_cubes(&sp98, &spBC, &spB0, &sp2C.unk40[0], 1);
-    func_80053750(arg1, &sp98, 1);
-    if (func_8005509C(arg1, spBC.f, spB0.f, 1, &sp2C, 0) != 0) {
+    trackIntersectBuildAABB(&sp98, &spBC, &spB0, &sp2C.unk40[0], 1);
+    trackIntersectBroadphase(arg1, &sp98, 1);
+    if (trackGetIntersect(arg1, spBC.f, spB0.f, 1, &sp2C, 0) != 0) {
         temp_fv0 = spB0.x - spBC.x;
         temp_fv1 = spB0.z - spBC.z;
         *arg2 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));

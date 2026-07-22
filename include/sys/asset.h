@@ -7,9 +7,6 @@
 #include "sys/generic_queue.h"
 #include "game/objects/object.h"
 
-#define ASSET_THREAD_ID 99
-#define ASSET_THREAD_PRIORITY 11
-
 enum AssetLoadType {
     ASSET_TYPE_FILE = 0,
     ASSET_TYPE_ALLOCATED_FILE = 1,

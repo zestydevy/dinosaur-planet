@@ -2,8 +2,8 @@
 #define _DLLS_338_H
 
 #include "PR/ultratypes.h"
-#include "types.h"
 #include "game/objects/object.h"
+#include "sys/lfx.h"
 
 typedef struct {
     u8 unk0[0x108];

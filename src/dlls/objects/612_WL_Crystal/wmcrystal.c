@@ -4,8 +4,8 @@
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/objexpr.h"
-#include "sys/segment_1460.h"
-#include "sys/segment_1D900.h"
+#include "sys/envfx.h"
+#include "sys/lighting.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -361,7 +361,7 @@ void WL_Crystal_control(Object* self) {
                     }
                     mainSetBits(BIT_38D, 0);
                     mainSetBits(BIT_WM_Quan_Ata_Lachu_Sun, 1);
-                    func_80000860(self, self, 0x31, 0);
+                    envfxAction(self, self, 0x31, 0);
                     camSetShakeOffset(4.8f);
                 }
             }
@@ -411,8 +411,8 @@ void WL_Crystal_control(Object* self) {
                 fxTimer1 -= gUpdateRate;
                 if (fxTimer1 <= 0) {
                     fxTimer1 = 0;
-                    func_80000860(self, self, 0x30, 0);
-                    func_80000860(self, self, 0x34, 0);
+                    envfxAction(self, self, 0x30, 0);
+                    envfxAction(self, self, 0x34, 0);
                 }
             }
             if (mathRnd(0, 8) == 0) {
@@ -612,7 +612,7 @@ void WL_Crystal_handle_sun_flare_effects(Object* self) {
 
             //Tint the room when looking towards the sun
             if (distanceToCamera2D < 12450.0f) {
-                func_8001EAA4(0xFF, 0xFF, 0x9B, transform.scale);
+                lightDimAmbient(0xFF, 0xFF, 0x9B, transform.scale);
             }
 
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_6D, &transform, 0x10000, -1, NULL);

@@ -245,7 +245,7 @@ void SCcollectables_handle_motion(Object* self, u8 alreadyOnGround) {
 
     samples = NULL;
     min = 10000.0f;
-    sampleCount = func_80057F1C(self, 
+    sampleCount = trackGetHeight(self, 
         self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
         (void*)&samples, 0, 0);
     

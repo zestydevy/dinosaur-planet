@@ -40,7 +40,7 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
     Object* var_t2;
     s32 temp_v0;
     s32 i;
-    Func_80057F1C_Struct** sp58;
+    TrackHeightResult** sp58;
     f32 var_fv0;
 
     pickup = obj->data;
@@ -63,20 +63,20 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
                 obj->srt.transl.y += obj->velocity.y * gUpdateRateF;
             }
             // Do track collision
-            temp_v0 = func_80057F1C(obj, obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, &sp58, 0, 1);
+            temp_v0 = trackGetHeight(obj, obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, &sp58, 0, 1);
             var_t2 = NULL;
             for (i = 0; i < temp_v0; i++) {
                 if (sp58[i]->unk14 != 0xE) {
-                    if ((obj->srt.transl.y < sp58[i]->unk0[0]) && ((sp58[i]->unk0[0] - 40.0f) < obj->srt.transl.y)) {
-                        var_t2 = sp58[i]->unk10;
-                        obj->srt.transl.y = sp58[i]->unk0[0];
+                    if ((obj->srt.transl.y < sp58[i]->y) && ((sp58[i]->y - 40.0f) < obj->srt.transl.y)) {
+                        var_t2 = sp58[i]->obj;
+                        obj->srt.transl.y = sp58[i]->y;
                         obj->velocity.y = 0.0f;
                         break;
                     }
                 }
             }
             for (i = 0; i < temp_v0; i++) {
-                var_fv0 = obj->srt.transl.y - sp58[i]->unk0[0];
+                var_fv0 = obj->srt.transl.y - sp58[i]->y;
                 if (var_fv0 < 0.0f) {
                     var_fv0 = -var_fv0;
                 }

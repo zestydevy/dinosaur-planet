@@ -2,7 +2,7 @@
 #include "dlls/objects/234_ScorpionRobot.h"
 #include "sys/gfx/model_asm.h"
 #include "sys/rarezip.h"
-#include "sys/segment_20490.h"
+#include "sys/lighting_asm.h"
 
 #define ALIGN8(a)  (((u32) (a) & ~0x7) + 0x8)
 #define ALIGN16(a)  ((u32) (a) & ~0xF)

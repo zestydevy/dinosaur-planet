@@ -10,7 +10,6 @@
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-#include "sys/segment_1050.h"
 
 typedef struct {
     ObjSetup base;
@@ -317,7 +316,7 @@ label2:
     }
     
     if (animData->lastMessage == 1) {
-        func_80000450(self, self, 0x18, 0, 0, 0);
+        lfxAction(self, self, 0x18, 0, 0, 0);
         animData->lastMessage = 0;
     }
     

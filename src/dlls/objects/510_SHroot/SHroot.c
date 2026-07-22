@@ -49,7 +49,7 @@ void dll_510_control(Object* self) {
     DLL510_Setup* objSetup;
     s32 count; 
     s32 i;
-    Func_80057F1C_Struct** sp48;
+    TrackHeightResult** sp48;
 
     objData = self->data;
     objSetup = (DLL510_Setup*)self->setup; 
@@ -75,18 +75,18 @@ void dll_510_control(Object* self) {
         break;
     case 1:
         if (!(objData->unk13 & 2)) {
-            count = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);
+            count = trackGetHeight(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);
             objData->unk4 = -100000.0f;
             for (i = 0; i < count; i++) {
             
-                if (sp48[i]->unk0[0] < self->srt.transl.f[1]) {
+                if (sp48[i]->y < self->srt.transl.f[1]) {
                     
                     if (!(objData->unk13 & 4) && (sp48[i]->unk14 == 0xE)) {
-                        objData->unk8 = sp48[i]->unk0[0];
+                        objData->unk8 = sp48[i]->y;
                         objData->unk13 |= 4;
                         
                     } else if (!(objData->unk13 & 2)) {
-                        objData->unk4 = sp48[i]->unk0[0];
+                        objData->unk4 = sp48[i]->y;
                         objData->unk13 |= 2;
                     }
                 }
@@ -120,15 +120,15 @@ void dll_510_control(Object* self) {
         break;
     case 4:
         if (!(objData->unk13 & 2)) {
-            count = func_80057F1C(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);   
+            count = trackGetHeight(self, self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp48, 0, 0);   
             objData->unk4 = -100000.0f;
             for (i = 0; i < count; i++) {
                 
                 
-                if (sp48 [i]->unk0[0] < self->srt.transl.f[1]) {
+                if (sp48 [i]->y < self->srt.transl.f[1]) {
                         
                     if (!(objData->unk13 & 2)) {
-                        objData->unk4 = sp48 [i]->unk0[0];
+                        objData->unk4 = sp48 [i]->y;
                         objData->unk13 = (u8) (objData->unk13 | 2);
                     }
                 }

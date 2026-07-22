@@ -5,6 +5,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "sys/gfx/model.h"
+#include "sys/intersect.h"
 #include "sys/joypad.h"
 #include "sys/map.h"
 #include "sys/objmsg.h"
@@ -50,8 +51,8 @@ void WL_Column_obj_Control(Object* self) {
     f32 y;
     f32 floorY;
     s32 count;
-    Func_80057F1C_Struct** collisionInfo;
-    Func_80057F1C_Struct* collision;
+    TrackHeightResult** collisionInfo;
+    TrackHeightResult* collision;
     Object* obj;
     s32 i;
 
@@ -74,15 +75,15 @@ void WL_Column_obj_Control(Object* self) {
             self->srt.transl.y += self->velocity.y * gUpdateRateF;
             
             //Rest on surfaces
-            count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 1);
+            count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 1);
             obj = NULL;
             for (i = 0; i < count; i++) {
                 collision = collisionInfo[i];
                 if (collision->unk14 != 14) { //Check terrain isn't water
                     y = self->srt.transl.y;
-                    floorY = collision->unk0[0];
+                    floorY = collision->y;
                     if ((y < floorY) && (((floorY - 40.0f) < y) || (i == 0))) {
-                        obj = collision->unk10;
+                        obj = collision->obj;
                         self->srt.transl.y = floorY;
                         self->velocity.y = 0.0f;
                     }

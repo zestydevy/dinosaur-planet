@@ -3,7 +3,7 @@
 #include "sys/map_enums.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/210_player.h"
 
@@ -330,13 +330,13 @@ int DBSHshrine_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* an
         if (animData->messages[i] != 0) {
             switch (animData->messages[i]) {
             case 1:
-                func_80000860(self, self, 0xD5, 0);
+                envfxAction(self, self, 0xD5, 0);
                 break;
             case 2:
                 if (D_80092A7C[0] == -1) {
-                    func_80000860(self, self, 0x14, 0);
+                    envfxAction(self, self, 0x14, 0);
                 } else {
-                    func_80000860(self, self, D_80092A7C[0], 0);
+                    envfxAction(self, self, D_80092A7C[0], 0);
                 }
                 break;
             case 3:

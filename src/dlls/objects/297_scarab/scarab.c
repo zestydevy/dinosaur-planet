@@ -11,7 +11,7 @@
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/rand.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "types.h"
 
 #include "dlls/objects/210_player.h"
@@ -26,7 +26,7 @@
 static Vec4f _bss_0;
 
 static void scarab_collect(Object* self, Object* player, Scarab_Data* objData);
-static void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg2, Unk80027934* arg3);
+static void scarab_rotate_with_surface(Object* self, TrackHeightResult* arg1, u8 arg2, TrackIntersectResult* arg3);
 static s32 scarab_was_ground_reached(Object* self);
 
 // offset: 0x0 | ctor
@@ -80,7 +80,7 @@ void scarab_control(Object* self) {
     Scarab_Data* objData;
     s8 state;
     SRT transform;
-    Func_80057F1C_Struct** collisionInfo = NULL;
+    TrackHeightResult** collisionInfo = NULL;
     f32 magnitude;
     s32 count;
     s32 minIndex = 0;
@@ -94,7 +94,7 @@ void scarab_control(Object* self) {
     s32 yaw;
     u32 messageID;
     AABBs32 aabb;
-    Unk80027934 sp4C;
+    TrackIntersectResult sp4C;
     
     objData = self->data;
     player = objGetPlayer();
@@ -228,9 +228,9 @@ void scarab_control(Object* self) {
             
             //Find nearest ground distance
             minValue = 10000.0f;
-            count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 1, 0);
+            count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 1, 0);
             for (i = 0; i < count; i++){
-                magnitude = collisionInfo[i]->unk0[0] - self->srt.transl.y;
+                magnitude = collisionInfo[i]->y - self->srt.transl.y;
                 if (magnitude < 0.0f) {
                     magnitude *= -1.0f;
                 }
@@ -242,7 +242,7 @@ void scarab_control(Object* self) {
             
             //Stick to ground
             if (collisionInfo != NULL) {
-                self->srt.transl.y = collisionInfo[minIndex]->unk0[0];
+                self->srt.transl.y = collisionInfo[minIndex]->y;
                 scarab_rotate_with_surface(self, collisionInfo[minIndex], 1, &sp4C);
             } else {
                 self->srt.transl.y = objData->initialY;
@@ -287,9 +287,9 @@ void scarab_control(Object* self) {
             sp4C.unk50[0] = -1;
             sp4C.unk54[0] = 0;
             
-            fit_aabb_around_cubes(&aabb, &pointNow, &pointFuture, sp4C.unk40, 1);
-            func_80053750(self, &aabb, 0);
-            collided = func_8005509C(self, (f32*)&pointNow, (f32*)&pointFuture, 1, &sp4C, 0);
+            trackIntersectBuildAABB(&aabb, &pointNow, &pointFuture, sp4C.unk40, 1);
+            trackIntersectBroadphase(self, &aabb, 0);
+            collided = trackGetIntersect(self, (f32*)&pointNow, (f32*)&pointFuture, 1, &sp4C, 0);
             
             //Gold Scarab: start climbing a wall
             if (collided && (self->id == OBJ_Gold_scarab)) {
@@ -308,9 +308,9 @@ void scarab_control(Object* self) {
 
             //Find nearest ground distance
             minValue = 10000.0f;
-            count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 1, 0);
+            count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 1, 0);
             for (i = 0; i < count; i++){
-                magnitude = collisionInfo[i]->unk0[0] - self->srt.transl.y;
+                magnitude = collisionInfo[i]->y - self->srt.transl.y;
                 if (magnitude < 0.0f) {
                     magnitude *= -1.0f;
                 }
@@ -322,7 +322,7 @@ void scarab_control(Object* self) {
             
             //Stick to ground
             if (collisionInfo != NULL) {
-                self->srt.transl.y = collisionInfo[minIndex]->unk0[0];
+                self->srt.transl.y = collisionInfo[minIndex]->y;
                 scarab_rotate_with_surface(self, collisionInfo[minIndex], 1, &sp4C);
             } else {
                 self->srt.transl.y = objData->initialY;
@@ -463,7 +463,7 @@ void scarab_collect(Object* self, Object* player, Scarab_Data* objData) {
 }
 
 // offset: 0x1304 | func: 8
-void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg2, Unk80027934* arg3) {
+void scarab_rotate_with_surface(Object* self, TrackHeightResult* arg1, u8 arg2, TrackIntersectResult* arg3) {
     SRT transform;
     f32 speed;
     Vec3f v;
@@ -474,9 +474,9 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
     objData = self->data;
 
     if (arg2 == 1){
-        v.x = arg1->unk0[1];
-        v.y = arg1->unk0[2];
-        v.z = arg1->unk0[3];
+        v.x = arg1->norm[0];
+        v.y = arg1->norm[1];
+        v.z = arg1->norm[2];
     }
 
     else if (arg2 == 0){
@@ -532,7 +532,7 @@ void scarab_rotate_with_surface(Object* self, Func_80057F1C_Struct* arg1, u8 arg
 s32 scarab_was_ground_reached(Object* self) {
     Vec3f spF0[4];
     Vec3f spC0[4];
-    Unk80027934 sp54;
+    TrackIntersectResult sp54;
     AABBs32 sp3C;
     ObjectHitInfo* objHits;
     u8 i;
@@ -553,9 +553,9 @@ s32 scarab_was_ground_reached(Object* self) {
         return FALSE;
     }
         
-    fit_aabb_around_cubes(&sp3C, spC0, spF0, sp54.unk40, 1);
-    func_80053750(self, &sp3C, objHits->unkA1);
-    i = func_8005509C(self, (f32*)&spC0, (f32*)&spF0, 1, &sp54, 0);
+    trackIntersectBuildAABB(&sp3C, spC0, spF0, sp54.unk40, 1);
+    trackIntersectBroadphase(self, &sp3C, objHits->unkA1);
+    i = trackGetIntersect(self, (f32*)&spC0, (f32*)&spF0, 1, &sp54, 0);
     if (i) {
         if (i & 1) {
             i = 0;

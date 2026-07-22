@@ -1,7 +1,7 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "sys/main.h"
 #include "sys/memory.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 
 // Active camera during intro Galleon fight while riding the CloudRunner
 
@@ -40,7 +40,7 @@ void camshipbattle_setup(Cam* cam, s32 arg1, void* data) {
     sState->unk28 = 0;
     sState->unk1C = 75.0f;
 
-    func_80000860(cam->player, cam->player, 0x84, 0);
+    envfxAction(cam->player, cam->player, 0x84, 0);
 }
 
 // offset: 0xF4 | func: 1 | export: 1

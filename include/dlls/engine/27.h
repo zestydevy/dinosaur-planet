@@ -5,7 +5,7 @@
 #include "sys/objhits.h"
 #include "sys/math.h"
 #include "game/objects/object.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "dll_def.h"
 
 typedef enum {
@@ -43,13 +43,13 @@ typedef struct {
 /*0x004*/ Vec3f *unk4; // points used for terrain detection
 /*0x008*/ Vec3f unk8[4]; // for terrain detection, derived from unk4
 /*0x038*/ Vec3f unk38[4]; // for terrain detection, derived from unk8 (prev tick?)
-/*0x068*/ Unk80027934 unk68; // terrain collision result
+/*0x068*/ TrackIntersectResult unk68; // terrain collision result
 /*0x0D4*/ Object *unkD4; // parent object (only when touching?)
 /*0x0D8*/ Vec3f *localHitsTestPoints; // points used for hit line detection, in local space relative to the owner
 /*0x0DC*/ f32 *hitsTestRadii; // radii of hit line detection (smaller values means object can get closer to hit)
 /*0x0E0*/ Vec3f unkE0[4]; // for hit line detection, relative to unkD4 (if a mobile map, otherwise world)
 /*0x110*/ Vec3f unk110[4]; // for hit line detection, relative to unkD4 (if a mobile map, otherwise world) (prev tick?)
-/*0x140*/ Func_80059C40_Struct unk140; // hit line collision result
+/*0x140*/ TrackLineIntersectResult unk140; // hit line collision result
           // Pitch/roll of floor normal, relative to object yaw
 /*0x194*/ s16 relativeFloorPitchSmooth;
 /*0x196*/ s16 relativeFloorRollSmooth;
@@ -101,7 +101,7 @@ DLL_INTERFACE(DLL_27) {
 /*3*/ void (*func_1E8)(Object *obj, DLL27_Data *data, f32 updateRate);
 /*4*/ void (*func_5A8)(Object* arg0, DLL27_Data* arg1);
 /*5*/ void (*func_624)(Object* arg0, DLL27_Data* arg1, f32 updateRate);
-/*6*/ Func_80057F1C_Struct *(*func_C7C)(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4);
+/*6*/ TrackHeightResult *(*func_C7C)(Object* arg0, f32 arg1, f32 arg2, s32* arg3, s32 arg4);
 /*7*/ void (*reset)(Object* obj, DLL27_Data* data);
 /*8*/ f32 (*func_DF4)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
 };

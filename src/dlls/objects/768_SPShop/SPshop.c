@@ -3,9 +3,9 @@
 #include "game/objects/object_id.h"
 #include "sys/map.h"
 #include "sys/objtype.h"
-#include "sys/segment_1D900.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lighting.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dlls/objects/210_player.h"
 
 #include "dlls/objects/768_SPshop.h"
@@ -140,13 +140,13 @@ void SPShop_control(Object* self) {
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 7, 1);
         }
 
-        func_80000860(self, self, 0x1C8, 0);
-        func_80000860(self, self, 0x1CB, 0);
-        func_80000450(self, self, 0x22F, 0, 0, 0);
-        func_80000450(self, self, 0x231, 0, 0, 0);
+        envfxAction(self, self, 0x1C8, 0);
+        envfxAction(self, self, 0x1CB, 0);
+        lfxAction(self, self, 0x22F, 0, 0, 0);
+        lfxAction(self, self, 0x231, 0, 0, 0);
         mainSetBits(BIT_SP_Entered_Shop, 1);
         gDLL_5_AMSEQ2->vtbl->set(NULL, 0xF3, 0, 0, 0);
-        func_8001EBD0(1);
+        lightSetInside(1);
         self->unkDC = 1;
     }
 

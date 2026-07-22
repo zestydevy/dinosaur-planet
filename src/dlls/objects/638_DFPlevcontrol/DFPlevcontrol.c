@@ -8,8 +8,8 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
-#include "sys/segment_1050.h"
-#include "sys/segment_1460.h"
+#include "sys/lfx.h"
+#include "sys/envfx.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/210_player.h"
 
@@ -49,23 +49,23 @@ void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 
 
     switch (act) { 
         case 0:
-            func_80000860(self, self, 261, 0);
-            func_80000860(self, self, 262, 0);
-            func_80000860(self, self, 263, 0);
+            envfxAction(self, self, 261, 0);
+            envfxAction(self, self, 262, 0);
+            envfxAction(self, self, 263, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(
                 MAP_DESERT_FORCE_POINT_TEMPLE_TOP, DFPT_ObjGroup2_Bottom_BigDoor, 1);
             break;
         case 1:
-            func_80000860(self, self, 415, 0);
+            envfxAction(self, self, 415, 0);
             mainSetBits(BIT_SpellStone_CRF, 1);
             break;
         case 2:
-            func_80000860(self, self, 415, 0);
+            envfxAction(self, self, 415, 0);
             mainSetBits(BIT_SpellStone_BWC, 1);
             mainSetBits(BIT_Spell_Grenade, 1);
             break;
         case 3:
-            func_80000860(self, self, 415, 0);
+            envfxAction(self, self, 415, 0);
             mainSetBits(BIT_SpellStone_KP, 1);
             mainSetBits(BIT_Spell_Grenade, 1);
             break;
@@ -111,8 +111,8 @@ void DFP_LevelControl_control(Object* self) {
             dTimerControl -= (s16)gUpdateRateF;
             if (dTimerControl <= 0) {
                 dTimerControl = 0;
-                func_80000860(self, self, 0x19F, 0);
-                func_80000450(self, self, 0x166, 0, 0, 0);
+                envfxAction(self, self, 0x19F, 0);
+                lfxAction(self, self, 0x166, 0, 0, 0);
                 dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
                 dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
                 ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
@@ -210,8 +210,8 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
         mainSetBits(BIT_DFPT_Puzzle_Pad_Show_Solution, 0);
 
         //Apply lighting/envFX, and play sounds
-        func_80000860(self, self, 0x19F, 0);
-        func_80000450(self, self, 0x166, 0, 0, 0);
+        envfxAction(self, self, 0x19F, 0);
+        lfxAction(self, self, 0x166, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
 
@@ -221,7 +221,7 @@ void DFP_LevelControl_handle_visit_1(Object* self) {
     
     //Apply extra lighting
     if ((dLitVisit1 == FALSE) && (mainGetBits(BIT_5E3))) {
-        func_80000450(self, self, 0x27A, 0, 0, 0);
+        lfxAction(self, self, 0x27A, 0, 0, 0);
         dLitVisit1 = TRUE;
     }
     
@@ -291,8 +291,8 @@ void DFP_LevelControl_handle_visit_2(Object* self) {
         objData->zappedTimer = 0;
 
         //Apply lighting/envFX, and play sounds
-        func_80000860(self, self, 0x19F, 0);
-        func_80000450(self, self, 0x166, 0, 0, 0);
+        envfxAction(self, self, 0x19F, 0);
+        lfxAction(self, self, 0x166, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
         
@@ -358,9 +358,9 @@ void DFP_LevelControl_handle_visit_3(Object* self) {
         mainSetBits(BIT_792, 1);
 
         //Apply lighting/envFX, and play sounds
-        func_80000860(self, self, 0x19F, 0);
-        func_80000860(self, self, 0x1A0, 0);
-        func_80000450(self, self, 0x166, 0, 0, 0);
+        envfxAction(self, self, 0x19F, 0);
+        envfxAction(self, self, 0x1A0, 0);
+        lfxAction(self, self, 0x166, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_78C, MAX_VOLUME, 0, 0, 0, 0);
         dll_amSfx->Play(self, SOUND_793, MAX_VOLUME, 0, 0, 0, 0);
 

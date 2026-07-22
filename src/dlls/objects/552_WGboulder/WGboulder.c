@@ -87,7 +87,7 @@ u32 WGboulder_get_data_size(Object *self, u32 offsetAddr) {
 // offset: 0x258 | func: 7
 void WGboulder_handle_motion(Object* self) {
     WGBoulder_Data* objData;
-    Func_80057F1C_Struct** samples;
+    TrackHeightResult** samples;
     s32 count;
     s32 sampleIdx;
     s32 i;
@@ -121,9 +121,9 @@ void WGboulder_handle_motion(Object* self) {
     objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
     
     //Look for closest ground
-    count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
+    count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &samples, 0, 0);
     for (i = 0, sampleIdx = 0; i < count; i++) {
-        dy = (self->srt.transl.y - 35.0f) - samples[i]->unk0[0];
+        dy = (self->srt.transl.y - 35.0f) - samples[i]->y;
         if (dy < 0.0f) {
             dy *= -1.0f;
         }
@@ -134,8 +134,8 @@ void WGboulder_handle_motion(Object* self) {
     }    
 
     //Bounce off/snap to the ground
-    if ((self->srt.transl.y - 35.0f) < samples[sampleIdx]->unk0[0]) {
-        self->srt.transl.y = samples[sampleIdx]->unk0[0] + 35.0f;
+    if ((self->srt.transl.y - 35.0f) < samples[sampleIdx]->y) {
+        self->srt.transl.y = samples[sampleIdx]->y + 35.0f;
         if (self->velocity.y < 0.0f) {
             self->velocity.y *= -0.9f;
         }

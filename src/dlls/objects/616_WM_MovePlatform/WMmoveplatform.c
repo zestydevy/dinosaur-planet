@@ -1,6 +1,7 @@
 //NOTE: this is an unused object, distinct from WM_Platform
 
 #include "common.h"
+#include "sys/intersect.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 
@@ -41,7 +42,7 @@ void WM_MovePlatform_obj_Control(Object* self) {
     f32 distance;
     s32 pad;
     f32 speed;
-    Func_80057F1C_Struct** collisionInfo;
+    TrackHeightResult** collisionInfo;
     f32 dSpeed;
     f32 dy;
     f32 minDistance;
@@ -101,13 +102,13 @@ void WM_MovePlatform_obj_Control(Object* self) {
     //Handle terrain collisions
     {
         minDistance = 10000.0f;
-        count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
+        count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &collisionInfo, 0, 0);
         
         for (i = 0; i < count; i++) {
-            dy = collisionInfo[i]->unk0[0] - self->srt.transl.f[1];
+            dy = collisionInfo[i]->y - self->srt.transl.f[1];
             distance = dy;
             if (dy < 0) {
-                dy = collisionInfo[i]->unk0[0] - self->srt.transl.f[1];
+                dy = collisionInfo[i]->y - self->srt.transl.f[1];
                 distance *= -1.0f;
             }
             if (distance < minDistance) {

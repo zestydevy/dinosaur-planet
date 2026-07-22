@@ -7,9 +7,10 @@
 #include "sys/audio/amAudio.h"
 #include "sys/asset.h"
 #include "sys/audio.h"
+#include "sys/dll.h"
 #include "sys/joypad.h"
-#include "sys/crash.h"
-#include "sys/exception.h"
+#include "sys/reset.h"
+#include "sys/di_cpu.h"
 #include "sys/pi.h"
 #include "sys/memory.h"
 #include "sys/newshadows.h"
@@ -23,15 +24,17 @@
 #include "sys/boot.h"
 #include "sys/di_rcp.h"
 #include "sys/rsp_segment.h"
+#include "sys/thread.h"
 #include "sys/voxmap.h"
 #include "sys/framebuffer_fx.h"
-#include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
+#include "sys/lighting.h"
+#include "sys/intersect.h"
 #include "sys/map.h"
 #include "sys/map_enums.h"
 #include "dll.h"
 #include "constants.h"
 #include "dongle.h"
+#include "macros.h"
 
 /* -------- .data start -------- */
 const char *gGameBuildVersion = "1.3623";
@@ -193,8 +196,9 @@ void mainInit(void) {
         tvMode = OS_VI_NTSC_LAN1;
     }
 
-    osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 0xD, tvMode, 1);
-    start_pi_manager_thread();
+    osCreateScheduler(&osscheduler_, &ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)], 
+        OS_SCHEDULER_THREAD_PRIORITY, tvMode, 1);
+    diCpuTraceInit();
     piInit();
     rcpInit(&osscheduler_);
     mainAllocFrameBuffers();
@@ -203,20 +207,20 @@ void mainInit(void) {
     gCurGfx = gMainGfx[gFrameBufIdx];
     gLastInsertedControllerIndex = joyInit();
     joyStartControllerThread(&osscheduler_);
-    start_crash_thread(&osscheduler_);
+    resetInit(&osscheduler_);
     texInitTextures();
     trackInit();
-    func_8001CD00();
+    lightInit();
     modInit();
     dllInit();
     objInit();
     diPrintfInit();
-    func_80053300();
+    trackIntersectInit();
     shadowsInit();
     footstepsInit();
     fontsInit();
     menuInit();
-    amCreateAudioMgr(&osscheduler_, /*threadPriority=*/14);
+    amCreateAudioMgr(&osscheduler_, AUDIO_THREAD_PRIORITY);
     mapInitGlobalMap();
     if (osMemSize != EXPANSION_RAM_SIZE) {
         gDLL_5_AMSEQ2 = gDLL_5_AMSEQ = dllLoad(DLL_ID_AMSEQ, 36);
@@ -362,7 +366,7 @@ void mainTick(void) {
     gUpdateRateInverseMirrorF = 1.0f / gUpdateRateMirrorF;
 
     mainHandleMapChange();
-    write_c_file_label_pointers("main/main.c", 0x37C);
+    diCpuTraceFile("main/main.c", 0x37C);
 }
 
 void mainTickNoExpansion(void) {
@@ -455,7 +459,7 @@ void main_func_80013D80(void) {
         }
 
         menuUpdate2();
-        func_800591EC();
+        trackIntersectTick();
         map_func_8004A67C();
         mapUpdateStreaming();
         objHandleAnimseqActors();

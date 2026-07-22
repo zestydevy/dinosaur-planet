@@ -17,7 +17,7 @@
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "types.h"
 #include "dll.h"
 
@@ -305,13 +305,13 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
         if (temp != 0) {
             switch (temp) {
                 case 1:
-                    func_80000860(self, self, 0xC7, 0);
+                    envfxAction(self, self, 0xC7, 0);
                     break;
                 case 2:
                     if (D_80092A7C[0] == -1) {
-                        func_80000860(self, self, 0x14, 0);
+                        envfxAction(self, self, 0x14, 0);
                     } else {
-                        func_80000860(self, self, D_80092A7C[0], 0);
+                        envfxAction(self, self, D_80092A7C[0], 0);
                     }
                     break;
                 case 3:
@@ -349,15 +349,15 @@ static int dll_466_func_C50(Object* self, Object *arg1, AnimObj_Data* arg2, s8 a
                     gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2f, 0x50, (u8)objdata->unk8, 0);
                     break;
                 case 12:
-                    func_80000860(self, self, 0xCE, 0);
+                    envfxAction(self, self, 0xCE, 0);
                     mainSetBits(BIT_Test_of_Fear_Particles, 1);
                     dll_amSfx->Play(NULL, SOUND_342_Low_Whoosh, MAX_VOLUME, 0, 0, 0, 0);
                     break;
                 case 13:
                     if (D_80092A7C[0] == -1) {
-                        func_80000860(self, self, 0x14, 0);
+                        envfxAction(self, self, 0x14, 0);
                     } else {
-                        func_80000860(self, self, D_80092A7C[0], 0);
+                        envfxAction(self, self, D_80092A7C[0], 0);
                     }
                     mainSetBits(BIT_Test_of_Fear_Particles, 0);
                     break;

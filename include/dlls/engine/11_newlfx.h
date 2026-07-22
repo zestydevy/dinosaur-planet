@@ -2,8 +2,8 @@
 #define _DLL_11_H
 
 #include "dll_def.h"
-#include "types.h"
 #include "game/objects/object.h"
+#include "sys/lfx.h"
 
 DLL_INTERFACE(DLL_11_newlfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

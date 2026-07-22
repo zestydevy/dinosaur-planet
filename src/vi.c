@@ -132,7 +132,7 @@ OSScClient gVideoSched;
 //static u8 _bss_pad[0x10];
 /* -------- .bss end 800bce70 -------- */
 
-void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
+void viInit(s32 videoMode, OSSched* scheduler, s32 doOneTimeInit) {
     int i;
     u32 width;
     u32 height;
@@ -151,7 +151,7 @@ void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
         gViHeightRatio = HEIGHT_RATIO_NTSC;
     }
 
-    if (someBool && osTvType == OS_TV_PAL) {
+    if (doOneTimeInit && osTvType == OS_TV_PAL) {
         for (i = 0; i < ARRAYCOUNT_S(gResolutionArray); i++) {
             gResolutionArray[i].v += 20;
         }
@@ -164,7 +164,7 @@ void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
     gFramebufferPointers[0] = NULL;
     gFramebufferPointers[1] = NULL;
 
-    if (someBool) {
+    if (doOneTimeInit) {
         osCreateMesgQueue(&gVideoMesgQueue, D_800bccc0, ARRAYCOUNT(D_800bccc0));
         osScAddClient(scheduler, &gVideoSched, &gVideoMesgQueue, OS_SC_ID_VIDEO);
     }
@@ -177,7 +177,7 @@ void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
         height = HIGH_RES_SCREEN_HEIGHT;
     }
 
-    viInitFramebuffers(someBool, width, height);
+    viInitFramebuffers(doOneTimeInit, width, height);
 
     gCurrFramebufferIdx = 1;
 
@@ -191,7 +191,7 @@ void viInit(s32 videoMode, OSSched* scheduler, s32 someBool) {
     D_800BCE58 = 0;
     D_800BCE2C = 5;
 
-    if (someBool) {
+    if (doOneTimeInit) {
         gViObjDepthLists[0] = mmAlloc(sizeof(ViObjDepth) * 80, ALLOC_TAG_SCREEN_COL, NULL);
         gViObjDepthLists[1] = &gViObjDepthLists[0][80 / 2];
     }

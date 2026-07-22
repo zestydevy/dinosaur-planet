@@ -329,7 +329,7 @@ static void cam1stperson2_func_E60(Cam* cam) {
     Object* player;
     Vec3f spD8;
     Vec3f spCC;
-    Unk80027934 sp60;
+    TrackIntersectResult sp60;
     AABBs32 sp48;
 
     player = cam->player;
@@ -365,9 +365,9 @@ static void cam1stperson2_func_E60(Cam* cam) {
     sp60.unk50[0] = -1;
     sp60.unk54[0] = 4;
     sp60.unk40[0] = 4.5f;
-    fit_aabb_around_cubes(&sp48, (Vec3f* ) sState->unk10, &spCC, &sp60.unk40[0], 1);
-    func_80053750(player, &sp48, 0);
-    func_8005509C(player, spD8.f, spCC.f, 1, &sp60, 0);
+    trackIntersectBuildAABB(&sp48, (Vec3f* ) sState->unk10, &spCC, &sp60.unk40[0], 1);
+    trackIntersectBroadphase(player, &sp48, 0);
+    trackGetIntersect(player, spD8.f, spCC.f, 1, &sp60, 0);
     sState->unk10[1] = spCC.x;
     sState->unk20[1] = spCC.y;
     sState->unk30[1] = spCC.z;

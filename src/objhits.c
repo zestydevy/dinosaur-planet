@@ -6,7 +6,7 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/model_asm.h"
 #include "dll.h"
@@ -868,7 +868,7 @@ void func_80027934(Object* obj, Object* otherObj) {
     u16 temp_t7_2;
     u16 var_t2;
     u8 temp_v1_3;
-    Unk80027934 spF0;
+    TrackIntersectResult spF0;
     AABBs32 spD8;
     f32 spA8[4 * 3];
     f32 sp78[4 * 3];
@@ -951,9 +951,9 @@ void func_80027934(Object* obj, Object* otherObj) {
         return;
     }
 
-    fit_aabb_around_cubes(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
-    func_80053750(otherObj, &spD8, objectHitInfo->unkA1);
-    temp_v1_3 = func_8005509C(otherObj, (f32 *) sp78, (f32 *) spA8, var_s0, &spF0, 0);
+    trackIntersectBuildAABB(&spD8, (Vec3f *) sp78, (Vec3f *) spA8, spF0.unk40, var_s0);
+    trackIntersectBroadphase(otherObj, &spD8, objectHitInfo->unkA1);
+    temp_v1_3 = trackGetIntersect(otherObj, (f32 *) sp78, (f32 *) spA8, var_s0, &spF0, 0);
     if (!temp_v1_3) {
         return;
     }

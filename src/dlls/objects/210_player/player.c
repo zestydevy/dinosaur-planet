@@ -31,7 +31,7 @@
 #include "sys/memory.h"
 #include "sys/joypad.h"
 #include "sys/newshadows.h"
-#include "sys/segment_53F00.h"
+#include "sys/intersect.h"
 #include "sys/objlib.h"
 #include "dll.h"
 #include "types.h"
@@ -55,9 +55,9 @@
 static void dll_210_func_1BC0(Object* player, Player_Data* arg1);
 static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 arg3);
 static void dll_210_func_7260(Object* player, Player_Data* arg1);
-static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5);
-static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5);
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2);
+static s32 dll_210_func_7300(Object* player, Player_Data* arg1, TrackLineIntersectResult* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5);
+static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, TrackLineIntersectResult* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5);
+static void dll_210_func_7B98(Object* player, TrackLineIntersectResult* arg1, Vec4f* arg2);
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* player, ObjFSA_Data* fsa, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa, Player_Data3B4* arg3, f32 arg4, s32 arg5);
@@ -716,7 +716,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
     SRT sp9C;
     MtxF sp5C;
     s32 temp_v0_6;
-    Func_80057F1C_Struct** sp54;
+    TrackHeightResult** sp54;
     DLL27_Data* temp_v0_3;
     f32 sp4C;
 
@@ -829,10 +829,10 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
                     _data_1C = mathRnd(40, 60);
                 }
             }
-            temp_v0_6 = func_80057F1C(player, player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, &sp54, 0, 0x20);
+            temp_v0_6 = trackGetHeight(player, player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, &sp54, 0, 0x20);
             sp4C = -arg1->unk83C;
             if (temp_v0_6 >= 2) {
-                sp4C += sp54[0]->unk0[0] - sp54[temp_v0_6 - 1]->unk0[0];
+                sp4C += sp54[0]->y - sp54[temp_v0_6 - 1]->y;
             }
             if (sp4C > 25.0f) {
                 dll_210_add_health(player, -1);
@@ -1293,9 +1293,9 @@ void dll_210_update(Object* player) {
     if (objdata->flags & 2) {
         temp_a1 = objdata->unk0.unk4.unkD4;
         if ((temp_a1 != NULL) && (temp_a1->def->flags & OBJDEF_IS_MOBILE_MAP) != 0 && !(temp_a1->def->flags & OBJDEF_MOBILE_MAP_NEVER_PLAYER_PARENT)) {
-            func_8005B5B8(player, temp_a1, 1);
+            trackIntersect_func_8005B5B8(player, temp_a1, 1);
         } else if ((player->parent != NULL) && (temp_a1 == NULL)) {
-            func_8005B5B8(player, NULL, 1);
+            trackIntersect_func_8005B5B8(player, NULL, 1);
         }
     }
     vehicle = objdata->vehicle;
@@ -1855,7 +1855,7 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
     s32 pad;
     f32 spA4;
     Vec3f sp98;
-    Unk80027934 sp2C;
+    TrackIntersectResult sp2C;
 
     spA4 = 0.0f;
     sp2C.unk40[0] = 0.0f;
@@ -1864,9 +1864,9 @@ void dll_210_func_47B8(Object* player, Player_Data* arg1) {
     sp98.x = player->srt.transl.x - (mathSinfInterp(player->srt.yaw) * 15.0f);
     sp98.y = player->srt.transl.y + 5.0f;
     sp98.z = player->srt.transl.z - (mathCosfInterp(player->srt.yaw) * 15.0f);
-    fit_aabb_around_cubes(&spB0, &player->srt.transl, &sp98, &spA4, 1);
-    func_80053750(player, &spB0, 8);
-    if (func_8005509C(player, &player->srt.transl.x, (f32*)&sp98, 1, &sp2C, 0U) != 0) {
+    trackIntersectBuildAABB(&spB0, &player->srt.transl, &sp98, &spA4, 1);
+    trackIntersectBroadphase(player, &spB0, 8);
+    if (trackGetIntersect(player, &player->srt.transl.x, (f32*)&sp98, 1, &sp2C, 0U) != 0) {
         arg1->flags |= 0x100000;
         return;
     }
@@ -2255,13 +2255,13 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 dll_210_func_1D8B8(arg0);
                 break;
             case 15:
-                func_8005B5B8(arg0, NULL, 1);
+                trackIntersect_func_8005B5B8(arg0, NULL, 1);
                 break;
             case 16:
                 sp60 = 400.0f;
                 tempObj = objGetNearestTypeTo(OBJTYPE_MobileMap, arg0, &sp60);
                 if (tempObj != NULL) {
-                    func_8005B5B8(arg0, tempObj, 1);
+                    trackIntersect_func_8005B5B8(arg0, tempObj, 1);
                 }
                 break;
             case 23:
@@ -2752,7 +2752,7 @@ static void dll_210_func_7260(Object* player, Player_Data* arg1) {
 }
 
 // offset: 0x7300 | func: 36
-static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5) {
+static s32 dll_210_func_7300(Object* player, Player_Data* arg1, TrackLineIntersectResult* arg2, Player_Data490* arg3, Vec3f* arg4, f32 arg5) {
     Player_Data *data = player->data;
     f32 f12;
     f32 f0;
@@ -2813,7 +2813,7 @@ static s32 dll_210_func_7300(Object* player, Player_Data* arg1, Func_80059C40_St
 }
 
 // offset: 0x75B0 | func: 37
-static s32 dll_210_func_75B0(Object* player, Func_80059C40_Struct* arg1, Player_Data490* arg2, Vec3f* arg3, f32 arg4, f32 arg5) {
+static s32 dll_210_func_75B0(Object* player, TrackLineIntersectResult* arg1, Player_Data490* arg2, Vec3f* arg3, f32 arg4, f32 arg5) {
     Player_Data *objdata = player->data;
     f32 sp4[4];
     f32 temp_fv1;
@@ -2872,7 +2872,7 @@ static s32 dll_210_func_75B0(Object* player, Func_80059C40_Struct* arg1, Player_
 }
 
 // offset: 0x77DC | func: 38
-static s32 dll_210_func_77DC(Object *player, Func_80059C40_Struct* arg1, UnkArg2* arg2, Vec3f* arg3) {
+static s32 dll_210_func_77DC(Object *player, TrackLineIntersectResult* arg1, UnkArg2* arg2, Vec3f* arg3) {
     arg2->unk0.x = arg1->unk1C.x;
     arg2->unk0.y = arg1->unk1C.y;
     arg2->unk0.z = arg1->unk1C.z;
@@ -2891,7 +2891,7 @@ static s32 dll_210_func_77DC(Object *player, Func_80059C40_Struct* arg1, UnkArg2
 }
 
 // offset: 0x78A8 | func: 39
-static s32 dll_210_func_78A8(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, UnkArg3* arg3, s32 arg4) {
+static s32 dll_210_func_78A8(Object* player, Player_Data* arg1, TrackLineIntersectResult* arg2, UnkArg3* arg3, s32 arg4) {
     arg3->unk3 = 0;
     arg3->unk48.x = ((arg2->unk8 - arg2->unk4) * 0.5f) + arg2->unk4;
     arg3->unk48.y = arg2->unkC;
@@ -2933,7 +2933,7 @@ static s32 dll_210_func_78A8(Object* player, Player_Data* arg1, Func_80059C40_St
 }
 
 // offset: 0x7AAC | func: 40
-static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_Struct* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5) {
+static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, TrackLineIntersectResult* arg2, Vec3f* arg3, Player_Data430* arg4, s32 arg5) {
     arg4->unk44.x = arg3->x;
     arg4->unk44.y = arg2->unkC;
     arg4->unk44.z = arg3->z;
@@ -2965,7 +2965,7 @@ static s32 dll_210_func_7AAC(Object* player, Player_Data* arg1, Func_80059C40_St
 }
 
 // offset: 0x7B98 | func: 41
-static void dll_210_func_7B98(Object* player, Func_80059C40_Struct* arg1, Vec4f* arg2) {
+static void dll_210_func_7B98(Object* player, TrackLineIntersectResult* arg1, Vec4f* arg2) {
     arg2->x = arg1->unk1C.x;
     arg2->y = arg1->unk1C.y;
     arg2->z = arg1->unk1C.z;
@@ -3031,7 +3031,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
     Vec3f sp134;
     Vec3f sp128;
     s32 var_s0_2;
-    Func_80059C40_Struct spD0;
+    TrackLineIntersectResult spD0;
     f32 spCC;
     s32 pad2;
     u8 var_v1;
@@ -3143,7 +3143,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                 sp140.y = player->srt.transl.y;
                 sp140.z = player->srt.transl.z;
             }
-            var_v1 = func_80059C40(&sp14C, &sp140, 0.0f, 3, &spD0, player, fsa->unk4.unk259, spB8[i], 0xFF, 0xA);
+            var_v1 = trackGetLineIntersect(&sp14C, &sp140, 0.0f, 3, &spD0, player, fsa->unk4.unk259, spB8[i], 0xFF, 0xA);
             if (sp7D != 0 && var_v1 != 0) {
                 arg1->unk7FC = spD0.unk44;
             }
@@ -3196,7 +3196,7 @@ static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa
                     sp140.y = player->srt.transl.y;
                     sp140.z = player->srt.transl.z;
                 }
-                var_v1 = func_80059C40(&sp14C, &sp140, 0.0f, 3, &spD0, player, fsa->unk4.unk259, spB8[i], 0xFF, 0xA);
+                var_v1 = trackGetLineIntersect(&sp14C, &sp140, 0.0f, 3, &spD0, player, fsa->unk4.unk259, spB8[i], 0xFF, 0xA);
             }
             if (var_v1 != 0) {
                 spCC = spD0.unk44;
@@ -6116,7 +6116,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     u32 spBC;
     Vec3f spB0;
     Vec3f spA4;
-    Func_80059C40_Struct sp50;
+    TrackLineIntersectResult sp50;
 
     if (fsa->enteredAnimState) {
         _bss_200 = 0x10;
@@ -6165,7 +6165,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             spB0.f[0] = temp_s0->unk7EC.f[0] - (temp_s0->unk430.unk24.f[0] * 30.0f);
             spB0.y = temp_s0->unk7EC.y;
             spB0.f[2] = temp_s0->unk7EC.f[2] - (temp_s0->unk430.unk24.f[2] * 30.0f);
-            if (func_80059C40(&temp_s0->unk7EC, &spB0, 0.0f, 3, &sp50, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
+            if (trackGetLineIntersect(&temp_s0->unk7EC, &spB0, 0.0f, 3, &sp50, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
                 player->srt.transl.f[0] = spB0.f[0];
                 player->srt.transl.f[2] = spB0.f[2];
 
@@ -6327,7 +6327,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         spA4.f[0] = spB0.f[0] - (temp_s0->unk430.unk24.f[0] * 30.0f);
                         spA4.f[1] = spB0.f[1];
                         spA4.f[2] = spB0.f[2] - (temp_s0->unk430.unk24.f[2] * 30.0f);
-                        if (func_80059C40(&spB0, &spA4, 0/*.0f*/, 3, NULL, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
+                        if (trackGetLineIntersect(&spB0, &spA4, 0/*.0f*/, 3, NULL, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
                             spD4 |= 1 << spE6;
                         }
                     }
@@ -6346,7 +6346,7 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                         spA4.f[0] = spB0.f[0] - (temp_s0->unk430.unk24.f[0] * 30.0f);
                         spA4.f[1] = spB0.f[1];
                         spA4.f[2] = spB0.f[2] - (temp_s0->unk430.unk24.f[2] * 30.0f);
-                        if (func_80059C40(&spB0, &spA4, 0.0f, 3, NULL, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
+                        if (trackGetLineIntersect(&spB0, &spA4, 0.0f, 3, NULL, player, fsa->unk4.unk259, 3, 0xFFU, 0) != 0) {
                             spD4 |= 1 << (spE6 + 2);
                         }
                     }

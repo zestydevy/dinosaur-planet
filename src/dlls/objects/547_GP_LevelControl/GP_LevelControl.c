@@ -9,7 +9,7 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/map_enums.h"
 #include "types.h"
 
@@ -153,7 +153,7 @@ void GP_LevelControl_func_58C(Object *self, s32 arg1) {
     Object *player;
 
     player = objGetPlayer();
-    func_80000860(self, player, 0x155, 0);
-    func_80000860(self, player, 0x1E5, 0);
-    func_80000860(self, player, 0x1E4, 0);
+    envfxAction(self, player, 0x155, 0);
+    envfxAction(self, player, 0x1E5, 0);
+    envfxAction(self, player, 0x1E4, 0);
 }

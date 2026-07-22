@@ -15,7 +15,7 @@
 #include "sys/objprint.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "sys/segment_1050.h"
+#include "sys/lfx.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "dll.h"
@@ -630,7 +630,7 @@ s32 DRearthwalk_func_19DC(Object* self, Object* rider) {
         sp48.z = self->srt.transl.z;
         sp48.x += mathSinfInterp(self->srt.yaw - 0x4000) * 100.0f;
         sp48.z += mathCosfInterp(self->srt.yaw - 0x4000) * 100.0f;
-        if (func_80059C40(&self->srt.transl, &sp48, 10.0f, 1, NULL, self, 8, -1, 0xFF, 0) != 0) {
+        if (trackGetLineIntersect(&self->srt.transl, &sp48, 10.0f, 1, NULL, self, 8, -1, 0xFF, 0) != 0) {
             objdata->unkA5E = 1;
         } else {
             objdata->unkA5E = 0;
@@ -1156,10 +1156,10 @@ static s32 DRearthwalk_func_32EC(Object* self, u8 arg1) {
         // fallthrough
         case 1:
             objdata->talkSeq = EWSEQ_2_LetsGoStopTheDragon;
-            func_80000450(self, self, 0x22C, 0, 0, 0);
+            lfxAction(self, self, 0x22C, 0, 0, 0);
             break;
         case 2:
-            func_80000450(self, self, 0x22E, 0, 0, 0);
+            lfxAction(self, self, 0x22E, 0, 0, 0);
             objdata->unkA58 &= ~0x80;
             //Set Mind Read text
             gDLL_22_Subtitles->vtbl->func_21C0(self->id, GAMETEXT_0D0_DR_Mind_Read_messages_5);

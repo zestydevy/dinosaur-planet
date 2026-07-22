@@ -439,7 +439,7 @@ s32 smallbasket_handle_being_lifted(Object* self, Object* player, SmallBasket_Da
 int smallbasket_handle_collision(Object* self) {
     Vec3f spF8[4];
     Vec3f spC8[4];
-    Unk80027934 sp5C;
+    TrackIntersectResult sp5C;
     AABBs32 aabb;
     ObjectHitInfo* objHits;
     f32* pad;
@@ -464,9 +464,9 @@ int smallbasket_handle_collision(Object* self) {
         return FALSE;
     }
         
-    fit_aabb_around_cubes(&aabb, (Vec3f*)&spC8, (Vec3f*)&spF8, &sp5C.unk40[0], 1);
-    func_80053750(self, &aabb, objHits->unkA1);
-    i = func_8005509C(self, (f32*)&spC8, (f32*)&spF8, 1, &sp5C, 0);
+    trackIntersectBuildAABB(&aabb, (Vec3f*)&spC8, (Vec3f*)&spF8, &sp5C.unk40[0], 1);
+    trackIntersectBroadphase(self, &aabb, objHits->unkA1);
+    i = trackGetIntersect(self, (f32*)&spC8, (f32*)&spF8, 1, &sp5C, 0);
     
     if (i) {
         if (i & 1) {

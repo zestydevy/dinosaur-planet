@@ -1,5 +1,5 @@
 #include "common.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 
 /* MusicAction enum names for this DLL, from `default.dol`. */
   typedef enum {
@@ -35,11 +35,11 @@ void dll_81_func_A4(Object* objA, Object* objB, s8 arg2, s32 arg3) {
     isNighttime = gDLL_7_Newday->vtbl->func8(&time);
 
     if (arg2 == 1) {
-        func_80000860(objA, objB, 0x142, arg3);
+        envfxAction(objA, objB, 0x142, arg3);
         gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_TalkSwapstoneTune, 0, 0, 0);
         mainSetBits(BIT_Played_Seq_01FD_Rocky_Teaches_Distract, TRUE);
     } else if (arg2 == -1) {
-        func_80000860(objA, objB, 0x60, arg3);
+        envfxAction(objA, objB, 0x60, arg3);
         if (isNighttime) {
             gDLL_5_AMSEQ2->vtbl->set(NULL, MFX_SH_MushroomTune, 0, 0, 0);
         } else {

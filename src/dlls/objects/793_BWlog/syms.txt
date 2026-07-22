@@ -22,15 +22,15 @@ BWlog_vehicle_GetRacePosition = 0xE70;
 BWlog_vehicle_Func18 = 0xE80;
 BWlog_vehicle_HandleRiderScale = 0xE8C;
 BWlog_vehicle_Func20 = 0xE9C;
-handleWater = 0xEB0;
-handleControlsAButton = 0x1600;
-startRoll = 0x178C;
-handleRoll = 0x1858;
-handleUnknownState = 0x1A4C;
-handlePaddleMotion = 0x1A5C;
-findRiverflows = 0x1C18;
-handleSounds = 0x2020;
-handleFx = 0x2444;
+BWlog_handleWater = 0xEB0;
+BWlog_handleControlsAButton = 0x1600;
+BWlog_startRoll = 0x178C;
+BWlog_handleRoll = 0x1858;
+BWlog_handleUnknownState = 0x1A4C;
+BWlog_handlePaddleMotion = 0x1A5C;
+BWlog_findRiverflows = 0x1C18;
+BWlog_handleSounds = 0x2020;
+BWlog_handleFx = 0x2444;
 
 .rodata = 0x2820:
 

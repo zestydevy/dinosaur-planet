@@ -7,7 +7,7 @@
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
-#include "sys/segment_1460.h"
+#include "sys/envfx.h"
 #include "sys/print.h"
 #include "dll.h"
 
@@ -359,13 +359,13 @@ static int DFShrine_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         } else {
             switch (message) {
                 case 1:
-                    func_80000860(self, self, 0xC3, 0);
+                    envfxAction(self, self, 0xC3, 0);
                     break;
                 case 2:
                     if (*D_80092A7C == -1) {
-                        func_80000860(self, self, 0x14, 0);
+                        envfxAction(self, self, 0x14, 0);
                     } else {
-                        func_80000860(self, self, *D_80092A7C, 0);
+                        envfxAction(self, self, *D_80092A7C, 0);
                     }
                     break;
                 case 3:
