@@ -155,15 +155,83 @@ typedef enum {
     MODANIM_SnowHorn_Hit_React = 47
 } SnowHornAnims;
 
+
+typedef enum {
+    SnowHorn_MODANIM0_0_Idle_LOOP = 0,              //Bobbling head merrily
+    SnowHorn_MODANIM0_1_Squirt,                     //Sucking up water, then squirting
+    SnowHorn_MODANIM0_2_Talk_LOOP,                  //Flapping trunk around
+    SnowHorn_MODANIM0_3_Walk_LOOP,                  //Walk cycle
+    SnowHorn_MODANIM0_4_Sleep_Intro,                //Curling up for a snooze
+    SnowHorn_MODANIM0_5_Sleep_LOOP,                 //Snoring gently
+    SnowHorn_MODANIM0_6_Sleep_Outro,                //Waking up and stretching
+    SnowHorn_MODANIM0_7_Sleep_Outro_Alt,            //Waking up without stretching (unused?)
+    SnowHorn_MODANIM0_8_Sit_Intro,                  //Curling up, but looking up instead of sleeping (unused?)
+    SnowHorn_MODANIM0_9_Sit_LOOP,                   //Sitting up
+    SnowHorn_MODANIM0_10_Sit_LOOP_FLIPPED,          //Mirrored version of the sit loop
+    SnowHorn_MODANIM0_11_Shaking_Off,               //Spinning torso to shake off snow
+    SnowHorn_MODANIM0_12_Turn_Walk_LOOP,            //Turn loop, maybe?
+    SnowHorn_MODANIM0_13_Trunk_Grab,                //Swiping Alpine Root from Sabre's hands
+    SnowHorn_MODANIM0_14_Trunk_Sweep,               //Reaching behind and to the left with trunk as though grabbing something, then sweeping to the right
+    SnowHorn_MODANIM0_15_Sneeze,                    //Bracing on all 4s, building up to a sneeze (unused?)
+    SnowHorn_MODANIM0_16_Look_Right,                //Turning to the right, with trunk settle
+    SnowHorn_MODANIM0_17_Stretch_Up_Intro,          //Stretching foreleg and trunk widely (Garunda Te escaping ice?)
+    SnowHorn_MODANIM0_18_Stretch_Up_Outro,          //End of stretch, with trunk settle
+    SnowHorn_MODANIM0_19_Fallen_Idle_LOOP,          //Collapsed onto side
+    SnowHorn_MODANIM0_20_Fallen_Talk_Intro,         //Looking up to chat
+    SnowHorn_MODANIM0_21_Fallen_Talk_LOOP,          //Chatting and gesturing with trunk
+    SnowHorn_MODANIM0_22_Fallen_Talk_Idle_LOOP,     //Listening
+    SnowHorn_MODANIM0_23_Fallen_Eat,                //Eating an Alpine Root
+    SnowHorn_MODANIM0_24_Fallen_Stand_Intro,        //Getting up
+    SnowHorn_MODANIM0_25_Fallen_Stand_Outro,        //Getting up, into neutral pose
+    SnowHorn_MODANIM0_26_Sleep_Talk_LOOP,           //Talking in their sleep (unused?)
+    SnowHorn_MODANIM0_27_Sit_Talk_LOOP,             //Talking while sitting up (unused?)
+    SnowHorn_MODANIM0_28_Backing_Away_Scared,       //Walking backwards while trunk twitches nervously (unused?)
+    SnowHorn_MODANIM0_29_Trunk_Flick_Right,         //Craning head to the right and flicking/grabbing with their trunk?
+    SnowHorn_MODANIM0_30_Falling_and_Landing,       //Seems to be dropping off a ledge and landing below?
+    SnowHorn_MODANIM0_31_Bow,                       //Craning trunk up, and then dipping into a deep bow (unused?)
+    SnowHorn_MODANIM0_32_Garunda_Smash_Ice_Intro,   //On sloped ground, winding up in anticipation of smashing through the ice
+    SnowHorn_MODANIM0_33_Garunda_Smash_Ice_Outro,   //Smashing through the ice with his tusks
+    SnowHorn_MODANIM0_34_Awkward_Pose,              //No animation, on sloped ground, contorted as though frozen in ice?
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, //Waiting under the ice
+    SnowHorn_MODANIM0_36, //TODO: continue!
+
+
+
+
+} SnowHorn_ModAnims;
+
 typedef enum  {
-    SEQ_0157_SnowHorn_Chat_BeforeDefeatingSharpClaw = 0, //Hmph, shouldn't you help your friend?
-    SEQ_0157_SnowHorn_Chat_BeforeDiggingUpRoot = 1, //I'm too hungry to talk to strangers!
-    SEQ_0158_SnowHorn_Chat_AfterDiggingUpRoot = 2, //If you press the C-right button you can feed me that root!
-    SEQ_0159_SnowHorn_Cutscene_FeedingRoot1 = 3, //One root is never enough, I'm starving! To get out of the clearing...
-    SEQ_0625_SnowHorn_Chat_AfterEatingRoot1 = 4, //One root is never enough, I'm starving!
-    SEQ_0248_SnowHorn_Cutscene_FeedingRoot2 = 5, //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
-    SEQ_0626_SnowHorn_Chat_AfterEatingRoot2 = 6  //I'm sorry lad, you're on your own now.
-} SnowHornTutorialSequences;
+    SEQ_157_GrumpySnowHorn_CHAT_Before_Tricky_Command_Tutorial,  //Hmph, shouldn't you help your friend?
+    SEQ_157_GrumpySnowHorn_CHAT_Asking_for_Roots,                //I'm too hungry to talk to strangers!
+    SEQ_158_GrumpySnowHorn_CHAT_Waiting_for_1st_Root,            //If you press the C-right button you can feed me that root!
+    SEQ_159_GrumpySnowHorn_ITEM_Waiting_for_1st_Root,            //One root is never enough, I'm starving! To get out of the clearing...
+    SEQ_625_GrumpySnowHorn_CHAT_Waiting_for_2nd_Root,            //One root is never enough, I'm starving!
+    SEQ_248_GrumpySnowHorn_ITEM_Waiting_for_2nd_Root,            //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
+    SEQ_626_GrumpySnowHorn_CHAT_Well_Fed                         //I'm sorry lad, you're on your own now.
+} GrumpySnowHorn_ObjSeqIDs;
+
+typedef enum  {
+    SEQ_0A0_WalkingSnowHornA_CHAT_1A,       //The SharpClaws have captured our leader!
+    SEQ_0A1_WalkingSnowHornA_CHAT_1B,       //Beyond the Hollow lies the Prince's homelands.
+        SEQ_0A2_WalkingSnowHornB_CHAT_1A,       //Do you hear that?
+        SEQ_0A3_WalkingSnowHornB_CHAT_1B,       //Follow the path to SwapStone Hollow.
+    
+        SEQ_23D_WalkingSnowHornB_CHAT_2,        //Beware the depths of the mine. A monster hides in the ice!
+    SEQ_24A_WalkingSnowHornA_CHAT_2,        //If you help our tribe, I'm sure they'll reward you.
+    
+        SEQ_270_WalkingSnowHornB_CHAT_3,        //Hey, shouldn't you get that SpellStone activated?
+    SEQ_3E9_WalkingSnowHornA_CHAT_3,        //After all that hard work, you have to let the Guardian do his work!
+    
+        SEQ_261_WalkingSnowHornB_CHAT_4A,       //Take the SpellStone to Volcano Force Point.
+        SEQ_248_WalkingSnowHornB_CHAT_4B,       //As your journey ends, you will meet us again.
+    SEQ_249_WalkingSnowHornA_CHAT_4A,       //You did such a good job, you deserve this!
+    SEQ_247_WalkingSnowHornA_CHAT_4B,       //When you are ready, the sacred lands await.
+    
+        SEQ_1C8_WalkingSnowHornB_CHAT_5A,       //The Ice Cave holds many dangers.
+        SEQ_1C0_WalkingSnowHornB_CHAT_5B,       //Do not always believe what your eyes tell you is true!
+    SEQ_1BF_WalkingSnowHornA_CHAT_5A,       //Fighting isn't always the answer!
+    SEQ_1C1_WalkingSnowHornA_CHAT_5B        //Your final test awaits!
+} WalkingSnowHorn_ObjSeqIDs;
 
 static int SnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 static s32 SnowHorn_sleep(Object* self);
@@ -241,34 +309,40 @@ static void SnowHorn_belinaTeControl(Object *self, SnowHorn_Data* objData, SnowH
 /*2BC*/ static f32 dBelinaTeAnimSpeeds[] = {0.005};
 
 /*2C0*/ static s32 dWalkingBChatSeqs1[] = {
-    0x0, 0x1
+    SEQ_0A0_WalkingSnowHornA_CHAT_1A, //@bug: dWalkingAChatSeqs1 and dWalkingBChatSeqs1's values should be swapped (wrong voice for the character)!
+    SEQ_0A1_WalkingSnowHornA_CHAT_1B
 };
 /*2C8*/ static s32 dWalkingAChatSeqs1[] = {
-    0x2, 0x3
+    SEQ_0A2_WalkingSnowHornB_CHAT_1A, 
+    SEQ_0A3_WalkingSnowHornB_CHAT_1B
 };
 /*2D0*/ static s32 dWalkingBChatSeqs2[] = {
-    0x4
+    SEQ_23D_WalkingSnowHornB_CHAT_2
 };
 /*2D4*/ static s32 dWalkingAChatSeqs2[] = {
-    0x5
+    SEQ_24A_WalkingSnowHornA_CHAT_2
 };
 /*2D8*/ static s32 dWalkingBChatSeqs3[] = {
-    0x6
+    SEQ_270_WalkingSnowHornB_CHAT_3
 };
 /*2DC*/ static s32 dWalkingAChatSeqs3[] = {
-    0x7
+    SEQ_3E9_WalkingSnowHornA_CHAT_3
 };
 /*2E0*/ static s32 dWalkingBChatSeqs4[] = {
-    0x8, 0x9
+    SEQ_261_WalkingSnowHornB_CHAT_4A, 
+    SEQ_248_WalkingSnowHornB_CHAT_4B
 };
 /*2E8*/ static s32 dWalkingAChatSeqs4[] = {
-    0x9, 0xb
+    SEQ_248_WalkingSnowHornB_CHAT_4B, //@bug: should be #10 (SEQ_249_WalkingSnowHornA_CHAT_4A)
+    SEQ_247_WalkingSnowHornA_CHAT_4B
 };
 /*2F0*/ static s32 dWalkingBChatSeqs5[] = { //UNUSED
-    0xc, 0xd
+    SEQ_1C8_WalkingSnowHornB_CHAT_5A, 
+    SEQ_1C0_WalkingSnowHornB_CHAT_5B
 };
 /*2F8*/ static s32 dWalkingAChatSeqs5[] = { //UNUSED
-    0xe, 0xf
+    SEQ_1BF_WalkingSnowHornA_CHAT_5A, 
+    SEQ_1C1_WalkingSnowHornA_CHAT_5B
 };
 
 // offset: 0x0 | ctor
@@ -696,7 +770,7 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
         if ((self->unkAF & ARROW_FLAG_4_Highlighted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
             mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
             mainDecrementBits(BIT_SW_Alpine_Roots);
-            gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_159_GrumpySnowHorn_ITEM_Waiting_for_1st_Root, self, -1);
             objData->state = GrumpySnowHorn_STATE_4_Waiting_for_2nd_Root;
             return;
         }
@@ -706,7 +780,7 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
         if ((self->unkAF & ARROW_FLAG_4_Highlighted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
             mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
             mainDecrementBits(BIT_SW_Alpine_Roots);
-            gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, self, -1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_248_GrumpySnowHorn_ITEM_Waiting_for_2nd_Root, self, -1);
             objData->state = GrumpySnowHorn_STATE_6_Well_Fed;
             return;
         }
@@ -936,7 +1010,7 @@ static void SnowHorn_walkingSetup(Object *self, SnowHorn_Data* objData, SnowHorn
 
     //Set up different chat sequences based on game progress
     if (objSetup->characterIdx == SnowHorn_IDX_1_WalkingA){
-        //NOTE: an unused 5th chat list exists too (dWalkingAChatSeqs4), intended for later in the game!
+        //NOTE: an unused 5th chat list exists too (dWalkingAChatSeqs5), intended for before the Test of Sacrifice!
 
         if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             //List 4: After activating the SpellStone
@@ -951,12 +1025,12 @@ static void SnowHorn_walkingSetup(Object *self, SnowHorn_Data* objData, SnowHorn
             objData->chatSequenceList = dWalkingAChatSeqs2;
             objData->chatSequenceCount = ARRAYCOUNT(dWalkingAChatSeqs2);
         } else {
-            //List 1: Initial
+            //List 1: Initial (@bug: uses wrong voice actor compared to other chatSequenceLists)
             objData->chatSequenceList = dWalkingAChatSeqs1;
             objData->chatSequenceCount = ARRAYCOUNT(dWalkingAChatSeqs1);
         }
     } else {
-        //NOTE: an unused 5th chat list exists too (dWalkingBChatSeqs4), intended for later in the game!
+        //NOTE: an unused 5th chat list exists too (dWalkingBChatSeqs5), intended for before the Test of Sacrifice!
 
         if (mainGetBits(BIT_SpellStone_DIM_Activated)){
             //List 4: After activating the SpellStone
@@ -969,9 +1043,9 @@ static void SnowHorn_walkingSetup(Object *self, SnowHorn_Data* objData, SnowHorn
         } else if (mainGetBits(BIT_Tricky_Learned_Distract)){
             //List 2: After Distract
             objData->chatSequenceList = dWalkingBChatSeqs2;
-            objData->chatSequenceCount = ARRAYCOUNT(dWalkingBChatSeqs3);
+            objData->chatSequenceCount = ARRAYCOUNT(dWalkingBChatSeqs2);
         } else {
-            //List 1: Initial
+            //List 1: Initial (@bug: uses wrong voice actor compared to other chatSequenceLists)
             objData->chatSequenceList = dWalkingBChatSeqs1;
             objData->chatSequenceCount = ARRAYCOUNT(dWalkingBChatSeqs1);
         }
