@@ -114,7 +114,7 @@ void CFPrisonUncle_obj_Control(Object* self) {
             objAnimSet(self, 0, 0.105f, 0);
             CFPrisonUncle_animateHeadJoints(self, player);
 
-            jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
+            jawJoint = objExpr_func_80034804(self, 1);
             if (mathRnd(0, 8) != 0) {
                 jawJoint->pitch = -M_15_DEGREES;
             } else {
@@ -137,7 +137,7 @@ void CFPrisonUncle_obj_Control(Object* self) {
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             CFPrisonUncle_animateHeadJoints(self, player);
 
-            jawJoint = (SeqJoint*)objExpr_func_80034804(self, 1);
+            jawJoint = objExpr_func_80034804(self, 1);
             jawJoint->pitch = -M_15_DEGREES;
 
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
@@ -305,7 +305,7 @@ int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* anim
 
 // offset: 0x9F8 | func: 8
 void CFPrisonUncle_resetHeadJoint(Object* self) {
-    SeqJoint* headJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
+    SeqJoint* headJoint = objExpr_func_80034804(self, 0);
     headJoint->pitch = 0;
     headJoint->yaw = 0;
 }

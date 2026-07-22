@@ -569,7 +569,7 @@ static void DBStealerWorm_setSeqJointRotation(Object* self, s16 pitch, s16 roll)
     seqJointIDs = objExpr_func_800349B0();
     
     for (i = 1; i < 9; i++) {
-        seqJoint = (SeqJoint*)objExpr_func_80034804(self, seqJointIDs[i]);
+        seqJoint = objExpr_func_80034804(self, seqJointIDs[i]);
         if (seqJoint != NULL) {
             seqJoint->roll = roll;
             seqJoint->pitch = pitch;

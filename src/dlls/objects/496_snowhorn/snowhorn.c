@@ -642,12 +642,12 @@ static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn
 
 static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, SnowHorn_Setup* setup) {
     SnowHorn_Data* objdata;
-    s16* temp_v0_2;
+    SeqJoint* seqJoint;
     Object* player;
     SRT srt;
     Vec3f v;
     u32 questValue;
-    s32 seqBoneAngle;
+    s32 seqJointAngle;
     s32 temp_v0;
     s16 *temp;
     s32 var_v1;
@@ -769,26 +769,26 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* snowHornObjdata, Snow
             objdata->unk8 = (s16) (objdata->unk8 + gUpdateRate);
             if (objdata->unk6 < objdata->unk8) {
                 objdata->unk8 = 0;
-                temp_v0_2 = objExpr_func_80034804(self, 0);
+                seqJoint = objExpr_func_80034804(self, 0);
 
-                objdata->unkE = (u16) (0x8000 - temp_v0_2[1]);
+                objdata->unkE = (u16) (0x8000 - seqJoint->yaw);
                 player = objGetPlayer();
                 
                 var_v1 = (mathAtan2f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + 0x8000;
                 CIRCLE_WRAP(var_v1)
                 
                 objAnimSet(self, 1, 0.0f, 0);
-                if ((var_v1 >= -0xBB7) && (var_v1 < 0xBB8)) {
+                if ((var_v1 > -0xBB8) && (var_v1 < 0xBB8)) {
                     objdata->unk38 = player->srt.transl.x;
                     objdata->unk3C = player->srt.transl.y;
                     objdata->unk40 = player->srt.transl.z;
                     objdata->unk2C = objdata->unkE;
                 } else {
                     temp = &self->srt.yaw;
-                    seqBoneAngle = temp_v0_2[1] + *temp;
-                    objdata->unk38 = self->srt.transl.x - (mathSinfInterp(seqBoneAngle) * 250.0f);
+                    seqJointAngle = seqJoint->yaw + *temp;
+                    objdata->unk38 = self->srt.transl.x - (mathSinfInterp(seqJointAngle) * 250.0f);
                     objdata->unk3C = self->srt.transl.y;
-                    objdata->unk40 = self->srt.transl.z - (mathCosfInterp(seqBoneAngle) * 250.0f);
+                    objdata->unk40 = self->srt.transl.z - (mathCosfInterp(seqJointAngle) * 250.0f);
                     objdata->unk2C = 0;
                 }
                 objdata->flags = 0;

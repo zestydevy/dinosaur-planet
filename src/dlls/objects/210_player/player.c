@@ -1906,7 +1906,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
     f32 spA4;
     f32 temp_fv0_4;
     f32 sp9C;
-    s16* temp_s0_2;
+    SeqJoint* seqJoint;
     s32 temp_t1;
     s32 temp_v1_8;
     Object* vehicle; // sp8C
@@ -1990,7 +1990,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             arg2->unk58 = 0.0f;
             arg2->unk24 = 0.083333336f;
             arg2->unk62 = 5;
-            objdata->unk354.headStartAngle = objExpr_func_80034804(arg0, 0)[1];
+            objdata->unk354.headStartAngle = objExpr_func_80034804(arg0, 0)->yaw;
             objdata->unk378.headStartAngle = 0;
             objdata->unk354.headGoalAngle = arg2->yawDiff;
             objdata->unk378.headGoalAngle = arg2->pitchDiff;
@@ -2005,7 +2005,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
         } else if (arg2->unk62 == 5) {
             arg2->unk7A &= ~0x4;
             func_8002674C(arg0);
-            temp_s0_2 = objExpr_func_80034804(arg0, 0);
+            seqJoint = objExpr_func_80034804(arg0, 0);
             if (_bss_0 == 3) {
                 if ((arg2->unk58 >= 1.0f) && (gDLL_2_Camera->vtbl->has_interpolation_finished() == FALSE)) {
                     if (arg3 == 0) {
@@ -2027,11 +2027,11 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
                 }
                 temp_fv0_2 = arg2->unk58 - temp_fv0_2;
                 arg0->srt.yaw += (s16) (temp_fv0_2 * arg2->yawDiff);
-                temp_s0_2[1] = _bss_2 - (arg0->srt.yaw & 0xFFFF);
-                CIRCLE_WRAP(temp_s0_2[1])
+                seqJoint->yaw = _bss_2 - (arg0->srt.yaw & 0xFFFF);
+                CIRCLE_WRAP(seqJoint->yaw)
             } else {
-                _bss_0 |= objExpr_func_800343B8(&objdata->unk354, temp_s0_2, 100.0f, 2000.0f);
-                _bss_0 |= objExpr_func_80034518(&objdata->unk378, temp_s0_2, 100.0f, 2000.0f) * 2;
+                _bss_0 |= objExpr_func_800343B8(&objdata->unk354, seqJoint, 100.0f, 2000.0f);
+                _bss_0 |= objExpr_func_80034518(&objdata->unk378, seqJoint, 100.0f, 2000.0f) * 2;
             }
             return 1;
         } else if (arg2->unk62 == 6) {
@@ -3451,20 +3451,20 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
     f32 riderX;
     f32 riderY;
     f32 riderZ;
-    s16* temp_v0;
+    SeqJoint* seqJoint;
 
     if (arg7) {
-        temp_v0 = objExpr_func_80034804(player, 0);
-        if (temp_v0 != NULL) {
-            if (temp_v0[1] > 0) {
-                temp_v0[1] -= (s16) (gUpdateRateF * 200.0f);
-                if (temp_v0[1] < 0) {
-                    temp_v0[1] = 0;
+        seqJoint = objExpr_func_80034804(player, 0);
+        if (seqJoint != NULL) {
+            if (seqJoint->yaw > 0) {
+                seqJoint->yaw -= (s16) (gUpdateRateF * 200.0f);
+                if (seqJoint->yaw < 0) {
+                    seqJoint->yaw = 0;
                 }
             } else {
-                temp_v0[1] += (s16) (gUpdateRateF * 200.0f);
-                if (temp_v0[1] > 0) {
-                    temp_v0[1] = 0;
+                seqJoint->yaw += (s16) (gUpdateRateF * 200.0f);
+                if (seqJoint->yaw > 0) {
+                    seqJoint->yaw = 0;
                 }
             }
         }
@@ -3658,7 +3658,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 spE8.yaw = 0;
                 spE8.pitch = mathAtan2f(temp_fs0, sqrtf((temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1)));
             } else {
-                spE8.yaw = objExpr_func_80034804(player, 9)[1];
+                spE8.yaw = objExpr_func_80034804(player, 9)->yaw;
                 spE8.pitch = arg2 * -14336.0f;
             }
             spE8.transl.x = 0.0f;
@@ -3737,7 +3737,7 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         spF8.yaw = 0;
         spF8.pitch = mathAtan2f(sp8C, sqrtf(SQ(sp90) + SQ(sp88)));
     } else {
-        spF8.yaw = objExpr_func_80034804(player, 9)[1];
+        spF8.yaw = objExpr_func_80034804(player, 9)->yaw;
         spF8.pitch = arg2 * -14336.0f;
     }
     spF8.transl.x = 0.0f;
@@ -7094,7 +7094,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     Object* sp60;
     s32 var_a0;
     s32 var_a1;
-    s16* temp_v0;
+    SeqJoint* seqJoint;
     s32 sp50;
     s32 sp4C;
     f32 sp48;
@@ -7113,15 +7113,15 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     }
     sp60 = objdata->vehicle;
     if (dll_vehicle(sp60)->CanDismount(sp60, player) != 0) {
-        temp_v0 = objExpr_func_80034804(player, 9);
-        if (temp_v0 != NULL) {
-            temp_v0[2] = 0;
-            temp_v0[0] = 0;
+        seqJoint = objExpr_func_80034804(player, 9);
+        if (seqJoint != NULL) {
+            seqJoint->roll = 0;
+            seqJoint->pitch = 0;
         }
         return 0x27;
     }
-    temp_v0 = objExpr_func_80034804(player, 9);
-    if (temp_v0 != NULL) {
+    seqJoint = objExpr_func_80034804(player, 9);
+    if (seqJoint != NULL) {
         var_a0 = sp60->srt.roll;
         if (sp60->srt.roll < -0x1555) {
             var_a0 = -0x1555;
@@ -7133,7 +7133,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             var_a0 = v1;
         }
-        temp_v0[2] = -var_a0;
+        seqJoint->roll = -var_a0;
         var_a1 = sp60->srt.pitch;
         if (sp60->srt.pitch < -0x1555) {
             var_a1 = -0x1555;
@@ -7145,7 +7145,7 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             }
             var_a1 = v1;
         }
-        temp_v0[0] = -var_a1;
+        seqJoint->pitch = -var_a1;
     }
     dll_vehicle(sp60)->GetPlayerAnim(sp60, &sp48, &sp50);
     sp4C = player->curModAnimId;
@@ -7187,16 +7187,16 @@ s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 
 // offset: 0x14B70 | func: 99
 static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
-    s16* temp_v0_2;
+    SeqJoint* seqJoint;
 
     player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
     player->srt.flags &= ~OBJFLAG_MANUAL_PREV_POSITIONS;
     player->curModAnimIdLayered = -1;
-    temp_v0_2 = objExpr_func_80034804(player, 9);
-    if (temp_v0_2 != NULL) {
-        temp_v0_2[0] = 0;
-        temp_v0_2[1] = 0;
-        temp_v0_2[2] = 0;
+    seqJoint = objExpr_func_80034804(player, 9);
+    if (seqJoint != NULL) {
+        seqJoint->pitch = 0;
+        seqJoint->yaw = 0;
+        seqJoint->roll = 0;
     }
 }
 
@@ -7215,7 +7215,7 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     f32 temp_fv0;
     SRT sp54;
     ModelInstance* sp50;
-    s16* seqJointEarL;
+    SeqJoint* seqJointEarL;
 
     if (fsa->enteredAnimState != 0) {
         fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_Off;
@@ -7279,15 +7279,15 @@ s32 dll_210_func_14BE8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     seqJointEarL++;
     seqJointEarL--;
     if (seqJointEarL != NULL) {
-        seqJointEarL[0] = vehicle->srt.pitch * temp_fv0;
-        seqJointEarL[2] = vehicle->srt.roll * temp_fv0;
+        seqJointEarL->pitch = vehicle->srt.pitch * temp_fv0;
+        seqJointEarL->roll = vehicle->srt.roll * temp_fv0;
     }
     dll_vehicle(vehicle)->GetCameraPosition(vehicle, &sp70, &sp74, &sp78);
     gDLL_2_Camera->vtbl->reposition_player(((objdata->unk738.x - sp70) * player->animProgress) + sp70, ((objdata->unk738.y - sp74) * player->animProgress) + sp74, temp= ((objdata->unk738.z - sp78) * player->animProgress) + sp78);
     if ((fsa->enteredAnimState == 0) && (fsa->unk33A != 0)) {
         if (seqJointEarL != NULL) {
-            seqJointEarL[0] = 0;
-            seqJointEarL[2] = 0;
+            seqJointEarL->pitch = 0;
+            seqJointEarL->roll = 0;
         }
         player->shadow->flags &= ~OBJ_SHADOW_FLAG_FADE_OUT;
         player->globalPosition.x = objdata->unk7EC.x;
@@ -8803,7 +8803,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         } else {
             objAnimSetBlend(player, 0x440, -temp_s1->unk830 * 1023.0f);
         }
-        objExpr_func_80034804(player, 9)[1] = temp_s1->unk82C * -10240.0f;
+        objExpr_func_80034804(player, 9)->yaw = temp_s1->unk82C * -10240.0f;
         temp_s1->flags &= ~0x400;
         if ((fsa->target == NULL) && (dll_210_func_1A9D4(player, &temp_s1->aimX, &temp_s1->aimY, &temp_s1->aimZ, temp_s1->unk82C, temp_s1->unk830) != 0)) {
             temp_s1->flags |= 0x400;
@@ -8951,7 +8951,7 @@ s32 dll_210_func_1A9D4(Object* player, s32* arg1, s32* arg2, s32* arg3, f32 arg4
 // offset: 0x1AAD8 | func: 125
 void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
     Object* temp_a0;
-    s16* temp_v0;
+    SeqJoint* seqJoint;
     s32 i;
     Player_Data* temp_s0;
 
@@ -8974,9 +8974,9 @@ void dll_210_func_1AAD8(Object* player, ObjFSA_Data *fsa) {
             _bss_210[i] = 0;
         }
     }
-    temp_v0 = objExpr_func_80034804(player, 9);
-    temp_v0[1] = 0;
-    temp_v0[0] = 0;
+    seqJoint = objExpr_func_80034804(player, 9);
+    seqJoint->yaw = 0;
+    seqJoint->pitch = 0;
 }
 
 // offset: 0x1AC3C | func: 126

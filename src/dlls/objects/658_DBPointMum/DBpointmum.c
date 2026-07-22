@@ -575,20 +575,20 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
 
 // offset: 0x23CC | func: 22
 void dll_658_func_23CC(Object* self, s16 seqBoneID, s16 arg2, s16 arg3) {
-    s16 *seqBone;
+    SeqJoint* seqJoint;
     
-    seqBone = objExpr_func_80034804(self, seqBoneID);
+    seqJoint = objExpr_func_80034804(self, seqBoneID);
     
-    if (!seqBone){
+    if (!seqJoint){
         return;
     }
     
-    seqBone[1] += (arg2 - seqBone[1]) >> 1;
-    seqBone[0] += (arg3 - seqBone[0]) >> 1;
+    seqJoint->yaw += (arg2 - seqJoint->yaw) >> 1;
+    seqJoint->pitch += (arg3 - seqJoint->pitch) >> 1;
 
-    //@bug? Should one of these lines be affecting seqBone[0] instead? 
-    seqBone[1] = (seqBone[1] < -0x1555) ? -0x1555 : ((seqBone[1] > 0x1555) ? 0x1555 : seqBone[1]);
-    seqBone[1] = (seqBone[1] < -0x1555) ? -0x1555 : ((seqBone[1] > 0x1555) ? 0x1555 : seqBone[1]);
+    //@bug? Should one of these lines be affecting seqJoint->pitch instead? 
+    seqJoint->yaw = (seqJoint->yaw < -0x1555) ? -0x1555 : ((seqJoint->yaw > 0x1555) ? 0x1555 : seqJoint->yaw);
+    seqJoint->yaw = (seqJoint->yaw < -0x1555) ? -0x1555 : ((seqJoint->yaw > 0x1555) ? 0x1555 : seqJoint->yaw);
 
     if (arg2 ){ }
 }

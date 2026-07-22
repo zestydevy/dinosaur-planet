@@ -1,3 +1,5 @@
+// This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
+
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/gamebits.h"
@@ -16,14 +18,6 @@
 #include "sys/objprint.h"
 #include "sys/lfx.h"
 #include "types.h"
-
-// This is the cage object ("DLL 583 CageKyte" is the baby version of Kyte in the cage)
-
-typedef struct {
-s16 x;
-s16 y;
-s16 z;
-} BoneRotation;
 
 typedef struct {
     Object* kyte; //baby version
@@ -69,7 +63,7 @@ void kyteCage_control(Object* self) {
     s32 count;
     s32 index;
     s32 parentDC;
-    BoneRotation* rotate;
+    SeqJoint* seqJoint;
 
     objData = self->data;
     if (!objData->kyte) {
@@ -89,12 +83,12 @@ void kyteCage_control(Object* self) {
 
     if (self->parent) {
         parentDC = self->parent->unkDC;
-        rotate = (BoneRotation*)objExpr_func_80034804(self, 0);
+        seqJoint = objExpr_func_80034804(self, 0);
         if ((parentDC < 9) && (self->curModAnimId != 5)) {
-            rotate->z = self->parent->srt.roll;
+            seqJoint->roll = self->parent->srt.roll;
             objAnimSet(self, 5, 0, 0);
         } else if ((parentDC >= 9) && (self->curModAnimId != 9)) {
-            rotate->z = 0;
+            seqJoint->roll = 0;
             objAnimSet(self, 9, 0, 0);
         }
     }

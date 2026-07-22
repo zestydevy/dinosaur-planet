@@ -361,7 +361,7 @@ int DIMCannon_animCallback(Object* self, Object* animObj, AnimObj_Data* animData
             SeqJoint* barrelJoint;
             s32 angle;
             
-            barrelJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
+            barrelJoint = objExpr_func_80034804(self, 0);
             angle = -barrelJoint->pitch;
             self->srt.yaw -= joyGetStickX(0) * 4; //@framerate-dependent
 
@@ -452,7 +452,7 @@ void DIMCannon_aimCannonClaw(Object* self, f32 x, f32 y, f32 z, f32 targetDist) 
 
     //Calculate the barrel pitch angle needed for the cannon to hit its target, and animate towards it 
     {
-        barrelJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
+        barrelJoint = objExpr_func_80034804(self, 0);
         
         sqAimVectorY = 2500.0f;
 
@@ -570,7 +570,7 @@ void DIMCannon_fireWhenReady(Object* self) {
     }
 
     //Get the cannon's barrel seqJoint
-    barrelJoint = (SeqJoint*)objExpr_func_80034804(self, 0);
+    barrelJoint = objExpr_func_80034804(self, 0);
     
     //Create a cannonball
     {

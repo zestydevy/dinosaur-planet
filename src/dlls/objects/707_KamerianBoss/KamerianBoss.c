@@ -534,13 +534,13 @@ void KamerianBoss_control(Object *self) {
             if (objdata->rightPipeYOffset < 15000) {
                 objdata->rightPipeYOffset += gUpdateRate * 50;
             }
-            objExpr_func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
+            objExpr_func_80034804(self, 4)->translateY = objdata->rightPipeYOffset;
         }
         if (objdata->leftPipeYOffset != 0) {
             if (objdata->leftPipeYOffset < 15000) {
                 objdata->leftPipeYOffset += gUpdateRate * 50;
             }
-            objExpr_func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
+            objExpr_func_80034804(self, 3)->translateY = objdata->leftPipeYOffset;
         }
         // Useless assignment of v1? required to match
         var_v1 = 0;
