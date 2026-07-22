@@ -59,6 +59,14 @@ enum SnowHornTutorialSequences {
 
 #define GARUNDA_TE_WEEDS_NEEDED 12
 
+typedef struct{
+/*0x10*/ ObjSetup base;
+/*0x18*/ s16 unkRadius;
+/*0x1A*/ s16 unk1A;
+/*0x1C*/ s8 yaw;
+/*0x1D*/ s8 unk1D;
+} SnowHorn_Setup;
+
 typedef struct {
 /*000*/ s32 *unk0;
 /*004*/ s16 unkRadius;
@@ -92,7 +100,7 @@ typedef struct {
 /*060*/ UnkCurvesStruct unk60;
 /*168*/ s32 unk168;
 /*16C*/ s32 unk16C;
-/*170*/ DLL27_Data unk170;
+/*170*/ DLL27_Data collider;
 /*3d0*/ s8 _unk3D0[0x3E0-0x3D0];
 /*3e0*/ u32 unk3e0;
 /*3e4*/ u32 unk3e4;
@@ -113,136 +121,121 @@ typedef struct {
 /*42B*/ s8 unk42B;
 } SnowHorn_Data;
 
-typedef struct{
-/*0x10*/ ObjSetup base;
-/*0x18*/ s16 unkRadius;
-/*0x1A*/ s16 unk1A;
-/*0x1C*/ s8 yaw;
-/*0x1D*/ s8 unk1D;
-} SnowHorn_Setup;
-
-typedef struct {
-/*000*/ s8 unk0[0x62];
-/*062*/ s8 unk62;
-/*063*/ s8 unk63;
-/*064*/ s8 unk64[0x2A];
-/*08E*/ u8 unk8E[10];
-/*098*/ u8 unk98[10];
-} UnkStruct2;
-
-static int dll_496_func_84C(Object* self, Object* overrideObject, AnimObj_Data* animObjdata, s8 arg3);
-static s32 dll_496_func_980(Object* snowhorn);
-static void dll_496_func_CC4(Object *snowHorn, s32 lookAt);
-static void dll_496_func_D5C(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_D80(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_11C4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_11E0(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_174C(Object *snowHorn, SnowHorn_Data *objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_1980(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_1CA0(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_1D68(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_22E4(Object *snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
-static void dll_496_func_2318(Object* snowhorn, SnowHorn_Data* objdata, SnowHorn_Setup* mapsObj);
+static int SnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static s32 SnowHorn_func_980(Object* self);
+static void SnowHorn_func_CC4(Object *self, s32 doLookAt);
+static void SnowHorn_func_D5C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_D80(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_11C4(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_11E0(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_174C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_1980(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_1CA0(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_1D68(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_22E4(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
+static void SnowHorn_func_2318(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
 
 static const char _rodata_0[] = "MAM: curve setup failed\n";
 
-static Unk80026DF4 _data_0[] = {
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002f, 0x0030, 0x00,  0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002a, 0x0030, 0x00,  0.011, 0.005},
-    {SOUND_677_Metal_Clang, NO_SOUND, 0xffff, 0xffff, 0x01,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
-    {SOUND_677_Metal_Clang, NO_SOUND, 0xffff, 0xffff, 0x01,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00,  0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002a, 0x0030, 0x00, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002e, 0x0030, 0x00, 0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002d, 0x0030, 0x00, 0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002c, 0x0030, 0x00, 0.015, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0x002b, 0x0030, 0x00, 0.015, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 0xffff, 0xffff, 0x00, 0.0, 0.0}
+/*000*/ static Unk80026DF4 dJointHitSounds[] = {
+    {SOUND_377_Metal_Smack,  NO_SOUND, 47, 48, FALSE, 0.012, 0.005},
+    {SOUND_377_Metal_Smack,  NO_SOUND, 47, 48, FALSE, 0.012, 0.005},
+    {SOUND_377_Metal_Smack,  NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
+    {SOUND_677_Metal_Clang,  NO_SOUND, -1, -1, TRUE,  0.0,   0.0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_677_Metal_Clang,  NO_SOUND, -1, -1, TRUE,  0.0,   0.0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, 46, 48, FALSE, 0.012, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, 45, 48, FALSE, 0.012, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, 44, 48, FALSE, 0.015, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, 43, 48, FALSE, 0.015, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0}
 };
 
-static Vec3f _data_230[] = {
+/*230*/ static Vec3f dTerrainTestPoints[] = {
     VEC3F(-12, 0, -20),
     VEC3F(12, 0, -20),
     VEC3F(12, 0, 20),
     VEC3F(-12, 0, 20)
 };
-static f32 _data_260[] = {
+/*260*/ static f32 dTerrainRadii[] = {
     0, 0, 0, 0
 };
-/** Boolean - decides whether all SnowHorn should go to sleep */
-static u8 _data_270 = 0;
-static u8 _data_274 = 0;
-static s32 _data_278 = 0;
-static s16 _data_27C[] = {
+/*270*/ static u8 dIsNightTime = FALSE; //Decides whether SnowHorn should go to sleep
+/*274*/ static u8 _data_274 = 0;
+/*278*/ static s32 _data_278 = 0;
+/*27C*/ static s16 _data_27C[] = {
     0, 3
 };
-static f32 _data_280[] = {
+/*280*/ static f32 _data_280[] = {
     0.005, 0.0
 };
-static s16 _data_288[] = {
+/*288*/ static s16 _data_288[] = {
     35, 35, 35, 35, 41, 0, 0, 0
 };
-static f32 _data_298[] = {
+/*298*/ static f32 _data_298[] = {
     0.005, 0.005, 0.005, 0.005, 0.008, 0.005, 0.005, 0.005
 };
-static s16 _data_2B8[] = {0};
-static f32 _data_2BC[] = {0.005};
-static s32 _data_2C0[] = {
+/*2B8*/ static s16 _data_2B8[] = {0};
+/*2BC*/ static f32 _data_2BC[] = {0.005};
+/*2C0*/ static s32 _data_2C0[] = {
     0x0, 0x1
 };
-static s32 _data_2C8[] = {
+/*2C8*/ static s32 _data_2C8[] = {
     0x2, 0x3
 };
-static s32 _data_2D0[] = {
+/*2D0*/ static s32 _data_2D0[] = {
     0x4
 };
-static s32 _data_2D4[] = {
+/*2D4*/ static s32 _data_2D4[] = {
     0x5
 };
-static s32 _data_2D8[] = {
+/*2D8*/ static s32 _data_2D8[] = {
     0x6
 };
-static s32 _data_2DC[] = {
+/*2DC*/ static s32 _data_2DC[] = {
     0x7
 };
-static s32 _data_2E0[] = {
+/*2E0*/ static s32 _data_2E0[] = {
     0x8, 0x9
 };
-static s32 _data_2E8[] = {
+/*2E8*/ static s32 _data_2E8[] = {
     0x9, 0xb
 };
-static s32 _data_2F0[] = {
+/*2F0*/ static s32 _data_2F0[] = {
     0xc, 0xd, 0xe, 0xf
 };
 
-void dll_496_ctor(s32 arg0) { }
+// offset: 0x0 | ctor
+void SnowHorn_ctor(void* dll) { }
 
-void dll_496_dtor(s32 arg0) { }
+// offset: 0xC | dtor
+void SnowHorn_dtor(void* dll) { }
 
-void dll_496_setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
+// offset: 0x18 | func: 0 | export: 0
+void SnowHorn_obj_Setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
     s32 pad;
     SnowHorn_Data* objData = self->data;
-/*300*/ u8 _data_300[4] = {1, 1, 1, 1};
+/*300*/ u8 dTerrainColliderArgs[4] = {1, 1, 1, 1};
 
     self->srt.yaw = objSetup->yaw << 8;
-    self->animCallback = dll_496_func_84C;
+    self->animCallback = SnowHorn_animCallback;
     
     if (reset) {
         return;
@@ -256,33 +249,34 @@ void dll_496_setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
 
     switch (objSetup->unk1D) {
         case 0:
-            dll_496_func_D5C(self, objData, objSetup);
+            SnowHorn_func_D5C(self, objData, objSetup);
             break;
         case 2:
-            dll_496_func_11C4(self, objData, objSetup);
+            SnowHorn_func_11C4(self, objData, objSetup);
             break;
         case 1:
         case 3:
-            dll_496_func_174C(self, objData, objSetup);
+            SnowHorn_func_174C(self, objData, objSetup);
             break;
         case 4:
-            dll_496_func_1CA0(self, objData, objSetup);
+            SnowHorn_func_1CA0(self, objData, objSetup);
             break;
         case 5:
-            dll_496_func_22E4(self, objData, objSetup);
+            SnowHorn_func_22E4(self, objData, objSetup);
             break;
     }
 
     if (objData->unk424 & 1) {
-        gDLL_27->vtbl->init(&objData->unk170, DLL27FLAG_2000000 | DLL27FLAG_4000000, DLL27FLAG_NONE, DLL27MODE_1);
-        gDLL_27->vtbl->setup_terrain_collider(&objData->unk170, 4, _data_230, _data_260, _data_300);
-        gDLL_27->vtbl->reset(self, &objData->unk170);
+        gDLL_27->vtbl->init(&objData->collider, DLL27FLAG_2000000 | DLL27FLAG_4000000, DLL27FLAG_NONE, DLL27MODE_1);
+        gDLL_27->vtbl->setup_terrain_collider(&objData->collider, ARRAYCOUNT(dTerrainTestPoints), dTerrainTestPoints, dTerrainRadii, dTerrainColliderArgs);
+        gDLL_27->vtbl->reset(self, &objData->collider);
     }
 
     self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
 }
 
-void dll_496_control(Object* self) {
+// offset: 0x24C | func: 1 | export: 1
+void SnowHorn_obj_Control(Object* self) {
     SnowHorn_Data* objData;
     f32 time;
     SnowHorn_Setup* objSetup;
@@ -306,12 +300,12 @@ void dll_496_control(Object* self) {
     }
     
    if (objData->unk424 & 0x40) {
-        dll_496_func_CC4(self, objData->unk424 & 4);
+        SnowHorn_func_CC4(self, objData->unk424 & 4);
         objExpr_func_800328F0(self, &objData->lookAtUnk, objData->walkSpeed);
     }
     objExprEyeIdle(self, &objData->lookAtUnk);
 
-    if (func_80026DF4(self, _data_0, 0x1C, (objData->flags & 0x4000 ? 1 : 0), &objData->unk54)) {
+    if (func_80026DF4(self, dJointHitSounds, 0x1C, (objData->flags & 0x4000 ? 1 : 0), &objData->unk54)) {
         objData->flags |= 0x4000;
         return;
     }
@@ -320,36 +314,36 @@ void dll_496_control(Object* self) {
     objData->unk427 = gDLL_29_Gplay->vtbl->get_act(self->mapID);
 
     //Check whether it's nighttime
-    _data_270 = gDLL_7_Newday->vtbl->func8(&time);
+    dIsNightTime = gDLL_7_Newday->vtbl->func8(&time);
 
-    if (objData->flags & 0x8000 && dll_496_func_980(self)){
+    if (objData->flags & 0x8000 && SnowHorn_func_980(self)){
         return;
     }
 
     objData->distanceFromPlayer = vec3Distance(&self->globalPosition, &player->globalPosition);
     switch (objSetup->unk1D) {
         case 0:
-            dll_496_func_D80(self, objData, objSetup);
+            SnowHorn_func_D80(self, objData, objSetup);
             break;
         case 2:
-            dll_496_func_11E0(self, objData, objSetup);
+            SnowHorn_func_11E0(self, objData, objSetup);
             break;
         case 1:
         case 3:
-            dll_496_func_1980(self, objData, objSetup);
+            SnowHorn_func_1980(self, objData, objSetup);
             break;
         case 4:
-            dll_496_func_1D68(self, objData, objSetup);
+            SnowHorn_func_1D68(self, objData, objSetup);
             break;
         case 5:
-            dll_496_func_2318(self, objData, objSetup);
+            SnowHorn_func_2318(self, objData, objSetup);
             break;
     }
     
     if (objData->unk424 & 1) {
-        gDLL_27->vtbl->func_1E8(self, &objData->unk170, gUpdateRateF);
-        gDLL_27->vtbl->func_5A8(self, &objData->unk170);
-        gDLL_27->vtbl->func_624(self, &objData->unk170, gUpdateRateF);
+        gDLL_27->vtbl->func_1E8(self, &objData->collider, gUpdateRateF);
+        gDLL_27->vtbl->func_5A8(self, &objData->collider);
+        gDLL_27->vtbl->func_624(self, &objData->collider, gUpdateRateF);
     }
 
     if (objData->anims) {
@@ -389,9 +383,11 @@ void dll_496_control(Object* self) {
 
 }
 
-void dll_496_update(Object* self){ }
+// offset: 0x770 | func: 2 | export: 2
+void SnowHorn_obj_Update(Object* self){ }
 
-void dll_496_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+// offset: 0x77C | func: 3 | export: 3
+void SnowHorn_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     SnowHorn_Data* objData = self->data;
 
     if (visibility) {
@@ -400,19 +396,23 @@ void dll_496_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
     }
 }
 
-void dll_496_free(Object* self, s32 onlySelf) {
+// offset: 0x804 | func: 4 | export: 4
+void SnowHorn_obj_Free(Object* self, s32 onlySelf) {
     _data_274 = 0;
 }
 
-u32 dll_496_get_model_flags(Object *self) {
+// offset: 0x828 | func: 5 | export: 5
+u32 SnowHorn_obj_GetModelFlags(Object *self) {
     return MODFLAGS_1 | MODFLAGS_SHADOW | MODFLAGS_8 | MODFLAGS_EVENTS | MODFLAGS_80;
 }
 
-u32 dll_496_get_data_size(Object *self, s32 offsetAddr) {
+// offset: 0x838 | func: 6 | export: 6
+u32 SnowHorn_obj_GetDataSize(Object *self, s32 offsetAddr) {
     return sizeof(SnowHorn_Data);
 }
 
-static int dll_496_func_84C(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+// offset: 0x84C | func: 9
+static int SnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     SnowHorn_Data* objdata;
     s32 i;
 
@@ -423,7 +423,7 @@ static int dll_496_func_84C(Object* self, Object* animObj, AnimObj_Data* animDat
     }
 
     if (objdata->unk424 & 1) {
-        gDLL_27->vtbl->reset(self, &objdata->unk170);
+        gDLL_27->vtbl->reset(self, &objdata->collider);
     }
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -441,8 +441,9 @@ static int dll_496_func_84C(Object* self, Object* animObj, AnimObj_Data* animDat
     return 0;
 }
 
+// offset: 0x980 | func: 10
 /** SnowHorn sleep state machine: handles anims and sounds */
-static s32 dll_496_func_980(Object* self) {
+static s32 SnowHorn_func_980(Object* self) {
     UnkFunc_80024108Struct animInfo;
     SnowHorn_Data* objData;
     TextureAnimator* eyelidR;
@@ -489,7 +490,7 @@ static s32 dll_496_func_980(Object* self) {
             objData->sleepTimer-= gUpdateRate;
 
             //Play wake-up animation when it's daytime
-            if ((_data_270 == FALSE) && (objData->sleepTimer <= 0)) {  
+            if ((dIsNightTime == FALSE) && (objData->sleepTimer <= 0)) {  
                 objAnimSet(self, MODANIM_SnowHorn_Wake_Up, 0.0f, 0);
                 if (eyelidR != NULL) {
                     eyelidR->frame = 0;
@@ -525,8 +526,9 @@ static s32 dll_496_func_980(Object* self) {
     return 1;
 }
 
+// offset: 0xCC4 | func: 11
 /** Updates the SnowHorn's player position reference when nearby (for the look-at behaviour) */
-static void dll_496_func_CC4(Object *self, s32 doLookAt){
+static void SnowHorn_func_CC4(Object *self, s32 doLookAt){
     SnowHorn_Data *objData;
     Object *player;
       
@@ -543,17 +545,19 @@ static void dll_496_func_CC4(Object *self, s32 doLookAt){
     }
 }
 
-static void dll_496_func_D5C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0xD5C | func: 12
+static void SnowHorn_func_D5C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->flags = 0;
     objData->unk424 |= 0x40 | 4;
     objData->unkRadius = objSetup->unkRadius;
 }
 
+// offset: 0xD80 | func: 13
 /** Called by the standing SnowHorn (not by the ones that walk around) */
-static void dll_496_func_D80(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+static void SnowHorn_func_D80(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     Object* player;
 
-    if (_data_270) {
+    if (dIsNightTime) {
         objData->sleepTimer = mathRnd(0, 300);
         objData->flags |= 0x8000;
 
@@ -643,11 +647,13 @@ static void dll_496_func_D80(Object* self, SnowHorn_Data* objData, SnowHorn_Setu
 
 }
 
-static void dll_496_func_11C4(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x11C4 | func: 14
+static void SnowHorn_func_11C4(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->unk424 |= 0x40 | 4;
 }
 
-static void dll_496_func_11E0(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x11E0 | func: 15
+static void SnowHorn_func_11E0(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     SnowHorn_Data* objData2;
     SeqJoint* seqJoint;
     Object* player;
@@ -765,7 +771,7 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* objData, SnowHorn_Set
         }
         break;
     case 5:
-        if (_data_270 != 0) {
+        if (dIsNightTime != 0) {
             objData2->flags |= M_180_DEGREES;
             self->unkAF |= 8;
             self->unkAF &= ~1;
@@ -804,7 +810,8 @@ static void dll_496_func_11E0(Object* self, SnowHorn_Data* objData, SnowHorn_Set
     }
 }
 
-static void dll_496_func_174C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup){
+// offset: 0x174C | func: 16
+static void SnowHorn_func_174C(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup){
     s32 sp2C = 0x19;
     
     objData->unk424 |= 0x40 | 4 | 1;
@@ -857,14 +864,15 @@ static void dll_496_func_174C(Object *self, SnowHorn_Data* objData, SnowHorn_Set
     }
 }
 
-static void dll_496_func_1980(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x1980 | func: 17
+static void SnowHorn_func_1980(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     s32 pad;
     f32 dx;
     f32 dz;
     f32 speed;
     UnkCurvesStruct* curveStruct;
 
-    if (_data_270) {
+    if (dIsNightTime) {
         if (objData->walkSpeed > 0.0f) {
             objData->walkSpeed = objData->walkSpeed - 0.025f;
         } else {
@@ -927,7 +935,8 @@ static void dll_496_func_1980(Object* self, SnowHorn_Data* objData, SnowHorn_Set
     }
 }
 
-static void dll_496_func_1CA0(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x1CA0 | func: 18
+static void SnowHorn_func_1CA0(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->flags = mainGetBits(BIT_Garunda_Te_Quest_Progress);
     
     // If the 1st SpellStone is activated, make sure Garunda Te is in his end state
@@ -941,7 +950,8 @@ static void dll_496_func_1CA0(Object *self, SnowHorn_Data* objData, SnowHorn_Set
     objData->garundaTe_weedsEaten = mainGetBits(BIT_Garunda_Te_Weeds_Eaten);
 }
 
-static void dll_496_func_1D68(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x1D68 | func: 19
+static void SnowHorn_func_1D68(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     Object* frostWeed;
     
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
@@ -1049,9 +1059,11 @@ static void dll_496_func_1D68(Object* self, SnowHorn_Data* objData, SnowHorn_Set
     }
 }
 
-static void dll_496_func_22E4(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
+// offset: 0x22E4 | func: 20
+static void SnowHorn_func_22E4(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->anims = _data_2B8;
     objData->animSpeeds = _data_2BC;
 }
 
-static void dll_496_func_2318(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) { }
+// offset: 0x2318 | func: 21
+static void SnowHorn_func_2318(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) { }

@@ -262,7 +262,7 @@
 490 = objects/490_WGSH_flybaddie
 493 = objects/493_NWsfx
 494 = objects/494_NWtreebridge
-496 = objects/496_snowhorn
+496 = objects/496_SnowHorn
 497 = objects/497_NWtricky
 498 = objects/498_NWanimice
 499 = objects/499_NWice
