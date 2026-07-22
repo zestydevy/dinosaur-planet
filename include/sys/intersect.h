@@ -92,6 +92,6 @@ void trackToggleHitLine(s32 animatorID, Object* parentObject, s32 enableLines);
 void trackIntersectTick(void);
 void trackIntersectModLineBuild(ObjDef* objdef);
 s32 trackGetLineIntersect(Vec3f* pos1, Vec3f* pos2, f32 arg2, s32 arg3, TrackLineIntersectResult* result, Object* obj, s8 arg6, s8 arg7, u8 arg8, s8 arg9);
-void trackIntersect_func_8005B5B8(Object*, Object*, s32);
+void trackIntersect_func_8005B5B8(Object* obj, Object* mobileMapObj, s32 transformLocalVectors);
 
 #endif

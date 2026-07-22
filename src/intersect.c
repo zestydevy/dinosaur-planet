@@ -2735,7 +2735,7 @@ s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5) {
     return 0;
 }
 
-//parent_object_to_mobile_map_object?
+//trackIntersectParentObjToMobileMap / trackIntersectChangeObjCoordinateSpace ?
 void trackIntersect_func_8005B5B8(Object* obj, Object* mobileMapObj, s32 transformLocalVectors) {
     Object* parent;
     ObjectHitInfo* hitInfo;
