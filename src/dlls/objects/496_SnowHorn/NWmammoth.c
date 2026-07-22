@@ -37,7 +37,7 @@
 #define FROSTWEED_QUEST_CHEAT 0  
 #endif 
 
-enum SnowHornAnims {
+typedef enum {
     MODANIM_SnowHorn_Idle = 0,
     MODANIM_SnowHorn_Talk = 2,
     MODANIM_SnowHorn_Walk = 3,
@@ -45,9 +45,9 @@ enum SnowHornAnims {
     MODANIM_SnowHorn_Sleep = 5,
     MODANIM_SnowHorn_Wake_Up = 6,
     MODANIM_SnowHorn_Hit_React = 47
-};
+} SnowHornAnims;
 
-enum SnowHornTutorialSequences {
+typedef enum  {
     SEQ_0157_SnowHorn_Chat_BeforeDefeatingSharpClaw = 0, //Hmph, shouldn't you help your friend?
     SEQ_0157_SnowHorn_Chat_BeforeDiggingUpRoot = 1, //I'm too hungry to talk to strangers!
     SEQ_0158_SnowHorn_Chat_AfterDiggingUpRoot = 2, //If you press the C-right button you can feed me that root!
@@ -55,29 +55,30 @@ enum SnowHornTutorialSequences {
     SEQ_0625_SnowHorn_Chat_AfterEatingRoot1 = 4, //One root is never enough, I'm starving!
     SEQ_0248_SnowHorn_Cutscene_FeedingRoot2 = 5, //Ahh, that hit the spot! Tell you what, young 'un, I'll help you out!
     SEQ_0626_SnowHorn_Chat_AfterEatingRoot2 = 6  //I'm sorry lad, you're on your own now.
-};
+} SnowHornTutorialSequences;
 
 #define GARUNDA_TE_WEEDS_NEEDED 12
 
 typedef struct{
 /*0x10*/ ObjSetup base;
 /*0x18*/ s16 unkRadius;
-/*0x1A*/ s16 unk1A;
+/*0x1A*/ s16 squirtInvervalSeconds;
 /*0x1C*/ s8 yaw;
 /*0x1D*/ s8 characterIdx;
 } SnowHorn_Setup;
 
 typedef struct {
-/*000*/ s32 *unk0;
-/*004*/ s16 unkRadius;
-/*006*/ s16 unk6;
+/*000*/ s32 unk0;
+/*004*/ s16 playerRange;
+/*006*/ s16 squirtTimeMax;
 /*008*/ s16 timer;
-/*00A*/ s16 sleepTimer; //randomly-assigned value?
+/*00A*/ s16 sleepTimer; //randomly-assigned value
 union {
-    /*00c*/ u16 flags;
-    /*00c*/ u16 state;
+    /*00c*/ u16 flags; //For walking SnowHorn
+    /*00c*/ u16 walkFlags; //For walking SnowHorn
+    /*00c*/ u16 state; //Used as a State Machine value by Garunda Te and NWmammothsquirt
 };
-/*00e*/ u16 unkE; //yaw?
+/*00e*/ u16 headYaw;
 /*010*/ f32 unk10;
 /*014*/ Vec3f trunkAttachPoint;
 /*020*/ f32 distanceFromPlayer;
@@ -86,35 +87,25 @@ union {
 /*026*/ s8 unk26;
 /*027*/ s8 unk27;
 /*028*/ Object* frostWeed;
-/*02c*/ s16 unk2C;
+/*02c*/ s16 aimYaw;
 /*02e*/ s16 unk2E;
 /*030*/ s32 unk30;
 /*034*/ s32 unk34;
-/*038*/ f32 unk38;
-/*03c*/ f32 unk3C;
-/*040*/ f32 unk40;
+/*038*/ Vec3f aimTarget;
 /*044*/ s16* anims;
 /*048*/ f32* animSpeeds;
 /*04c*/ s32* chatSequenceList;
 /*050*/ f32 animSpeed;
-/*054*/ f32 unk54;
-/*058*/ f32 walkSpeed; //has something to do with the struct at 0x60?
+/*054*/ f32 animSpeedFlinch;
+/*058*/ f32 walkSpeed;
 /*05C*/ s32 unk5C;
 /*060*/ UnkCurvesStruct curves;
 /*168*/ s32 unk168;
 /*16C*/ s32 unk16C;
 /*170*/ DLL27_Data collider;
-/*3d0*/ s8 _unk3D0[0x3E0-0x3D0];
-/*3e0*/ u32 unk3e0;
-/*3e4*/ u32 unk3e4;
-/*3e8*/ u32 unk3e8;
-/*3ec*/ u32 unk3ec;
-/*3f0*/ u32 unk3f0;
-/*3f4*/ u32 unk3f4;
-/*3f8*/ u32 unk3f8;
-/*3fc*/ u32 unk3fc;
+/*3d0*/ s8 _unk3D0[0x400-0x3D0];
 /*400*/ HeadAnimation headAnim;
-/*424*/ u8 unk424;
+/*424*/ u8 animFlags;
 /*425*/ u8 chatSequenceIdx;
 /*426*/ u8 chatSequenceCount;
 /*427*/ u8 mapAct;
@@ -151,9 +142,38 @@ typedef enum {
     SnowHorn_FLAG_800 = 0x800,
     SnowHorn_FLAG_1000 = 0x1000,
     SnowHorn_FLAG_2000 = 0x2000,
-    SnowHorn_FLAG_4000 = 0x4000,
+    SnowHorn_FLAG_4000 = 0x4000, //Hit
     SnowHorn_FLAG_8000 = 0x8000,
 } SnowHorn_Flags;
+
+typedef enum {
+    SnowHorn_ANIMFLAG_1 = 1,
+    SnowHorn_ANIMFLAG_2 = 2,
+    SnowHorn_ANIMFLAG_4 = 4,
+    SnowHorn_ANIMFLAG_8_Animation_Finished = 8,
+    SnowHorn_ANIMFLAG_10 = 0x10,
+    SnowHorn_ANIMFLAG_20 = 0x20,
+    SnowHorn_ANIMFLAG_40 = 0x40,
+    SnowHorn_ANIMFLAG_80_Player_Nearby = 0x80
+} SnowHorn_AnimFlags;
+
+//NOTE: these State Machine indices skip over some values in order to match up with the chat ObjSeq index associated with each state.
+typedef enum {
+    GrumpySnowHorn_STATE_0_Before_Tricky_Command_Tutorial = 0,
+    GrumpySnowHorn_STATE_1_Asking_for_Roots = 1,
+    GrumpySnowHorn_STATE_2_Waiting_for_1st_Root = 2,
+    GrumpySnowHorn_STATE_4_Waiting_for_2nd_Root = 4,
+    GrumpySnowHorn_STATE_6_Well_Fed = 6
+} GrumpySnowHorn_States; 
+
+typedef enum {
+    SnowHornSquirt_STATE_0,
+    SnowHornSquirt_STATE_1,
+    SnowHornSquirt_STATE_2,
+    SnowHornSquirt_STATE_3,
+    SnowHornSquirt_STATE_4,
+    SnowHornSquirt_STATE_5
+} SnowHornSquirt_States;
 
 typedef enum {
     GarundaTe_STATE_0_Trapped_Under_Ice,
@@ -292,12 +312,14 @@ void SnowHorn_obj_Setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
     }
 
     objAddObjectType(self, OBJTYPE_SnowHorn);
+
     objData->animSpeed = 0.005f;
-    objData->unkRadius = objSetup->unkRadius;
-    objData->unk6 = objSetup->unk1A * 60;
+    objData->playerRange = objSetup->unkRadius;
+    objData->squirtTimeMax = objSetup->squirtInvervalSeconds * 60;
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
+    //Character-specific setup
     switch (objSetup->characterIdx) {
     case SnowHorn_IDX_0_Grumpy:
         SnowHorn_grumpySetup(self, objData, objSetup);
@@ -317,12 +339,14 @@ void SnowHorn_obj_Setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
         break;
     }
 
-    if (objData->unk424 & 1) {
+    //Terrain collider setup
+    if (objData->animFlags & SnowHorn_ANIMFLAG_1) {
         gDLL_27->vtbl->init(&objData->collider, DLL27FLAG_2000000 | DLL27FLAG_4000000, DLL27FLAG_NONE, DLL27MODE_1);
         gDLL_27->vtbl->setup_terrain_collider(&objData->collider, ARRAYCOUNT(dTerrainTestPoints), dTerrainTestPoints, dTerrainRadii, dTerrainColliderArgs);
         gDLL_27->vtbl->reset(self, &objData->collider);
     }
 
+    //Shadows
     self->shadow->flags |= (OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
 }
 
@@ -340,41 +364,45 @@ void SnowHorn_obj_Control(Object* self) {
     objSetup = (SnowHorn_Setup*)self->setup;
     player = objGetPlayer();
 
-    if (vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition) < (2.0f * SQ(objData->unkRadius))) {
-        if ((objData->unk424 & 0x80) == FALSE) {
-            objData->unk424 |= 0x80;
+    //Check whether the player is nearby
+    if (vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition) < (2.0f * SQ(objData->playerRange))) {
+        if ((objData->animFlags & SnowHorn_ANIMFLAG_80_Player_Nearby) == FALSE) {
+            objData->animFlags |= SnowHorn_ANIMFLAG_80_Player_Nearby;
         }
     } else {
-        if (objData->unk424 & 0x80) {
-            objData->unk424 &= ~0x80;
+        if (objData->animFlags & SnowHorn_ANIMFLAG_80_Player_Nearby) {
+            objData->animFlags &= ~SnowHorn_ANIMFLAG_80_Player_Nearby;
         }
     }
     
-   if (objData->unk424 & 0x40) {
-        SnowHorn_lookAtPlayer(self, objData->unk424 & 4);
+    //Handle procedural blinking/head turn animations 
+    if (objData->animFlags & SnowHorn_ANIMFLAG_40) {
+        SnowHorn_lookAtPlayer(self, objData->animFlags & SnowHorn_ANIMFLAG_4);
         objExpr_func_800328F0(self, &objData->headAnim, objData->walkSpeed);
     }
     objExprEyeIdle(self, &objData->headAnim);
 
-    if (func_80026DF4(self, dJointHitSounds, ARRAYCOUNT(dJointHitSounds), (objData->flags & 0x4000 ? 1 : 0), &objData->unk54)) {
-        objData->flags |= 0x4000;
+    //React to being hit
+    if (func_80026DF4(self, dJointHitSounds, ARRAYCOUNT(dJointHitSounds), (objData->flags & SnowHorn_FLAG_4000 ? 1 : 0), &objData->animSpeedFlinch)) {
+        objData->flags |= SnowHorn_FLAG_4000;
         return;
     }
-    
-    objData->flags &= ~0x4000;
+    objData->flags &= ~SnowHorn_FLAG_4000;
+
     objData->mapAct = gDLL_29_Gplay->vtbl->get_act(self->mapID);
 
     //Check whether it's nighttime
     dIsNightTime = gDLL_7_Newday->vtbl->func8(&time);
 
-    if (objData->flags & 0x8000) {
-        if (SnowHorn_sleep(self)) {
-            return;
-        }
+    //Return early when asleep
+    if ((objData->flags & SnowHorn_FLAG_8000) && SnowHorn_sleep(self)) {
+        return;
     }
 
+    //Store player distance
     objData->distanceFromPlayer = vec3Distance(&self->globalPosition, &player->globalPosition);
 
+    //Handle character-specific behaviour
     switch (objSetup->characterIdx) {
     case SnowHorn_IDX_0_Grumpy:
         SnowHorn_grumpyControl(self, objData, objSetup);
@@ -394,33 +422,36 @@ void SnowHorn_obj_Control(Object* self) {
         break;
     }
     
-    if (objData->unk424 & 1) {
+    //Handle terrain collider
+    if (objData->animFlags & SnowHorn_ANIMFLAG_1) {
         gDLL_27->vtbl->func_1E8(self, &objData->collider, gUpdateRateF);
         gDLL_27->vtbl->func_5A8(self, &objData->collider);
         gDLL_27->vtbl->func_624(self, &objData->collider, gUpdateRateF);
     }
 
+    //Handle animations
     if (objData->anims) {
-        animIndex = objData->flags & ~0x8000;
+        animIndex = objData->flags & ~SnowHorn_FLAG_8000;
         if (self->curModAnimId != objData->anims[animIndex]) {
             objAnimSet(self, objData->anims[animIndex], 0.0f, 0);
 
             if (objData->animSpeeds[animIndex] >= 0.0f) {
                 objData->animSpeed = objData->animSpeeds[animIndex];
             }
-            objData->unk424 &= ~8;
+            objData->animFlags &= ~SnowHorn_ANIMFLAG_8_Animation_Finished;
         }
 
         if (objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &animInfo)) {
-            objData->unk424 |= 8;
+            objData->animFlags |= SnowHorn_ANIMFLAG_8_Animation_Finished;
         } else {
-            objData->unk424 &= ~8;
+            objData->animFlags &= ~SnowHorn_ANIMFLAG_8_Animation_Finished;
         }
         objAnim_func_80025780(self, gUpdateRateF, &animInfo, 0);
     }
 
+    //Handle chat sequences
     if (objData->chatSequenceList && (self->unkAF & ARROW_FLAG_1_Interacted)) {
-        if (objData->unk424 & 0x20) {
+        if (objData->animFlags & SnowHorn_ANIMFLAG_20) {
             seqIndex = mathRnd(0, objData->chatSequenceCount - 1);
         } else {
             seqIndex = objData->chatSequenceIdx;
@@ -478,13 +509,15 @@ static int SnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* an
         objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     }
 
-    if (objdata->unk424 & 1) {
+    if (objdata->animFlags & SnowHorn_ANIMFLAG_1) {
         gDLL_27->vtbl->reset(self, &objdata->collider);
     }
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
+
     animData->unk62 = 0;
 
+    //Grant SnowHorn Wastes' map via a sequence message
     for (i = 0; i < animData->messageCount; i++){
         if (animData->messages[i] == 3) {
             mainSetBits(BIT_Map_SW, 1);
@@ -563,7 +596,7 @@ static s32 SnowHorn_sleep(Object* self) {
 
         if (animIsFinished) {
             objAnimSet(self, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
-            objData->flags &= ~0x8000;
+            objData->flags &= ~SnowHorn_FLAG_8000;
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
             return 0;
         }
@@ -583,7 +616,6 @@ static s32 SnowHorn_sleep(Object* self) {
 }
 
 // offset: 0xCC4 | func: 11
-/** Looks at the player when they're nearby. */
 static void SnowHorn_lookAtPlayer(Object *self, s32 doLookAt){
     SnowHorn_Data *objData;
     Object *player;
@@ -604,8 +636,8 @@ static void SnowHorn_lookAtPlayer(Object *self, s32 doLookAt){
 // offset: 0xD5C | func: 12
 static void SnowHorn_grumpySetup(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->flags = 0;
-    objData->unk424 |= 0x40 | 4;
-    objData->unkRadius = objSetup->unkRadius;
+    objData->animFlags |= SnowHorn_ANIMFLAG_40 | SnowHorn_ANIMFLAG_4;
+    objData->playerRange = objSetup->unkRadius;
 }
 
 // offset: 0xD80 | func: 13
@@ -614,14 +646,13 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
 
     if (dIsNightTime) {
         objData->sleepTimer = mathRnd(0, 300);
-        objData->flags |= 0x8000;
+        objData->flags |= SnowHorn_FLAG_8000;
 
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         self->unkAF &= ~ARROW_FLAG_1_Interacted;
         return;
     }
-    
-    objData->flags &= ~0x8000;
+    objData->flags &= ~SnowHorn_FLAG_8000;
 
     if (self->curModAnimId != 0) {
         objAnimSet(self, 0, 0.0f, 0);
@@ -632,7 +663,7 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
     if (!player) 
         return;
     
-    if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) > SQ((f32)objData->unkRadius)) {
+    if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) > SQ((f32)objData->playerRange)) {
         objData->sleepTimer += gUpdateRate;
         if (objData->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->start_obj_sequence(7, self, -1);
@@ -644,164 +675,181 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
     objData->sleepTimer = 0;
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
-    switch (objData->flags) {
+    switch (objData->state) {
     u32 rootsEaten;
-    case 0:
+    case GrumpySnowHorn_STATE_0_Before_Tricky_Command_Tutorial:
+        //Wait for Sabre to defeat the SharpClaw chasing Tricky
         if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-            objData->flags = 1;
+            objData->state = GrumpySnowHorn_STATE_1_Asking_for_Roots;
         }
         break;    
-    case 1:
+    case GrumpySnowHorn_STATE_1_Asking_for_Roots:
+        //Check how many roots have been eaten
         rootsEaten = mainGetBits(BIT_SnowHorn_Tutorial_NumRootsFed);
         switch (rootsEaten) {
         case 0:
+            //Advance state if no roots have been eaten and an Alpine Root has been collected
             if (mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot1) || 
                 mainGetBits(BIT_SnowHorn_Tutorial_GotAlpineRoot2))
             {
-                objData->flags = 2;
+                objData->state = GrumpySnowHorn_STATE_2_Waiting_for_1st_Root;
             }
             break;
         case 1:
-            objData->flags = 4;
+            //Advance state if one Alpine Root has been eaten
+            objData->state = GrumpySnowHorn_STATE_4_Waiting_for_2nd_Root;
             break;
         default:
-            objData->flags = 6;
+            //Advance state if both Alpine Roots have been eaten
+            objData->state = GrumpySnowHorn_STATE_6_Well_Fed;
             break;
         }
         break;
-    case 2:
+    case GrumpySnowHorn_STATE_2_Waiting_for_1st_Root:
+        //Play the first root eating sequence when an Alpine Root is offered
         if ((self->unkAF & ARROW_FLAG_4_Highlighted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
             mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 1);
             mainDecrementBits(BIT_SW_Alpine_Roots);
             gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0159_SnowHorn_Cutscene_FeedingRoot1, self, -1);
-            objData->flags = 4;
+            objData->state = GrumpySnowHorn_STATE_4_Waiting_for_2nd_Root;
             return;
         }
         break;
-    case 4:
+    case GrumpySnowHorn_STATE_4_Waiting_for_2nd_Root:
+        //Play the second root eating sequence when an Alpine Root is offered
         if ((self->unkAF & ARROW_FLAG_4_Highlighted) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SW_Alpine_Roots)) {
             mainSetBits(BIT_SnowHorn_Tutorial_NumRootsFed, 2);
             mainDecrementBits(BIT_SW_Alpine_Roots);
             gDLL_3_Animation->vtbl->start_obj_sequence(SEQ_0248_SnowHorn_Cutscene_FeedingRoot2, self, -1);
-            objData->flags = 2 | 4;
+            objData->state = GrumpySnowHorn_STATE_6_Well_Fed;
             return;
         }
         break;
-    case 6:
+    case GrumpySnowHorn_STATE_6_Well_Fed:
         break;
     }
     
     //Play chat sequence
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         self->unkAF &= ~ARROW_FLAG_1_Interacted;
-        if (objData->flags < (1 | 2 | 4)) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(objData->flags, self, -1);
+        if (objData->state <= GrumpySnowHorn_STATE_6_Well_Fed) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(objData->state, self, -1);
             joyDisableButtons(0, A_BUTTON);
         }
     }
-
 }
 
 // offset: 0x11C4 | func: 14
 static void SnowHorn_blueSetup(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
-    objData->unk424 |= 0x40 | 4;
+    objData->animFlags |= SnowHorn_ANIMFLAG_40 | SnowHorn_ANIMFLAG_4;
 }
 
 // offset: 0x11E0 | func: 15
 static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
-    SnowHorn_Data* objData2;
+    SnowHorn_Data* squirtData;
     SeqJoint* seqJoint;
     Object* player;
     SRT srt;
     Vec3f v;
     u32 pad;
-    s32 seqJointAngle;
+    s32 squirtYaw;
     s32 animFinished;
-    s16 *temp;
+    s16 *rotate;
     s32 aimYawDiff;
     Vec3f f;
 
-    objData2 = self->data;
+    squirtData = self->data;
     
     animFinished = objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
 
-    switch (objData2->flags) {
-    case 0:
+    //Squirt State Machine (unfinished!)
+    //Seems intended to shoot water at the player, but the aiming calculations go unused.
+    switch (squirtData->state) {
+    case SnowHornSquirt_STATE_0:
         v.x = 0.0f;
         v.y = 10.0f;
         v.z = -25.0f;
+
         srt.transl.z = 0.0f;
         srt.transl.y = 0.0f;
         srt.transl.x = 0.0f;
         srt.roll = 0;
         srt.pitch = 0;
-        srt.yaw = objData2->unkE;
+        srt.yaw = squirtData->headYaw;
         srt.scale = 0.0f;
         mathRotateRPY(&srt, v.f);
-        srt.transl.x = objData2->trunkAttachPoint.x + v.f[0];
+
+        srt.transl.x = squirtData->trunkAttachPoint.x + v.f[0];
         srt.transl.y = self->srt.transl.y + v.f[1];
-        srt.transl.z = objData2->trunkAttachPoint.z + v.f[2];
+        srt.transl.z = squirtData->trunkAttachPoint.z + v.f[2];
         srt.yaw = 0;
-        objData2->flags = 1;
+
+        squirtData->state = SnowHornSquirt_STATE_1;
         break;
-    case 1:
+    case SnowHornSquirt_STATE_1:
         if (self->animProgress > 0.25f) {
             v.x = 0.0f;
             v.y = 20.0f;
             v.z = -20.0f;
+
             srt.transl.z = 0.0f;
             srt.transl.y = 0.0f;
             srt.transl.x = 0.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = objData2->unkE;
+            srt.yaw = squirtData->headYaw;
             srt.scale = 0.0f;
             mathRotateRPY(&srt, v.f);
-            srt.transl.f[0] = objData2->trunkAttachPoint.f[0] + v.f[0];
+
+            srt.transl.f[0] = squirtData->trunkAttachPoint.f[0] + v.f[0];
             srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
-            srt.transl.f[2] = objData2->trunkAttachPoint.f[2] + v.f[2];
+            srt.transl.f[2] = squirtData->trunkAttachPoint.f[2] + v.f[2];
             srt.yaw = 0;
-            objData2->flags = 2;
+
+            squirtData->state = SnowHornSquirt_STATE_2;
         }
         break;
-    case 2:
+    case SnowHornSquirt_STATE_2:
         if (self->animProgress > 0.65f) {
             v.x = 0.0f;
             v.y = 0.0f;
             v.z = -40.0f;
+
             srt.transl.z = 0.0f;
             srt.transl.y = 0.0f;
             srt.transl.x = 0.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = objData2->unkE;
+            srt.yaw = squirtData->headYaw;
             srt.scale = 0.0f;
             mathRotateRPY(&srt, v.f);
+
             f.x = self->globalPosition.x;
             f.y = self->globalPosition.y;
             f.z = self->globalPosition.z;
 
-            self->globalPosition.x = objData2->trunkAttachPoint.x;
+            self->globalPosition.x = squirtData->trunkAttachPoint.x;
             self->globalPosition.y = self->srt.transl.y + 40.0f;
-            self->globalPosition.z = objData2->trunkAttachPoint.z;
+            self->globalPosition.z = squirtData->trunkAttachPoint.z;
             srt.yaw = 0;
 
             self->globalPosition.x = f.x;
             self->globalPosition.y = f.y;
             self->globalPosition.z = f.z;
-            objData2->flags = 3;
+            squirtData->state = SnowHornSquirt_STATE_3;
         }
         break;
-    case 3:
+    case SnowHornSquirt_STATE_3:
         v.x = 0.0f;
         v.y = 0.0f;
         v.z = -60.0f;
+
         srt.transl.z = 0.0f;
         srt.transl.y = 0.0f;
         srt.transl.x = 0.0f;
         srt.roll = 0;
         srt.pitch = 0;
-        srt.yaw = objData2->unkE;
+        srt.yaw = squirtData->headYaw;
         srt.scale = 0.0f;
         mathRotateRPY(&srt, v.f);
 
@@ -809,59 +857,65 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
         f.y = self->globalPosition.y;
         f.z = self->globalPosition.z;
 
-        self->globalPosition.x = objData2->trunkAttachPoint.f[0] + v.f[0];
+        self->globalPosition.x = squirtData->trunkAttachPoint.f[0] + v.f[0];
         self->globalPosition.y = self->globalPosition.f[1] + v.f[1];
-        self->globalPosition.z = objData2->trunkAttachPoint.f[2] + v.f[2];
+        self->globalPosition.z = squirtData->trunkAttachPoint.f[2] + v.f[2];
         srt.yaw = 0;
 
         self->globalPosition.x = f.x;
         self->globalPosition.y = f.y;
         self->globalPosition.z = f.z;
-        objData2->flags = 4;
+        squirtData->state = SnowHornSquirt_STATE_4;
         break;
-    case 4:
-        if (animFinished != 0) {
+    case SnowHornSquirt_STATE_4:
+        if (animFinished) {
             objAnimSet(self, 0, 0.0f, 0);
-            objData2->flags = 5;
+            squirtData->state = SnowHornSquirt_STATE_5;
         }
         break;
-    case 5:
-        if (dIsNightTime != 0) {
-            objData2->flags |= M_180_DEGREES;
-            self->unkAF |= 8;
-            self->unkAF &= ~1;
+    case SnowHornSquirt_STATE_5:
+        if (dIsNightTime) {
+            squirtData->flags |= SnowHorn_FLAG_8000;
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
+            self->unkAF &= ~ARROW_FLAG_1_Interacted;
             break;
         }
 
-        objData2->timer += gUpdateRate;
-        if (objData2->unk6 < objData2->timer) {
-            objData2->timer = 0;
+        squirtData->timer += gUpdateRate;
+        if (squirtData->timer > squirtData->squirtTimeMax) {
+            squirtData->timer = 0;
+
+            //Get the head seqJoint's yaw
             seqJoint = objExpr_func_80034804(self, 0);
-            objData2->unkE = M_180_DEGREES - seqJoint->yaw;
+            squirtData->headYaw = M_180_DEGREES - seqJoint->yaw;
 
             player = objGetPlayer();
             
             //Get the angle to the location the player will be at 1 second in the future
-            aimYawDiff = (mathAtan2f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) - (self->srt.yaw & 0xFFFF)) + M_180_DEGREES;
-            CIRCLE_WRAP(aimYawDiff)
+            aimYawDiff = (
+                mathAtan2f((player->globalPosition.x + (player->velocity.x * 60.0f)) - self->globalPosition.x, 
+                           (player->globalPosition.z + (player->velocity.z * 60.0f)) - self->globalPosition.z) 
+                - (self->srt.yaw & 0xFFFF)) + M_180_DEGREES;
+
+            CIRCLE_WRAP(aimYawDiff);
             
             objAnimSet(self, 1, 0.0f, 0);
 
             if ((-3000 < aimYawDiff) && (aimYawDiff < 3000)) {
-                objData2->unk38 = player->srt.transl.x;
-                objData2->unk3C = player->srt.transl.y;
-                objData2->unk40 = player->srt.transl.z;
-                objData2->unk2C = objData2->unkE;
+                squirtData->aimTarget.x = player->srt.transl.x;
+                squirtData->aimTarget.y = player->srt.transl.y;
+                squirtData->aimTarget.z = player->srt.transl.z;
+                squirtData->aimYaw = squirtData->headYaw;
             } else {
-                temp = &self->srt.yaw;
-                seqJointAngle = seqJoint->yaw + *temp;
-                objData2->unk38 = self->srt.transl.x - (mathSinfInterp(seqJointAngle) * 250.0f);
-                objData2->unk3C = self->srt.transl.y;
-                objData2->unk40 = self->srt.transl.z - (mathCosfInterp(seqJointAngle) * 250.0f);
-                objData2->unk2C = 0;
+                rotate = &self->srt.yaw;
+                squirtYaw = seqJoint->yaw + rotate[0];
+                squirtData->aimTarget.x = self->srt.transl.x - (mathSinfInterp(squirtYaw) * 250.0f);
+                squirtData->aimTarget.y = self->srt.transl.y;
+                squirtData->aimTarget.z = self->srt.transl.z - (mathCosfInterp(squirtYaw) * 250.0f);
+                squirtData->aimYaw = 0;
             }
 
-            objData2->flags = 0;
+            squirtData->flags = 0;
         }
         break;
     }
@@ -871,7 +925,7 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
 static void SnowHorn_walkingSetup(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup){
     s32 curveType = 0x19;
     
-    objData->unk424 |= 0x40 | 4 | 1;
+    objData->animFlags |= SnowHorn_ANIMFLAG_40 | SnowHorn_ANIMFLAG_4 | SnowHorn_ANIMFLAG_1;
 
     objData->anims = dWalkingAnims;
     objData->animSpeeds = dWalkingAnimSpeeds;
@@ -946,11 +1000,13 @@ static void SnowHorn_walkingControl(Object* self, SnowHorn_Data* objData, SnowHo
     f32 speed;
     UnkCurvesStruct* curveStruct;
 
+    //Handle walk speed
     if (dIsNightTime) {
+        //Slow to a stop, and go to sleep
         if (objData->walkSpeed > 0.0f) {
-            objData->walkSpeed = objData->walkSpeed - 0.025f;
+            objData->walkSpeed -= 0.025f;
         } else {
-            objData->flags |= 0x8000;
+            objData->flags |= SnowHorn_FLAG_8000;
             objData->walkSpeed = 0.0f;
             objData->sleepTimer = mathRnd(0, 300);
             return;
@@ -962,13 +1018,14 @@ static void SnowHorn_walkingControl(Object* self, SnowHorn_Data* objData, SnowHo
             objData->walkSpeed = 0.0f;
         }
     } else {
+        //Accelerate back to walking speed
         objData->walkSpeed += 0.025f;
         if (objData->walkSpeed > 0.5f) {
             objData->walkSpeed = 0.5f;
         }
     }
     
-    //Play a sequence when entering an Area object with a specific value
+    //Play a sequence when entering an Area object with a specific value (unused?)
     if (_data_274 && objGetAreaValueAtPoint(self->globalPosition.x, self->globalPosition.y, self->globalPosition.z) == 0xA){
         //NOTE: objSeqID out of bounds! Maybe a deleted/planned sequence?
         gDLL_3_Animation->vtbl->start_obj_sequence(16, self, -1);
@@ -997,13 +1054,13 @@ static void SnowHorn_walkingControl(Object* self, SnowHorn_Data* objData, SnowHo
         self->srt.transl.x = curveStruct->unk0.unk68.x;
         self->srt.transl.z = curveStruct->unk0.unk68.z;
 
-        objData->unk424 &= ~0x4;
+        objData->animFlags &= ~SnowHorn_ANIMFLAG_4;
         
         if (objData->walkSpeed <= 0.0f) {
             objData->flags = 0;
         }
     } else {
-        objData->unk424 |= 4;
+        objData->animFlags |= SnowHorn_ANIMFLAG_4;
         if (objData->walkSpeed > 0.1f) {
             objData->flags = 1;
         }
@@ -1095,7 +1152,7 @@ static void SnowHorn_garundaTeControl(Object* self, SnowHorn_Data* objData, Snow
         }
         break;
     case GarundaTe_STATE_4_Eating_a_FrostWeed:
-        if (objData->unk424 & 8) {
+        if (objData->animFlags & SnowHorn_ANIMFLAG_8_Animation_Finished) {
             //Finish the FrostWeed quest when Garunda Te has eaten 12 weeds
             if (objData->garundaTeWeedsEaten >= GARUNDA_TE_WEEDS_NEEDED) {
                 mainSetBits(BIT_Garunda_Te_Fed, TRUE);
