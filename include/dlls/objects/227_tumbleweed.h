@@ -85,4 +85,6 @@ DLL_INTERFACE(DLL_227_Tumbleweed) {
 /*12*/ void (*store_player)(Object* self, Object* player);
 };
 
+#define dll_tumbleweed(obj) (((DLL_227_Tumbleweed*)obj->dll)->vtbl)
+
 #endif //_DLLS_227_H
