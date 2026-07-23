@@ -39,48 +39,51 @@
 
 typedef struct{
 /*0x10*/ ObjSetup base;
-/*0x18*/ s16 unkRadius;
-/*0x1A*/ s16 squirtInvervalSeconds;
+/*0x18*/ s16 playerNearbyRange; //`SnowHorn_FLAG_80_Player_Nearby` is set when the player is inside a multiple of this range (not used for anything, though)
+/*0x1A*/ s16 squirtInverval;    //For the Blue SnowHorn: the time (in seconds) between squirting water at the player
 /*0x1C*/ s8 yaw;
-/*0x1D*/ s8 characterIdx;
+/*0x1D*/ s8 characterIdx;       //Which SnowHorn this is (see `SnowHorn_CharacterIndices`)
 } SnowHorn_Setup;
 
 typedef struct {
 /*000*/ s32 unk0;
-/*004*/ s16 playerRange;
-/*006*/ s16 squirtTimeMax;
-/*008*/ s16 timer;
-/*00A*/ s16 sleepTimer;         //Randomly-assigned value
-/*00c*/ u16 state;              //Used as a State Machine value and as secondary flags (in an overlapping way)
-/*00e*/ u16 headYaw;
+/*004*/ s16 playerNearbyRange;  //`SnowHorn_FLAG_80_Player_Nearby` is set when the player is inside a multiple of this range (not used for anything, though)
+/*006*/ s16 squirtInterval;     //For the Blue SnowHorn: the time (in frames) between squirting water at the player
+/*008*/ s16 timer;              //A timer for calling out to the player (Garunda Te), or squirting water (Blue SnowHorn)
+
+//A randomised delay before a SnowHorn wakes at daytime (to stagger nearby SnowHorn's wake animations).
+//Also used by the Grumpy SnowHorn to attempt to play an out-of-bounds ObjSeq when the player is nearby.
+/*00A*/ s16 sleepTimer;         
+/*00c*/ u16 state;              //Used as a State Machine value and for secondary flags (in an overlapping way)
+/*00e*/ u16 headYaw;            //The yaw of the SnowHorn's head seqJoint
 /*010*/ s32 unk10;
-/*014*/ Vec3f trunkAttachPoint;
-/*020*/ f32 distanceFromPlayer;
-/*024*/ s32 unk24;
-/*028*/ Object* frostWeed;
-/*02c*/ s16 aimYaw;
-/*02e*/ s16 unk2E;
-/*030*/ s32 unk30;
-/*034*/ s32 unk34;
-/*038*/ Vec3f aimTarget;
-/*044*/ s16* anims;
-/*048*/ f32* animSpeeds;
-/*04c*/ s32* chatSequenceList;
-/*050*/ f32 animSpeed;
-/*054*/ f32 animSpeedFlinch;
-/*058*/ f32 walkSpeed;
+/*014*/ Vec3f trunkAttachPoint; //WS coordinates of the SnowHorn's trunk, stored when drawn
+/*020*/ f32 playerDistance;     //Used for head look-at behaviour
+/*024*/ s32 unk24;              
+/*028*/ Object* frostWeed;      //A FrostWeed, referenced while Garunda Te is inhaling it
+/*02c*/ s16 aimYaw;             //Unused trajectory angle, presumably for the Blue SnowHorn's missing water squirt particles
+/*02e*/ s16 unk2E;           
+/*030*/ s32 unk30;           
+/*034*/ s32 unk34;           
+/*038*/ Vec3f aimTarget;        //Unused aim target coordinates, presumably for the Blue SnowHorn's missing water squirt particles
+/*044*/ s16* anims;             //State Machine values' modAnims
+/*048*/ f32* animSpeeds;        //State Machine values' animSpeeds
+/*04c*/ s32* chatSequenceList;  //ObjSeqs to play when the player interacts
+/*050*/ f32 animSpeed;          //Animation playback speed
+/*054*/ f32 animSpeedFlinch;    //Animation playback speed (during hitSphere flinching)
+/*058*/ f32 walkSpeed;          //Walking SnowHorns' current speed
 /*05C*/ s32 unk5C;
-/*060*/ UnkCurvesStruct curves;
+/*060*/ UnkCurvesStruct curves; //Walking SnowHorns' curve data
 /*168*/ s32 unk168;
 /*16C*/ s32 unk16C;
-/*170*/ DLL27_Data collider;
+/*170*/ DLL27_Data collider;    //Terrain collider data
 /*3d0*/ s8 _unk3D0[0x400-0x3D0];
-/*400*/ HeadAnimation headAnim;
-/*424*/ u8 flags;
-/*425*/ u8 chatSequenceIdx;
-/*426*/ u8 chatSequenceCount;
-/*427*/ u8 mapAct;
-/*428*/ s8 garundaTeWeedsEaten;
+/*400*/ HeadAnimation headAnim; //Procedural head animator data
+/*424*/ u8 flags;               //See `SnowHorn_Flags`
+/*425*/ u8 chatSequenceIdx;     //The index of the ObjSeq to play (from objData->chatSequenceList) when the player interacts
+/*426*/ u8 chatSequenceCount;   //The number of ObjSeqs in `objData->chatSequenceList`
+/*427*/ u8 mapAct;              //The current map act (queried by Walking SnowHorns, but not used for anything)
+/*428*/ s8 garundaTeWeedsEaten; //FrostWeed minigame progress
 } SnowHorn_Data;
 
 typedef enum {
@@ -96,22 +99,22 @@ typedef enum {
 } SnowHorn_CharacterIndices;
 
 typedef enum {
-    SnowHorn_STATEFLAG_Flinch = 0x4000,
-    SnowHorn_STATEFLAG_Sleep = 0x8000
-} SnowHorn_StateFlags;
+    SnowHorn_STATEFLAG_Flinch = 0x4000,         //The SnowHorn's reacting to being hit
+    SnowHorn_STATEFLAG_Sleep = 0x8000           //It's the SnowHorn's bedtime
+} SnowHorn_StateFlags; //NOTE: these flags temporarily block the character from running their State Machines
 
 typedef enum {
-    SnowHorn_FLAG_1_Use_Collider = 1,
-    SnowHorn_FLAG_2 = 2,                        //Unused
-    SnowHorn_FLAG_4_Look_at_Player = 4,
-    SnowHorn_FLAG_8_Animation_Finished = 8,
-    SnowHorn_FLAG_10 = 0x10,                    //Unused
-    SnowHorn_FLAG_20_Pick_Random_Chat = 0x20,
-    SnowHorn_FLAG_40_Enable_Head_Anims = 0x40,
-    SnowHorn_FLAG_80_Player_Nearby = 0x80
+    SnowHorn_FLAG_1_Use_Collider = 1,           //Use terrain collider
+    SnowHorn_FLAG_2 = 2,                        //UNUSED
+    SnowHorn_FLAG_4_Look_at_Player = 4,         //Enables procedural head aim animation when the player's nearby (provided `SnowHorn_FLAG_40_Enable_Head_Anims` is also set)
+    SnowHorn_FLAG_8_Animation_Finished = 8,     //The current animation has ended
+    SnowHorn_FLAG_10 = 0x10,                    //UNUSED
+    SnowHorn_FLAG_20_Pick_Random_Chat = 0x20,   //Pick a chat sequence index at random when talked to, instead of playing them in order (unused)
+    SnowHorn_FLAG_40_Enable_Head_Anims = 0x40,  //Enables procedural head turns/look-ats
+    SnowHorn_FLAG_80_Player_Nearby = 0x80       //Set when the player approaches (but not used for anything)
 } SnowHorn_Flags;
 
-//NOTE: these State Machine indices skip over some values in order to match up with the chat ObjSeq index associated with each state.
+//NOTE: these State Machine indices skip over some values in order to sync up with the chat ObjSeq index associated with each state.
 typedef enum {
     GrumpySnowHorn_STATE_0_Before_Tricky_Command_Tutorial = 0,
     GrumpySnowHorn_STATE_1_Asking_for_Roots = 1,
@@ -121,12 +124,14 @@ typedef enum {
 } GrumpySnowHorn_States; 
 
 typedef enum {
-    SnowHornSquirt_STATE_0,
-    SnowHornSquirt_STATE_1,
-    SnowHornSquirt_STATE_2,
-    SnowHornSquirt_STATE_3,
-    SnowHornSquirt_STATE_4,
-    SnowHornSquirt_STATE_5
+    //Unfinished aiming states: rapidly ascends through them (changing state per tick) until entering firing state
+    SnowHornSquirt_STATE_0_Aim_Nearest,
+    SnowHornSquirt_STATE_1_Aim_Near,
+    SnowHornSquirt_STATE_2_Aim_Far,
+    SnowHornSquirt_STATE_3_Aim_Farthest,
+
+    SnowHornSquirt_STATE_4_Firing,
+    SnowHornSquirt_STATE_5_Idle
 } BlueSnowHorn_States;
 
 typedef enum {
@@ -146,58 +151,85 @@ typedef enum {
 } GarundaTe_States;
 
 typedef enum {
-    MODANIM_SnowHorn_Idle = 0,
-    MODANIM_SnowHorn_Talk = 2,
-    MODANIM_SnowHorn_Walk = 3,
-    MODANIM_SnowHorn_Sleep_Intro = 4,
-    MODANIM_SnowHorn_Sleep = 5,
-    MODANIM_SnowHorn_Wake_Up = 6,
-    MODANIM_SnowHorn_Hit_React = 47
-} SnowHornAnims;
+    //Bank 0
+    SnowHorn_MODANIM0_0_Idle_LOOP = 0,               //Bobbling head merrily
+    SnowHorn_MODANIM0_1_Squirt,                      //Sucking up water, then squirting
+    SnowHorn_MODANIM0_2_Talk_LOOP,                   //Flapping trunk around
+    SnowHorn_MODANIM0_3_Walk_LOOP,                   //Walk cycle
+    SnowHorn_MODANIM0_4_Sleep_Intro,                 //Curling up for a snooze
+    SnowHorn_MODANIM0_5_Sleep_LOOP,                  //Snoring gently
+    SnowHorn_MODANIM0_6_Sleep_Outro,                 //Waking up and stretching
+    SnowHorn_MODANIM0_7_Sleep_Outro_Alt,             //Waking up without stretching (unused?)
+    SnowHorn_MODANIM0_8_Resting_Intro,               //Curling up, but looking up instead of sleeping (unused?)
+    SnowHorn_MODANIM0_9_Resting_LOOP,                //Similar to the sleep pose, but sitting up attentively
+    SnowHorn_MODANIM0_10_Resting_LOOP_FLIPPED,       //Mirrored version of the resting loop
+    SnowHorn_MODANIM0_11_Shaking_Off,                //Spinning torso to shake off snow
+    SnowHorn_MODANIM0_12_Turn_Walk_LOOP,             //Turn loop, maybe?
+    SnowHorn_MODANIM0_13_Trunk_Grab,                 //Swiping Alpine Root from Sabre's hands
+    SnowHorn_MODANIM0_14_Trunk_Sweep,                //Reaching behind and to the left with trunk as though grabbing something, then sweeping to the right
+    SnowHorn_MODANIM0_15_Sneeze,                     //Bracing on all 4s, building up to a sneeze (unused?)
+    SnowHorn_MODANIM0_16_Look_Right,                 //Turning to the right, with trunk settle
+    SnowHorn_MODANIM0_17_Stretch_Up_Intro,           //Stretching foreleg and trunk widely (Garunda Te escaping ice?)
+    SnowHorn_MODANIM0_18_Stretch_Up_Outro,           //End of stretch, with trunk settle
+    SnowHorn_MODANIM0_19_Fallen_Idle_LOOP,           //Collapsed onto side (DarkIce Mines' famished SnowHorn)
+    SnowHorn_MODANIM0_20_Fallen_Talk_Intro,          //Looking up to chat
+    SnowHorn_MODANIM0_21_Fallen_Talk_LOOP,           //Chatting and gesturing with trunk
+    SnowHorn_MODANIM0_22_Fallen_Talk_Idle_LOOP,      //Listening
+    SnowHorn_MODANIM0_23_Fallen_Eat,                 //Eating an Alpine Root
+    SnowHorn_MODANIM0_24_Fallen_Stand_Intro,         //Getting up
+    SnowHorn_MODANIM0_25_Fallen_Stand_Outro,         //Getting up, into neutral pose
+    SnowHorn_MODANIM0_26_Sleep_Talk_LOOP,            //Talking in their sleep (unused?)
+    SnowHorn_MODANIM0_27_Sit_Talk_LOOP,              //Talking while sitting up (unused?)
+    SnowHorn_MODANIM0_28_Backing_Away_Scared,        //Walking backwards while trunk twitches nervously (unused?)
+    SnowHorn_MODANIM0_29_Trunk_Flick_Right,          //Craning head to the right and flicking/grabbing with their trunk?
+    SnowHorn_MODANIM0_30_Falling_and_Landing,        //Seems to be dropping off a ledge and landing below?
+    SnowHorn_MODANIM0_31_Bow,                        //Craning trunk up, and then dipping into a deep bow (unused?)
+    SnowHorn_MODANIM0_32_Garunda_Smash_Ice_Intro,    //On sloped ground, winding up in anticipation of smashing through the ice
+    SnowHorn_MODANIM0_33_Garunda_Smash_Ice_Outro,    //Smashing through the ice with his tusks
+    SnowHorn_MODANIM0_34_Garunda_Awkward_Pose,       //No animation, on sloped ground, contorted as though frozen in ice? Trunk is slightly off fitting through the crack in Garunda's icy prison (maybe an early draft of mAnim0_35?)
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP,  //On sloped ground, waiting with trunk sticking out through a crack in the ice
+    SnowHorn_MODANIM0_36_Garunda_Trapped_Drop_Trunk,                //(Root shifted vertically!) From [mAnim0_35], withdraws trunk back down under the ice (unused?)
+    SnowHorn_MODANIM0_37_Garunda_Trapped_Drop_Trunk_Idle_LOOP,      //(Root shifted vertically!) From [mAnim0_36], swings trunk in idle cycle (unused?)
+    SnowHorn_MODANIM0_38_Garunda_Awkward_Idle_LOOP,  //Same pose as [mAnim0_34], but with subtle trunk movements (maybe an early draft of mAnim0_35?)
+    SnowHorn_MODANIM0_39_Garunda_Awkward_Trunk_Nod,  //From [mAnim0_38], bobs trunk back and forward as though talking
+    SnowHorn_MODANIM0_40_Dejected_Sigh,              //In standing pose, flops head sadly to the left
+    SnowHorn_MODANIM0_41_Garunda_Trapped_Eat,        //From [mAnim0_35], brings trunk back through the ice and to his mouth, then returns to initial pose
+    //NOTE: Garunda Te (OBJ_NWmammothguardi)'s modAnim bank0 ends here and doesn't include the next 7 animations
+    SnowHorn_MODANIM0_42_Flinch_Up,                  //Reels head backwards, then returns to neutral standing pose
+    SnowHorn_MODANIM0_43_Flinch_Left,                //Reels head to the left, then returns to neutral standing pose
+    SnowHorn_MODANIM0_44_Flinch_Right,               //Reels head to the right, then returns to neutral standing pose
+    SnowHorn_MODANIM0_45_Flinch_Down_L,              //Reels head downwards and lifts left foreleg in pain, then returns to neutral standing pose
+    SnowHorn_MODANIM0_46_Flinch_Down_R,              //Reels head downwards and lifts right foreleg in pain, then returns to neutral standing pose
+    SnowHorn_MODANIM0_47_Flinch_Neutral,             //Reels head dizzily, then returns to neutral standing pose
+    SnowHorn_MODANIM0_48_Counterattack,              //Swings tusks wildly to the right, then left, then returns to neutral standing pose (unused, but referenced in unused field of hitSphere data - maybe intended as a Baddie attack reaction, or after the player attacks too many times?)
 
+    //Bank 1
+    SnowHorn_MODANIM1_0_Talk_LOOP = 0x100,           //Flapping trunk around in standing pose (similar to [mAnim0_2])
+    SnowHorn_MODANIM1_1_Trunk_Toot,                  //Raising trunk into the air, in standing pose
+    SnowHorn_MODANIM1_2_Walk_LOOP,                   //Walk cycle (similar to [mAnim0_3])
+    SnowHorn_MODANIM1_3_Idle_Fidget,                 //Shuffles feet, then reaches behind with trunk to scratch back (used by DIMSnowHorn1)
+    SnowHorn_MODANIM1_4_Peer_Right_Intro,            //Leaning down slightly and peering to the right
+    SnowHorn_MODANIM1_5_Peer_Right_Idle_LOOP,        //From [mAnim1_4], idle cycle
+    SnowHorn_MODANIM1_6_Peer_Right_Outro,            //From [mAnim1_5], returning to neutral standing pose
 
-typedef enum {
-    SnowHorn_MODANIM0_0_Idle_LOOP = 0,              //Bobbling head merrily
-    SnowHorn_MODANIM0_1_Squirt,                     //Sucking up water, then squirting
-    SnowHorn_MODANIM0_2_Talk_LOOP,                  //Flapping trunk around
-    SnowHorn_MODANIM0_3_Walk_LOOP,                  //Walk cycle
-    SnowHorn_MODANIM0_4_Sleep_Intro,                //Curling up for a snooze
-    SnowHorn_MODANIM0_5_Sleep_LOOP,                 //Snoring gently
-    SnowHorn_MODANIM0_6_Sleep_Outro,                //Waking up and stretching
-    SnowHorn_MODANIM0_7_Sleep_Outro_Alt,            //Waking up without stretching (unused?)
-    SnowHorn_MODANIM0_8_Sit_Intro,                  //Curling up, but looking up instead of sleeping (unused?)
-    SnowHorn_MODANIM0_9_Sit_LOOP,                   //Sitting up
-    SnowHorn_MODANIM0_10_Sit_LOOP_FLIPPED,          //Mirrored version of the sit loop
-    SnowHorn_MODANIM0_11_Shaking_Off,               //Spinning torso to shake off snow
-    SnowHorn_MODANIM0_12_Turn_Walk_LOOP,            //Turn loop, maybe?
-    SnowHorn_MODANIM0_13_Trunk_Grab,                //Swiping Alpine Root from Sabre's hands
-    SnowHorn_MODANIM0_14_Trunk_Sweep,               //Reaching behind and to the left with trunk as though grabbing something, then sweeping to the right
-    SnowHorn_MODANIM0_15_Sneeze,                    //Bracing on all 4s, building up to a sneeze (unused?)
-    SnowHorn_MODANIM0_16_Look_Right,                //Turning to the right, with trunk settle
-    SnowHorn_MODANIM0_17_Stretch_Up_Intro,          //Stretching foreleg and trunk widely (Garunda Te escaping ice?)
-    SnowHorn_MODANIM0_18_Stretch_Up_Outro,          //End of stretch, with trunk settle
-    SnowHorn_MODANIM0_19_Fallen_Idle_LOOP,          //Collapsed onto side
-    SnowHorn_MODANIM0_20_Fallen_Talk_Intro,         //Looking up to chat
-    SnowHorn_MODANIM0_21_Fallen_Talk_LOOP,          //Chatting and gesturing with trunk
-    SnowHorn_MODANIM0_22_Fallen_Talk_Idle_LOOP,     //Listening
-    SnowHorn_MODANIM0_23_Fallen_Eat,                //Eating an Alpine Root
-    SnowHorn_MODANIM0_24_Fallen_Stand_Intro,        //Getting up
-    SnowHorn_MODANIM0_25_Fallen_Stand_Outro,        //Getting up, into neutral pose
-    SnowHorn_MODANIM0_26_Sleep_Talk_LOOP,           //Talking in their sleep (unused?)
-    SnowHorn_MODANIM0_27_Sit_Talk_LOOP,             //Talking while sitting up (unused?)
-    SnowHorn_MODANIM0_28_Backing_Away_Scared,       //Walking backwards while trunk twitches nervously (unused?)
-    SnowHorn_MODANIM0_29_Trunk_Flick_Right,         //Craning head to the right and flicking/grabbing with their trunk?
-    SnowHorn_MODANIM0_30_Falling_and_Landing,       //Seems to be dropping off a ledge and landing below?
-    SnowHorn_MODANIM0_31_Bow,                       //Craning trunk up, and then dipping into a deep bow (unused?)
-    SnowHorn_MODANIM0_32_Garunda_Smash_Ice_Intro,   //On sloped ground, winding up in anticipation of smashing through the ice
-    SnowHorn_MODANIM0_33_Garunda_Smash_Ice_Outro,   //Smashing through the ice with his tusks
-    SnowHorn_MODANIM0_34_Awkward_Pose,              //No animation, on sloped ground, contorted as though frozen in ice?
-    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, //Waiting under the ice
-    SnowHorn_MODANIM0_36, //TODO: continue!
-
-
-
-
+    //Bank 2
+    SnowHorn_MODANIM2_0_Turn_Right_LOOP = 0x200, //Turning on the spot
+    SnowHorn_MODANIM2_1_Turn_Left_LOOP,          //Turning on the spot
+    SnowHorn_MODANIM2_2_Sidestep_Left_LOOP,      //Scooting over towards mount platform
+    SnowHorn_MODANIM2_3_Sidestep_Right_LOOP,     //Scooting over towards mount platform
+    SnowHorn_MODANIM2_4_Tusk_Attack,             //A powerful tusk swing
+    SnowHorn_MODANIM2_5_Sit_Idle_LOOP,           //Sitting in a cute loaf pose, with legs tucked underneath body
+    SnowHorn_MODANIM2_6_Sit_Intro,               //Wiggling hind legs and settling into a loaf pose [mAnim2_5]
+    SnowHorn_MODANIM2_7_Sit_Outro,               //From [mAnim2_5], Getting back up into neutral standing pose
+    SnowHorn_MODANIM2_8_Walk_Intro,              //Stepping forward onto left foreleg
+    SnowHorn_MODANIM2_9_Walk_Outro_L,            //Starting off with left foreleg in contact pose, settles into a neutral standing pose
+    SnowHorn_MODANIM2_10_Walk_Outro_R,           //Starting off with right foreleg in contact pose, settles into a neutral standing pose
+    SnowHorn_MODANIM2_11_Gallop_and_Stop,        //Starting in mid-gallop, takes a few bounds and then comes to a sudden skidding halt (called by Horn of Truth)
+    SnowHorn_MODANIM2_12_Wheel_Walk_LOOP,        //A poor SnowHorn stuck operating DarkIce Mines' wheels
+    SnowHorn_MODANIM2_13_Offering_Item,          //Reaching behind and to the left with their trunk, and then offering an item
+    SnowHorn_MODANIM2_14_Lifting_Trunk_Intro,    //Crouching down on forelegs, and laying trunk flat out ahead
+    SnowHorn_MODANIM2_15_Lifting_Trunk_Outro,    //From [mAnim2_14], pushing down on forelegs and lifting their trunk high up (lifting an object, maybe?)
+    SnowHorn_MODANIM2_16_Ground_Slam             //Rearing up on hind legs, and slamming back heavily to the ground (Grumpy SnowHorn stopping geyser)
 } SnowHorn_ModAnims;
 
 typedef enum  {
@@ -247,35 +279,35 @@ static void SnowHorn_garundaTeControl(Object *self, SnowHorn_Data* objData, Snow
 static void SnowHorn_belinaTeSetup(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
 static void SnowHorn_belinaTeControl(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup);
 
-/*000*/ static Unk80026DF4 dJointHitSounds[] = {
-    {SOUND_377_Metal_Smack,  NO_SOUND, 47, 48, FALSE, 0.012, 0.005},
-    {SOUND_377_Metal_Smack,  NO_SOUND, 47, 48, FALSE, 0.012, 0.005},
-    {SOUND_377_Metal_Smack,  NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
-    {SOUND_677_Metal_Clang,  NO_SOUND, -1, -1, TRUE,  0.0,   0.0},
-    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_677_Metal_Clang,  NO_SOUND, -1, -1, TRUE,  0.0,   0.0},
-    {SOUND_377_Metal_Smack,  NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 42, 48, FALSE, 0.011, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, 46, 48, FALSE, 0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 45, 48, FALSE, 0.012, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 44, 48, FALSE, 0.015, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, 43, 48, FALSE, 0.015, 0.005},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0},
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, FALSE, 0.0,   0.0}
+/*000*/ static Unk80026DF4 dJointHitData[] = {
+    {SOUND_377_Metal_Smack,  NO_SOUND, SnowHorn_MODANIM0_47_Flinch_Neutral, SnowHorn_MODANIM0_48_Counterattack, 0,    0.012, 0.005},
+    {SOUND_377_Metal_Smack,  NO_SOUND, SnowHorn_MODANIM0_47_Flinch_Neutral, SnowHorn_MODANIM0_48_Counterattack, 0,    0.012, 0.005},
+    {SOUND_377_Metal_Smack,  NO_SOUND, SnowHorn_MODANIM0_42_Flinch_Up,      SnowHorn_MODANIM0_48_Counterattack, 0,    0.011, 0.005},
+    {SOUND_677_Metal_Clang,  NO_SOUND, -1,                                  -1,                                 TRUE, 0,     0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1,                                  -1,                                 0,    0,     0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1,                                  -1,                                 0,    0,     0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1,                                  -1,                                 0,    0,     0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1,                                  -1,                                 0,    0,     0},
+    {SOUND_677_Metal_Clang,  NO_SOUND, -1,                                  -1,                                 TRUE, 0,     0},
+    {SOUND_377_Metal_Smack,  NO_SOUND, -1,                                  -1,                                 0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_42_Flinch_Up,      SnowHorn_MODANIM0_48_Counterattack,  0,    0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_42_Flinch_Up,      SnowHorn_MODANIM0_48_Counterattack,  0,    0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_42_Flinch_Up,      SnowHorn_MODANIM0_48_Counterattack,  0,    0.011, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_46_Flinch_Down_R,  SnowHorn_MODANIM0_48_Counterattack,  0,    0.012, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_45_Flinch_Down_L,  SnowHorn_MODANIM0_48_Counterattack,  0,    0.012, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_44_Flinch_Right,   SnowHorn_MODANIM0_48_Counterattack,  0,    0.015, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, SnowHorn_MODANIM0_43_Flinch_Left,    SnowHorn_MODANIM0_48_Counterattack,  0,    0.015, 0.005},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0},
+    {SOUND_377_Metal_Smack, NO_SOUND, -1,                                  -1,                                  0,    0,     0}
 };
 
 /*230*/ static Vec3f dTerrainTestPoints[] = {
@@ -291,22 +323,45 @@ static void SnowHorn_belinaTeControl(Object *self, SnowHorn_Data* objData, SnowH
 /*274*/ static u8 dPlayAreaObjSeq = FALSE;
 /*278*/ static s32 _data_278 = 0;
 
+//State Machine animations for the Walking SnowHorns
 /*27C*/ static s16 dWalkingAnims[] = {
-    0, 3
+    SnowHorn_MODANIM0_0_Idle_LOOP, 
+    SnowHorn_MODANIM0_3_Walk_LOOP
 };
 /*280*/ static f32 dWalkingAnimSpeeds[] = {
-    0.005, 0.0
+    0.005, 
+    0.0
 };
 
+//State Machine animations for Garunda Te
 /*288*/ static s16 dGarundaTeAnims[] = {
-    35, 35, 35, 35, 41, 0, 0, 0
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, 
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, 
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, 
+    SnowHorn_MODANIM0_35_Garunda_Trapped_Idle_LOOP, 
+    SnowHorn_MODANIM0_41_Garunda_Trapped_Eat, 
+    SnowHorn_MODANIM0_0_Idle_LOOP, 
+    SnowHorn_MODANIM0_0_Idle_LOOP, 
+    SnowHorn_MODANIM0_0_Idle_LOOP
 };
 /*298*/ static f32 dGarundaTeAnimSpeeds[] = {
-    0.005, 0.005, 0.005, 0.005, 0.008, 0.005, 0.005, 0.005
+    0.005, 
+    0.005, 
+    0.005, 
+    0.005, 
+    0.008, 
+    0.005, 
+    0.005, 
+    0.005
 };
 
-/*2B8*/ static s16 dBelinaTeAnims[] = {0};
-/*2BC*/ static f32 dBelinaTeAnimSpeeds[] = {0.005};
+//State Machine animations for Belina Te
+/*2B8*/ static s16 dBelinaTeAnims[] = {
+    SnowHorn_MODANIM0_0_Idle_LOOP
+};
+/*2BC*/ static f32 dBelinaTeAnimSpeeds[] = {
+    0.005
+};
 
 /*2C0*/ static s32 dWalkingBChatSeqs1[] = {
     SEQ_0A0_WalkingSnowHornA_CHAT_1A, //@bug: dWalkingAChatSeqs1 and dWalkingBChatSeqs1's values should be swapped (wrong voice for the character)!
@@ -367,8 +422,8 @@ void SnowHorn_obj_Setup(Object* self, SnowHorn_Setup* objSetup, s32 reset) {
     objAddObjectType(self, OBJTYPE_SnowHorn);
 
     objData->animSpeed = 0.005f;
-    objData->playerRange = objSetup->unkRadius;
-    objData->squirtTimeMax = objSetup->squirtInvervalSeconds * 60;
+    objData->playerNearbyRange = objSetup->playerNearbyRange;
+    objData->squirtInterval = objSetup->squirtInverval * 60;
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
@@ -410,7 +465,7 @@ void SnowHorn_obj_Control(Object* self) {
     SnowHorn_Setup* objSetup;
     Object* player;
     UnkFunc_80024108Struct animInfo;
-    s32 animIndex;
+    s32 stateNumber;
     s32 seqIndex;
 
     objData = self->data;
@@ -418,7 +473,7 @@ void SnowHorn_obj_Control(Object* self) {
     player = objGetPlayer();
 
     //Check whether the player is nearby
-    if (vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition) < (2.0f * SQ(objData->playerRange))) {
+    if (vec3DistanceXZSquared(&self->globalPosition, &player->globalPosition) < (2.0f * SQ(objData->playerNearbyRange))) {
         if ((objData->flags & SnowHorn_FLAG_80_Player_Nearby) == FALSE) {
             objData->flags |= SnowHorn_FLAG_80_Player_Nearby;
         }
@@ -437,7 +492,7 @@ void SnowHorn_obj_Control(Object* self) {
 
     //React to being hit
     if (func_80026DF4(self, 
-        dJointHitSounds, ARRAYCOUNT(dJointHitSounds), 
+        dJointHitData, ARRAYCOUNT(dJointHitData), 
         (objData->state & SnowHorn_STATEFLAG_Flinch ? TRUE : FALSE), 
         &objData->animSpeedFlinch)
     ) {
@@ -457,7 +512,7 @@ void SnowHorn_obj_Control(Object* self) {
     }
 
     //Store player distance
-    objData->distanceFromPlayer = vec3Distance(&self->globalPosition, &player->globalPosition);
+    objData->playerDistance = vec3Distance(&self->globalPosition, &player->globalPosition);
 
     //Handle character-specific behaviour
     switch (objSetup->characterIdx) {
@@ -486,14 +541,14 @@ void SnowHorn_obj_Control(Object* self) {
         gDLL_27->vtbl->func_624(self, &objData->collider, gUpdateRateF);
     }
 
-    //Handle animations
+    //Handle animations (synced with State Machine value)
     if (objData->anims) {
-        animIndex = objData->state & ~SnowHorn_STATEFLAG_Sleep;
-        if (self->curModAnimId != objData->anims[animIndex]) {
-            objAnimSet(self, objData->anims[animIndex], 0.0f, 0);
+        stateNumber = objData->state & ~SnowHorn_STATEFLAG_Sleep;
+        if (self->curModAnimId != objData->anims[stateNumber]) {
+            objAnimSet(self, objData->anims[stateNumber], 0.0f, 0);
 
-            if (objData->animSpeeds[animIndex] >= 0.0f) {
-                objData->animSpeed = objData->animSpeeds[animIndex];
+            if (objData->animSpeeds[stateNumber] >= 0.0f) {
+                objData->animSpeed = objData->animSpeeds[stateNumber];
             }
             objData->flags &= ~SnowHorn_FLAG_8_Animation_Finished;
         }
@@ -613,13 +668,13 @@ static s32 SnowHorn_sleep(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;    
     
     switch (self->curModAnimId) {
-    case MODANIM_SnowHorn_Sleep_Intro:
+    case SnowHorn_MODANIM0_4_Sleep_Intro:
         if (playSound) {
             dll_amSfx->Play(self, SOUND_129_SnowHorn_Yawn_1, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         if (animIsFinished) {
-            objAnimSet(self, MODANIM_SnowHorn_Sleep, 0.0f, 0);
+            objAnimSet(self, SnowHorn_MODANIM0_5_Sleep_LOOP, 0.0f, 0);
             if (eyelidR != NULL) {
                 eyelidR->frame = 0x200;
             }
@@ -629,16 +684,16 @@ static s32 SnowHorn_sleep(Object* self) {
             objData->sleepTimer = mathRnd(0, 300);
         }
         break;
-    case MODANIM_SnowHorn_Sleep:
+    case SnowHorn_MODANIM0_5_Sleep_LOOP:
         if (playSound) {
             dll_amSfx->Play(self, SOUND_12A_SnowHorn_SnoreHorn, MAX_VOLUME, 0, 0, 0, 0);
         }
 
-        objData->sleepTimer-= gUpdateRate;
+        objData->sleepTimer -= gUpdateRate;
 
         //Play wake-up animation when it's daytime
         if ((dIsNightTime == FALSE) && (objData->sleepTimer <= 0)) {  
-            objAnimSet(self, MODANIM_SnowHorn_Wake_Up, 0.0f, 0);
+            objAnimSet(self, SnowHorn_MODANIM0_6_Sleep_Outro, 0.0f, 0);
             if (eyelidR != NULL) {
                 eyelidR->frame = 0;
             }
@@ -647,13 +702,13 @@ static s32 SnowHorn_sleep(Object* self) {
             }
         }
         break;
-    case MODANIM_SnowHorn_Wake_Up:
+    case SnowHorn_MODANIM0_6_Sleep_Outro: //Waking up
         if (playSound) {
             dll_amSfx->Play(self, SOUND_12B_SnowHorn_Yawn_2, MAX_VOLUME, 0, 0, 0, 0);
         }
 
         if (animIsFinished) {
-            objAnimSet(self, MODANIM_SnowHorn_Idle, 0.0f, 0); //Play idle animation
+            objAnimSet(self, SnowHorn_MODANIM0_0_Idle_LOOP, 0.0f, 0); //Play idle animation
             objData->state &= ~SnowHorn_STATEFLAG_Sleep;
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
             return 0;
@@ -664,7 +719,7 @@ static s32 SnowHorn_sleep(Object* self) {
 
         //Go to sleep
         if (objData->sleepTimer <= 0) { 
-            objAnimSet(self, MODANIM_SnowHorn_Sleep_Intro, 0.0f, 0);
+            objAnimSet(self, SnowHorn_MODANIM0_4_Sleep_Intro, 0.0f, 0);
             objData->walkSpeed = 0.0f;
         }
         break;
@@ -681,7 +736,7 @@ static void SnowHorn_lookAtPlayerWhenNearby(Object *self, s32 enable){
     objData = self->data;
     player = objGetPlayer();
       
-    if (enable && (player != NULL) && (objData->distanceFromPlayer < 200.0f)){
+    if (enable && (player != NULL) && (objData->playerDistance < 200.0f)){
         objData->headAnim.aimIsActive = TRUE;
         objData->headAnim.headAimX = player->srt.transl.x;
         objData->headAnim.headAimY = player->srt.transl.y;
@@ -695,7 +750,7 @@ static void SnowHorn_lookAtPlayerWhenNearby(Object *self, s32 enable){
 static void SnowHorn_grumpySetup(Object *self, SnowHorn_Data* objData, SnowHorn_Setup* objSetup) {
     objData->state = 0;
     objData->flags |= SnowHorn_FLAG_40_Enable_Head_Anims | SnowHorn_FLAG_4_Look_at_Player;
-    objData->playerRange = objSetup->unkRadius;
+    objData->playerNearbyRange = objSetup->playerNearbyRange;
 }
 
 // offset: 0xD80 | func: 13
@@ -713,8 +768,8 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
     objData->state &= ~SnowHorn_STATEFLAG_Sleep;
 
     //Handle animations
-    if (self->curModAnimId != 0) {
-        objAnimSet(self, 0, 0.0f, 0);
+    if (self->curModAnimId != SnowHorn_MODANIM0_0_Idle_LOOP) {
+        objAnimSet(self, SnowHorn_MODANIM0_0_Idle_LOOP, 0.0f, 0);
     }
     objAnimAdvance(self, objData->animSpeed, gUpdateRate, NULL);
 
@@ -723,7 +778,7 @@ static void SnowHorn_grumpyControl(Object* self, SnowHorn_Data* objData, SnowHor
         return;
     
     //Try to play a sequence when the player is a distance away
-    if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) > SQ((f32)objData->playerRange)) {
+    if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) > SQ((f32)objData->playerNearbyRange)) {
         objData->sleepTimer += gUpdateRate;
         if (objData->sleepTimer > 900) {
             gDLL_3_Animation->vtbl->start_obj_sequence(7, self, -1); //NOTE: out-of-bounds ObjSeqIdx!
@@ -809,7 +864,7 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
     SnowHorn_Data* squirtData;
     SeqJoint* seqJoint;
     Object* player;
-    SRT srt;
+    SRT fxTransform;
     Vec3f v;
     u32 pad;
     s32 squirtYaw;
@@ -823,117 +878,147 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
     animFinished = objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
 
     //Squirt State Machine (unfinished!)
-    //Seems intended to shoot water at the player, but the aiming calculations go unused.
+    //Seems intended to shoot water at the player, but the aiming calculations go unused
     switch (squirtData->state) {
-    case SnowHornSquirt_STATE_0:
-        v.x = 0.0f;
-        v.y = 10.0f;
-        v.z = -25.0f;
-
-        srt.transl.z = 0.0f;
-        srt.transl.y = 0.0f;
-        srt.transl.x = 0.0f;
-        srt.roll = 0;
-        srt.pitch = 0;
-        srt.yaw = squirtData->headYaw;
-        srt.scale = 0.0f;
-        mathRotateRPY(&srt, v.f);
-
-        srt.transl.x = squirtData->trunkAttachPoint.x + v.f[0];
-        srt.transl.y = self->srt.transl.y + v.f[1];
-        srt.transl.z = squirtData->trunkAttachPoint.z + v.f[2];
-        srt.yaw = 0;
-
-        squirtData->state = SnowHornSquirt_STATE_1;
-        break;
-    case SnowHornSquirt_STATE_1:
-        if (self->animProgress > 0.25f) {
+    case SnowHornSquirt_STATE_0_Aim_Nearest:
+        //Rotate an aim vector based on the head joint's yaw (aiming far and low)
+        {
             v.x = 0.0f;
-            v.y = 20.0f;
-            v.z = -20.0f;
+            v.y = 10.0f;
+            v.z = -25.0f;
 
-            srt.transl.z = 0.0f;
-            srt.transl.y = 0.0f;
-            srt.transl.x = 0.0f;
-            srt.roll = 0;
-            srt.pitch = 0;
-            srt.yaw = squirtData->headYaw;
-            srt.scale = 0.0f;
-            mathRotateRPY(&srt, v.f);
+            fxTransform.transl.z = 0.0f;
+            fxTransform.transl.y = 0.0f;
+            fxTransform.transl.x = 0.0f;
+            fxTransform.roll = 0;
+            fxTransform.pitch = 0;
+            fxTransform.yaw = squirtData->headYaw;
+            fxTransform.scale = 0.0f;
+            mathRotateRPY(&fxTransform, v.f);
+        }
 
-            srt.transl.f[0] = squirtData->trunkAttachPoint.f[0] + v.f[0];
-            srt.transl.f[1] = self->srt.transl.f[1] + v.f[1];
-            srt.transl.f[2] = squirtData->trunkAttachPoint.f[2] + v.f[2];
-            srt.yaw = 0;
+        //Convert rotated aim vector into worldSpace SRT, by adding trunk's worldSpace XZ and SnowHorn's Y
+        {
+            fxTransform.transl.x = squirtData->trunkAttachPoint.x + v.f[0];
+            fxTransform.transl.y = self->srt.transl.y + v.f[1];
+            fxTransform.transl.z = squirtData->trunkAttachPoint.z + v.f[2];
+            fxTransform.yaw = 0;
+        }
 
-            squirtData->state = SnowHornSquirt_STATE_2;
+        squirtData->state = SnowHornSquirt_STATE_1_Aim_Near;
+        break;
+    case SnowHornSquirt_STATE_1_Aim_Near:
+        if (self->animProgress > 0.25f) {
+            //Rotate an aim vector based on the head joint's yaw (aiming a little higher)
+            {
+                v.x = 0.0f;
+                v.y = 20.0f;
+                v.z = -20.0f;
+
+                fxTransform.transl.z = 0.0f;
+                fxTransform.transl.y = 0.0f;
+                fxTransform.transl.x = 0.0f;
+                fxTransform.roll = 0;
+                fxTransform.pitch = 0;
+                fxTransform.yaw = squirtData->headYaw;
+                fxTransform.scale = 0.0f;
+                mathRotateRPY(&fxTransform, v.f);
+            }
+
+            //Convert rotated aim vector into worldSpace SRT, by adding trunk's worldSpace XZ and SnowHorn's Y
+            {
+                fxTransform.transl.f[0] = squirtData->trunkAttachPoint.f[0] + v.f[0];
+                fxTransform.transl.f[1] = self->srt.transl.f[1] + v.f[1];
+                fxTransform.transl.f[2] = squirtData->trunkAttachPoint.f[2] + v.f[2];
+                fxTransform.yaw = 0;
+            }
+
+            squirtData->state = SnowHornSquirt_STATE_2_Aim_Far;
         }
         break;
-    case SnowHornSquirt_STATE_2:
+    case SnowHornSquirt_STATE_2_Aim_Far:
         if (self->animProgress > 0.65f) {
-            v.x = 0.0f;
-            v.y = 0.0f;
-            v.z = -40.0f;
+            //Rotate an aim vector based on the head joint's yaw (aiming straight ahead)
+            {
+                v.x = 0.0f;
+                v.y = 0.0f;
+                v.z = -40.0f;
 
-            srt.transl.z = 0.0f;
-            srt.transl.y = 0.0f;
-            srt.transl.x = 0.0f;
-            srt.roll = 0;
-            srt.pitch = 0;
-            srt.yaw = squirtData->headYaw;
-            srt.scale = 0.0f;
-            mathRotateRPY(&srt, v.f);
+                fxTransform.transl.z = 0.0f;
+                fxTransform.transl.y = 0.0f;
+                fxTransform.transl.x = 0.0f;
+                fxTransform.roll = 0;
+                fxTransform.pitch = 0;
+                fxTransform.yaw = squirtData->headYaw;
+                fxTransform.scale = 0.0f;
+                mathRotateRPY(&fxTransform, v.f);
+            }
 
+            //Store the SnowHorn's global position
             f.x = self->globalPosition.x;
             f.y = self->globalPosition.y;
             f.z = self->globalPosition.z;
 
+            //Set the SnowHorn's globalPosition to the endpoint of their trunk!
+            //(Is this a mistake? Maybe they meant to set fxTransform's translation here?)
             self->globalPosition.x = squirtData->trunkAttachPoint.x;
             self->globalPosition.y = self->srt.transl.y + 40.0f;
             self->globalPosition.z = squirtData->trunkAttachPoint.z;
-            srt.yaw = 0;
+            fxTransform.yaw = 0;
 
+            //Set the SnowHorn's globalPosition back to its previous value? (Very odd!)
             self->globalPosition.x = f.x;
             self->globalPosition.y = f.y;
             self->globalPosition.z = f.z;
-            squirtData->state = SnowHornSquirt_STATE_3;
+
+            squirtData->state = SnowHornSquirt_STATE_3_Aim_Farthest;
         }
         break;
-    case SnowHornSquirt_STATE_3:
-        v.x = 0.0f;
-        v.y = 0.0f;
-        v.z = -60.0f;
+    case SnowHornSquirt_STATE_3_Aim_Farthest:
+        //Rotate an aim vector based on the head joint's yaw (aiming way ahead)
+        {
+            v.x = 0.0f;
+            v.y = 0.0f;
+            v.z = -60.0f;
 
-        srt.transl.z = 0.0f;
-        srt.transl.y = 0.0f;
-        srt.transl.x = 0.0f;
-        srt.roll = 0;
-        srt.pitch = 0;
-        srt.yaw = squirtData->headYaw;
-        srt.scale = 0.0f;
-        mathRotateRPY(&srt, v.f);
+            fxTransform.transl.z = 0.0f;
+            fxTransform.transl.y = 0.0f;
+            fxTransform.transl.x = 0.0f;
+            fxTransform.roll = 0;
+            fxTransform.pitch = 0;
+            fxTransform.yaw = squirtData->headYaw;
+            fxTransform.scale = 0.0f;
+            mathRotateRPY(&fxTransform, v.f);
+        }
 
+        //Store the SnowHorn's global position
         f.x = self->globalPosition.x;
         f.y = self->globalPosition.y;
         f.z = self->globalPosition.z;
 
+        //Set the SnowHorn's globalPosition to the endpoint of their trunk!
+        //(Is this a mistake? Maybe they meant to set fxTransform's translation here?)
         self->globalPosition.x = squirtData->trunkAttachPoint.f[0] + v.f[0];
         self->globalPosition.y = self->globalPosition.f[1] + v.f[1];
         self->globalPosition.z = squirtData->trunkAttachPoint.f[2] + v.f[2];
-        srt.yaw = 0;
+        fxTransform.yaw = 0;
 
+        //Set the SnowHorn's globalPosition back to its previous value? (Very odd!)
         self->globalPosition.x = f.x;
         self->globalPosition.y = f.y;
         self->globalPosition.z = f.z;
-        squirtData->state = SnowHornSquirt_STATE_4;
+
+        squirtData->state = SnowHornSquirt_STATE_4_Firing;
         break;
-    case SnowHornSquirt_STATE_4:
+    case SnowHornSquirt_STATE_4_Firing:
+        //Return to idle state at end of squirt animation
         if (animFinished) {
-            objAnimSet(self, 0, 0.0f, 0);
-            squirtData->state = SnowHornSquirt_STATE_5;
+            objAnimSet(self, SnowHorn_MODANIM0_0_Idle_LOOP, 0.0f, 0);
+            squirtData->state = SnowHornSquirt_STATE_5_Idle;
         }
         break;
-    case SnowHornSquirt_STATE_5:
+    case SnowHornSquirt_STATE_5_Idle:
+        //Go to sleep at night
         if (dIsNightTime) {
             squirtData->state |= SnowHorn_STATEFLAG_Sleep;
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -941,8 +1026,9 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
             break;
         }
 
+        //Squirt water at the player
         squirtData->timer += gUpdateRate;
-        if (squirtData->timer > squirtData->squirtTimeMax) {
+        if (squirtData->timer > squirtData->squirtInterval) {
             squirtData->timer = 0;
 
             //Get the head seqJoint's yaw
@@ -959,7 +1045,7 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
 
             CIRCLE_WRAP(aimYawDiff);
             
-            objAnimSet(self, 1, 0.0f, 0);
+            objAnimSet(self, SnowHorn_MODANIM0_1_Squirt, 0.0f, 0);
 
             if ((-3000 < aimYawDiff) && (aimYawDiff < 3000)) {
                 squirtData->aimTarget.x = player->srt.transl.x;
@@ -975,7 +1061,7 @@ static void SnowHorn_blueControl(Object* self, SnowHorn_Data* objData, SnowHorn_
                 squirtData->aimYaw = 0;
             }
 
-            squirtData->state = 0;
+            squirtData->state = SnowHornSquirt_STATE_0_Aim_Nearest;
         }
         break;
     }
@@ -1071,7 +1157,7 @@ static void SnowHorn_walkingControl(Object* self, SnowHorn_Data* objData, SnowHo
             objData->sleepTimer = mathRnd(0, 300);
             return;
         }
-    } else if ((self->unkAF & ARROW_FLAG_4_Highlighted) || (objData->distanceFromPlayer < 80.0f)) {
+    } else if ((self->unkAF & ARROW_FLAG_4_Highlighted) || (objData->playerDistance < 80.0f)) {
         //Gradually come to a stop when near the player
         objData->walkSpeed -= 0.025f;
         if (objData->walkSpeed < 0.05f) {
@@ -1195,7 +1281,7 @@ static void SnowHorn_garundaTeControl(Object* self, SnowHorn_Data* objData, Snow
         frostWeed = objGetNearestTypeTo(OBJTYPE_Baddie, self, 0);
         objSetup = (SnowHorn_Setup*)self->setup;
         if ((frostWeed != NULL) && (frostWeed->id == OBJ_Tumbleweed2) && 
-            (vec3DistanceXZSquared(&self->globalPosition, &frostWeed->globalPosition) < SQ(objSetup->unkRadius))
+            (vec3DistanceXZSquared(&self->globalPosition, &frostWeed->globalPosition) < SQ(objSetup->playerNearbyRange))
         ) {
             if (dll_tumbleweed(frostWeed)->is_gravitating(frostWeed) == FALSE) {
                 //Attract the FrostWeed towards Garunda Te's trunk

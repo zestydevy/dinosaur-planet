@@ -34,7 +34,7 @@ _rodata_A0 = 0xA0; // absolute:0x24CC
 _rodata_A4 = 0xA4; // absolute:0x24D0
 
 .data = 0x24FC:
-dJointHitSounds = 0x0; // absolute:0x24FC
+dJointHitData = 0x0; // absolute:0x24FC
 dTerrainTestPoints = 0x230; // absolute:0x272C
 dTerrainRadii = 0x260; // absolute:0x275C
 dIsNightTime = 0x270; // absolute:0x276C
