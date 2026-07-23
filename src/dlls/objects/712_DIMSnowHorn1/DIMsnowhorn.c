@@ -12,6 +12,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "sys/gfx/textable.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -21,6 +22,7 @@
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 typedef enum {
     DIMSnowHorn_IDX_0_Shackled,         //The SnowHorn shackled beside one of the snow houses
@@ -58,7 +60,27 @@ typedef struct {
     s16 unk90A;
 } DIMSnowHorn_Data;
 
-/*0x0*/ static s16 _data_0[] = {0x01c8};
+typedef enum {
+    DIMSnowHorn_ASTATE_0,
+    DIMSnowHorn_ASTATE_1,
+    DIMSnowHorn_ASTATE_2,
+    DIMSnowHorn_ASTATE_3,
+    DIMSnowHorn_ASTATE_4,
+    DIMSnowHorn_ASTATE_5,
+    DIMSnowHorn_ASTATE_6,
+    DIMSnowHorn_ASTATE_7,
+    DIMSnowHorn_ASTATE_8,
+    DIMSnowHorn_ASTATE_9,
+    DIMSnowHorn_ASTATE_10,
+    DIMSnowHorn_ASTATE_11,
+    DIMSnowHorn_ASTATE_12
+} DIMSnowHorn_AnimStates;
+
+typedef enum {
+    DIMSnowHorn_LSTATE_0_Top
+} DIMSnowHorn_LogicStates;
+
+/*0x0*/ static s16 dEnergyBarTexIDs[] = { TEXTABLE_1C8_CMDMENU_Early_Energy_Bar };
 /*0x4*/ static Vec3f dTerrainTestPoints[] = {
     VEC3F(-12, 0, -20),
     VEC3F(12, 0, -20),
@@ -76,14 +98,15 @@ typedef struct {
     25, 25
 };
 /*0x64*/ static u16 _data_64[] = { //Unused snowy footstep sounds?
-    0x037b, 0x037b
+    SOUND_37B_Snowy_Crunch, 
+    SOUND_37B_Snowy_Crunch
 };
 
 /*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[13];
 /*0x34*/ static ObjFSA_StateCallback sLogicStateCallbacks[1];
-/*0x38*/ static Texture* _bss_38[1];
-/*0x3C*/ static u8 _bss_3C[0x4];
-/*0x40*/ static MtxF _bss_40;
+/*0x38*/ static Texture* sEnergyBarTextures[1];
+/*0x3C*/ static u32 _bss_3C;
+/*0x40*/ static MtxF sRiderMtx;
 
 static void DIMSnowHorn_func_7C0(Object* self);
 static void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber);
@@ -109,21 +132,21 @@ static s32 DIMSnowHorn_logicState0(Object* obj, ObjFSA_Data* fsa, f32 updateRate
 
 // offset: 0x0 | func: 0
 static void DIMSnowHorn_initFSACallbacks(void) {
-    sAnimStateCallbacks[0] = DIMSnowHorn_animState0;
-    sAnimStateCallbacks[1] = DIMSnowHorn_animState1;
-    sAnimStateCallbacks[2] = DIMSnowHorn_animState2;
-    sAnimStateCallbacks[3] = DIMSnowHorn_animState3;
-    sAnimStateCallbacks[4] = DIMSnowHorn_animState4;
-    sAnimStateCallbacks[5] = DIMSnowHorn_animState5;
-    sAnimStateCallbacks[6] = DIMSnowHorn_animState6;
-    sAnimStateCallbacks[7] = DIMSnowHorn_animState7;
-    sAnimStateCallbacks[8] = DIMSnowHorn_animState8;
-    sAnimStateCallbacks[9] = DIMSnowHorn_animState9;
-    sAnimStateCallbacks[10] = DIMSnowHorn_animState10;
-    sAnimStateCallbacks[11] = DIMSnowHorn_animState11;
-    sAnimStateCallbacks[12] = DIMSnowHorn_animState12;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_0] = DIMSnowHorn_animState0;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_1] = DIMSnowHorn_animState1;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_2] = DIMSnowHorn_animState2;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_3] = DIMSnowHorn_animState3;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_4] = DIMSnowHorn_animState4;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_5] = DIMSnowHorn_animState5;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_6] = DIMSnowHorn_animState6;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_7] = DIMSnowHorn_animState7;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_8] = DIMSnowHorn_animState8;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_9] = DIMSnowHorn_animState9;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_10] = DIMSnowHorn_animState10;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_11] = DIMSnowHorn_animState11;
+    sAnimStateCallbacks[DIMSnowHorn_ASTATE_12] = DIMSnowHorn_animState12;
     
-    sLogicStateCallbacks[0] = DIMSnowHorn_logicState0;
+    sLogicStateCallbacks[DIMSnowHorn_LSTATE_0_Top] = DIMSnowHorn_logicState0;
 }
 
 // offset: 0xC8 | ctor
@@ -132,8 +155,8 @@ void DIMSnowHorn_ctor(void* dll) {
     
     DIMSnowHorn_initFSACallbacks();
 
-    for (i = 0; i < ARRAYCOUNT(_data_0); i++) {
-        _bss_38[i] = texLoadTextureActual(_data_0[i], 0);
+    for (i = 0; i < ARRAYCOUNT(dEnergyBarTexIDs); i++) {
+        sEnergyBarTextures[i] = texLoadTextureActual(dEnergyBarTexIDs[i], 0);
     }
 }
 
@@ -141,9 +164,9 @@ void DIMSnowHorn_ctor(void* dll) {
 void DIMSnowHorn_dtor(void* dll) {
     u32 i;
 
-    for (i = 0; i < ARRAYCOUNT(_data_0); i++) {
-        if (_bss_38[i]) {
-            texFreeTexture(_bss_38[i]);
+    for (i = 0; i < ARRAYCOUNT(dEnergyBarTexIDs); i++) {
+        if (sEnergyBarTextures[i]) {
+            texFreeTexture(sEnergyBarTextures[i]);
         }
     }
 }
@@ -198,8 +221,6 @@ void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset)
     objData->moveData.unk4A9 |= 8;
 }
 
-/*0x6C*/ static f32 _data_6C = 0.0f;
-
 // offset: 0x43C | func: 2 | export: 1
 void DIMSnowHorn_obj_Control(Object* self) {
     DIMSnowHorn_Data* objData;
@@ -214,10 +235,10 @@ void DIMSnowHorn_obj_Control(Object* self) {
 
     objData->unk8FE = 5;
 
-    self->unkAF &= ~8;
+    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     
     if (objData->unk902 == 2) {
-        self->unkAF |= 8;
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
         fsa->unk4.mode = 1;
 
         for (i = 0; i < gUpdateRate; i++) {
@@ -247,7 +268,7 @@ void DIMSnowHorn_obj_Control(Object* self) {
     if ((objData->characterIdx == DIMSnowHorn_IDX_3_Blizzard) || 
         (objData->characterIdx == DIMSnowHorn_IDX_1_Famished)
     ) {
-        if ((objData->unk902 == 0) && (fsa->animState == 8)) {
+        if ((objData->unk902 == 0) && (fsa->animState == DIMSnowHorn_ASTATE_8)) {
             if ((((DLL_Unknown*)player->dll)->vtbl->func[70].withOneArgS32(player) == 30) && (joyGetPressed(0) & A_BUTTON)) {
                 joyDisableButtons(0, A_BUTTON);
                 mainSetBits(BIT_3E3, 1);
@@ -372,7 +393,7 @@ void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, T
         gSPLoadGeometryMode(dl, 0x00000004 | 0x00200000);
         dlApplyGeometryMode(&dl);
         dlSetPrimColor(&dl, 0xFF, 0xFF, 0xFF, 0xFF);
-        DIMSnowHorn_func_E88(&dl, _bss_38[0], 0);
+        DIMSnowHorn_func_E88(&dl, sEnergyBarTextures[0], 0);
 
         //TODO: figure out what these macros are
         {
@@ -504,7 +525,7 @@ s32 DIMSnowHorn_vehicle_CanMount(Object* self, Object* player) {
     
     if ((objData->characterIdx == DIMSnowHorn_IDX_0_Shackled) || 
         (objData->characterIdx == DIMSnowHorn_IDX_2_Leap_of_Faith) || 
-        (fsa->animState != 8)
+        (fsa->animState != DIMSnowHorn_ASTATE_8)
     ) {
         return 0;
     }
@@ -595,7 +616,7 @@ void DIMSnowHorn_vehicle_GetPlayerAnim(Object* self, f32* arg1, s32* arg2) {
 f32 DIMSnowHorn_vehicle_Func16(Object* self, f32* oAnimDelta) {
     DIMSnowHorn_Data* objData = self->data;
     
-    if (objData->fsa.animState == 0xB) {
+    if (objData->fsa.animState == DIMSnowHorn_ASTATE_11) {
         *oAnimDelta = -objData->fsa.animTickDelta;
     } else {
         *oAnimDelta = 0.005f;
@@ -632,10 +653,10 @@ void DIMSnowHorn_vehicle_HandleRiderScale(Object* self, f32 scale) {
     xform.transl.y = jointY;
     xform.transl.z = jointZ;
     xform.scale = scale / self->def->scale;
-    mathYprXyzMtx(&_bss_40, &xform);
+    mathYprXyzMtx(&sRiderMtx, &xform);
     
-    mathMtxCat4x3F(&_bss_40, jointMtx, &_bss_40);
-    objprintSetModelMatrixOverride(&_bss_40);
+    mathMtxCat4x3F(&sRiderMtx, jointMtx, &sRiderMtx);
+    objprintSetModelMatrixOverride(&sRiderMtx);
 }
 
 // offset: 0x159C | func: 25
@@ -647,7 +668,8 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
 
     fsa = &((DIMSnowHorn_Data*)self->data)->fsa;
     objData = self->data;
-    self->unkAF |= 8;
+
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
     switch (objData->characterIdx) {
     case DIMSnowHorn_IDX_0_Shackled: 
@@ -657,43 +679,43 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
                 mainSetBits(BIT_DIM_Gear_1, 1);
             }
         }
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_1);
         break;
     case DIMSnowHorn_IDX_1_Famished:
         animData->unk62 = 0;
         if (self->seqSlot != SEQSLOT_NONE) {
             switch (objData->unk905) {
             case 0:
-                animState = 6;
+                animState = DIMSnowHorn_ASTATE_6;
                 break;
             case 1:
-                animState = 6;
+                animState = DIMSnowHorn_ASTATE_6;
                 break;
             case 2: 
-                animState = 7;
+                animState = DIMSnowHorn_ASTATE_7;
                 break;
             case 3:
-                animState = 7;
+                animState = DIMSnowHorn_ASTATE_7;
                 break;
             case 4:
             default:
-                animState = 8;
+                animState = DIMSnowHorn_ASTATE_8;
                 break;
             }
         } else {
 // block_17: //TODO: try to remove? (https://decomp.me/scratch/MWw2F)
-            animState = 8;
+            animState = DIMSnowHorn_ASTATE_8;
         }
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, animState);
         break;
     case DIMSnowHorn_IDX_2_Leap_of_Faith:
         animData->unk62 = 0;
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_3);
         break;
     case DIMSnowHorn_IDX_3_Blizzard:
         if (self->seqSlot == SEQSLOT_NONE) {
             if (animData->unk62 == 0) {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 8);
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_8);
                 objData->unk905 = 0;
             }
 
@@ -710,7 +732,7 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
             }
         } else {
             animData->unk62 = 0;
-            fsa->enteredAnimState = 1;
+            fsa->enteredAnimState = TRUE;
         }
         break;
     }
@@ -720,6 +742,7 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
 
 // offset: 0x1860 | func: 26
 int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    /*0x6C*/ static f32 _data_6C = 0.0f;
     /*0x70*/ static s8 _data_70 = 0;
 
     s32 pad1;
@@ -775,16 +798,16 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
             if (yawDiff < -M_90_DEGREES) {
                 yawDiff = -M_90_DEGREES;
             }
-            if ((yawDiff < 0x100) && (yawDiff >= -0xFF)) {
+            if ((yawDiff < 0x100) && (yawDiff > -0x100)) {
                 self->srt.yaw = animObj->srt.yaw;
                 animData->unk62 = 0;
                 animData->unk7A = animData->unk7C;
                 animData->prevTime = animData->time - 1;
                 outValue = 0;
             } else {
-                if (fsa->animState == 0xB) {
-                    fsa->enteredAnimState = 1;
-                    fsa->prevAnimState = 8;
+                if (fsa->animState == DIMSnowHorn_ASTATE_11) {
+                    fsa->enteredAnimState = TRUE;
+                    fsa->prevAnimState = DIMSnowHorn_ASTATE_8;
                     fsa->animState = fsa->prevAnimState;
                 }
                 fsa->xAnalogInput = -mathSinfInterp(-animObj->srt.yaw) * 60.0f;
@@ -818,16 +841,6 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
     return outValue;
 }
 
-/*0x74*/ static s16 _data_74[] = { 0x0103, 0x000b };
-/*0x78*/ static f32 _data_78[] = { 0.0031, 0.005 };
-/*0x80*/ static s16 _data_80[2] = {
-    SnowHorn_MODANIM0_0_Idle_LOOP, 
-    SnowHorn_MODANIM0_3_Walk_LOOP
-};
-/*0x84*/ static f32 _data_84[] = {
-    0.0, 0.05, 0.03, 0.85, 0, 0, 0
-};
-
 // offset: 0x1C78 | func: 27
 void DIMSnowHorn_func_1C78(Object* self) {
     DIMSnowHorn_Data* objData;
@@ -850,7 +863,7 @@ void DIMSnowHorn_func_1C78(Object* self) {
 }
 
 // offset: 0x1D34 | func: 28
-static void DIMSnowHorn_func_1D34(Object* self, ObjFSA_Data* fsa) {
+static void DIMSnowHorn_stop(Object* self, ObjFSA_Data* fsa) {
     fsa->speed = 0.0f;
     fsa->unk27C = 0.0f;
     fsa->unk278 = 0.0f;
@@ -859,6 +872,24 @@ static void DIMSnowHorn_func_1D34(Object* self, ObjFSA_Data* fsa) {
     self->velocity.y = 0.0f;
     self->velocity.z = 0.0f;
 }
+
+/*0x74*/ static s16 _data_74[] = {
+    0x0103, 
+    0x000b 
+};
+/*0x78*/ static f32 _data_78[] = {
+    0.0031, 
+    0.005 
+};
+
+/*0x80*/ static s16 _data_80[2] = {
+    SnowHorn_MODANIM0_0_Idle_LOOP, 
+    SnowHorn_MODANIM0_3_Walk_LOOP
+};
+/*0x84*/ static f32 _data_84[] = {
+    0.0, 0.05, 
+    0.03, 0.85
+};
 
 // offset: 0x1D68 | func: 29
 s32 DIMSnowHorn_animState0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -869,29 +900,29 @@ s32 DIMSnowHorn_animState0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if (mainGetBits(BIT_F3)) {
             objData->unk906 |= 0x20;
         }
-        return FSA_NEXTSTATE_SYNC(1);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_1);
     case DIMSnowHorn_IDX_1_Famished:
         if (mainGetBits(BIT_16F)) {
-            return FSA_NEXTSTATE_SYNC(8);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
         } else if (mainGetBits(BIT_28)) {
-            return FSA_NEXTSTATE_SYNC(7);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_7);
         } else if (mainGetBits(BIT_27)) {
-            return FSA_NEXTSTATE_SYNC(6);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_6);
         } else {
-            return FSA_NEXTSTATE_SYNC(5);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_5);
         }
     case DIMSnowHorn_IDX_2_Leap_of_Faith:
         if (mainGetBits(BIT_Horn_of_Truth)) {
             objData->unk905 = 8;
-            return FSA_NEXTSTATE_SYNC(3);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3);
         } else {
             objData->unk905 = 6;
-            return FSA_NEXTSTATE_SYNC(3);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3);
         }
     case DIMSnowHorn_IDX_3_Blizzard:
-        return FSA_NEXTSTATE_SYNC(8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
     default:
-        return FSA_NEXTSTATE_SYNC(8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
     }
 }
 
@@ -900,7 +931,8 @@ s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
     objData = self->data;
-    DIMSnowHorn_func_1D34(self, fsa);
+    
+    DIMSnowHorn_stop(self, fsa);
 
     fsa->flags |= 0x200000;
     
@@ -914,10 +946,10 @@ s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     objData->unk8FC -= (s32)updateRate;
     if (objData->unk8FC <= 0) {
-        return FSA_NEXTSTATE_ASYNC(2);
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_2);
     }
     
-    if (!(objData->unk906 & 0x20) && (self->unkAF & 1)) {
+    if (!(objData->unk906 & 0x20) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
         joyDisableButtons(0, A_BUTTON);
     }
@@ -932,17 +964,18 @@ s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     objData = self->data;
     
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
+
     fsa->flags |= 0x200000;
     
-    if (fsa->enteredAnimState != 0) {
+    if (fsa->enteredAnimState) {
         animIdx = mathRnd(0, 1);
         fsa->animTickDelta = _data_78[animIdx];
         objAnimSet(self, _data_74[animIdx], 0.0f, 0);
     }
     
-    if (fsa->unk33A != 0) {
-        return FSA_NEXTSTATE_ASYNC(1);
+    if (fsa->unk33A) {
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_1);
     }
     
     if (!(objData->unk906 & 0x20) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
@@ -957,7 +990,8 @@ s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
+
     fsa->flags |= 0x200000;
     
     if (fsa->enteredAnimState) {
@@ -970,7 +1004,7 @@ s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     objData->unk8FC -= (s32) updateRate;
     if (objData->unk8FC <= 0) {
-        return FSA_NEXTSTATE_ASYNC(4);
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_4);
     }
     
     if (self->unkAF & 1) {
@@ -997,7 +1031,7 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     objData = self->data;
     
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
     
     fsa->flags |= 0x200000;
     if (fsa->enteredAnimState) {
@@ -1007,7 +1041,7 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_ASYNC(3);
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_3);
     }
     
     if (self->unkAF & 1) {
@@ -1030,14 +1064,16 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
+    
     fsa->flags |= 0x200000;
+
     objData = self->data;
     
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
-        if (self->curModAnimId != 0x13) {
-            objAnimSet(self, 0x13, 0.0f, 0);
+        if (self->curModAnimId != SnowHorn_MODANIM0_19_Fallen_Idle_LOOP) {
+            objAnimSet(self, SnowHorn_MODANIM0_19_Fallen_Idle_LOOP, 0.0f, 0);
         }
     }
     
@@ -1062,18 +1098,18 @@ s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
+
     fsa->flags |= 0x200000;
     
     objData = self->data;
     
-    self->unkAF &= ~8;
+    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
-        if (self->curModAnimId != 0x13) {
-
-            objAnimSet(self, 0x13, 0.0f, 0);
+        if (self->curModAnimId != SnowHorn_MODANIM0_19_Fallen_Idle_LOOP) {
+            objAnimSet(self, SnowHorn_MODANIM0_19_Fallen_Idle_LOOP, 0.0f, 0);
         }
     }
     
@@ -1099,15 +1135,15 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
     s8 value;
 
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
     
     fsa->flags |= 0x200000;
     
     objData = self->data;
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
-        if (self->curModAnimId != 0x13) {
-            objAnimSet(self, 0x13, 0.0f, 0);
+        if (self->curModAnimId != SnowHorn_MODANIM0_19_Fallen_Idle_LOOP) {
+            objAnimSet(self, SnowHorn_MODANIM0_19_Fallen_Idle_LOOP, 0.0f, 0);
         }
     }
     
@@ -1136,7 +1172,7 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
     
     fsa->flags |= 0x200000;
 
@@ -1149,7 +1185,10 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
     }
     
-    if (((self->curModAnimId == 0x209) || (self->curModAnimId == 0x20A)) && (fsa->unk33A != 0)) {
+    if (((self->curModAnimId == SnowHorn_MODANIM2_9_Walk_Outro_L) || 
+         (self->curModAnimId == SnowHorn_MODANIM2_10_Walk_Outro_R)) 
+         && fsa->unk33A
+    ) {
         objAnimSet(self, _data_80[0], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
     }
@@ -1161,14 +1200,14 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if ((fsa->prevAnalogInputPower > 0) && (fsa->analogInputPower > 0) && (fsa->unk328 >= objData->unk8FE)) {
-        return FSA_NEXTSTATE_SYNC(10);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_10);
     }
     if ((fsa->prevAnalogInputPower > 0.1f) && (fsa->analogInputPower > 0.1f) && (fsa->unk328 < objData->unk8FE)) {
-        return FSA_NEXTSTATE_SYNC(11);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_11);
     }
     
     if (fsa->unk310 & 0x8000) {
-        return FSA_NEXTSTATE_SYNC(12);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
     } else {
         return 0;
     }
@@ -1182,13 +1221,13 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     self->unkAF |= 8;
     
     switch (self->curModAnimId) {
-    case 0x206:
+    case SnowHorn_MODANIM2_6_Sit_Intro:
         if (fsa->unk33A) {
             if (fsa->animTickDelta > 0.0f) {
-                objAnimSet(self, 0x205, 0.0f, 0);
+                objAnimSet(self, SnowHorn_MODANIM2_5_Sit_Idle_LOOP, 0.0f, 0);
                 fsa->animTickDelta = 0.005f;
             } else {
-                return FSA_NEXTSTATE_SYNC(8);
+                return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
             }
         }
         
@@ -1199,19 +1238,19 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
 
         break;
-    case 0x205:
+    case SnowHorn_MODANIM2_5_Sit_Idle_LOOP:
         if ((objData->unk900 != 0) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
-            objAnimSet(self, 0x207, 0.0f, 0);
+            objAnimSet(self, SnowHorn_MODANIM2_7_Sit_Outro, 0.0f, 0);
             fsa->animTickDelta = 0.014f;
         }
         break;
-    case 0x207:
+    case SnowHorn_MODANIM2_7_Sit_Outro:
         if (fsa->unk33A != 0) {
-            return FSA_NEXTSTATE_SYNC(8);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
         }
         break;
     default:
-        objAnimSet(self, 0x206, 0.0f, 0);
+        objAnimSet(self, SnowHorn_MODANIM2_6_Sit_Intro, 0.0f, 0);
         fsa->animTickDelta = 0.014f;
         break;
     }
@@ -1225,24 +1264,24 @@ s32 DIMSnowHorn_animState10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     fsa->flags |= 0x200000;
     if ((fsa->unk328 < objData->unk8FE) || (fsa->analogInputPower == 0.0f)) {
-        return FSA_NEXTSTATE_SYNC(8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
     }
 
     if (fsa->unk32A < -0xAF) {
         fsa->unk32A = -fsa->unk32A;
     }
     
-    if ((fsa->unk32A > 0) && (self->curModAnimId != 0x201)) {
-        objAnimSet(self, 0x201, 0.0f, 0);
-    } else if ((fsa->unk32A <= 0) && (self->curModAnimId != 0x200)) {
-        objAnimSet(self, 0x200, 0.0f, 0);
+    if ((fsa->unk32A > 0) && (self->curModAnimId != SnowHorn_MODANIM2_1_Turn_Left_LOOP)) {
+        objAnimSet(self, SnowHorn_MODANIM2_1_Turn_Left_LOOP, 0.0f, 0);
+    } else if ((fsa->unk32A <= 0) && (self->curModAnimId != SnowHorn_MODANIM2_0_Turn_Right_LOOP)) {
+        objAnimSet(self, SnowHorn_MODANIM2_0_Turn_Right_LOOP, 0.0f, 0);
     }
     fsa->animTickDelta = 0.012f;
     
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 8);
     
     if (fsa->unk310 & 0x8000) {
-        return FSA_NEXTSTATE_SYNC(12);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
     } else {
         return 0;
     }
@@ -1266,7 +1305,7 @@ s32 DIMSnowHorn_animState11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
 
     fsa->flags |= 0x200000;
 
-    if (fsa->enteredAnimState){
+    if (fsa->enteredAnimState) {
         self->srt.yaw += fsa->unk32A * 0xB6;
         fsa->unk328 = 0;
         fsa->unk32A = 0;
@@ -1334,7 +1373,7 @@ s32 DIMSnowHorn_animState11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     if (fsa->speed < temp_v0[0]){
         animCondition1 = 1;
         if (animIndex == 1){
-            return FSA_NEXTSTATE_SYNC(8);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
         }
         animIndex -= one;
     } else if (temp_v0[1] <= fsa->speed){
@@ -1361,7 +1400,7 @@ s32 DIMSnowHorn_animState11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
 
     if (fsa->unk310 & 0x8000){
-        return FSA_NEXTSTATE_SYNC(12);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
     } else {
         return 0;
     }
@@ -1377,12 +1416,12 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     fsa->flags |= 0x200000;
     
-    DIMSnowHorn_func_1D34(self, fsa);
+    DIMSnowHorn_stop(self, fsa);
     
     if (fsa->enteredAnimState) {
         objData->unk906 &= ~8;
         objHits->unk58 |= 0x200;
-        objAnimSet(self, 0x204, 0.0f, 0);
+        objAnimSet(self, SnowHorn_MODANIM2_4_Tusk_Attack, 0.0f, 0);
         fsa->animTickDelta = 0.013f;
     }
     
@@ -1400,7 +1439,7 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (self->animProgress > 0.9f) {
-        return FSA_NEXTSTATE_SYNC(8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
     } else {
         return 0;
     }

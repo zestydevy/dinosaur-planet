@@ -411,6 +411,8 @@ enum SoundID {
     SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
 
+    SOUND_37B_Snowy_Crunch = 0x37B,
+
     SOUND_380_Scorching_Impact = 0x380, //DRbullet
 
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
