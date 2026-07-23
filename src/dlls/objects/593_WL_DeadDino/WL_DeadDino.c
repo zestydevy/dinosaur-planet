@@ -37,14 +37,14 @@ typedef enum {
 } DeadDino_States;
 
 /*0x0*/ static Unk80026DF4 dJointHitSounds[] = {
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_677_Metal_Clang, NO_SOUND, -1, -1, 1, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
-    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0, 0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_677_Metal_Clang, NO_SOUND, -1, -1, TRUE, 0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
     EMPTY_UNK80026DF4,
     EMPTY_UNK80026DF4,
     EMPTY_UNK80026DF4,
