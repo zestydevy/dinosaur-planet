@@ -26,7 +26,9 @@ typedef struct {
     s8 unk34C[0x804 - 0x34C];
     s8 unk804;
     Vec3f unk808;
-    s8 unk814[0x860 - 0x814];
+    s8 unk814[0x828 - 0x814];
+    Vec3f unk828[1];
+    s8 unk834[0x860 - 0x834];
     Vec3f unk860;
     s8 unk86C[0x8FC - 0x86C];
     s16 unk8FC;
@@ -72,11 +74,13 @@ typedef struct {
     0.0, 0.05, 0.03, 0.85, 0, 0, 0
 };
 
-/*0x0*/ static u8 _bss_0[0x34];
-/*0x34*/ static u8 _bss_34[0x4];
+/*0x0*/ static ObjFSA_StateCallback _bss_0[13];
+/*0x34*/ static ObjFSA_StateCallback _bss_34[1];
 /*0x38*/ static Texture* _bss_38[1];
 /*0x3C*/ static u8 _bss_3C[0x4];
 /*0x40*/ static MtxF _bss_40;
+
+static void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
 
 // offset: 0x0 | func: 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_0.s")
@@ -134,7 +138,61 @@ void dll_712_func_7C0(Object* self) {
 }
 
 // offset: 0x87C | func: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_87C.s")
+void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
+    DIMSnowHorn_Data* objData;
+    ObjFSA_Data* fsa;
+    Camera* cam;
+    s32 sp28;
+
+    if (arg2 != -1) {
+        sp28 = (arg2 + 1) == gUpdateRate;
+    } else {
+        sp28 = 1;
+    }
+    
+    cam = camGetMain();    
+    
+    objData = self->data;
+    
+    fsa = &objData->unk0;
+    fsa->hitpoints = 0;
+    fsa->flags &= ~0x8000;
+    
+    if (objData->unk902 == 2) {
+        if (mainGetBits(BIT_3E2)) {
+            objData->unk900 -= arg1;
+        }
+        
+        if (mainGetBits(BIT_3E9)) {
+            mainSetBits(BIT_3E9, 0);
+            objData->unk900 = BIT_3E8;
+        }
+        
+        if (objData->unk900 < 0) {
+            objData->unk900 = 0;
+        }
+        
+        fsa->xAnalogInput = joyGetStickXBuffered(0, arg2);
+        fsa->yAnalogInput = joyGetStickYBuffered(0, arg2);
+        fsa->unk310 = joyGetPressedBuffered(0, arg2);
+        fsa->unk30C = joyGetButtonsBuffered(0, arg2);
+        fsa->unk324 = cam->srt.yaw;
+    } else {
+        fsa->unk310 = 0;
+        fsa->unk30C = 0;
+        fsa->unk324 = 0;
+        fsa->xAnalogInput = 0.0f;
+        fsa->yAnalogInput = 0.0f;
+    }
+
+    fsa->flags |= 0x400000;
+    if (sp28) {
+        fsa->flags &= ~0x400000;
+    }
+    
+    gDLL_18_objfsa->vtbl->tick(self, fsa, arg1, gUpdateRateF, _bss_0, _bss_34);
+    dll_712_func_FA0(self, objData, fsa);
+}
 
 // offset: 0xAD4 | func: 5 | export: 2
 void dll_712_update(Object *self) { }
@@ -162,7 +220,45 @@ u32 dll_712_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_E88.s")
 
 // offset: 0xFA0 | func: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_FA0.s")
+void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa) {
+    u8 i;
+    SRT fxTransform; 
+    u8 count;
+    u8 bits;
+    
+    bits = 0;
+    if (fsa->unk308 & 2) {
+        bits = 1;
+    }
+    if (fsa->unk308 & 4) {
+        bits |= 2;
+    }
+    if (fsa->unk308 & 8) {
+        bits |= 4;
+    }
+    if (fsa->unk308 & 0x10) {
+        bits |= 8;
+    }
+
+    i = 0;
+    while (bits) {
+        if (bits & 1) {
+            fxTransform.transl.f[0] = objData->unk828[i].f[0];
+            fxTransform.transl.f[1] = objData->unk828[i].f[1];
+            fxTransform.transl.f[2] = objData->unk828[i].f[2];
+            fxTransform.scale = 0.004f;
+
+            count = mathRnd(2, 6);
+            while (count) {
+                gDLL_17_partfx->vtbl->spawn(self, 0x1F9 + mathRnd(0, 1), &fxTransform, 0x10001, -1, NULL);
+                count--;
+            }
+        }
+
+        bits >>= 1;
+        i++;
+    }
+}
 
 // offset: 0x1150 | func: 12 | export: 7
 s32 dll_712_func_1150(Object* self, Object* player) {
@@ -540,7 +636,40 @@ s32 dll_712_func_2470(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x25E4 | func: 35
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_25E4.s")
+s32 dll_712_func_25E4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DIMSnowHorn_Data* objData;
+
+    dll_712_func_1D34(self, fsa);
+    fsa->flags |= 0x200000;
+    
+    objData = self->data;
+    
+    self->unkAF &= ~8;
+    
+    if (fsa->enteredAnimState) {
+        fsa->animTickDelta = 0.005f;
+        if (self->curModAnimId != 0x13) {
+
+            objAnimSet(self, 0x13, 0.0f, 0);
+        }
+    }
+    
+    if (self->unkAF & ARROW_FLAG_4_Highlighted) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_DIM_Alpine_Roots)) {
+            objData->unk905 = 2;
+            gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
+            mainSetBits(BIT_28, 1);
+            mainSetBits(BIT_DIM_Alpine_Roots, mainGetBits(BIT_DIM_Alpine_Roots) - 1);
+            joyDisableButtons(0, A_BUTTON);
+        } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
+            objData->unk905 = 1;
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
+            joyDisableButtons(0, A_BUTTON);
+        }
+    }
+    
+    return 0;
+}
 
 // offset: 0x27D4 | func: 36
 s32 dll_712_func_27D4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -559,8 +688,8 @@ s32 dll_712_func_27D4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
     }
     
-    if (self->unkAF & 4) {
-        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(0x170)) {
+    if (self->unkAF & ARROW_FLAG_4_Highlighted) {
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_DIM_Alpine_Roots)) {
             objData->unk905 = 4;
             gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
             mainSetBits(BIT_16F, 1);
@@ -570,7 +699,7 @@ s32 dll_712_func_27D4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                 value = 0;
             }
             mainSetBits(BIT_DIM_Alpine_Roots, value);
-        } else if (self->unkAF & 1) {
+        } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
             objData->unk905 = 3;
             gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
             joyDisableButtons(0, A_BUTTON);
@@ -581,10 +710,91 @@ s32 dll_712_func_27D4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x29B8 | func: 37
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_29B8.s")
+s32 dll_712_func_29B8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DIMSnowHorn_Data* objData = self->data;
+    
+    dll_712_func_1D34(self, fsa);
+    
+    fsa->flags |= 0x200000;
+
+    if (fsa->enteredAnimState) {
+        fsa->animStateTime = 0;
+        fsa->animTickDelta = 0.005f;
+        fsa->unk2B0 = 8.0f;
+        if (self->curModAnimId != _data_80[0]) {
+            objAnimSet(self, _data_80[0], 0.0f, 0);
+        }
+    }
+    
+    if (((self->curModAnimId == 0x209) || (self->curModAnimId == 0x20A)) && (fsa->unk33A != 0)) {
+        objAnimSet(self, _data_80[0], 0.0f, 0);
+        fsa->animTickDelta = 0.005f;
+    }
+    
+    if (fsa->analogInputPower < 0.05f) {
+        fsa->unk328 = 0;
+        fsa->unk32A = 0;
+        fsa->analogInputPower = 0;
+    }
+    
+    if ((fsa->prevAnalogInputPower > 0) && (fsa->analogInputPower > 0) && (fsa->unk328 >= objData->unk8FE)) {
+        return 0xB;
+    }
+    if ((fsa->prevAnalogInputPower > 0.1f) && (fsa->analogInputPower > 0.1f) && (fsa->unk328 < objData->unk8FE)) {
+        return 0xC;
+    }
+    
+    if (fsa->unk310 & 0x8000) {
+        return 0xD;
+    } else {
+        return 0;
+    }
+}
 
 // offset: 0x2BA0 | func: 38
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_2BA0.s")
+s32 dll_712_func_2BA0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    DIMSnowHorn_Data* objData = self->data;
+    
+    fsa->flags |= 0x200000;
+    self->unkAF |= 8;
+    
+    switch (self->curModAnimId) {
+    case 0x206:
+        if (fsa->unk33A) {
+            if (fsa->animTickDelta > 0.0f) {
+                objAnimSet(self, 0x205, 0.0f, 0);
+                fsa->animTickDelta = 0.005f;
+            } else {
+                return 9;
+            }
+        }
+        
+        if (objData->unk900 != 0) {
+            if ((fsa->animTickDelta > 0.0f) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
+                fsa->animTickDelta = -fsa->animTickDelta;
+            }
+        }
+
+        break;
+    case 0x205:
+        if ((objData->unk900 != 0) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
+            objAnimSet(self, 0x207, 0.0f, 0);
+            fsa->animTickDelta = 0.014f;
+        }
+        break;
+    case 0x207:
+        if (fsa->unk33A != 0) {
+            return 9;
+        }
+        break;
+    default:
+        objAnimSet(self, 0x206, 0.0f, 0);
+        fsa->animTickDelta = 0.014f;
+        break;
+    }
+
+    return 0;
+}
 
 // offset: 0x2D90 | func: 39
 s32 dll_712_func_2D90(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
