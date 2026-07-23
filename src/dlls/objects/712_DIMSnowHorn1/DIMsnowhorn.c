@@ -72,9 +72,6 @@ typedef struct {
 /*0x64*/ static u32 _data_64[] = {
     0x037b037b
 };
-// /*0x68*/ static u32 _data_68 = 0x01010101;
-
-
 
 /*0x0*/ static ObjFSA_StateCallback _bss_0[13];
 /*0x34*/ static ObjFSA_StateCallback _bss_34[1];
@@ -85,6 +82,7 @@ typedef struct {
 static void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
 static int dll_712_func_159C(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackValue);
 static int dll_712_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void dll_712_func_E88(Gfx** gdl, Texture* tex, s32 frame);
 
 // offset: 0x0 | func: 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_0.s")
@@ -247,8 +245,72 @@ void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
 void dll_712_update(Object *self) { }
 
 // offset: 0xAE0 | func: 6 | export: 3
-void dll_712_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_print.s")
+void dll_712_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DIMSnowHorn_Data *objData;
+    s32 pad1;
+    Gfx *dl;
+    s32 pad2;
+    
+    objData = self->data;
+    
+    if ((objData->unk906 & 0x10)) {
+        return;
+    }
+    
+    if ((objData->unk904 == 3) && (objData->unk902 == 2)) {            
+        dl = *gdl;
+            
+        gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
+        dlApplyCombine(&dl);
+        gDPSetOtherMode(dl, G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | 
+            G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
+        dlApplyOtherMode(&dl);
+        gSPLoadGeometryMode(dl, 0x00000004 | 0x00200000);
+        dlApplyGeometryMode(&dl);
+        dlSetPrimColor(&dl, 0xFF, 0xFF, 0xFF, 0xFF);
+        dll_712_func_E88(&dl, _bss_38[0], 0);
+
+        //TODO: figure out what these macros are
+        {
+            Gfx *_g = (Gfx *) dl;
+            dl = _g + 1;
+            _g->words.w0 = (((((objData->unk900 / 5) + 0x50) & 0xFFF) << 0xC) | 0xE4000000) | 0x90;
+            _g->words.w1 = 0x00050050;
+        }
+        
+        {
+            Gfx *_g = (Gfx *) dl;
+            dl = _g + 1;
+            _g->words.w0 = 0xE1000000;\
+            _g->words.w1 = 0x000001FF;
+        }
+        
+        {
+            Gfx *_g = (Gfx *) dl;
+            dl = _g + 1; _g->words.w0 = 0xF1000000; _g->words.w1 = 0x0400FC00; 
+        } 
+        
+        gDLBuilder->needsPipeSync = TRUE; 
+        
+        *gdl = dl; 
+    } 
+    
+    if (visibility == -1) { 
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f); 
+        objGetAttachPointWorldSpace(self, 1, &objData->unk860.f[0], &objData->unk860.f[1], &objData->unk860.f[2], 0); 
+        objGetAttachPointBoneWorldPositions(self, 2, 4, objData->unk828); 
+    }
+   
+    if (objData->unk902 != 2) {
+        if (visibility) {
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objGetAttachPointWorldSpace(self, 1, &objData->unk860.f[0], &objData->unk860.f[1], &objData->unk860.f[2], 0);
+            objGetAttachPointBoneWorldPositions(self, 2, 4, objData->unk828);
+        }
+        
+        ((DLL_53_movelib *) gTempDLLInsts[1])->vtbl->func3(self, &objData->unk34C, 0);
+    }
+}
 
 // offset: 0xE24 | func: 7 | export: 4
 void dll_712_free(Object* self, s32 onlySelf) {
@@ -266,7 +328,29 @@ u32 dll_712_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0xE88 | func: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_E88.s")
+void dll_712_func_E88(Gfx** gdl, Texture* tex, s32 frame) {
+    Gfx* dl;
+    s32 i;
+
+    dl = *gdl;
+
+    //Get the animation frame
+    for (i = 0; i < frame; i++) {
+        if (tex->next != NULL) {
+            tex = tex->next;
+        }
+    }
+
+    dl->words.w0 = tex->gdl->words.w0;
+    dl->words.w1 = (u32) (OS_PHYSICAL_TO_K0(tex + 1));
+    dl++;
+
+    gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tex->gdl + 1));
+
+    texRenderReset();
+
+    *gdl = dl;
+}
 
 // offset: 0xFA0 | func: 11
 void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa) {
