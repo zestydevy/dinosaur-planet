@@ -31,9 +31,7 @@ typedef struct {
 typedef struct {
     ObjFSA_Data unk0;
     MoveLibData unk34C;
-    s8 unk804;
-    Vec3f unk808;
-    s8 unk814[0x828 - 0x814];
+    HeadAnimation unk804;
     Vec3f unk828[1];
     s8 unk834[0x860 - 0x834];
     Vec3f unk860;
@@ -69,8 +67,8 @@ typedef struct {
 /*0x5C*/ static f32 _data_5C[] = {
     25, 25
 };
-/*0x64*/ static u32 _data_64[] = {
-    0x037b037b
+/*0x64*/ static u16 _data_64[] = { //Unused snowy footstep sounds?
+    0x037b, 0x037b
 };
 
 /*0x0*/ static ObjFSA_StateCallback _bss_0[13];
@@ -79,18 +77,48 @@ typedef struct {
 /*0x3C*/ static u8 _bss_3C[0x4];
 /*0x40*/ static MtxF _bss_40;
 
+static void dll_712_func_7C0(Object* self);
+static void dll_712_func_87C(Object* self, s32 updateRate, s32 iterationNumber);
+static void dll_712_func_E88(Gfx** gdl, Texture* tex, s32 frame);
 static void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
 static int dll_712_func_159C(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackValue);
 static int dll_712_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static void dll_712_func_E88(Gfx** gdl, Texture* tex, s32 frame);
+static void dll_712_func_1C78(Object* self);
+static s32 dll_712_func_1D68(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_1EB0(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2024(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2174(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_22FC(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2470(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_25E4(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_27D4(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_29B8(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2BA0(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2D90(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_2EEC(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_32C0(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_712_func_3430(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_0.s")
+static void dll_712_func_0(void) {
+    _bss_0[0] = dll_712_func_1D68;
+    _bss_0[1] = dll_712_func_1EB0;
+    _bss_0[2] = dll_712_func_2024;
+    _bss_0[3] = dll_712_func_2174;
+    _bss_0[4] = dll_712_func_22FC;
+    _bss_0[5] = dll_712_func_2470;
+    _bss_0[6] = dll_712_func_25E4;
+    _bss_0[7] = dll_712_func_27D4;
+    _bss_0[8] = dll_712_func_29B8;
+    _bss_0[9] = dll_712_func_2BA0;
+    _bss_0[10] = dll_712_func_2D90;
+    _bss_0[11] = dll_712_func_2EEC;
+    _bss_0[12] = dll_712_func_32C0;
+    
+    _bss_34[0] = dll_712_func_3430;
+}
 
 // offset: 0xC8 | ctor
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_ctor.s")
-#else
 void dll_712_ctor(void* dll) {
     u32 i;
     
@@ -100,7 +128,6 @@ void dll_712_ctor(void* dll) {
         _bss_38[i] = texLoadTextureActual(_data_0[i], 0);
     }
 }
-#endif
 
 // offset: 0x15C | dtor
 void dll_712_dtor(void* dll) {
@@ -163,8 +190,68 @@ void dll_712_setup(Object* self, DLL712_Setup* objSetup, s32 reset) {
 /*0x6C*/ static f32 _data_6C = 0.0f;
 
 // offset: 0x43C | func: 2 | export: 1
-void dll_712_control(Object *self);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_control.s")
+void dll_712_control(Object* self) {
+    DIMSnowHorn_Data* objData;
+    s32 i;
+    ObjFSA_Data* fsa;
+    f32 distance;
+    Object* player;
+
+    player = objGetPlayer();
+    fsa = self->data;
+    objData = self->data;
+
+    objData->unk8FE = 5;
+
+    self->unkAF &= ~8;
+    
+    if (objData->unk902 == 2) {
+        self->unkAF |= 8;
+        fsa->unk4.mode = 1;
+
+        for (i = 0; i < gUpdateRate; i++) {
+            dll_712_func_87C(self, 1, i);
+        }
+    } else {
+        fsa->unk4.mode = 0;
+        gDLL_27->vtbl->reset(self, &fsa->unk4);
+        dll_712_func_87C(self, gUpdateRate, -1);
+    }
+    
+    if (objData->unk902 == 0) {
+        gDLL_9_Newclouds->vtbl->func7.withOneArg(0);
+    } else {
+        gDLL_9_Newclouds->vtbl->func7.withOneArg(1);
+    }
+    
+    if ((objData->unk904 != 0) && (objData->unk904 != 2)) {
+        
+    } else {
+        dll_712_func_1C78(self);
+        objExpr_func_800328F0(self, &objData->unk804, 0.0f);
+    }
+    
+    if ((objData->unk904 == 3) || (objData->unk904 == 1)) {
+        if ((objData->unk902 == 0) && (fsa->animState == 8)) {
+            if ((((DLL_Unknown*)player->dll)->vtbl->func[70].withOneArgS32(player) == 0x1E) && (joyGetPressed(0) & A_BUTTON)) {
+                joyDisableButtons(0, A_BUTTON);
+                mainSetBits(0x3E3, 1);
+                mainSetBits(0x5BA, 1);
+                objData->unk900 = 0x3E8;
+            }
+        } else if ((objData->unk902 == 2) && (joyGetPressed(0) & 0x8000)) {
+            distance = 100.0f;
+            if (objGetNearestTypeTo(0x15, self, &distance) != NULL) {
+                joyDisableButtons(0, A_BUTTON);
+                mainSetBits(0x3E3, 0);
+                mainSetBits(0x5BB, 1);
+            }
+        }
+    }
+    
+    objExprEyeIdle(self, &objData->unk804);
+    dll_712_func_7C0(self);
+}
 
 // offset: 0x7C0 | func: 3
 void dll_712_func_7C0(Object* self) {
@@ -185,16 +272,18 @@ void dll_712_func_7C0(Object* self) {
 }
 
 // offset: 0x87C | func: 4
-void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
+void dll_712_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
     DIMSnowHorn_Data* objData;
     ObjFSA_Data* fsa;
     Camera* cam;
-    s32 sp28;
+    s32 isLastIteration;
 
-    if (arg2 != -1) {
-        sp28 = (arg2 + 1) == gUpdateRate;
-    } else {
-        sp28 = 1;
+    //This function can be called 60 times per second (repeated gUpdateRate times per frame drawn)
+    //`iterationNumber` tracks how many times the function has been called this frame.
+    if (iterationNumber != -1) { //Iterating gUpdateRate times
+        isLastIteration = (iterationNumber + 1) == gUpdateRate;
+    } else {                     //Called once per frame drawn
+        isLastIteration = TRUE;
     }
     
     cam = camGetMain();    
@@ -207,7 +296,7 @@ void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
     
     if (objData->unk902 == 2) {
         if (mainGetBits(BIT_3E2)) {
-            objData->unk900 -= arg1;
+            objData->unk900 -= updateRate;
         }
         
         if (mainGetBits(BIT_3E9)) {
@@ -219,10 +308,10 @@ void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
             objData->unk900 = 0;
         }
         
-        fsa->xAnalogInput = joyGetStickXBuffered(0, arg2);
-        fsa->yAnalogInput = joyGetStickYBuffered(0, arg2);
-        fsa->unk310 = joyGetPressedBuffered(0, arg2);
-        fsa->unk30C = joyGetButtonsBuffered(0, arg2);
+        fsa->xAnalogInput = joyGetStickXBuffered(0, iterationNumber);
+        fsa->yAnalogInput = joyGetStickYBuffered(0, iterationNumber);
+        fsa->unk310 = joyGetPressedBuffered(0, iterationNumber);
+        fsa->unk30C = joyGetButtonsBuffered(0, iterationNumber);
         fsa->unk324 = cam->srt.yaw;
     } else {
         fsa->unk310 = 0;
@@ -233,11 +322,11 @@ void dll_712_func_87C(Object* self, s32 arg1, s32 arg2) {
     }
 
     fsa->flags |= 0x400000;
-    if (sp28) {
+    if (isLastIteration) {
         fsa->flags &= ~0x400000;
     }
     
-    gDLL_18_objfsa->vtbl->tick(self, fsa, arg1, gUpdateRateF, _bss_0, _bss_34);
+    gDLL_18_objfsa->vtbl->tick(self, fsa, updateRate, gUpdateRateF, _bss_0, _bss_34);
     dll_712_func_FA0(self, objData, fsa);
 }
 
@@ -731,15 +820,15 @@ void dll_712_func_1C78(Object* self) {
     player = objGetPlayer();
     if (player != NULL) {
         if ((vec3Distance(&player->globalPosition, &self->globalPosition) < 300.0f) && (objData->unk902 == 0)) {
-            objData->unk804 = 1;
-            objData->unk808.x = player->srt.transl.x;
-            objData->unk808.y = player->srt.transl.y;
-            objData->unk808.z = player->srt.transl.z;
+            objData->unk804.aimIsActive = 1;
+            objData->unk804.headAimX = player->srt.transl.x;
+            objData->unk804.headAimY = player->srt.transl.y;
+            objData->unk804.headAimZ = player->srt.transl.z;
             return;
         }
     }
     
-    objData->unk804 = 0;
+    objData->unk804.aimIsActive = 0;
 }
 
 // offset: 0x1D34 | func: 28
