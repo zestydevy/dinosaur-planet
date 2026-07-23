@@ -4,6 +4,7 @@
 #include "dll.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/3_animation.h"
+#include "dlls/engine/53_movelib.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/496_SnowHorn.h"
 #include "game/gamebits.h"
@@ -23,7 +24,7 @@
 
 typedef struct {
     ObjFSA_Data unk0;
-    s8 unk34C[0x804 - 0x34C];
+    MoveLibData unk34C;
     s8 unk804;
     Vec3f unk808;
     s8 unk814[0x828 - 0x814];
@@ -46,33 +47,29 @@ typedef struct {
 } DIMSnowHorn_Data;
 
 /*0x0*/ static s16 _data_0[] = {0x01c8};
-/*0x4*/ static f32 _data_4[] = {
-    -12, 0, -20,
-    12, 0, -20,
-    12, 0, 20,
-    -12, 0, 20
+/*0x4*/ static Vec3f _data_4[] = {
+    VEC3F(-12, 0, -20),
+    VEC3F(12, 0, -20),
+    VEC3F(12, 0, 20),
+    VEC3F(-12, 0, 20)
 };
-/*0x34*/ static u32 _data_34[] = {
+/*0x34*/ static f32 _data_34[] = {
     0, 0, 0, 0
 };
-/*0x44*/ static f32 _data_44[] = {
-    0, 0, 35, 0, 0, -35
+/*0x44*/ static Vec3f _data_44[] = {
+    VEC3F(0, 0, 35), 
+    VEC3F(0, 0, -35)
 };
-/*0x5C*/ static u32 _data_5C[] = {
-    0x41c80000, 0x41c80000, 0x037b037b
+/*0x5C*/ static f32 _data_5C[] = {
+    25, 25
+};
+/*0x64*/ static u32 _data_64[] = {
+    0x037b037b
 };
 /*0x68*/ static u32 _data_68 = 0x01010101;
-/*0x6C*/ static f32 _data_6C = 0.0;
-/*0x70*/ static u32 _data_70 = 0x00000000;
-/*0x74*/ static s16 _data_74[] = { 0x0103, 0x000b };
-/*0x78*/ static f32 _data_78[] = { 0.0031, 0.005 };
-/*0x80*/ static s16 _data_80[2] = {
-    SnowHorn_MODANIM0_0_Idle_LOOP, 
-    SnowHorn_MODANIM0_3_Walk_LOOP
-};
-/*0x84*/ static f32 _data_84[] = {
-    0.0, 0.05, 0.03, 0.85, 0, 0, 0
-};
+/*0x6C*/ static f32 _data_6C = 0.0f;
+// /*0x70*/ static u32 _data_70 = 0x00000000;
+
 
 /*0x0*/ static ObjFSA_StateCallback _bss_0[13];
 /*0x34*/ static ObjFSA_StateCallback _bss_34[1];
@@ -403,7 +400,114 @@ void dll_712_func_14A8(Object* self, f32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_159C.s")
 
 // offset: 0x1860 | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_1860.s")
+int dll_712_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    /*0x70*/ static s8 _data_70 = 0;
+
+    s32 pad1;
+    s32 outValue;
+    f32 diffX;
+    f32 diffZ;
+    f32 dx;
+    f32 dz;
+    f32 sp3C;
+    f32 otherDist;
+    s32 yawDiff;
+    DIMSnowHorn_Data* objData;
+    ObjFSA_Data* fsa;
+
+    outValue = 0;
+    
+    fsa = &((DIMSnowHorn_Data*)self->data)->unk0;
+    objData = self->data;
+
+    if (animData->unk62 != 0) {
+        if (animData->unk62 != 1) {
+            animData->unk4C.x = self->srt.transl.f[0];
+            animData->unk4C.y = self->srt.transl.f[1];
+            animData->unk4C.z = self->srt.transl.f[2];
+            _data_6C = 10000.0f;
+            _data_70 = 0;
+        }
+
+        outValue = 1;
+        
+        fsa->unk4.mode = 1;
+        animData->unk7A = 0;
+        animData->unk62 = 1;
+        
+        diffX = animData->unk4C.f[0] - self->srt.transl.f[0];
+        diffZ = animData->unk4C.f[2] - self->srt.transl.f[2];
+        sp3C = sqrtf(SQ(diffX) + SQ(diffZ));
+        if (sp3C <= _data_6C) {
+            _data_70++;
+        }
+        
+        dx = animObj->srt.transl.f[0] - animData->unk4C.f[0];
+        dz = animObj->srt.transl.f[2] - animData->unk4C.f[2];
+        otherDist = sqrtf(SQ(dx) + SQ(dz));
+        if (otherDist <= sp3C) {
+            objData->unk8FE = 0;
+            yawDiff = self->srt.yaw - (animObj->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(yawDiff);
+            
+            if (yawDiff > M_90_DEGREES) {
+                yawDiff = M_90_DEGREES;
+            }
+            if (yawDiff < -M_90_DEGREES) {
+                yawDiff = -M_90_DEGREES;
+            }
+            if ((yawDiff < 0x100) && (yawDiff >= -0xFF)) {
+                self->srt.yaw = animObj->srt.yaw;
+                animData->unk62 = 0;
+                animData->unk7A = animData->unk7C;
+                animData->prevTime = animData->time - 1;
+                outValue = 0;
+            } else {
+                if (fsa->animState == 0xB) {
+                    fsa->enteredAnimState = 1;
+                    fsa->prevAnimState = 8;
+                    fsa->animState = fsa->prevAnimState;
+                }
+                fsa->xAnalogInput = -mathSinfInterp(-animObj->srt.yaw) * 60.0f;
+                fsa->yAnalogInput = -mathCosfInterp(-animObj->srt.yaw) * 60.0f;
+                gDLL_18_objfsa->vtbl->func3(&animObj->srt);
+                fsa->unk30C = 0;
+                fsa->unk310 = 0;
+                fsa->unk324 = 0;
+                gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, _bss_0, _bss_34);
+            }
+        } else {
+            dx = dx / otherDist;
+            dz = dz / otherDist;
+            fsa->xAnalogInput = -dx * 50.0f;
+            fsa->yAnalogInput = dz * 50.0f;
+            self->srt.transl.f[0] = animData->unk4C.f[0] + (sp3C * dx);
+            self->srt.transl.f[2] = animData->unk4C.f[2] + (sp3C * dz);
+            gDLL_18_objfsa->vtbl->func3(&animObj->srt);
+            fsa->unk30C = 0;
+            fsa->unk310 = 0;
+            fsa->unk324 = 0;
+            gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, _bss_0, _bss_34);
+        }
+        _data_6C = sp3C;
+    } else {
+        fsa->unk4.mode = 0;
+        gDLL_27->vtbl->reset(self, &fsa->unk4);
+        animData->unk7A = animData->unk7C;
+    }
+
+    return outValue;
+}
+
+/*0x74*/ static s16 _data_74[] = { 0x0103, 0x000b };
+/*0x78*/ static f32 _data_78[] = { 0.0031, 0.005 };
+/*0x80*/ static s16 _data_80[2] = {
+    SnowHorn_MODANIM0_0_Idle_LOOP, 
+    SnowHorn_MODANIM0_3_Walk_LOOP
+};
+/*0x84*/ static f32 _data_84[] = {
+    0.0, 0.05, 0.03, 0.85, 0, 0, 0
+};
 
 // offset: 0x1C78 | func: 27
 void dll_712_func_1C78(Object* self) {
