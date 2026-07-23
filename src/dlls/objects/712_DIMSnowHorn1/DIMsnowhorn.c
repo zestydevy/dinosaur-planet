@@ -23,6 +23,12 @@
 #include "prevent_bss_reordering.h"
 
 typedef struct {
+    ObjSetup base;
+    s8 unk18;
+    s8 unk19;
+} DLL712_Setup;
+
+typedef struct {
     ObjFSA_Data unk0;
     MoveLibData unk34C;
     s8 unk804;
@@ -66,9 +72,8 @@ typedef struct {
 /*0x64*/ static u32 _data_64[] = {
     0x037b037b
 };
-/*0x68*/ static u32 _data_68 = 0x01010101;
-/*0x6C*/ static f32 _data_6C = 0.0f;
-// /*0x70*/ static u32 _data_70 = 0x00000000;
+// /*0x68*/ static u32 _data_68 = 0x01010101;
+
 
 
 /*0x0*/ static ObjFSA_StateCallback _bss_0[13];
@@ -78,6 +83,8 @@ typedef struct {
 /*0x40*/ static MtxF _bss_40;
 
 static void dll_712_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
+static int dll_712_func_159C(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackValue);
+static int dll_712_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | func: 0
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_0.s")
@@ -109,8 +116,53 @@ void dll_712_dtor(void* dll) {
 }
 
 // offset: 0x1CC | func: 1 | export: 0
-void dll_712_setup(Object *self, ObjSetup *setup, s32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_setup.s")
+void dll_712_setup(Object* self, DLL712_Setup* objSetup, s32 reset) {
+    DIMSnowHorn_Data* objData;
+    DLL27_Data* collider;
+    s32 pad;
+/*0x68*/ u8 _data_68[] = { 1, 1, 1, 1};
+    
+    self->srt.yaw = objSetup->unk18 << 8;
+    self->animCallback = dll_712_func_159C;
+    
+    objAddObjectType(self, OBJTYPE_Vehicle);
+    
+    objData = self->data;
+    objData->unk904 = objSetup->unk19;
+    objData->unk8FE = 5;
+    objData->unk900 = 0x3E8;
+
+    if (self->shadow != NULL) {
+        self->shadow->flags |= 0xA10;
+        self->shadow->maxDistScale = self->shadow->scale * 0.3f;
+    }
+
+    if (self->objhitInfo != NULL) {
+        self->objhitInfo->unkA1 = 9;
+    }
+    
+    gDLL_18_objfsa->vtbl->func0(self, &objData->unk0, 0xD, 1);
+    objData->unk0.unk29C = 0.17f;
+    objData->unk0.unk4.mode = 0;
+    
+    if (objData->unk904 == 3) {
+        objData->unk906 |= 0x10;
+    }
+    
+    if ((objData->unk904 != 0) && (objData->unk904 != 2)) {
+        collider = &objData->unk0.unk4;
+        gDLL_27->vtbl->init(collider, 0x06000000, 0x200020, 1);
+        gDLL_27->vtbl->setup_hits_collider(collider, 2, _data_44, _data_5C, 8);
+        gDLL_27->vtbl->setup_terrain_collider(collider, 4, _data_4, _data_34, _data_68);
+        gDLL_27->vtbl->reset(self, collider);
+    }
+    
+    mainCreateTempDLL(0x35);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objData->unk34C, -0x1FFF, 0x2AAA, 3);
+    objData->unk34C.unk4A9 |= 8;
+}
+
+/*0x6C*/ static f32 _data_6C = 0.0f;
 
 // offset: 0x43C | func: 2 | export: 1
 void dll_712_control(Object *self);
@@ -395,9 +447,85 @@ void dll_712_func_14A8(Object* self, f32 arg1) {
     objprintSetModelMatrixOverride(&_bss_40);
 }
 
-
 // offset: 0x159C | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/712_DIMSnowHorn1/dll_712_func_159C.s")
+int dll_712_func_159C(Object* self, Object* arg1, AnimObj_Data* animData, s8 prevCallbackValue) {
+    ObjFSA_Data* fsa;
+    DIMSnowHorn_Data* objData;
+    s32 var_a2;
+    s32 i;
+
+    fsa = &((DIMSnowHorn_Data*)self->data)->unk0;
+    objData = self->data;
+    self->unkAF |= 8;
+
+    switch (objData->unk904) {
+    case 0: 
+        animData->unk62 = 0;
+        if (self->seqSlot == -1) {
+            for (i = 0; i < animData->messageCount; i++) {
+                mainSetBits(0x17B, 1);
+            }
+        }
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        break;
+    case 1:
+        animData->unk62 = 0;
+        if (self->seqSlot != -1) {
+            switch (objData->unk905) {
+            case 0:
+                var_a2 = 6;
+                break;
+            case 1:
+                var_a2 = 6;
+                break;
+            case 2: 
+                var_a2 = 7;
+                break;
+            case 3:
+                var_a2 = 7;
+                break;
+            case 4:
+            default:
+                var_a2 = 8;
+                break;
+            }
+        } else {
+block_17: //TODO: try to remove? (https://decomp.me/scratch/MWw2F)
+            var_a2 = 8;
+        }
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, var_a2);
+        break;
+    case 2:
+        animData->unk62 = 0;
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 3);
+        break;
+    case 3:
+        if (self->seqSlot == -1) {
+            if (animData->unk62 == 0) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 8);
+                objData->unk905 = 0;
+            }
+
+            if (mainGetBits(0x3D8)) {
+                objData->unk905 = 5;
+                mainSetBits(0x3D8, 0);
+                objData->unk906 &= ~0x10;
+            }
+            
+            if (objData->unk905 == 5) {
+                dll_712_func_1860(self, arg1, animData, prevCallbackValue);
+            } else {
+                animData->unk62 = 0;
+            }
+        } else {
+            animData->unk62 = 0;
+            fsa->enteredAnimState = 1;
+        }
+        break;
+    }
+    
+    return animData->unk62 != 0;
+}
 
 // offset: 0x1860 | func: 26
 int dll_712_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
