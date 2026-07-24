@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
+#include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -1143,4 +1144,46 @@ s32 SharpClaw_func_49E4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_4CA4.s")
 
 // offset: 0x5398 | func: 57
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_5398.s")
+s32 SharpClaw_func_5398(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Object* player;
+    Object* sidekick;
+    Unk80009024* vox;
+    Baddie* baddie;
+    Player_Data* playerData;
+
+    baddie = self->data;
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
+    fsa->target = sidekick;
+
+    playerData = player->data;
+    
+    if (self == playerData->unk0.target) {
+        if (fsa->target != NULL) {
+            ((DLL_ISidekick*)fsa->target->dll)->vtbl->func21(fsa->target, 0, 0);
+        }
+        
+        fsa->target = player;
+        fsa->unk33D = 0;
+        gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
+        baddie->unk3B0 &= ~0x10;
+        return 4;
+    }
+    
+    gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+    fsa->xAnalogInput = 0.0f;
+    fsa->yAnalogInput = 0.0f;
+    
+    vox = &baddie->unk34C;
+    bcopy(&self->srt.transl, vox, sizeof(Vec3f));
+    bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
+    vox_func_80009024(&baddie->unk34C, &baddie->unk374);
+    
+    if (vox->unk25 == 0) {
+        gDLL_18_objfsa->vtbl->func6(self, fsa, vox->unk18.x, vox->unk18.z, 0.0f, 0.0f, 60.0f);
+    } else {
+        gDLL_18_objfsa->vtbl->func6(self, fsa, vox->unk18.x, vox->unk18.z, 15.0f, 30.0f, 60.0f);
+    }
+    
+    return 0;
+}
