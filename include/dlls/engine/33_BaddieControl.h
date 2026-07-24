@@ -49,7 +49,7 @@ typedef struct {
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8;
 /*3EC*/ f32 unk3EC;
-/*3F0*/ u8 unk3F0;
+/*3F0*/ s8 unk3F0; //modAnimIdx?
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
 /*3F4*/ void *objdata; // pointer to remaining object data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;
