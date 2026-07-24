@@ -328,7 +328,7 @@ void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
     
     fsa = &objData->fsa;
     fsa->hitpoints = 0;
-    fsa->flags &= ~0x8000;
+    fsa->flags &= ~OBJFSA_FLAG_8000;
     
     if (objData->unk902 == 2) {
         if (mainGetBits(BIT_3E2)) {
@@ -337,7 +337,7 @@ void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
         
         if (mainGetBits(BIT_3E9)) {
             mainSetBits(BIT_3E9, 0);
-            objData->unk900 = BIT_3E8;
+            objData->unk900 = 1000;
         }
         
         if (objData->unk900 < 0) {
@@ -357,9 +357,9 @@ void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
         fsa->yAnalogInput = 0.0f;
     }
 
-    fsa->flags |= 0x400000;
+    fsa->flags |= OBJFSA_FLAG_400000;
     if (isLastIteration) {
-        fsa->flags &= ~0x400000;
+        fsa->flags &= ~OBJFSA_FLAG_400000;
     }
     
     gDLL_18_objfsa->vtbl->tick(self, fsa, updateRate, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
@@ -934,7 +934,7 @@ s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     DIMSnowHorn_stop(self, fsa);
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
@@ -966,7 +966,7 @@ s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     DIMSnowHorn_stop(self, fsa);
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     if (fsa->enteredAnimState) {
         animIdx = mathRnd(0, 1);
@@ -992,7 +992,7 @@ s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     DIMSnowHorn_stop(self, fsa);
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
@@ -1007,7 +1007,7 @@ s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_4);
     }
     
-    if (self->unkAF & 1) {
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
         if (mainGetBits(BIT_Horn_of_Truth)) {
             objData->unk905 = 8;
         }
@@ -1033,7 +1033,8 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     DIMSnowHorn_stop(self, fsa);
     
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
+
     if (fsa->enteredAnimState) {
         animIdx = mathRnd(0, 1);
         fsa->animTickDelta = _data_78[animIdx];
@@ -1044,7 +1045,7 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_3);
     }
     
-    if (self->unkAF & 1) {
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
         if (mainGetBits(BIT_Horn_of_Truth)) {
             objData->unk905 = 8;
         }
@@ -1066,7 +1067,7 @@ s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     DIMSnowHorn_stop(self, fsa);
     
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
 
     objData = self->data;
     
@@ -1100,7 +1101,7 @@ s32 DIMSnowHorn_animState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     DIMSnowHorn_stop(self, fsa);
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     objData = self->data;
     
@@ -1137,7 +1138,7 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     DIMSnowHorn_stop(self, fsa);
     
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     objData = self->data;
     if (fsa->enteredAnimState) {
@@ -1174,7 +1175,7 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     DIMSnowHorn_stop(self, fsa);
     
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
 
     if (fsa->enteredAnimState) {
         fsa->animStateTime = 0;
@@ -1217,8 +1218,9 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
-    fsa->flags |= 0x200000;
-    self->unkAF |= 8;
+    fsa->flags |= OBJFSA_FLAG_200000;
+
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
     
     switch (self->curModAnimId) {
     case SnowHorn_MODANIM2_6_Sit_Intro:
@@ -1262,7 +1264,8 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 DIMSnowHorn_animState10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
+
     if ((fsa->unk328 < objData->unk8FE) || (fsa->analogInputPower == 0.0f)) {
         return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
     }
@@ -1303,7 +1306,7 @@ s32 DIMSnowHorn_animState11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
     s32 animIndex;
     f32 *temp_v0;
 
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
 
     if (fsa->enteredAnimState) {
         self->srt.yaw += fsa->unk32A * 0xB6;
@@ -1414,7 +1417,7 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     objData = self->data;
     objHits = self->objhitInfo;
     
-    fsa->flags |= 0x200000;
+    fsa->flags |= OBJFSA_FLAG_200000;
     
     DIMSnowHorn_stop(self, fsa);
     
@@ -1428,6 +1431,7 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if ((objHits->unk58 & 0x200) && (objHits->unk9D & 2)) {
         objData->unk906 |= 8;
     }
+
     if (objData->unk906 & 8) {
         objHits->unk5F = 0;
         objHits->unk60 = 0;
