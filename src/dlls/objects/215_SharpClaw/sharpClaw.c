@@ -2,6 +2,7 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 
@@ -13,7 +14,8 @@ typedef struct {
 typedef struct {
     s8 unk0;
     s8 unk1;
-    s8 unk2[0xA - 2];
+    s8 unk2;
+    s8 unk3[0xA - 3];
     s8 unkA;
     s8 unkB[0x10 - 0xB];
     u16 unk10;
@@ -44,19 +46,36 @@ typedef struct {
     0x0000, SOUND_16B_SharpClaw_Taunt_3
 };
 /*0xD0*/ static u32 data_D0[] = {
-    0x00000236, 0x00000237, 0x00000238, 0x00000239, 0x0000023a
+    0x00000236, 
+    0x00000237, 
+    0x00000238, 
+    0x00000239, 
+    0x0000023a
 };
 /*0xE4*/ static u32 data_E4[] = {
-    0x0000023b, 0x0000023f, 0x0000023d, 0x0000023e, 0x00000240, 0x0000023c
+    0x0000023b, 
+    0x0000023f, 
+    0x0000023d, 
+    0x0000023e, 
+    0x00000240, 
+    0x0000023c
 };
 /*0xFC*/ static u32 data_FC[] = {
     0x000000b6, 0x00000099, 0x00000090, 0x00000091
 };
 /*0x10C*/ static u32 data_10C[] = {
-    0x00000374, 0x00000375, 0x00000376, 0x0000025b, 0x0000025c
+    0x00000374, 
+    0x00000375, 
+    0x00000376, 
+    0x0000025b, 
+    0x0000025c
 };
 /*0x120*/ static u32 data_120[] = {
-    0x00000377, 0x00000378, 0x00000379, 0x0000025b, 0x0000025c
+    0x00000377, 
+    0x00000378, 
+    0x00000379, 
+    0x0000025b, 
+    0x0000025c
 };
 /*0x134*/ static s16 data_134[] = {
     0x0000, 0x0001, 0x0002, 0x0000
@@ -70,7 +89,7 @@ typedef struct {
 /*0x14C*/ static f32 data_14C[] = {
     0, 0.05, 0.03, 0.7, 0.68, 1.05
 };
-/*0x164*/ static u32 data_164[] = {
+/*0x164*/ static s32 data_164[] = {
     0x00000002, 0x00000003
 };
 
@@ -168,8 +187,45 @@ void SharpClaw_obj_Update(Object* self) {
 }
 
 // offset: 0x68C | func: 4 | export: 3
-void SharpClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_obj_Print.s")
+void SharpClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    Baddie* baddie;
+    SharpClaw_DataActual* objData;
+
+    baddie = self->data;
+    objData = baddie->objdata;
+
+    if (!visibility || self->unkDC) {
+        return;
+    }
+    
+    if (objData->unk14 > 0.0f) {
+        objprintSetBlendColor(0x64, 0xFF, 0xFF, 0x9BU);
+    } else {
+        if (baddie->unk3E8 != 0.0f) {
+            objprintSetBlendColor(0xC8, 0, 0, baddie->unk3E8);
+        }
+    }
+    
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+    
+    if (objData->unk14 > 0.0f) {
+        gDLL_32->vtbl->func2(self, 0x52A, NULL);
+    }
+    
+    if (baddie->unk3B2 & 0x60) {
+        if (baddie->unk3B2 & 0x20) {
+            gDLL_32->vtbl->func2(self, 0x330, &baddie->unk3E8);
+            gDLL_32->vtbl->func2(self, 0x330, &baddie->unk3E8);
+        }
+        gDLL_32->vtbl->func2(self, 0x32F, &baddie->unk3E8);
+    }
+    
+    if (baddie->unk3B2 & 0x100) {
+        gDLL_32->vtbl->func2(self, 0x333, &baddie->unk3E8);
+        gDLL_32->vtbl->func2(self, 0x334, &baddie->unk3E8);
+        baddie->unk3B2 &= ~0x100;
+    }
+}
 
 // offset: 0x958 | func: 5 | export: 4
 void SharpClaw_obj_Free(Object* self, s32 onlySelf) {
@@ -223,39 +279,182 @@ void SharpClaw_Func_A40(Object* self, u8 arg1) {
 }
 
 // offset: 0xA88 | func: 10
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_A88.s")
+#else
+
+static void SharpClaw_func_14C0(Object* self, AnimObj_Data* animData, Baddie* baddie, ObjFSA_Data* fsa);
+static void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+
+s32 SharpClaw_func_A88(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    Baddie* baddie;
+    Baddie_Setup* objSetup;
+    Object* sidekick;
+    s32 i;
+
+    baddie = self->data;
+    objSetup = (Baddie_Setup*)self->setup;
+    
+    if (self->unkDC != 0) {
+        return 0;
+    }
+
+    for (i = 0; i < animData->messageCount; i++) {
+        switch (animData->messages[i]) {
+        case 1:
+            sidekick = objGetSidekick();
+            if (sidekick != NULL) {
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 1, self);
+                baddie->unk3B2 |= 4;
+                baddie->unk3B4 = 2;
+                baddie->fsa.logicState = 0xD;
+            }
+            break;
+        case 2:
+            baddie->nextWeaponID = 3;
+            SharpClaw_func_E88(self, baddie, &baddie->fsa);
+            break;
+        case 3:
+            gDLL_3_Animation->vtbl->set_camera_module(0x5B, 4, (s32)self, 0x3C);
+            break;
+        }
+    }
+    
+    if (self->seqSlot != -1) {
+        if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 1U) == 0) {
+            func_800267A4(self);
+            return 1;
+        }
+        if (baddie->fsa.hitpoints > 0) {
+            func_8002674C(self);
+        }
+        SharpClaw_func_E88(self, baddie, &baddie->fsa);
+        if ((baddie->unk3A0 != NO_GAMEBIT) && mainGetBits(baddie->unk3A0)) {
+            gDLL_3_Animation->vtbl->func21(animData, objSetup->unk2C);
+            baddie->unk3A0 = -1;
+        }
+
+        switch (baddie->unk3B4) {
+        case 2:
+            animData->unk7A = 0;
+            SharpClaw_func_14C0(self, animData, baddie, &baddie->fsa);
+            if (baddie->unk3B4 == 1) {
+                baddie->fsa.logicState = 0xB;
+                gDLL_18_objfsa->vtbl->tick(self, &baddie->fsa, 1.0f, 1.0f, bss_20, bss_88);
+                animData->unk62 = 0;
+            }
+            break;
+        case 1:
+            if (gDLL_33_BaddieControl->vtbl->func12(self, animData, baddie, bss_20, bss_88, 0)) {
+                gDLL_33_BaddieControl->vtbl->func10(self, &baddie->fsa, 0.17f, 1);
+            }
+            SharpClaw_func_17A0(self, baddie, &baddie->fsa);
+            break;
+        case 0:
+        default:
+            animData->unk7A = -1;
+            animData->unk7A &= 0xFFBF;
+            SharpClaw_func_17A0(self, baddie, &baddie->fsa);
+            break;
+        }
+    }
+
+    if (self->seqSlot == -1) {
+        baddie->unk3B2 |= 2;
+        func_800267A4(self);
+        return 0;
+    }
+    
+    return baddie->unk3B4 != 0;
+}
+#endif
 
 // offset: 0xE88 | func: 11
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_E88.s")
 
 // offset: 0x14C0 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_14C0.s")
+void SharpClaw_func_14C0(Object* self, AnimObj_Data* animData, Baddie* baddie, ObjFSA_Data* fsa) {
+    SharpClaw_DataActual* objData;
+    Baddie_Setup* objSetup;
+    UnkCurvesStruct* temp_a0;
+    Object* sidekick;
+    Object* target;
+
+    objData = baddie->objdata;
+    objSetup = (Baddie_Setup*)self->setup;
+    target = fsa->target;
+    if (target != NULL) {
+        objExpr_func_80032C0C(self, target, &baddie->unk3BC, 0x19);
+    }
+    
+    if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2 * 1.39f, !(baddie->unk3B0 & 0x10))) {
+        fsa->target = baddie->unk3AC;
+        fsa->unk33D = 0;
+        if (objSetup->unk2E != -1) {
+            baddie->unk3B4 = 1;
+            if (animData != NULL) {
+                gDLL_3_Animation->vtbl->func21(animData, objSetup->unk24);
+            }
+        } else {
+            fsa->speed = 0.0f;
+            fsa->unk278 = 0.0f;
+            objData->unk2 = 0;
+            temp_a0 = baddie->unk3F8;
+            baddie->unk3B4 = 0;
+            if (temp_a0 != NULL) {
+                if (gDLL_26_Curves->vtbl->func_4288(temp_a0, self, 700.0f, data_164, -1) != 0) {
+                    baddie->unk3B2 &= ~8;
+                } else {
+                    baddie->unk3B2 |= 8;
+                }
+            }
+        }
+        if (fsa->hitpoints != 0) {
+            if (baddie->unk3B2 & 4) {
+                sidekick = objGetSidekick();
+                if (sidekick != NULL) {
+                    ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 1, self);
+                }
+                fsa->logicState = 0xD;
+            } else {
+                fsa->logicState = 0xB;
+            }
+        }
+    }
+    
+    if (fsa->hitpoints > 0) {
+        func_8002674C(self);
+    }
+    
+    gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.17f, 1);
+    baddie->unk3AC = self->animObj;
+    self->animObj = NULL;
+    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_20, bss_88);
+    self->animObj = baddie->unk3AC;
+}
 
 // offset: 0x17A0 | func: 13
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_17A0.s")
-#else
 void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-    SharpClaw_DataActual* objData;
-    Object* target;
-    Object* player;
-
+    SharpClaw_DataActual *objData;
+    Object *target;
+    Object *player;
+    int temp = 2;
     objData = baddie->objdata;
     player = objGetPlayer();
 
-    if (!(baddie->unk3B0 & 0x40) && (((DLL_210_Player*)player->dll)->vtbl->func50(player) != 0x40)) {
+    if ((!(baddie->unk3B0 & 0x40)) && (((DLL_210_Player *) player->dll)->vtbl->func50(player) != 0x40)) {
         target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
         if (target != NULL) {
             gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
             fsa->unk33D = 0;
             fsa->target = target;
-            baddie->unk3B4 = 2;
             baddie->unk3B0 &= ~0x10;
-            objData->unkA = 2;
+            baddie->unk3B4 = temp;
+            objData->unkA = temp;
         }
     }
 }
-#endif
 
 // offset: 0x18EC | func: 14
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_18EC.s")
@@ -303,7 +502,82 @@ void SharpClaw_func_1E2C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x2044 | func: 16
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_2044.s")
+#else
+void SharpClaw_func_2044-4(Object* self, SRT* fxTransform, s32 useModGfx) {
+    DLL_IModgfx* modGfxDLL;
+    s32 i;
+/*0x1B0*/ s32 data_1B0[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
+/*0x1C0*/ s16 data_1C0[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+/*0x1C0*/ s16 data_1C8[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    f32 fxParam; //4C
+    Object* player; //48
+
+
+    // sp60.unk0 = (u32) data_1B0->unk0;
+    // sp60.unk4 = (s32) data_1B0->unk4;
+    // sp60.unkC = (s32) data_1B0->unkC;
+    // sp60.unk8 = (s32) data_1B0->unk8;
+    // sp58.unk4 = (s32) data_1C0->unk4;
+    // sp58.unk0 = (s32) data_1C0->unk0;
+    // sp50.unk4 = (s32) data_1C8->unk4;
+    // sp50.unk0 = (s32) data_1C8->unk0;
+    
+    
+    player = objGetPlayer();
+
+    
+    if (useModGfx == FALSE) {
+        fxParam = 0.014f;
+        gDLL_17_partfx->vtbl->spawn(self, 0x325, fxTransform, 0x200001, -1, &fxParam);
+        
+        fxTransform->scale = 92.0f;
+        gDLL_17_partfx->vtbl->spawn(self, 0x323, fxTransform, 0x200001, -1, NULL);
+        
+        fxParam = 0.015f;
+        fxTransform->scale = 231.0f;
+        gDLL_17_partfx->vtbl->spawn(self, 0x323, fxTransform, 0x200001, -1, &fxParam);
+        
+        fxTransform->transl.f[0] -= self->globalPosition.f[0];
+        fxTransform->transl.f[1] -= self->globalPosition.f[1];
+        fxTransform->transl.f[2] -= self->globalPosition.f[2];
+        fxTransform->scale = 123.0f;
+        for (i = 0; i < 0xF; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, 0x324, fxTransform, 2, -1, NULL);
+        }
+        
+        if (player->id != 0) {
+            gDLL_6_AMSFX->vtbl->Play(self, data_10C[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        } else {
+            gDLL_6_AMSFX->vtbl->Play(self, data_120[mathRnd(0, 2)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        }
+        gDLL_6_AMSFX->vtbl->Play(self, data_D0[mathRnd(0, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+    } else {
+        gDLL_17_partfx->vtbl->spawn(self, 0x328, fxTransform, 0x200001, -1, NULL);
+        fxTransform->transl.f[0] -= self->globalPosition.f[0];
+        fxTransform->transl.f[1] -= self->globalPosition.f[1];
+        fxTransform->transl.f[2] -= self->globalPosition.f[2];
+        gDLL_6_AMSFX->vtbl->Play(self, data_10C[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        
+        modGfxDLL = dllLoad(0x1002, 1);
+        
+        data_1B0[1] += mathRnd(0, 0x9B);
+        data_1B0[2] += mathRnd(0, 0x9B);
+        
+        fxTransform->yaw = 0;
+        fxTransform->pitch = 0;
+        fxTransform->roll = 0;
+        fxTransform->scale = 1.0f;
+        
+        modGfxDLL->vtbl->func0(self, 0, fxTransform, 1, -1, data_1B0);
+        if (modGfxDLL != NULL) {
+            dllFree(modGfxDLL);
+            // if (!useModGfx) {}
+        }
+    }
+}
+#endif
 
 // offset: 0x2534 | func: 17
 static void SharpClaw_func_2534(u8 message, Object* arg1) {
@@ -1138,7 +1412,41 @@ s32 SharpClaw_func_49E4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x4A5C | func: 55
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_4A5C.s")
+s32 SharpClaw_func_4A5C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Unk80009024* vox;
+    Baddie* baddie;
+
+    baddie = self->data;
+    fsa->unk278 = 1.0f;
+    fsa->speed = 1.0f;
+    if (fsa->target != NULL) {
+        if (fsa->enteredLogicState != 0) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+        }
+        
+        vox = &baddie->unk34C;
+        fsa->xAnalogInput = 0.0f;
+        fsa->yAnalogInput = 0.0f;
+        bcopy(&self->srt.transl, vox, sizeof(Vec3f));
+        bcopy(&fsa->target->srt.transl, &baddie->unk34C.unkC, sizeof(Vec3f));
+        vox_func_80009024(vox, &baddie->unk374);
+
+        if ((fsa->targetDist < (baddie->unk3E2 * 0.55f)) && (baddie->unk3B4 == 2)) {
+            baddie->unk3B0 &= ~0x10;
+            return 6;
+        }
+        
+        if (vox->unk25 == 0) {
+            gDLL_18_objfsa->vtbl->func6(self, fsa, vox->unk18.x, vox->unk18.f[2], 0.0f, 0.0f, 60.0f);
+        } else {
+            gDLL_18_objfsa->vtbl->func6(self, fsa, vox->unk18.x, vox->unk18.f[2], 15.0f, 30.0f, 60.0f);
+        }
+    } else if (fsa->enteredLogicState != 0) {
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
+    }
+    
+    return 0;
+}
 
 // offset: 0x4CA4 | func: 56
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_4CA4.s")
