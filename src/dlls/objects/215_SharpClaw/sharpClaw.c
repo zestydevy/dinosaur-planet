@@ -3,6 +3,7 @@
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/math.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 
@@ -13,10 +14,13 @@ typedef struct {
 
 typedef struct {
     s8 unk0;
-    s8 unk1;
-    s8 unk2;
+    u8 unk1;
+    u8 unk2;
     s8 unk3[0xA - 3];
-    s8 unkA;
+    union {
+        s8 unkA;
+        u8 unkAu;
+    };
     s8 unkB[0x10 - 0xB];
     u16 unk10;
     f32 unk14;
@@ -456,8 +460,87 @@ void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     }
 }
 
+#define WRAP_F(x,low,high) { if ((x) > (high)) (x) = -(((high) * 2) - 1) + (x); if ((x) < (low)) (x) = (((high) * 2) - 1) + (x); }
+#define CIRCLE_WRAP_F(x) WRAP_F(x, -M_180_DEGREES_F, M_180_DEGREES_F)
+
 // offset: 0x18EC | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_18EC.s")
+void SharpClaw_func_18EC(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    Object* target; //5C
+    s32 pad[3];
+    UnkCurvesStruct* curves; //4C
+    SharpClaw_DataActual* objData; //48
+    Object* player; //44
+    f32 dx;
+    f32 dz;
+    f32 yawDiff;
+    f32 absYawDiff;
+
+    curves = baddie->unk3F8;
+    objData = baddie->objdata;
+    player = objGetPlayer();
+    
+    if (fsa->hitpoints == 0) {
+        return;
+    }
+    
+    gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.17f, 1);
+    
+    if (((baddie->unk3B2 & 4) == FALSE) && (fsa->logicState != 1)) {
+        fsa->logicState = 2;
+        if (baddie->unk3B2 & 8) {
+            dx = curves->unk0.unk68.x - self->srt.transl.x;
+            dz = curves->unk0.unk68.z - self->srt.transl.z;
+            dx = sqrtf(SQ(dx) + SQ(dz));
+            if ((curves_func_800053B0(&curves->unk0, 10.0f / dx) || curves->unk0.unk10) && 
+                gDLL_26_Curves->vtbl->func_4704(curves) && 
+                gDLL_26_Curves->vtbl->func_4288(baddie->unk3F8, self, 700.0f, data_164, -1)
+            ) {
+                baddie->unk3B2 &= ~8;
+            }
+
+            if (objData->unk2 < objData->unk1) {
+                objData->unk2 += gUpdateRate;
+            }
+
+            yawDiff = (((u16)mathAtan2f(curves->unk0.unk74, curves->unk0.unk7C)) - ((u16)self->srt.yaw & 0xFFFF)) + M_180_DEGREES;
+            //Similar to CIRCLE_WRAP, but applied to a float?
+            CIRCLE_WRAP_F(yawDiff);
+
+            absYawDiff = (yawDiff < 0) ? -yawDiff : yawDiff;
+            
+            fsa->unk278 = 1.0f - (absYawDiff / (M_180_DEGREES_F - 1.0f));
+            if (fsa->unk278 < 0.01f) {
+                fsa->unk278 = 0.01f;
+            }
+
+            fsa->unk278 *= objData->unk2 / 100.0f;
+            fsa->speed = fsa->unk278;
+            gDLL_18_objfsa->vtbl->func6(self, fsa, curves->unk0.unk68.x, curves->unk0.unk68.f[2], 0.0f, 0.0f, 60.0f);
+            if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 1);
+            }
+        } else if ((fsa->enteredAnimState != 0) || (fsa->unk33A != 0)) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0);
+        }
+        
+        if ((fsa->enteredAnimState || fsa->unk33A) && !(baddie->unk3B0 & 0x40) && (((DLL_210_Player*)player->dll)->vtbl->func50(player) != 0x40)) {           
+            target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+            if (target != NULL) {
+                gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
+                fsa->target = target;
+                fsa->unk33D = 0;
+                baddie->unk3B0 &= ~0x10;
+                baddie->unk3B4 = 2;
+                objData->unkAu = 2;
+            }
+        }
+    }
+    
+    baddie->unk3AC = self->animObj;
+    self->animObj = NULL;
+    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_20, bss_88);
+    self->animObj = baddie->unk3AC;
+}
 
 // offset: 0x1E2C | func: 15
 void SharpClaw_func_1E2C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
