@@ -98,22 +98,22 @@ enum SoundID {
     SOUND_5E_Bubbling = 0x5E,              //does not loop
     SOUND_5F = 0X5F,                       //distant and long roar
     SOUND_60 = 0X60,                       //some kind of creature bellowing?
-    SOUND_61_Footstep = 0x61,              //Normal footstep
-    SOUND_62_Footstep = 0x62,              //Normal footstep
-    SOUND_63_Footstep = 0x63,              //Normal footstep
-    SOUND_64_Footstep = 0x64,              //Normal footstep
-    SOUND_65_Footstep = 0x65,              //Crunchy footstep
-    SOUND_66_Footstep = 0x66,              //Crunchy footstep
-    SOUND_67_Footstep = 0x67,              //Crunchy footstep
-    SOUND_68_Footstep = 0x68,              //Crunchy footstep
-    SOUND_69_Creaky_Step = 0x69,           //Creaky footstep
-    SOUND_6A_Creaky_Step = 0x6A,           //Creaky footstep
-    SOUND_6B_Creaky_Step = 0x6B,           //Creaky footstep
-    SOUND_6C_Creaky_Step = 0x6C,           //Creaky footstep
-    SOUND_6D_Water_Footstep = 0x6D,        //Soggy footstep
-    SOUND_6E_Water_Footstep = 0x6E,        //Soggy footstep
-    SOUND_6F_Water_Footstep = 0x6F,        //Soggy footstep
-    SOUND_70_Water_Footstep = 0x70,        //Soggy footstep
+    SOUND_61_Footstep_Soft = 0x61,         //Soft ground (soil/grass/gravel/etc.) [FOOTSTEP FOLEY]
+    SOUND_62_Footstep_Soft = 0x62,         //Soft ground (soil/grass/gravel/etc.) [FOOTSTEP FOLEY]
+    SOUND_63_Footstep_Firm = 0x63,         //Harder ground                        [FOOTSTEP FOLEY]
+    SOUND_64_Footstep_Firm = 0x64,         //Harder ground                        [FOOTSTEP FOLEY]
+    SOUND_65_Footstep_Snow = 0x65,         //Crunchy snow compacting underfoot    [FOOTSTEP FOLEY]
+    SOUND_66_Footstep_Snow = 0x66,         //Crunchy snow compacting underfoot    [FOOTSTEP FOLEY]
+    SOUND_67_Footstep_Grit = 0x67,         //Rough terrain                        [FOOTSTEP FOLEY]
+    SOUND_68_Footstep_Grit = 0x68,         //Rough terrain                        [FOOTSTEP FOLEY]
+    SOUND_69_Footstep_Wood_Creaky = 0x69,  //Creaky old wood                      [FOOTSTEP FOLEY]
+    SOUND_6A_Footstep_Wood_Creaky = 0x6A,  //Creaky old wood                      [FOOTSTEP FOLEY]
+    SOUND_6B_Footstep_Wood_Solid = 0x6B,   //Hardwood (ladders etc.)              [FOOTSTEP FOLEY]
+    SOUND_6C_Footstep_Wood_Solid = 0x6C,   //Hardwood (ladders etc.)              [FOOTSTEP FOLEY]
+    SOUND_6D_Footstep_Water_Wade = 0x6D,   //Deeper water                         [FOOTSTEP FOLEY]
+    SOUND_6E_Footstep_Water_Wade = 0x6E,   //Deeper water                         [FOOTSTEP FOLEY]
+    SOUND_6F_Footstep_Water_Puddle = 0x6F, //Soggy footstep                       [FOOTSTEP FOLEY]
+    SOUND_70_Footstep_Water_Puddle = 0x70, //Soggy footstep                       [FOOTSTEP FOLEY]
     SOUND_71_Water_Move = 0x71,            //Water is moved 
     SOUND_72_Water_Wave = 0x72,            //Water is moved So hard it makes a wave
     SOUND_73_Thunder = 0x73,               //
@@ -264,6 +264,10 @@ enum SoundID {
     
     SOUND_163_Toy_Double_Squeak = 0x163, //Unused?
 
+    SOUND_169_SharpClaw_Taunt_1 = 0x169, //"Hey you! *snort* C'mon and fight! *snort*"
+    SOUND_16A_SharpClaw_Taunt_2 = 0x16A, //"C'mon! *snort* Are you chicken? Hrgh."
+    SOUND_16B_SharpClaw_Taunt_3 = 0x16B, //"C'mooon! Press Z to fight."
+
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
     SOUND_175_Machinery_Move_B = 0x175, //SB_ShipGun
     SOUND_176_Explosion_A = 0x176, //SB_ShipGun
@@ -324,15 +328,15 @@ enum SoundID {
 
     SOUND_27A_Wood_Creak_A = 0x27A,
     SOUND_27B_Wood_Creak_B = 0x27B,
-    SOUND_27C = 0x27C,
-    SOUND_27D = 0x27D,
-    SOUND_27E = 0x27E,
-    SOUND_27F = 0x27F,
+    SOUND_27C_Footstep_Wood = 0x27C, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27D_Footstep_Wood = 0x27D, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27E_Footstep_Wood = 0x27E, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27F_Footstep_Wood = 0x27F, //Creaky old wood [FOOTSTEP FOLEY]
 
-    SOUND_280 = 0x280,
-    SOUND_281 = 0x281,
-    SOUND_282 = 0x282,
-    SOUND_283 = 0x283,
+    SOUND_280_Footstep_Stone = 0x280, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_281_Footstep_Stone = 0x281, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_282_Footstep_Stone_Hard = 0x282, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_283_Footstep_Stone_Hard = 0x283, //Solid terrain [FOOTSTEP FOLEY]
 
     SOUND_284_SB_Kyte_Heeelp = 0x284,
     SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
@@ -396,10 +400,10 @@ enum SoundID {
     SOUND_366_GuardClaw_Rawr = 0x366,
     SOUND_367_GuardClaw_SharpClaw_Only = 0x367,
 
-    SOUND_368 = 0x368,
-    SOUND_369 = 0x369,
-    SOUND_36A = 0x36A,
-    SOUND_36B = 0x36B,
+    SOUND_368_Footstep_Snow = 0x368, //Creaky snow compacting underfoot [FOOTSTEP FOLEY]
+    SOUND_369_Footstep_Snow = 0x369, //Creaky snow compacting underfoot [FOOTSTEP FOLEY]
+    SOUND_36A_Footstep_Grit = 0x36A, //Rougher ground [FOOTSTEP FOLEY]
+    SOUND_36B_Footstep_Grit = 0x36B, //Rougher ground [FOOTSTEP FOLEY]
 
     SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
@@ -428,12 +432,12 @@ enum SoundID {
     SOUND_3EC_Water_Wade_Slow_A = 0x3EC,
     SOUND_3ED_Water_Wade_Slow_B = 0x3ED,
 
-    SOUND_402 = 0x402,
+    SOUND_402_Footstep_Ice = 0x402, //Creaky ice [FOOTSTEP FOLEY]
     SOUND_403 = 0x403,
-    SOUND_404 = 0x404,
+    SOUND_404_Footstep_Ice = 0x404, //Creaky ice [FOOTSTEP FOLEY]
 
-    SOUND_406 = 0x406,
-    SOUND_407 = 0x407,
+    SOUND_406_Footstep_Ice = 0x406, //Creaky ice [FOOTSTEP FOLEY]
+    SOUND_407_Footstep_Ice = 0x407, //Creaky ice [FOOTSTEP FOLEY]
 
     SOUND_43C_Target_Highlighted = 0x43C, // camera DLL [Interaction Arrow]
     SOUND_43D_Transporter_Fire = 0x43D,
@@ -673,7 +677,7 @@ enum SoundID {
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
     
-    SOUND_88D = 0x88D,
+    SOUND_88D_Footstep_Marsh = 0x88D, //Sticky squelchy footstep [FOOTSTEP FOLEY]
     
     SOUND_8A0_Deflate_Honk = 0x8A0,             //SHrocketmushroom
     SOUND_8A1_Spore_Launched = 0x8A1,           //SHrocketmushroom
