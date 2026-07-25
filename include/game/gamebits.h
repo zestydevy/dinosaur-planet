@@ -2046,7 +2046,7 @@ typedef enum {
     BIT_7F8 = 0x7F8, // len:1 group:1
     BIT_7F9 = 0x7F9, // len:1 group:1
     BIT_7FA = 0x7FA, // len:1 group:1
-    BIT_7FB = 0x7FB, // len:1 group:1
+    BIT_WC_Met_King_EarthWalker = 0x7FB, // len:1 group:1
     BIT_7FC = 0x7FC, // len:1 group:1
     BIT_7FD = 0x7FD, // len:1 group:0
     BIT_7FE = 0x7FE, // len:1 group:1
