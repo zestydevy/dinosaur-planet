@@ -16,17 +16,19 @@ typedef struct {
     s8 unk0;
     u8 unk1;
     u8 unk2;
-    s8 unk3[0xA - 3];
+    f32 unk4;
+    s16 unk8;
     union {
         s8 unkA;
         u8 unkAu;
     };
-    s8 unkB[0x10 - 0xB];
+    u16 unkC;
+    s16 unkE;
     u16 unk10;
     f32 unk14;
 } SharpClaw_DataActual;
 
-/*0x0*/ static u32 data_0[] = {
+/*0x0*/ static s32 data_0[] = {
     0x00000013, 0x00000013, 0x00000015, 0x00000015, 0x00000015, 0x00000013, 0x00000013, 0x00000013, 
     0x00000013, 0x00000013, 0x00000013, 0x00000015, 0x00000015, 0x00000015, 0x00000015, 0x00000013, 
     0x00000015, 0x00000013, 0x00000013, 0x00000013, 0x00000013, 0x00000015, 0x00000013, 0x00000014, 
@@ -36,8 +38,9 @@ typedef struct {
     0x0000010d, 0x0000010d, 0x0000010c, 0x0000010a, 0x0000010a, 0x0000010b, 0x0000010b, 0x0000010b, 
     0x0000010a
 };
-/*0x94*/ static u32 data_94[] = {
-    0xffffff01, 0xffffffff, 0xffffffff, 0x0101ffff, 0xffffffff, 0xffffffff, 0x01ffffff
+/*0x94*/ static s8 data_94[] = {
+    0xff, 0xff, 0xff, 0x01, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0x01, 0xff, 0xff, 
+    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0x01, 0xff, 0xff, 0xff
 };
 /*0xB0*/ static s16 data_B0[] = {
     SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, 
@@ -115,7 +118,8 @@ typedef struct {
     0x0206, 0x0167, 0x0165, 0x0206
 };
 
-/*0x0*/ static u8 bss_0[0x20];
+/*0x0*/ static SRT bss_0;
+/*0x1C*/ static s32 bss_1C;
 /*0x20*/ static ObjFSA_StateCallback bss_20[26];
 /*0x88*/ static ObjFSA_StateCallback bss_88[2];
 /*0x90*/ static u8 _bss_90[0x30];
@@ -375,7 +379,114 @@ s32 SharpClaw_func_A88(Object* self, Object* animObj, AnimObj_Data* animData, s8
 #endif
 
 // offset: 0xE88 | func: 11
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_E88.s")
+#else
+
+static void SharpClaw_func_1E2C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void SharpClaw_func_2044(Object* self, SRT* fxTransform, s32 useModGfx);
+static s32 SharpClaw_func_267C(u8 message, Object* baddie);
+
+void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    SharpClaw_DataActual* objData;
+    s32 hit;
+    s32 temp_v0_2;
+
+    objData = baddie->objdata;
+
+    if (self->linkedObject != NULL) {
+        self->linkedObject->parent = self->parent;
+    }
+    
+    gDLL_33_BaddieControl->vtbl->func4(self, objGetPlayer(), 0x10, &objData->unkC, &objData->unkE, &objData->unk10);
+    fsa->targetDist = objData->unk10;
+    if (!(baddie->unk3B0 & 0x20)) {
+        gDLL_33_BaddieControl->vtbl->func14(self, (Baddie*)fsa, &baddie->unk3B2, 9, 0xA, baddie->unk3A6, baddie->unk3A4);
+    }
+    gDLL_33_BaddieControl->vtbl->change_weapon(self, baddie);
+    
+    SharpClaw_func_1E2C(self, baddie, fsa);
+    objExprEyeIdle(self, &baddie->unk3BC);
+
+    temp_v0_2 = gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
+    if (temp_v0_2 == 1) {
+        baddie->unk3B2 |= 4;
+    } else if (temp_v0_2 == 2) {
+        baddie->unk3B2 &= ~4;
+    }
+    
+    if ((fsa->animState == 0x10) || (fsa->animState == 0x11) || (fsa->animState == 0x12)) {
+        func_80028D2C(self);
+    } else {
+        func_80026160(self);
+    }
+    
+    objData->unk4 += gUpdateRateF;
+    
+    if (baddie->unk3B0 & 0x80) {
+        if ((fsa->animState == 0x10) || (fsa->animState == 0x11) || (fsa->animState == 0x12) || (baddie->unk3B2 & 0x10)) {
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &bss_0);
+            if (hit != 0) {
+                SharpClaw_func_2044(self, &bss_0, 0);
+            }
+        } else {
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &bss_0);
+            if (hit != 0) {
+                SharpClaw_func_2044(self, &bss_0, 1);
+            }
+        }
+    } else {
+        if (((fsa->animState == 0xF) || (fsa->animState == 5)) && !(baddie->unk3B2 & 0x10)) {
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &bss_0);
+            if (hit != 0) {
+                SharpClaw_func_2044(self, &bss_0, 1);
+            }
+        } else {
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &bss_0);
+            if (hit != 0) {
+                SharpClaw_func_2044(self, &bss_0, 0);
+            }
+        }
+    }
+    
+    if ((hit == 5) || (hit == 0xE) || (hit == 0xF)) {
+        baddie->unk3B4 = 2;
+        fsa->target = objGetPlayer();
+        return;
+    }
+    
+    if (hit == 0x19) {
+        baddie->unk3B4 = 2;
+        objData->unk14 = 400.0f;
+        baddie->unk3B2 |= 0x80;
+        return;
+    }
+    
+    if (hit != 0) {
+        baddie->unk3B4 = 2;
+        if (objData->unk4 < 240.0f) {
+            objData->unk8++;
+        } else {
+            objData->unk8 = 0;
+        }
+        
+        if (fsa->hitpoints > 0) {
+            objData->unk4 = 0.0f;
+            if (objData->unk8 >= 2) {
+                objData->unk8 = 0;
+                fsa->logicState = 8;
+                fsa->enteredLogicState = 1;
+                if (SharpClaw_func_267C(2, self)) {
+                    objData->unkA = 1;
+                }
+            } else if (SharpClaw_func_267C(2, self)) {
+                objData->unkA = 1;
+            }
+        }
+    }
+}
+
+#endif
 
 // offset: 0x14C0 | func: 12
 void SharpClaw_func_14C0(Object* self, AnimObj_Data* animData, Baddie* baddie, ObjFSA_Data* fsa) {
@@ -465,11 +576,11 @@ void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 
 // offset: 0x18EC | func: 14
 void SharpClaw_func_18EC(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-    Object* target; //5C
+    Object* target;
     s32 pad[3];
-    UnkCurvesStruct* curves; //4C
-    SharpClaw_DataActual* objData; //48
-    Object* player; //44
+    UnkCurvesStruct* curves;
+    SharpClaw_DataActual* objData;
+    Object* player;
     f32 dx;
     f32 dz;
     f32 yawDiff;
@@ -588,7 +699,7 @@ void SharpClaw_func_1E2C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_2044.s")
 #else
-void SharpClaw_func_2044-4(Object* self, SRT* fxTransform, s32 useModGfx) {
+void SharpClaw_func_2044-5(Object* self, SRT* fxTransform, s32 useModGfx) {
     DLL_IModgfx* modGfxDLL;
     s32 i;
 /*0x1B0*/ s32 data_1B0[] = { 0x00000006, 0x00000069, 0x00000069, 0x000000ff };
