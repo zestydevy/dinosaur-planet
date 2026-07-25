@@ -197,6 +197,7 @@
 378 = objects/378_CFScalesGalleon
 379 = objects/379_CF_ObjCreator
 382 = objects/382_CFIllusionClaw
+383 = objects/383_CFPerch
 385 = objects/385
 388 = objects/388_CFbarrel
 393 = objects/393_CFMainSlideDoor

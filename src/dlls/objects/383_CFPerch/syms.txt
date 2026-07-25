@@ -1,0 +1,13 @@
+.text = 0x0:
+CFPerch_ctor = 0x0;
+CFPerch_dtor = 0xC;
+CFPerch_obj_Setup = 0x18;
+CFPerch_obj_Control = 0x48;
+CFPerch_obj_Update = 0xC8;
+CFPerch_obj_Print = 0xD4;
+CFPerch_obj_Free = 0x128;
+CFPerch_obj_GetModelFlags = 0x178;
+CFPerch_obj_GetDataSize = 0x188;
+CFPerch_animCallback = 0x19C;
+
+.rodata = 0x240:
