@@ -242,19 +242,19 @@ s32 dll_212_func_3A2C(Object* self, DLL212_Data* objdata) {
     temp_v0->redFood -= 1;
     objdata->unk14 = 1;
     objdata->unk30 = 0x1F4; // maybe: BIT_Used_Tricky_Cell_Key
-    objdata->unk0 = dll_load_deferred(DLL_ID_178, 1);
+    objdata->unk0 = dllLoad(DLL_ID_178, 1);
     for (i = 0; i < 3; i++) {
-        temp_v0_2 = obj_alloc_setup(sizeof(FlameBlast_Setup), OBJ_flameblast);
+        temp_v0_2 = objAllocSetup(sizeof(FlameBlast_Setup), OBJ_flameblast);
         temp_v0_2->base.x = self->srt.transl.x;
         temp_v0_2->base.y = self->srt.transl.y;
         temp_v0_2->base.z = self->srt.transl.z;
         temp_v0_2->base.loadFlags = 2;
         temp_v0_2->base.byte5 = 1;
         temp_v0_2->timer = i * 10;
-        objdata->unk4[i] = obj_create(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
+        objdata->unk4[i] = objSetupObject(&temp_v0_2->base, 5, self->mapID, -1, self->parent);
     }
 
-    temp_v0_3 = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    temp_v0_3 = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     temp_v0_3->base.loadFlags = 2;
     temp_v0_3->base.byte5 = 1;
     temp_v0_3->base.x = self->srt.transl.x;
@@ -273,7 +273,7 @@ s32 dll_212_func_3A2C(Object* self, DLL212_Data* objdata) {
     temp_v0_3->bank = 1;
     temp_v0_3->indexInBank = 0x4A;
     temp_v0_3->fxRate = -0x1E;
-    objdata->unk10 = obj_create(&temp_v0_3->base, 5, self->mapID, -1, self->parent);
+    objdata->unk10 = objSetupObject(&temp_v0_3->base, 5, self->mapID, -1, self->parent);
     return 1;
 }
 
@@ -290,7 +290,7 @@ CurveSetup* dll_212_func_3C4C(Object* self) {
     for (i = 0; i < 4; i++) {
         temp_v0 = gDLL_25->vtbl->func_2CF8(self, data_1AC[i]);
         if (temp_v0 != NULL) {
-            temp_fv0 = vec3_distance(&self->globalPosition, &temp_v0->pos);
+            temp_fv0 = vec3Distance(&self->globalPosition, &temp_v0->pos);
             if (temp_fv0 < var_fs0) {
                 var_fs0 = temp_fv0;
                 var_s3 = temp_v0;
@@ -329,7 +329,7 @@ void dll_212_func_3D30(Object* self, DLL212_Data* objdata) {
         return;
     }
 
-    gDLL_6_AMSFX->vtbl->play(self, SOUND_95B, MAX_VOLUME, NULL, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->Play(self, SOUND_95B, MAX_VOLUME, NULL, NULL, 0, NULL);
     var_s0 = 20;
     // FAKE
     do {} while (0);
@@ -345,9 +345,9 @@ void dll_212_func_3F44(s32 arg0, DLL212_Data* objdata) {
 
     if (objdata->unk14 == 1) {
         objdata->unk14 = 2;
-        dll_unload(objdata->unk0);
-        obj_destroy_object(objdata->unk10);
-        for (i = 0; i < 3; i++) { obj_destroy_object(objdata->unk4[i]); }
+        dllFree(objdata->unk0);
+        objFreeObject(objdata->unk10);
+        for (i = 0; i < 3; i++) { objFreeObject(objdata->unk4[i]); }
     }
 }
 
@@ -422,6 +422,6 @@ int dll_212_func_4040(Object* self, s32* arg1) {
 
 // offset: 0x40BC | func: 53
 int dll_212_func_40BC(u8 arg0) {
-    return (data_148[arg0] + 1) == 0 || main_get_bits(data_148[arg0]) != 0;
+    return (data_148[arg0] + 1) == 0 || mainGetBits(data_148[arg0]) != 0;
 }
 
