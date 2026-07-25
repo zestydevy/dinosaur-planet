@@ -6,19 +6,9 @@ typedef struct {
     s8 unk18;
     s8 unk19;
     u16 unk1A;
-    u16 unk1C;
+    s16 unk1C;
     s16 unk1E;
     s16 unk20;
-    u8 unk22;
-    u8 unk23;
-    u8 unk24;
-    u8 unk25;
-    s8 unk26;
-    u8 unk27;
-    s8 unk28;
-    u8 unk29;
-    u8 unk2A;
-    u8 unk2B;
 } DFP_Statue1_Setup;
 
 typedef struct {

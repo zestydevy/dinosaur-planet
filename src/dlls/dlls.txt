@@ -363,6 +363,7 @@
 641 = objects/641_DFPLift
 644 = objects/644_DFP_floorbar
 646 = objects/646_DFP_ForceAway
+647 = objects/647_DFP_RotatePuzzle
 648 = objects/648_DFP_Statue1
 649 = objects/649_DFP_PerchSwitch
 652 = objects/652_DFP_SpellPlace
