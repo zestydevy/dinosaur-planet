@@ -15,17 +15,28 @@ typedef struct {
 typedef struct {
     u8 pad0[0x8];
     s32 unk8;
-    u8 padC[0x28-0xC];
+    u8 padC[0x24-0xC];
+    s16 unk24;
+    u16 pad26;
     s32 unk28;
     u16 unk2C;
-} KyteUnkArg1;
+} Kyte_Unk3;
 
 typedef struct {
     HeadAnimation unk0;
     u8 pad24[0x48 - 0x24];
     u8 unk48;
     u8 unk49;
-} KyteUnk;
+} Kyte_Unk;
+
+typedef struct {
+    u32 pad0;
+    u32 pad4;
+    f32 unk8;
+    u32 padC;
+    s32* unk10;
+    s32 unk14;
+} Kyte_Unk2;
 
 typedef struct {
     void *unk0; // loaded dll
@@ -250,19 +261,212 @@ static Object* Kyte_func_1F14(Object* self, s32 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_20A4.s")
 
 // offset: 0x27D8 | func: 39
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_27D8.s")
+s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+    f32 sp44;
+    f32 sp40;
+    f32 sp3C;
+    f32 sp38;
+    f32 var_fa1;
+    s16 sp32;
+    s16 temp_v1;
+    s32 var_a1;
+    f32 sp28;
+    f32 var_fv1;
+    s32 sp20;
+
+    sp20 = -1;
+    sp40 = arg1->x - arg0->srt.transl.x;
+    sp38 = arg1->z - arg0->srt.transl.z;
+    sp3C = arg1->y - arg0->srt.transl.y;
+    sp32 = arg0->srt.yaw;
+    sp44 = sqrtf(SQ(sp40) + SQ(sp38));
+    arg0->srt.yaw = mathAtan2f(sp40, sp38) + 0x8000;
+    arg0->srt.pitch = mathAtan2f(sp3C, sp44);
+    temp_v1 = arg0->srt.yaw - (sp32 & 0xFFFF);
+    CIRCLE_WRAP(temp_v1);
+    arg0->srt.roll = (arg0->srt.roll + (s32) (temp_v1 * 16.0f)) / 2;
+    if (arg0->srt.roll > 0x3000) {
+        arg0->srt.roll = 0x3000;
+    }
+    if (arg0->srt.roll < -0x3000) {
+        arg0->srt.roll = -0x3000;
+    }
+    if (arg2 == 0.0f) {
+        arg2 = 0.0001f;
+    }
+    var_fv1 = (sp3C * 0.01f) + (0.0005f * sp44) + 0.03f;
+    if (var_fv1 < 0.0f) {
+        var_fv1 = 0/*.0f*/;
+    }
+    if (var_fv1 > 0.5f) {
+        var_fv1 = 0.5f;
+    }
+    if (*arg4 != -1) {
+        var_a1 = *arg4;
+        sp28 = sp28;
+        var_fv1 = (arg0->animProgress * 0.01f) + (var_fv1 * (1.0f - arg0->animProgress));
+    } else {
+        var_fa1 = 0;
+        var_a1 = arg3->unk10[(s32)var_fa1];
+        if ((s32)var_fa1 < (arg3->unk14 - 1)) {
+            sp20 = arg3->unk10[(s32) (var_fa1 + 1.0f)];
+        }
+        sp28 = ((sp3C / arg2) + 1.0f) * 0.5f;
+        if (sp28 < 0/*.0f*/) {
+            sp28 = 0/*.0f*/;
+        }
+        if (sp28 > 1.0f) {
+            sp28 = 1.0f;
+        }
+        sp28 *= 1023.0f;
+    }
+    *arg5 = var_fv1;
+    if (var_a1 != arg0->curModAnimId) {
+        sp28 = sp28;
+        objAnimSet(arg0, var_a1, 0/*.0f*/, 0U);
+    }
+    if (sp20 != -1) {
+        objAnimSetBlend(arg0, sp20, sp28);
+    }
+    arg6->unk2C &= ~8;
+    return 0;
+}
 
 // offset: 0x2B58 | func: 40
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_2B58.s")
+s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+    f32 var_ft4;
+    f32 sp30;
+    f32 sp2C;
+    f32 sp28;
+    f32 var_fv1;
+    f32 var_fv0;
+    s16 temp_v1;
+    s32 var_a1;
+
+    var_ft4 = 0;
+    if (arg0->srt.roll != 0) {
+        arg0->srt.roll >>= 1;
+    }
+    if (arg0->srt.pitch != 0) {
+        arg0->srt.pitch >>= 1;
+    }
+    sp30 = arg0->srt.transl.x - arg1->x;
+    sp28 = arg0->srt.transl.z - arg1->z;
+    sp2C = arg0->srt.transl.y - arg1->y;
+    if (!(arg6->unk2C & 4)) {
+        var_ft4 = sqrtf(SQ(sp30) + SQ(sp28));
+        temp_v1 = mathAtan2f(sp30, sp28) - (arg0->srt.yaw & 0xFFFF);
+        CIRCLE_WRAP(temp_v1);
+        arg0->srt.yaw += (temp_v1 >> 2);
+    }
+    // FAKE
+    if (sp30 != 0.0f);
+    var_fv1 = (sp2C * 0.0005f) + (0.005f * var_ft4) + 0.01f;
+    if (var_fv1 < 0.0f){
+        var_fv1 = 0/*.0f*/;
+    }
+    if (var_fv1 > 0.5f) {
+        var_fv1 = 0.5f;
+    }
+    if (*arg4 != -1) {
+        var_a1 = *arg4;
+        var_fv1 = (arg0->animProgress * 0.01f) + (var_fv1 * (1.0f - arg0->animProgress));
+    } else {
+        if (var_ft4 > 0/*.0f*/) {
+            var_fv0 = 1/*.0f*/;
+        } else {
+            var_fv0 = 0/*.0f*/;
+        }
+        var_a1 = arg3->unk10[(s32) var_fv0];
+    }
+    if (var_a1 != arg0->curModAnimId) {
+        objAnimSet(arg0, var_a1, 0/*.0f*/, 0U);
+    }
+    *arg5 = var_fv1;
+    arg6->unk2C &= ~8;
+    return 0;
+}
 
 // offset: 0x2DA4 | func: 41
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_2DA4.s")
+s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+    f32 temp_fv1;
+    f32 sp40;
+    f32 sp3C;
+    f32 sp38;
+    s32 temp_v0_4;
+    s32 var_a1;
+    s32 var_v1;
+    f32 var_fa0;
+
+    sp38 = 0.0f;
+    sp40 = arg0->srt.transl.x - arg1->x;
+    sp3C = arg0->srt.transl.z - arg1->z;
+    if (arg0->srt.roll != 0) {
+        arg0->srt.roll >>= 1;
+    }
+    if (arg0->srt.pitch != 0) {
+        arg0->srt.pitch >>= 1;
+    }
+    if (!(arg6->unk2C & 4)) {
+        arg0->srt.yaw = mathAtan2f(sp40, sp3C);
+    }
+    if (*arg4 != -1) {
+        var_a1 = *arg4;
+        sp38 = 0.02f;
+        arg6->unk2C |= 8;
+    } else {
+        if (arg6->unk2C & 2) {
+            arg6->unk2C |= 8;
+            temp_v0_4 = arg0->srt.yaw - arg6->unk24;
+            if (temp_v0_4 >= 0) {
+                var_v1 = temp_v0_4;
+            } else {
+                var_v1 = -temp_v0_4;
+            }
+            sp38 = var_v1 * 0.00005f;
+            temp_v0_4 = arg0->srt.yaw - arg6->unk24;
+            if (temp_v0_4 >= 0) {
+                var_v1 = temp_v0_4;
+            } else {
+                var_v1 = -temp_v0_4;
+            }
+            if (var_v1 > 0x100) {
+                var_a1 = arg3->unk10[1];
+            } else {
+                var_a1 = arg3->unk10[0];
+            }
+            sp38 += 0.005f;
+        } else {
+            arg6->unk2C |= 8;
+            temp_fv1 = sqrtf((sp40 * sp40) + (sp3C * sp3C)) * gUpdateRateInverseF;
+            var_fa0 = (((temp_fv1 / arg3->unk8) * (f32) (arg3->unk14 - 1)) + 1.0f);
+            var_a1 = arg3->unk10[(s32)var_fa0];
+            objGetAnimChange(arg0, temp_fv1, &sp38);
+        }
+    }
+    if (var_a1 != arg0->curModAnimId) {
+        objAnimSet(arg0, var_a1, 0.0f, 0U);
+    }
+    *arg5 = sp38;
+    return 0;
+}
 
 // offset: 0x300C | func: 42
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_300C.s")
+void Kyte_func_300C(Object* arg0) {
+    ObjectShadow* sp2C;
+    f32 sp28;
+
+    sp2C = arg0->shadow;
+    sp28 = 0.0f;
+    sp2C->tr.x = arg0->srt.transl.x;
+    sp2C->tr.z = arg0->srt.transl.z;
+    if (trackGetHeightFloor(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp28, 0U) != 0) {
+        sp2C->tr.y = arg0->srt.transl.y - sp28;
+    }
+}
 
 // offset: 0x3098 | func: 43
-s32 Kyte_func_3098(Object* arg0, KyteUnk* arg1) {
+s32 Kyte_func_3098(Object* arg0, Kyte_Unk* arg1) {
     Object* sp2C;
     s32 var_v0;
 
@@ -284,7 +488,7 @@ s32 Kyte_func_3098(Object* arg0, KyteUnk* arg1) {
 
 
 // offset: 0x319C | func: 44
-s32 Kyte_func_319C(Object* arg0, KyteUnkArg1* arg1, KyteUnk* arg2, u32 arg3, DLL212_Data* arg4) {
+s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL212_Data* arg4) {
     s32 sp4C;
     s32 var_v0;
     s32 var_v1;
@@ -389,7 +593,7 @@ s32 Kyte_func_319C(Object* arg0, KyteUnkArg1* arg1, KyteUnk* arg2, u32 arg3, DLL
 }
 
 // offset: 0x35C0 | func: 45
-s32 Kyte_func_35C0(Object* arg0, KyteUnkArg1* arg1, KyteUnk* arg2, DLL212_Data* arg3) {
+s32 Kyte_func_35C0(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, DLL212_Data* arg3) {
     Object* sp3C;
     u8 sp3B;
     Vec3f sp2C;
