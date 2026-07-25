@@ -421,6 +421,8 @@ enum SoundID {
 
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
 
+    SOUND_387_Wood_Impact = 0x387, //DIMWoodDoor
+    SOUND_388_Wood_Smash = 0x388, //DIMWoodDoor
     SOUND_389_Explosion = 0x389, //DIMExplosion
 
     SOUND_3D6 = 0x3D6, // used in SHroot (DLL 510)

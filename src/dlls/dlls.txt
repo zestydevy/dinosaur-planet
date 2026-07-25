@@ -299,6 +299,7 @@
 537 = objects/537_DIMCannon
 540 = objects/540_DIMDismountPoint
 541 = objects/541_DIMExplosion
+542 = objects/542_DIMWoodDoor
 544 = objects/544_DIM_LevelControl
 545 = objects/545_DIMTent
 546 = objects/546_DIMBikeDoor
