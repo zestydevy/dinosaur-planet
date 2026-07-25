@@ -45,7 +45,7 @@ typedef struct {
     s32 _unk520;
     u8 unk524;
     s8 _unk525[0x52C - 0x525];
-    s32 unk52C;
+    Object* unk52C;
     UnkCurvesStruct unk530;
     Vec3f unk638[2];
     DLL658_func19FC_arg2 unk650;
@@ -338,7 +338,70 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x1064 | func: 12
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_1064.s")
+#else
+
+static CurveSetup* dll_658_func_153C(Object* self, s32 arg1, Vec3f* arg2, s32 arg3);
+static s32 dll_658_func_1618(Object* self, UnkCurvesStruct* arg1, CurveSetup* arg2, f32 arg3, u8 arg4, f32* arg5, f32* animSpeed);
+static s32 dll_658_func_19FC(Object* self, CurveSetup* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4);
+
+s32 dll_658_func_1064(Object* self, s32 arg1, s32 arg2) {
+    f32 animSpeed; //44
+    f32 distance; //40
+    Vec3f* sp30; //30
+    PointBack_Data* objData;
+
+    animSpeed = 0.0f;
+    distance = 17000.0f;
+    objData = self->data;
+    
+    if (arg1 != 0) {
+        return 0;
+    } 
+    
+    if (arg2 != 0) {
+        objAnimSet(self, 0xD, 0.0f, 0);
+        return 0;
+    } 
+    
+    self->velocity.x = 0.0f;
+    self->velocity.y = 0.0f;
+    self->velocity.z = 0.0f;
+    animSpeed = 0.004f;
+
+    switch (self->curModAnimId) {
+    case 1:
+        if (dll_658_func_1618(self, &objData->unk530, (void*)objData->unk638, 0.3f, 0, &objData->unk650.unk24.z, &animSpeed) != 0) {
+            mainSetBits(BIT_41F, 1);
+            objAnimSet(self, 3, 0.0f, 0);
+        }
+        break;
+    case 3:
+        if (mathRnd(0, 0x64) == 0) {
+            objAnimSet(self, 1, 0.0f, 0);
+        }
+        animSpeed = 0.004f;
+        break;
+    default:
+        objData->unk52C = objFindClosestObject(self, 0x339, &distance);
+        if (objData->unk52C != NULL) {
+            sp30 = objData->unk638;
+            bcopy(&self->srt.transl, sp30, sizeof(Vec3f));
+            dll_658_func_19FC(self, dll_658_func_153C(self, 0, &sp30[1], 1), &sp30[0], &sp30[4], 0.5f);
+            animSpeed = 0.004f;
+            self->unkDC = 0;
+            objAnimSet(self, 1, 0.0f, 0);
+        }
+        break;
+    }
+
+    objAnimAdvance(self, animSpeed, gUpdateRate, &objData->unk500);
+    objMove(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    
+    return 0;
+}
+#endif
 
 // offset: 0x1308 | func: 13
 s32 dll_658_func_1308(Object* self, AnimObj_Data* animData, s32 arg2) {
