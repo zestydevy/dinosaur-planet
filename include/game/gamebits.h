@@ -14,7 +14,7 @@ typedef enum {
     BIT_7 = 0x7, // len:1 group:2
     BIT_8 = 0x8, // len:1 group:2 task:0
     BIT_Sabre_Dino_Bag_S = 0x9, // len:1 group:1 (small)  [INVENTORY]
-    BIT_A = 0xA, // len:1 group:2
+    BIT_SW_Grumpy_SnowHorn_Stopped_Geyser = 0xA, // len:1 group:2
     BIT_B = 0xB, // len:1 group:1
     BIT_C = 0xC, // len:1 group:1
     BIT_DF_Shrine_Door_Light_Activated_One = 0xD, // len:1 group:1
