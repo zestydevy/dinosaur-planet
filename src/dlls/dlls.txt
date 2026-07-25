@@ -354,6 +354,7 @@
 617 = objects/617_WL_VConsole
 618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
+632 = objects/632_VFP_coreplat
 633 = objects/633_VFP_PodiumPoint
 634 = objects/634_VFP_flamepoint
 636 = objects/636_VFP_lavastar
