@@ -48,12 +48,12 @@ void dll_35_Func_20(s32 arg0) {
     if (data_4C > 1.0f) {
         data_4C = 0.3f;
     }
-    data_50 += (gUpdateRate * 0x64);;
+    data_50 += (gUpdateRate * 100);
     if (data_50 >= 0x8000) {
         data_50 = 0;
     }
     data_5C = mathSinfInterp((s16) data_50);
-    data_54 += (gUpdateRate * 0x32);
+    data_54 += (gUpdateRate * 50);
     if (data_54 >= 0x8000) {
         data_54 = 0;
     }
@@ -64,8 +64,7 @@ void dll_35_Func_20(s32 arg0) {
 s32 dll_35_Func_194(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* data) {
     ExpgfxStruct sp3C;
     s32 temp_v0;
-    Vec2f* temp_v1_3;
-    s32 temp;
+    s32 _pad[2];
 
     data_40 += 0.001f;
     if (data_40 > 1.0f) {
@@ -447,7 +446,6 @@ s32 dll_35_Func_194(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, voi
     case 0x269:
     case 0x272:
     case 0x27D:
-        temp = id;
         sp3C.unk30.x = (f32) mathRnd(-0x14, 0x14) * 0.2f;
         sp3C.unk30.y = (f32) mathRnd(-0xA, 0xA) * 0.03f;
         sp3C.unk24.z = (f32) mathRnd(0xA, 0x14) * 0.0045f;
@@ -495,7 +493,6 @@ s32 dll_35_Func_194(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, voi
     case 0x26B:
     case 0x274:
     case 0x27B:
-        temp = id;
         sp3C.unk30.x = (f32) mathRnd(-0x14, 0x14) * 0.2f;
         sp3C.unk30.y = (f32) mathRnd(-0xA, 0xA) * 0.03f;
         sp3C.unk24.z = (f32) mathRnd(0xA, 0x14) * 0.0045f;
@@ -673,7 +670,6 @@ s32 dll_35_Func_194(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, voi
     case 0x286:
     case 0x287:
     case 0x288:
-        temp = id;
         sp3C.unk30.y = (f32) mathRnd(-6, 2);
         sp3C.unk24.x = (f32) mathRnd(-0xA, 0xA) * 0.0015f;
         sp3C.unk24.z = (f32) mathRnd(-0xA, 0xA) * 0.0015f;
