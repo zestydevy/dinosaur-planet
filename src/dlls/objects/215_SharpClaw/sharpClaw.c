@@ -217,7 +217,6 @@ void SharpClaw_ctor(void* dll) {
 void SharpClaw_dtor(void* dll) { }
 
 // offset: 0x244 | func: 1 | export: 0
-void SharpClaw_obj_Setup(Object* self, ObjSetup* setup, s32 reset);
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_obj_Setup.s")
 #else
@@ -860,24 +859,22 @@ void SharpClaw_func_2044(Object* self, SRT* fxTransform, s32 useModGfx) {
     
     if (useModGfx == FALSE) {
         fxParam = 0.014f;
-        gDLL_17_partfx->vtbl->spawn(self, 0x325, fxTransform, 0x200001, -1, &fxParam);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_325, fxTransform, 0x200001, -1, &fxParam);
         
         fxTransform->scale = 92.0f;
-        gDLL_17_partfx->vtbl->spawn(self, 0x323, fxTransform, 0x200001, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_323, fxTransform, 0x200001, -1, NULL);
         
         fxParam = 0.015f;
         fxTransform->scale = 231.0f;
-        gDLL_17_partfx->vtbl->spawn(self, 0x323, fxTransform, 0x200001, -1, &fxParam);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_323, fxTransform, 0x200001, -1, &fxParam);
         
         fxTransform->transl.f[0] -= self->globalPosition.f[0];
         fxTransform->transl.f[1] -= self->globalPosition.f[1];
         fxTransform->transl.f[2] -= self->globalPosition.f[2];
         fxTransform->scale = 123.0f;
 
-        i = 0;
-        while (i != 0xF) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x324, fxTransform, 2, -1, NULL);
-            i++;
+        for (i = 0; i < 15; i++) {
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, fxTransform, 2, -1, NULL);
         }
         
         if (player->id != OBJ_Sabre) {
@@ -887,17 +884,17 @@ void SharpClaw_func_2044(Object* self, SRT* fxTransform, s32 useModGfx) {
         }
         gDLL_6_AMSFX->vtbl->Play(self, data_D0[mathRnd(0, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
     } else {
-        gDLL_17_partfx->vtbl->spawn(self, 0x328, fxTransform, 0x200001, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_328, fxTransform, 0x200001, -1, NULL);
         
         fxTransform->transl.f[0] -= self->globalPosition.f[0];
         fxTransform->transl.f[1] -= self->globalPosition.f[1];
         fxTransform->transl.f[2] -= self->globalPosition.f[2];
         gDLL_6_AMSFX->vtbl->Play(self, data_10C[mathRnd(3, 4)], MAX_VOLUME, NULL, NULL, 0, NULL);
         
-        modGfxDLL = dllLoad(0x1002, 1);
+        modGfxDLL = dllLoad(DLL_ID_106, 1);
         
         data_1B0[1] += mathRnd(0, 155);
-        data_1B0[2] += mathRnd(0, 0x9B);
+        data_1B0[2] += mathRnd(0, 155);
         
         fxTransform->yaw = 0;
         fxTransform->pitch = 0;
@@ -1808,7 +1805,6 @@ s32 SharpClaw_func_4CA4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if (gDLL_2_Camera->vtbl->get_target_object() != self) {
             if (objData->unk0 >= 7) {
                 if (baddie->unk3B0 & 1) {
-                    objData = objData;
                     gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, 0xE);
                 }
                 objData->unk0 = 0;
