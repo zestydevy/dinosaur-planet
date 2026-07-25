@@ -47,18 +47,13 @@ The most important work that needs to be done currently is decompiling and under
 
 
 ## Style guide
-The Dinosaur Planet Decompilation follows the same [style guide as the SM64 Decompilation](https://docs.google.com/document/d/1T_6dUj32QOscrMOMDsr7bY0esohswEAstKCO4gFn6t0).
-
-In addition:
-- Use Unix line endings (`\n`).
-- Ensure files end with a newline.
-- Strip trailing whitespace.
+Please see the [style guide](docs/StyleGuide.md) document.
 
 
 ## Opening a pull request
 Before opening a pull request, you should make sure that:
 
-1. Any code additions/changes follow the project's [style guide](#style-guide).
+1. Any code additions/changes follow the project's [style guide](docs/StyleGuide.md).
     - Not a strict requirement but it helps!
 2. The ROM builds successfully in both matching and non-matching configurations.
     - CI will test against:

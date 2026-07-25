@@ -28,6 +28,7 @@ typedef struct {
 /*2A*/    u8 multiplyB;           //Colour multiplier for model
 /*2B*/    u8 unused2B;
 /*2C*/    s16 gamebitCount;
+/*2E*/    s16 unk2E;
 } Collectable_Setup;
 
 typedef enum {

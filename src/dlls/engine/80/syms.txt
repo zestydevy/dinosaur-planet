@@ -1,0 +1,6 @@
+.text = 0x0:
+dll_80_ctor = 0x0;
+dll_80_dtor = 0xC;
+dll_80_update1 = 0x18;
+dll_80_update2 = 0x24;
+dll_80_draw = 0x2C;

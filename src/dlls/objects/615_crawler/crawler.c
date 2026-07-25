@@ -67,12 +67,12 @@ void dll_615_func_1AE8(Object* self) {
     
     if (objSetup->uID == 0){
         func_800267A4(self);
-        obj_destroy_object(self);
+        objFreeObject(self);
         return;
     }
     
-    obj_free_tick(self);
+    objDisable(self);
     func_800267A4(self);
-    obj_free_object_type(self, OBJTYPE_Baddie);    
+    objFreeObjectType(self, OBJTYPE_Baddie);    
     self->srt.flags |= OBJFLAG_INVISIBLE;
 }

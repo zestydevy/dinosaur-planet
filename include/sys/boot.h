@@ -3,6 +3,6 @@
 
 #include "PR/ultratypes.h"
 
-void thread_timer_tick(void);
+void bootCheckStack(void);
 
 #endif

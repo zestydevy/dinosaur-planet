@@ -1,0 +1,11 @@
+.text = 0x0:
+dll_81_ctor = 0x0;
+dll_81_dtor = 0xC;
+dll_81_func_18 = 0x18;
+dll_81_func_A4 = 0xA4;
+dll_81_func_224 = 0x224;
+dll_81_func_3C8 = 0x3C8;
+dll_81_func_4DC = 0x4DC;
+
+.rodata = 0x53C:
+_oob_rodata_0 = 0x0; // absolute:0x53C

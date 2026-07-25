@@ -58,17 +58,17 @@ void sprintfSetSpacingCodes(s32 setting);
 int sprintf(char *str, const char *format, ...);
 int vsprintf(char *str, const char *format, va_list args);
 
-void diPrintfInit();
+void diPrintfInit(void);
 int diPrintf(const char *format, ...);
 void diPrintfAll(Gfx **gdl);
-void diPrintfClear();
+void diPrintfClear(void);
 void diPrintfSetCol(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfSetBG(u8 red, u8 green, u8 blue, u8 alpha);
 void diPrintfCmd_0x87(u8, u8);
 void diPrintfSetXY(u16 x, u16 y);
 void diPrintfCmd_0x86(u16);
 s32 diPrintfMeasureString(const char *format, ...);
-void diPrintfOrigin();
-void diPrintfNewline();
+void diPrintfOrigin(void);
+void diPrintfNewline(void);
 
 #endif

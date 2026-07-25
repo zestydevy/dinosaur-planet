@@ -1,0 +1,13 @@
+.text = 0x0:
+DFSH_Door2Special_ctor = 0x0;
+DFSH_Door2Special_dtor = 0xC;
+DFSH_Door2Special_setup = 0x18;
+DFSH_Door2Special_control = 0xD4;
+DFSH_Door2Special_update = 0xE0;
+DFSH_Door2Special_print = 0xEC;
+DFSH_Door2Special_free = 0x140;
+DFSH_Door2Special_get_model_flags = 0x150;
+DFSH_Door2Special_get_data_size = 0x160;
+DFSH_Door2Special_anim_callback = 0x174;
+
+.rodata = 0x33C:

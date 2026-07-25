@@ -1,0 +1,12 @@
+.text = 0x0:
+WL_LaserTarget_ctor = 0x0;
+WL_LaserTarget_dtor = 0xC;
+WL_LaserTarget_setup = 0x18;
+WL_LaserTarget_control = 0x84;
+WL_LaserTarget_update = 0x1DC;
+WL_LaserTarget_print = 0x1E8;
+WL_LaserTarget_free = 0x23C;
+WL_LaserTarget_get_model_flags = 0x24C;
+WL_LaserTarget_get_data_size = 0x25C;
+
+.rodata = 0x2B0:

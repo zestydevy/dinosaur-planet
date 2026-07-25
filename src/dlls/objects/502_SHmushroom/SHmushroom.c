@@ -61,10 +61,10 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 
 	objData = self->data;
 	curveEndpoint = 25; //Matches unk18 on the initial curve node for SwapStone Hollow's lily pond mushroom (uID 0x3081c)
-	player = get_player();
+	player = objGetPlayer();
 	self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
-	if (main_get_bits(setup->gamebitCollected)) {
+	if (mainGetBits(setup->gamebitCollected)) {
 		objData->state = SHmushroom_STATE_8_Hidden;
 		self->objhitInfo->unk58 &= ~1;
 		self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -88,8 +88,8 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	self->srt.scale = self->def->scale;
 
 	//Get root motion speed from jump animation?
-	func_80023D30(self, SHmushroom_MODANIM_1_Jump, 0.0f, 0);
-	func_80024108(self, 1.0f, 1.0f, &animInfo);
+	objAnimSet(self, SHmushroom_MODANIM_1_Jump, 0.0f, 0);
+	objAnimAdvance(self, 1.0f, 1.0f, &animInfo);
 	objData->jumpSpeed = animInfo.unk0[0];
 	if (objData->jumpSpeed < 0.0f) {
 		objData->jumpSpeed = -objData->jumpSpeed;
@@ -98,8 +98,8 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	objData->jumpSpeed += 20.0f;
 
 	//Get root motion speed from hop animation?
-	func_80023D30(self, SHmushroom_MODANIM_4_Look_Hop_LOOP, 0.0f, 0);
-	func_80024108(self, 1.0f, 1.0f, &animInfo);
+	objAnimSet(self, SHmushroom_MODANIM_4_Look_Hop_LOOP, 0.0f, 0);
+	objAnimAdvance(self, 1.0f, 1.0f, &animInfo);
 	objData->hopSpeed = animInfo.unk0[2];
 	if (objData->hopSpeed < 0.0f) {
 		objData->hopSpeed = -objData->hopSpeed;
@@ -107,7 +107,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	objData->hopSpeed += 20.0f;
 
 	//Set up message queue
-	obj_init_mesg_queue(self, 1);
+	objInitMesgQueue(self, 1);
 
 	//Optionally set the mushroom to follow curves (only affects specific mushrooms)
 	if ((setup->index == 4) || //White Mushroom around lily pond in SwapStone Hollow well
@@ -115,15 +115,15 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 	) {
 		objData->flags |= SHmushroom_FLAG_Follow_Curve;
 		gDLL_26_Curves->vtbl->func_4288(&objData->curves, self, 1000.0f, &curveEndpoint, -1);
-		self->srt.transl.x = objData->curves.unk68.x;
-		self->srt.transl.z = objData->curves.unk68.z;
+		self->srt.transl.x = objData->curves.unk0.unk68.x;
+		self->srt.transl.z = objData->curves.unk0.unk68.z;
 	}
 
 	objData->curvesDelta = 5.0f;
 
 	//Set initial pursuer distance
 	if (player != NULL) {
-		distanceToPlayer = vec3_distance(&player->globalPosition, &self->globalPosition);
+		distanceToPlayer = vec3Distance(&player->globalPosition, &self->globalPosition);
 		objData->prevPursuerDistance = distanceToPlayer;
 		objData->pursuerDistance = distanceToPlayer;
 	} else {
@@ -131,7 +131,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 		objData->prevPursuerDistance = 200.0f;
 	}
 
-	obj_add_object_type(self, OBJTYPE_TrickyTarget);
+	objAddObjectType(self, OBJTYPE_TrickyTarget);
 
 	//Set up inventory gamebit (value incremented when collected)
 	if (self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) {
@@ -140,7 +140,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 		objData->gamebitInventory = BIT_Inventory_White_Mushrooms;
 	}
 
-	func_80023D08(self, self->modelInstIdx);
+	objSetInfoNum(self, self->modelInstIdx);
 }
 
 // offset: 0x3A8 | func: 1 | export: 1
@@ -153,18 +153,18 @@ void SHmushroom_control(Object* self) {
 	s32 pad;
 	f32 playerDistanceSquared;
 	s32 count;
-	Func_80057F1C_Struct** spBC;
+	TrackHeightResult** spBC;
 	SHmushroom_Data* objData;
 	f32 sidekickDistanceSquared;
 	Object* player;
 	u32 outMesgID;
-	Func_80059C40_Struct sp58;
+	TrackLineIntersectResult sp58;
 	s32 temp;
 
 	objData = self->data;
 	objSetup = (SHmushroom_Setup*)self->setup;
-	player = get_player();
-	sidekick = get_sidekick();
+	player = objGetPlayer();
+	sidekick = objGetSidekick();
 
 	if (objData->state == SHmushroom_STATE_8_Hidden) {
 
@@ -173,7 +173,7 @@ void SHmushroom_control(Object* self) {
 		   If the mushroom unloads before the message is received, the mushroom will be missed permanently!
 		   This can cause a softlock while saving Queen EarthWalker in SwapStone Hollow.
 		*/
-		while (obj_recv_mesg(self, &outMesgID, NULL, NULL)) {
+		while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
 			if (outMesgID == 0x7000B) {
 				if (self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) {
 					dinoFoodBag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 16);
@@ -184,11 +184,11 @@ void SHmushroom_control(Object* self) {
 
 					//Otherwise store Blue Mushrooms directly in the inventory
 					} else {
-						main_increment_bits(objData->gamebitInventory);
+						mainIncrementBits(objData->gamebitInventory);
 					}
 				} else {
 					//Other mushroom types (White Mushrooms) are always stored directly in the inventory
-					main_increment_bits(objData->gamebitInventory);
+					mainIncrementBits(objData->gamebitInventory);
 				}
 			}
 		}
@@ -198,11 +198,11 @@ void SHmushroom_control(Object* self) {
 	//Handle being chased by player/sidekick (get distance to whoever's nearest)
 	objData->prevPursuerDistance = objData->pursuerDistance;
 
-	playerDistanceSquared = vec3_distance_squared(&player->globalPosition, &self->globalPosition);
+	playerDistanceSquared = vec3DistanceSquared(&player->globalPosition, &self->globalPosition);
 	if (sidekick == NULL) {
 		objData->pursuerDistance = sqrtf(playerDistanceSquared);
 	} else {
-		sidekickDistanceSquared = vec3_distance_squared(&sidekick->globalPosition, &self->globalPosition);
+		sidekickDistanceSquared = vec3DistanceSquared(&sidekick->globalPosition, &self->globalPosition);
 		if (playerDistanceSquared < sidekickDistanceSquared) {
 			objData->pursuerDistance = sqrtf(playerDistanceSquared);
 		} else {
@@ -217,7 +217,7 @@ void SHmushroom_control(Object* self) {
 
 	//React to attacks
 	if (func_80025F40(self, &hitBy, NULL, NULL) != 0) {
-		gDLL_6_AMSFX->vtbl->play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
+		dll_amSfx->Play(self, SOUND_744_Mushroom_Hit, MAX_VOLUME, NULL, NULL, 0, NULL);
 
 		//Get eaten when attacked by an EarthWalker
 		if (hitBy->id == OBJ_DR_EarthWarrior) {
@@ -243,10 +243,10 @@ void SHmushroom_control(Object* self) {
 
 	if (objData->flags & SHmushroom_FLAG_Moving) {
 		//Snap Y to ground
-		count = func_80057F1C(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spBC, 0, 0);
+		count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &spBC, 0, 0);
 		for (i = 0; i < count; i++) {
-			if (spBC[i]->unk0[0] < (self->srt.transl.y + 10.0f)) {
-				self->srt.transl.y = spBC[i]->unk0[0];
+			if (spBC[i]->y < (self->srt.transl.y + 10.0f)) {
+				self->srt.transl.y = spBC[i]->y;
 				break;
 			}
 		}
@@ -258,7 +258,7 @@ void SHmushroom_control(Object* self) {
 		   Considering the "MUSHROOM: trapped" string, maybe the mushroom's intended to stop fleeing
 		   if its path around the pond is blocked by dropping the cave stalactites?
 		*/
-		temp = func_80059C40(&self->prevLocalPosition, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFF, 0x14);
+		temp = trackGetLineIntersect(&self->prevLocalPosition, &self->srt.transl, 6.0f, 2, &sp58, self, 8, -1, 0xFF, 0x14);
 		if ((objSetup->index == 4) && (temp) && (sp58.unk50 == 0xD)) {
 			objData->flags |= SHmushroom_FLAG_No_Fleeing;
 			STUBBED_PRINTF("MUSHROOM: trapped!!!!\n");
@@ -276,11 +276,11 @@ void SHmushroom_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 void SHmushroom_free(Object* self, s32 a1) {
 	SHmushroom_Data* objData = self->data;
 
-	obj_free_object_type(self, OBJTYPE_TrickyTarget);
+	objFreeObjectType(self, OBJTYPE_TrickyTarget);
 
 	//Stop sound loop
 	if (objData->soundHandleStun != 0) {
-		gDLL_6_AMSFX->vtbl->stop(objData->soundHandleStun);
+		dll_amSfx->Stop(objData->soundHandleStun);
 		objData->soundHandleStun = 0;
 	}
 }
@@ -318,24 +318,24 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 	dx = self->srt.transl.x - fleeingFrom->srt.transl.x;
 	dz = self->srt.transl.z - fleeingFrom->srt.transl.z;
 
-	angle = arctan2_f(-dx, -dz);
-	dz = fsin16_precise(angle);
-	dx = fcos16_precise(angle);
+	angle = mathAtan2f(-dx, -dz);
+	dz = mathSinfInterp(angle);
+	dx = mathCosfInterp(angle);
 
 	v.x = self->srt.transl.x - (distance * dz);
 	v.y = self->srt.transl.y;
 	v.z = self->srt.transl.z - (distance * dx);
 
-	if (func_80059C40(&self->srt.transl, &v, 0.1f, 3, NULL, self, 8, -1, 0xFF, 0)) {
+	if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 3, NULL, self, 8, -1, 0xFF, 0)) {
 		angle1 = angle;
 		angle2 = angle;
 
 		sp90[2] = sp90[3] = dz;
-		sp80[2] = fsin16_precise( M_20_DEGREES);
-		sp80[3] = fsin16_precise(-M_20_DEGREES);
+		sp80[2] = mathSinfInterp( M_20_DEGREES);
+		sp80[3] = mathSinfInterp(-M_20_DEGREES);
 		sp90[0] = sp90[1] = dx;
-		sp80[0] = fcos16_precise( M_20_DEGREES);
-		sp80[1] = fcos16_precise(-M_20_DEGREES);
+		sp80[0] = mathCosfInterp( M_20_DEGREES);
+		sp80[1] = mathCosfInterp(-M_20_DEGREES);
 
 		for (i = 0; i < 8; i++) {
 			dummy:
@@ -347,7 +347,7 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 			v.z = self->srt.transl.z - (sp90[0] * distance);
 
 			angle1 += M_20_DEGREES;
-			if (func_80059C40(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
+			if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
 				return angle1;
 			}
 
@@ -358,7 +358,7 @@ static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmush
 			v.z = self->srt.transl.z - (sp90[1] * distance);
 
 			angle2 -= M_20_DEGREES;
-			if (func_80059C40(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
+			if (trackGetLineIntersect(&self->srt.transl, &v, 0.1f, 1, NULL, self, 8, -1, 0xFF, 0) == 0) {
 				return angle2;
 			}
 		}
@@ -378,11 +378,11 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 	f32 dz;
 
 	while (TRUE) {
-		dx = objData->curves.unk68.x - self->srt.transl.x;
-		dz = objData->curves.unk68.z - self->srt.transl.z;
+		dx = objData->curves.unk0.unk68.x - self->srt.transl.x;
+		dz = objData->curves.unk0.unk68.z - self->srt.transl.z;
 
 		if ((SQ(dx) + SQ(dz)) < SQ(distance)) {
-			if ((curves_func_800053B0(&objData->curves, objData->curvesDelta) || objData->curves.unk10)) {
+			if ((curves_func_800053B0(&objData->curves.unk0, objData->curvesDelta) || objData->curves.unk0.unk10)) {
 				if (gDLL_26_Curves->vtbl->func_4704(&objData->curves) != 0) {
 					STUBBED_PRINTF("MUSHROOM ERROR: no node found\n");
 				}
@@ -392,7 +392,7 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 		}
 	}
 
-	return (s32)arctan2_f(-dx, -dz);
+	return (s32)mathAtan2f(-dx, -dz);
 }
 
 // offset: 0xD74 | func: 9
@@ -404,7 +404,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	SRT fxTransform;
 	Object* player;
 
-	player = get_player();
+	player = objGetPlayer();
 
 	objData->flags &= ~SHmushroom_FLAG_Moving;
 
@@ -431,7 +431,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 				}
 
 				objData->state = SHmushroom_STATE_1_Jump;
-				gDLL_6_AMSFX->vtbl->play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
+				dll_amSfx->Play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
 				self->srt.yaw = objData->fleeAngle - M_90_DEGREES;
 
 			//Enter alert state if the player/sidekick are close
@@ -476,7 +476,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 			//Alert state: staying still in poised pose, facing towards threat
 			dx = self->srt.transl.x - player->srt.transl.x;
 			dz = self->srt.transl.z - player->srt.transl.z;
-			self->srt.yaw = arctan2_f(-dx,-dz);
+			self->srt.yaw = mathAtan2f(-dx,-dz);
 
 			//If pursuer backs off, play a little "phew!" animation
 			if ((objSetup->alertRange + 10.0f) < objData->pursuerDistance) {
@@ -493,7 +493,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 						}
 
 						objData->state = SHmushroom_STATE_1_Jump;
-						gDLL_6_AMSFX->vtbl->play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
+						dll_amSfx->Play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
 						self->srt.yaw = objData->fleeAngle - M_90_DEGREES;
 
 					//Hop in surprise (if the player/sidekick are sneaking up)
@@ -505,7 +505,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 						}
 
 						objData->state = SHmushroom_STATE_5_Surprised_Hop;
-						gDLL_6_AMSFX->vtbl->play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
+						dll_amSfx->Play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
 						self->srt.yaw = objData->fleeAngle;
 					}
 				}
@@ -534,7 +534,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 			}
 
 			objData->state = SHmushroom_STATE_1_Jump;
-			gDLL_6_AMSFX->vtbl->play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
+			dll_amSfx->Play(self, SOUND_53C_Mushroom_Bounce, MAX_VOLUME, NULL, NULL, 0, NULL);
 			self->srt.yaw = objData->fleeAngle - M_90_DEGREES;
 		}
 		break;
@@ -551,8 +551,8 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	case SHmushroom_STATE_9_Stunned:
 		//Start stunned sound loop
 		if (objData->stunnedTimer <= 0) {
-			gDLL_6_AMSFX->vtbl->play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandleStun, NULL, 0, NULL);
-			objData->stunnedTimer = rand_next(240, 300);
+			dll_amSfx->Play(self, SOUND_745_Mushroom_Stunned_Loop, MAX_VOLUME, &objData->soundHandleStun, NULL, 0, NULL);
+			objData->stunnedTimer = mathRnd(240, 300);
 		}
 
 		//Run down stun timer
@@ -566,7 +566,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 			//Stop sound loop
 			if (objData->soundHandleStun != 0) {
-				gDLL_6_AMSFX->vtbl->stop(objData->soundHandleStun);
+				dll_amSfx->Stop(objData->soundHandleStun);
 				objData->soundHandleStun = 0;
 			}
 
@@ -598,10 +598,10 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	if (self->unkAF & ARROW_FLAG_1_Interacted) {
 		//Set the objectID for the item collection sequence, and set a gamebit
 		if ((self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) &&
-			(main_get_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj) == FALSE)
+			(mainGetBits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj) == FALSE)
 		) {
 			gDLL_3_Animation->vtbl->set_variable_obj(OBJ_SHmushroomanim, NULL, 0);
-			main_set_bits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj, TRUE);
+			mainSetBits(BIT_Tutorial_Collected_Blue_Mushroom_Assigned_AnimObj, TRUE);
 		}
 
 		/* Send message to player, displaying Blue Mushroom's tutorial box
@@ -609,7 +609,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 		   @bug: can appear when collecting White Mushrooms before Blue Mushrooms (with no anim object set)
 		*/
-		obj_send_mesg(player,
+		objSendMesg(player,
 			0x7000A,
 			self,
 			(void*)BIT_Tutorial_Collected_Blue_Mushroom
@@ -617,7 +617,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 		//Set this mushroom's collection gamebit, so it won't reappear
 		if (objSetup->gamebitCollected != NO_GAMEBIT) {
-			main_set_bits(objSetup->gamebitCollected, TRUE);
+			mainSetBits(objSetup->gamebitCollected, TRUE);
 		}
 
 		self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -626,18 +626,18 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 
 		//Stop sound loop
 		if (objData->soundHandleStun != 0) {
-			gDLL_6_AMSFX->vtbl->stop(objData->soundHandleStun);
+			dll_amSfx->Stop(objData->soundHandleStun);
 			objData->soundHandleStun = 0;
 		}
 	}
 
 	//Change animation when needed
 	if (self->curModAnimId != dStateModAnimIDs[objData->state]) {
-		func_80023D30(self, dStateModAnimIDs[objData->state], 0.25f, 0);
+		objAnimSet(self, dStateModAnimIDs[objData->state], 0.25f, 0);
 	}
 
 	//Advance animation
-	if (func_80024108(self, dStateAnimSpeeds[objData->state], gUpdateRateF, &animInfo)) {
+	if (objAnimAdvance(self, dStateAnimSpeeds[objData->state], gUpdateRateF, &animInfo)) {
 		objData->flags |= SHmushroom_FLAG_Animation_Finished;
 	} else {
 		objData->flags &= ~SHmushroom_FLAG_Animation_Finished;
@@ -653,7 +653,7 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 	}
 
 	//Move
-	self->velocity.x = fsin16_precise(objData->fleeAngle) * speed;
-	self->velocity.z = fcos16_precise(objData->fleeAngle) * speed;
-	obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+	self->velocity.x = mathSinfInterp(objData->fleeAngle) * speed;
+	self->velocity.z = mathCosfInterp(objData->fleeAngle) * speed;
+	objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
 }

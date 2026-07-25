@@ -163,7 +163,7 @@ enum ObjectStateFlags {
     OBJSTATE_STANDALONE = 0x10,
     OBJSTATE_UNK20 = 0x20, // unused?
     // Object was destroyed (not necessarily freed just yet)
-    OBJSTATE_DESTROYED = 0x40,
+    OBJSTATE_DESTROYED = 0x40, // TODO: this needs a better name
     OBJSTATE_UNK80 = 0x80,
     // If set, bits 8-10 are the model index to switch to
     OBJSTATE_PENDING_MODEL_SWITCH = 0x800,
@@ -179,6 +179,7 @@ enum ObjectStateFlags {
 // Stored in the flags of Object.srt
 enum ObjectFlags {
 /*1*/ OBJFLAG_UNK_2 = 0x2,
+/*2*/ OBJFLAG_UNK_4 = 0x4,
 
       // don't automatically calculate previous local/global position object fields
 /*3*/ OBJFLAG_MANUAL_PREV_POSITIONS = 0x8,
@@ -420,18 +421,18 @@ typedef struct {
 DLL_INTERFACE(DLL_IObject) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
           // reset: true if this is not the first setup call and the object should only reset state and not perform init allocations
-    /*0*/ void (*setup)(struct Object *obj, ObjSetup *setup, s32 reset);
-    /*1*/ void (*control)(struct Object *obj);
-    /*2*/ void (*update)(struct Object *obj);
+    /*0*/ void (*Setup)(struct Object *obj, ObjSetup *setup, s32 reset);
+    /*1*/ void (*Control)(struct Object *obj);
+    /*2*/ void (*Update)(struct Object *obj);
           // visibility: true if the object passed distance fade and frustum culling checks
-    /*3*/ void (*print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+    /*3*/ void (*Print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
           // onlySelf: true if the object should only free itself and not child/associated objects (not including linked objects)
-    /*4*/ void (*free)(struct Object *obj, s32 onlySelf);
-    /*5*/ u32 (*get_model_flags)(struct Object *obj);
+    /*4*/ void (*Free)(struct Object *obj, s32 onlySelf);
+    /*5*/ u32 (*GetModelFlags)(struct Object *obj);
           // offset: 
           // - 1st call: byte offset from the start of the object's memory to the allocated data.
           // - 2nd call: address of the object's allocated data.
-    /*6*/ u32 (*get_data_size)(struct Object *obj, u32 offsetAddr);
+    /*6*/ u32 (*GetDataSize)(struct Object *obj, u32 offsetAddr);
 };
 
 // always called by DLL 3 "ANIM" during cutscenes?
@@ -467,15 +468,15 @@ typedef struct Object {
 /*0060*/    ObjectEvent *curEvent;
 /*0064*/    ObjectShadow* shadow;
 /*0068*/    DLL_IObject *dll;
-/*006C*/    s16 (*unk6C)[9];
+/*006C*/    s16 (*unk6C)[9]; //Sequence joints
 /*0070*/    Vtx* unk70;
 /*0074*/    ObjectStruct74* unk74;
 /*0078*/    ObjectStruct78 *unk78; // related to ObjDef.unk40
 /*007C*/    ModelInstance **modelInsts; // called "frames" in default.dol
 /*0080*/    Vec3f prevLocalPosition; // srt position from previous tick
 /*008C*/    Vec3f prevGlobalPosition; // global position from previous tick
-/*0098*/    f32 animProgress;
-/*009C*/    f32 animProgressLayered;
+/*0098*/    f32 animProgress;        //tValue for main model animation
+/*009C*/    f32 animProgressLayered; //tValue for additive model animation (e.g. the weapon-stowing animation that can be layered on top of the main idle/walk/run anims)
 /*00A0*/    s16 curModAnimId;
 /*00A2*/    s16 curModAnimIdLayered;
 /*00A4*/    f32 depthSortVal; //angle between camera and Object?
@@ -500,7 +501,7 @@ typedef struct Object {
 /*00D6*/    u8 unkD6;
 /*00D5*/    u8 unkD7[0xd8 - 0xd7];
 /*00D8*/    u8 unkD8;
-/*00D9*/    u8 unkD9;
+/*00D9*/    u8 unkD9; // num touch callbacks
 /*00DA*/    u8 freeLock; // if set, object will not be freed even if attempted
 /*00DB*/    u8 unkDB[0xdc - 0xdb];
 /*00DC*/    s32 unkDC; // sometimes stores ID related to object's active sequence?

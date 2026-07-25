@@ -33,7 +33,7 @@ void CRFuelTank_setup(Object *self, CRFuelTank_Setup *setup, s32 arg2) {
     self->stateFlags |= OBJSTATE_PRINT_DISABLED;
     func_8002674C(self);
     func_80026128(self, 0x1D, setup->unk1A / 10, 0);
-    if ((setup->gamebit != NO_GAMEBIT) && (main_get_bits(setup->gamebit))) {
+    if ((setup->gamebit != NO_GAMEBIT) && (mainGetBits(setup->gamebit))) {
         func_80026160(self);
         func_800267A4(self);
         self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -63,11 +63,11 @@ void CRFuelTank_update(Object *self) {
     if (hitinfo->unk48 && hitinfo->unk48->id == OBJ_CRSnowBike) {
         func_80026160(self);
         func_800267A4(self);
-        gDLL_6_AMSFX->vtbl->play(self, SOUND_B3C_Machinery_Charge_Up, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B3C_Machinery_Charge_Up, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 250;
         self->unkE0 = 1;
         if (setup->gamebit != NO_GAMEBIT) {
-            main_set_bits(setup->gamebit, 1);
+            mainSetBits(setup->gamebit, 1);
         }
     }
 }

@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_461_ctor
-.dword dll_461_dtor
+.dword CCsandwormBoss_ctor
+.dword CCsandwormBoss_dtor
 
 # export table
-/*0*/ .dword dll_461_setup
-/*1*/ .dword dll_461_control
-/*2*/ .dword dll_461_update
-/*3*/ .dword dll_461_print
-/*4*/ .dword dll_461_free
-/*5*/ .dword dll_461_get_model_flags
-/*6*/ .dword dll_461_get_data_size
+/*0*/ .dword CCsandwormBoss_setup
+/*1*/ .dword CCsandwormBoss_control
+/*2*/ .dword CCsandwormBoss_update
+/*3*/ .dword CCsandwormBoss_print
+/*4*/ .dword CCsandwormBoss_free
+/*5*/ .dword CCsandwormBoss_get_model_flags
+/*6*/ .dword CCsandwormBoss_get_data_size

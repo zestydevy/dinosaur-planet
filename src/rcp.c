@@ -72,9 +72,9 @@ u8 gGfxYieldData[OS_YIELD_DATA_SIZE];
 /**
  * Prepare the gfx task for the F3DEX2 XBus microcode.
  * Sends a message to the scheduler to start processing an RSP task once set up.
- * Official Name: rcpFast3d
+ * Official Name: rcpFast3d (likely the old name)
  */
-s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
+s32 rcpF3DEX_2_XBUS(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     OSScTask *task;
     
     gGfxTaskIsRunning = TRUE;
@@ -122,19 +122,20 @@ s32 gfxtask_run_xbus(Gfx *dlStart, Gfx *dlEnd, s32 param3) {
     return 0;
 }
 
-void func_800378E8(s32 a0, s32 a1, s32 a2) {
+void rcp_func_800378E8(s32 a0, s32 a1, s32 a2) {
 
 }
 
-void func_800378FC(s32 a0, s32 a1, s32 a2) {
+void rcp_func_800378FC(s32 a0, s32 a1, s32 a2) {
 
 }
 
-void func_80037910(s32 a0, s32 a1, s32 a2) {
+void rcp_func_80037910(s32 a0, s32 a1, s32 a2) {
 
 }
 
-s32 gfxtask_wait(void) {
+// official name: rcpWaitDP
+s32 rcpWaitDP(void) {
     GfxTaskMesg *mesg = NULL;
 
     if (!gGfxTaskIsRunning) {
@@ -147,7 +148,7 @@ s32 gfxtask_wait(void) {
     return mesg->unk4;
 }
 
-void func_80037978(s32 a0, s32 a1, s32 a2) {
+void rcp_func_80037978(s32 a0, s32 a1, s32 a2) {
 
 }
 
@@ -155,7 +156,7 @@ void func_80037978(s32 a0, s32 a1, s32 a2) {
  * Sets the primitive colour for the cyclemode fillrect background.
  * Official name: rcpSetScreenColour
  */
-void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
+void rcpSetScreenColour(u8 red, u8 green, u8 blue) {
     sBGPrimColourR = red;
     sBGPrimColourG = green;
     sBGPrimColourB = blue;
@@ -166,35 +167,35 @@ void rcp_set_screen_color(u8 red, u8 green, u8 blue) {
  * Uses RGBA5551
  * Official name: rcpSetBorderColour
  */
-void rcp_set_border_color(u32 red, u32 green, s32 blue) {
+void rcpSetBorderColour(u32 red, u32 green, s32 blue) {
     sBackgroundFillColour = GPACK_RGBA5551(red, green, blue, 1);
     sBackgroundFillColour |= (sBackgroundFillColour << 16);
 }
 
 // official name: rcpClearScreen
-void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
+void rcpClearScreen(Gfx **gdl, Mtx **mtx, s32 flags) {
     s32 viSize;
     s32 viWidth, viHeight;
     s32 ulx, uly, lrx, lry;
     s32 letterbox;
 
-    viewport_get_full_rect(&ulx, &uly, &lrx, &lry);
+    camViewportGetFullRect(&ulx, &uly, &lrx, &lry);
 
-    letterbox = camera_get_letterbox();
+    letterbox = camGetLetterbox();
 
-    viSize = vi_get_current_size();
+    viSize = viGetCurrentSize();
     viWidth = GET_VIDEO_WIDTH(viSize);
     viHeight = GET_VIDEO_HEIGHT(viSize);
 
     gDPSetScissor((*gdl)++, G_SC_NON_INTERLACE, 0, 0, viWidth - 1, viHeight - 1);
 
     gDPSetCombineMode((*gdl), G_CC_PRIMITIVE, G_CC_PRIMITIVE);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode((*gdl), 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_FILL |  G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
     if (gDLBuilder->needsPipeSync) {
         gDLBuilder->needsPipeSync = FALSE;
@@ -204,7 +205,7 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
     gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     if ((flags & CLEAR_ZBUFFER) != 0) {
-        dl_set_fill_color(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
+        dlSetFillColor(gdl, (GPACK_ZDZ(G_MAXFBZ, 0) << 16) | GPACK_ZDZ(G_MAXFBZ, 0));
 
         gDPFillRectangle((*gdl)++, ulx, uly, lrx, lry);
 
@@ -219,7 +220,7 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
     gDPSetColorImage((*gdl)++, G_IM_FMT_RGBA, G_IM_SIZ_16b, viWidth, SEGMENT_ADDR(SEGMENT_FRAMEBUFFER, 0x0));
 
     if ((flags & CLEAR_COLOR) != 0 || letterbox != 0) {
-        dl_set_fill_color(gdl, 
+        dlSetFillColor(gdl, 
             (GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1) << 16) 
                 | GPACK_RGBA5551(sBGPrimColourR, sBGPrimColourG, sBGPrimColourB, 1));
 
@@ -235,15 +236,16 @@ void rcp_clear_screen(Gfx **gdl, Mtx **mtx, s32 flags) {
         }
     }
 
-    camera_apply_scissor(gdl);
+    camApplyScissor(gdl);
 }
 
 // unused
-void rdp_init(Gfx **gdl) {
+// official name: rcpInitDp
+void rcpInitDp(Gfx **gdl) {
     s32 resolution;
     s32 resWidth;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     resWidth = GET_VIDEO_WIDTH(resolution);
 
     if (gDLBuilder->needsPipeSync) {
@@ -261,23 +263,25 @@ void rdp_init(Gfx **gdl) {
     gDPSetDepthImage((*gdl)++, SEGMENT_ADDR(SEGMENT_ZBUFFER, 0x0));
 
     gDPSetCombineMode((*gdl), G_CC_DECALRGB, G_CC_DECALRGB);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     gDPSetOtherMode((*gdl), 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_1CYCLE | G_PM_1PRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 }
 
-void rsp_init(Gfx **gdl) {
+// official name: rcpInitSp
+void rcpInitSp(Gfx **gdl) {
     // Clear all
     gSPClearGeometryMode((*gdl), 0xFFFFFF);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
 
     gSPDisplayList((*gdl)++, OS_K0_TO_PHYSICAL(D_800917D0));
 }
 
-void gfxtask_init(OSSched *sched) {
+// official name: rcpInit
+void rcpInit(OSSched *sched) {
     gScInterruptQ = osScGetInterruptQ(sched);
 
     osCreateMesgQueue(&gRCPUnusedMesgQueue1, gRCPUnusedMesgBuf1, ARRAYCOUNT(gRCPUnusedMesgBuf1));
@@ -285,12 +289,12 @@ void gfxtask_init(OSSched *sched) {
     osCreateMesgQueue(&gGfxTaskMesgQueue, gGfxTaskMesgBuf, ARRAYCOUNT(gGfxTaskMesgBuf));
 }
 
-void func_80037F8C(s32 param1) {
+void rcp_func_80037F8C(s32 param1) {
     D_800917BC = param1;
 }
 
 // official name: rcpTileWrite ?
-void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b, u8 a) {
+void rcpTileWrite(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 b, u8 a) {
     Texture* tile;
     Texture* tex;
     s32 lrx;
@@ -307,15 +311,15 @@ void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 
     j = 0;
     dl = *gdl;
     gSPLoadGeometryMode(dl, G_SHADE | G_CULL_BACK | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     gDPSetOtherMode(
         dl, 
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
     );
-    dl_apply_other_mode(&dl);
+    dlApplyOtherMode(&dl);
     x *= 4;
     y *= 4;
     tex = tiles->tex;
@@ -343,7 +347,7 @@ void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 
             dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tile + 1);
             dl++;
             gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(tile->gdl + 1));
-            dl_set_prim_color(&dl, r, g, b, a);
+            dlSetPrimColor(&dl, r, g, b, a);
             gSPTextureRectangle(dl++, 
             /*ulx*/ ulx,
             /*uly*/ uly,
@@ -360,16 +364,16 @@ void rcp_tile_write(Gfx** gdl, TextureTile* tiles, s32 x, s32 y, u8 r, u8 g, u8 
         j++;
         tex = tiles[j].tex;
     }
-    tex_render_reset();
+    texRenderReset();
     *gdl = dl;
 }
 
-void rcp_screen_full_write(Gfx** gdl, Texture* tex, s32 x, s32 y, s32 arg4, s32 frameno, s32 alpha, s32 flags) {
+void rcpScreenFullWrite(Gfx** gdl, Texture* tex, s32 x, s32 y, s32 arg4, s32 frameno, s32 alpha, s32 flags) {
     s32 texHeight = tex->height | ((tex->widthHeightHi & 0xF) << 8);
-    rcp_screen_write(gdl, tex, x, y, 0, texHeight, frameno, alpha, flags);
+    rcpScreenWrite(gdl, tex, x, y, 0, texHeight, frameno, alpha, flags);
 }
 
-void rcp_screen_scroll_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 top, s32 bottom, s32 alpha, s32 flags) {
+void rcpScreenScrollWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 top, s32 bottom, s32 alpha, s32 flags) {
     s32 texHeight;
 
     top -= dstY;
@@ -382,12 +386,12 @@ void rcp_screen_scroll_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 to
         bottom = texHeight;
     }
     if (top < texHeight && bottom >= 0) {
-        rcp_screen_write(gdl, tex, dstX, dstY, top, bottom, 0, alpha, flags);
+        rcpScreenWrite(gdl, tex, dstX, dstY, top, bottom, 0, alpha, flags);
     }
 }
 
 // official name: rcpScreenWrite (default.dol)
-void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32 srcBottom, s32 frameno, s32 alpha, s32 flags) {
+void rcpScreenWrite(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s32 srcBottom, s32 frameno, s32 alpha, s32 flags) {
     s32 width;
     s32 sp148;
     s32 temp_v0_9;
@@ -417,7 +421,7 @@ void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s
         }
     }
     gSPGeometryMode(*gdl, 0xFFFFFF, 0);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     width = tex->width | ((tex->widthHeightHi & 0xF0) << 4);
     if (sp12C != 0) {
         sp148 = (s32) ((f32)tex->width * 1) | ((tex->widthHeightHi & 0xF0) << 4);
@@ -442,33 +446,33 @@ void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s
     img = (u8*)frameTex + (width * srcTop * bytesPerPx) + sizeof(Texture);
     if (flags & SCREEN_WRITE_CYC_COPY) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     } else if ((alpha == 255) && (flags & SCREEN_WRITE_OPAQUE)) {
         gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     } else {
         gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(
             *gdl, 
             G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2
         );
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
     }
-    dl_set_prim_color(gdl, 255, 255, 255, alpha);
+    dlSetPrimColor(gdl, 255, 255, 255, alpha);
     srcY = srcTop;
     do {
         temp_v0_9 = srcBottom - srcY;
@@ -636,7 +640,7 @@ void rcp_screen_write(Gfx** gdl, Texture* tex, s32 dstX, s32 dstY, s32 srcTop, s
     } while (srcY < srcBottom);
 }
 
-void draw_pause_screen_freeze_frame(Gfx** gdl) {
+void rcpDrawPauseScreenFreezeFrame(Gfx** gdl) {
     u16* fbPtr;
     s32 remainingY;
     s32 yPos;
@@ -647,21 +651,21 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
     width = 320;
     height = 240;
     
-    fbPtr = vi_get_framebuffer_end();
+    fbPtr = viGetFramebufferEnd();
     
     chunkSize = 6;
     
     gSPClearGeometryMode(*gdl, 0xFFFFFF);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     
     gDPSetCombineMode(*gdl, G_CC_DECALRGBA, G_CC_DECALRGBA);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
    
     gDPSetOtherMode(*gdl, 
         G_AD_PATTERN | G_CD_DISABLE | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | 
             G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_COPY | G_PM_NPRIMITIVE, 
         G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_NOOP2);
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
     
     yPos = 0;
 
@@ -705,7 +709,7 @@ void draw_pause_screen_freeze_frame(Gfx** gdl) {
 }
 
 // official name: rcpTileWriteX ?
-void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 height, s32 s, s32 t, f32 scaleX, f32 scaleY, u32 color, s32 flags) {
+void rcpTileWriteX(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f32 height, s32 s, s32 t, f32 scaleX, f32 scaleY, u32 color, s32 flags) {
     s32 _pad;
     s32 resolution;
     Texture* tile;
@@ -722,19 +726,19 @@ void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f3
     Gfx* dl;
 
     dl = *gdl;
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     viHeight = ((u16)GET_VIDEO_HEIGHT(resolution)) * 4;
     viWidth = GET_VIDEO_WIDTH(resolution) * 4;
     temp_s0 = (flags & TILE_WRITE_TRANSLUCENT)
         ? &D_80091868[(flags & 0xFF) * 3]
         : &D_80091828[(flags & 0xFF) * 3];
     gSPGeometryMode(dl, 0xFFFFFF, G_SHADING_SMOOTH | G_SHADE);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     bcopy(temp_s0, dl, sizeof(Gfx));
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     bcopy(temp_s0 + 1, dl, sizeof(Gfx));
-    dl_apply_other_mode(&dl);
-    dl_set_prim_color(&dl, (color >> 0x18) & 0xFF, (color >> 0x10) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
+    dlApplyOtherMode(&dl);
+    dlSetPrimColor(&dl, (color >> 0x18) & 0xFF, (color >> 0x10) & 0xFF, (color >> 8) & 0xFF, color & 0xFF);
     scaleX *= 4.0f;
     scaleY *= 4.0f;
     for (j = 0, tile = tiles[j].tex; tile != NULL; j++, tile = tiles[j].tex) {
@@ -766,7 +770,7 @@ void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f3
                 }
                 temp_s0 = tile->gdl;
                 dl->words.w0 = temp_s0->words.w0;
-                dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(tex_get_frame_img(tile, tiles[j].animProgress));
+                dl->words.w1 = (unsigned int) OS_PHYSICAL_TO_K0(texGetFrameImg(tile, tiles[j].animProgress));
                 dl++;
                 temp_s0++;
                 gSPDisplayList(dl++, OS_PHYSICAL_TO_K0(temp_s0));
@@ -785,14 +789,14 @@ void rcp_tile_write_x(Gfx** gdl, TextureTile* tiles, f32 x, f32 y, f32 width, f3
             }
         }
     }
-    tex_render_reset();
+    texRenderReset();
     *gdl = dl;
 }
 
-void func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
+void rcp_func_80039560(s32 a0, s32 a1, s32 a2, s32 a3) {
 
 }
 
-void func_80039578(s32 a0, s32 a1, s32 a2, s32 a3) {
+void rcp_func_80039578(s32 a0, s32 a1, s32 a2, s32 a3) {
 
 }

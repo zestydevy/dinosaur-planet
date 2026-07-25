@@ -35,6 +35,7 @@ void sndpFreeState(sndstate *state);
 sndstate *func_80066064(ALBank *bank, ALSound *sound);
 void func_80066794(u8 arg0);
 
+// official name: gsSndpNew ?
 void n_alSndpNew(ALSndpConfig *config) {
 	u32 i;
 	void *ptr;
@@ -443,6 +444,7 @@ void _removeEvents(ALEventQueue *evtq, N_ALSoundState *state, u16 typemask) {
 	osSetIntMask(mask);
 }
 
+// official name: getSoundStateCounts
 u16 sndpCountStates(s16 *numfreeptr, s16 *numallocedptr) {
 	OSIntMask mask = osSetIntMask(1);
 	u16 numalloced;
@@ -555,12 +557,14 @@ void sndpFreeState(sndstate *state) {
 	}
 }
 
+// official name: gsSndpSetPriority
 void sndSetPriority(sndstate *state, u8 priority) {
 	if (state) {
 		state->priority = (s16)priority;
 	}
 }
 
+// official name: gsSndpGetState
 s32 sndGetState(sndstate *state) {
 	if (state) {
 		return state->state;
@@ -569,6 +573,7 @@ s32 sndGetState(sndstate *state) {
 	}
 }
 
+// official name: ad_sndp_play
 sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pitch, u8 fxmix, u8 fxbus, sndstate **handleptr) {
 	sndstate *state;
 	sndstate *state2 = NULL;
@@ -651,6 +656,7 @@ sndstate *some_sound_func(ALBank *bank, s16 soundnum, u16 vol, ALPan pan, f32 pi
 	return state2;
 }
 
+// official name: gsSndpStop
 void audioStop(sndstate *state) {
 	N_ALEvent evt;
     
@@ -684,18 +690,22 @@ void func_80066794(u8 flags) {
 	osSetIntMask(mask);
 }
 
+// official name: gsSndpStopAll
 void func_80066854(void) {
     func_80066794(SNDSTATEFLAG_01);
 }
 
+// official name: gsSndpStopAllRetrigger
 void func_8006687C(void) {
     func_80066794(SNDSTATEFLAG_01 | SNDSTATEFLAG_10);
 }
 
+// official name: gsSndpStopAllLooped
 void func_800668A4(void) {
     func_80066794(SNDSTATEFLAG_01 | SNDSTATEFLAG_02);
 }
 
+// official name: gsSndpSetParam
 void audioPostEvent(sndstate *state, s16 type, void *data) {
 	N_ALEvent evt;
 
@@ -710,10 +720,12 @@ void audioPostEvent(sndstate *state, s16 type, void *data) {
 	}
 }
 
+// official name: gsSndpGetMasterVolume
 u16 func_8006694C(u8 index) {
     return D_800BFEF4[index];
 }
 
+// official name: gsSndpSetMasterVolume
 void func_80066978(u8 index, u16 volume) {
     OSIntMask mask = osSetIntMask(1);
     sndstate *volatile state = g_SndpAllocStatesHead;

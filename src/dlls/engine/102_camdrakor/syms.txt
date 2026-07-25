@@ -1,0 +1,12 @@
+.text = 0x0:
+camdrakor_ctor = 0x0;
+camdrakor_dtor = 0xC;
+camdrakor_func_18 = 0x18;
+camdrakor_func_138 = 0x138;
+camdrakor_func_61C = 0x61C;
+camdrakor_func_65C = 0x65C;
+
+.rodata = 0x6BC:
+
+.bss = 0x6BC:
+sState = 0x0; // absolute:0x6BC

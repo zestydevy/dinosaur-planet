@@ -57,14 +57,14 @@ void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
     objData->speedZ = 0;
 
     objData->cupIndex = objSetup->cupIndex;
-    objData->bobTimer = rand_next(0, 600);
-    objData->rotateSpeed = rand_next(-800, 800);
+    objData->bobTimer = mathRnd(0, 600);
+    objData->rotateSpeed = mathRnd(-800, 800);
     objData->bobSpeed = 1;
     self->opacityWithFade = 0;
     objData->fxTimer = 0;
     
     if (dShrine == NULL) {
-        dShrine = obj_get_nearest_type_to(OBJTYPE_13, self, &objectDistance);
+        dShrine = objGetNearestTypeTo(OBJTYPE_13, self, &objectDistance);
     }
 }
 
@@ -78,10 +78,10 @@ void ECSHCup_control(Object* self) {
     f32 objectDistance = 500.0f;
     Object *player;
     
-    player = get_player();
+    player = objGetPlayer();
     
     if (dShrine == NULL){
-        dShrine = obj_get_nearest_type_to(OBJTYPE_13, self, &objectDistance);
+        dShrine = objGetNearestTypeTo(OBJTYPE_13, self, &objectDistance);
     }
     if (dShrine == NULL){
         return;
@@ -169,14 +169,14 @@ void ECSHCup_control(Object* self) {
             self->opacityWithFade = opacity;
         }
         
-        gDLL_6_AMSFX->vtbl->free_object(self);
+        dll_amSfx->FreeObject(self);
     } else if ((state == Cup_STATE_Round_Start) && (state != objData->prevState)) {
         if (objData->cupIndex == cupWithSpirit) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-            gDLL_6_AMSFX->vtbl->play(0, SOUND_343_Eerie_Ringing, 0x57, 0, 0, 0, 0);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_33F_Cup_Slide_Loop, MAX_VOLUME, 0, 0, 0, 0);
+            dll_amSfx->Play(0, SOUND_343_Eerie_Ringing, 0x57, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_33F_Cup_Slide_Loop, MAX_VOLUME, 0, 0, 0, 0);
         } else {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_33F_Cup_Slide_Loop, 0x1E, 0, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_33F_Cup_Slide_Loop, 0x1E, 0, 0, 0, 0);
         }
         objData->prevState = state;
     } else if ((state == Cup_STATE_Moving) && (state != objData->prevState)) {
@@ -202,7 +202,7 @@ void ECSHCup_control(Object* self) {
         self->srt.transl.x = goal.x;
         self->srt.transl.z = goal.z;
         objData->prevState = state;
-    } else if ((state == Cup_STATE_Await_Choice) && player && vec3_distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
+    } else if ((state == Cup_STATE_Await_Choice) && player && vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
         ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->choose_cup(objData->cupIndex);
         if (objData->cupIndex == cupWithSpirit) {
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
@@ -216,7 +216,7 @@ void ECSHCup_update(Object *self) { }
 // offset: 0x8F4 | func: 3 | export: 3
 void ECSHCup_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -1,12 +1,13 @@
 #include "PR/libaudio.h"
 #include "PR/os.h"
 #include "libultra/audio/synthInternals.h"
+#include "sys/di_cpu.h"
 #include "sys/memory.h"
 #include "sys/interrupt_util.h"
 #include "sys/print.h"
+#include "constants.h"
 #include "macros.h"
-
-extern s32 get_stack_();
+#include "memory_regions.h"
 
 #define ALIGN16(a) (((u32)(a) & 0xF) ? (((u32)(a) & ~0xF) + 0x10) : (u32)(a))
 #define S32_MAX 0x7FFFFFFF
@@ -35,25 +36,23 @@ s32 gMemoryFreeDelay;
 
 void mmInit(void) {
     // Start pool memory at the end of .bss
-    u32 startAddr = (u32)&bss_end;
+    u32 bssEndAddr = (u32)&bss_end;
 
     // Clear to 0xFF
-    s32 *mem = (s32*)startAddr;
-    while ((u32)mem < osMemSize)
+    s32 *mem = (s32*)bssEndAddr;
+    while ((u32)mem < osMemSize) {
         *mem++ = -1;
+    }
 
     // Initialize memory pools
     gNumMemoryPools = 0;
 
-    if (osMemSize != EXPANSION_SIZE)
-    {
-        mmInitPool((void *)startAddr, MEM_POOL_AREA_NO_EXPANSION - startAddr, 1200);
-    }
-    else
-    {
-        mmInitPool((void *)MEM_POOL_AREA_00, RAM_END - MEM_POOL_AREA_00,          400);
-        mmInitPool((void *)MEM_POOL_AREA_01, MEM_POOL_AREA_00 - MEM_POOL_AREA_01, 800);
-        mmInitPool((void *)startAddr,        MEM_POOL_AREA_02 - startAddr,        1200);
+    if (osMemSize != EXPANSION_RAM_SIZE) {
+        mmInitPool((void *)bssEndAddr, COLOR_BUFFERS_ADDR_NO_EXP_PAK - bssEndAddr, 1200);
+    } else {
+        mmInitPool((void *)MEMORY_POOL_0_START, MEMORY_POOL_0_SIZE, 400);
+        mmInitPool((void *)MEMORY_POOL_1_START, MEMORY_POOL_1_SIZE, 800);
+        mmInitPool((void *)bssEndAddr, COLOR_BUFFERS_ADDR_EXP_PAK - bssEndAddr, 1200);
     }
 
     mmSetDelay(2);
@@ -101,15 +100,15 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
     void *ptr;
 
     if (size == 0) {
-        get_stack_();
+        diCpuTraceCurrentStack();
         ptr = NULL;
         return ptr;
     }
-    if ((size >= 4500) || (osMemSize != EXPANSION_SIZE)) {
+    if ((size >= 4500) || (osMemSize != EXPANSION_RAM_SIZE)) {
         // >= 4500 bytes -> pool 0
         ptr = mmAllocR(0, size, tag, name);
         if (ptr == NULL) {
-            get_stack_();
+            diCpuTraceCurrentStack();
             // @bug ? If no expansion pack is in, memory pool 1 won't exist
             ptr = mmAllocR(1, size, tag, name);
         }
@@ -117,7 +116,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
         // >= 1024 bytes -> pool 1
         ptr = mmAllocR(1, size, tag, name);
         if (ptr == NULL) {
-            get_stack_();
+            diCpuTraceCurrentStack();
             ptr = mmAllocR(2, size, tag, name);
         }
     } else {
@@ -125,7 +124,7 @@ void *mmAlloc(s32 size, s32 tag, const char *name) {
         ptr = mmAllocR(2, size, tag, name);
     }
     if (ptr == NULL) {
-        get_stack_();
+        diCpuTraceCurrentStack();
     }
     return ptr;
 }
@@ -142,7 +141,7 @@ void *mmRealloc(void *address, s32 newSize, const char *name) {
     u32 *canary;
 
     if (newSize <= 0) {
-        get_stack_();
+        diCpuTraceCurrentStack();
         return NULL;
     }
     newSize = (s32)ALIGN16(newSize);
@@ -251,12 +250,12 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
     u32* canary;
 
     var_t0 = 0;
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     currIndex = MEMSLOT_NONE;
     pool = &gMemoryPools[poolIndex];
     pool->memUsed += size;
     if (pool->maxSlots == (pool->numSlots + 1)) {
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
         return 0;
     }
     size = (s32)ALIGN16(size);
@@ -283,7 +282,7 @@ void *mmAllocR(s32 poolIndex, s32 size, s32 tag, const char *name) {
     }
     if (currIndex != MEMSLOT_NONE) {
         mmAllocSlot2(poolIndex, currIndex, size, SLOT_USED, SLOT_FREE, tag, name);
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
         
         canary = (u32*)((slots + currIndex)->data);
         canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
@@ -306,12 +305,12 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
     s32 intFlags;
     u32 *canary;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
 
     if (size == 0) {}
     
     if ((gMemoryPools[0].numSlots + 1) == gMemoryPools[0].maxSlots) {
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
     } else {
         size = (s32)ALIGN16(size);
         size = size + SLOT_CANARY_SIZE;
@@ -324,12 +323,12 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
                     (u32) address + size <= (u32) currSlot->data + currSlot->size) {
                     if (address == currSlot->data) {
                         mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
-                        interrupts_enable(intFlags);
+                        enableInterrupts(intFlags);
                         return currSlot->data;
                     } else {
                         idx = mmAllocSlot2(0, idx, (u32)address - (u32)currSlot->data, SLOT_FREE, SLOT_USED, tag, name);
                         mmAllocSlot2(0, idx, size, SLOT_USED, SLOT_FREE, tag, name);
-                        interrupts_enable(intFlags);
+                        enableInterrupts(intFlags);
 
                         canary = (u32*)(slots + idx)->data;
                         canary += ((s32) (size - SLOT_CANARY_SIZE) >> 2);
@@ -342,7 +341,7 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
             }
         }
         
-        interrupts_enable(intFlags);
+        enableInterrupts(intFlags);
     }
 
     return NULL;
@@ -351,24 +350,24 @@ void *mmAllocAtAddr(s32 size, void *address, s32 tag, const char *name) {
 void mmSetDelay(s32 delay) {
     s32 intFlags;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     gMemoryFreeDelay = delay;
     if (delay == 0) {
         while (gMemoryFreeQueueLength > 0) {
             mmFreeNow(gMemoryFreeQueue[--gMemoryFreeQueueLength].address);
         }
     }
-    interrupts_enable(intFlags);
+    enableInterrupts(intFlags);
 }
 
 void mmFree(void *address) {
-    s32 prevIE = interrupts_disable();
+    s32 prevIE = disableInterrupts();
     if (gMemoryFreeDelay == 0) {
         mmFreeNow(address);
     } else {
         mmFreeEnqueue(address);
     }
-    interrupts_enable(prevIE);
+    enableInterrupts(prevIE);
 }
 
 void mmFreeTick(void) {
@@ -379,7 +378,7 @@ void mmFreeTick(void) {
     MemoryPoolSlot* slot;
     s32 nextIndex;
 
-    intFlags = interrupts_disable();
+    intFlags = disableInterrupts();
     
     for (i = 0; i < gMemoryFreeQueueLength;) {
         gMemoryFreeQueue[i].ticksLeft--;
@@ -394,7 +393,7 @@ void mmFreeTick(void) {
         }
     }
     
-    interrupts_enable(intFlags);
+    enableInterrupts(intFlags);
     
     // Update memory monitors
     memMonVal0 = 0;

@@ -23,7 +23,7 @@ void SPitembeam_setup(Object* self, SPitembeam_Setup* setup, s32 arg2) {
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 
     //Store a pointer to the SPShop object
-    self->unkDC = (s32)obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance);
+    self->unkDC = (s32)objGetNearestTypeTo(OBJTYPE_LevelControl, self, &distance);
 }
 
 // offset: 0x88 | func: 1 | export: 1
@@ -47,7 +47,7 @@ void SPitembeam_control(Object* self) {
     }
 
     //Scroll the light beam texture
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->positionU += 8;
         if (texAnim->positionU > 0x400) {

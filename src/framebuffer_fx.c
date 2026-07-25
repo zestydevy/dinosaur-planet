@@ -15,25 +15,25 @@ s32 gFbfxEffectDuration = 0;
 
 // .bss 800b49e0-800b49f0
 
-void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32);
-void fbfx_motion_blur(u16 *fb1, u16 *fb2, s32 width, s32 height);
+void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32);
+void fbfxMotionBlur(u16 *fb1, u16 *fb2, s32 width, s32 height);
 void fbfx_func_800403AC(u16 *fb1, u16 *fb2, s32 width, s32 height, s32 arg4);
-void fbfx_sine_waves(s32 arg0, s32 arg1);
+void fbfxSineWaves(s32 arg0, s32 arg1);
 void fbfx_func_80040754(u16 *fb, s32 width, s32 height, s32 arg3);
 void fbfx_func_80040870(u16 *fb1, u16 *fb2, s32 width, s32 height, s32 arg4);
-void fbfx_burn_paper_random_setup(u16* fb, s32 fbWidth, s32 fbHeight, s32 count);
-void fbfx_burn_paper_center_setup(u16 *fb, s32 width, s32 height);
-void fbfx_burn_paper_right_setup(u16* fb, s32 width, s32 height, s32 count);
-void fbfx_burn_paper_corner_setup(u16 *framebuffer, s32 width, s32 height);
-void fbfx_burn_paper(u16* fb1, u16* fb2, s32 width, s32 height);
-void fbfx_fill_full_alpha(u16 *fb1, u16 *fb2, s32 width, s32 height);
+void fbfxBurnPaperRandomSetup(u16* fb, s32 fbWidth, s32 fbHeight, s32 count);
+void fbfxBurnPaperCenterSetup(u16 *fb, s32 width, s32 height);
+void fbfxBurnPaperRightSetup(u16* fb, s32 width, s32 height, s32 count);
+void fbfxBurnPaperCornerSetup(u16 *framebuffer, s32 width, s32 height);
+void fbfxBurnPaper(u16* fb1, u16* fb2, s32 width, s32 height);
+void fbfxFillFullAlpha(u16 *fb1, u16 *fb2, s32 width, s32 height);
 u16 fbfx_func_8003FD48(u16, u16, u16, u16);
 u16 fbfx_func_8003FB88(u16, u16, u16, u16);
 void fbfx_func_8003F2C4(u16*, u16, u16, s32);
 void fbfx_func_8003EC8C(u16*, u16 *, s32);
-void weird_resize_copy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
+void fbfxWeirdResizeCopy(u16 *src, s32 srcWidth, s32 destWidth, u16 *dest);
 
-void fbfx_tick(Gfx **gdl, s32 updateRate) {
+void fbfxTick(Gfx **gdl, s32 updateRate) {
     static s32 gFbfxTimer;
 
     if (gFbfxEffectID > FBFX_NONE) {
@@ -41,7 +41,7 @@ void fbfx_tick(Gfx **gdl, s32 updateRate) {
             gFbfxTimer = gFbfxEffectDuration;
             STUBBED_PRINTF("Freak a0 %x  a1 %x \n", gFrontFramebuffer, gBackFramebuffer); // args from default.dol (maybe wrong?)
         }
-        fbfx_do_effect(gdl, gFbfxEffectDuration, gFbfxEffectID, camera_get_letterbox());
+        fbfxDoEffect(gdl, gFbfxEffectDuration, gFbfxEffectID, camGetLetterbox());
         if (gFbfxEffectID == FBFX_MOTION_BLUR) {
             gFbfxTimer -= updateRate;
             if (gFbfxTimer <= 0) {
@@ -81,14 +81,14 @@ void fbfx_func_8003EBD4(s32 hOffset) {
     u16* nextFB;
     u16* currentFB;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gBackFramebuffer;
     currentFB = gFrontFramebuffer;
     hOffset = width - hOffset;
     while (height--) {
-        weird_resize_copy(&nextFB[hOffset], width - (hOffset << 1), width, currentFB);
+        fbfxWeirdResizeCopy(&nextFB[hOffset], width - (hOffset << 1), width, currentFB);
         nextFB += width;
         currentFB += width;
     }
@@ -167,7 +167,7 @@ void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 ar
     s32 s1;
     s32 s2;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     currentFB = gFrontFramebuffer;
@@ -177,8 +177,8 @@ void fbfx_func_8003EF30(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 ar
         s1 = arg0;\
         s2 = arg3;\
         do {
-            temp_s0 = (sin16(s1) * arg1) / 32768;
-            temp_s0 -= (sin16(s2) * arg4) / 32768;
+            temp_s0 = (mathSin(s1) * arg1) / 32768;
+            temp_s0 -= (mathSin(s2) * arg4) / 32768;
             arg6(currentFB, width, temp_s0, nextFB);
             s1 += arg2;
             s2 += arg5 ^ (arg5 * 0);
@@ -237,7 +237,8 @@ void fbfx_func_8003F074(u16* arg0, s32 arg1, s32 arg2, u16* arg3) {
  * NOTE: Please see the note in the implementation, this function also reads
  * undefined stack memory, which affects the copied values.
  */
-void weird_resize_copy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
+// TODO: rename
+void fbfxWeirdResizeCopy(u16* src, s32 srcWidth, s32 destWidth, u16* dest) {
     s32 i;
     u16 buffer[642];
     s32 var_v0;
@@ -289,7 +290,7 @@ void fbfx_func_8003F2C4(u16* arg0, u16 arg1, u16 arg2, s32 arg3) {
 }
 
 
-void fbfx_play(s32 effectID, s32 duration) {
+void fbfxPlay(s32 effectID, s32 duration) {
     gFbfxEffectID = effectID;
     gFbfxEffectDuration = duration;
 }
@@ -304,7 +305,7 @@ void fbfx_func_8003F4C0(s32 arg0) {
     u16* currentFB;
     s32 v0;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg0 == 0) {
@@ -350,7 +351,7 @@ void fbfx_func_8003F660(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u16 var_r20;
     u16 var_r19;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);  
     height = GET_VIDEO_HEIGHT(resolution);
     if (arg3 != 0) {
@@ -556,7 +557,7 @@ u16 fbfx_func_8003FD48(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     return (var_a1 + var_a3 + var_v1);
 }
 
-void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
+void fbfxDoEffect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
     s32 i;
     s32 fadeOutDuration;
     s32 viSize;
@@ -573,28 +574,28 @@ void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
     if (fadeOutDuration < 0) {
         fadeOutDuration = 0;
     }
-    viSize = vi_get_current_size();
+    viSize = viGetCurrentSize();
     viWidth = GET_VIDEO_WIDTH(viSize);
     viHeight = GET_VIDEO_HEIGHT(viSize);
-    gfxtask_wait();
+    rcpWaitDP();
     switch (effectID) {
     case FBFX_NOOP: // nop
         break;
     case FBFX_BURN_PAPER_RANDOM: // burn away (from random points) (setup)
-        fbfx_fill_full_alpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
-        fbfx_burn_paper_random_setup(gFrontFramebuffer, viWidth, viHeight, 10);
+        fbfxFillFullAlpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        fbfxBurnPaperRandomSetup(gFrontFramebuffer, viWidth, viHeight, 10);
         break;
     case FBFX_BURN_PAPER_CENTER: // burn away (from center) (setup)
-        fbfx_fill_full_alpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
-        fbfx_burn_paper_center_setup(gFrontFramebuffer, viWidth, viHeight);
+        fbfxFillFullAlpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        fbfxBurnPaperCenterSetup(gFrontFramebuffer, viWidth, viHeight);
         break;
     case FBFX_BURN_PAPER_RIGHT: // burn away (from right side) (setup)
-        fbfx_fill_full_alpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
-        fbfx_burn_paper_right_setup(gFrontFramebuffer, viWidth, viHeight, 4);
+        fbfxFillFullAlpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        fbfxBurnPaperRightSetup(gFrontFramebuffer, viWidth, viHeight, 4);
         break;
     case FBFX_BURN_PAPER_CORNERS: // burn away (from corners) (setup)
-        fbfx_fill_full_alpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
-        fbfx_burn_paper_corner_setup(gFrontFramebuffer, viWidth, viHeight);
+        fbfxFillFullAlpha(gFrontFramebuffer, gBackFramebuffer, viWidth, viHeight);
+        fbfxBurnPaperCornerSetup(gFrontFramebuffer, viWidth, viHeight);
         break;
     case FBFX_FADE_OUT_RIGHT_FADE_IN:  // fade to black (smear right) -> then back in (setup)
         var_s7 = -1;
@@ -609,10 +610,10 @@ void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
         var_fp = 1;
         break;
     case FBFX_MOTION_BLUR: // accumulation motion blur
-        // - at this point, gfxtask_wait ensured that the rcp is done writing to gBackFramebuffer.
+        // - at this point, rcpWaitDP ensured that the rcp is done writing to gBackFramebuffer.
         // - gBackFramebuffer is the next frame to be displayed, gFrontFramebuffer is the current.
         // - average the pixels of both and write back to gBackFramebuffer (to be displayed next).
-        fbfx_motion_blur(gBackFramebuffer, gFrontFramebuffer, viWidth, viHeight);
+        fbfxMotionBlur(gBackFramebuffer, gFrontFramebuffer, viWidth, viHeight);
         return;
     }
 
@@ -623,10 +624,10 @@ void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
         }
         // This segment command is unnecessary and can cause a display list buffer overflow if the
         // framebuffer effect has too many iterations!
-        rsp_segment(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
+        segSetBase(gdl, SEGMENT_FRAMEBUFFER, gFrontFramebuffer);
         switch (effectID) {
         case FBFX_SINE_WAVES: // 2 vertical sine waves moving from the center outward
-            fbfx_sine_waves((viWidth >> 1) - ((s32) ((s32) (viWidth * (i + 1)) / duration) >> 1), viWidth >> 4);
+            fbfxSineWaves((viWidth >> 1) - ((s32) ((s32) (viWidth * (i + 1)) / duration) >> 1), viWidth >> 4);
             break;
         case FBFX_LERP: // modulate to next frame (does nothing while arg1 - var_t0 >= 15)
             if (var_v1_2 != -1) {
@@ -644,7 +645,7 @@ void fbfx_do_effect(Gfx **gdl, s32 duration, s32 effectID, s32 arg3) {
         case FBFX_BURN_PAPER_CENTER: // burn away effect
         case FBFX_BURN_PAPER_RIGHT: // burn away effect
         case FBFX_BURN_PAPER_CORNERS: // burn away effect
-            fbfx_burn_paper(gFrontFramebuffer, gBackFramebuffer, viHeight, viWidth);
+            fbfxBurnPaper(gFrontFramebuffer, gBackFramebuffer, viHeight, viWidth);
             break;
         case FBFX_FADE_OUT_FADE_IN:  // fade to black (blurry/smear) -> then back in
         case FBFX_FADE_OUT_RIGHT_FADE_IN: // fade to black (smear right) -> then back in
@@ -683,7 +684,7 @@ void fbfx_func_800402F8(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void fbfx_motion_blur(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+void fbfxMotionBlur(u16 *fb1, u16 *fb2, s32 width, s32 height) {
     func_8005324C(fb1, fb2, (width * height) >> 2);
     STUBBED_PRINTF(" size %x ", (width * height) >> 2);
 }
@@ -751,7 +752,7 @@ void fbfx_func_80040468(u16* arg0, u16* arg1, s32 arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void fbfx_sine_waves(s32 arg0, s32 arg1) {
+void fbfxSineWaves(s32 arg0, s32 arg1) {
     s32 width;
     s32 height;
     s32 resolution;
@@ -761,13 +762,13 @@ void fbfx_sine_waves(s32 arg0, s32 arg1) {
     s32 var_s2;
     s32 i;
 
-    resolution = vi_get_current_size();
+    resolution = viGetCurrentSize();
     width = GET_VIDEO_WIDTH(resolution);
     height = GET_VIDEO_HEIGHT(resolution);
     nextFB = gBackFramebuffer;
     currentFB = gFrontFramebuffer;
     for (i = 0; i < height; i++) {
-        var_s1 = arg0 - (cos16(((((arg0 >> 1) + i) << 0xF) / (u32)(height >> 2))) >> 0xC);
+        var_s1 = arg0 - (mathCos(((((arg0 >> 1) + i) << 0xF) / (u32)(height >> 2))) >> 0xC);
         if ((width >> 1) < var_s1) {
             var_s1 = (width >> 1);
         }
@@ -826,29 +827,29 @@ void fbfx_func_80040870(u16 *fb1, u16 *fb2, s32 width, s32 height, s32 arg4) {
     }
 }
 
-void fbfx_burn_paper_random_setup(u16* fb, s32 fbWidth, s32 fbHeight, s32 count) {
+void fbfxBurnPaperRandomSetup(u16* fb, s32 fbWidth, s32 fbHeight, s32 count) {
     s32 x;
     s32 i;
     u16* pixelPtr;
 
     for (i = 0; i < count; i++) {
-        x = rand_next(0, fbWidth);
-        pixelPtr = (u16 *)((rand_next(0, fbHeight) * fbWidth * 2) + (s32)fb + (x * 2));
+        x = mathRnd(0, fbWidth);
+        pixelPtr = (u16 *)((mathRnd(0, fbHeight) * fbWidth * 2) + (s32)fb + (x * 2));
         *pixelPtr &= ~1;
     }
 }
 
-void fbfx_burn_paper_center_setup(u16 *fb, s32 width, s32 height) {
+void fbfxBurnPaperCenterSetup(u16 *fb, s32 width, s32 height) {
     // Sets center pixel alpha to 0
     fb[(width >> 1) + (height >> 1) * width] &= ~1;
 }
 
-void fbfx_burn_paper_right_setup(u16* fb, s32 width, s32 height, s32 count) {
+void fbfxBurnPaperRightSetup(u16* fb, s32 width, s32 height, s32 count) {
     s32 i;
     u16* temp_v1;
 
     for (i = 0; i < count; i++) {
-        temp_v1 = (u16 *)((rand_next(0, height) * width * 2) + (s32)fb);
+        temp_v1 = (u16 *)((mathRnd(0, height) * width * 2) + (s32)fb);
         temp_v1[0] &= ~1;
     }
 }
@@ -858,12 +859,12 @@ void fbfx_func_80040A94(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
     u16* temp_v1;
 
     for (i = 0; i < arg3; i++) {
-        temp_v1 = (u16 *)((rand_next(0, arg2) * arg1 * 2) + arg0 + (arg1 * 2));
+        temp_v1 = (u16 *)((mathRnd(0, arg2) * arg1 * 2) + arg0 + (arg1 * 2));
         temp_v1[0] &= ~1;
     }
 }
 
-void fbfx_burn_paper_corner_setup(u16 *framebuffer, s32 width, s32 height) {
+void fbfxBurnPaperCornerSetup(u16 *framebuffer, s32 width, s32 height) {
     // @bug? these are off by one?
     (framebuffer + width)[0] &= -2;
     framebuffer[0] &= -2;
@@ -885,7 +886,7 @@ void fbfx_func_80040B8C(u16* arg0, u16* arg1, u16* arg2, s32 arg3, s32 arg4) {
     }
 }
 
-void fbfx_burn_paper(u16* frontFb, u16* backFb, s32 height, s32 width) {
+void fbfxBurnPaper(u16* frontFb, u16* backFb, s32 height, s32 width) {
     s32 temp_a2_2;
     s32 j;
     s32 var_fp;
@@ -895,11 +896,11 @@ void fbfx_burn_paper(u16* frontFb, u16* backFb, s32 height, s32 width) {
     s32 var_s7;
 
     var_fp = 0;
-    var_s7 = rand_next(0, 3) - 1;
+    var_s7 = mathRnd(0, 3) - 1;
     if (!var_s7) {
         var_s7 = 1;
     }
-    var_s5 = (rand_next(0, 3) - 1) * width;
+    var_s5 = (mathRnd(0, 3) - 1) * width;
     for (i = 0; i < height; i++) {
         for (j = 0; j < width; j++) {
             if ((~*(frontFb + var_s7) & 1) + (~*(frontFb + var_s5) & 1) + (~*((frontFb - var_s5) + var_s7) & 1)) {
@@ -917,12 +918,12 @@ void fbfx_burn_paper(u16* frontFb, u16* backFb, s32 height, s32 width) {
             backFb++;
         }
 
-        var_s7 = rand_next(0, 3) - 1;
+        var_s7 = mathRnd(0, 3) - 1;
         if (!var_s7) {
             var_s7 = 1;
         }
         temp_a2_2 = width << 1;
-        var_s5 = (rand_next(0, 3) - 1) * width;
+        var_s5 = (mathRnd(0, 3) - 1) * width;
         var_fp ^= 1;
         if (i != 0) {
             bcopy(&sp5C[var_fp], frontFb - temp_a2_2, temp_a2_2);
@@ -932,7 +933,7 @@ void fbfx_burn_paper(u16* frontFb, u16* backFb, s32 height, s32 width) {
     bcopy(&sp5C[var_fp], frontFb - width, width << 1);
 }
 
-void fbfx_fill_full_alpha(u16 *fb1, u16 *fb2, s32 width, s32 height) {
+void fbfxFillFullAlpha(u16 *fb1, u16 *fb2, s32 width, s32 height) {
     s32 i;
 
     for (i = 0; i < (width * height); i++) {

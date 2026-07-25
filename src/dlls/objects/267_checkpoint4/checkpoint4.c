@@ -1,6 +1,7 @@
 #include "game/objects/object.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
+#include "dlls/objects/267_checkpoint4.h"
 
 #define SOME_COUNT 4
 
@@ -15,14 +16,6 @@ typedef struct {
     s16 unk34[SOME_COUNT];
     u8 _unk3C[0x40 - 0x3C];
 } checkpoint4_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18[0x28 - 0x18];
-    s8 unk28;
-    u8 yaw;
-    u8 scale;
-} checkpoint4_Setup;
 
 // offset: 0x0 | ctor
 void checkpoint4_ctor(void *dll) { }
@@ -54,13 +47,13 @@ void checkpoint4_setup(Object *self, checkpoint4_Setup *setup, s32 arg2) {
     transform.transl.z = 0.0f;
     transform.scale = 1.0f;
 
-    matrix_from_srt(&mtx, &transform);
-    vec3_transform(&mtx, 0.0f, 0.0f, 1.0f, &objdata->x, &objdata->y, &objdata->z);
+    mathYprXyzMtx(&mtx, &transform);
+    mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &objdata->x, &objdata->y, &objdata->z);
 
     objdata->unk1C = -((self->srt.transl.x * objdata->x) + (self->srt.transl.y * objdata->y) + (self->srt.transl.z * objdata->z));
     objdata->scale = self->srt.scale * 2;
 
-    for (i = 0; i != SOME_COUNT; i++) objdata->unk34[i] = rand_next(0, 240);
+    for (i = 0; i != SOME_COUNT; i++) objdata->unk34[i] = mathRnd(0, 240);
 
     self->unkDC = setup->unk28;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
@@ -75,7 +68,7 @@ void checkpoint4_update(Object *self) { }
 // offset: 0x1F0 | func: 3 | export: 3
 void checkpoint4_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

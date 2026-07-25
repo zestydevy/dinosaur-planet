@@ -23,7 +23,7 @@ enum FramebufferFXID {
     FBFX_FADE_OUT = 15
 };
 
-void fbfx_tick(Gfx **gdl, s32 updateRate);
-void fbfx_play(s32 effectID, s32 duration);
+void fbfxTick(Gfx **gdl, s32 updateRate);
+void fbfxPlay(s32 effectID, s32 duration);
 
 #endif

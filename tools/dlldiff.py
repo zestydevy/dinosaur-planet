@@ -164,8 +164,8 @@ def main():
         dlls = [str(i + 1) for i in range(796)]
 
     # Load DLLS.tabs
-    targ_dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS_tab.bin")
-    base_dllstab_path = BUILD_ASSETS_DIR.joinpath("DLLS_tab.bin")
+    targ_dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS.tab")
+    base_dllstab_path = BUILD_ASSETS_DIR.joinpath("DLLS.tab")
 
     if not targ_dllstab_path.exists():
         print(f"ERR: DLLS.tab not found @ {targ_dllstab_path.absolute()}")

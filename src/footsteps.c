@@ -79,7 +79,7 @@ f32 D_800BCC80[2];
 void footsteps_func_8005CF4C(Object *, UnkFootstepsStruct2*);
 void footsteps_func_8005CDFC(s32 _);
 
-void footsteps_init(void) {
+void footstepsInit(void) {
     s32 i;
 
     if (D_800BCC10 != NULL) {
@@ -130,14 +130,14 @@ void footsteps_init(void) {
     D_800BCC10[7].y = 0.0f;
     D_800BCC10[7].z = -3.0f;
 
-    D_800BCC68 = tex_load_deferred(TEXTABLE_18_Footprint1);
-    D_800BCC6C = tex_load_deferred(TEXTABLE_19_Footprint2);
-    D_800BCC70 = tex_load_deferred(TEXTABLE_1A_Footprint3);
+    D_800BCC68 = texLoadTexture(TEXTABLE_18_Footprint1);
+    D_800BCC6C = texLoadTexture(TEXTABLE_19_Footprint2);
+    D_800BCC70 = texLoadTexture(TEXTABLE_1A_Footprint3);
 
     D_800BCC78 = (u8)0;
 }
 
-void footsteps_clear(void) {
+void footstepsClear(void) {
     s32 i;
 
     for (i = 0; i < ARRAYCOUNT_S(gUnkFootstepStructs); i++) {
@@ -156,11 +156,11 @@ void footsteps_clear(void) {
 }
 
 // officialName: footstepsTurnOn
-void footsteps_toggle(u32 enabled) {
+void footstepsTurnOn(u32 enabled) {
     D_800BCC78 = enabled;
 
     if (enabled == 0) {
-        footsteps_clear();
+        footstepsClear();
     }
 }
 
@@ -199,7 +199,7 @@ void footsteps_func_8005CB10(Gfx **gdl, Object *obj) {
             break;
     }
 
-    tex_gdl_set_textures(gdl, tex, NULL, 0x1a, 0, 0, 1);
+    texDPTextures(gdl, tex, NULL, 0x1a, 0, 0, 1);
 
     i = 0;
 
@@ -330,10 +330,10 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
 
     if (sp68.y != 0.0f) {
         if (sp68.x != 0.0f) {
-            var_s2 = arctan2_f(sp68.x, sp68.y);
+            var_s2 = mathAtan2f(sp68.x, sp68.y);
         }
         if (sp68.z != 0.0f) {
-            var_s3 = arctan2_f(sp68.z, sp68.y);
+            var_s3 = mathAtan2f(sp68.z, sp68.y);
         }
     }
 
@@ -365,8 +365,8 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
         spAC.x = D_800BCC10[var_s1].x;
         spAC.y = D_800BCC10[var_s1].y;
         spAC.z = D_800BCC10[var_s1].z;
-        rotate_vec3(&sp7C, spAC.f);
-        rotate_vec3(&sp94, spAC.f);
+        mathRotateRPY(&sp7C, spAC.f);
+        mathRotateRPY(&sp94, spAC.f);
         var_s0->ob[0] = arg1->unk0.f[0] + spAC.f[0] - gWorldX;
         var_s0->ob[1] = arg1->unk0.f[1] + spAC.f[1] + 1;
         var_s0->ob[2] = arg1->unk0.f[2] + spAC.f[2] - gWorldZ;
@@ -403,7 +403,7 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
     }
     var_s5--;
     gSPVertex(dl++, OS_PHYSICAL_TO_K0(var_s0), 4, 0);
-    dl_triangles(&dl, var_s5, 2);
+    dlTriangles(&dl, var_s5, 2);
     gSPEndDisplayList(dl++);
     D_80093000 = D_80093000 + 1;
     if (D_80093000 == 39) {
@@ -414,7 +414,7 @@ void footsteps_func_8005CF4C(Object* arg0, UnkFootstepsStruct2* arg1) {
     footsteps_func_8005CD80();
 }
 
-u16 *footsteps_get_sfx_bank(s32 bank) {
+u16 *footstepsGetSfxBank(s32 bank) {
     switch (bank) {
         case 1:
             return gFootstepSfxBank1;

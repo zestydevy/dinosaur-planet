@@ -1,0 +1,11 @@
+.text = 0x0:
+dll_72_ctor = 0x0;
+dll_72_dtor = 0x88;
+dll_72_update1 = 0x100;
+dll_72_update2 = 0x10C;
+dll_72_draw = 0x114;
+
+.rodata = 0x1B4:
+
+.data = 0x1B4:
+dTexTiles = 0x0; // absolute:0x1B4

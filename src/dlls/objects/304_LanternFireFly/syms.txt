@@ -1,0 +1,22 @@
+.text = 0x0:
+LanternFireFly_ctor = 0x0;
+LanternFireFly_dtor = 0xC;
+LanternFireFly_setup = 0x18;
+LanternFireFly_control = 0x190;
+LanternFireFly_update = 0x84C;
+LanternFireFly_print = 0x858;
+LanternFireFly_free = 0x8AC;
+LanternFireFly_get_model_flags = 0x960;
+LanternFireFly_get_data_size = 0x970;
+LanternFireFly_append_spline_point = 0x984;
+LanternFireFly_set_next_spline_coord_randomised = 0xAB0;
+LanternFireFly_set_next_spline_coord = 0xBE0;
+LanternFireFly_send = 0xC3C;
+LanternFireFly_set_home = 0xE54;
+
+.rodata = 0xF1C:
+str_0 = 0x0; // absolute:0xF1C
+
+.data = 0xF7C:
+data_0 = 0x0; // absolute:0xF7C
+dLightCreated = 0x4; // absolute:0xF80

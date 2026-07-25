@@ -85,14 +85,14 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
     objData->hitPoints = 1;
 
     //Check if already burnt
-    if (main_get_bits(objSetup->gamebitBurnt)) {
+    if (mainGetBits(objSetup->gamebitBurnt)) {
         objData->hitPoints = 0;
         self->objhitInfo->unk58 &= ~1;
         self->opacity = 0;
     }
 
     objData->maskSpeed = sMaskSpeeds[0];
-    dModGfxDLL = dll_load_deferred(DLL_ID_165, 1);
+    dModGfxDLL = dllLoad(DLL_ID_165, 1);
 }
 
 // offset: 0xD4 | func: 1 | export: 1
@@ -155,13 +155,13 @@ void DIMTent_control(Object* self) {
         }
 
         //After being fully damaged, track that the tent has been burnt and start the burning effect
-        main_set_bits(objSetup->gamebitBurnt, 1);
+        mainSetBits(objSetup->gamebitBurnt, 1);
         objData->isBurning = TRUE;
 
         //Drop the bridge cog if this tent's index matches the random one picked by DIMLevelControl
-        if (main_get_bits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
+        if (mainGetBits(BIT_DIM_Gear_3_Random_Tent) == (u32)objSetup->tentIndex) {
             Collectable_Setup* cogSetup;
-            cogSetup = (Collectable_Setup*)obj_alloc_setup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
+            cogSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_DIMBridgeCogCol);
             cogSetup->base.x = objSetup->base.x;
             cogSetup->base.y = objSetup->base.y + 8.0f;
             cogSetup->base.z = objSetup->base.z;
@@ -174,7 +174,7 @@ void DIMTent_control(Object* self) {
             cogSetup->gamebitCount = NO_GAMEBIT;
             cogSetup->objHitsValue = 5;
             cogSetup->yaw = self->srt.yaw >> 8;
-            obj_create((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
+            objSetupObject((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
         }
     }
 }
@@ -190,14 +190,14 @@ void DIMTent_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (objData->isBurning == TRUE) {
             DIMTent_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, pols);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x430 | func: 4 | export: 4
 void DIMTent_free(s32 self, s32 arg1) {
     if (dModGfxDLL) {
-        dll_unload(dModGfxDLL);
+        dllFree(dModGfxDLL);
     }
 }
 
@@ -235,11 +235,11 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     maskProgress /= MASK_MAX; //tValue for the mask animation (0 at top, 1 at bottom)
 
     //Set up mesh masking draw configs
-    dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0x80);
+    dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, 0x80);
     gSPLoadGeometryMode(*gdl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG | G_SHADING_SMOOTH);
-    dl_apply_geometry_mode(gdl);
+    dlApplyGeometryMode(gdl);
     gDPSetCombineLERP(*gdl, TEXEL0, 0, SHADE, 0, TEXEL0, 0, PRIMITIVE, 0, COMBINED, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED);
-    dl_apply_combine(gdl);
+    dlApplyCombine(gdl);
 
     //Position the cube's vertices (forming a section of a pyramid)
     for (i = 0; i < ARRAYCOUNT(sMaskVertCoords); i++) {
@@ -271,7 +271,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
         G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP |
         G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | Z_CMP | Z_UPD | IM_RD | CVG_DST_SAVE |
         ZMODE_XLU | FORCE_BL | G_RM_FOG_SHADE_A | GBL_c2(G_BL_CLR_IN, G_BL_0, G_BL_CLR_MEM, G_BL_1MA));
-    dl_apply_other_mode(gdl);
+    dlApplyOtherMode(gdl);
 
     srt.transl.x = self->srt.transl.x;
     srt.transl.y = self->srt.transl.y;
@@ -280,10 +280,10 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
     srt.pitch = 0;
     srt.roll = 0;
     srt.scale = 0.05f;
-    camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1, 0, NULL);
+    camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dl_triangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
 
     //Set transform for particles
     srt.transl.x = (30.0f * maskProgress) + 2.0f;
@@ -304,7 +304,7 @@ void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triang
 
     //Randomly create snow evaporation particles approaching the end of the burning
     if (objData->maskY > THRESHOLD_SNOW_EVAPORATE) {
-        if (rand_next(0, 2) == 0) {
+        if (mathRnd(0, 2) == 0) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_206, &srt, 4, -1, NULL);
         }
     //Otherwise create fire/smoke/ember particles

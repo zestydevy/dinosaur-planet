@@ -15,8 +15,8 @@ _exports:
 /*4*/ .dword fishingnet_free
 /*5*/ .dword fishingnet_get_model_flags
 /*6*/ .dword fishingnet_get_data_size
-/*7*/ .dword fishingnet_func_C0
-/*8*/ .dword fishingnet_func_DC
-/*9*/ .dword fishingnet_func_304
-/*10*/ .dword fishingnet_func_338
+/*7*/ .dword fishingnet_set_visibility
+/*8*/ .dword fishingnet_draw
+/*9*/ .dword fishingnet_get_transform
+/*10*/ .dword fishingnet_catch
 /*11*/ .dword fishingnet_func_4D4

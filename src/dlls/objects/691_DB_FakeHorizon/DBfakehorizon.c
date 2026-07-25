@@ -64,7 +64,7 @@ void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
     
     objSetup = (DBFakeHorizon_Setup*)self->setup;
 
-    dy = get_main_camera()->srt.transl.y - self->srt.transl.y;
+    dy = camGetMain()->srt.transl.y - self->srt.transl.y;
     if (dy < 0.0f){
         return;
     }
@@ -74,13 +74,13 @@ void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tri
     }
 
     scaleY = dy / objSetup->divisor;
-    matrix_scaling(&mtx, self->srt.scale, self->srt.scale * scaleY, self->srt.scale);
+    mathScaleMtx(&mtx, self->srt.scale, self->srt.scale * scaleY, self->srt.scale);
     mtx.m[3][0] = self->srt.transl.x - gWorldX;
     mtx.m[3][1] = self->srt.transl.y;
     mtx.m[3][2] = self->srt.transl.z - gWorldZ;
-    func_80034FF0(&mtx);
-    draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-    func_80034FF0(NULL);
+    objprintSetModelMatrixOverride(&mtx);
+    objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+    objprintSetModelMatrixOverride(NULL);
 }
 
 // offset: 0x200 | func: 4 | export: 4

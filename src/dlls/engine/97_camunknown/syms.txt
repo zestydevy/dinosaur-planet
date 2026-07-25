@@ -1,0 +1,12 @@
+.text = 0x0:
+camunk_ctor = 0x0;
+camunk_dtor = 0xC;
+camunk_func_18 = 0x18;
+camunk_func_74 = 0x74;
+camunk_func_250 = 0x250;
+camunk_func_290 = 0x290;
+
+.rodata = 0x2E0:
+
+.bss = 0x2F0:
+sState = 0x0; // absolute:0x2F0

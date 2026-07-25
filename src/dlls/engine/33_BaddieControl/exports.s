@@ -26,7 +26,7 @@ _exports:
 /*15*/ .dword BaddieControl_free
 /*16*/ .dword BaddieControl_func_F60
 /*17*/ .dword BaddieControl_func_10F4
-/*18*/ .dword BaddieControl_func_15CC
+/*18*/ .dword BaddieControl_drop_collectable
 /*19*/ .dword BaddieControl_check_hit
 /*20*/ .dword BaddieControl_func_1D88
 /*21*/ .dword BaddieControl_setup

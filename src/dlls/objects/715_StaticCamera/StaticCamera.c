@@ -1,16 +1,6 @@
 #include "common.h"
+#include "dlls/objects/715_StaticCamera.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 _unk1B;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-}DLL715_Setup;
 
 typedef struct {
     u8 unk0;
@@ -38,7 +28,7 @@ void dll_715_setup(Object* self, DLL715_Setup* setup, s32 arg2) {
     objdata->unk4 = setup->unk1A;
     objdata->unk1 = 0;
     if (arg2 == 0) {
-        obj_add_object_type(self, OBJTYPE_StaticCamera);
+        objAddObjectType(self, OBJTYPE_StaticCamera);
     }
 }
 
@@ -51,13 +41,13 @@ void dll_715_update(Object *self) { }
 // offset: 0xC8 | func: 3 | export: 3
 void dll_715_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
     if (arg5 != 0) {
-        draw_object(arg0, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(arg0, arg1, arg2, arg3, arg4, 1.0f);
     }
 }
 
 // offset: 0x11C | func: 4 | export: 4
 void dll_715_free(Object* self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_StaticCamera);
+    objFreeObjectType(self, OBJTYPE_StaticCamera);
 }
 
 // offset: 0x15C | func: 5 | export: 5

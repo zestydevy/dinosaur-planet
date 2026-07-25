@@ -44,11 +44,11 @@ void sideload_control(Object* self) {
     s16 dSidekickObjIDs[] = {OBJ_Tricky, OBJ_Kyte};
     s16 gamebit;
     
-    if (get_player() && (get_sidekick() == FALSE) && (objData->loaded == FALSE) && 
-        ((gamebit = objSetup->gamebitUnlocked, gamebit == NO_GAMEBIT) || main_get_bits(gamebit))
+    if (objGetPlayer() && (objGetSidekick() == FALSE) && (objData->loaded == FALSE) && 
+        ((gamebit = objSetup->gamebitUnlocked, gamebit == NO_GAMEBIT) || mainGetBits(gamebit))
     ) {
         objData->loaded = TRUE;
-        func_80023894(self, dSidekickObjIDs[objSetup->sidekickIndex]);
+        objLoadSidekick(self, dSidekickObjIDs[objSetup->sidekickIndex]);
     }
 }
 
@@ -58,7 +58,7 @@ void sideload_update(Object *self) { }
 // offset: 0x154 | func: 3 | export: 3
 void sideload_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -46,11 +46,11 @@ The linker script is vital for creating matching ROMs because it places data fro
 As DLLs are linked separately, they use a different linker script found at `src/dlls/dll.ld`. Some DLLs override this with their own linker script found in their `src` directory.
 
 ### Symbols
-While extracting assembly code, splat will also generate files containing symbols for global variables and functions that it comes across. These symbols will initially have auto-generated names like `func_<address>` and `D_<address>`. Automatically detected variables are placed in `undefined_syms_auto.txt` and functions in `undefined_funcs_auto.txt` (found in the repository root after splat is ran).
+While extracting assembly code, splat will also generate files containing symbols for global variables and functions that it comes across. These symbols will initially have auto-generated names like `func_<address>` and `D_<address>`. Some automatically detected variables are placed in `undefined_syms_auto.txt` (found in the repository root after splat is ran).
 
 To give these symbols actual names, the file `symbol_addrs.txt` is used. Splat reads this file while extracting and will use the names given here for addresses it thinks are variables or functions.
 
-Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` and `undefined_funcs.txt` files can be used to define things like variables and functions respectively.
+Sometimes, splat won't be able to detect an address as a proper symbol. This usually happens when the address isn't referenced explicitly in assembly. For addresses that should have a symbol, the `undefined_syms.txt` file can be used to define it.
 
 DLLs however, do not use any of the above files for symbols. Instead, each DLL has their own `syms.txt` file found in their directory under `src/dlls`. This file is converted into a linker script at build time, rather than being used directly. Additionally, all DLLs are linked with the `export_symbol_addrs.txt` file, which define names for DLL import symbols.
 

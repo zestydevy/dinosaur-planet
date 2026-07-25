@@ -286,7 +286,7 @@ There is still so much more to reversing assembly, but this is the general proce
 ## 3. Symbols
 An important part of decomp is giving names to memory addresses, known as symbols. This includes global/local static variables and functions.
 
-Part of splat's job is to automatically generate symbols for addresses that it sees referenced. The full list of these generated symbols can be found (after running `./dino.py extract`) in the `undefined_funcs_auto.txt` and `undefined_syms_auto.txt` files in the repository root. Initially, splat will also generate a name for each symbol, such as `func_<address>` and `D_<address>` for functions and variables respectively. These names can be overwritten using the `symbol_addrs.txt` file (also in the repository root).
+Part of splat's job is to automatically generate symbols for addresses that it sees referenced but not defined. The full list of these symbols can be found (after running `./dino.py extract`) in the `undefined_syms_auto.txt` file in the repository root. Initially, splat will also generate a name for each symbol, such as `func_<address>` and `D_<address>` for functions and variables respectively. These names can be overwritten using the `symbol_addrs.txt` file (also in the repository root).
 
 The format of each line in `symbol_addrs.txt` is as follows:
 ```
@@ -301,9 +301,9 @@ texture_load = 0x8003cda8; // type:func
 
 Attributes are separated by spaces and are optional unless splat is incorrectly detecting the symbol type. Although optional, the size attribute is useful for data symbols as it allows splat to provide additional analysis such as warnings about symbol overlaps.
 
-Sometimes, there will be an address that should have a symbol that splat was unable to detect. This usually happens when the address is not explicitly referenced in the final assembly code. In this case, the symbol cannot be added to `symbol_addrs.txt` and instead must be added to `undefined_funcs.txt` or `undefined_syms.txt` for functions and variables respectively (found in the repository root). These files are fed directly into the linker and as such should not contain the `type` or `size` attributes (just the format `<name> = <VRAM address in hex>;`).
+Sometimes, there will be an address that should have a symbol that splat was unable to detect. This usually happens when the address is not explicitly referenced in the final assembly code. In this case, the symbol cannot be added to `symbol_addrs.txt` and instead must be added to `undefined_syms.txt` (found in the repository root). This file is fed directly into the linker and as such should not contain the `type` or `size` attributes (just the format `<name> = <VRAM address in hex>;`).
 
-> Note: When modifying `symbol_addrs.txt`, you will need to re-run `./dino.py extract` to re-generate the linker the script with the new symbols. If you just modify `undefined_funcs.txt` or `undefined_syms.txt`, then this is not required.
+> Note: When modifying `symbol_addrs.txt`, you will need to re-run `./dino.py extract` to re-generate the linker the script with the new symbols. If you just modified `undefined_syms.txt`, then this is not required.
 
 
 ## 4. Data Sections

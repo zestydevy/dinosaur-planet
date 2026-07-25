@@ -66,6 +66,10 @@ typedef struct {
 #define BLANK_FOODBAG_ITEM {0, 0, 0, 0, 0, 0}
 #define NO_FOOD_OBJECT_ID -1
 
+/**
+  * An interface for foodbags. Exports 13 onwards are only used by the player foodbag, 
+  * and are not used by the sidekicks' dinosaur foodbag (`DLL_315_SideFoodbag`).
+  */
 DLL_INTERFACE(DLL_IFoodbag) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ int (*is_obtained)(Object* self);
@@ -78,6 +82,14 @@ DLL_INTERFACE(DLL_IFoodbag) {
     /*14*/ u16 (*get_capacity)(Object* self);
     /*15*/ s32 (*count_slots_occupied)(Object* self);
     /*16*/ s16 (*get_anim_objectID_from_food_gamebit)(s16 foodGamebit);
+};
+
+/**
+  * An interface for foodbag items placed in the world (DLL 300 foodbagPlacedFood)
+  */
+DLL_INTERFACE(DLL_IPlacedFood) {
+	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
+    /*7*/ int (*get_unload_timer_value)(Object* self, UNK_TYPE_32 arg1);
 };
 
 #endif //_DLLS_COMMON_FOODBAG_H

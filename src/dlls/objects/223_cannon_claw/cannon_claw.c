@@ -28,23 +28,23 @@ void cannon_claw_control(Object *self) {
     Object *sidekick;
     CannonClaw_Setup *setup;
 
-    sidekick = get_sidekick();
+    sidekick = objGetSidekick();
     
     if (self->unkDC) {
         return;
     }
 
     if (self->curModAnimId != 0x208) {
-        func_80023D30(self, 0x208, 0, 0);
+        objAnimSet(self, 0x208, 0, 0);
     }
 
-    func_80024108(self, 0.005f, gUpdateRateF, NULL);
+    objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
     temp = func_80025F40(self, NULL, 0, 0);
     
     if (temp) {
         if (self->parent) {
             setup = (CannonClaw_Setup*)self->parent->setup;
-            main_set_bits(setup->gamebit, 1);
+            mainSetBits(setup->gamebit, 1);
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
         }
         
@@ -52,7 +52,7 @@ void cannon_claw_control(Object *self) {
     } else {
         if (self->parent) {
             setup = (CannonClaw_Setup*)self->parent->setup;
-            if (main_get_bits(setup->gamebit)) {
+            if (mainGetBits(setup->gamebit)) {
                 cannon_claw_func_1B4(self);
             }
         }
@@ -69,7 +69,7 @@ void cannon_claw_update(Object *self) { }
 
 void cannon_claw_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility && self->unkDC == 0) {
-		draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}
 }
 

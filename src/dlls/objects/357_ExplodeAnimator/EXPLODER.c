@@ -18,13 +18,13 @@ void ExplodeAnimator_setup(Object* self, ExplodeAnimator_Setup* objSetup, s32 ar
 
     objData = self->data;
     
-    if (main_get_bits(objSetup->gamebitExploded)) {
+    if (mainGetBits(objSetup->gamebitExploded)) {
         objData->flags = ExplodeAnimator_FLAG_Finished;
     } else {
         objData->flags = ExplodeAnimator_FLAG_Waiting_to_Explode;
     }
 
-    obj_add_object_type(self, OBJTYPE_ExplodeAnimator);
+    objAddObjectType(self, OBJTYPE_ExplodeAnimator);
 }
 
 // offset: 0x94 | func: 1 | export: 1
@@ -38,8 +38,8 @@ void ExplodeAnimator_control(Object* self) {
     }
     
     objSetup = (ExplodeAnimator_Setup*)self->setup;
-    if (main_get_bits(objSetup->gamebitExplodeTrigger)) {
-        main_set_bits(objSetup->gamebitExploded, 1);
+    if (mainGetBits(objSetup->gamebitExplodeTrigger)) {
+        mainSetBits(objSetup->gamebitExploded, 1);
         objData->flags |= ExplodeAnimator_FLAG_Finished;
         ExplodeAnimator_create_partfx(self, objSetup);
     }
@@ -53,7 +53,7 @@ void ExplodeAnimator_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x164 | func: 4 | export: 4
 void ExplodeAnimator_free(Object *self, s32 arg1) {
-    obj_free_object_type(self, OBJTYPE_ExplodeAnimator);
+    objFreeObjectType(self, OBJTYPE_ExplodeAnimator);
 }
 
 // offset: 0x1A4 | func: 5 | export: 5
@@ -73,11 +73,11 @@ void ExplodeAnimator_create_partfx(Object* self, ExplodeAnimator_Setup* objSetup
     f32 params[2];
 
     for (i = 0; i < objSetup->particleCount; i++){
-        params[0] = rand_next(objSetup->param0Min, objSetup->param0Max) * 0.01f;
-        params[1] = rand_next(objSetup->param1Min, objSetup->param1Max) * 0.01f;
-        transform.transl.x = rand_next(objSetup->xMin, objSetup->xMax);
-        transform.transl.y = rand_next(objSetup->yMin, objSetup->yMax);
-        transform.transl.z = rand_next(objSetup->zMin, objSetup->zMax);
+        params[0] = mathRnd(objSetup->param0Min, objSetup->param0Max) * 0.01f;
+        params[1] = mathRnd(objSetup->param1Min, objSetup->param1Max) * 0.01f;
+        transform.transl.x = mathRnd(objSetup->xMin, objSetup->xMax);
+        transform.transl.y = mathRnd(objSetup->yMin, objSetup->yMax);
+        transform.transl.z = mathRnd(objSetup->zMin, objSetup->zMax);
         gDLL_17_partfx->vtbl->spawn(self, objSetup->particleID, &transform, 2, -1, &params);
     }
 }

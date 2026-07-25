@@ -1,0 +1,31 @@
+.text = 0x0:
+camnormal_ctor = 0x0;
+camnormal_dtor = 0x68;
+camnormal_func_A8 = 0xA8;
+camnormal_func_860 = 0x860;
+camnormal_func_B70 = 0xB70;
+camnormal_func_BD4 = 0xBD4;
+camnormal_func_ED4 = 0xED4;
+camnormal_func_11F0 = 0x11F0;
+camnormal_func_12E8 = 0x12E8;
+camnormal_func_19E8 = 0x19E8;
+camnormal_func_1A58 = 0x1A58;
+camnormal_func_1DEC = 0x1DEC;
+camnormal_func_1FFC = 0x1FFC;
+camnormal_func_22D0 = 0x22D0;
+camnormal_func_2388 = 0x2388;
+camnormal_func_24F0 = 0x24F0;
+camnormal_func_250C = 0x250C;
+camnormal_func_26E4 = 0x26E4;
+camnormal_func_29B4 = 0x29B4;
+camnormal_func_2A5C = 0x2A5C;
+
+.rodata = 0x2CC4:
+str_0 = 0x0; // absolute:0x2CC4
+
+.data = 0x2D54:
+data_0 = 0x0; // absolute:0x2D54
+
+.bss = 0x2D64:
+sState = 0x0; // absolute:0x2D64
+bss_4 = 0x4; // absolute:0x2D68

@@ -39,10 +39,10 @@ void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
     }
     self->srt.yaw = -0x7FFF;
     DLL515Data->unk8 = ((u16)self->srt.yaw) / 8192; // TODO: that cast is sus
-    temp_v1 = rand_next(7, 0xA) * 0xA;
+    temp_v1 = mathRnd(7, 0xA) * 0xA;
     DLL515Data->unk0 = temp_v1;
     DLL515Data->unk4 = temp_v1;
-    if (rand_next(0, 1) != 0) {
+    if (mathRnd(0, 1) != 0) {
         DLL515Data->unkA = 1;
     }
     self->animCallback = dll_525_func_81C;
@@ -61,25 +61,25 @@ void dll_525_control(Object* self) {
 
     dll525Data = self->data;
     if (self->modelInstIdx == 5) {
-        if (main_get_bits(BIT_639) == 0) {
+        if (mainGetBits(BIT_639) == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             return;
         }
-        sp40 = get_player();
+        sp40 = objGetPlayer();
         if (((DLL_210_Player*)sp40->dll)->vtbl->get_vehicle(sp40) != 0) {
-            main_set_bits(BIT_63B, 1U);
+            mainSetBits(BIT_63B, 1U);
             return;
         }
-        main_set_bits(BIT_63B, 0U);
+        mainSetBits(BIT_63B, 0U);
         return;
     }
-    if (main_get_bits(BIT_639) == 0) {
+    if (mainGetBits(BIT_639) == 0) {
         dll525Data->unk4 -= gUpdateRateF;
         if (func_80025F40(self, &sp40, &sp48, &sp44) != 0) {
-            gDLL_6_AMSFX->vtbl->play(self, 0x797U, 0x7FU, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, 0x797U, 0x7FU, NULL, NULL, 0, NULL);
             dll525Data->unkA = (s16) (dll525Data->unkA ^ 2);
             if (dll525Data->unkA & 2) {
-                main_set_bits(BIT_639, dll_525_func_684(self, dll525Data));
+                mainSetBits(BIT_639, dll_525_func_684(self, dll525Data));
             }
         }
         if (!(dll525Data->unkA & 2)) {
@@ -90,8 +90,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 >= 8) {
                         dll525Data->unk8 = 0;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = dll_amSfx->Play(self, SOUND_796_Pole_Rotate, mathRnd(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    dll_amSfx->SetPitch(dll525Data->unkC, ((f32) mathRnd(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw + (512.0f * gUpdateRateF));
@@ -103,8 +103,8 @@ void dll_525_control(Object* self) {
                     if (dll525Data->unk8 < 0) {
                         dll525Data->unk8 = 7;
                     }
-                    dll525Data->unkC = gDLL_6_AMSFX->vtbl->play(self, SOUND_796_Pole_Rotate, rand_next(0x40, 0x7F) , NULL, NULL, 0, NULL);
-                    gDLL_6_AMSFX->vtbl->set_pitch(dll525Data->unkC, ((f32) rand_next(-0x32, 0x32) / 100.0f) + 1.0f);
+                    dll525Data->unkC = dll_amSfx->Play(self, SOUND_796_Pole_Rotate, mathRnd(0x40, 0x7F) , NULL, NULL, 0, NULL);
+                    dll_amSfx->SetPitch(dll525Data->unkC, ((f32) mathRnd(-0x32, 0x32) / 100.0f) + 1.0f);
                 }
                 if (((s32) (self->srt.yaw & 0xFFFF) / 8192) != dll525Data->unk8) {
                     self->srt.yaw = (s16) (s32) ((f32) self->srt.yaw - (512.0f * gUpdateRateF));
@@ -120,7 +120,7 @@ void dll_525_update(Object *self) { }
 // offset: 0x5A4 | func: 3 | export: 3
 void dll_525_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -132,7 +132,7 @@ void dll_525_free(Object* self, s32 a1) {
     dll525Data = self->data;
     temp_a1 = dll525Data->unkC;
     if (temp_a1 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(temp_a1);
+        dll_amSfx->Stop(temp_a1);
         dll525Data->unkC = 0U;
     }
 }
@@ -157,7 +157,7 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
     DLL525_Data* dll525Data;
     
     var_s1 = 0;
-    temp_s6 = get_world_objects(&i, &sp58);
+    temp_s6 = objGetObjects(&i, &sp58);
     for ( ; i < sp58; i++) {
         temp_v1 = temp_s6[i];
         if (temp_v1->id == OBJ_SC_totempuzzle) {
@@ -167,13 +167,13 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
                     if (dll525Data->unk8 == 4) {
                         var_s1 += 1;
                         if (arg0 == temp_v1) {
-                            gDLL_6_AMSFX->vtbl->play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
                         }
                     }
                 } else if (dll525Data->unk8 == 3) {
                     var_s1 += 1;
                     if (arg0 == temp_v1) {
-                        gDLL_6_AMSFX->vtbl->play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(arg0, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                 }
             }
@@ -189,7 +189,7 @@ static s32 dll_525_func_684(Object* arg0, void* arg1) {
 static int dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3) {
     s32 var_v1;
 
-    if (main_get_bits(BIT_639) != 0) {
+    if (mainGetBits(BIT_639) != 0) {
         var_v1 = 0;
     } else {
         var_v1 = 1;

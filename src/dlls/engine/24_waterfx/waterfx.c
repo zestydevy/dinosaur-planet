@@ -156,10 +156,10 @@ void waterfx_ctor(void *dll) {
     sNumWaterSplashParticles = 0;
     sNumMovementRipples = 0;
     
-    sCircularWaterRippleTex = tex_load_deferred(TEXTABLE_56_CircularWaterRipple);
-    sWaterSplashTex = tex_load_deferred(TEXTABLE_59_WaterSplash);
-    sWaterSplashParticleTex = tex_load_deferred(TEXTABLE_22_WaterSplashParticle);
-    sMovementWaterRippleTex = tex_load_deferred(TEXTABLE_57_MovementWaterRipple);
+    sCircularWaterRippleTex = texLoadTexture(TEXTABLE_56_CircularWaterRipple);
+    sWaterSplashTex = texLoadTexture(TEXTABLE_59_WaterSplash);
+    sWaterSplashParticleTex = texLoadTexture(TEXTABLE_22_WaterSplashParticle);
+    sMovementWaterRippleTex = texLoadTexture(TEXTABLE_57_MovementWaterRipple);
     
     waterfx_init();
 }
@@ -170,19 +170,19 @@ void waterfx_dtor(void *dll) {
         mmFree(sCircularRippleTris);
     }
     if (sCircularWaterRippleTex != NULL) {
-        tex_free(sCircularWaterRippleTex);
+        texFreeTexture(sCircularWaterRippleTex);
         sCircularWaterRippleTex = NULL;
     }
     if (sWaterSplashTex != NULL) {
-        tex_free(sWaterSplashTex);
+        texFreeTexture(sWaterSplashTex);
         sWaterSplashTex = NULL;
     }
     if (sWaterSplashParticleTex != NULL) {
-        tex_free(sWaterSplashParticleTex);
+        texFreeTexture(sWaterSplashParticleTex);
         sWaterSplashParticleTex = NULL;
     }
     if (sMovementWaterRippleTex != NULL) {
-        tex_free(sMovementWaterRippleTex);
+        texFreeTexture(sMovementWaterRippleTex);
         sMovementWaterRippleTex = NULL;
     }
 }
@@ -440,13 +440,13 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
 
     if ((sNumCircularRipples != 0) || (sNumMovementRipples != 0) || (sNumWaterSplashes != 0) || (sNumWaterSplashParticles != 0)) {
         gSPLoadGeometryMode(*gdl, G_SHADE | G_ZBUFFER | G_SHADING_SMOOTH);
-        dl_apply_geometry_mode(gdl);
+        dlApplyGeometryMode(gdl);
         gDPSetCombineLERP(*gdl, 0, 0, 0, TEXEL0, TEXEL0, 0, PRIMITIVE, 0, 0, 0, 0, COMBINED, COMBINED, 0, SHADE, 0);
-        dl_apply_combine(gdl);
+        dlApplyCombine(gdl);
         gDPSetOtherMode(*gdl, 
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_ZB_CLD_SURF2);
-        dl_apply_other_mode(gdl);
+        dlApplyOtherMode(gdl);
 
         // Draw circular water ripples
         if (sNumCircularRipples != 0) {
@@ -455,7 +455,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
         for (i = 0; i < MAX_CIRCULAR_RIPPLES; i++) {
             if (sCircularRipples[i].alpha != 0) {
                 circRipple = &sCircularRipples[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, circRipple->alpha);
+                dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, circRipple->alpha);
                 srt.transl.x = circRipple->x;
                 srt.transl.y = circRipple->y;
                 srt.transl.z = circRipple->z;
@@ -463,9 +463,9 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = circRipple->yaw;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sCircularRippleVerts[i << 2]), 4, 0);
-                dl_triangles(gdl, &sCircularRippleTris[i << 1], 2);
+                dlTriangles(gdl, &sCircularRippleTris[i << 1], 2);
             }
         }
 
@@ -476,7 +476,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
         for (i = 0; i < MAX_SPLASHES; i++) {
             if (sWaterSplashes[i].alpha != 0) {
                 splash = &sWaterSplashes[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, splash->alpha);
+                dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, splash->alpha);
                 srt.transl.x = splash->x;
                 srt.transl.y = splash->y;
                 srt.transl.z = splash->z;
@@ -484,16 +484,16 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = 0;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashVerts[i * 14]), 14, 0);
-                dl_triangles(gdl, &sWaterSplashTris[i * 12], 12);
+                dlTriangles(gdl, &sWaterSplashTris[i * 12], 12);
             }
         }
 
         // Draw water splash particles
         if (sNumWaterSplashParticles != 0) {
             gSPDisplayList((*gdl)++, OS_PHYSICAL_TO_K0(sWaterSplashParticleTex->gdl));
-            dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, 0xB4);
+            dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, 0xB4);
         }
         for (i = 0; i < MAX_SPLASH_PARTICLES; i++) {
             if (sWaterSplashParticles[i].splashIdx != -1 && sWaterSplashParticles[i].unk10 != 0) {
@@ -505,9 +505,9 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = 0;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sWaterSplashPartVerts[i << 2]), 4, 0);
-                dl_triangles(gdl, &sWaterSplashPartTris[i << 1], 2);
+                dlTriangles(gdl, &sWaterSplashPartTris[i << 1], 2);
             }
         }
 
@@ -518,7 +518,7 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
         for (i = 0; i < MAX_MOVEMENT_RIPPLES; i++) {
             if (sMovementRipples[i].alpha != 0 && sMovementRipples[i].hide == FALSE) {
                 movRipple = &sMovementRipples[i];
-                dl_set_prim_color(gdl, 0xFF, 0xFF, 0xFF, movRipple->alpha);
+                dlSetPrimColor(gdl, 0xFF, 0xFF, 0xFF, movRipple->alpha);
                 srt.transl.x = movRipple->x;
                 srt.transl.y = movRipple->y;
                 srt.transl.z = movRipple->z;
@@ -526,12 +526,12 @@ void waterfx_print(Gfx** gdl, Mtx** mtxs) {
                 srt.yaw = movRipple->yaw;
                 srt.roll = 0;
                 srt.pitch = 0;
-                camera_setup_object_srt_matrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
+                camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
                 gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(&sMovementRippleVerts[i << 2]), 4, 0);
-                dl_triangles(gdl, &sMovementRippleTris[i << 1], 2);
+                dlTriangles(gdl, &sMovementRippleTris[i << 1], 2);
             }
         }
-        tex_render_reset();
+        texRenderReset();
     }
 }
 
@@ -552,7 +552,7 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
     s16 angle;
     s16 angleDeviation;
 
-    count = rand_next(2, 4);
+    count = mathRnd(2, 4);
     if ((count + sNumWaterSplashParticles) > MAX_SPLASH_PARTICLES) {
         count = MAX_SPLASH_PARTICLES - sNumWaterSplashParticles;
     }
@@ -564,9 +564,9 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
             if (idx < MAX_SPLASH_PARTICLES) {
                 part = &sWaterSplashParticles[idx];
                 sectorSize[0] = (s16)(0xFFFF / count);
-                angleDeviation = rand_next(-0x7D0, 0x7D0);
-                temp_fs0 = fsin16_precise(angle + angleDeviation);
-                temp_fv0 = fcos16_precise(angle + angleDeviation);
+                angleDeviation = mathRnd(-0x7D0, 0x7D0);
+                temp_fs0 = mathSinfInterp(angle + angleDeviation);
+                temp_fv0 = mathCosfInterp(angle + angleDeviation);
                 part->xVel = 4.0f * temp_fv0;
                 part->zVel = 4.0f * temp_fs0;
                 lateralMag = SQ(part->xVel) + SQ(part->zVel);
@@ -575,8 +575,8 @@ static s32 waterfx_make_splash_particles(WaterSplash *splash, s32 splashIdx) {
                     part->xVel *= lateralMag;
                     part->zVel *= lateralMag;
                 }
-                part->speed = rand_next(600, 800) * 0.001f;
-                part->yVel = rand_next(500, 600) * 0.001f;
+                part->speed = mathRnd(600, 800) * 0.001f;
+                part->yVel = mathRnd(500, 600) * 0.001f;
                 part->unk10 = 0;
                 part->splashIdx = splashIdx;
 
@@ -677,8 +677,8 @@ void waterfx_spawn_splash(f32 x, f32 y, f32 z, f32 size) {
     s = qu105(0);
     i = 1;
     do {
-        temp_fv0 = fcos16_precise(angle);
-        temp_fv0_2 = fsin16_precise(angle);
+        temp_fv0 = mathCosfInterp(angle);
+        temp_fv0_2 = mathSinfInterp(angle);
         splash->unkC[i] = 4.0f * temp_fv0;
         splash->unk24[i] = 4.0f;
         splash->unk3C[i] = 4.0f * temp_fv0_2;

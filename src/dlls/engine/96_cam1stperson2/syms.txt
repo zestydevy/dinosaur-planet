@@ -1,0 +1,18 @@
+.text = 0x0:
+cam1stperson2_ctor = 0x0;
+cam1stperson2_dtor = 0xC;
+cam1stperson2_func_18 = 0x18;
+cam1stperson2_func_4BC = 0x4BC;
+cam1stperson2_func_93C = 0x93C;
+cam1stperson2_func_990 = 0x990;
+cam1stperson2_func_9C4 = 0x9C4;
+cam1stperson2_func_CE0 = 0xCE0;
+cam1stperson2_func_E60 = 0xE60;
+cam1stperson2_func_137C = 0x137C;
+
+.rodata = 0x14B4:
+str_0 = 0x0; // absolute:0x14B4
+
+.bss = 0x1504:
+sState = 0x0; // absolute:0x1504
+bss_4 = 0x4; // absolute:0x1508

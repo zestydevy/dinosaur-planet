@@ -20,9 +20,9 @@ void CCkrazoaBits_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void CCkrazoaBits_setup(Object *self, ObjSetup *setup, s32 arg2) {
     CCkrazoaBits_Data *objdata = self->data;
-    objdata->unk0 = main_get_bits(BIT_CC_Activate_Krazoa_Tablet_Slots);
-    objdata->unk1 = main_get_bits(BIT_236);
-    objdata->unk2 = main_get_bits(BIT_237);
+    objdata->unk0 = mainGetBits(BIT_CC_Activate_Krazoa_Tablet_Slots);
+    objdata->unk1 = mainGetBits(BIT_236);
+    objdata->unk2 = mainGetBits(BIT_237);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -30,26 +30,26 @@ void CCkrazoaBits_setup(Object *self, ObjSetup *setup, s32 arg2) {
 void CCkrazoaBits_control(Object *self) {
     CCkrazoaBits_Data *objdata = self->data;
 
-    if (objdata->unk0 == 0 && main_get_bits(BIT_CC_Activate_Krazoa_Tablet_Slots)) {
+    if (objdata->unk0 == 0 && mainGetBits(BIT_CC_Activate_Krazoa_Tablet_Slots)) {
         objdata->unk0 = 1;
-        main_increment_bits(BIT_CC_Krazoa_Tablets);
-        main_set_bits(BIT_23C, 1);
+        mainIncrementBits(BIT_CC_Krazoa_Tablets);
+        mainSetBits(BIT_23C, 1);
     }
-    if (objdata->unk1 == 0 && main_get_bits(BIT_236)) {
+    if (objdata->unk1 == 0 && mainGetBits(BIT_236)) {
         objdata->unk1 = 1;
         objdata->unk4 = 1;
-        main_set_bits(BIT_23C, 1);
-        main_increment_bits(BIT_CC_Krazoa_Tablets);
-        main_set_bits(BIT_23C, 1);
+        mainSetBits(BIT_23C, 1);
+        mainIncrementBits(BIT_CC_Krazoa_Tablets);
+        mainSetBits(BIT_23C, 1);
     }
-    if (objdata->unk2 == 0 && main_get_bits(BIT_237)) {
+    if (objdata->unk2 == 0 && mainGetBits(BIT_237)) {
         objdata->unk2 = 1;
-        main_increment_bits(BIT_CC_Krazoa_Tablets);
-        main_set_bits(BIT_23C, 1);
+        mainIncrementBits(BIT_CC_Krazoa_Tablets);
+        mainSetBits(BIT_23C, 1);
     }
-    if ((objdata->unk4 != 0) && main_get_bits(BIT_13F) && main_get_bits(BIT_140)) {
+    if ((objdata->unk4 != 0) && mainGetBits(BIT_13F) && mainGetBits(BIT_140)) {
         objdata->unk4 = 0;
-        main_set_bits(BIT_23C, 0);
+        mainSetBits(BIT_23C, 0);
     }
 }
 

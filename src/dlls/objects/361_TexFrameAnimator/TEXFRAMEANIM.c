@@ -43,7 +43,7 @@ void TexFrameAnimator_setup(Object* self, TexFrameAnimator_Setup* objSetup, s32 
     }
 
     //Check if already finished playing
-    if ((objData->finished = main_get_bits(objSetup->gamebitFinished))){
+    if ((objData->finished = mainGetBits(objSetup->gamebitFinished))){
         objData->frame = objData->endFrame;
         objData->playing = TRUE;
     }
@@ -65,7 +65,7 @@ void TexFrameAnimator_control(Object* self) {
 
     //Check if texture animation should start
     if (objData->playing == FALSE && 
-        main_get_bits(objSetup->gamebitPlay) && 
+        mainGetBits(objSetup->gamebitPlay) && 
         objData->finished == FALSE) {
 
         objData->frame = 0;
@@ -78,19 +78,19 @@ void TexFrameAnimator_control(Object* self) {
     }
 
     //Get object's local Blocks model
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if (!block || !(block->vtxFlags & 8)) {
         return;
     }
 
     //Get local Block's relevant Material
-    texAnimInst = block_texanim_get_instance(block, objData->materialID);
+    texAnimInst = blockTexanimGetInstance(block, objData->materialID);
     if (!texAnimInst) {
         return;
     }
 
     //Get Block Material's Texture
-    blockTexture = block_texanim_get(texAnimInst->texanimID);
+    blockTexture = blockTexanimGet(texAnimInst->texanimID);
 
     //Advance texture animation frame
     objData->frame += objData->speed * gUpdateRate;
@@ -101,7 +101,7 @@ void TexFrameAnimator_control(Object* self) {
         objData->frame = 0;
     } else if (objData->frame > objData->endFrame) {
         if (objSetup->gamebitFinished != NO_GAMEBIT) {
-            main_set_bits(objSetup->gamebitFinished, TRUE);
+            mainSetBits(objSetup->gamebitFinished, TRUE);
             if (0){
                 diPrintf(" Set bit %i ", objSetup->gamebitFinished);
             }
@@ -123,7 +123,7 @@ void TexFrameAnimator_update(Object *self) { }
 // offset: 0x2C4 | func: 3 | export: 3
 void TexFrameAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility){
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

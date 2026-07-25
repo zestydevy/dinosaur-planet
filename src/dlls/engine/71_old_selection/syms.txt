@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_71_ctor = 0x0;
+dll_71_dtor = 0x28;
+dll_71_update1 = 0x34;
+dll_71_update2 = 0x40;
+dll_71_draw = 0x48;
+
+.rodata = 0x3BC:
+
+.bss = 0x3DC:
+sIndexSelected = 0x0; // absolute:0x3DC
+sButtonsEnabled = 0x4; // absolute:0x3E0

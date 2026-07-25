@@ -94,17 +94,17 @@ void SB_ShipGun_control(Object *self) {
     SRT transform;
     s16 *sp44;
 
-    player = get_player();
+    player = objGetPlayer();
     objdata = self->data;
     setup = (SB_ShipGun_Setup*)self->setup;
-    sp44 = func_80034804(self, 0);
+    sp44 = objExpr_func_80034804(self, 0);
     if (self->parent->id == OBJ_WL_Galleon) {
         self->objhitInfo->unk58 &= ~1;
         objdata->unkF = 0;
         return;
     }
     if (objdata->cloudrunner == NULL) {
-        objects = get_world_objects(&objIndex, &objCount);
+        objects = objGetObjects(&objIndex, &objCount);
         for (i = objIndex; i < objCount; i++) {
             if (objects[i]->id == OBJ_SB_Cloudrunner) {
                 objdata->cloudrunner = objects[i];
@@ -124,9 +124,9 @@ void SB_ShipGun_control(Object *self) {
     case STATE_0:
         objdata->unkF = 0;
         if (self->curModAnimId != 1) {
-            func_80023D30(self, 1, 0.0f, 0);
+            objAnimSet(self, 1, 0.0f, 0);
         }
-        func_80024108(self, 0.0f, gUpdateRate, NULL);
+        objAnimAdvance(self, 0.0f, gUpdateRate, NULL);
         if ((parent != NULL) && (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func9(parent) == 0)) {
             if (setup->gunIndex == 0) { // right gun
                 if ((var_s0_2 == 0) || (var_s0_2 == 3)) {
@@ -139,7 +139,7 @@ void SB_ShipGun_control(Object *self) {
             }
         }
         if (objdata->state == STATE_1) {
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_174_Machinery_Move_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_174_Machinery_Move_A, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
         self->objhitInfo->unk58 &= ~1;
         break;
@@ -149,21 +149,21 @@ void SB_ShipGun_control(Object *self) {
         }
         self->objhitInfo->unk58 &= ~1;
         if (self->curModAnimId != 1) {
-            func_80023D30(self, 1, 0.0f, 0);
+            objAnimSet(self, 1, 0.0f, 0);
         }
-        if (func_80024108(self, 0.01f, gUpdateRate, NULL) != 0) {
+        if (objAnimAdvance(self, 0.01f, gUpdateRate, NULL) != 0) {
             objdata->state = STATE_2;
         }
         objdata->unk8 = 0x50;
         break;
     case STATE_2:
         if (self->curModAnimId != 0) {
-            func_80023D30(self, 0, 0.5f, 0);
+            objAnimSet(self, 0, 0.5f, 0);
         }
         self->objhitInfo->unk58 |= 1;
         if (func_80025F40(self, NULL, NULL, NULL) != 0) {
             objdata->unkA = 0xFF;
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_176_Explosion_A, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(NULL, SOUND_176_Explosion_A, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unkD++;
             if (objdata->unkD == 2) {
                 objdata->state = STATE_3;
@@ -171,7 +171,7 @@ void SB_ShipGun_control(Object *self) {
                     ((DLL_572_SB_Galleon*)parent->dll)->vtbl->func7(parent);
                 }
             } else if (objdata->unkD == 4) {
-                gDLL_6_AMSFX->vtbl->play(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->state = STATE_3;
                 for (i = 5; i != 0; i--) {
                     gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, 2, -1, NULL);
@@ -186,10 +186,10 @@ void SB_ShipGun_control(Object *self) {
         }
         dx1 = player->globalPosition.f[0] - self->globalPosition.f[0];
         dz1 = player->globalPosition.f[2] - self->globalPosition.f[2];
-        self->srt.yaw = arctan2_f(-dz1, dx1) * 2;
+        self->srt.yaw = mathAtan2f(-dz1, dx1) * 2;
         new_var = self->globalPosition.f[1];
         dy1 = player->globalPosition.f[1] - new_var;
-        objdata->unk6 = arctan2_f(-dy1, sqrtf((dx1 * dx1) + (dz1 * dz1)));
+        objdata->unk6 = mathAtan2f(-dy1, sqrtf((dx1 * dx1) + (dz1 * dz1)));
         if (objdata->unk6 >= 0x1F41) {
             objdata->unk6 = 0x1F40;
         } else if (objdata->unk6 < (-0x1F40)) {
@@ -198,7 +198,7 @@ void SB_ShipGun_control(Object *self) {
         *sp44 = objdata->unk6;
         objdata->unk8 -= gUpdateRate;
         if (objdata->unk8 < 0) {
-            get_object_child_position(self, &sp98, &sp94, &sp90);
+            camGetObjectChildPosition(self, &sp98, &sp94, &sp90);
             transform.transl.x = 0.0f;
             transform.transl.y = 0.0f;
             transform.transl.z = 0.0f;
@@ -209,8 +209,8 @@ void SB_ShipGun_control(Object *self) {
             sp84.x = 100.0f;
             sp84.y = 135.f;
             sp84.z = 0.0f;
-            rotate_vec3(&transform, (f32*)(&sp84));
-            cannonballSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_CannonBall);
+            mathRotateRPY(&transform, (f32*)(&sp84));
+            cannonballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_CannonBall);
             cannonballSetup->x = sp84.x + sp98;
             cannonballSetup->y = sp84.y + sp94;
             cannonballSetup->z = sp84.z + sp90;
@@ -218,7 +218,7 @@ void SB_ShipGun_control(Object *self) {
             cannonballSetup->fadeFlags = 1;
             cannonballSetup->loadDistance = 0xFF;
             cannonballSetup->fadeDistance = 0xFF;
-            cannonballObj = obj_create(cannonballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+            cannonballObj = objSetupObject(cannonballSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
             if (0) { }
             dx = (dx1 = objdata->cloudrunner->globalPosition.x - self->globalPosition.x);
             dy = objdata->cloudrunner->globalPosition.y - (self->globalPosition.y + 100.0f);
@@ -233,12 +233,12 @@ void SB_ShipGun_control(Object *self) {
             cannonballObj->srt.transl.x += dy * 8.0f;
             cannonballObj->srt.transl.y += cannonballObj->velocity.y * 8.0f;
             cannonballObj->srt.transl.z += cannonballObj->velocity.z * 8.0f;
-            cannonballObj->srt.yaw = arctan2_f(cannonballObj->velocity.x, cannonballObj->velocity.z);
+            cannonballObj->srt.yaw = mathAtan2f(cannonballObj->velocity.x, cannonballObj->velocity.z);
             cannonballObj->unkDC = 0xB4;
             cannonballObj->unkE0 = (s32) objdata->cloudrunner;
-            camera_enable_y_offset();
-            camera_set_shake_offset(0.1f);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
+            camUseShake();
+            camSetShakeOffset(0.1f);
+            dll_amSfx->Play(NULL, SOUND_96_Cannon, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unk10++;
             if (objdata->unk10 == 3) {
                 objdata->unk8 = 0x10E;
@@ -250,11 +250,11 @@ void SB_ShipGun_control(Object *self) {
         break;
     case STATE_3:
         self->objhitInfo->unk58 &= ~1;
-        get_object_child_position(self, &sp98, &sp94, &sp90);
+        camGetObjectChildPosition(self, &sp98, &sp94, &sp90);
         if (self->curModAnimId != 1) {
             for (i = 0; i != 6; i++) {
                 if (objdata->unkE == 1) {
-                    debrisSetup = obj_alloc_setup(sizeof(ObjSetup), OBJ_SB_Debris);
+                    debrisSetup = objAllocSetup(sizeof(ObjSetup), OBJ_SB_Debris);
                     debrisSetup->x = sp98;
                     debrisSetup->y = sp94 + 135.0f;
                     debrisSetup->z = sp90;
@@ -262,23 +262,23 @@ void SB_ShipGun_control(Object *self) {
                     debrisSetup->fadeFlags = 2;
                     debrisSetup->loadDistance = 0xFF;
                     debrisSetup->fadeDistance = 0xFF;
-                    obj_create(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+                    objSetupObject(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
                 }
                 gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, PARTFXFLAG_2, -1, NULL);
-                main_set_bits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
+                mainSetBits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
             }
             if (objdata->unkE > 0) {
                 objdata->unkE--;
             }
-            func_80023D30(self, 1, 1.0f, 0U);
-            gDLL_6_AMSFX->vtbl->play(NULL, SOUND_175_Machinery_Move_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+            objAnimSet(self, 1, 1.0f, 0U);
+            dll_amSfx->Play(NULL, SOUND_175_Machinery_Move_B, MAX_VOLUME, NULL, NULL, 0, NULL);
         }
-        if (func_80024108(self, -0.01f, gUpdateRate, NULL) != 0) {
+        if (objAnimAdvance(self, -0.01f, gUpdateRate, NULL) != 0) {
             objdata->state = STATE_0;
         }
         break;
     case STATE_4:
-        obj_destroy_object(self);
+        objFreeObject(self);
         break;
     }
 }
@@ -306,9 +306,9 @@ void SB_ShipGun_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
         return;
     if (visibility && objdata->unkE != 0 && objdata->unkF != 0) {
         if (objdata->unkA != 0) {
-            func_80036F6C(0xFF, 0xFF - objdata->unkA, 0xFF - objdata->unkA);
+            objprintSetMultiplierColor(0xFF, 0xFF - objdata->unkA, 0xFF - objdata->unkA);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -57,14 +57,12 @@ void osScGetAudioSPStats(f32 *timer0, f32 *timer1, f32 *timer2);
 
 void __scMain(void *arg);
 
-void sc_signal_do_audio(OSSched *sc);
+void scSignalDoAudio(OSSched *sc);
 
 /**
  * Gets a string for a OSScTask task type.
  */
-char *sc_get_task_type_string(u32 taskType);
-
-void some_dummied_task_func(OSScTask *task);
+char *scGetTaskTypeString(u32 taskType);
 
 Gfx *sc_func_8003BAD0(OSSched *sc, 
     const char **retFile, u32 *retunkC, Gfx **retunk10,

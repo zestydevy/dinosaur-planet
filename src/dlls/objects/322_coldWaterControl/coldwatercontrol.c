@@ -63,7 +63,7 @@ void ColdWaterControl_control(Object* self) {
             objData->timer = COLDWATER_INITIAL;
         }
     } else {
-        objData->player = get_player();
+        objData->player = objGetPlayer();
     }
 }
 

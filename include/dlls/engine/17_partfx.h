@@ -9,17 +9,22 @@ enum ParticleID {
     PARTICLE_2 = 0x2, //cannon blast
     PARTICLE_5 = 0x5,
     PARTICLE_9 = 0x9, //debris explosion
+    PARTICLE_26 = 0x26,
     PARTICLE_3C = 0x3C,
     PARTICLE_42 = 0x42,
     PARTICLE_47 = 0x47,
+    PARTICLE_56 = 0x56,
+    PARTICLE_57 = 0x57,
+    PARTICLE_58 = 0x58,
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_69 = 0x69, //nothing?
-    PARTICLE_75 = 0x75,
+    PARTICLE_6D = 0x6D,
+    PARTICLE_75 = 0x75, //Transporter - horizontal blue magic explosion
     PARTICLE_77 = 0x77,
-    PARTICLE_78 = 0x78,
-    PARTICLE_79 = 0x79,
-    PARTICLE_7A = 0x7A,
+    PARTICLE_78 = 0x78, //Transporter - large ripple
+    PARTICLE_79 = 0x79, //Transporter - blue glow
+    PARTICLE_7A = 0x7A, //Transporter - small sparkles (floating outward, then attracting inwards)
     PARTICLE_84 = 0x84, // implemented by DLL 40
     PARTICLE_85 = 0x85, // implemented by DLL 40
     /* --- DLL 40 START --- */
@@ -52,6 +57,22 @@ enum ParticleID {
     /* --- DLL 44 END --- */
     /* --- DLL 37 START --- */
     PARTICLE_190 = 0x190,
+    PARTICLE_19E = 0x19E,
+    PARTICLE_19F = 0x19F,
+    PARTICLE_1A0 = 0x1A0,
+    PARTICLE_1A9 = 0x1A9,
+    PARTICLE_1AA = 0x1AA,
+    PARTICLE_1AB = 0x1AB,
+    PARTICLE_1AC = 0x1AC,
+    PARTICLE_1AD = 0x1AD,
+    PARTICLE_1AE = 0x1AE,
+    PARTICLE_1AF = 0x1AF,
+    PARTICLE_1B0 = 0x1B0,
+    PARTICLE_1B1 = 0x1B1,
+    PARTICLE_1B2 = 0x1B2,
+    PARTICLE_1BB = 0x1BB,
+    PARTICLE_1BC = 0x1BC,
+    PARTICLE_1BD = 0x1BD,
     PARTICLE_1F3 = 0x1F3,
     /* --- DLL 37 END --- */
     /* --- DLL 36 START --- */
@@ -69,6 +90,7 @@ enum ParticleID {
     PARTICLE_279 = 0x279, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_27A = 0x27A, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_286 = 0x286,
+    PARTICLE_28A = 0x28A,
     PARTICLE_2BB = 0x2BB,
     /* --- DLL 35 END --- */
     PARTICLE_320 = 0x320, // big expanding cloud of mist         (WaterWallSpray)
@@ -90,7 +112,10 @@ enum ParticleID {
     PARTICLE_Green_Slime_Drop = 0x335,
     PARTICLE_336 = 0x336,
     PARTICLE_340 = 0x340,
+    PARTICLE_342 = 0x342,
     PARTICLE_343 = 0x343,
+    PARTICLE_344 = 0x344,
+    PARTICLE_345 = 0x345,
     PARTICLE_34C = 0x34C,
     PARTICLE_34D = 0x34D,
     PARTICLE_34E = 0x34E,
@@ -117,6 +142,7 @@ enum ParticleID {
     PARTICLE_3C4 = 0x3C4,
     PARTICLE_3C5 = 0x3C5,
     PARTICLE_3DD = 0x3DD,
+    PARTICLE_3DE = 0x3DE,
     /* --- DLL 42 END --- */
     PARTICLE_Gasvent_Gas = 0x3DF,
     /* --- DLL 48 START --- */
@@ -181,6 +207,10 @@ enum ParticleID {
     PARTICLE_54E = 0x54E,
     PARTICLE_54F = 0x54F,
     PARTICLE_550 = 0x550,
+    PARTICLE_551 = 0x551,
+    PARTICLE_552 = 0x552,
+    PARTICLE_553 = 0x553,
+    PARTICLE_554 = 0x554,
     PARTICLE_555 = 0x555,
     /* --- DLL 34 START --- */
     PARTICLE_5DD = 0x5DD,

@@ -59,9 +59,9 @@ void dll_246_setup(Object* self, DLL426_Setup* setup, s32 arg2) {
         if (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, objdata->unk14, (s32* ) _data_0, -1) == 0) {
             objdata->unk24 = (u8) (objdata->unk24 | 1);
         }
-        objdata->unk1C = gDLL_6_AMSFX->vtbl->play(self, SOUND_B83, MAX_VOLUME, NULL, NULL, 0, NULL);
-        objdata->unk20 = gDLL_6_AMSFX->vtbl->play(self, SOUND_B83, HALF_VOLUME+1, NULL, NULL, 0, NULL);
-        gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk20, 0.7f);
+        objdata->unk1C = dll_amSfx->Play(self, SOUND_B83, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objdata->unk20 = dll_amSfx->Play(self, SOUND_B83, HALF_VOLUME+1, NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(objdata->unk20, 0.7f);
     }
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -89,10 +89,10 @@ void dll_246_control(Object* self) {
     if (objdata->unk18 > 1.0f) {
         objdata->unk18 = (f32) (objdata->unk18 - 0.005f);
     }
-    gDLL_6_AMSFX->vtbl->set_pitch(objdata->unk1C, (fsin16_precise((s16) (objdata->unk26 + objdata->unk28)) * 0.05f) + objdata->unk18);
-    gDLL_6_AMSFX->vtbl->set_vol(objdata->unk1C, (u32) (objdata->unk18 * 63.0f) );
+    dll_amSfx->SetPitch(objdata->unk1C, (mathSinfInterp((s16) (objdata->unk26 + objdata->unk28)) * 0.05f) + objdata->unk18);
+    dll_amSfx->SetVol(objdata->unk1C, (u32) (objdata->unk18 * 63.0f) );
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_336, NULL, 2, -1, &objdata->unk18);
-    objdata->player = get_player();
+    objdata->player = objGetPlayer();
     if (objdata->player != NULL) {
         sp58.f[0] = objdata->player->globalPosition.x - self->globalPosition.x;
         sp58.f[1] = objdata->player->globalPosition.y - self->globalPosition.y;
@@ -100,9 +100,9 @@ void dll_246_control(Object* self) {
         objdata->unkC = VECTOR_MAGNITUDE(sp58);
     }
     if (sp68 != NULL) {
-        sp58.f[0] = sp68->unk68.x - self->globalPosition.x;
-        sp58.f[1] = sp68->unk68.y - self->globalPosition.y;
-        sp58.f[2] = sp68->unk68.z - self->globalPosition.z;
+        sp58.f[0] = sp68->unk0.unk68.x - self->globalPosition.x;
+        sp58.f[1] = sp68->unk0.unk68.y - self->globalPosition.y;
+        sp58.f[2] = sp68->unk0.unk68.z - self->globalPosition.z;
         objdata->unk10 = VECTOR_MAGNITUDE(sp58);
     }
     if (objdata->unk24 & 2) {
@@ -134,17 +134,17 @@ void dll_246_free(Object* self, s32 arg1) {
     void* temp_a0;
 
     objdata = self->data;
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     temp_a0 = objdata->unk0;
     if (temp_a0 != NULL) {
         mmFree(temp_a0);
         objdata->unk0 = 0;
     }
     if (objdata->unk1C != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk1C);
+        dll_amSfx->Stop(objdata->unk1C);
     }
     if (objdata->unk20 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk20);
+        dll_amSfx->Stop(objdata->unk20);
     }
 }
 
@@ -164,21 +164,21 @@ static void dll_246_func_6C8(Object* self, DLL246_Data* objdata) {
 
     temp_s1 = objdata->unk0;
     if (
-        ((curves_func_800053B0(temp_s1, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk10)) && 
+        ((curves_func_800053B0(&temp_s1->unk0, objdata->unk8) != 0) || (_bss_0 != temp_s1->unk0.unk10)) && 
         (gDLL_26_Curves->vtbl->func_4704(temp_s1) != 0) && 
         (gDLL_26_Curves->vtbl->func_4288(objdata->unk0, self, 400.0f, _data_0, -1) != 0)
    ) {
         objdata->unk24 &= ~1;
     }
-    _bss_0 = temp_s1->unk10;
+    _bss_0 = temp_s1->unk0.unk10;
     if (objdata->unk24 & 2) {
         self->velocity.f[0] += (objdata->player->srt.transl.f[0] - self->srt.transl.f[0]) * 0.003f;
         self->velocity.f[1] += ((objdata->player->srt.transl.f[1] + 30.0f) - self->srt.transl.f[1]) * 0.003f;
         self->velocity.f[2] += ((objdata->player->srt.transl.f[2] - self->srt.transl.f[2]) * 0.003f);
     } else {
-        self->velocity.f[0] += (temp_s1->unk68.f[0] - self->srt.transl.f[0]) * 0.003f;
-        self->velocity.f[1] += (temp_s1->unk68.f[1] - self->srt.transl.f[1]) * 0.003f;
-        self->velocity.f[2] += ((temp_s1->unk68.f[2] - self->srt.transl.f[2]) * 0.003f);
+        self->velocity.f[0] += (temp_s1->unk0.unk68.f[0] - self->srt.transl.f[0]) * 0.003f;
+        self->velocity.f[1] += (temp_s1->unk0.unk68.f[1] - self->srt.transl.f[1]) * 0.003f;
+        self->velocity.f[2] += ((temp_s1->unk0.unk68.f[2] - self->srt.transl.f[2]) * 0.003f);
     }
     self->velocity.f[0] *= 0.9f;
     self->velocity.f[1] *= 0.9f;
@@ -201,11 +201,11 @@ static void dll_246_func_6C8(Object* self, DLL246_Data* objdata) {
     if (self->velocity.f[2] < -0.8f) {
         self->velocity.f[2] = -0.8f;
     }
-    obj_move(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
+    objMove(self, self->velocity.f[0] * gUpdateRateF, self->velocity.f[1] * gUpdateRateF, self->velocity.f[2] * gUpdateRateF);
     objdata->unk26 += (s16) (32.0f * gUpdateRateF);
     objdata->unk28 += (s16) (23.0f * gUpdateRateF);
-    self->srt.yaw += (s16) (fsin16_precise(objdata->unk26) * 182.0f * 4.0f);
-    self->srt.roll += (s16) (fsin16_precise(objdata->unk28) * 182.0f * 4.0f);
+    self->srt.yaw += (s16) (mathSinfInterp(objdata->unk26) * 182.0f * 4.0f);
+    self->srt.roll += (s16) (mathSinfInterp(objdata->unk28) * 182.0f * 4.0f);
     
     
 }

@@ -64,7 +64,7 @@ void dll_776_update(Object *self) { }
 // offset: 0x19C | func: 3 | export: 3
 void dll_776_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -86,7 +86,7 @@ static f32 dll_776_func_224(Object* arg0) {
     f32 sp24;
 
     sp24 = 10000.0f;
-    if (obj_get_nearest_type_to(OBJTYPE_Baddie, arg0, &sp24) == NULL) {
+    if (objGetNearestTypeTo(OBJTYPE_Baddie, arg0, &sp24) == NULL) {
         return 0.0f;
     }
     if (sp24 < 200.0f) {

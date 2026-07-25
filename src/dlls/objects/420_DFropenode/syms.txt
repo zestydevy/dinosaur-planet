@@ -1,0 +1,37 @@
+.text = 0x0:
+dll_420_ctor = 0x0;
+dll_420_dtor = 0xC;
+dll_420_setup = 0x18;
+dll_420_control = 0xAC;
+dll_420_update = 0x578;
+dll_420_print = 0x584;
+dll_420_free = 0x984;
+dll_420_get_model_flags = 0xAB4;
+dll_420_get_data_size = 0xAC4;
+dll_420_func_AD8 = 0xAD8;
+dll_420_func_DFC = 0xDFC;
+dll_420_func_E28 = 0xE28;
+dll_420_func_F04 = 0xF04;
+dll_420_func_FDC = 0xFDC;
+dll_420_func_1098 = 0x1098;
+dll_420_func_135C = 0x135C;
+dll_420_func_148C = 0x148C;
+dll_420_func_149C = 0x149C;
+dll_420_func_14AC = 0x14AC;
+dll_420_func_14F0 = 0x14F0;
+dll_420_func_1514 = 0x1514;
+dll_420_func_152C = 0x152C;
+dll_420_func_18BC = 0x18BC;
+dll_420_func_18FC = 0x18FC;
+dll_420_func_1994 = 0x1994;
+dll_420_func_1A8C = 0x1A8C;
+dll_420_func_1C48 = 0x1C48;
+dll_420_func_1EF0 = 0x1EF0;
+
+.rodata = 0x2064:
+rodata_0 = 0x0; // absolute:0x2064
+rodata_60 = 0x60; // absolute:0x20C4
+
+.data = 0x21A4:
+data_0 = 0x0; // absolute:0x21A4
+data_4 = 0x4; // absolute:0x21A8

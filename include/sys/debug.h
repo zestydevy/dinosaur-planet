@@ -3,8 +3,8 @@
 
 #include "PR/ultratypes.h"
 
-void debug_toggle(s8 enabled);
-s8 debug_is_enabled();
-s32 debug_tick();
+void debugToggle(s8 enabled);
+s8 debugIsEnabled(void);
+s32 debugTick(void);
 
 #endif //_SYS_DEBUG_H

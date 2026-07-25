@@ -29,7 +29,7 @@ typedef enum {
     BIT_16 = 0x16, // len:1 group:1
     BIT_17 = 0x17, // len:1 group:0
     BIT_18 = 0x18, // len:1 group:1
-    BIT_19 = 0x19, // len:1 group:1
+    BIT_DF_Cradle_Powered = 0x19, // len:1 group:1
     BIT_1A = 0x1A, // len:1 group:1
     BIT_1B = 0x1B, // len:1 group:1
     BIT_1C = 0x1C, // len:1 group:0
@@ -193,7 +193,7 @@ typedef enum {
     BIT_BA = 0xBA, // len:1 group:0
     BIT_BB = 0xBB, // len:1 group:0
     BIT_BC = 0xBC, // len:1 group:0
-    BIT_BD = 0xBD, // len:1 group:2
+    BIT_WM_EarthWalker_Died = 0xBD, // len:1 group:2
     BIT_BE = 0xBE, // len:1 group:1
     BIT_SH_Move_Thorntail_Blocking_Hollow_Log = 0xBF, // len:1 group:1 task:10
     BIT_C0 = 0xC0, // len:1 group:1
@@ -495,8 +495,8 @@ typedef enum {
     BIT_1E8 = 0x1E8, // len:1 group:1
     BIT_1E9 = 0x1E9, // len:1 group:1
     BIT_Tutorial_Fire_Crystal = 0x1EA, // len:1 group:1 [TUTORIAL]
-    BIT_1EB = 0x1EB, // len:1 group:2
-    BIT_1EC = 0x1EC, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Solo_Defeated = 0x1EB, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_1 = 0x1EC, // len:1 group:2
     BIT_Dino_Bag_Red_Grubs = 0x1ED, // len:6 group:1    [INVENTORY]
     BIT_Horn_of_Truth = 0x1EE, // len:1 group:1         [INVENTORY]
     BIT_1EF = 0x1EF, // len:1 group:1
@@ -558,7 +558,7 @@ typedef enum {
     BIT_WM_Spirit_Release_Effect = 0x227, // len:1 group:0
     BIT_Played_Seq_022F_CC_Lightfoot_Gives_Spellpage = 0x228, // len:1 group:2
     BIT_Boss_Galadon_Map_Setup = 0x229, // len:4 group:1
-    BIT_22A = 0x22A, // len:1 group:2
+    BIT_CC_SandWormBoss_SharpClaw_Pair_Defeated_2 = 0x22A, // len:1 group:2
     BIT_SpellStone_DIM_Activated = 0x22B, // len:1 group:1 (SpellStone #1, DarkIce Mines) [INVENTORY]
     BIT_Dino_Foodbag_Give = 0x22C, // len:1 group:1  set by sidefoodbag during setup
     BIT_22D = 0x22D, // len:1 group:3
@@ -663,7 +663,7 @@ typedef enum {
     BIT_290 = 0x290, // len:1 group:1
     BIT_291 = 0x291, // len:1 group:1
     BIT_292 = 0x292, // len:1 group:3
-    BIT_293 = 0x293, // len:1 group:0
+    BIT_DF_Cave_Door_Hidden = 0x293, // len:1 group:0
     BIT_294 = 0x294, // len:1 group:1
     BIT_295 = 0x295, // len:1 group:3
     BIT_296 = 0x296, // len:1 group:2
@@ -750,7 +750,7 @@ typedef enum {
     BIT_2E7 = 0x2E7, // len:1 group:2
     BIT_SpellStone_CRF = 0x2E8, // len:1 group:1 (SpellStone #2, CloudRunner Fortress) [INVENTORY]
     BIT_WM_Setup5_Sabre_Dock_Rounded_Corner = 0x2E9, // len:1 group:0
-    BIT_2EA = 0x2EA, // len:1 group:1
+    BIT_Krystal_Fishing_Net = 0x2EA, // len:1 group:1 (Krystal bought/found a fishing net - known via the fish DLL, plus the `fishingnetColle` object in the old Level Select's "Energy Demo" setting this gamebit when collected.)
     BIT_2EB = 0x2EB, // len:1 group:1
     BIT_2EC = 0x2EC, // len:1 group:1
     BIT_WM_Setup5_Sabre_Entered_Hall_Antechamber = 0x2ED, // len:1 group:1
@@ -982,9 +982,9 @@ typedef enum {
     BIT_3CF = 0x3CF, // len:1 group:1
     BIT_3D0 = 0x3D0, // len:1 group:0
     BIT_3D1 = 0x3D1, // len:1 group:1
-    BIT_3D2 = 0x3D2, // len:1 group:2
-    BIT_3D3 = 0x3D3, // len:1 group:2
-    BIT_3D4 = 0x3D4, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_Waterfall_Cave = 0x3D2, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_Ruins_Cave = 0x3D3, // len:1 group:2
+    BIT_CC_Fire_Crystal_Collected_SandWorm_Boss = 0x3D4, // len:1 group:2
     BIT_CC_Fire_Crystal = 0x3D5, // len:2 group:2   [INVENTORY]
     BIT_3D6 = 0x3D6, // len:1 group:2
     BIT_3D7 = 0x3D7, // len:1 group:2
@@ -997,7 +997,7 @@ typedef enum {
     BIT_CC_Placed_Fire_Crystal_Courtyard_Beacon = 0x3DE, // len:1 group:2 The beacon beyond the Portal Door
     BIT_CC_Placed_Fire_Crystal_Island_Beacon = 0x3DF, // len:1 group:2    The beacon on the island at the back of Cape Claw
     BIT_Front_End_ObjGroup_Bits = 0x3E0, // len:32 group:3
-    BIT_3E1 = 0x3E1, // len:1 group:1
+    BIT_Sabre_Fishing_Net = 0x3E1, // len:1 group:1 (Sabre bought/found a fishing net - known via the fish DLL)
     BIT_3E2 = 0x3E2, // len:1 group:0
     BIT_3E3 = 0x3E3, // len:1 group:0
     BIT_Scarab_Count_Krystal = 0x3E4, // len:8 group:2
@@ -1023,7 +1023,7 @@ typedef enum {
     BIT_Tricky_Ball_Unlocked = 0x3F8, // len:1 group:2 [SIDEKICK COMMAND]
     BIT_3F9 = 0x3F9, // len:1 group:2
     BIT_3FA = 0x3FA, // len:1 group:2
-    BIT_3FB = 0x3FB, // len:1 group:2
+    BIT_CC_SandWormBoss_Defeated = 0x3FB, // len:1 group:2
     BIT_3FC = 0x3FC, // len:1 group:2
     BIT_3FD = 0x3FD, // len:1 group:2
     BIT_3FE = 0x3FE, // len:1 group:1
@@ -1064,8 +1064,8 @@ typedef enum {
     BIT_Galleon_Inside_ObjGroup_Bits = 0x421, // len:32 group:3
     BIT_422 = 0x422, // len:1 group:1
     BIT_423 = 0x423, // len:1 group:1
-    BIT_424 = 0x424, // len:1 group:1
-    BIT_425 = 0x425, // len:1 group:1
+    BIT_DB_Nest_Egg_Added = 0x424, // len:1 group:1
+    BIT_DB_Nest_Added_All_Eggs = 0x425, // len:1 group:1
     BIT_426 = 0x426, // len:1 group:1
     BIT_427 = 0x427, // len:1 group:1
     BIT_428 = 0x428, // len:4 group:1
@@ -1107,7 +1107,7 @@ typedef enum {
     BIT_44C = 0x44C, // len:1 group:1
     BIT_44D = 0x44D, // len:1 group:1
     BIT_44E = 0x44E, // len:1 group:1
-    BIT_44F = 0x44F, // len:1 group:0
+    BIT_Menus_Selection_Blocked = 0x44F, // len:1 group:0
     BIT_450 = 0x450, // len:1 group:1
     BIT_451 = 0x451, // len:1 group:0
     BIT_SH_ObjGroup_Bits = 0x452, // len:32 group:3
@@ -1692,7 +1692,7 @@ typedef enum {
     BIT_695 = 0x695, // len:1 group:1
     BIT_696 = 0x696, // len:1 group:1
     BIT_697 = 0x697, // len:1 group:0
-    BIT_698 = 0x698, // len:3 group:1
+    BIT_698 = 0x698, // len:3 group:1 (Active firefly count?)
     BIT_699 = 0x699, // len:1 group:0
     BIT_Discovered_Duster_1  = 0x69A, // len:1 group:1
     BIT_Discovered_Duster_2  = 0x69B, // len:1 group:1
@@ -2328,7 +2328,7 @@ typedef enum {
     BIT_Shown_ZLock_Interact_Message = 0x912, // len:1 group:2
     BIT_913 = 0x913, // len:1 group:2
     BIT_Tutorial_Magic_Plant = 0x914, // len:1 group:2 [TUTORIAL]
-    BIT_915 = 0x915, // len:1 group:2
+    BIT_Tutorial_ZLock_Talk = 0x915, // len:1 group:2 [TUTORIAL]
     BIT_916 = 0x916, // len:1 group:2
     BIT_GP_Bonfire_Kindling_Placed = 0x917, // len:1 group:0
     BIT_GP_Bonfire_Burning = 0x918, // len:1 group:0

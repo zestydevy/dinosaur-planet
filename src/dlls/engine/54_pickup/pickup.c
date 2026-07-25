@@ -24,7 +24,7 @@ void pickup_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void pickup_setup(Object* obj, Pickup* pickup, s16 arg2) {
-    obj_add_object_type(obj, OBJTYPE_Pickup);
+    objAddObjectType(obj, OBJTYPE_Pickup);
     pickup->unk2 = arg2;
 }
 
@@ -40,13 +40,13 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
     Object* var_t2;
     s32 temp_v0;
     s32 i;
-    Func_80057F1C_Struct** sp58;
+    TrackHeightResult** sp58;
     f32 var_fv0;
 
     pickup = obj->data;
     pickup->unk8 = 0;
     pickup->flags &= ~PICKUPFLAG_PickedUpThisTick;
-    player = get_player();
+    player = objGetPlayer();
     if (pickup->state == PICKUP_NotHeld) {
         // Not currently held
         pickup->state = pickup_should_pickup(obj, player, pickup);
@@ -63,20 +63,20 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
                 obj->srt.transl.y += obj->velocity.y * gUpdateRateF;
             }
             // Do track collision
-            temp_v0 = func_80057F1C(obj, obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, &sp58, 0, 1);
+            temp_v0 = trackGetHeight(obj, obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, &sp58, 0, 1);
             var_t2 = NULL;
             for (i = 0; i < temp_v0; i++) {
                 if (sp58[i]->unk14 != 0xE) {
-                    if ((obj->srt.transl.y < sp58[i]->unk0[0]) && ((sp58[i]->unk0[0] - 40.0f) < obj->srt.transl.y)) {
-                        var_t2 = sp58[i]->unk10;
-                        obj->srt.transl.y = sp58[i]->unk0[0];
+                    if ((obj->srt.transl.y < sp58[i]->y) && ((sp58[i]->y - 40.0f) < obj->srt.transl.y)) {
+                        var_t2 = sp58[i]->obj;
+                        obj->srt.transl.y = sp58[i]->y;
                         obj->velocity.y = 0.0f;
                         break;
                     }
                 }
             }
             for (i = 0; i < temp_v0; i++) {
-                var_fv0 = obj->srt.transl.y - sp58[i]->unk0[0];
+                var_fv0 = obj->srt.transl.y - sp58[i]->y;
                 if (var_fv0 < 0.0f) {
                     var_fv0 = -var_fv0;
                 }
@@ -96,10 +96,10 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
         // Currently held
         func_8002681C(obj);
         obj->unkAF |= ARROW_FLAG_8_No_Targetting;
-        if (joy_get_pressed(0) & A_BUTTON) {
-            joy_disable_buttons(0, A_BUTTON);
+        if (joyGetPressed(0) & A_BUTTON) {
+            joyDisableButtons(0, A_BUTTON);
             if ((pickup->flags & PICKUPFLAG_DropDisabled) || (((DLL_210_Player*)player->dll)->vtbl->func49(player) == 0)) {
-                gDLL_6_AMSFX->vtbl->play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(player, SOUND_912_Object_Refused, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else {
                 pickup->unk6 = 0;
             }
@@ -113,12 +113,12 @@ s32 pickup_control(Object* obj, UNUSED Pickup* _pickup) {
             pickup->state = PICKUP_NotHeld;
             pickup->unk6 = 0;
             if (!(pickup->flags & PICKUPFLAG_DontSave)) {
-                map_save_object(obj->setup, obj->mapID, obj->srt.transl.x, obj->srt.transl.y + 10.0f, obj->srt.transl.z);
+                mapSaveObject(obj->setup, obj->mapID, obj->srt.transl.x, obj->srt.transl.y + 10.0f, obj->srt.transl.z);
             }
         }
         if (pickup->unk6 != 0) {
             // Send message to player to pickup this object
-            obj_send_mesg(player, 0x100008, obj, (void* ) ((pickup->unk2 << 0x10) | (pickup->unk0 & 0xFFFF)));
+            objSendMesg(player, 0x100008, obj, (void* ) ((pickup->unk2 << 0x10) | (pickup->unk0 & 0xFFFF)));
         }
     }
     return pickup->state;
@@ -147,7 +147,7 @@ s32 pickup_should_print(Object* obj, s32 visibility) {
 
 // offset: 0x664 | func: 3 | export: 3
 void pickup_free(Object* obj) {
-    obj_free_object_type(obj, OBJTYPE_Pickup);
+    objFreeObjectType(obj, OBJTYPE_Pickup);
 }
 
 // offset: 0x6A0 | func: 4 | export: 4
@@ -206,7 +206,7 @@ void pickup_drop(Object* obj, Pickup* pickup) {
     Object* player;
     Object* heldObj;
 
-    player = get_player();
+    player = objGetPlayer();
     pickup->state = PICKUP_NotHeld;
 
     // Get held object
@@ -225,7 +225,7 @@ static s32 pickup_should_pickup(Object* obj, Object* player, Pickup* pickup) {
             && (obj->unkAF & ARROW_FLAG_1_Interacted) 
             && (obj->unkE0 == 0)) {
         pickup->unk0 = 0;
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         shouldPickup = TRUE;
     }
 

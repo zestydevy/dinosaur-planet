@@ -138,7 +138,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
     self->srt.yaw = objSetup->yaw << 8;
 
     //Check if character's interactions already finished
-    if (main_get_bits(objSetup->gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         objData->finished = TRUE;
     }
 
@@ -155,11 +155,11 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
         objData->behaviourFunction = DR_NPC_guardclaw_behaviour;
         objData->soundsAttack = dSoundsGuardClawAttack;
         objData->soundsTalk   = dSoundsGuardClaw;
-        obj_add_object_type(self, OBJTYPE_Baddie);
+        objAddObjectType(self, OBJTYPE_Baddie);
 
         //Hide self and stop updating after Illusion Spell used
         if (objData->finished) {
-            obj_free_tick(self);
+            objDisable(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
         }
 
@@ -169,11 +169,11 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
     //Start playing one of two idle animations, picked at random
     objData->animSpeed = 0.01f;
-    func_80023D30(self, objData->modAnims[rand_next(0, 1)], 0.0f, 0);
+    objAnimSet(self, objData->modAnims[mathRnd(0, 1)], 0.0f, 0);
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
-    create_temp_dll(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_53_MOVELIB);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func2(self, &objData->movedata, -0x11C7, 0x3554, 3);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func5(&objData->movedata, 300, 120);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func6(&objData->movedata, dDLL53Array2, dDLL53Array1, 3);
@@ -197,7 +197,7 @@ void DR_NPC_control(Object* self) {
 
     //Run character-specific behaviour, and set a gamebit when character's task finished (SharpClaw fed, GuardClaw tricked)
     if ((objData->finished == FALSE) && objData->behaviourFunction(self)) {
-        main_set_bits(objSetup->gamebitFinished, 1);
+        mainSetBits(objSetup->gamebitFinished, 1);
         objData->finished = TRUE;
     }
 
@@ -209,7 +209,7 @@ void DR_NPC_control(Object* self) {
     if (temp != 0) {
         diPrintf(" YAW DIFF ");
         if (self->curModAnimId != objData->modAnims[2]) {
-            func_80023D30(self, objData->modAnims[2], 0, 0);
+            objAnimSet(self, objData->modAnims[2], 0, 0);
         }
         self->srt.yaw += (temp + 1) >> 4;
         objData->animSpeed = (temp / 1024) * 0.01f;
@@ -217,24 +217,24 @@ void DR_NPC_control(Object* self) {
         //Return to idle animation when rotation finished
         if (((temp >= 0) ? temp : -temp) < 0x400) {
             self->srt.yaw = objSetup->yaw << 8;
-            func_80023D30(self, objData->modAnims[rand_next(0, 1)], 0, 0);
+            objAnimSet(self, objData->modAnims[mathRnd(0, 1)], 0, 0);
             objData->animSpeed = 0.01f;
         }
     }
 
     //Talk at random intervals
     if ((objData->talkTimer -= gUpdateRate) < 0) {
-        objData->talkTimer = rand_next(50, 500);
-        func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[rand_next(0, 1)].soundID, 0);
+        objData->talkTimer = mathRnd(50, 500);
+        objExpr_func_80034B54(self, &objData->headAnimTalk, &objData->soundsTalk[mathRnd(0, 1)].soundID, 0);
     }
 
     //Pick the next animation to play after the current one ends
-    if (func_80024108(self, objData->animSpeed, gUpdateRateF, &objData->animData)) {
+    if (objAnimAdvance(self, objData->animSpeed, gUpdateRateF, &objData->animData)) {
         //87.5% chance of continuing idle
-        if (rand_next(0, 7)) {
+        if (mathRnd(0, 7)) {
             temp = 0;
         } else {
-            if (rand_next(0, 1)) {
+            if (mathRnd(0, 1)) {
                 //6.25% chance of looking around (or in SharpClaw's case: huddling)
                 animIndex = 1;
             } else {
@@ -243,7 +243,7 @@ void DR_NPC_control(Object* self) {
             }
             temp = animIndex;
         }
-        func_80023D30(self, objData->modAnims[temp], 0, 0);
+        objAnimSet(self, objData->modAnims[temp], 0, 0);
 
         //Set animation playback speed
         if (temp == 0) {
@@ -255,11 +255,11 @@ void DR_NPC_control(Object* self) {
 
     DR_NPC_play_sounds(self, &objData->animData, objData->soundsAttack);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objData->movedata);
-    func_80032A08(self, &objData->headAnimLook);
-    func_80034BC0(self, &objData->headAnimTalk);
+    objExprEyeIdle(self, &objData->headAnimLook);
+    objExpr_func_80034BC0(self, &objData->headAnimTalk);
 
     //Show Distract command option
-    sidekick = obj_get_nearest_type_to(OBJTYPE_Sidekick, self, &distance);
+    sidekick = objGetNearestTypeTo(OBJTYPE_Sidekick, self, &distance);
     if (sidekick != NULL) {
         ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
@@ -273,7 +273,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
     DR_NPC_Data* objData = self->data;
 
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func3(self, &objData->movedata, 0);
     }
 }
@@ -282,10 +282,10 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 void DR_NPC_free(Object* self, s32 onlySelf) {
     DR_NPC_Setup* objSetup = (DR_NPC_Setup*)self->setup;
 
-    remove_temp_dll(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
 
     if (objSetup->characterType != DR_NPC_SharpClaw) {
-        obj_free_object_type(self, OBJTYPE_Baddie);
+        objFreeObjectType(self, OBJTYPE_Baddie);
     }
 }
 
@@ -309,7 +309,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     s32 i;
 
     objData = self->data;
-    player = get_player();
+    player = objGetPlayer();
     objSetup = (DR_NPC_Setup*)self->setup;
 
     func_8002674C(self);
@@ -318,7 +318,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
     //GuardClaw sequence subevents
     for (i = 0; i < animData->messageCount; i++) {
         if ((animData->messages[i] == 1) && (objSetup->characterType != DR_NPC_SharpClaw)) {
-            obj_free_tick(self);
+            objDisable(self);
             func_800267A4(self);
             self->srt.flags |= OBJFLAG_INVISIBLE;
         }
@@ -336,7 +336,7 @@ int DR_NPC_anim_callback(Object* self, Object*arg1, AnimObj_Data* animData) {
             STUBBED_PRINTF(" Edanble FoodType %i ", foodGamebit);
             ((DLL_210_Player*)player->dll)->vtbl->func75(player, 1);
             
-            main_set_bits(objSetup->gamebitFinished, 1);
+            mainSetBits(objSetup->gamebitFinished, 1);
             STUBBED_PRINTF(" \n Have Set Bit %i \n", objSetup->gamebitFinished);
 
             gDLL_3_Animation->vtbl->end_obj_sequence(self->seqSlot);
@@ -355,11 +355,11 @@ s32 DR_NPC_sharpclaw_behaviour(Object* self) {
     Object* player;
     s32 foodGamebit;
 
-    player = get_player();
+    player = objGetPlayer();
 
     //Talking to the SharpClaw
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         if (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
@@ -388,8 +388,8 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
     Object* sidekick;
     DR_NPC_Data* objData;
 
-    player = get_player();
-    sidekick = get_sidekick();
+    player = objGetPlayer();
+    sidekick = objGetSidekick();
     objData = self->data;
 
     //Return TRUE when Illusion Spell is used
@@ -399,18 +399,18 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
 
     //Talking to GuardClaw
     if ((self->unkAF & ARROW_FLAG_1_Interacted) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE)) {
-        joy_disable_buttons(0, A_BUTTON);
+        joyDisableButtons(0, A_BUTTON);
         self->objhitInfo->unk5F = 11;
         self->objhitInfo->unk60 = 4;
-        gDLL_3_Animation->vtbl->start_obj_sequence(rand_next(0, 1), self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(mathRnd(0, 1), self, -1);
     }
 
     //Attack when sidekick or player nearby
-    if (((sidekick && (vec3_distance_xz(&self->globalPosition, &sidekick->globalPosition) < 40.0f)) ||
-         (player && (vec3_distance_xz(&self->globalPosition, &player->globalPosition) < 40.0f)))
+    if (((sidekick && (vec3DistanceXZ(&self->globalPosition, &sidekick->globalPosition) < 40.0f)) ||
+         (player && (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < 40.0f)))
         && (self->curModAnimId != GuardClaw_MODANIM_9_Staff_Swing_Left)
     ) {
-        func_80023D30(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);
+        objAnimSet(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);
         objData->animSpeed = 0.006f;
         if (sidekick != NULL) {
             ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
@@ -438,12 +438,12 @@ void DR_NPC_play_sounds(Object* self, UnkFunc_80024108Struct* objAnimData, s16* 
         switch (objAnimData->unk13[i]) {
         case 0:
             if (soundIDs != NULL) {
-                gDLL_6_AMSFX->vtbl->play(self, soundIDs[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, soundIDs[0], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             break;
         case 7:
             if (soundIDs != NULL) {
-                gDLL_6_AMSFX->vtbl->play(self, soundIDs[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, soundIDs[1], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             break;
         case 1:
@@ -465,6 +465,6 @@ void DR_NPC_play_sounds(Object* self, UnkFunc_80024108Struct* objAnimData, s16* 
 
     //Play a sound if case 1/2/3/4 were reached (only the GuardClaw uses this, and the soundID is empty)
     if (bits && (soundIDs != NULL)) {
-        gDLL_6_AMSFX->vtbl->play(self, soundIDs[3], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, soundIDs[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
 }

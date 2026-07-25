@@ -21,7 +21,7 @@ void dll_19_func_5C(void) {
 // offset: 0xA0 | func: 2 | export: 2
 void dll_19_func_A0(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
     if (D_800A7D94 != 0) {
-        func_8000FB2C(gdl);
+        menu_func_8000FB2C(gdl);
     }
     gDLL_1_cmdmenu->vtbl->print(gdl, mtxs, vtxs);
 }

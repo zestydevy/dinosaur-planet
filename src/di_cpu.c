@@ -1,0 +1,831 @@
+#include "sys/di_cpu.h"
+
+#include "PR/os_internal.h"
+#include "libc/stdarg.h"
+#include "libc/string.h"
+#include "sys/dll.h"
+#include "sys/thread.h"
+#include "sys/vi.h"
+#include "sys/print.h"
+#include "macros.h"
+
+typedef struct {
+    u32 code1;
+    u32 code2;
+    char *text;
+} CrashErrString;
+
+typedef enum {
+    CRASH_TEXTCOLOR_WHITE = 0,
+    CRASH_TEXTCOLOR_BLUE = 1,
+    CRASH_TEXTCOLOR_CYAN = 2,
+    CRASH_TEXTCOLOR_GREEN = 3,
+    CRASH_TEXTCOLOR_YELLOW = 4,
+    CRASH_TEXTCOLOR_RED = 5,
+    CRASH_TEXTCOLOR_MAGENTA = 6,
+    CRASH_TEXTCOLOR_BLACK = 7
+} CrashTextColor;
+
+/* 
+	FORMAT : 
+	5 lines stored top to bottom
+	one byte per line
+	2BPP stored BACKWARDS horizontally
+	table begins at charID=33 ("!") and ends at charID=122 ("z")
+	there is no difference between uppercase and lowercase
+	the MSBS are always 0
+	example "C" / "c" :
+	xx	00 11 00
+	xx  11 00 11
+	xx	00 00 11
+	xx	11 00 11
+	xx	00 11 00
+*/
+char gCrashFont[] = { 
+    0x0c, 0x0c, 0x0c, 0x00, 0x0c, 
+	0x33, 0x33, 0x00, 0x00, 0x00,
+	0x26, 0x3f, 0x26, 0x3f, 0x26, 
+	0x2c, 0x0e, 0x2e, 0x2c, 0x0e, 
+	0x33, 0x28, 0x1d, 0x0a, 0x33, 
+	0x1d, 0x33, 0x2d, 0x33, 0x3e, 
+	0x0c, 0x0c, 0x00, 0x00, 0x00, 
+	0x0e, 0x03, 0x03, 0x03, 0x0e, 
+	0x2c, 0x30, 0x30, 0x30, 0x2c, 
+	0x00, 0x0c, 0x3f, 0x1d, 0x37, 
+	0x00, 0x0c, 0x3f, 0x0c, 0x00, 
+	0x00, 0x00, 0x00, 0x0d, 0x03, 
+	0x00, 0x00, 0x3f, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x04, 0x0c, 
+	0x30, 0x38, 0x19, 0x0b, 0x03, 
+	0x2e, 0x33, 0x33, 0x33, 0x2e, 
+	0x0c, 0x0f, 0x0c, 0x0c, 0x3f, 
+	0x2f, 0x30, 0x2e, 0x03, 0x3f, 
+	0x3f, 0x30, 0x3f, 0x30, 0x3f, 
+	0x33, 0x33, 0x3f, 0x30, 0x30, 
+	0x3f, 0x03, 0x2e, 0x30, 0x2f, 
+	0x3e, 0x03, 0x2f, 0x33, 0x2f, 
+	0x3f, 0x30, 0x30, 0x30, 0x30, 
+	0x2e, 0x33, 0x2e, 0x33, 0x2e, 
+	0x3e, 0x33, 0x3e, 0x30, 0x2f, 
+	0x00, 0x0c, 0x00, 0x0c, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x1d, 0x33, 0x3f, 0x33, 0x33, 
+	0x0f, 0x33, 0x0f, 0x33, 0x0f, 
+	0x1d, 0x33, 0x03, 0x33, 0x1d, 
+	0x0f, 0x33, 0x33, 0x33, 0x0f, 
+	0x3f, 0x03, 0x1f, 0x03, 0x3f, 
+	0x3f, 0x03, 0x1f, 0x03, 0x03, 
+	0x2e, 0x03, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x3f, 0x33, 0x33, 
+	0x3f, 0x0c, 0x0c, 0x0c, 0x3f, 
+	0x3f, 0x30, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x1f, 0x33, 0x33, 
+	0x03, 0x03, 0x03, 0x03, 0x3f, 
+	0x37, 0x3f, 0x37, 0x33, 0x33, 
+	0x37, 0x3b, 0x3f, 0x3b, 0x37, 
+	0x0c, 0x33, 0x33, 0x33, 0x0c, 
+	0x1f, 0x33, 0x1f, 0x03, 0x03, 
+	0x2e, 0x33, 0x33, 0x37, 0x3e, 
+	0x0f, 0x33, 0x1f, 0x33, 0x33, 
+	0x2e, 0x07, 0x2e, 0x34, 0x2e, 
+	0x3f, 0x0c, 0x0c, 0x0c, 0x0c, 
+	0x33, 0x33, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x37, 0x2a, 0x0c, 
+	0x33, 0x33, 0x37, 0x3f, 0x37, 
+	0x33, 0x33, 0x1d, 0x33, 0x33, 
+	0x33, 0x33, 0x2e, 0x0c, 0x0c, 
+	0x3f, 0x24, 0x19, 0x06, 0x3f, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x00, 0x00, 0x00, 0x00, 0x00, 
+	0x1d, 0x33, 0x3f, 0x33, 0x33, 
+	0x0f, 0x33, 0x0f, 0x33, 0x0f, 
+	0x1d, 0x33, 0x03, 0x33, 0x1d, 
+	0x0f, 0x33, 0x33, 0x33, 0x0f, 
+	0x3f, 0x03, 0x1f, 0x03, 0x3f, 
+	0x3f, 0x03, 0x1f, 0x03, 0x03, 
+	0x2e, 0x03, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x3f, 0x33, 0x33, 
+	0x3f, 0x0c, 0x0c, 0x0c, 0x3f, 
+	0x3f, 0x30, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x1f, 0x33, 0x33, 
+	0x03, 0x03, 0x03, 0x03, 0x3f, 
+	0x37, 0x3f, 0x37, 0x33, 0x33, 
+	0x37, 0x3b, 0x3f, 0x3b, 0x37, 
+	0x0c, 0x33, 0x33, 0x33, 0x0c, 
+	0x1f, 0x33, 0x1f, 0x03, 0x03, 
+	0x2e, 0x33, 0x33, 0x37, 0x3e, 
+	0x0f, 0x33, 0x1f, 0x33, 0x33, 
+	0x2e, 0x07, 0x2e, 0x34, 0x2e, 
+	0x3f, 0x0c, 0x0c, 0x0c, 0x0c, 
+	0x33, 0x33, 0x33, 0x33, 0x2e, 
+	0x33, 0x33, 0x37, 0x2a, 0x0c, 
+	0x33, 0x33, 0x37, 0x3f, 0x37, 
+	0x33, 0x33, 0x1d, 0x33, 0x33, 
+	0x33, 0x33, 0x2e, 0x0c, 0x0c, 
+	0x3f, 0x24, 0x19, 0x06, 0x3f
+};
+// 2 bytes {RRRRR-GGGGG-BBBBB-0} 
+// broken into 8 sub-palettes
+// each palette is a single color with 4 shades for anti-alias
+u16 gCrashPaletteTable[] = { 
+    0x0000, 0x5294, 0xa528, 0xfffe, // 0 = white
+    0x0000, 0x0014, 0x0028, 0x003e, // 1 = blue
+    0x0000, 0x0294, 0x0528, 0x07fe, // 2 = cyan
+    0x0000, 0x0280, 0x0500, 0x07c0, // 3 = green
+    0x0000, 0x5280, 0xa500, 0xffc0, // 4 = yellow
+    0x0000, 0x5000, 0xa000, 0xf800, // 5 = red
+    0x0000, 0x5014, 0xa028, 0xf83e, // 6 = magenta
+    0x0000, 0x0000, 0x0000, 0x0000  // 7 = black/empty
+};
+CrashErrString errStringArray_cause[] = {
+    { 0x80000000, 0x80000000, "BD" },
+    { 0x00008000, 0x00008000, "IP8" },
+    { 0x00004000, 0x00004000, "IP7" },
+    { 0x00002000, 0x00002000, "IP6" },
+    { 0x00001000, 0x00001000, "IP5" },
+    { 0x00000800, 0x00000800, "IP4" },
+    { 0x00000400, 0x00000400, "IP3" },
+    { 0x00000200, 0x00000200, "IP2" },
+    { 0x00000100, 0x00000100, "IP1" },
+    { 0x0000007C, 0x00000000, "Interrupt" },
+    { 0x0000007C, 0x00000004, "TLB modify ex" },
+    { 0x0000007C, 0x00000008, "TLB load/fetch ex" },
+    { 0x0000007C, 0x0000000C, "TLB store ex" },
+    { 0x0000007C, 0x00000010, "Addr load/fetch err" },
+    { 0x0000007C, 0x00000014, "Addr store err" },
+    { 0x0000007C, 0x00000018, "Bus error fetch ex" },
+    { 0x0000007C, 0x0000001C, "Bus error ref ex" },
+    { 0x0000007C, 0x00000020, "Syscall ex" },
+    { 0x0000007C, 0x00000024, "Breakpoint ex" },
+    { 0x0000007C, 0x00000028, "Reserved inst ex" },
+    { 0x0000007C, 0x0000002C, "Co-pro unusable ex" },
+    { 0x0000007C, 0x00000030, "Arith overflow ex" },
+    { 0x0000007C, 0x00000034, "Trap ex" },
+    { 0x0000007C, 0x00000038, "Virtual coherency ex" },
+    { 0x0000007C, 0x0000003C, "Floating point ex" },
+    { 0x0000007C, 0x0000005C, "Watchpoint ex" },
+    { 0x0000007C, 0x0000007C, "Virtual coherency ex2" },
+    { 0x00000000, 0x00000000, "" },
+};
+CrashErrString errStringArray_cause2[] = {
+    { 0x80000000, 0x80000000, "CU3" },
+    { 0x40000000, 0x40000000, "CU2" },
+    { 0x20000000, 0x20000000, "CU1" },
+    { 0x10000000, 0x10000000, "CU0" },
+    { 0x08000000, 0x08000000, "RP" },
+    { 0x04000000, 0x04000000, "FR" },
+    { 0x02000000, 0x02000000, "RE" },
+    { 0x00400000, 0x00400000, "BEV" },
+    { 0x00200000, 0x00200000, "TS" },
+    { 0x00100000, 0x00100000, "SR" },
+    { 0x00040000, 0x00040000, "CH" },
+    { 0x00020000, 0x00020000, "CE" },
+    { 0x00010000, 0x00010000, "DE" },
+    { 0x00008000, 0x00008000, "IM8" },
+    { 0x00004000, 0x00004000, "IM7" },
+    { 0x00002000, 0x00002000, "IM6" },
+    { 0x00001000, 0x00001000, "IM5" },
+    { 0x00000800, 0x00000800, "IM4" },
+    { 0x00000400, 0x00000400, "IM3" },
+    { 0x00000200, 0x00000200, "IM2" },
+    { 0x00000100, 0x00000100, "IM1" },
+    { 0x00000080, 0x00000080, "KX" },
+    { 0x00000040, 0x00000040, "SX" },
+    { 0x00000020, 0x00000020, "UX" },
+    { 0x00000018, 0x00000010, "USR" },
+    { 0x00000018, 0x00000008, "SUP" },
+    { 0x00000018, 0x00000000, "KER" },
+    { 0x00000004, 0x00000004, "ERL" },
+    { 0x00000002, 0x00000002, "EXL" },
+    { 0x00000001, 0x00000001, "IE" },
+    { 0x00000000, 0x00000000, "" },
+};
+CrashErrString errStringArray_fpsr[] = {
+    { 0x01000000, 0x01000000, "FS" },
+    { 0x00800000, 0x00800000, "C" },
+    { 0x00020000, 0x00020000, "Unimplemented operation" },
+    { 0x00010000, 0x00010000, "Invalid operation" },
+    { 0x00008000, 0x00008000, "Division by zero" },
+    { 0x00004000, 0x00004000, "Overflow" },
+    { 0x00002000, 0x00002000, "Underflow" },
+    { 0x00001000, 0x00001000, "Inexact operation" },
+    { 0x00000800, 0x00000800, "EV" },
+    { 0x00000400, 0x00000400, "EZ" },
+    { 0x00000200, 0x00000200, "EO" },
+    { 0x00000100, 0x00000100, "EU" },
+    { 0x00000080, 0x00000080, "EI" },
+    { 0x00000040, 0x00000040, "FV" },
+    { 0x00000020, 0x00000020, "FZ" },
+    { 0x00000010, 0x00000010, "FO" },
+    { 0x00000008, 0x00000008, "FU" },
+    { 0x00000004, 0x00000004, "FI" },
+    { 0x00000003, 0x00000000, "RN" },
+    { 0x00000003, 0x00000001, "RZ" },
+    { 0x00000003, 0x00000002, "RP" },
+    { 0x00000003, 0x00000003, "RM" },
+    { 0x00000000, 0x00000000, "" },
+};
+char *gDiObjFuncNames[] = {
+    "setup",
+    "control",
+    "print",
+    "update",
+    "free"
+};
+s32 gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+s32 gSomeCrashVideoFlag = 0;
+s32 D_800937f8[3] = {0};
+u8 gDiCpuTraceBufIdx = 0;
+u8 gDiCpuTraceInitd = 0;
+
+#define DI_CPU_FILE_TRACE_BUFFER_LEN 10
+
+#define DI_CPU_OS_EVENT_FAULT 8
+#define DI_CPU_OS_EVENT_CPU_BREAK 2
+
+/* -------- .bss start 800beb10 -------- */
+u64 gDiCpuThreadStack[STACKSIZE(OS_PIM_STACKSIZE)];
+OSThread gDiCpuThread;
+s32 gCurrObjFuncTrace[5];
+OSMesgQueue gDiCpuTraceEventQueue;
+OSMesg gDiCpuTraceEventQueueBuffer[8];
+OSMesg gDiCpuPiManagerCmdQueueBuffer[8];
+OSMesgQueue gDiCpuPiManagerCmdQueue;
+OSMesgQueue gCrashControllerMesgQueue;
+OSContPad gCrashContPadArray1[MAXCONTROLLERS];
+OSContPad gCrashContPadArray2[MAXCONTROLLERS];
+u16 gCrashButtons[MAXCONTROLLERS];
+const char *gDiCpuTraceFilenames[DI_CPU_FILE_TRACE_BUFFER_LEN];
+s32 gDiCpuTraceLineNumbers[DI_CPU_FILE_TRACE_BUFFER_LEN]; // line numbers
+/* -------- .bss end 800bfe70 -------- */
+
+void diCpuThreadMain(void *arg);
+void diCpuPrintCause(s32 x, s32 y, u32 param3, CrashErrString *param4);
+void diCpuReadController(void);
+void diCpuXYPrintf(s32 x, s32 y, char *fmt, ...);
+void diCpuClearFramebuffer(void);
+void diCpuHandleThreadFault(void);
+
+void diCpuTraceObject(s32 index, s32 objID) {
+    if (index >= 0 && index < ARRAYCOUNT_S(gCurrObjFuncTrace)) {
+        gCurrObjFuncTrace[index] = objID;
+    }
+}
+
+// official name: diCpuTraceInit (probably)
+void diCpuTraceInit(void) {
+    int i;
+
+    osCreateThread(
+        /*t*/       &gDiCpuThread,
+        /*id*/      DI_CPU_THREAD_ID,
+        /*entry*/   &diCpuThreadMain,
+        /*arg*/     NULL,
+        /*sp*/      &gDiCpuThreadStack[STACKSIZE(OS_PIM_STACKSIZE)],
+        /*pri*/     DI_CPU_THREAD_PRIORITY
+    );
+
+    osStartThread(&gDiCpuThread);
+
+    for (i = 0; i < ARRAYCOUNT_S(gCurrObjFuncTrace); ++i) {
+        gCurrObjFuncTrace[i] = -1;
+    }
+}
+
+/*static*/ void diCpuThreadMain(void *arg) {
+    OSMesg msg;
+    s32 evtFlags;
+
+    evtFlags = 0;
+
+    // Listen for OS_EVENT_FAULT and OS_EVENT_CPU_BREAK
+    osCreateMesgQueue(
+        /*mq*/      &gDiCpuTraceEventQueue,
+        /*msg*/     &gDiCpuTraceEventQueueBuffer[0],
+        /*count*/   ARRAYCOUNT(gDiCpuTraceEventQueueBuffer)
+    );
+
+    osSetEventMesg(OS_EVENT_FAULT, &gDiCpuTraceEventQueue, (OSMesg)DI_CPU_OS_EVENT_FAULT);
+    osSetEventMesg(OS_EVENT_CPU_BREAK, &gDiCpuTraceEventQueue, (OSMesg)DI_CPU_OS_EVENT_CPU_BREAK);
+
+    // Start system PI manager thread (if not already started)
+    osCreatePiManager(
+        /*pri*/         OS_PRIORITY_PIMGR,
+        /*cmdQ*/        &gDiCpuPiManagerCmdQueue,
+        /*cmdBuf*/      &gDiCpuPiManagerCmdQueueBuffer[0],
+        /*cmdMsgCnt*/   ARRAYCOUNT(gDiCpuPiManagerCmdQueueBuffer)
+    );
+
+    while (TRUE) {
+        // Wait for event
+        osRecvMesg(&gDiCpuTraceEventQueue, &msg, OS_MESG_BLOCK);
+
+        evtFlags |= (s32)msg;
+
+        // If a CPU break or CPU fault occurred...
+        if ((evtFlags & DI_CPU_OS_EVENT_FAULT) || (evtFlags & DI_CPU_OS_EVENT_CPU_BREAK)) {
+            // Only handle a fault once per message, but if a break is received, this should run
+            // every time a fault or break is received again regardless of which
+            evtFlags &= ~DI_CPU_OS_EVENT_FAULT;
+
+            // Stop app threads and display crash screen
+            diCpuStopActiveAppThreads();
+            diCpuCrashScreenInit();
+            diCpuHandleThreadFault();
+        }
+    }
+}
+
+void diCpuStopActiveAppThreads(void) {
+    OSThread *thread;
+
+    thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->priority > OS_PRIORITY_IDLE &&
+            thread->priority <= OS_PRIORITY_APPMAX) {
+            osStopThread(thread);
+        }
+
+        thread = thread->tlnext;
+    }
+}
+
+void diCpuHandleThreadFault(void) {
+    // Find first faulted/broke active thread
+    OSThread *thread = __osGetActiveQueue();
+
+    while (thread->priority != -1) {
+        if (thread->priority > OS_PRIORITY_IDLE &&
+            ((thread->flags & OS_FLAG_FAULT) || (thread->flags & OS_FLAG_CPU_BREAK))) {
+            break;
+        }
+
+        thread = thread->tlnext;
+    }
+
+    // Get current controller state
+    osContGetReadData(&gCrashContPadArray1[0]);
+    // TODO: Why isn't this called before osContGetReadData?
+    osContStartReadData(&gCrashControllerMesgQueue);
+    bcopy(&gCrashContPadArray1[0], &gCrashContPadArray2[0], sizeof(OSContPad) * MAXCONTROLLERS);
+
+    // Display crash screen
+    diCpuDrawCpuInfo(&thread, 1, 0);
+}
+
+void diCpuDrawCpuInfo(OSThread** threads, s32 threadsCount, s32 threadsIdx) {
+    OSThread* thread;
+    __OSThreadContext* ctx;
+    s32 pcDLLNo;
+    s32 j;
+    s32 raDLLNo;
+    u32 raDllStart;
+    u32 raDllEnd;
+    s32 _pad;
+    u32 pcDllStart;
+    u32 pcDllEnd;
+    s32 y;
+    u32 addr;
+
+    while (1) {
+        thread = threads[threadsIdx];
+        raDLLNo = dllFindExecutingDLL((u32)thread->context.ra, (void **) &raDllStart, (void **) &raDllEnd);
+        pcDLLNo = dllFindExecutingDLL(thread->context.pc, (void **) &pcDllStart, (void **) &pcDllEnd);
+        diCpuClearFramebuffer();
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
+        diCpuXYPrintf(204, 214, "CPU + DLL INFO");
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+        ctx = &thread->context;
+        diCpuXYPrintf(16, 24, "fault in thread %d", thread->id);
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
+        diCpuXYPrintf(16, 34, "epc\t\t\t\t%08x", ctx->pc);
+        if (pcDLLNo != -1) {
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
+            addr = thread->context.pc;
+            if ((addr >= (u32) pcDllStart) && ((u32) pcDllEnd >= addr)) {
+                addr -= (u32)pcDllStart;
+            }
+            diCpuXYPrintf(16, 40, "dll epc\t\t%08x  (in DLL #%d)", addr, pcDLLNo);
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
+        }
+        if (ctx->cause == -1U) {
+            diCpuXYPrintf(16, 46, "cause\t\tmmAlloc(%d,%8x)\n",  (u32)ctx->a0, (u32)ctx->a1);
+        } else {
+            diCpuXYPrintf(16, 46, "cause\t\t\t%08x", ctx->cause);
+            diCpuPrintCause(168, 46, ctx->cause, errStringArray_cause);
+        }
+        diCpuXYPrintf(16, 52, "sr\t\t\t\t%08x", ctx->sr);
+        diCpuXYPrintf(16, 58, "badvaddr\t%08x", ctx->badvaddr);
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
+        if (raDLLNo != -1) {
+            addr = (u32)thread->context.ra;
+            if ((addr >= (u32) raDllStart) && ((u32) raDllEnd >= addr)) {
+                addr -= (u32)raDllStart;
+            }
+            diCpuXYPrintf(16, 64, "ra\t\t\t\t%08x  (in DLL #%d)", addr, raDLLNo);
+            diCpuXYPrintf(16, 76, "dll start\t%08x", raDllStart);
+            diCpuXYPrintf(16, 82, "dll end\t\t%08x", raDllEnd);
+        } else {
+            gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
+            diCpuXYPrintf(16, 64, "ra\t\t\t\t%08x", (u32)ctx->ra);
+        }
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_YELLOW;
+        y = 94;
+        for (j = 0; j < 5; j++) {
+            if (gCurrObjFuncTrace[j] != -1) {
+                diCpuXYPrintf(16, y, "Fault in object: (%s) (%d) ", gDiObjFuncNames[j], gCurrObjFuncTrace[j]);
+                y += 6;
+            }
+        }
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
+        y += 6;
+        diCpuXYPrintf(16, y, "at %08x v0 %08x v1 %08x", (u32)ctx->at, (u32)ctx->v0, (u32)ctx->v1);
+        y += 6;
+        diCpuXYPrintf(16, y, "a0 %08x a1 %08x a2 %08x", (u32)ctx->a0, (u32)ctx->a1, (u32)ctx->a2);
+        y += 6;
+        diCpuXYPrintf(16, y, "a3 %08x t0 %08x t1 %08x", (u32)ctx->a3, (u32)ctx->t0, (u32)ctx->t1);
+        y += 6;
+        diCpuXYPrintf(16, y, "t2 %08x t3 %08x t4 %08x", (u32)ctx->t2, (u32)ctx->t3, (u32)ctx->t4);
+        y += 6;
+        diCpuXYPrintf(16, y, "t5 %08x t6 %08x t7 %08x", (u32)ctx->t5, (u32)ctx->t6, (u32)ctx->t7);
+        y += 6;
+        diCpuXYPrintf(16, y, "s0 %08x s1 %08x s2 %08x", (u32)ctx->s0, (u32)ctx->s1, (u32)ctx->s2);
+        y += 6;
+        diCpuXYPrintf(16, y, "s3 %08x s4 %08x s5 %08x", (u32)ctx->s3, (u32)ctx->s4, (u32)ctx->s5);
+        y += 6;
+        diCpuXYPrintf(16, y, "s6 %08x s7 %08x t8 %08x", (u32)ctx->s6, (u32)ctx->s7, (u32)ctx->t8);
+        y += 6;
+        diCpuXYPrintf(16, y, "t9 %08x gp %08x sp %08x", (u32)ctx->t9, (u32)ctx->gp, (u32)ctx->sp);
+        y += 6;
+        diCpuXYPrintf(16, y, "s8 %08x", (u32)ctx->s8);
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+        diCpuXYPrintf(96, 220, "press button for stack trace");
+        while (1) {
+            diCpuReadController();
+            if (gCrashButtons[0] == 0) {
+                continue;
+            }
+            if (threadsCount == 1) {
+                diCpuDrawStackTrace(threads, threadsCount, threadsIdx);
+                continue;
+            }
+
+            break;
+        }
+
+        threadsIdx++;
+        if (threadsIdx >= threadsCount) {
+            threadsIdx = 0;
+        }
+    }
+}
+
+void diCpuDrawStackTrace(OSThread** threads, s32 threadsCount, s32 threadsIdx) {
+    OSThread* thread;
+    __OSThreadContext* ctx;
+    s32 dllno;
+    u32 *sp;
+    s32 y;
+    s32 maxFrames;
+    s32 frameno;
+    u32 *pc;
+    void* sp54;
+    void* sp50;
+    u32 *ra;
+
+    maxFrames = 28;
+    frameno = 0;
+    thread = threads[threadsIdx];
+    diCpuClearFramebuffer();
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
+    diCpuXYPrintf(220, 214, "STACK TRACE");
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+    diCpuXYPrintf(16, 24, "Fault in thread %d", thread->id);
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+    ctx = &thread->context;
+    diCpuXYPrintf(80, 220, "press button for FPU registers");
+    ra = (u32*) ctx->ra;
+    pc = (u32*) ctx->pc;
+    sp = (u32*) ctx->sp;
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
+    diCpuXYPrintf(16, 36, "J#\tPC\t\t\t\tSP");
+    diCpuXYPrintf(200, 36, "DLL#\tDLL ADDR");
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
+    diCpuXYPrintf(16, 42, "%02d\t%08x\t%08x", 0, pc, sp);
+    dllno = dllFindExecutingDLL((u32)ra, &sp54, &sp50);
+    if (dllno != -1) {
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
+        diCpuXYPrintf(200, 42, "%d", dllno);
+        diCpuXYPrintf(240, 42, "%08x", sp54);
+        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
+    }
+    y = 48;
+    frameno++;
+    while (pc != NULL && maxFrames > frameno) {
+        if ((pc[0] & 0xFC1FFFFF) == 0x0000F809) { // jalr $ra, $zero
+            ra = (u32*)pc[1];
+            pc += 1;
+            continue;
+        }
+
+        switch (pc[0] >> 16) {
+            case 0xDFBF: // ld $ra, imm($sp)
+                ra = (u32*)(sp + (((u32) (pc[0] & 0xFFFF) >> 2)))[1];
+                break;
+            case 0x8FBF: // lw $ra, imm($sp)
+                // @fake *0 (the index is just [0])
+                ra = (u32*)(sp + (((u32) (pc[0] & 0xFFFF)) >> 2))[pc[0] * 0];
+                break;
+            case 0x03E0: // jr $ra (check is split across the case and the following if statement, 0x03E00008)
+                if ((pc[0] & 0xFFFF) != 0x0008) {
+                    break;
+                }
+
+                // @bug? This was probably supposed to be `if (pc[1])` to check if the delay slot is a nop
+                if ((u32)&pc[1]) {
+                    // Check delay slot
+                    switch (pc[1] >> 16) {
+                        case 0x27BD: // addiu $sp, $sp, imm
+                            sp += ((u32) (pc[1] & 0xFFFF) >> 2);
+                            break;
+                    }
+                }
+                pc = ra;
+                if (ra) {
+                    diCpuXYPrintf(16, y, "%02d\t%08x\t%08x", frameno, ra, sp);
+                    dllno = dllFindExecutingDLL((u32)ra, &sp54, &sp50);
+                    if (dllno != -1) {
+                        gCrashPaletteSelector = CRASH_TEXTCOLOR_RED;
+                        diCpuXYPrintf(200, y, "%d", dllno);
+                        diCpuXYPrintf(240, y, "%08x", sp54);
+                        gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
+                    }
+                    y += 6;
+                    frameno += 1;
+                }
+                continue;
+            case 0x27BD: // addiu $sp, $sp, imm
+                sp += ((u32) (pc[0] & 0xFFFF) >> 2);
+                break;
+        }
+        pc += 1;
+    }
+    while (1) {
+        diCpuReadController();
+        if (gCrashButtons[0]) {
+            diCpuDrawFpuInfo(threads, threadsCount, threadsIdx);
+        }
+    }
+}
+
+void diCpuDrawFpuInfo(OSThread **threads, s32 threadsCount, s32 threadsIdx) {
+    OSThread *thread;
+    __OSThreadContext *context;
+
+    thread = threads[threadsIdx];
+    context = &thread->context;
+
+    diCpuClearFramebuffer();
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_MAGENTA;
+    diCpuXYPrintf(244, 214, "FPU INFO");
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+    diCpuXYPrintf(16, 24, "Fault in thread %d", thread->id);
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_GREEN;
+    diCpuXYPrintf(16, 34, "fpcsr : %08x", context->fpcsr);
+    diCpuPrintCause(16, 40, context->fpcsr, errStringArray_fpsr);
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_CYAN;
+    diCpuXYPrintf(16, 50, "FPU Register dump diabled");
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+    diCpuXYPrintf(80, 220, "press button for CPU registers");
+
+    while (1) {
+        do {
+            diCpuReadController();
+        } while (gCrashButtons[0] == 0);
+
+        diCpuDrawCpuInfo(threads, threadsCount, threadsIdx);
+    }
+}
+
+void diCpuReadController(void) {
+    s32 i;
+
+    osContGetReadData(gCrashContPadArray1);
+    osContStartReadData(&gCrashControllerMesgQueue);
+    for (i = 0; i < MAXCONTROLLERS; i++) {
+        gCrashButtons[i] = (gCrashContPadArray1[i].button ^ gCrashContPadArray2[i].button) & gCrashContPadArray1[i].button & 0xFFFF;
+    }
+    bcopy(gCrashContPadArray1, gCrashContPadArray2, sizeof(OSContPad) * MAXCONTROLLERS);
+}
+
+void diCpuCrashScreenInit(void) {
+    s32 i;
+
+    gCrashPaletteSelector = CRASH_TEXTCOLOR_WHITE;
+
+    if (viGetMode() > 3 && viGetMode() < 7) {
+        gSomeCrashVideoFlag = 1;
+    } else {
+        gSomeCrashVideoFlag = 0;
+    }
+
+    for (i = 0; i != 100; ++i) {
+        diCpuClearFramebuffer();
+    }
+}
+
+// blits a single glyph to the framebuffer
+void diCpuDrawGlyph(s32 col, s32 row, u8* glyph) {
+    u32 width;
+    s32 var_a3;
+    s32 i;
+    u16* fb;
+    u16* tempFb;
+    u8 glyphPixelRow;
+    u16 *palette;
+
+    width = viGetCurrentSize() & 0xFFFF;
+    fb = &gFrontFramebuffer[(row * width) + col]; // get a pixel index into the framebuffer
+    palette = (u16*)&((u8*)gCrashPaletteTable)[gCrashPaletteSelector * 8];
+    i = MAXCONTROLLERS + 1; // 5
+    while (i--) { // iteratate over the glyph, row by row
+        var_a3 = 1;
+        if (gSomeCrashVideoFlag != 0) {
+            var_a3 = 2; // if VI res is 640 by 480, blit this row twice
+        }
+        while (var_a3--) {
+            tempFb = fb; // copy the framebuffer reference
+            fb += width; // move the pixel index to the next row
+            glyphPixelRow = glyph[0]; // get the current row of pixels from the glyph
+            while (glyphPixelRow) { // iterate glyph row
+                (tempFb++)[0] = palette[glyphPixelRow & 3]; // write the same glyph pixel twice to consecutive framebuffer pixels
+                (tempFb++)[0] = palette[glyphPixelRow & 3];
+                glyphPixelRow >>= 2; // next pixel
+            }
+        }
+        glyph++; // increment the glyph pointer to the next row/byte
+    }
+}
+
+// iterates over the string and displays each character
+// supports newline, tab, space
+// offsets indexes into the glyphs table by -165 because characters with ID < 33 (165 / 5) don't exist
+void diCpuXYPrintLine(s32 x, s32 y, char *str) {
+    char c;
+
+    while (*str != '\0') {
+        c = *str++;
+
+        if (c == '\n') {
+            y += 6;
+            x = 32;
+        } else if (c == '\t') {
+            x = (x - (x & 0xf)) + 16;
+        } else if (c <= ' ') {
+            x += 4;
+        } else if (c > ' ' && c <= 'z') {
+            diCpuDrawGlyph(x, y, (u8 *)&gCrashFont[c * 5 - 165]);
+            x += 8;
+        }
+    }
+
+    osWritebackDCacheAll();
+}
+
+// official name: cpuXYPrintf (probably)
+void diCpuXYPrintf(s32 x, s32 y, char *fmt, ...) {
+    s32 var;
+    va_list ap;
+    char str[252]; // exact length could vary between 249-252
+
+    va_start(ap, fmt);
+    
+    vsprintf(str, fmt, ap);
+
+    va_end(ap);
+
+    if (gSomeCrashVideoFlag) {
+        if (gSomeCrashVideoFlag == 1) {
+            y -= 8;
+        } else {
+            y -= 104;
+        }
+
+        if (y < 0 || y > 115) {
+            return;
+        }
+
+        y *= 2;
+    }
+
+    diCpuXYPrintLine(x, y, str);
+}
+
+void diCpuPrintCause(s32 x, s32 y, u32 param3, CrashErrString *param4) {
+    s32 bvar;
+    char str[260]; // length is anywhere between 253-260
+    s32 len;
+
+    bvar = 1;
+
+    sprintf(str, "(");
+    len = strlen(str);
+
+    while (param4->code1 != 0) {
+        if ((param4->code1 & param3) == param4->code2) {
+            if (bvar) {
+                bvar = 0;
+            } else {
+                sprintf(str + len, ",");
+            }
+
+            len = strlen(str);
+            sprintf(str + len, "%s", param4->text);
+            len = strlen(str);
+        }
+
+        param4++;
+    }
+
+    sprintf(str + len, ")");
+    len = strlen(str);
+    diCpuXYPrintf(x, y, str);
+}
+
+/**
+ * Sets all values of gFrontFramebuffer to 0.
+ */
+void diCpuClearFramebuffer(void) {
+    u32 resEncoded = viGetCurrentSize();
+    s32 valuesLeft = GET_VIDEO_WIDTH(resEncoded) * (GET_VIDEO_HEIGHT(resEncoded) & 0xffff);
+    u16 *framebufferPtr = gFrontFramebuffer;
+
+    while (valuesLeft--) {
+        *framebufferPtr = 0;
+        ++framebufferPtr;
+    }
+}
+
+void diCpuTraceFile(const char *filename, s32 lineno) {
+    // Clear buffers on first call
+    if (gDiCpuTraceInitd == 0) {
+        for (gDiCpuTraceInitd = 0; gDiCpuTraceInitd < DI_CPU_FILE_TRACE_BUFFER_LEN; ++gDiCpuTraceInitd) {
+            gDiCpuTraceFilenames[gDiCpuTraceInitd] = NULL;
+            gDiCpuTraceLineNumbers[gDiCpuTraceInitd] = 0;
+        }
+
+        gDiCpuTraceInitd = 1;
+    }
+
+    // Store filename and lineno (circular buffer)
+    gDiCpuTraceBufIdx += 1;
+    if (gDiCpuTraceBufIdx == DI_CPU_FILE_TRACE_BUFFER_LEN) {
+        gDiCpuTraceBufIdx = 0;
+    }
+
+    gDiCpuTraceFilenames[gDiCpuTraceBufIdx] = filename;
+    gDiCpuTraceLineNumbers[gDiCpuTraceBufIdx] = lineno;
+}
+
+static const char str_8009b650[] = "recent ";
+static const char str_8009b658[] = "       ";
+static const char str_8009b660[] = "%s:%d\n";
+
+s32 diCpu_func_800631E0(void) {
+    s32 bufIdx;
+    s32 i;
+    s32 max;
+
+    bufIdx = gDiCpuTraceBufIdx;
+    for (i = 0; i < DI_CPU_FILE_TRACE_BUFFER_LEN; i++) {
+        const char *label;
+
+        bufIdx++;
+        if ((bufIdx ^ 0) == (max = DI_CPU_FILE_TRACE_BUFFER_LEN)) {
+            bufIdx = 0;
+        }
+        label = gDiCpuTraceFilenames[bufIdx];
+        if (gDiCpuTraceBufIdx){}
+        if (label) {
+            // maybe?
+            // STUBBED_PRINTF(label);
+        }
+    }
+
+    return bufIdx ^ 0;
+}

@@ -5,15 +5,6 @@
 
 #include "PR/ultratypes.h"
 
-#define EXPANSION_RAM_START 0x80400000
-#define EXPANSION_SIZE 0x00800000
-#define RAM_END (0x80000000 + EXPANSION_SIZE)
-
-#define MEM_POOL_AREA_00 0x8042C000
-#define MEM_POOL_AREA_01 0x80245000
-#define MEM_POOL_AREA_02 0x80119000
-#define MEM_POOL_AREA_NO_EXPANSION 0x802D4000
-
 typedef enum MempoolFlags {
     SLOT_FREE = 0,             // The slot is free.
     SLOT_USED = (1 << 0),      // The slot is used.

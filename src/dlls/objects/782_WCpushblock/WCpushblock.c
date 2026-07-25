@@ -66,15 +66,15 @@ void dll_782_control(Object* self) {
     s32 var_a0;
 
     objdata = self->data;
-    player = get_player();
+    player = objGetPlayer();
     distance = 100000.0f;
     if (objdata->levelCtrl == NULL) {
-        objdata->levelCtrl = obj_get_nearest_type_to(OBJTYPE_LevelControl, self, &distance); //getting WCLevelControl
+        objdata->levelCtrl = objGetNearestTypeTo(OBJTYPE_LevelControl, self, &distance); //getting WCLevelControl
         self->opacity = 0;
         return;
     }
     
-    temp_v0 = func_800348A0(self, 0, 0);
+    temp_v0 = objExprGetTexAnimator(self, 0, 0);
     if (temp_v0 != NULL) {
         temp_v0->frame = 0;
     }
@@ -82,7 +82,7 @@ void dll_782_control(Object* self) {
         isNighttime = gDLL_7_Newday->vtbl->func8(&time);
         
         if (self->modelInstIdx == 1) {
-            if (main_get_bits(BIT_812) != 0) {
+            if (mainGetBits(BIT_812) != 0) {
                 objdata->unk274 = 6;
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func12(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func7(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);
@@ -90,7 +90,7 @@ void dll_782_control(Object* self) {
                 objdata->unk274 = 3;
             }
         } else {
-            if (main_get_bits(BIT_813) != 0) {
+            if (mainGetBits(BIT_813) != 0) {
                 objdata->unk274 = 6;
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func19(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func14(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);
@@ -155,7 +155,7 @@ void dll_782_control(Object* self) {
                 }
             }
             if ((objdata->unk264 != self->srt.transl.x) || (objdata->unk268 != self->srt.transl.y)) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9B9_Block_Shifting, 1, &objdata->unk26C, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_9B9_Block_Shifting, 1, &objdata->unk26C, 0, 0, 0);
                 objdata->unk274 = 2;
             }
         }
@@ -171,8 +171,8 @@ void dll_782_control(Object* self) {
             var_fv1 = 127.0f;
         }
         
-        gDLL_6_AMSFX->vtbl->set_vol(objdata->unk26C, var_fv1);
-        obj_move(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
+        dll_amSfx->SetVol(objdata->unk26C, var_fv1);
+        objMove(self, self->velocity.x * gUpdateRateF, 0.0f, self->velocity.z * gUpdateRateF);
         var_a0 = 0;
         if (objdata->unk275 == 0) {
             if (self->velocity.x < 1.5f) {
@@ -220,23 +220,23 @@ void dll_782_control(Object* self) {
             self->velocity.z = -1.5f;
         }
         if (var_a0 != 0) {
-            gDLL_6_AMSFX->vtbl->stop(objdata->unk26C);
+            dll_amSfx->Stop(objdata->unk26C);
             self->velocity.x = 0.0f;
             self->velocity.z = 0.0f;
             if (objdata->unk277 == 2) {
                 objdata->unk274 = 4;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_9BB_Magic_Reverse_Cymbal, MAX_VOLUME, NULL, 0, 0, 0);
                 if (self->modelInstIdx == 1) {
-                    main_increment_bits(BIT_810);
+                    mainIncrementBits(BIT_810);
                 } else {
-                    main_increment_bits(BIT_811);
+                    mainIncrementBits(BIT_811);
                 }
             } else if (objdata->unk277 == 1) {
                 objdata->unk274 = 1;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             } else {
                 objdata->unk274 = 3;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
+                dll_amSfx->Play(self, SOUND_9BA_Thud, MAX_VOLUME, NULL, 0, 0, 0);
             }
             if (objdata->unk274 != 3) {
                 if (self->modelInstIdx == 1) {
@@ -254,14 +254,14 @@ void dll_782_control(Object* self) {
     case 3:
         func_800267A4(self);
         if (self->opacity == 0xFF) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_9C5_Vanish, MAX_VOLUME, NULL, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_9C5_Vanish, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity - (gUpdateRate * 8);
         if (var_v0 < 0) {
             var_v0 = 0;
         }
         self->opacity = (u8) var_v0;
-        if (self->opacity == 0 && (dll_782_func_FF0(self, objdata, get_player()) != 0)) {
+        if (self->opacity == 0 && (dll_782_func_FF0(self, objdata, objGetPlayer()) != 0)) {
             if (self->modelInstIdx == 1) {
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func11(objdata->unk276, &objdata->unk270, &objdata->unk272);
                 ((DLL_779_WCLevelControl*)(objdata->levelCtrl)->dll)->vtbl->func7(&self->srt, objdata->unk270, objdata->unk272, &self->srt.transl.x, &self->srt.transl.z);
@@ -275,7 +275,7 @@ void dll_782_control(Object* self) {
     case 5:
         if (self->opacity == 0) {
             func_8002674C(self);
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_9C6_Appear, MAX_VOLUME, NULL, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_9C6_Appear, MAX_VOLUME, NULL, 0, 0, 0);
         }
         var_v0 = self->opacity + (gUpdateRate * 8);
         if (var_v0 > 0xFF) {
@@ -290,7 +290,7 @@ void dll_782_control(Object* self) {
         self->opacity = 0xFF;
         /* fallthrough */
     case 4:
-        temp_v0 = func_800348A0(self, 0, 0);
+        temp_v0 = objExprGetTexAnimator(self, 0, 0);
         if (temp_v0 != NULL) {
             temp_v0->frame = 0x100;
         }
@@ -304,7 +304,7 @@ void dll_782_update(Object* self) { }
 // offset: 0xF44 | func: 3 | export: 3
 void dll_782_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

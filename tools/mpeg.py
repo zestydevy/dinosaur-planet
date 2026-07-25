@@ -41,7 +41,7 @@ def main():
     os.chdir(Path(args.base_dir).resolve())
 
     with open(BIN_ASSETS_DIR.joinpath("MPEG.bin"), "rb") as mpeg, \
-         open(BIN_ASSETS_DIR.joinpath("MPEG_tab.bin"), "rb") as mpeg_tab:
+         open(BIN_ASSETS_DIR.joinpath("MPEG.tab"), "rb") as mpeg_tab:
         read_mpeg(mpeg, mpeg_tab)
 
 if __name__ == "__main__":

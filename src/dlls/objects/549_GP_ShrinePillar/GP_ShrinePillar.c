@@ -55,7 +55,7 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
 
     objdata = (GP_ShrinePillar_Data*)self->data;
     if (setup->gamebitRaised != NO_GAMEBIT) {
-        if (main_get_bits(setup->gamebitRaised)) {
+        if (mainGetBits(setup->gamebitRaised)) {
             objdata->state = STATE_Raised;
         }
     } else {
@@ -67,7 +67,7 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
     self->animCallback = GP_ShrinePillar_anim_callback;
 
     //Set pillar's animated stone texture to frame 0
-    animTexture = func_800348A0(self, 0, 0);
+    animTexture = objExprGetTexAnimator(self, 0, 0);
     if (animTexture != NULL) {
         animTexture->frame = 0;
     }
@@ -106,7 +106,7 @@ void GP_ShrinePillar_update(Object *self) { }
 // offset: 0x1DC | func: 3 | export: 3
 void GP_ShrinePillar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -141,7 +141,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
     switch (objdata->state) {
     case STATE_Underground:
         //Waiting for gamebit (set when leaving each act of Desert Force Point Temple)
-        if (main_get_bits(setup->gamebitRise)) {
+        if (mainGetBits(setup->gamebitRise)) {
             objdata->state = STATE_Rising;
         }
         break;
@@ -151,14 +151,14 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
             if (animObjData->messages[index] == 1) {
                 objdata->state = STATE_Raised;
                 if (setup->gamebitRaised != NO_GAMEBIT) {
-                    main_set_bits(setup->gamebitRaised, 1);
+                    mainSetBits(setup->gamebitRaised, 1);
                 }
             }
         }
         break;
     case STATE_Raised:
         //Waiting for door opening gamebit to be set
-        if (main_get_bits(setup->gamebitDoorOpen)) {
+        if (mainGetBits(setup->gamebitDoorOpen)) {
             objdata->state = STATE_Waiting_for_Door_Open;
         }
         break;
@@ -185,7 +185,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Fade_Texture_to_Cooled:
         //Fading animated texture from hot stone frame to iced-over stone frame
-        animatedTexture1 = func_800348A0(self, 0, 0);
+        animatedTexture1 = objExprGetTexAnimator(self, 0, 0);
         if (animatedTexture1 != NULL) {
             opacity = animatedTexture1->frame + (gUpdateRate * 8);
             if (opacity > 0x100) {
@@ -198,7 +198,7 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         break;
     case STATE_Fade_Texture_to_Hot:
         //Fading texture from hot stone frame to iced-over stone frame
-        animatedTexture2 = func_800348A0(self, 0, 0);
+        animatedTexture2 = objExprGetTexAnimator(self, 0, 0);
         if (animatedTexture2 != NULL) {
             opacity = animatedTexture2->frame - (gUpdateRate * 8);
             if (opacity < 0) {

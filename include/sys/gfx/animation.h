@@ -21,10 +21,10 @@ and whether TS components are also animated (bones always have rotation componen
 typedef struct {
 /*0000*/    s8 referenceCount;
 /*0001*/	s8 unk1; //animation flags (looping etc?)
-/*0002*/	s16 unk2; //keyframe_data_offset
+/*0002*/	s16 offsetKeyframes; //The offset to the keyframe data, relative to the beginning of the animation file
 /** keyframes for the root translation of the model
 (used to map the anim playback progress based on character speed, e.g. during walk cycles) */
-/*0004*/	s16 offset_rootMotion;
+/*0004*/	s16 offsetRootMotion;
 /*0006*/	AnimationHeader animHeader;
 } Animation;
 
@@ -45,7 +45,7 @@ typedef struct {
 /*003C*/    AnimationHeader *unk3C[2];
 /*0044*/    u16 animIndexes[2];
 /*0048*/	u16 unk48[2];
-/*004C*/	u16 unk4C[2][3];
+/*004C*/	u16 unk4C[2][3]; //keyframe offsets?
 /*0058*/    s16 unk58[2]; //anim blend strength? (out of 1024)
 /*005C*/	s16 unk5C[2]; //anim blend duration?
 /*0060*/    s8 unk60[2];

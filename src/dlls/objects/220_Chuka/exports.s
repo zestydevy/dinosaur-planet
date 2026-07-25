@@ -4,15 +4,15 @@
 _exports:
 
 # ctor/dtor
-.dword dll_220_ctor
-.dword dll_220_dtor
+.dword Chuka_ctor
+.dword Chuka_dtor
 
 # export table
-/*0*/ .dword dll_220_setup
-/*1*/ .dword dll_220_control
-/*2*/ .dword dll_220_update
-/*3*/ .dword dll_220_print
-/*4*/ .dword dll_220_free
-/*5*/ .dword dll_220_get_model_flags
-/*6*/ .dword dll_220_get_data_size
-/*7*/ .dword dll_220_func_704
+/*0*/ .dword Chuka_setup
+/*1*/ .dword Chuka_control
+/*2*/ .dword Chuka_update
+/*3*/ .dword Chuka_print
+/*4*/ .dword Chuka_free
+/*5*/ .dword Chuka_get_model_flags
+/*6*/ .dword Chuka_get_data_size
+/*7*/ .dword Chuka_receive_message

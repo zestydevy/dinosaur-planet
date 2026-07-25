@@ -4,6 +4,7 @@
 #include "PR/gu.h"
 #include "sys/math.h"
 
+// official name: atan2f
 f32 atan2f(f32 x, f32 z) {
 	f32 result;
 	f32 len;

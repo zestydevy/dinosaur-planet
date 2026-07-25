@@ -16,16 +16,6 @@ typedef struct Unk80026DF4 {
     f32 unk10;
 } Unk80026DF4;
 
-// size: 0x6C
-typedef struct Unk80027934 {
-    Vec4f unk0[4];
-    f32 unk40[4];
-    s8 unk50[4];
-    s8 unk54[4];
-    Object* unk58[4];
-    s16 unk68;
-} Unk80027934;
-
 // siuze: 0x1C
 typedef struct Unk800B19A0 {
     f32 unk0;
@@ -104,7 +94,7 @@ typedef enum {
     Damage_Type_7 = 0x7,
     Damage_Type_8 = 0x8,
     Damage_Type_9 = 0x9,
-    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?)
+    Damage_Type_Sword_Staff_Strike1 = 0xA,     //Sabre: anticlockwise/jump-attack  Krystal: anticlockwise        (possibly meant for anticlockwise attacks?) (seems to be used for a wide variety of attacks, so maybe DamageType_Physical_1?)
     Damage_Type_Sword_Staff_Strike2 = 0xB,     //Sabre: overhead                   Krystal: clockwise/overhead   (possibly meant for overhead/jump-attack?)
     Damage_Type_Sword_Strike_Clockwise = 0xC,  //Sabre: clockwise                  Krystal: N/A                  (possibly meant for clockwise attacks?)
     Damage_Type_D = 0xD,                 //Speeder bike checks this type
@@ -114,7 +104,7 @@ typedef enum {
     Damage_Type_Fishing_Net = 0x11,
     Damage_Type_Bullet = 0x12,
     Damage_Type_13 = 0x13,
-    Damage_Type_14 = 0x14, //vehicle-related?
+    Damage_Type_Speeding_Vehicle = 0x14, //CRsnowbike
     Damage_Type_Toxic = 0x15, //stuns player (SHkillermushroom spores)
     Damage_Type_16 = 0x16,
     Damage_Type_17 = 0x17,
@@ -123,26 +113,22 @@ typedef enum {
     Damage_Type_Flame_Command = 0x1A,
     Damage_Type_1B = 0x1B, //player-related, causes falling?
     Damage_Type_Icy_Water = 0x1C,
+    Damage_Type_Bike_Fuel = 0x1D,
     Damage_Type_None = 0x7F
 } DamageTypes;
 
-void objhits_init(void);
+void objHitInit(void);
 void func_80025DF0(void);
-void obj_do_hit_detection(s32 numObjs);
+void objHitDoHitDetection(s32 numObjs);
 s32 func_80025F40(Object* obj, Object **hitBy, s32 *arg2, s32 *damage);
 s32 func_8002635C(Object* objDamaged, Object* hitBy, s8 damageType, s8 hitDamage, s8 arg4);
 u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4);
 s32 func_80026724(Object*);
 void func_80028D90(void);
 void func_8002B410(Object *, s32);
-void update_object(Object *);
-void func_8001943C(Object *object, MtxF *mf, f32 yPrescale, f32 arg3);
-void func_8001A1D4(Model *model, AnimState *animState, s32 count);
 void func_80026AB8(Object *obj, ModelInstance *modelInstance, s32 arg2, ObjectHitInfo *objHitInfo, s32 arg4, s32 arg5);
 void func_8002B5C0(Object *obj);
-s32 func_8005509C(Object *arg0, f32* arg1, f32* arg2, s32 arg3, Unk80027934* arg4, u8 arg5);
 void func_800287E4(Object *obj, Object *otherObj, f32 arg2, f32 arg3, f32 arg4, s32 arg5);
-void func_80032804(Object*,Object*);
 u8 func_80029C04(Object *obj, Object *obj2, Object *obj3, s8 arg3, s8 arg4, u32 arg5, u32 arg6);
 void func_8002949C(Object *obj, Object *obj2, Object *obj3, ObjectHitInfo *objHitInfo, ObjectHitInfo *objHitInfo2, f32 updateRate);
 void func_80029AB4(ModelJoint *joints, s32 jointsCount, HitSphere *hitSpheres, s32 hitSpheresCount, s32 arg4, s32 arg5);
@@ -179,9 +165,10 @@ void func_800267A4(Object *obj);
 u32 func_8002667C(Object *obj, u32 addr);
 u32 func_80026BD8(Object *obj, u32 addr);
 u32 func_80026A20(s32 objId, ModelInstance* modelInstance, ObjectHitInfo* objHitInfo, u32 arg3, Object* obj);
-void update_obj_hitboxes(s32 arg0);
+void objHitUpdateHitModels(s32 arg0);
 void func_80025E58(void);
 void func_8002B6EC(void);
 void func_800267C4(Object* obj);
+Object **func_80025DD4(s32 *arg0);
 
 #endif

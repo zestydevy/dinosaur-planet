@@ -1,0 +1,12 @@
+.text = 0x0:
+WGBouncyVine_ctor = 0x0;
+WGBouncyVine_dtor = 0xC;
+WGBouncyVine_setup = 0x18;
+WGBouncyVine_control = 0x114;
+WGBouncyVine_update = 0x3F0;
+WGBouncyVine_print = 0x3FC;
+WGBouncyVine_free = 0x460;
+WGBouncyVine_get_model_flags = 0x470;
+WGBouncyVine_get_data_size = 0x480;
+
+.rodata = 0x4EC:

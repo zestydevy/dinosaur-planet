@@ -1,14 +1,14 @@
 #include "PR/ultratypes.h"
 #include "sys/linked_list.h"
 
-LinkedList *linked_list_init(LinkedList *list, s16 nextFieldOffset) {
+LinkedList *linkedListInit(LinkedList *list, s16 nextFieldOffset) {
     list->head = NULL;
     list->nextFieldOffset = nextFieldOffset;
 
     return list;
 }
 
-void linked_list_prepend(LinkedList *list, void *node) {
+void linkedListPrepend(LinkedList *list, void *node) {
     void *prevHead;
 
     prevHead = list->head;
@@ -19,7 +19,7 @@ void linked_list_prepend(LinkedList *list, void *node) {
     list->count += 1;
 }
 
-void linked_list_append(LinkedList *list, void *node) {
+void linkedListAppend(LinkedList *list, void *node) {
     void *next;
     void *last;
 
@@ -42,7 +42,7 @@ void linked_list_append(LinkedList *list, void *node) {
     list->count += 1;
 }
 
-void linked_list_insert(LinkedList *list, void *after, void *node) {
+void linkedListInsert(LinkedList *list, void *after, void *node) {
     void *next;
 
     if (list->head == NULL) {
@@ -64,7 +64,7 @@ void linked_list_insert(LinkedList *list, void *after, void *node) {
     list->count += 1;
 }
 
-void linked_list_remove(LinkedList *list, void *node) {
+void linkedListRemove(LinkedList *list, void *node) {
     void *before;
     void *curr;
     
@@ -96,7 +96,7 @@ void linked_list_remove(LinkedList *list, void *node) {
     }
 }
 
-void linked_list_remove_fast(LinkedList *list, void *before, void *node) {
+void linkedListRemoveFast(LinkedList *list, void *before, void *node) {
     if (node != NULL) {
         void *next = *LINKED_LIST_NEXT_FIELD2(list, node);
 

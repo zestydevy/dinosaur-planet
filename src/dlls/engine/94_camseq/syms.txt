@@ -1,0 +1,9 @@
+.text = 0x0:
+camseq_ctor = 0x0;
+camseq_dtor = 0xC;
+camseq_setup = 0x18;
+camseq_control = 0x64;
+camseq_free = 0x70;
+camseq_func_7C = 0x7C;
+
+.bss = 0x90:

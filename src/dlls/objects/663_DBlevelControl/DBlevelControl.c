@@ -65,12 +65,12 @@ void DBlevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     objdata->mapSetup = 1;
 
     for (i = 0; i < 3; i++) {
-        if (main_get_bits(_data_8[i])) {
+        if (mainGetBits(_data_8[i])) {
             objdata->floodLevel++;
         }
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
-    obj_add_object_type(self, OBJTYPE_DBlevelcontrol);
+    objAddObjectType(self, OBJTYPE_DBlevelcontrol);
 }
 
 // offset: 0xE4 | func: 1 | export: 1
@@ -82,40 +82,40 @@ void DBlevelControl_control(Object *self) {
 
     objdata = self->data;
 
-    if (main_get_bits(BIT_DB_Picked_Up_Egg)) {
+    if (mainGetBits(BIT_DB_Picked_Up_Egg)) {
         count = 0;
 
         for (i = 0; i < 3; i++) {
-            count += main_get_bits(_data_18[i]); // ?
+            count += mainGetBits(_data_18[i]); // ?
         }
 
         if (objdata->eggsOrDiamonds < count) {
-            main_set_bits(_data_0[objdata->eggsOrDiamonds], 1);
-            main_set_bits(BIT_DB_Picked_Up_Egg, 0);
-            main_set_bits(BIT_DB_Eggs_Or_Diamonds, ++objdata->eggsOrDiamonds);
+            mainSetBits(_data_0[objdata->eggsOrDiamonds], 1);
+            mainSetBits(BIT_DB_Picked_Up_Egg, 0);
+            mainSetBits(BIT_DB_Eggs_Or_Diamonds, ++objdata->eggsOrDiamonds);
         }
     }
 
-    if (main_get_bits(BIT_DB_Update_Flood_Level)) {
-        main_set_bits(_data_10[objdata->floodLevel], 1);
-        main_set_bits(BIT_DB_Update_Flood_Level, 0);
+    if (mainGetBits(BIT_DB_Update_Flood_Level)) {
+        mainSetBits(_data_10[objdata->floodLevel], 1);
+        mainSetBits(BIT_DB_Update_Flood_Level, 0);
         objdata->floodLevel++;
     }
 
-    gDLL_6_AMSFX->vtbl->water_falls_control();
+    dll_amSfx->WaterFallsControl();
 
-    if (main_get_bits(_data_20[objdata->mapSetup-1])) {
+    if (mainGetBits(_data_20[objdata->mapSetup-1])) {
         do {
             objdata->mapSetup++;
-        } while (main_get_bits(_data_20[objdata->mapSetup-1]));
+        } while (mainGetBits(_data_20[objdata->mapSetup-1]));
     }
     if (objdata->mapSetup != gDLL_29_Gplay->vtbl->get_act(self->mapID)) {
         gDLL_29_Gplay->vtbl->set_act(self->mapID, objdata->mapSetup);
     }
 
-    player = get_player();
+    player = objGetPlayer();
     if (((DLL_210_Player*)(player->dll))->vtbl->get_spirit_bits(player, PLAYER_SPIRIT_2)) {
-        main_set_bits(BIT_21F_Spirit_Collected, 1);
+        mainSetBits(BIT_21F_Spirit_Collected, 1);
     }
 }
 
@@ -127,7 +127,7 @@ void DBlevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 
 // offset: 0x384 | func: 4 | export: 4
 void DBlevelControl_free(Object *self, s32 arg1) {
-   obj_free_object_type(self, OBJTYPE_DBlevelcontrol);
+   objFreeObjectType(self, OBJTYPE_DBlevelcontrol);
 }
 
 // offset: 0x3C4 | func: 5 | export: 5

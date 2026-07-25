@@ -1,0 +1,15 @@
+.text = 0x0:
+NWsfx_ctor = 0x0;
+NWsfx_dtor = 0xC;
+NWsfx_setup = 0x18;
+NWsfx_control = 0x84;
+NWsfx_update = 0x1E8;
+NWsfx_print = 0x1F4;
+NWsfx_free = 0x248;
+NWsfx_get_model_flags = 0x258;
+NWsfx_get_data_size = 0x268;
+
+.rodata = 0x2BC:
+
+.data = 0x2BC:
+dSoundIDs = 0x0; // absolute:0x2BC

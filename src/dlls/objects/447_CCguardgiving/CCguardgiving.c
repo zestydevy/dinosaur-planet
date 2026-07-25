@@ -46,10 +46,10 @@ void CCguardgiving_setup(Object *self, ObjSetup *setup, s32 arg2) {
     CCguardgiving_Data *objdata = self->data;
 
     objdata->guardClaw = NULL;
-    if (main_get_bits(BIT_Map_CC)) {
+    if (mainGetBits(BIT_Map_CC)) {
         objdata->state = STATE_Finished;
         objdata->stepAside = TRUE;
-    } else if (main_get_bits(BIT_CC_Bribed_GuardClaw)) {
+    } else if (mainGetBits(BIT_CC_Bribed_GuardClaw)) {
         objdata->state = STATE_Waiting_to_Sell_Map;
         objdata->stepAside = TRUE;
     } else {
@@ -69,11 +69,11 @@ void CCguardgiving_control(Object *self) {
 
     //Find the GuardClaw object
     if (!objdata->guardClaw) {
-        guardClaw = obj_get_nearest_type_to(OBJTYPE_Baddie, self, &distance);
+        guardClaw = objGetNearestTypeTo(OBJTYPE_Baddie, self, &distance);
         objdata->guardClaw = guardClaw;
         if (guardClaw == NULL)
             return;
-        func_80023BF8(self, 0, 0, 0, 0, 2);
+        obj_func_80023BF8(self, 0, 0, 0, 0, 2);
     }
 
     //Copy GuardClaw's transform
@@ -96,7 +96,7 @@ void CCguardgiving_control(Object *self) {
 
     switch (objdata->state) {
     case STATE_Waiting_for_Bribe:
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             //When talked to, play one of two different chat sequences
             gDLL_3_Animation->vtbl->start_obj_sequence(objdata->objectSeqIndex, self, -1);
             if (objdata->objectSeqIndex == SeqIndex_Chat_Bribe_Wanted_1) {
@@ -107,7 +107,7 @@ void CCguardgiving_control(Object *self) {
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() == CMDMENU_CATEGORY_3_Items) {
             //Go to bribe attempt state if the object inventory is open
             objdata->state = STATE_Bribe_Attempt;
-            func_80023BF8(self, 0, 0, 0, 0, 3);
+            obj_func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_Bribe_Attempt:
@@ -115,48 +115,48 @@ void CCguardgiving_control(Object *self) {
             //Accepting gold nugget
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Bribed_with_Gold, self, -1);
             objdata->state = STATE_Waiting_to_Sell_Map;
-            func_80023BF8(self, 0, 0, 0, 0, 2);
-            main_set_bits(BIT_CC_Bribed_GuardClaw, 1);
+            obj_func_80023BF8(self, 0, 0, 0, 0, 2);
+            mainSetBits(BIT_CC_Bribed_GuardClaw, 1);
         } else if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Scarab_Count_Krystal)) {
             //Refusing scarabs
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Bribe_with_Scarabs_Refused, self, -1);
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() != CMDMENU_CATEGORY_3_Items) {
             //If the object inventory closes, go back to waiting
             objdata->state = STATE_Waiting_for_Bribe;
-            func_80023BF8(self, 0, 0, 0, 0, 2);
+            obj_func_80023BF8(self, 0, 0, 0, 0, 2);
         }
         break;
     case STATE_Waiting_to_Sell_Map:
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             //Play map sale chat sequence when talked to
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Chat_Map, self, -1);
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() == CMDMENU_CATEGORY_3_Items) {
             //Advance state when object inventory open
             objdata->state = STATE_Map_Sale_Attempt;
-            func_80023BF8(self, 0, 0, 0, 0, 3);
+            obj_func_80023BF8(self, 0, 0, 0, 0, 3);
         }
         break;
     case STATE_Map_Sale_Attempt:
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Scarab_Count_Krystal)) {
             //Give map when scarabs selected in inventory
-            player = get_player();
+            player = objGetPlayer();
             count = ((DLL_210_Player*)player->dll)->vtbl->get_scarabs(player);
             if (count >= 10) {
                 ((DLL_210_Player*)player->dll)->vtbl->set_scarabs(player, count - 10);
                 gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Selling_Map, self, -1);
                 objdata->state = STATE_Finished;
-                func_80023BF8(self, 0, 0, 0, 0, 2);
-                main_set_bits(BIT_Map_CC, 1);
+                obj_func_80023BF8(self, 0, 0, 0, 0, 2);
+                mainSetBits(BIT_Map_CC, 1);
             }
         } else if (gDLL_1_cmdmenu->vtbl->get_page_category() != CMDMENU_CATEGORY_3_Items) {
             //If the object inventory closes, go back to waiting
             objdata->state = STATE_Waiting_to_Sell_Map;
-            func_80023BF8(self, 0, 0, 0, 0, 2);
+            obj_func_80023BF8(self, 0, 0, 0, 0, 2);
         }
         break;
     case STATE_Finished:
         //Play "restating" sequence when talked to
-        if (func_80032538(self)) {
+        if (objCheckPlayerInteract(self)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(SeqIndex_Chat_End, self, -1);
         }
         break;
@@ -166,7 +166,7 @@ void CCguardgiving_control(Object *self) {
 // offset: 0x66C | func: 2 | export: 2
 void CCguardgiving_update(Object *self) {
     if ((self->def->flags & OBJDEF_INVISIBLE) && self->unk74) {
-        func_80036438(self);
+        objprintUpdateLockIconCoords(self);
     }
 }
 

@@ -2,7 +2,7 @@
 #include "sys/bitstream.h"
 #include "macros.h"
 
-BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capacity) {
+BitStream *bitstreamInit(BitStream *stream, u8 *data, s32 bitLength, s32 capacity) {
     stream->byteLength = bitLength >> 3;
     if (bitLength & 7) {
         // need one extra byte to hold bits
@@ -17,7 +17,7 @@ BitStream *bitstream_init(BitStream *stream, u8 *data, s32 bitLength, s32 capaci
     return stream;
 }
 
-u32 bitstream_read(BitStream *stream, u8 n) {
+u32 bitstreamRead(BitStream *stream, u8 n) {
     u32 data;
     s32 i;
     s32 byteIdx;
@@ -48,7 +48,7 @@ u32 bitstream_read(BitStream *stream, u8 n) {
 
 static const char str_800986e8[] = "BIT STREAM: write overflow\n";
 
-void bitstream_write(BitStream *stream, u32 data, u8 n) {
+void bitstreamWrite(BitStream *stream, u32 data, u8 n) {
     s32 i;
     s32 byteIdx;
     s32 bitIdx;
@@ -81,16 +81,16 @@ void bitstream_write(BitStream *stream, u32 data, u8 n) {
 
 static const char str_80098704[] = "BIT STREAM: append overflow\n";
 
-void bitstream_append(BitStream *stream, u32 data, u8 n) {
+void bitstreamAppend(BitStream *stream, u32 data, u8 n) {
     s32 len;
 
     len = stream->bitLength;
 
     stream->bitPos = len;
 
-    bitstream_write(stream, data, n);
+    bitstreamWrite(stream, data, n);
 }
 
-void bitstream_set_pos(BitStream *stream, s32 bitPos) {
+void bitstreamSetPos(BitStream *stream, s32 bitPos) {
     stream->bitPos = bitPos;
 }

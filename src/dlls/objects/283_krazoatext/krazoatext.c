@@ -57,7 +57,7 @@ void krazoatext_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
 void krazoatext_setup(Object* self, s32 arg1, s32 arg2) {  
-    obj_init_mesg_queue(self, 2);
+    objInitMesgQueue(self, 2);
     krazoatext_unload_all_glyph_textures(self, self->data);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -86,17 +86,17 @@ void krazoatext_control(Object* self) {
         objdata->stringLoaded = TRUE;
     }
 
-    while (obj_recv_mesg(self, &message, 0, 0)) {
+    while (objRecvMesg(self, &message, 0, 0)) {
     }
 
     if (objdata->state != 0) {
-        if (!(self->unkAF & 4) || (joy_get_pressed(0) & B_BUTTON)) {
+        if (!(self->unkAF & 4) || (joyGetPressed(0) & B_BUTTON)) {
             objdata->state = 0;
         }
     } else if (self->unkAF & 1) {
         objdata->state = 1;
         if (objdata->sound == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_286, 0x7F, (u32*)&objdata->sound, 0, 0, 0);
         }
     }
 
@@ -106,8 +106,8 @@ void krazoatext_control(Object* self) {
         krazoatext_unload_all_glyph_textures(self, objdata);
     }
 
-    if (objdata->sound && !gDLL_6_AMSFX->vtbl->is_playing(objdata->sound)) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+    if (objdata->sound && !dll_amSfx->IsPlaying(objdata->sound)) {
+        dll_amSfx->Stop(objdata->sound);
         objdata->sound = NULL;
     }
 }
@@ -119,7 +119,7 @@ void krazoatext_update(Object* self){ }
 void krazoatext_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility) {
         self->srt.scale = 0.001f;
-        draw_object(self, gfx, mtx, vtx, pols, 1.0f);
+        objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
         self->srt.scale = self->def->scale;
     }
 }
@@ -130,7 +130,7 @@ void krazoatext_free(Object* self, s32 arg1) {
 
     krazoatext_unload_all_glyph_textures(self, objdata);
     if (objdata->sound) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->sound);
+        dll_amSfx->Stop(objdata->sound);
     }
 }
 
@@ -172,7 +172,7 @@ void krazoatext_print_text(Object* self, Gfx** gfx) {
                 currentGlyph.tile.x = 0;
                 currentGlyph.tile.y = 0;
                 currentGlyph.tile.animProgress = 0;
-                rcp_tile_write(gfx, &currentGlyph.tile, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
+                rcpTileWrite(gfx, &currentGlyph.tile, xCoord, KRAZOA_PRINT_BASE_Y, 0xFF, 0xFF, 0xFF, 0xFF);
             }
         }
 
@@ -195,7 +195,7 @@ void krazoatext_load_required_glyph_textures(Object* self, KText_Data* objdata) 
         if (ASCII_A <= objdata->text[charIndex] && objdata->text[charIndex] <= ASCII_Z){
             glyphIndex = (u32)objdata->text[charIndex] - ASCII_A;
             if (objdata->glyphs[glyphIndex] == NULL) {
-                objdata->glyphs[glyphIndex] = tex_load_deferred(KRAZOA_ALPHABET_ICONS + glyphIndex);
+                objdata->glyphs[glyphIndex] = texLoadTexture(KRAZOA_ALPHABET_ICONS + glyphIndex);
             }
         }
         charIndex++;
@@ -211,7 +211,7 @@ void krazoatext_unload_all_glyph_textures(Object* self, KText_Data* objdata) {
     if (objdata->glyphsLoaded) {
         for (index = 0; index < KRAZOA_ALPHABET_LENGTH; index++){
             if (objdata->glyphs[index]) {
-                tex_free(objdata->glyphs[index]);
+                texFreeTexture(objdata->glyphs[index]);
             }
             objdata->glyphs[index] = NULL;
         }

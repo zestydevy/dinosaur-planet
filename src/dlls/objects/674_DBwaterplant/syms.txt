@@ -1,0 +1,12 @@
+.text = 0x0:
+DBWaterPlant_ctor = 0x0;
+DBWaterPlant_dtor = 0xC;
+DBWaterPlant_setup = 0x18;
+DBWaterPlant_control = 0x120;
+DBWaterPlant_update = 0x310;
+DBWaterPlant_print = 0x3BC;
+DBWaterPlant_free = 0x410;
+DBWaterPlant_get_model_flags = 0x420;
+DBWaterPlant_get_data_size = 0x430;
+
+.rodata = 0x4A0:

@@ -16,12 +16,12 @@ void SB_ShipFlag_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void SB_ShipFlag_setup(Object *self, SB_ShipFlag_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
-    func_80023D30(self, 0, 0.0f, 0);
+    objAnimSet(self, 0, 0.0f, 0);
 }
 
 // offset: 0x74 | func: 1 | export: 1
 void SB_ShipFlag_control(Object *self) {
-    func_80024108(self, 0.007f, gUpdateRate, NULL);
+    objAnimAdvance(self, 0.007f, gUpdateRate, NULL);
 }
 
 // offset: 0xE0 | func: 2 | export: 2
@@ -30,7 +30,7 @@ void SB_ShipFlag_update(Object *self) { }
 // offset: 0xEC | func: 3 | export: 3
 void SB_ShipFlag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

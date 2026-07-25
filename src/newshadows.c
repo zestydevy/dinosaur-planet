@@ -3,10 +3,11 @@
 #include "sys/newshadows.h"
 #include "sys/camera.h"
 #include "sys/gfx/textable.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/shadowtex.h"
-#include "sys/segment_1D900.h"
-#include "sys/segment_53F00.h"
+#include "sys/lighting.h"
+#include "sys/intersect.h"
 #include "macros.h"
 
 static const char str_8009a9d0[] = "shadows: group overflow error\n";
@@ -83,16 +84,16 @@ void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2);
 void shadows_func_800511E8(Object*, s32, Vec3f*, Unk8004FA58 arg3[12]);
 s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* arg2, Vec3f* arg3, s32 arg4, f32 arg5, f32 arg6, s32 arg7, s32 arg8);
 void shadows_func_80050B88(Object* arg0, Vec3f* arg1, Unk8004FA58* arg2, Unk8004FA58* arg3, Unk8004FA58* arg4, Unk8004FA58* arg5, s16* arg6, s16* arg7, f32 arg8, s16* arg9, s32 argA);
-s32 shadows_draw2(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
+s32 shadowsDraw2(Vtx* arg0, Gfx* arg1, ObjectShadow* arg2, Object* arg3, s32 arg4, s32* arg5);
 s32 shadows_func_80051CFC(Vec3f* arg0, Vec3f* arg1);
 s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 arg7);
-s32 shadows_draw1(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
+s32 shadowsDraw1(Vtx* arg0, Gfx* gdl, ObjectShadow* arg2, Object *arg3, s32 arg4, s32* arg5);
 s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3, Vec3f *arg4, Vtx *arg5, Unk8004FA58* arg6, s32 max);
 void shadows_func_80052230(Vec3f *A, Vec3f *B, f32 *arg2);
 s32 shadows_func_80052148(Vec3f* arg0, Vec3f* arg1);
 void shadows_func_80052644(u8* source, u8* dest, s32 arg2, s32* outCount, Vec4f* arg4, s32 length, void (*arg6)(Vec3f*, Vec3f*, Vec3f*, f32), u8 someFlag);
 
-void shadows_init(void) {
+void shadowsInit(void) {
     void *temp_v0;
 
     D_80092BE8 = 10;
@@ -171,8 +172,8 @@ void shadows_init(void) {
     D_800B9840[21] = 6.0f;
     D_800B9840[22] = 0.0f;
     D_800B9840[23] = 55.0f;
-    shadowtex_init();
-    D_800BB190 = tex_load_deferred(TEXTABLE_D8);
+    shadowtexInit();
+    D_800BB190 = texLoadTexture(TEXTABLE_D8);
 }
 
 void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
@@ -182,7 +183,7 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     static u8 _bss_800bb1b8[0x40];
     Vec3f sp1C;
 
-    if (func_8001EBE0() != 0) {
+    if (lightGetInside() != 0) {
         arg0 = 0.0f;
         arg1 = 198.0f;
         arg2 = 19.0f;
@@ -223,7 +224,7 @@ void shadows_func_8004D698(f32 arg0, f32 arg1, f32 arg2, s32 arg3) {
     }
 }
 
-void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
+void shadowsSetCustomObjPos(Object *obj, f32 x, f32 y, f32 z) {
     ObjectShadow *shadow = obj->shadow;
 
     if (shadow) {
@@ -234,19 +235,19 @@ void shadows_set_custom_obj_pos(Object *obj, f32 x, f32 y, f32 z) {
     }
 }
 
-void shadows_clear_custom_obj_pos(Object *obj) {
+void shadowsClearCustomObjPos(Object *obj) {
     if (obj->shadow != NULL) {
         obj->shadow->flags &= ~OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS;
     }
 }
 
-u32 shadows_init_obj_shadow(Object *obj, u32 addr, s32 arg2) {
+u32 shadowsInitObjShadow(Object *obj, u32 addr, s32 arg2) {
     ObjectShadow *shadow;
 
     shadow = (ObjectShadow*)mmAlign4(addr);
     obj->shadow = shadow;
     addr = (u32)(shadow + 1);
-    shadow->texture = tex_load((s32) -obj->def->shadowTexture, 0);
+    shadow->texture = texLoadTextureActual((s32) -obj->def->shadowTexture, 0);
     shadow->scale = obj->def->shadowScale;
     shadow->maxDistScale = shadow->scale;
     shadow->dir.x = D_80092BD0;
@@ -311,7 +312,7 @@ void shadows_func_8004DABC(void) {
     }
 }
 
-s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
+s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2A4; // end of loop
@@ -336,7 +337,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
     // @fake
     if (1) {}
-    if (track_get_shadows_on() == 0) {
+    if (trackGetShadowsOn() == 0) {
         obj->shadow->gdl = NULL;
         return 0;
     }
@@ -414,7 +415,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
         bcopy(&obj->globalPosition, &sp22C, sizeof(Vec3f));
         if (obj->parent != NULL) {
-            transform_point_by_object(
+            camTransformPointByObject(
                 shadow->tr.x,
                 shadow->tr.y,
                 shadow->tr.z,
@@ -446,10 +447,10 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     for (i = 0, j = 0; i < 8; i++, j++) {
         VECTOR_ADD(obj->globalPosition, sp244[i], sp1C0[j]);
     }
-    fit_aabb_around_cubes(&sp68, sp1C0, sp1C0, sp48, 8);
-    func_80053750(obj, &sp68, 1);
-    func_80053408(&sp8C);
-    func_800533D8(&sp2B4, &sp88);
+    trackIntersectBuildAABB(&sp68, sp1C0, sp1C0, sp48, 8);
+    trackIntersectBroadphase(obj, &sp68, 1);
+    trackIntersectGetBlockList(&sp8C);
+    trackIntersect_func_800533D8(&sp2B4, &sp88);
     sp90 = sp88;
     sp2B4 = shadows_func_80052300(
         obj,
@@ -477,7 +478,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             }
             return 0;
         }
-        D_800BB150 += shadows_draw1(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadowsDraw1(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     } else {
         if (shadows_func_8004FA58(obj, sp244, sp94, sp2B4, D_800BB144, D_800BB148, D_800BA1A0, 0x18F - temp_t0) == 0) {
             shadow->gdl = NULL;
@@ -489,7 +490,7 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
 
             return 0;
         }
-        D_800BB150 += shadows_draw2(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
+        D_800BB150 += shadowsDraw2(D_800BB148, D_800BB150, shadow, obj, D_80092C20, &sp2B0);
     }
 
     D_800BB14C += sp2B0;
@@ -504,14 +505,14 @@ s32 shadows_update_obj_geom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     return 0;
 }
 
-s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
+s32 shadowsCalcOpacity(Object *obj, ObjectShadow *shadow) {
     s32 sp1C;
     s32 sp18;
     f32 var_fv1;
 
     sp1C = shadow->distFadeStart * 4;
     sp18 = shadow->distFadeEnd * 4;
-    var_fv1 = (camera_get_distance_to_point(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z) - sp1C) / (sp18 - sp1C);
+    var_fv1 = (camDistance(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z) - sp1C) / (sp18 - sp1C);
     if (var_fv1 < 0.0f) {
         var_fv1 = 0.0f;
     } else if (var_fv1 > 1.0f) {
@@ -522,7 +523,7 @@ s32 shadows_calc_opacity(Object *obj, ObjectShadow *shadow) {
     return sp1C >> 8;
 }
 
-void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
     ObjectShadow* shadow;
     Vec3f sp50;
     Vec3f sp44;
@@ -537,13 +538,13 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
         bcopy(&obj->globalPosition, &sp50, sizeof(Vec3f));
         bcopy(&shadow->tr, &obj->srt.transl, sizeof(Vec3f));
         if (obj->parent != NULL) {
-            transform_point_by_object(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
+            camTransformPointByObject(shadow->tr.x, shadow->tr.y, shadow->tr.z, &shadow->tr.x, &shadow->tr.y, &shadow->tr.z, obj->parent);
         } else {
             bcopy(&shadow->tr, &obj->globalPosition, sizeof(Vec3f));
         }
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
-        shadowtex_draw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+        shadowtexDraw(obj, D_80092C18, gdl, mtxs, vtxs, pols, (s32) D_800BB170, D_800BB18C, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
         bcopy(&sp44, &obj->srt.transl, sizeof(Vec3f));
@@ -553,7 +554,7 @@ void shadows_update_dynamic_tex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtx
 
 static u8 _data_pad_80092c68[0xC] = {0};
 
-void shadows_update_obj_box(Object* arg0) {
+void shadowsUpdateObjBox(Object* arg0) {
     s32 sp2B4 = 0;
     s32 sp2B0;
     s32 sp2AC;
@@ -574,7 +575,7 @@ void shadows_update_obj_box(Object* arg0) {
     AABBs32 sp70;
     f32 sp50[8] = {0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f}; // D_80092C74
 
-    if (track_get_shadows_on() == 0) {
+    if (trackGetShadowsOn() == 0) {
         arg0->shadow->gdl = NULL;
         return;
     }
@@ -601,7 +602,7 @@ void shadows_update_obj_box(Object* arg0) {
             bcopy(&arg0->srt.transl, &sp1D4, 0xC);
             bcopy(&arg0->globalPosition, &sp1E0, 0xC);
             if (arg0->parent != NULL) {
-                transform_point_by_object(
+                camTransformPointByObject(
                     temp_s1->tr.x,
                     temp_s1->tr.y,
                     temp_s1->tr.z,
@@ -629,10 +630,10 @@ void shadows_update_obj_box(Object* arg0) {
         for (i = 0, j = 0; i < 8; i++, j++) {
             VECTOR_ADD(arg0->globalPosition, sp24C[i], sp1EC[j]);
         }
-        fit_aabb_around_cubes(&sp70, sp1EC, sp1EC, sp50, 8);
-        func_80053750(arg0, &sp70, 1);
-        func_80053408(&spA0);
-        func_800533D8(&sp2B4, &sp9C);
+        trackIntersectBuildAABB(&sp70, sp1EC, sp1EC, sp50, 8);
+        trackIntersectBroadphase(arg0, &sp70, 1);
+        trackIntersectGetBlockList(&spA0);
+        trackIntersect_func_800533D8(&sp2B4, &sp9C);
         sp2B4 = shadows_func_80052300(arg0, sp9C, D_800BA1A0, 
             D_800BB174, sp2B4, spA0->x, spA0->z, 0, temp_s1->flags & OBJ_SHADOW_FLAG_WATER_SURFACE);
         D_800BB174 += sp2B4 * 3;
@@ -647,7 +648,7 @@ void shadows_update_obj_box(Object* arg0) {
             }
             return;
         } else {
-            D_800BB184 += shadows_draw2(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
+            D_800BB184 += shadowsDraw2(D_800BB17C, D_800BB184, temp_s1, arg0, D_80092C20, &sp2B0);
             D_800BB180 += sp2B0;
             D_800BB178 = D_800BB174;
             D_80092C28 = D_800BB184 - D_800BB158[D_80092C0C];
@@ -663,7 +664,7 @@ void shadows_update_obj_box(Object* arg0) {
 
     if ((temp_s1->gdl != NULL) && (temp_s1->gdl2 != NULL)) {
         if (!(temp_s1->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            alpha = shadows_calc_opacity(arg0, temp_s1);
+            alpha = shadowsCalcOpacity(arg0, temp_s1);
         } else {
             alpha = temp_s1->opacity;
         }
@@ -671,7 +672,7 @@ void shadows_update_obj_box(Object* arg0) {
     }
 }
 
-s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4, s32 *arg5) {
+s32 shadowsDraw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg4, s32 *arg5) {
     DLTri* currentTri;
     s16 temp_v0_2;
     s16* var_s0;
@@ -692,23 +693,23 @@ s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg
 
     sp1C0 = dl;
     gSPLoadGeometryMode(dl, G_ZBUFFER | G_SHADE | G_CULL_BACK | G_FOG);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     gDPSetCombineLERP(dl, 0, 0, 0, TEXEL0, 0, 0, 0, TEXEL1, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0);
-    dl_apply_combine(&dl);
+    dlApplyCombine(&dl);
     if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         gDPSetOtherMode(dl, 
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2);
-        dl_apply_other_mode(&dl);
+        dlApplyOtherMode(&dl);
     } else {
         gDPSetOtherMode(dl,
             G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
             G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2);
-        dl_apply_other_mode(&dl);
+        dlApplyOtherMode(&dl);
     }
     shadow->gdl2 = dl;
-    dl_set_prim_color_no_sync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
-    shadowtex_get_textures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+    dlSetPrimColorNoSync(&dl, 0xFFU, 0xFFU, 0xFFU, 0x96U);
+    shadowtexGetTextures(shadow->bufferIdx ^ 1, &sp1B8, &sp1B4, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
     var_s5 = 0;
     var_s6 = 0;
     while (var_s6 < 4) {
@@ -787,7 +788,7 @@ s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg
                     var_a0++;
                 }
                 
-                dl_triangles(&dl, spA8, (D_800B98B8[var_s1] - 2));
+                dlTriangles(&dl, spA8, (D_800B98B8[var_s1] - 2));
                 var_s5 += D_800B98B8[var_s1];
             }
             var_s2 += D_800B98B8[var_s1];
@@ -800,7 +801,7 @@ s32 shadows_draw1(Vtx *arg0, Gfx *dl, ObjectShadow *shadow, Object *obj, s32 arg
     return (dl - sp1C0);
 }
 
-s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4, s32* arg5) {
+s32 shadowsDraw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg4, s32* arg5) {
     s32 sp1E4;
     s32 var_s0;
     s32 var_s4;
@@ -833,7 +834,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
         sp1C0 = D_80092BE4 * sp1C0;
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_DYNAMIC_TEX) {
-        shadowtex_get_textures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
+        shadowtexGetTextures(shadow->bufferIdx ^ 1, &spB4, &spB0, OBJ_SHADOW_FLAG_GET_TEX_SLOT(shadow->flags));
         sp1D4 = 0;
     } else {
         sp1C4 = shadow->texture;
@@ -841,7 +842,7 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     }
     if (!(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR)) {
         if ((obj->def->shadowType == OBJ_SHADOW_GEOM) && !(shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OPACITY)) {
-            sp1D0 = shadows_calc_opacity(obj, shadow);
+            sp1D0 = shadowsCalcOpacity(obj, shadow);
         } else {
             sp1D0 = shadow->opacity;
         }
@@ -859,48 +860,48 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     }
     var_s2 = 0;
     sp1E4 = 0;
-    dl_use_alt_builder();
-    tex_render_save_state();
+    dlUseAltBuilder();
+    texRenderSaveState();
     // @fake
     if ((s32)&dl) {}
     gSPGeometryMode(dl, 0xFFFFFF, G_FOG| G_CULL_BACK | G_SHADE | G_ZBUFFER);
-    dl_apply_geometry_mode(&dl);
+    dlApplyGeometryMode(&dl);
     if (sp1D4 != 0) {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, 0, 0, 0, TEXEL0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&dl);
+        dlApplyCombine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         } else {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             );
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         }
-        tex_gdl_set_textures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
+        texDPTextures(&dl, sp1C4, NULL, 0U, 0, 0U, 0U);
     } else {
         gDPSetCombineLERP(dl, 0, 0, 0, PRIMITIVE, TEXEL0, 0, TEXEL1, 0, 0, 0, 0, COMBINED, COMBINED, 0, PRIMITIVE, 0)
-        dl_apply_combine(&dl);
+        dlApplyCombine(&dl);
         if (shadow->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         } else {
             gDPSetOtherMode(
                 dl,
                 G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE,
                 G_AC_NONE | G_ZS_PIXEL | G_RM_FOG_SHADE_A | G_RM_ZB_CLD_SURF2
             )
-            dl_apply_other_mode(&dl);
+            dlApplyOtherMode(&dl);
         }
         gDPLoadTextureBlock_4b(dl++, OS_PHYSICAL_TO_K0(spB4), G_IM_FMT_I, 64, 64, 0, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
         gDPLoadMultiBlock_4bS(dl++, OS_PHYSICAL_TO_K0(D_800BB190 + 1), 0x100, 1, G_IM_FMT_I, 64, 64, 0x100, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMIRROR | G_TX_CLAMP, G_TX_NOMASK, G_TX_NOMASK, G_TX_NOLOD, G_TX_NOLOD)
@@ -910,9 +911,9 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
     if (shadow2) {}
     shadow2->gdl2 = dl;
     if (shadow2->flags & OBJ_SHADOW_FLAG_CUSTOM_COLOR) {
-        dl_set_prim_color_no_sync(&dl, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
+        dlSetPrimColorNoSync(&dl, shadow2->r, shadow2->g, shadow2->b, (s16)(sp1C0 * 255.0f));
     } else {
-        dl_set_prim_color_no_sync(&dl, 0, 0, 0, sp1D0);
+        dlSetPrimColorNoSync(&dl, 0, 0, 0, sp1D0);
     }
     for (; sp1E4 < arg4; sp1E4++) {
         gSPVertex(dl++, OS_PHYSICAL_TO_K0(arg0), D_800B98B8[sp1E4], 0);
@@ -924,15 +925,15 @@ s32 shadows_draw2(Vtx* arg0, Gfx* dl, ObjectShadow* shadow, Object* obj, s32 arg
             var_v1++;
             var_a0++;
         }
-        dl_triangles(&dl, spB8, D_800B98B8[sp1E4] - 2);
+        dlTriangles(&dl, spB8, D_800B98B8[sp1E4] - 2);
 
         arg0 += D_800B98B8[sp1E4];
         var_s4 += D_800B98B8[sp1E4];
         var_s2 += D_800B98B8[sp1E4];
     }
     gSPEndDisplayList(dl++);
-    dl_use_main_builder();
-    tex_render_restore_state();
+    dlUseMainBuilder();
+    texRenderRestoreState();
     *arg5 = var_s4;
     return dl - sp1C8;
 }
@@ -984,9 +985,9 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     sp280 = 0;
     sp26C = 0;
     spAC = arg0->shadow;
-    camera = get_camera();
+    camera = camGet();
     if (arg0->parent != NULL) {
-        inverse_transform_point_by_object(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
+        camInverseTransformPointByObject(camera->tx, camera->ty, camera->tz, &spD8.f[0], &spD8.f[1], &spD8.f[2], arg0->parent);
     } else {
         spD8.f[0] = camera->tx;
         spD8.f[1] = camera->ty;
@@ -997,7 +998,7 @@ s32 shadows_func_8004FA58(Object* arg0, Vec3f *arg1, Unk8004FA58 *arg2, s32 arg3
     spD8.f[2] -= arg0->srt.transl.z;
     temp_fv0 = sqrtf(SQ(spD8.x) + SQ(spD8.y) + SQ(spD8.z));
     var_fs2 = temp_fv0 * 0.1f;
-    var_a0 = (s16)((u16)arctan2_f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
+    var_a0 = (s16)((u16)mathAtan2f(spD8.y, sqrtf(SQ(spD8.x) + SQ(spD8.z))));
     CLAMP(var_a0, 0, 0x2000);
     var_fv0 = (f32)var_a0 / 8192;
     if (var_fv0 > 1.0f) {
@@ -1145,12 +1146,12 @@ s32 shadows_func_800502AC(Object* arg0, Vec3f *arg1, Unk8004FA58* arg2, s32 arg3
     sp344 = 0;
     spAC = arg0->shadow;
     bzero(&D_800B9B10, sizeof(D_800B9B10) - 4);
-    temp_fs4 = (f32) spAC->visibility * 0.015625f;
-    camera = get_camera();
+    temp_fs4 = (f32) spAC->visibility * (1.0f / 64.0f);
+    camera = camGet();
     spD0.x = camera->tx - arg0->globalPosition.x;
     spD0.y = camera->ty - arg0->globalPosition.y;
     spD0.z = camera->tz - arg0->globalPosition.z;
-    var_fv1 = sqrtf((spD0.x * spD0.x) + (spD0.y * spD0.y) + (spD0.z * spD0.z));
+    var_fv1 = sqrtf(SQ(spD0.x) + SQ(spD0.y) + SQ(spD0.z));
     if (spAC->flags & OBJ_SHADOW_FLAG_NO_Z_BUFFER) {
         var_fv1 = 0.0f;
     }
@@ -1477,11 +1478,11 @@ void shadows_func_800516BC(Object* obj, Vec3f* arg1, f32 arg2) {
     s32 i;
     s16 sp2A;
 
-    set_camera_selector(0);
-    camera = get_camera();
-    sp2A = arctan2_f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
-    sp30 = fsin16_precise(-sp2A);
-    temp_fv0 = fcos16_precise(-sp2A);
+    camSetCameraSelector(0);
+    camera = camGet();
+    sp2A = mathAtan2f(camera->srt.transl.x - obj->srt.transl.x, camera->srt.transl.z - obj->srt.transl.z) & 0xFFFF;
+    sp30 = mathSinfInterp(-sp2A);
+    temp_fv0 = mathCosfInterp(-sp2A);
     temp_fa1 = obj->shadow->maxDistScale * 0.3333f;
     for (i = 0; i < 8; i++) {
         sp40[0] = D_800B9840[i * 3 + 0] * arg2;
@@ -1540,14 +1541,14 @@ void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 ar
         arg4 = -5;
     }
     if (var_fa0 < var_fv1) {
-        var_v0 = arctan2s(var_fv1, temp_fa1);
+        var_v0 = mathAtan2(var_fv1, temp_fa1);
     } else {
-        var_v0 = arctan2_f(var_fa0, temp_fa1);
+        var_v0 = mathAtan2f(var_fa0, temp_fa1);
     }
     if (arg1->shadow->flags & OBJ_SHADOW_FLAG_USE_OBJ_YAW) {
         srt.yaw = arg1->srt.yaw;
     } else {
-        srt.yaw = arctan2_f(-temp_fs1, -temp_fs2);
+        srt.yaw = mathAtan2f(-temp_fs1, -temp_fs2);
     }
     // This needs to be u16???
     srt.pitch = (0x4000 - var_v0);
@@ -1567,7 +1568,7 @@ void shadows_func_80051944(s32 arg0, Object* arg1, Vec3f* arg2, f32 arg3, s16 ar
             pos.y = (D_800B97E0[i * 3 + 1] * arg3) - temp_fv0;
             pos.z = (D_800B97E0[i * 3 + 2] * (arg1->shadow->maxDistScale * temp_fs4)) - temp_fv0;
         }
-        rotate_vec3(&srt, pos.f);
+        mathRotateRPY(&srt, pos.f);
         arg2->x = pos.x;
         arg2->y = pos.y - arg4;
         arg2->z = pos.z;
@@ -1623,7 +1624,7 @@ s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3*
 
     for (i = 0; i < arg4; i++) {
         var_s3 = &arg3[i];
-        if (shadows_func_80051F64(arg1, arg2, var_s3->unkA, var_s3->unk16) == 1) {
+        if (shadows_func_80051F64(arg1, arg2, var_s3->vX, var_s3->vZ) == 1) {
             sp70.x = arg1;
             sp70.y = arg0->srt.transl.y;
             sp70.z = arg2;
@@ -1632,15 +1633,15 @@ s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3*
             sp64.z = arg2;
             if (arg5 != NULL) {
                 f0 = 0.00012208521f;
-                arg5->x = var_s3->unk4 * f0;
-                arg5->y = var_s3->unk6 * f0;
-                arg5->z = var_s3->unk8 * f0;
+                arg5->x = var_s3->nX * f0;
+                arg5->y = var_s3->nY * f0;
+                arg5->z = var_s3->nZ * f0;
                 arg5->w = var_s3->unk0;
                 return 1;
             }
-            sp44.x = var_s3->unk4 * 0.00012208521f;
-            sp44.y = var_s3->unk6 * 0.00012208521f;
-            sp44.z = var_s3->unk8 * 0.00012208521f;
+            sp44.x = var_s3->nX * 0.00012208521f;
+            sp44.y = var_s3->nY * 0.00012208521f;
+            sp44.z = var_s3->nZ * 0.00012208521f;
             sp44.w = var_s3->unk0;
             shadows_func_800528AC(&sp70, &sp64, &sp58, &sp44);
             return sp58.y - sp70.y;
@@ -1747,7 +1748,7 @@ s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* 
         sp34 -= arg5;
         sp30 -= arg6;
     }
-    temp_v0 = func_8005341C(&sp44);
+    temp_v0 = trackIntersectGetPLIndices(&sp44);
     temp_t2 = &temp_v0[sp44];
     sp44 = 0;
     var_a2 = 0;
@@ -1766,21 +1767,21 @@ s32 shadows_func_80052300(Object* arg0, UnkFunc80051D68Arg3 *arg1, Unk8004FA58* 
                 if (var_v1 == FALSE) {
                     continue;
                 }
-                arg3->x = arg1[sp44].unkA[0] - sp34;
-                arg3->y = arg1[sp44].unk10[0] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[0] - sp30;
+                arg3->x = arg1[sp44].vX[0] - sp34;
+                arg3->y = arg1[sp44].vY[0] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[0] - sp30;
                 arg3++;
-                arg3->x = arg1[sp44].unkA[1] - sp34;
-                arg3->y = arg1[sp44].unk10[1] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[1] - sp30;
+                arg3->x = arg1[sp44].vX[1] - sp34;
+                arg3->y = arg1[sp44].vY[1] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[1] - sp30;
                 arg3++;
-                arg3->x = arg1[sp44].unkA[2] - sp34;
-                arg3->y = arg1[sp44].unk10[2] - arg0->srt.transl.y;
-                arg3->z = arg1[sp44].unk16[2] - sp30;
+                arg3->x = arg1[sp44].vX[2] - sp34;
+                arg3->y = arg1[sp44].vY[2] - arg0->srt.transl.y;
+                arg3->z = arg1[sp44].vZ[2] - sp30;
                 arg3++;
-                arg2[var_a2].pos.x = arg1[sp44].unk4 * 0.00012208521f;
-                arg2[var_a2].pos.y = arg1[sp44].unk6 * 0.00012208521f;
-                arg2[var_a2].pos.z = arg1[sp44].unk8 * 0.00012208521f;
+                arg2[var_a2].pos.x = arg1[sp44].nX * 0.00012208521f;
+                arg2[var_a2].pos.y = arg1[sp44].nY * 0.00012208521f;
+                arg2[var_a2].pos.z = arg1[sp44].nZ * 0.00012208521f;
                 arg2[var_a2].unk10 = arg1[sp44].unk2F;
                 if (1) {}
                 var_a2++;

@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_236_ctor
-.dword dll_236_dtor
+.dword WGTriffid_ctor
+.dword WGTriffid_dtor
 
 # export table
-/*0*/ .dword dll_236_setup
-/*1*/ .dword dll_236_control
-/*2*/ .dword dll_236_update
-/*3*/ .dword dll_236_print
-/*4*/ .dword dll_236_free
-/*5*/ .dword dll_236_get_model_flags
-/*6*/ .dword dll_236_get_data_size
+/*0*/ .dword WGTriffid_setup
+/*1*/ .dword WGTriffid_control
+/*2*/ .dword WGTriffid_update
+/*3*/ .dword WGTriffid_print
+/*4*/ .dword WGTriffid_free
+/*5*/ .dword WGTriffid_get_model_flags
+/*6*/ .dword WGTriffid_get_data_size

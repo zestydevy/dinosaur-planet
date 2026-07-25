@@ -56,8 +56,8 @@ void SB_Propeller_control(Object *self) {
         self->objhitInfo->unk58 &= ~1;
         if (!objdata->soundHandle) {
             if (parent_unkDC > 10) {
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_290_Propeller_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
-                gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, 1);
+                dll_amSfx->Play(self, SOUND_290_Propeller_Loop, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
+                dll_amSfx->SetVol(objdata->soundHandle, 1);
                 objdata->counter = 1;
             }
         } else {
@@ -65,7 +65,7 @@ void SB_Propeller_control(Object *self) {
             if (objdata->counter > 80) {
                 objdata->counter = 80;
             }
-            gDLL_6_AMSFX->vtbl->set_vol(objdata->soundHandle, objdata->counter);
+            dll_amSfx->SetVol(objdata->soundHandle, objdata->counter);
         }
     } else {
         sp54 = ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func8(self->parent);
@@ -82,7 +82,7 @@ void SB_Propeller_control(Object *self) {
             }
         } else {
             if (objdata->soundHandle) {
-                gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle);
+                dll_amSfx->Stop(objdata->soundHandle);
             }
         }
         self->unkDC -= gUpdateRate;
@@ -97,11 +97,11 @@ void SB_Propeller_control(Object *self) {
             }
         }
         if ((damageType != 0) && (self->unkDC == 0) && sp48) {
-            player = get_player();
+            player = objGetPlayer();
             if (sp48 != player) {
                 self->unkDC = 20;
                 if ((self->parent) && ((sp54 == 2) || (sp54 == 5))) {
-                    gDLL_6_AMSFX->vtbl->play(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    dll_amSfx->Play(NULL, SOUND_177_Explosion_B, MAX_VOLUME, NULL, NULL, 0, NULL);
                     objdata->torque /= 3;
                     ((DLL_572_SB_Galleon*)self->parent->dll)->vtbl->func7(self->parent);
                     for (i = 10; i != 0; i--) {
@@ -150,17 +150,17 @@ void SB_Propeller_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         if (!self->parent || self->parent->unkDC != 10) {
             parent = self->parent;
             if (parent && parent->id == OBJ_SB_Galleon && parent) {
-                temp_fv1 = (1.0f - fsin16_precise(objdata->theta)) * 255.0f;
+                temp_fv1 = (1.0f - mathSinfInterp(objdata->theta)) * 255.0f;
                 if (temp_fv1 < 0.0f) {
                     temp_fv1 = 0.0f;
                 } else if (temp_fv1 > 255.0f) {
                     temp_fv1 = 255.0f;
                 }
                 if (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func8(parent) == 2) {
-                    func_80036F6C(0xFF, (u8)temp_fv1, (u8)temp_fv1);
+                    objprintSetMultiplierColor(0xFF, (u8)temp_fv1, (u8)temp_fv1);
                 }
             }
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -173,7 +173,7 @@ void SB_Propeller_free(Object *self, s32 arg1) {
     objdata = self->data;
     soundHandle = objdata->soundHandle;
     if (soundHandle) {
-        gDLL_6_AMSFX->vtbl->stop(soundHandle);
+        dll_amSfx->Stop(soundHandle);
     }
 }
 

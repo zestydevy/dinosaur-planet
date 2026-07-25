@@ -23,9 +23,9 @@ MANUAL_FUNCTION_DEFS = {
     0x800813BC: { "name": "proutSyncPrintf", "size": 0x64 },
 
     # These functions are supposed to fallthrough to the next function
-    0x80016178: { "name": "cos16_precise", "size": 0x60 },
-    0x800161d8: { "name": "cos16", "size": 0x44 },
-    0x800162f4: { "name": "fcos16", "size": 0x54 },
+    0x80016178: { "name": "mathCosInterp", "size": 0x60 },
+    0x800161d8: { "name": "mathCos", "size": 0x44 },
+    0x800162f4: { "name": "Cosf", "size": 0x54 },
 
     # 0x8001B4F0-0x8001C8D4 is handwritten assembly that trips up recomp, split it into a bunch of
     # functions that don't technically exist to get recomp working. This will basically make problematic
@@ -55,8 +55,8 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     text_start = 0x80000400
     text_size = 0x89350
     text_end = text_start + text_size
-    segment_start = text_start
-    segment_size = 0xA3AA0
+    core_start = text_start
+    core_size = 0xA3AA0
 
     funcs = []
     vrams: dict[int, int] = {}
@@ -77,7 +77,8 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
             sym_name: str = sym.name
             sym_name = SYMBOL_RENAMES.get(sym_name, sym_name)
 
-            if sym_name.startswith("L8"):
+            if sym_name.startswith("L8") or sym_name.startswith("."):
+                # Local asm label
                 continue
             if sym_name.endswith(".NON_MATCHING"):
                 # Non-matching functions have a duplicate symbol with a .NON_MATCHING suffix, ignore these
@@ -121,10 +122,10 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
     
     # Write function symbols
     syms_toml.write("[[section]]\n")
-    syms_toml.write("name = \".segment\"\n")
+    syms_toml.write("name = \".core\"\n")
     syms_toml.write("rom = 0x00001000\n")
-    syms_toml.write("vram = 0x{:X}\n".format(segment_start))
-    syms_toml.write("size = 0x{:X}\n".format(segment_size))
+    syms_toml.write("vram = 0x{:X}\n".format(core_start))
+    syms_toml.write("size = 0x{:X}\n".format(core_size))
     syms_toml.write("\n")
 
     syms_toml.write("functions = [\n")
@@ -149,10 +150,10 @@ def gen_core_syms(syms_toml: TextIO, datasyms_toml: TextIO):
 
     # Write data symbols
     datasyms_toml.write("[[section]]\n")
-    datasyms_toml.write("name = \".segment\"\n")
+    datasyms_toml.write("name = \".core\"\n")
     datasyms_toml.write("rom = 0x00001000\n")
-    datasyms_toml.write("vram = 0x{:X}\n".format(segment_start))
-    datasyms_toml.write("size = 0x{:X}\n".format(segment_size))
+    datasyms_toml.write("vram = 0x{:X}\n".format(core_start))
+    datasyms_toml.write("size = 0x{:X}\n".format(core_size))
     datasyms_toml.write("\n")
 
     datasyms_toml.write("symbols = [\n")
@@ -294,7 +295,7 @@ def scan_dll_elf(
                 symbol_renames[sym.name] = (rename, vram)
 
 def gen_dll_syms(syms_toml: TextIO, datasyms_toml: TextIO, dino_dlls_txt: TextIO, include_dir: Path):
-    with open(BIN_PATH.joinpath("assets/DLLS_tab.bin"), "rb") as tab_file:
+    with open(BIN_PATH.joinpath("assets/DLLS.tab"), "rb") as tab_file:
         tab = DLLTab.parse(tab_file.read())
 
     with open(BIN_PATH.joinpath("assets/DLLS.bin"), "rb") as dlls_file:

@@ -43,7 +43,7 @@ void CCgasventControl_dtor(void *dll) { }
 void CCgasventControl_setup(Object *self, CCgasventControl_Setup *setup, s32 arg2) {
     CCgasventControl_Data *objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    if (main_get_bits(BIT_CC_Completed_Gas_Chamber_Puzzle)) {
+    if (mainGetBits(BIT_CC_Completed_Gas_Chamber_Puzzle)) {
         objdata->state = STATE_Puzzle_Completed;
     }
 }
@@ -59,30 +59,30 @@ void CCgasventControl_control(Object *self) {
 
     switch (objdata->state) {
     case STATE_Loading:
-        obj_get_all_of_type(OBJTYPE_CCgasvent, &count);
-        objdata->player = get_player();
+        objGetAllOfType(OBJTYPE_CCgasvent, &count);
+        objdata->player = objGetPlayer();
         if (count == GASVENT_COUNT && objdata->player)
             objdata->state = STATE_Unstarted;
         break;
     case STATE_Unstarted:
-        if (main_get_bits(BIT_3EC)) {
+        if (mainGetBits(BIT_3EC)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
             objdata->state = STATE_Puzzle;
         }
         break;
     case STATE_Puzzle:
         // check if the vents are covered
-        objects = obj_get_all_of_type(OBJTYPE_CCgasvent, &count);
+        objects = objGetAllOfType(OBJTYPE_CCgasvent, &count);
         count = 0;
         for (i = 0; i < GASVENT_COUNT; i++) {
-            if (vec3_distance_xz_squared(&objects[i]->globalPosition,
-                &obj_get_nearest_type_to(OBJTYPE_PushBlock, objects[i], NULL)->globalPosition) > DISTANCE) {
+            if (vec3DistanceXZSquared(&objects[i]->globalPosition,
+                &objGetNearestTypeTo(OBJTYPE_PushBlock, objects[i], NULL)->globalPosition) > DISTANCE) {
                 count++;
                 objdata->timer += gUpdateRateF;
             }
         }
         if (count == 0) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_798_Puzzle_Solved, MAX_VOLUME, NULL, NULL, 0, NULL);
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             objdata->state = STATE_Puzzle_Complete;
             break;
@@ -108,7 +108,7 @@ void CCgasventControl_update(Object *self) { }
 // offset: 0x388 | func: 3 | export: 3
 void CCgasventControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

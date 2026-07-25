@@ -1,0 +1,18 @@
+.text = 0x0:
+DFCradle_ctor = 0x0;
+DFCradle_dtor = 0xC;
+DFCradle_setup = 0x18;
+DFCradle_control = 0x240;
+DFCradle_update = 0x908;
+DFCradle_print = 0x914;
+DFCradle_free = 0x968;
+DFCradle_get_model_flags = 0x978;
+DFCradle_get_data_size = 0x988;
+DFCradle_func_99C = 0x99C;
+
+.rodata = 0xAC0:
+
+.data = 0xAF0:
+sSoundIDs = 0x0; // absolute:0xAF0
+dTexscrollUIDs = 0x8; // absolute:0xAF8
+dCurveTypes = 0x18; // absolute:0xB08

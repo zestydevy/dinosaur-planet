@@ -43,7 +43,7 @@ def main():
 
     # Load DLLS.TAB/DLLS.BIN
     dllsbin_path = BIN_ASSETS_DIR.joinpath("DLLS.bin")
-    dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS_tab.bin")
+    dllstab_path = BIN_ASSETS_DIR.joinpath("DLLS.tab")
 
     if not dllsbin_path.exists():
         print(f"ERR: DLLS.BIN not found @ {dllsbin_path.absolute()}")

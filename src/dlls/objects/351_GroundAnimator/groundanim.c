@@ -4,48 +4,7 @@
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/272_collectable.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitDug;         //Gamebit to set when Tricky digs up the spot
-    s16 unused1A;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 unused1C;               //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    s16 magicCaveID;        //Values 3 onwards cause the dig spot to become be a Magic Cave entrance
-    u8 digDepthMax;         //Dig distance (stored at 100x scale)
-    u8 soundIndex;          //Index of the sound to play when digging has finished (0: small secret, 1: big secret)
-    u8 unused22;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 findCommandRadius;   //Range for Find command to show up in inventory
-    u8 unused24;                //TODO: Not used by the GroundAnimator, but may store experience/energy cost value for Tricky
-    u8 animatorID;          //Block shapes with this tag will be animated
-    u8 falloffRadius;       //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    u8 collectableDepth;    //How far down the collectable is buried beneath the dig spot
-} GroundAnimator_Setup;
-
-typedef struct {
-    f32* vtxWeights;        //Displacement strengths (from 0 to 1) for each vertex being animated (influence falls off from centre)
-    Object* collectable;
-    s32 digDepth;           //Current dig progress (starts at 0, increases while digging)
-    f32 falloffRadius;      //Vertex influence tapers off with this radius, and it also decides how far Tricky scoots backwards while digging
-    f32 collectableDepth;   //Affects how far down the collectable is buried
-    s16 animatedShapeIDs[5];
-    s16 misconfiguredShapeID;
-    s16 animatedVtxCount;   //The total number of vertices being animated
-    u8 animatedShapesCount; //Total shapes animated (i.e. number of items in `animatedShapeIDs`)
-    s8 previousDigDepth;    //Previous dig progress value (vertex updates are queued when this differs from current dig value)
-    u8 magicCaveID;         //Seems intended as an index for a specific Magic Cave instance (can be queried with `get_magic_cave_index` export)
-    u8 animUpdates;         //Used to queue vertex animation updates
-    u8 flags;               //Various state flags: Block search, dig finished, Magic Cave entrance/glow
-} GroundAnimator_Data;
-
-typedef enum {
-    GroundAnimator_FLAG_0_None = 0,
-    GroundAnimator_FLAG_1_Block_Found = 1,
-    GroundAnimator_FLAG_2_Dig_Finished = 2,
-    GroundAnimator_FLAG_4_Unused = 4,
-    GroundAnimator_FLAG_8_Magic_Cave_Entrance = 8,
-    GroundAnimator_FLAG_10_Glow_Created = 0x10,
-    GroundAnimator_FLAG_20_Glow_Required = 0x20
-} GroundAnimator_Flags;
+#include "dlls/objects/351_GroundAnimator.h"
 
 /* Sounds that can play when Tricky finishes digging */
 /*0x0*/ static u16 dDigJingles[2] = {
@@ -81,7 +40,7 @@ void GroundAnimator_setup(Object* self, GroundAnimator_Setup* objSetup, s32 rese
     
     if (objSetup->animatorID) {
         //Check if spot's already been dug up
-        if (main_get_bits(objSetup->gamebitDug)) {
+        if (mainGetBits(objSetup->gamebitDug)) {
             objData->digDepth = objSetup->digDepthMax * 100;
             objData->flags |= GroundAnimator_FLAG_2_Dig_Finished;
             if (objData->flags & GroundAnimator_FLAG_8_Magic_Cave_Entrance) {
@@ -89,7 +48,7 @@ void GroundAnimator_setup(Object* self, GroundAnimator_Setup* objSetup, s32 rese
             }
         }
 
-        obj_add_object_type(self, OBJTYPE_TrickyTarget);
+        objAddObjectType(self, OBJTYPE_TrickyTarget);
 
         //Ensure the sound index is in bounds
         if (objSetup->soundIndex >= TOTAL_JINGLES) {
@@ -128,17 +87,17 @@ void GroundAnimator_control(Object* self) {
     if (objData->flags & GroundAnimator_FLAG_8_Magic_Cave_Entrance) {
         //Create a modGfx glow around the dig spot
         if ((objData->flags & GroundAnimator_FLAG_20_Glow_Required) && !(objData->flags & GroundAnimator_FLAG_10_Glow_Created)) {
-            modGfxDLL = dll_load_deferred(DLL_ID_184, 1);
+            modGfxDLL = dllLoad(DLL_ID_184, 1);
             modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, 0);
             modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, &shapeID);
-            dll_unload(modGfxDLL);
+            dllFree(modGfxDLL);
             
             objData->flags |= GroundAnimator_FLAG_10_Glow_Created;
         }
         
         //Warp the player to the Magic Cave when they approach
         if ((objData->flags & GroundAnimator_FLAG_2_Dig_Finished) && 
-            (vec3_distance_xz(&self->globalPosition, &get_player()->globalPosition) < 10.0f)
+            (vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition) < 10.0f)
         ) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         }
@@ -151,7 +110,7 @@ void GroundAnimator_control(Object* self) {
         
     //Get the GroundAnimator's local Block index, and queue vertex animation updates when Block is found
     {
-        blockIndex = map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
+        blockIndex = mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
 
         previousState = objData->flags & GroundAnimator_FLAG_1_Block_Found;    
         if (blockIndex >= 0) {
@@ -172,7 +131,7 @@ void GroundAnimator_control(Object* self) {
         
     //Set up animation: get shapeIDs and calculate vertex influence weights
     if ((objData->flags & GroundAnimator_FLAG_1_Block_Found) && (objData->vtxWeights == NULL)) {
-        objData->animatedVtxCount = block_get_animator_vertex_count(self, objSetup->animatorID);
+        objData->animatedVtxCount = blockGetAnimatorVertexCount(self, objSetup->animatorID);
         if (objData->animatedVtxCount > 0) {
             objData->vtxWeights = mmAlloc(objData->animatedVtxCount * sizeof(f32), ALLOC_TAG_TRACK_COL, NULL);
             GroundAnimator_store_shapeIDs_and_vertex_weights(self, objData, objSetup);
@@ -186,7 +145,7 @@ void GroundAnimator_control(Object* self) {
         
     //Update the dig spot's nearby collectable, if it has one
     if (objData->collectable == NULL) {
-        objData->collectable = obj_get_nearest_type_to(OBJTYPE_Collectable, self, &distance);
+        objData->collectable = objGetNearestTypeTo(OBJTYPE_Collectable, self, &distance);
         collectable = objData->collectable;
         if (collectable != NULL) {
             //Pause the collectable if digging hasn't finished yet
@@ -202,7 +161,7 @@ void GroundAnimator_control(Object* self) {
     }
     
     //Get Block by index
-    block = map_get_block_by_index(blockIndex);
+    block = mapGetBlockByIndex(blockIndex);
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;
     }
@@ -219,7 +178,7 @@ void GroundAnimator_control(Object* self) {
         if (objData->animUpdates) {
             objData->animUpdates--;
             
-            //Finish digging
+            //Handle when digging is finished
             if (objData->digDepth > (objSetup->digDepthMax * 100)) {
                 objData->digDepth = objSetup->digDepthMax * 100;
                 
@@ -228,11 +187,11 @@ void GroundAnimator_control(Object* self) {
                     ((DLL_272_Collectable*)objData->collectable->dll)->vtbl->set_pause_state(objData->collectable, 0);
                 }
                 
-                main_set_bits(objSetup->gamebitDug, TRUE);
+                mainSetBits(objSetup->gamebitDug, TRUE);
                 objData->flags |= (GroundAnimator_FLAG_20_Glow_Required | GroundAnimator_FLAG_2_Dig_Finished);
 
                 //Play success sound
-                gDLL_6_AMSFX->vtbl->play(self, dDigJingles[objSetup->soundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, dDigJingles[objSetup->soundIndex], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
 
             vertices = (BlockVertex*)block->vertices2[block->vtxFlags & 1];            
@@ -274,10 +233,10 @@ void GroundAnimator_control(Object* self) {
     
     //Show the Find command when the player is nearby
     if (!(objData->flags & GroundAnimator_FLAG_2_Dig_Finished)) {
-        player = get_player();
-        sidekick = get_sidekick();
+        player = objGetPlayer();
+        sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            distance = vec3_distance_squared(&self->globalPosition, &player->globalPosition);
+            distance = vec3DistanceSquared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
             }
@@ -299,7 +258,7 @@ void GroundAnimator_free(Object* self, s32 onlySelf) {
         mmFree(objData->vtxWeights);
     }
     
-    obj_free_object_type(self, OBJTYPE_TrickyTarget);
+    objFreeObjectType(self, OBJTYPE_TrickyTarget);
     gDLL_14_Modgfx->vtbl->func4(self);
 }
 
@@ -330,18 +289,18 @@ void GroundAnimator_store_shapeIDs_and_vertex_weights(Object* self, GroundAnimat
     f32 dz;
     s32 vtxID;
     
-    block = map_get_block_by_index(map_world_coords_to_block_index(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
-    
+    //Get local Block and make sure its vertices are animatable
+    block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));
     if ((block == NULL) || !(block->vtxFlags & 8)) {
         return;
     }
         
     //Get the GroundAnimator's position relative to the Blocks model's local origin
-    blockWorldGridX = floor_f((self->srt.transl.x - gWorldX) / 640.0f);
-    blockWorldGridZ = floor_f((self->srt.transl.z - gWorldZ) / 640.0f);
+    blockWorldGridX = floorf((self->srt.transl.x - gWorldX) / BLOCKS_GRID_UNIT_F);
+    blockWorldGridZ = floorf((self->srt.transl.z - gWorldZ) / BLOCKS_GRID_UNIT_F);
 
-    digBlockX = self->srt.transl.x - (blockWorldGridX * 640.0f + gWorldX);
-    digBlockZ = self->srt.transl.z - (blockWorldGridZ * 640.0f + gWorldZ);
+    digBlockX = self->srt.transl.x - (blockWorldGridX * BLOCKS_GRID_UNIT_F + gWorldX);
+    digBlockZ = self->srt.transl.z - (blockWorldGridZ * BLOCKS_GRID_UNIT_F + gWorldZ);
     
     //Search through the Block's shapes, looking for any tagged with the animatorID
     objData->animatedShapesCount = 0;

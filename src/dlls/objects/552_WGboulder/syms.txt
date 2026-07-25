@@ -1,0 +1,16 @@
+.text = 0x0:
+WGboulder_ctor = 0x0;
+WGboulder_dtor = 0xC;
+WGboulder_setup = 0x18;
+WGboulder_control = 0x2C;
+WGboulder_update = 0x1C4;
+WGboulder_print = 0x1D0;
+WGboulder_free = 0x224;
+WGboulder_get_model_flags = 0x234;
+WGboulder_get_data_size = 0x244;
+WGboulder_handle_motion = 0x258;
+
+.rodata = 0x58C:
+
+.data = 0x5AC:
+dCurveTypes = 0x0; // absolute:0x5AC

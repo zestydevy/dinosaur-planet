@@ -25,8 +25,6 @@ typedef enum {
     Switch_FLAG_Resets_After_Delay = 2          //Switch resets resets to its unpressed state after a number of seconds (specified by `objData->resetDelay`)
 } ProjectileSwitch_Flags;
 
-#define ONE_SIXTY_FOURTH_F 0.015625f
-
 static void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSound);
 
 // offset: 0x0 | ctor
@@ -46,7 +44,7 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     if (objSetup->scale == 0) {
         self->srt.scale = self->def->scale;
     } else {
-        self->srt.scale = (objSetup->scale * self->def->scale * ONE_SIXTY_FOURTH_F);
+        self->srt.scale = objSetup->scale * self->def->scale * (1.0f / 64.0f);
     }
     self->objhitInfo->unk52 = (objSetup->scale * self->def->hitbox_flagsB6) / 64;
     
@@ -57,7 +55,7 @@ void ProjectileSwitch_setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 
     }
     
     //Check if the switch is already pressed
-    objData->switchPressed = main_get_bits(objSetup->gamebit);
+    objData->switchPressed = mainGetBits(objSetup->gamebit);
     if (objData->switchPressed) {
         ProjectileSwitch_change_state(self, TRUE, FALSE);
     } else {
@@ -78,7 +76,7 @@ void ProjectileSwitch_control(Object* self) {
     objData = self->data;
     objSetup = (ProjectileSwitch_Setup*)self->setup;
     
-    if (objData->switchPressed && (main_get_bits(objSetup->gamebit) == FALSE)) {
+    if (objData->switchPressed && (mainGetBits(objSetup->gamebit) == FALSE)) {
         ProjectileSwitch_change_state(self, FALSE, TRUE);
     }
     
@@ -87,7 +85,7 @@ void ProjectileSwitch_control(Object* self) {
         objData->resetTimer -= (f32)gUpdateRate;
         if (objData->resetTimer <= 0.0f) {
             objData->resetTimer = 0.0f;
-            main_set_bits(objSetup->gamebit, 0);
+            mainSetBits(objSetup->gamebit, 0);
         } else {
             return;
         }
@@ -98,11 +96,11 @@ void ProjectileSwitch_control(Object* self) {
         if (objData->switchPressed) {
             if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Can_Be_Toggled_Via_Attacks) {
                 ProjectileSwitch_change_state(self, FALSE, TRUE);
-                main_set_bits(objSetup->gamebit, 0);
+                mainSetBits(objSetup->gamebit, 0);
             }
         } else {
             ProjectileSwitch_change_state(self, TRUE, TRUE);
-            main_set_bits(objSetup->gamebit, 1);
+            mainSetBits(objSetup->gamebit, 1);
             if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Resets_After_Delay) {
                 objData->resetTimer = objSetup->resetDelay * 0.1f * 60.0f;
             }
@@ -119,9 +117,9 @@ void ProjectileSwitch_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
     
     if (visibility) {
         if (objSetup->enableTint) {
-            func_80036F6C(objSetup->tintR, objSetup->tintG, objSetup->tintB);
+            objprintSetMultiplierColor(objSetup->tintR, objSetup->tintG, objSetup->tintB);
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
@@ -159,11 +157,11 @@ void ProjectileSwitch_change_state(Object* self, int switchPressed, int playSoun
     //Optionally play a state change sound
     if (playSound) {
         soundID = switchPressed ? SOUND_7AE_Switch_Hit_Blast : SOUND_7AF_Switch_Reset_Swoosh;
-        gDLL_6_AMSFX->vtbl->play(self, soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     //Set texture frame
-    texAnim = func_800348A0(self, 0, 0);
+    texAnim = objExprGetTexAnimator(self, 0, 0);
     if (texAnim != NULL) {
         texAnim->frame = switchPressed << 8;
     }

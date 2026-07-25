@@ -1,8 +1,10 @@
 // @DECOMP_OPT_FLAGS=-O1 -g2
 // @DECOMP_IDO_VERSION=7.1
 #include "PR/ultratypes.h"
+#include "sys/math.h"
 
-u16 D_80096B30[] = {
+// The first table is the "main" one covering most of the range
+u16 arccos_main_table[] = {
     0x8000,  0x7EBA,  0x7D74,  0x7C2D,
     0x7AE7,  0x79A0,  0x7859,  0x7711,
     0x75C9,  0x7480,  0x7337,  0x71EC,
@@ -21,7 +23,8 @@ u16 D_80096B30[] = {
     0x1CF6
 };
 
-u16 D_80096BAC[] = {
+// The second table handles values near 1.0 (where arccos changes rapidly)
+u16 arccos_near_one_table[] = {
     0x1CF6,  0x1CBB,  0x1C80,  0x1C45,
     0x1C08,  0x1BCC,  0x1B8F,  0x1B51,
     0x1B13,  0x1AD4,  0x1A95,  0x1A55,
@@ -40,78 +43,85 @@ u16 D_80096BAC[] = {
     0x734,   0x63D,   0x518,   0x39A
 };
 
-u16 D_80096C2C[] = {
+// The third table handles the endpoint refinement near arccos(1.0) = 0
+u16 arccos_endpoint_table[] = {
     0x39A, 0x31E, 0x28C, 0x1CD
 };
 
-s32 func_8007C2F0(s32 param1) {
-    s32 var3;
-    s32 var4;
-    s32 idx;
-    s32 var1;
-    s32 var2;
-    u16 *ptr;
+/**
+ * Uses precomputed lookup tables for arccos and arcsin functions.
+ * Official Name: tableval
+ */
+s32 tableval(s32 num) {
+    s32 curTableVal;
+    s32 nexTableVal;
+    s32 tableIndex;
+    s32 mask;
+    s32 shift;
+    u16 *table;
     
-    if (param1 >= 32736) {
-        var1 = 7;
-        var2 = 3;
-        ptr = &D_80096C2C[0];
-        param1 -= 32736;
-    } else if (param1 >= 30720) {
-        var1 = 31;
-        var2 = 5;
-        ptr = &D_80096BAC[0];
-        param1 -= 30720;
+    if (num >= 32736) {
+        mask = 7;
+        shift = 3;
+        table = &arccos_endpoint_table[0];
+        num -= 32736;
+    } else if (num >= 30720) {
+        mask = 31;
+        shift = 5;
+        table = &arccos_near_one_table[0];
+        num -= 30720;
     } else {
-        var1 = 511;
-        var2 = 9;
-        ptr = &D_80096B30[0];
+        mask = 511;
+        shift = 9;
+        table = &arccos_main_table[0];
     }
 
-    idx = param1 >> var2;
+    tableIndex = num >> shift;
 
-    var3 = ptr[idx];
-    var4 = ptr[idx + 1];
+    curTableVal = table[tableIndex];
+    nexTableVal = table[tableIndex + 1];
 
-    var3 -= ((var3 - var4) * (param1 & var1)) >> var2;
+    curTableVal -= ((curTableVal - nexTableVal) * (num & mask)) >> shift;
 
-    return var3;
+    return curTableVal;
 }
 
-u16 acos(s16 param1) {
-    s32 var1;
+// Official Name: acoss
+u16 acoss(s16 x) {
+    s32 result;
 
-    if (param1 >= 0) {
-        var1 = param1;
+    if (x >= 0) {
+        result = x;
     } else {
-        var1 = -param1;
+        result = -x;
     }
 
-    var1 = func_8007C2F0(var1);
+    result = tableval(result);
 
-    if (param1 < 0) {
-        var1 = 65535 - var1;
+    if (x < 0) {
+        result = 65535 - result;
     }
 
-    return var1;
+    return result;
 }
 
-s16 asin(s16 param1) {
-    s32 var1;
+// Official Name: asins
+s16 asins(s16 x) {
+    s32 result;
 
-    if (param1 >= 0) {
-        var1 = param1;
+    if (x >= 0) {
+        result = x;
     } else {
-        var1 = -param1;
+        result = -x;
     }
 
-    var1 = func_8007C2F0(var1);
+    result = tableval(result);
 
-    if (param1 >= 0) {
-        var1 = 32767 - var1;
+    if (x >= 0) {
+        result = 32767 - result;
     } else {
-        var1 = var1 - 32768;
+        result = result - 32768;
     }
 
-    return var1;
+    return result;
 }

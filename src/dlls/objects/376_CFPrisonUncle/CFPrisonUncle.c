@@ -54,15 +54,15 @@ void dll_376_dtor(void *dll) { }
 void dll_376_setup(Object* self, ObjSetup* setup, s32 arg2) {
     DLL376_Data* objData;
 
-    obj_init_mesg_queue(self, 1);
+    objInitMesgQueue(self, 1);
     objData = self->data;
     self->animCallback = (void*)&dll_376_func_8F4;
     objData->unk4C[0] = 0x1D0;
     objData->unk4C[1] = 0x1D1;
     objData->unk5C = 0;
     objData->unk60 = 0;
-    if (main_get_bits(BIT_4D)) {
-        main_set_bits(BIT_50, 1);
+    if (mainGetBits(BIT_4D)) {
+        mainSetBits(BIT_50, 1);
     }
 }
 
@@ -80,16 +80,16 @@ void dll_376_control(Object* self) {
     s16* sp40;
     
     objData = self->data;
-    if (!objData || main_get_bits(BIT_50)){
+    if (!objData || mainGetBits(BIT_50)){
         return;
     }
     
-    if (obj_recv_mesg(self, &messageID, &messageSender, &messageArg)) {
+    if (objRecvMesg(self, &messageID, &messageSender, &messageArg)) {
         objData->unk0 = NULL;
     }
     
     if (objData->unk0 == NULL) {
-        objects = get_world_objects(&initialIndex, &objectsCount);
+        objects = objGetObjects(&initialIndex, &objectsCount);
         for (i = initialIndex; i < objectsCount; i++){
             if (objects[i]->controlNo == OBJCONTROL_CFPerch) {
                 objData->unk0 = objects[i];
@@ -98,41 +98,41 @@ void dll_376_control(Object* self) {
         }
     }
     
-    objData->unk5F = main_get_bits(BIT_4D);
+    objData->unk5F = mainGetBits(BIT_4D);
     if (objData->unk5F == 0) {
-        player = get_player();
+        player = objGetPlayer();
         
         if (objData->unk58) {
-            func_80023D30(self, 0, 0.105f, 0);
+            objAnimSet(self, 0, 0.105f, 0);
             dll_376_func_A3C(self, player);
-            sp40 = func_80034804(self, 1);
-            if (rand_next(0, 8) != 0) {
+            sp40 = objExpr_func_80034804(self, 1);
+            if (mathRnd(0, 8) != 0) {
                 *sp40 = -0xAAA;
             } else {
                 *sp40 = 0;
             }
-            if (gDLL_6_AMSFX->vtbl->is_playing(objData->unk58) == 0) {
-                gDLL_6_AMSFX->vtbl->stop(objData->unk58);
+            if (dll_amSfx->IsPlaying(objData->unk58) == 0) {
+                dll_amSfx->Stop(objData->unk58);
                 objData->unk58 = 0;
                 *sp40 = 0;
             }
         } else {
             dll_376_func_9F8(self);
-            if (rand_next(0, 0x1E) == 0) { 
-                func_80034B94(self, &objData->unk28, _data_0[rand_next(0, 3)]);
+            if (mathRnd(0, 0x1E) == 0) { 
+                objExpr_func_80034B94(self, &objData->unk28, _data_0[mathRnd(0, 3)]);
             }
         }
         
         if (self->unkAF & 1) {
             dll_376_func_A3C(self, player);
-            *func_80034804(self, 1) = -0xAAA;
+            *objExpr_func_80034804(self, 1) = -0xAAA;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         } else {
-            func_80034BC0(self, &objData->unk28);
-            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3_distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
-                gDLL_6_AMSFX->vtbl->play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
+            objExpr_func_80034BC0(self, &objData->unk28);
+            if ((objData->unk58 == 0) && (objData->unk5C <= 0) && player && (vec3Distance(&self->globalPosition, &player->globalPosition) < 200.0f)) {
+                dll_amSfx->Play(self, objData->unk4C[objData->unk5E], MAX_VOLUME, &objData->unk58, NULL, 0, NULL);
                 
-                if (rand_next(0, 100) < 50) {
+                if (mathRnd(0, 100) < 50) {
                     objData->unk5E++;
                 } else {
                     objData->unk5E--;
@@ -143,13 +143,13 @@ void dll_376_control(Object* self) {
                 } else if (objData->unk5E >= 2) {
                     objData->unk5E = 0;
                 }
-                objData->unk5C = rand_next(1000, 5000);
+                objData->unk5C = mathRnd(1000, 5000);
             }
 
             if (objData->unk5C > 0) {
                 objData->unk5C -= gUpdateRate;
             }
-            func_80024108(self, 0.005f, gUpdateRate, NULL);
+            objAnimAdvance(self, 0.005f, gUpdateRate, NULL);
         }
     } else {
         self->unkAF |= 8;
@@ -172,17 +172,17 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
  
     objData = self->data;  
     
-    if (main_get_bits(BIT_50)) {
-        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+    if (mainGetBits(BIT_50)) {
+        if (objData->unk0 && trackObjVisCheck(objData->unk0)) {
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
     
-    if (main_get_bits(BIT_4D) && visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
-        if (objData->unk0 && track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+    if (mainGetBits(BIT_4D) && visibility) {
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        if (objData->unk0 && trackObjVisCheck(objData->unk0)) {
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         return;
     }
@@ -195,7 +195,7 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         if (!visibility) {
             return;
         }
-        draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         objDef = objData->unk0->def;
         modelInstance = objData->unk0->modelInsts[objData->unk0->modelInstIdx];
         if (objDef->numAttachPoints != 0) {
@@ -210,13 +210,13 @@ void dll_376_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             self->srt.pitch = 0;
             self->srt.roll = 0;
         }
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else {
-        if (track_obj_vis_check(objData->unk0)) {
-            draw_object(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
+        if (trackObjVisCheck(objData->unk0)) {
+            objprintDrawModel(objData->unk0, gdl, mtxs, vtxs, pols, 1.0f);
         }
         if (visibility) {
-            draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -246,7 +246,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         objData->unk60 = 1;
        
         
-        dustSetup = (BoneDust_Setup*)obj_alloc_setup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
+        dustSetup = (BoneDust_Setup*)objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
         dustSetup->unk1A = 2;
         dustSetup->unk2C = -1;
         dustSetup->unk1C = -1;
@@ -259,7 +259,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
         dustSetup->unk27 = 0;
-        obj_create((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        objSetupObject((ObjSetup*)dustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
     return 0;
 }
@@ -267,7 +267,7 @@ s32 dll_376_func_8F4(Object* self, Object* arg1, AnimObj_Data* arg2, s32 arg3) {
 // offset: 0x9F8 | func: 8
 void dll_376_func_9F8(Object* self) {
     s16* temp;
-    temp = func_80034804(self, 0);
+    temp = objExpr_func_80034804(self, 0);
     temp[0] = 0;
     temp[1] = 0;
 }
@@ -276,5 +276,5 @@ void dll_376_func_9F8(Object* self) {
 void dll_376_func_A3C(Object* self, Object* player) {
     DLL376_Data *objData = self->data;
     
-    func_80032CF8(self, player, &objData->unk4, 0x23);
+    objExpr_func_80032CF8(self, player, &objData->unk4, 0x23);
 }

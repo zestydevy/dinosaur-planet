@@ -41,7 +41,7 @@ void CannonBall_control(Object* self) {
     //Destroy self when lifetime runs out
     self->unkDC -= gUpdateRate;
     if (self->unkDC < 0) {
-        obj_destroy_object(self);
+        objFreeObject(self);
     }
     
     //Set up damaging collision
@@ -52,8 +52,8 @@ void CannonBall_control(Object* self) {
     //Become destroyed upon colliding
     if ((self->unkE0 == 1) && (self->objhitInfo->unk9D != 0)) {
         gDLL_17_partfx->vtbl->spawn(self, 6, NULL, 1, -1, NULL);
-        gDLL_6_AMSFX->vtbl->play(NULL, SOUND_95_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
-        obj_destroy_object(self);
+        dll_amSfx->Play(NULL, SOUND_95_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
+        objFreeObject(self);
         
         if (
             self->unkE0 == 1 && 
@@ -64,7 +64,7 @@ void CannonBall_control(Object* self) {
             x = (x << 0x10) | (z & 0xFFFF);
 
             //Send an object message with the cannonball's last coordinates (in local mapSpace)
-            obj_send_mesg_many(OBJCONTROL_Baddie, 0, self, 0xD0004, (void*)x);
+            objSendMesgMany(OBJCONTROL_Baddie, 0, self, 0xD0004, (void*)x);
         }
     }
     
@@ -77,7 +77,7 @@ void CannonBall_update(Object *self) { }
 // offset: 0x2D0 | func: 3 | export: 3
 void CannonBall_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

@@ -1,9 +1,0 @@
-.text = 0x0:
-camtalk1_ctor = 0x0;
-camtalk1_dtor = 0xC;
-camtalk1_setup = 0x18;
-camtalk1_control = 0x64;
-camtalk1_free = 0x70;
-camtalk1_func_7C = 0x7C;
-
-.bss = 0x90:

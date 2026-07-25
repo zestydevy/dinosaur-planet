@@ -1,0 +1,18 @@
+.text = 0x0:
+old_levelselect_ctor = 0x0;
+old_levelselect_dtor = 0xC;
+old_levelselect_update1 = 0x18;
+old_levelselect_update2 = 0x24;
+old_levelselect_draw = 0x2C;
+old_levelselect_start = 0xB58;
+
+.rodata = 0xC40:
+
+.data = 0xD30:
+dStrings = 0x0; // absolute:0xD30
+dSelectedPrintIdx = 0xD40; // absolute:0x1A70
+dSelectedListIdx = 0xD44; // absolute:0x1A74
+dShowLevelUnavailable = 0xD48; // absolute:0x1A78
+
+.bss = 0x1A80:
+sButtonsEnabled = 0x0; // absolute:0x1A80

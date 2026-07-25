@@ -12,6 +12,6 @@ enum RSPSegments {
     SEGMENT_5
 };
 
-void rsp_segment(Gfx **gdl, u32 segment, void *base);
+void segSetBase(Gfx **gdl, u32 segment, void *base);
 
 #endif

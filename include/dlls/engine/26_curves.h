@@ -7,6 +7,20 @@
 #include "types.h"
 #include "sys/curves.h"
 
+// size: 0x108
+typedef struct {
+/*00*/ CurvesStruct unk0;
+/*9C*/ CurveSetup *unk9C;
+/*A0*/ CurveSetup *unkA0;
+/*A4*/ CurveSetup *unkA4;
+/*A8*/ f32 unkA8[4];
+/*B8*/ f32 unkB8[4];
+/*C8*/ f32 unkC8[4];
+/*D8*/ f32 unkD8[4];
+/*E8*/ f32 unkE8[4];
+/*F8*/ f32 unkF8[4];
+} UnkCurvesStruct;
+
 typedef struct {
     u32 uID;
     CurveSetup *setup;

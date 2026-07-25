@@ -46,20 +46,20 @@ void dll_602_setup(Object* self, DLL602_Setup* setup, s32 arg2) {
     objdata->unk10 = setup->unk19;
     sp34.transl.y = -2.0f;
     if (objdata->unk10 == 0) {
-        sp4C = dll_load_deferred(DLL_ID_121, 1U);
+        sp4C = dllLoad(DLL_ID_121, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 1, &sp34, 0x10004, -1, 0);
     } else if (objdata->unk10 == 0x7F) {
-        sp4C = dll_load_deferred(DLL_ID_121, 1U);
+        sp4C = dllLoad(DLL_ID_121, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 2, &sp34, 0x10004, -1, 0);
     } else {
-        sp4C = dll_load_deferred(DLL_ID_115, 1U);
+        sp4C = dllLoad(DLL_ID_115, 1U);
         self->srt.scale *= 0.5f;
         sp4C->vtbl->func0(self, 2, &sp34, 0x10004, -1, 0);
     }
     self->srt.scale *= 2.0f;
-    dll_unload(sp4C);
+    dllFree(sp4C);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
@@ -86,29 +86,29 @@ void dll_602_control(Object* self) {
     if (objdata->unk10 == 2) {
         self->srt.yaw += 0x32;
     }
-    temp_fv0 = vec3_distance(&get_player()->globalPosition, &self->globalPosition);
+    temp_fv0 = vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition);
     if (objdata->unk8 == 0) {
         if (temp_fv0 < 90.0f) {
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_1D3, MAX_VOLUME, &objdata->unk8, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_1D3, MAX_VOLUME, &objdata->unk8, NULL, 0, NULL);
         }
     } else if (temp_fv0 >= 90.0f) {
-        gDLL_6_AMSFX->vtbl->stop(objdata->unk8);
+        dll_amSfx->Stop(objdata->unk8);
         objdata->unk8 = 0U;
     }
     if (objdata->unk10 != 2) {
         sp58 = self->srt.transl.f[0] - gWorldX;
         sp54 = self->srt.transl.f[1];
         sp50 = self->srt.transl.f[2] - gWorldZ;
-        camera_project_point(sp58, sp54, sp50, &sp64, &sp60, &sp5C);
-        camera_clip_to_screen(sp64, sp60, sp5C, &sp74, &sp70, NULL);
-        sp68 = vi_obj_depth(sp74, sp70, self);
-        get_vec3_to_camera_normalized(self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp4C, &sp48, &sp44);
-        camera_project_point(sp58 += (sp4C * 20.0f), sp54 += (sp48 * 20.0f), sp50 += (sp44 * 20.0f), &sp64, &sp60, &sp5C);
-        camera_clip_to_screen(sp64, sp60, sp5C, NULL, NULL, &sp6C);
+        camProjectPoint(sp58, sp54, sp50, &sp64, &sp60, &sp5C);
+        camClipToScreen(sp64, sp60, sp5C, &sp74, &sp70, NULL);
+        sp68 = viObjDepth(sp74, sp70, self);
+        camGetVec3ToCameraNormalized(self->srt.transl.f[0], self->srt.transl.f[1], self->srt.transl.f[2], &sp4C, &sp48, &sp44);
+        camProjectPoint(sp58 += (sp4C * 20.0f), sp54 += (sp48 * 20.0f), sp50 += (sp44 * 20.0f), &sp64, &sp60, &sp5C);
+        camClipToScreen(sp64, sp60, sp5C, NULL, NULL, &sp6C);
         if (objdata->unkC > 0) {
            objdata->unkC -= gUpdateRate;
         } else {
-            if ((vi_contains_point(sp74, sp70) != 0) && (sp6C > 0) && (sp6C < sp68)) {
+            if ((viContainsPoint(sp74, sp70) != 0) && (sp6C > 0) && (sp6C < sp68)) {
                 sp78.transl.f[0] = 0.0f;
                 sp78.transl.f[2] = 0.0f;
                 sp78.transl.f[1] = 13.0f;
@@ -138,12 +138,12 @@ void dll_602_free(Object* self, s32 a1) {
     objdata = self->data;
     temp_a2 = objdata->unk8;
     if (temp_a2 != 0) {
-        gDLL_6_AMSFX->vtbl->stop(temp_a2);
+        dll_amSfx->Stop(temp_a2);
     }
     if (a1 == 0) {
         temp_a0 = objdata->unk0;
         if (temp_a0 != NULL) {
-            obj_destroy_object(temp_a0);
+            objFreeObject(temp_a0);
         }
     }
     gDLL_14_Modgfx->vtbl->func5(self);

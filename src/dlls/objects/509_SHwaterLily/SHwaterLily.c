@@ -32,8 +32,8 @@ void dll_509_setup(Object* self, WaterLily_Setup* setup, s32 arg2) {
   
     if (setup->unk19 == 1) {
         gDLL_26_Curves->vtbl->func_4288(&LilyData->unk0, self, 1000.0f, &sp34, -1);
-        self->srt.transl.f[0] = LilyData->unk0.unk68.f[0];
-        self->srt.transl.f[2] = LilyData->unk0.unk68.f[2];
+        self->srt.transl.f[0] = LilyData->unk0.unk0.unk68.f[0];
+        self->srt.transl.f[2] = LilyData->unk0.unk0.unk68.f[2];
         LilyData->unk108 = (setup->unk1A / 10.0f);
     }
     
@@ -50,11 +50,11 @@ void dll_509_control(Object* self) {
     f32 temp;
 
     if (LilyData->unk19 == 1) {
-        if ((curves_func_800053B0(&WLData->unk0, WLData->unk108) != 0) || (WLData->unk0.unk10 != 0)) {
+        if ((curves_func_800053B0(&WLData->unk0.unk0, WLData->unk108) != 0) || (WLData->unk0.unk0.unk10 != 0)) {
             gDLL_26_Curves->vtbl->func_4704(&WLData->unk0);
         }
-        self->srt.transl.f[0] = WLData->unk0.unk68.f[0];
-        self->srt.transl.f[2] = WLData->unk0.unk68.f[2];
+        self->srt.transl.f[0] = WLData->unk0.unk0.unk68.f[0];
+        self->srt.transl.f[2] = WLData->unk0.unk0.unk68.f[2];
     }
     if (WLData->unk110 > 0.0f) {
         WLData->unk110 = (f32) (WLData->unk110 - gUpdateRateF);
@@ -79,7 +79,7 @@ void dll_509_update(Object *self) { }
 // offset: 0x2D4 | func: 3 | export: 3
 void dll_509_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility != 0) {
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 

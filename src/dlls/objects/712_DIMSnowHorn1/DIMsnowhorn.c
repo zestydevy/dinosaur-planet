@@ -274,9 +274,9 @@ s32 dll_712_func_2EEC(Object* self, DIMSnowHorn_Data* objData, f32 arg2) {
 
     objData->unk28C += ((var_fv1 - objData->unk28C) / objData->unk2B0) * arg2;
     if (self->srt.pitch > 0){
-        var_fv1 -= fsin16_precise(self->srt.pitch) * 0.3f;
+        var_fv1 -= mathSinfInterp(self->srt.pitch) * 0.3f;
     } else {
-        var_fv1 -= fsin16_precise(self->srt.pitch) * 0.15f;
+        var_fv1 -= mathSinfInterp(self->srt.pitch) * 0.15f;
     }
     if (var_fv1 < _data_84[2]){
         var_fv1 = _data_84[2];
@@ -322,12 +322,12 @@ s32 dll_712_func_2EEC(Object* self, DIMSnowHorn_Data* objData, f32 arg2) {
 
     if (animCondition1){
         if ((animIndex == 1) && animCondition2){
-            func_80023D30(self, 0x208, animProgress, 0);
+            objAnimSet(self, 0x208, animProgress, 0);
         } else {
-            func_80023D30(self, _data_80[animIndex], animProgress, 0);
+            objAnimSet(self, _data_80[animIndex], animProgress, 0);
         }
     }
-    func_8002493C(self, objData->unk278, &objData->unk298);
+    objGetAnimChange(self, objData->unk278, &objData->unk298);
 
     if (objData->unk310 & 0x8000){
         return 0xD;

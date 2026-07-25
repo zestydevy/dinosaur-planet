@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_426_ctor
-.dword dll_426_dtor
+.dword DFcavedoor_ctor
+.dword DFcavedoor_dtor
 
 # export table
-/*0*/ .dword dll_426_setup
-/*1*/ .dword dll_426_control
-/*2*/ .dword dll_426_update
-/*3*/ .dword dll_426_print
-/*4*/ .dword dll_426_free
-/*5*/ .dword dll_426_get_model_flags
-/*6*/ .dword dll_426_get_data_size
+/*0*/ .dword DFcavedoor_setup
+/*1*/ .dword DFcavedoor_control
+/*2*/ .dword DFcavedoor_update
+/*3*/ .dword DFcavedoor_print
+/*4*/ .dword DFcavedoor_free
+/*5*/ .dword DFcavedoor_get_model_flags
+/*6*/ .dword DFcavedoor_get_data_size

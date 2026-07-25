@@ -107,7 +107,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     FXEmit_Setup *setup;
     Object *fxEmit;
 
-    setup = obj_alloc_setup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+    setup = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
     setup->base.loadDistance = 0xFF;
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
@@ -129,7 +129,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->indexInBank = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
-    fxEmit = obj_create((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    fxEmit = objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (fxEmit != NULL) {
         fxEmit->unkC4 = self;
     }
@@ -141,7 +141,7 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     ObjSetup *setup;
     Object *projectile;
 
-    setup = obj_alloc_setup(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid
     setup->x = x;
     setup->y = y;
     setup->z = z;
@@ -149,13 +149,13 @@ void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4,
     setup->fadeFlags = OBJSETUP_FADE_MANUAL;
     setup->loadDistance = 0xFF;
     setup->fadeDistance = 0xFF;
-    projectile = obj_create(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    projectile = objSetupObject(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
         projectile->srt.pitch = arg5;
         projectile->srt.yaw = arg4;
-        projectile->velocity.x = fcos16(arg5) * fsin16(arg4) * arg6;
-        projectile->velocity.y = fsin16(arg5) * arg6;
-        projectile->velocity.z = fcos16(arg5) * fcos16(arg4) * arg6;
+        projectile->velocity.x = Cosf(arg5) * Sinf(arg4) * arg6;
+        projectile->velocity.y = Sinf(arg5) * arg6;
+        projectile->velocity.z = Cosf(arg5) * Cosf(arg4) * arg6;
         projectile->unkC4 = self;
     }
 }
@@ -171,7 +171,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     self->animCallback = NULL;
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    func_80023D30(self, KD_MODANIM_DETATCH_RIGHT_PIPE, 0.0f, 0);
+    objAnimSet(self, KD_MODANIM_DETATCH_RIGHT_PIPE, 0.0f, 0);
     bzero(objdata, sizeof(KamerianBoss_Data));
     objdata->health = 10;
     objdata->animTickDelta = 0.0f;
@@ -185,7 +185,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     KamerianBoss_disable_hit_sphere(1);
 
     for (i = 0; i < 2; i++) {
-        texture = tex_load_deferred(sHealthBarTextureIDs[i]);
+        texture = texLoadTexture(sHealthBarTextureIDs[i]);
         sHealthBarTextures[i] = texture;
         _bss_8[i][0].tex = texture;
         _bss_8[i][0].animProgress = 0;
@@ -247,7 +247,7 @@ s16 KamerianBoss_func_558(f32 arg0, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 
                 if (temp_fv0 < 0.0f) {
                     var_fa1 = -var_fa1;
                 }
-                sp7C[var_s2] = arctan2_f(((temp_fs5 / temp_fv0) * var_fa1) - ((arg7 * temp_fv0) / (2.0f * var_fa1)), var_fa1);
+                sp7C[var_s2] = mathAtan2f(((temp_fs5 / temp_fv0) * var_fa1) - ((arg7 * temp_fv0) / (2.0f * var_fa1)), var_fa1);
                 var_s2 += 1;
             }
         }
@@ -291,9 +291,9 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
     headY = objdata->attachmentPositions[14].y;
     headZ = objdata->attachmentPositions[14].z;
     if (!(objdata->player->srt.transl.y < (objdata->playerStartY - 20.0f))) {
-        func_80014D34(0.5f, &playerX, &playerY, &playerZ);
+        mainGetBufferedPlayerPos(0.5f, &playerX, &playerY, &playerZ);
         playerY += 20.0f;
-        sp42 = atan2f_to_s(playerX - headX, playerZ - headZ);
+        sp42 = Arctanf(playerX - headX, playerZ - headZ);
         temp_t7 = KamerianBoss_func_558(headX, headY, headZ, playerX, playerY, playerZ, 7.8f, -0.046f, 0);
         if ((self->curModAnimId == KD_MODANIM_ATTACK) && (self->animProgress >= 0.18f) && !(objdata->flameDebounce)) {
             KamerianBoss_create_projectile(self, headX, headY, headZ, sp42, temp_t7, 7.8f, OBJ_KamerianFlame);
@@ -304,9 +304,9 @@ void KamerianBoss_do_flame_attack(Object *self, KamerianBoss_Data *objdata) {
             objdata->flameAttackTimer -= gUpdateRate;
             return;
         }
-        objdata->flameAttackTimer = rand_next(270, 372);
+        objdata->flameAttackTimer = mathRnd(270, 372);
         if ((self->curModAnimId != KD_MODANIM_ATTACK) || (objdata->animTickDelta == 0.0f)) {
-            func_80023D30(self, KD_MODANIM_ATTACK, 0.0f, 0);
+            objAnimSet(self, KD_MODANIM_ATTACK, 0.0f, 0);
             objdata->animTickDelta = 0.0097f;
             objdata->flameDebounce = 0;
         }
@@ -356,13 +356,13 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
         return;
     }
     
-    *timer = rand_next(90, 270);
+    *timer = mathRnd(90, 270);
     if (1){} // @fake
     
     temp_fv0_2 = player->globalPosition.x - sp80;
     temp_fv1_2 = player->globalPosition.z - sp7C;
     if (sqrtf(SQ(temp_fv0_2) + SQ(temp_fv1_2)) < 500.0f) {
-        func_80014D34(1.2f, &sp6C, &sp68, &sp64);
+        mainGetBufferedPlayerPos(1.2f, &sp6C, &sp68, &sp64);
         sp68 += 20.0f;
     } else {
         if (side != 0) {
@@ -370,11 +370,11 @@ void KamerianBoss_do_acid_attack(Object *self, KamerianBoss_Data *objdata, s32 s
         } else {
             sp52 = -10000;
         }
-        sp6C = (fsin16(sp52) * 400.0f) + sp80;
+        sp6C = (Sinf(sp52) * 400.0f) + sp80;
         sp68 = player->globalPosition.y;
-        sp64 = (fcos16(sp52) * 400.0f) + sp7C;
+        sp64 = (Cosf(sp52) * 400.0f) + sp7C;
     }
-    sp52 = atan2f_to_s(sp6C - sp78, sp64 - sp70);
+    sp52 = Arctanf(sp6C - sp78, sp64 - sp70);
     temp2 = KamerianBoss_func_558(sp78, sp74, sp70, sp6C, sp68, sp64, 8.5f, -0.22f, 1);
     KamerianBoss_create_projectile(self, sp78, sp74, sp70, sp52, temp2, 8.5f, OBJ_KamerianAcid);
 }
@@ -390,7 +390,7 @@ void KamerianBoss_do_pipe_texture_anim(Object *self, s32 updateRate) {
 
     objdata = self->data;
     for (i = 0; i < 5; i++) {
-        texAnimator = func_800348A0(self, i + 5, 0);
+        texAnimator = objExprGetTexAnimator(self, i + 5, 0);
         if (texAnimator != NULL) {
             temp_fv0 = 570.0f - (f32) objdata->rightPipeTimer;
             if (temp_fv0 < 0.0f) {
@@ -405,7 +405,7 @@ void KamerianBoss_do_pipe_texture_anim(Object *self, s32 updateRate) {
                 texAnimator->frame = frame;
             }
         }
-        texAnimator = func_800348A0(self, i, 0);
+        texAnimator = objExprGetTexAnimator(self, i, 0);
         if (texAnimator != NULL) {
             temp_fv0 = 570.0f - (f32) objdata->leftPipeTimer;
             if (temp_fv0 < 0.0f) {
@@ -446,10 +446,10 @@ void KamerianBoss_func_E94(Object *self, s32 arg1) {
     } else {
         var_a2 = 6;
     }
-    temp_v1 = rand_next(0, 4) + var_a2;
+    temp_v1 = mathRnd(0, 4) + var_a2;
     sp40 = temp_v1 + 1;
     sp44 = temp_v1;
-    temp_fv0 = (f32) rand_next(0, 1000) * 0.001f;
+    temp_fv0 = (f32) mathRnd(0, 1000) * 0.001f;
     f2 = objdata->attachmentPositions[sp44].x;
     f12 = objdata->attachmentPositions[sp44].y;
     f18 = objdata->attachmentPositions[sp44].z;
@@ -483,7 +483,7 @@ void KamerianBoss_control(Object *self) {
 
     objdata = self->data;
     if (objdata->player == NULL) {
-        objdata->player = get_player();
+        objdata->player = objGetPlayer();
         objdata->playerStartY = objdata->player->srt.transl.y;
     }
     if (objdata->player != NULL) {
@@ -503,7 +503,7 @@ void KamerianBoss_control(Object *self) {
             } else {
                 objdata->rightPipeTimer = 0;
                 for (i = 0; i < 6; i += 2) {
-                    obj_destroy_object(objdata->unk10[i]);
+                    objFreeObject(objdata->unk10[i]);
                     objdata->unk10[i] = NULL;
                 }
             }
@@ -523,24 +523,24 @@ void KamerianBoss_control(Object *self) {
             } else {
                 objdata->leftPipeTimer = 0;
                 for (i = 1; i < 7; i += 2) {
-                    obj_destroy_object(objdata->unk10[i]);
+                    objFreeObject(objdata->unk10[i]);
                     objdata->unk10[i] = NULL;
                 }
             }
         }
         KamerianBoss_do_pipe_texture_anim(self, gUpdateRate);
-        objdata->animFinished = func_80024108(self, objdata->animTickDelta, gUpdateRateF, NULL);
+        objdata->animFinished = objAnimAdvance(self, objdata->animTickDelta, gUpdateRateF, NULL);
         if (objdata->rightPipeYOffset != 0) {
             if (objdata->rightPipeYOffset < 15000) {
                 objdata->rightPipeYOffset += gUpdateRate * 50;
             }
-            func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
+            objExpr_func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
         }
         if (objdata->leftPipeYOffset != 0) {
             if (objdata->leftPipeYOffset < 15000) {
                 objdata->leftPipeYOffset += gUpdateRate * 50;
             }
-            func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
+            objExpr_func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
         }
         // Useless assignment of v1? required to match
         var_v1 = 0;
@@ -567,26 +567,26 @@ void KamerianBoss_control(Object *self) {
             case KD_MODANIM_OPEN_RIGHT_WING_ALT:
                 objdata->rightWingOpened = TRUE;
                 var_a0 = 1;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle1 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle1);
+                    dll_amSfx->Stop(objdata->soundHandle1);
                     objdata->soundHandle1 = 0;
                 }
                 break;
             case KD_MODANIM_OPEN_LEFT_WING:
             case KD_MODANIM_OPEN_LEFT_WING_ALT:
                 objdata->leftWingOpened = TRUE;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle2 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle2);
+                    dll_amSfx->Stop(objdata->soundHandle2);
                     objdata->soundHandle2 = 0;
                 }
                 break;
             case KD_MODANIM_OPEN_HATCH:
                 objdata->hatchOpened = TRUE;
-                gDLL_6_AMSFX->vtbl->play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
+                dll_amSfx->Play(self, SOUND_9AE, MAX_VOLUME, NULL, NULL, 0, NULL);
                 if (objdata->soundHandle3 != 0) {
-                    gDLL_6_AMSFX->vtbl->stop(objdata->soundHandle3);
+                    dll_amSfx->Stop(objdata->soundHandle3);
                     objdata->soundHandle3 = 0;
                 }
                 break;
@@ -604,10 +604,10 @@ void KamerianBoss_control(Object *self) {
             var_s0 |= 4;
         }
         if ((var_s0 == 3) && (self->curModAnimId < KD_MODANIM_OPEN_HATCH)) {
-            func_80023D30(self, KD_MODANIM_OPEN_HATCH, 0.0f, 0);
+            objAnimSet(self, KD_MODANIM_OPEN_HATCH, 0.0f, 0);
             objdata->animTickDelta = 0.01f;
             sHealthBarAlpha = gUpdateRate;
-            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
+            dll_amSfx->Play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle3, NULL, 0, NULL);
         }
         func_800269CC(self, self->objhitInfo, _data_0[var_s0]);
         i = self->objhitInfo->unk62;
@@ -623,18 +623,18 @@ void KamerianBoss_control(Object *self) {
                         for (j = 0; j < 6; j += 2) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x - 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->rightPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
-                        func_80023D30(self, 
+                        objAnimSet(self, 
                             objdata->leftWingOpened ? KD_MODANIM_DETATCH_RIGHT_PIPE_ALT : KD_MODANIM_DETATCH_RIGHT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
                         objdata->rightPipeYOffset = 1;
                         objdata->rightPipeDetached = TRUE;
-                        obj_destroy_object(objdata->unk8[0]);
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        objFreeObject(objdata->unk8[0]);
+                        dll_amSfx->Play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
                 case 8:
@@ -644,30 +644,30 @@ void KamerianBoss_control(Object *self) {
                         for (j = 1; j < 7; j += 2) {
                             objdata->unk10[j] = KamerianBoss_create_fx_emit(self, self->globalPosition.x + 163.0f, self->globalPosition.y + 175.0f, self->globalPosition.z + 145.0f, 0x693);
                         }
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        dll_amSfx->Play(self, SOUND_9AA, MAX_VOLUME, NULL, NULL, 0, NULL);
                     } else if ((collisionType == Damage_Type_Projectile) && (objdata->leftPipeTimer > 50)) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
-                        func_80023D30(self, 
+                        objAnimSet(self, 
                             objdata->rightWingOpened ? KD_MODANIM_DETATCH_LEFT_PIPE_ALT : KD_MODANIM_DETATCH_LEFT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
                         objdata->leftPipeYOffset = 1;
                         objdata->leftPipeDetached = TRUE;
-                        obj_destroy_object(objdata->unk8[1]);
-                        gDLL_6_AMSFX->vtbl->play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
+                        objFreeObject(objdata->unk8[1]);
+                        dll_amSfx->Play(self, SOUND_9AB, MAX_VOLUME, NULL, NULL, 0, NULL);
                     }
                     break;
                 case 0:
                     if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(0);
-                            func_80023D30(self, 
+                            objAnimSet(self, 
                                 objdata->leftWingOpened ? KD_MODANIM_OPEN_RIGHT_WING_ALT : KD_MODANIM_OPEN_RIGHT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;
-                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
-                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle1, NULL, 0, NULL);
+                            dll_amSfx->Play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle1, NULL, 0, NULL);
                         }
                     }
                     break;
@@ -675,12 +675,12 @@ void KamerianBoss_control(Object *self) {
                     if (collisionType == Damage_Type_Projectile) {
                         if ((objdata->leftPipeDetached) && (objdata->rightPipeDetached)) {
                             KamerianBoss_disable_hit_sphere(1);
-                            func_80023D30(self, 
+                            objAnimSet(self, 
                                 objdata->rightWingOpened ? KD_MODANIM_OPEN_LEFT_WING_ALT : KD_MODANIM_OPEN_LEFT_WING, 
                                 0.0f, 0);
                             objdata->animTickDelta = 0.005f;
-                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
-                            gDLL_6_AMSFX->vtbl->play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle2, NULL, 0, NULL);
+                            dll_amSfx->Play(self, SOUND_9AC, MAX_VOLUME, NULL, NULL, 0, NULL);
+                            dll_amSfx->Play(self, SOUND_9AD, MAX_VOLUME, &objdata->soundHandle2, NULL, 0, NULL);
                         }
                     }
                     /* fallthrough */
@@ -709,7 +709,7 @@ void KamerianBoss_control(Object *self) {
             if (!objdata->loadedTempDLL) {
                 s16 sp8C[3] = {0x0002, 0x0000, 0x0000}; // _data_10
                 s16 sp84[3] = {0x0018, 0x0014, 0x0008}; // _data_18
-                create_temp_dll(53);
+                mainCreateTempDLL(53);
                 ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &_bss_40, -18000, 9800, 3);
                 ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&_bss_40, sp84, sp84, 3);
                 _bss_40.unk4A9 |= 8;
@@ -735,10 +735,10 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
     hpBarWidth = (objdata->health / 10) * 32;
     if ((visibility != 0) && (self->unkDC == 0)) {
         // Draw self
-        draw_object(self, gdl, mtxs, vtxs, pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         // Draw health bar
         if (sHealthBarAlpha != 0) {
-            rcp_tile_write_x(gdl, _bss_8[0], 
+            rcpTileWriteX(gdl, _bss_8[0], 
                 /*x*/96.0f, 
                 /*y*/24.0f, 
                 /*width*/(f32) hpBarWidth, 
@@ -750,7 +750,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
                 /*color*/sHealthBarAlpha - 256, 
                 /*flags*/TILE_WRITE_TRANSLUCENT | TILE_WRITE_POINT_FILT);
             
-            rcp_tile_write_x(gdl, _bss_8[1], 
+            rcpTileWriteX(gdl, _bss_8[1], 
                 /*x*/(f32) ((hpBarWidth * 4) + 96), 
                 /*y*/24.0f, 
                 /*width*/(f32) (32 - hpBarWidth), 
@@ -765,7 +765,7 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
         // Get attachment positions
         i = 15;
         while(i--) {
-            func_80031F6C(self, 
+            objGetAttachPointWorldSpace(self, 
                 i, 
                 &objdata->attachmentPositions[i].x, 
                 &objdata->attachmentPositions[i].y, 
@@ -781,9 +781,9 @@ void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tria
 
 // offset: 0x2068 | func: 13 | export: 4
 void KamerianBoss_free(Object *self, s32 a1) {
-    obj_free_object_type(self, OBJTYPE_Baddie);
+    objFreeObjectType(self, OBJTYPE_Baddie);
     if (self->linkedObject != NULL) {
-        obj_destroy_object(self->linkedObject);
+        objFreeObject(self->linkedObject);
         self->linkedObject = NULL;
     }
 }

@@ -1,0 +1,16 @@
+.text = 0x0:
+camlockon_ctor = 0x0;
+camlockon_dtor = 0xC;
+camlockon_func_18 = 0x18;
+camlockon_func_1B8 = 0x1B8;
+camlockon_func_B64 = 0xB64;
+camlockon_func_BB0 = 0xBB0;
+camlockon_func_BC0 = 0xBC0;
+camlockon_func_C58 = 0xC58;
+camlockon_func_D34 = 0xD34;
+
+.rodata = 0xF84:
+
+.bss = 0xFC4:
+sState = 0x0; // absolute:0xFC4
+bss_4 = 0x4; // absolute:0xFC8
