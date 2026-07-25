@@ -122,15 +122,96 @@ typedef struct {
 /*0x0*/ static SRT bss_0;
 /*0x1C*/ static s32 bss_1C;
 /*0x20*/ static ObjFSA_StateCallback bss_20[26];
-/*0x88*/ static ObjFSA_StateCallback bss_88[2];
-/*0x90*/ static u8 _bss_90[0x30];
+/*0x88*/ static ObjFSA_StateCallback bss_88[14];
+
+static s32 SharpClaw_func_27C4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_298C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_2B54(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_2D54(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_2EA8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_2F98(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3090(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3178(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3260(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_330C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_33B8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_34A0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3588(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_36C4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3800(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_393C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3A24(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3B84(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3CE8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3E4C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3F1C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_3F4C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4008(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_40C4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_424C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_433C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4408(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_447C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4494(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4574(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4600(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_46F8(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4710(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4858(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_48CC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_49E4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4A5C(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_4CA4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 SharpClaw_func_5398(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_func_0.s")
+static void SharpClaw_func_0(void) {
+    bss_20[0] = SharpClaw_func_27C4;
+    bss_20[1] = SharpClaw_func_298C;
+    bss_20[2] = SharpClaw_func_2B54;
+    bss_20[3] = SharpClaw_func_2D54;
+    bss_20[4] = SharpClaw_func_2EA8;
+    bss_20[5] = SharpClaw_func_2F98;
+    bss_20[6] = SharpClaw_func_3090;
+    bss_20[7] = SharpClaw_func_3178;
+    bss_20[8] = SharpClaw_func_3260;
+    bss_20[9] = SharpClaw_func_330C;
+    bss_20[10] = SharpClaw_func_33B8;
+    bss_20[11] = SharpClaw_func_34A0;
+    bss_20[12] = SharpClaw_func_3588;
+    bss_20[13] = SharpClaw_func_36C4;
+    bss_20[14] = SharpClaw_func_3800;
+    bss_20[15] = SharpClaw_func_393C;
+    bss_20[16] = SharpClaw_func_3A24;
+    bss_20[17] = SharpClaw_func_3B84;
+    bss_20[18] = SharpClaw_func_3CE8;
+    bss_20[19] = SharpClaw_func_3E4C;
+    bss_20[20] = SharpClaw_func_3F1C;
+    bss_20[21] = SharpClaw_func_3F4C;
+    bss_20[22] = SharpClaw_func_4008;
+    bss_20[23] = SharpClaw_func_40C4;
+    bss_20[24] = SharpClaw_func_424C;
+    
+    bss_88[0] = SharpClaw_func_433C;
+    bss_88[1] = SharpClaw_func_4408;
+    bss_88[2] = SharpClaw_func_447C;
+    bss_88[3] = SharpClaw_func_4494;
+    bss_88[4] = SharpClaw_func_4574;
+    bss_88[5] = SharpClaw_func_4600;
+    bss_88[6] = SharpClaw_func_46F8;
+    bss_88[7] = SharpClaw_func_4710;
+    bss_88[8] = SharpClaw_func_4858;
+    bss_88[9] = SharpClaw_func_48CC;
+    bss_88[10] = SharpClaw_func_49E4;
+    bss_88[11] = SharpClaw_func_4A5C;
+    bss_88[12] = SharpClaw_func_4CA4;
+    bss_88[13] = SharpClaw_func_5398;
+}
 
 // offset: 0x1F8 | ctor
-void SharpClaw_ctor(void* dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/215_SharpClaw/SharpClaw_ctor.s")
+void SharpClaw_ctor(void* dll) {
+    SharpClaw_func_0();
+}
 
 // offset: 0x238 | dtor
 void SharpClaw_dtor(void* dll) { }
