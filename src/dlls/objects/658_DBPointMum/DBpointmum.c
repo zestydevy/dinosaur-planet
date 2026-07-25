@@ -117,6 +117,7 @@ typedef struct {
 
 /*0x0*/ static PointBackBSSUnk0* _bss_0;
 
+static s32 dll_658_func_720(Object* self, s32 arg1);
 static s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1);
 
 // offset: 0x0 | ctor
@@ -130,13 +131,6 @@ void dll_658_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_setup.s")
 
 // offset: 0x358 | func: 1 | export: 1
-void dll_658_control(Object *self);
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_control.s")
-#else
-static void dll_658_func_720(Object* self, s32 arg1);
-
 void dll_658_control(Object* self) {
     PointBack_Data* objData;
 
@@ -147,7 +141,6 @@ void dll_658_control(Object* self) {
     gDLL_27->vtbl->func_5A8(self, &objData->unk688);
     gDLL_27->vtbl->func_624(self, &objData->unk688, gUpdateRateF);
 }
-#endif
 
 // offset: 0x430 | func: 2 | export: 2
 void dll_658_update(Object *self) { }
