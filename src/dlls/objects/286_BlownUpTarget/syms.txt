@@ -1,0 +1,12 @@
+.text = 0x0:
+BlownUpTarget_ctor = 0x0;
+BlownUpTarget_dtor = 0xC;
+BlownUpTarget_obj_Setup = 0x18;
+BlownUpTarget_obj_Control = 0x108;
+BlownUpTarget_obj_Update = 0x300;
+BlownUpTarget_obj_Print = 0x30C;
+BlownUpTarget_obj_Free = 0x324;
+BlownUpTarget_obj_GetModelFlags = 0x334;
+BlownUpTarget_obj_GetDataSize = 0x344;
+
+.rodata = 0x398:

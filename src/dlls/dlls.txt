@@ -135,6 +135,7 @@
 283 = objects/283_krazoatext
 284 = objects/284_levelname
 285 = objects/285_ProjectileSwitch
+286 = objects/286_BlownUpTarget
 287 = objects/287_pressureswitch
 289 = objects/289_CClogpush
 290 = objects/290_MagicPlant
