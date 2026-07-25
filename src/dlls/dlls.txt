@@ -356,6 +356,7 @@
 641 = objects/641_DFPLift
 644 = objects/644_DFP_floorbar
 646 = objects/646_DFP_ForceAway
+649 = objects/649_DFP_PerchSwitch
 652 = objects/652_DFP_SpellPlace
 654 = objects/654_textblock
 658 = objects/658_DBPointMum

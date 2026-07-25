@@ -1,0 +1,13 @@
+.text = 0x0:
+DFP_PerchSwitch_ctor = 0x0;
+DFP_PerchSwitch_dtor = 0xC;
+DFP_PerchSwitch_obj_Setup = 0x18;
+DFP_PerchSwitch_obj_Control = 0xCC;
+DFP_PerchSwitch_obj_Update = 0x1E8;
+DFP_PerchSwitch_obj_Print = 0x1F4;
+DFP_PerchSwitch_obj_Free = 0x20C;
+DFP_PerchSwitch_obj_GetModelFlags = 0x21C;
+DFP_PerchSwitch_obj_GetDataSize = 0x22C;
+DFP_PerchSwitch_animCallback = 0x240;
+
+.rodata = 0x298:

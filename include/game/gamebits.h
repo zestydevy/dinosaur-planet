@@ -2250,7 +2250,7 @@ typedef enum {
     BIT_8C4 = 0x8C4, // len:1 group:0
     BIT_8C5 = 0x8C5, // len:1 group:0
     BIT_8C6 = 0x8C6, // len:1 group:0
-    BIT_8C7 = 0x8C7, // len:1 group:1
+    BIT_DFP_Kyte_Activated_Perch = 0x8C7, // len:1 group:1
     BIT_8C8 = 0x8C8, // len:1 group:1
     BIT_8C9 = 0x8C9, // len:1 group:1
     BIT_8CA = 0x8CA, // len:1 group:1
