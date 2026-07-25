@@ -508,7 +508,7 @@ class DinoCommandRunner:
     def m2c(self, args: "list[str]"):
         self.__run_cmd(["m2c", "-t", "mips-ido-c"] + args)
 
-    def decompile(self, file: str, func_name: str, keep_ctx: bool):
+    def decompile(self, file: str, func_name: str, keep_ctx: bool, stack_structs: bool):
         filepath = Path(file)
         if not filepath.exists():
             print(f"File not found at: {filepath.absolute().resolve()}")
@@ -536,7 +536,11 @@ class DinoCommandRunner:
             self.__run_cmd([sys.executable, str(M2CTX_PY), file])
 
         # Run m2c
-        self.__run_cmd(["m2c", "-t", "mips-ido-c", "--pointer-style", "left", "--context", "ctx.c", "-f", func_name, asmpath.as_posix()])
+        args = ["m2c", "-t", "mips-ido-c", "--pointer-style", "left", "--context", "ctx.c", "-f", func_name]
+        if stack_structs:
+            args.append("--stack-structs")
+        args.append(asmpath.as_posix())
+        self.__run_cmd(args)
     
     def __assert_project_built(self):
         linker_script_path = SCRIPT_DIR.joinpath(f"{TARGET}.ld")
@@ -651,6 +655,7 @@ def main():
     decompile_cmd.add_argument("file", help="The C file to create context for. Must contain a GLOBAL_ASM pragma for the function to be decompiled.")
     decompile_cmd.add_argument("function", help="The name of the function to decompile. A GLOBAL_ASM pragma must exist with a path to the asm of the function.")
     decompile_cmd.add_argument("--keep-ctx", dest="keep_ctx", action="store_true", help="Don't regenerate ctx.c. Useful if you need to manually edit the context file.", default=False)
+    decompile_cmd.add_argument("--stack-structs", dest="stack_structs", action="store_true", help="Instruct m2c to output an inferred stack declaration.", default=False)
 
     args, _ = parser.parse_known_args()
     cmd = args.command
@@ -713,7 +718,7 @@ def main():
             full_args = sys.argv[m2c_index + 1:]
             runner.m2c(args=full_args)
         elif cmd == "decompile":
-            runner.decompile(args.file, args.function, args.keep_ctx)
+            runner.decompile(args.file, args.function, args.keep_ctx, args.stack_structs)
         
         # Notify user if IDO recomp is out-of-date
         if cmd != "setup" and cmd != "update-ido":

@@ -1,0 +1,11 @@
+.text = 0x0:
+dimPartfx_ctor = 0x0;
+dimPartfx_dtor = 0xC;
+dimPartfx_Func_18 = 0x18;
+dimPartfx_Func_20 = 0x20;
+dimPartfx_Spawn = 0x2C;
+
+.rodata = 0x2094:
+
+.bss = 0x2234:
+bss_0 = 0x0; // absolute:0x2234
