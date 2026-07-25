@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
@@ -22,19 +23,6 @@ typedef struct {
 } PointBack_funcACC_UnkArg1;
 
 typedef struct {
-    s8 _unk0[0x8E - 0x0];
-    u8 unk8E;
-} PointBack_func1308_arg1; //might be AnimObj_Data?
-
-// same as DLL53Func17F4Arg1?
-typedef struct {
-    s8 _unk0[0x2C - 0x0];
-    s8 unk2C;
-    s8 unk2D;
-} DLL658_func19FC_arg1;
-
-// same as DLL53Func17F4Arg2?
-typedef struct {
     Vec3f unk0;
     Vec3f unkC;
     Vec3f unk18;
@@ -42,12 +30,6 @@ typedef struct {
     f32 unk30;
     f32 unk34;
 } DLL658_func19FC_arg2;
-
-typedef struct {
-    s8 _unk0[0x13 - 0x0];
-    u8 unk13[0x1B - 0x13];
-    s8 unk1B;
-} PointBack_func2178_arg1;
 
 typedef struct {
     ObjSetup base;
@@ -58,11 +40,15 @@ typedef struct {
     MoveLibData unk0;
     HeadAnimation unk4B8;
     HeadAnimation unk4DC;
-    PointBack_func2178_arg1 unk500;
+    UnkFunc_80024108Struct unk500;
     s32 unk51C; //bitfield for creating 4 effects in print function?
     s32 _unk520;
     u8 unk524;
-    s8 _unk525[0x688 - 0x525];
+    s8 _unk525[0x52C - 0x525];
+    s32 unk52C;
+    UnkCurvesStruct unk530;
+    Vec3f unk638[2];
+    DLL658_func19FC_arg2 unk650;
     DLL27_Data unk688;
     s8 _unk8E8[0x920 - 0x8E8];
 } PointBack_Data;
@@ -118,7 +104,7 @@ typedef struct {
 /*0x0*/ static PointBackBSSUnk0* _bss_0;
 
 static s32 dll_658_func_720(Object* self, s32 arg1);
-static s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1);
+static s32 dll_658_func_2178(Object* self, UnkFunc_80024108Struct* arg1);
 
 // offset: 0x0 | ctor
 void dll_658_ctor(void *dll) { }
@@ -355,12 +341,12 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_1064.s")
 
 // offset: 0x1308 | func: 13
-s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
+s32 dll_658_func_1308(Object* self, AnimObj_Data* animData, s32 arg2) {
     PointBack_Setup* objSetup;
     PointBack_Data* objData;
 
-    if (arg1 != NULL) {
-        if (arg1->unk8E == 1) {
+    if (animData != NULL) {
+        if (animData->messages[0] == 1) {
             joyGetPressed(0); //@bug: called without being used/stored
             
             if (joyGetPressed(0) & B_BUTTON) {
@@ -369,7 +355,7 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
                 return 1;
             }
         }
-        arg1->unk8E = 0;
+        animData->messages[0] = 0;
         
     } else if (mainGetBits(BIT_42A)) {
         mainSetBits(BIT_41F, 0);
@@ -462,8 +448,8 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
 }
 
 // offset: 0x19FC | func: 18
-s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4) {
-    f32 spline[4];
+s32 dll_658_func_19FC(Object* self, CurveSetup* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4) {
+    Vec4f spline;
     s16 rot[3];
     s32 returnVal;
 
@@ -492,23 +478,23 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         }
     }
     
-    spline[0] = arg2->unk0.x;
-    spline[1] = arg2->unkC.x;
-    spline[2] = arg2->unk18.x;
-    spline[3] = arg2->unk24.x;
-    self->srt.transl.x = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.x;
+    spline.f[1] = arg2->unkC.x;
+    spline.f[2] = arg2->unk18.x;
+    spline.f[3] = arg2->unk24.x;
+    self->srt.transl.x = curvesHermite(spline.f, *arg3, 0);
     
-    spline[0] = arg2->unk0.y;
-    spline[1] = arg2->unkC.y;
-    spline[2] = arg2->unk18.y;
-    spline[3] = arg2->unk24.y;
-    self->srt.transl.y = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.y;
+    spline.f[1] = arg2->unkC.y;
+    spline.f[2] = arg2->unk18.y;
+    spline.f[3] = arg2->unk24.y;
+    self->srt.transl.y = curvesHermite(spline.f, *arg3, 0);
     
-    spline[0] = arg2->unk0.z;
-    spline[1] = arg2->unkC.z;
-    spline[2] = arg2->unk18.z;
-    spline[3] = arg2->unk24.z;
-    self->srt.transl.z = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.z;
+    spline.f[1] = arg2->unkC.z;
+    spline.f[2] = arg2->unk18.z;
+    spline.f[3] = arg2->unk24.z;
+    self->srt.transl.z = curvesHermite(spline.f, *arg3, 0);
     
     return returnVal;
 }
@@ -579,7 +565,7 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_1E14.s")
 
 // offset: 0x2178 | func: 21
-s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
+s32 dll_658_func_2178(Object* self, UnkFunc_80024108Struct* arg1) {
     PointBack_Data* objData;
     u8 flags;
     s32 i;
