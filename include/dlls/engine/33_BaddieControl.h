@@ -31,7 +31,7 @@ typedef struct {
 /*3A2*/ s16 unk3A2;
 /*3A4*/ s16 unk3A4;
 /*3A6*/ s16 unk3A6;
-/*3A8*/ u32 unk3A8;
+/*3A8*/ u32 unk3A8; //soundHandle
 /*3AC*/ Object *unk3AC;
 /*3B0*/ u8 unk3B0; //flags
 /*3B1*/ u8 _unk3B1;
@@ -47,7 +47,7 @@ typedef struct {
 /*3E0*/ s16 unk3E0; //droppedItemIdx
 /*3E2*/ u16 unk3E2; //max vision distance?
 /*3E4*/ f32 unk3E4;
-/*3E8*/ f32 unk3E8;
+/*3E8*/ f32 unk3E8; //timer related to damage effects? (flashing red etc.)
 /*3EC*/ f32 unk3EC;
 /*3F0*/ s8 unk3F0; //modAnimIdx?
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
