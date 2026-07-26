@@ -11,7 +11,7 @@ _exports:
 /*0*/ .dword perchobject_obj_Setup
 /*1*/ .dword perchobject_obj_Control
 /*2*/ .dword perchobject_obj_Update
-/*3*/ .dword perchobject_print
+/*3*/ .dword perchobject_obj_Print
 /*4*/ .dword perchobject_obj_Free
 /*5*/ .dword perchobject_obj_GetModelFlags
 /*6*/ .dword perchobject_obj_GetDataSize
