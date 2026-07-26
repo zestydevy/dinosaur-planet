@@ -37,7 +37,7 @@
 #include "types.h"
 #include "dlls/objects/common/vehicle.h"
 #include "dlls/objects/common/foodbag.h"
-#include "dlls/objects/common/group48.h"
+#include "dlls/objects/common/weapon.h"
 #include "dlls/objects/common/dinocaller.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/277_iceblast.h"
@@ -2422,7 +2422,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
                 arg1->unk8A8 = 2;
             }
             if ((temp_s2 != NULL) && (player->animProgressLayered > 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
-                ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 0.15f);
+                ((DLL_IWeapon*)temp_s2->dll)->vtbl->func7(temp_s2, 0.15f);
             }
             if (temp_s3 != 0) {
                 arg1->unk878 = 3;
@@ -2431,7 +2431,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             break;
         case 13:
             if ((temp_s2 != NULL) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
-                ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func7(temp_s2, 1.0f);
+                ((DLL_IWeapon*)temp_s2->dll)->vtbl->func7(temp_s2, 1.0f);
             }
             arg1->unk8A8 = 2;
             arg1->unk878 = 0;
@@ -2449,7 +2449,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
                 arg1->unk8A8 = 0;
             }
             if ((temp_s2 != NULL) && (player->animProgressLayered < 0.7f) && (temp_s2->controlNo == OBJCONTROL_Weapon)) {
-                ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
+                ((DLL_IWeapon*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             if (temp_s3 != 0) {
                 arg1->unk87C = -1;
@@ -2459,7 +2459,7 @@ void dll_210_func_64B4(Object* player, Player_Data* arg1, f32 arg2) {
             break;
         case 14:
             if (temp_s2->controlNo == OBJCONTROL_Weapon) {
-                ((DLL_IGROUP_48*)temp_s2->dll)->vtbl->func8(temp_s2);
+                ((DLL_IWeapon*)temp_s2->dll)->vtbl->func8(temp_s2);
             }
             arg1->unk87C = -1;
             arg1->unk8A8 = 0;
@@ -8396,7 +8396,7 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         }
     } else {
         if (sp40->controlNo == OBJCONTROL_Weapon) {
-            ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func11(sp40);
+            ((DLL_IWeapon *)sp40->dll)->vtbl->func11(sp40);
         }
         sp47 = 1;
         sp3C->flags &= ~0x40;
@@ -8426,9 +8426,9 @@ s32 dll_210_func_18630(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             player->objhitInfo->unk61 = 0;
         }
         if (sp40->controlNo == OBJCONTROL_Weapon) {
-            ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func12(sp40, 1);
-            ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func13(sp40, sp3C->unk3B4[sp3C->unk8A1].unk30);
-            ((DLL_IGROUP_48 *)sp40->dll)->vtbl->func18(sp40, sp3C->unk3B4[sp3C->unk8A1].unk1C, sp3C->unk3B4[sp3C->unk8A1].unk20);
+            ((DLL_IWeapon *)sp40->dll)->vtbl->func12(sp40, 1);
+            ((DLL_IWeapon *)sp40->dll)->vtbl->func13(sp40, sp3C->unk3B4[sp3C->unk8A1].unk30);
+            ((DLL_IWeapon *)sp40->dll)->vtbl->func18(sp40, sp3C->unk3B4[sp3C->unk8A1].unk1C, sp3C->unk3B4[sp3C->unk8A1].unk20);
         }
     }
     player->objhitInfo->unk5F = sp3C->unk3B4[sp3C->unk8A1].unk4;

@@ -5,6 +5,7 @@
 #include "sys/objtype.h"
 
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "dlls/objects/725_SC_flamegameflame.h"
 
 /*0x0*/ static u16 dActivateGamebits[] = {
@@ -24,7 +25,7 @@ void SCFlameGameFlame_ctor(void *dll) { }
 void SCFlameGameFlame_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCFlameGameFlame_setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 arg2) {
+void SCFlameGameFlame_obj_Setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 arg2) {
     SCFlameGameFlame_Data* objData;
     s32 i;
 
@@ -44,7 +45,7 @@ void SCFlameGameFlame_setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void SCFlameGameFlame_control(Object* self) {
+void SCFlameGameFlame_obj_Control(Object* self) {
     SCFlameGameFlame_Data* objData;
     SCFlameGameFlame_Setup* objSetup;
     Object* sidekick;
@@ -87,10 +88,10 @@ void SCFlameGameFlame_control(Object* self) {
 }
 
 // offset: 0x2A4 | func: 2 | export: 2
-void SCFlameGameFlame_update(Object *self) { }
+void SCFlameGameFlame_obj_Update(Object *self) { }
 
 // offset: 0x2B0 | func: 3 | export: 3
-void SCFlameGameFlame_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SCFlameGameFlame_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     SCFlameGameFlame_Data* objData = self->data;
     
     objData->flags &= ~SCFlameGameFlame_FLAG_Target_in_View;
@@ -100,22 +101,22 @@ void SCFlameGameFlame_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, 
 }
 
 // offset: 0x2F0 | func: 4 | export: 4
-void SCFlameGameFlame_free(Object* self, s32 arg1) {
+void SCFlameGameFlame_obj_Free(Object* self, s32 arg1) {
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x330 | func: 5 | export: 5
-u32 SCFlameGameFlame_get_model_flags(Object *self) {
+u32 SCFlameGameFlame_obj_GetModelFlags(Object *self) {
     return MODFLAGS_1;
 }
 
 // offset: 0x340 | func: 6 | export: 6
-u32 SCFlameGameFlame_get_data_size(Object *self, u32 a1) {
+u32 SCFlameGameFlame_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(SCFlameGameFlame_Data);
 }
 
 // offset: 0x354 | func: 7 | export: 7
-int SCFlameGameFlame_func_354(Object* self, s32 arg1) {
+int SCFlameGameFlame_KyteTarget_Interact(Object* self, s32 arg1) {
     SCFlameGameFlame_Data* objData = self->data;
     s32 outValue;
     
@@ -136,22 +137,22 @@ int SCFlameGameFlame_func_354(Object* self, s32 arg1) {
 }
 
 // offset: 0x3A4 | func: 8 | export: 8
-s32 SCFlameGameFlame_func_3A4(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+s32 SCFlameGameFlame_KyteTarget_Func_3A4(Object *self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x3BC | func: 9 | export: 9
-s32 SCFlameGameFlame_func_3BC(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+s32 SCFlameGameFlame_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
     return 0;
 }
 
 // offset: 0x3D4 | func: 10 | export: 10
-s32 SCFlameGameFlame_func_3D4(Object* self) {
+s32 SCFlameGameFlame_KyteTarget_Func_3D4(Object* self) {
     SCFlameGameFlame_Data* objData = self->data;
     
     if (objData->flags & SCFlameGameFlame_FLAG_Player_Gave_Command) {
-        return 2;
+        return KYTE_TARGET_FUNC10_FLAG_2;
     } else {
-        return 0;
+        return KYTE_TARGET_FUNC10_FLAG_0;
     }
 }

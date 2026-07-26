@@ -4,6 +4,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
@@ -77,7 +78,7 @@ void GPbonfire_ctor(void* dll){ }
 void GPbonfire_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
+void GPbonfire_obj_Setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
@@ -97,7 +98,7 @@ void GPbonfire_setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
 }
 
 // offset: 0xB8 | func: 1 | export: 1
-void GPbonfire_control(Object* self) {
+void GPbonfire_obj_Control(Object* self) {
     GPBonfire_Data* objdata;
     GPBonfire_Setup* setup;
     Object* sidekick;
@@ -241,17 +242,17 @@ void GPbonfire_control(Object* self) {
 }
 
 // offset: 0x7F4 | func: 2 | export: 2
-void GPbonfire_update(Object* self){ }
+void GPbonfire_obj_Update(Object* self){ }
 
 // offset: 0x800 | func: 3 | export: 3
-void GPbonfire_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void GPbonfire_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
     if (visibility && self->modelInstIdx == 1) {
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }
 }
 
 // offset: 0x864 | func: 4 | export: 4
-void GPbonfire_free(Object* self, s32 arg1) {
+void GPbonfire_obj_Free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     objFreeObjectType(self, OBJTYPE_KyteTarget);
@@ -259,17 +260,17 @@ void GPbonfire_free(Object* self, s32 arg1) {
 }
 
 // offset: 0x8EC | func: 5 | export: 5
-u32 GPbonfire_get_model_flags(Object* self){
+u32 GPbonfire_obj_GetModelFlags(Object* self){
     return MODFLAGS_1;
 }
 
 // offset: 0x8FC | func: 6 | export: 6
-u32 GPbonfire_get_data_size(Object* self, s32 arg1){
+u32 GPbonfire_obj_GetDataSize(Object* self, s32 arg1){
     return sizeof(GPBonfire_Data);
 }
 
 // offset: 0x910 | func: 7 | export: 7
-s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
+s32 GPbonfire_KyteTarget_Interact(Object* self, s32 skipSequence) {
     GPBonfire_Data* objdata;
     s32 returnVal;
 
@@ -297,22 +298,22 @@ s32 GPbonfire_start_burning(Object* self, s32 skipSequence) {
 }
 
 // offset: 0xA08 | func: 8 | export: 8
-s32 GPbonfire_func_A08(Object* self, s32 arg1, s32 arg2){
+s32 GPbonfire_KyteTarget_Func_A08(Object* self, s32 arg1, s32 arg2){
     return 0;
 }
 
 // offset: 0xA20 | func: 9 | export: 9
-s32 GPbonfire_func_A20(Object* self, s32 arg1, s32 arg2){
+s32 GPbonfire_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY){
     return 0;
 }
 
 // offset: 0xA38 | func: 10 | export: 10
-s32 GPbonfire_func_A38(void){
-    return 2;
+s32 GPbonfire_KyteTarget_Func_A38(void){
+    return KYTE_TARGET_FUNC10_FLAG_2;
 }
 
 // offset: 0xA44 | func: 11
-void GPbonfire_func_A44(Object* self) {
+static void GPbonfire_func_A44(Object* self) {
     GPBonfire_Data* objdata;
     GPBonfire_Setup* setup;
     void** dll;

@@ -3,6 +3,7 @@
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/609_WMFireFly.h"
+#include "dlls/objects/common/kyte_target.h"
 
 typedef struct {
     ObjSetup base;
@@ -29,7 +30,7 @@ void KyteFireFlys_ctor(void *dll) { }
 void KyteFireFlys_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void KyteFireFlys_setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
+void KyteFireFlys_obj_Setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
     KyteFireFlys_Data* objData;
     s32 i;
 
@@ -45,7 +46,7 @@ void KyteFireFlys_setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0xE0 | func: 1 | export: 1
-void KyteFireFlys_control(Object* self) {
+void KyteFireFlys_obj_Control(Object* self) {
     KyteFireFlys_Data* objData;
     KyteFireFlys_Setup* objSetup;
     Object* sidekick;
@@ -81,13 +82,13 @@ void KyteFireFlys_control(Object* self) {
 }
 
 // offset: 0x26C | func: 2 | export: 2
-void KyteFireFlys_update(Object *self) { }
+void KyteFireFlys_obj_Update(Object *self) { }
 
 // offset: 0x278 | func: 3 | export: 3
-void KyteFireFlys_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void KyteFireFlys_obj_Print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x290 | func: 4 | export: 4
-void KyteFireFlys_free(Object* self, s32 onlySelf) {
+void KyteFireFlys_obj_Free(Object* self, s32 onlySelf) {
     KyteFireFlys_Data* objData;
     s32 i;
 
@@ -103,17 +104,17 @@ void KyteFireFlys_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x330 | func: 5 | export: 5
-u32 KyteFireFlys_get_model_flags(Object *self) {
+u32 KyteFireFlys_obj_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x340 | func: 6 | export: 6
-u32 KyteFireFlys_get_data_size(Object *self, u32 a1) {
+u32 KyteFireFlys_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(KyteFireFlys_Data);
 }
 
 // offset: 0x354 | func: 7 | export: 7
-s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
+s32 KyteFireFlys_KyteTarget_Interact(Object* self, s32 arg1) {
     KyteFireFlys_Setup* objSetup;
     KyteFireFlys_Data* objData;
     s32 outValue;
@@ -157,18 +158,18 @@ s32 KyteFireFlys_func_354(Object* self, s32 arg1) {
 }
 
 // offset: 0x49C | func: 8 | export: 8
-s32 KyteFireFlys_func_49C(s32 arg0, s32 arg1, s32 arg2) {
+s32 KyteFireFlys_KyteTarget_Func_49C(Object* self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x4B4 | func: 9 | export: 9
-s32 KyteFireFlys_func_4B4(s32 arg0, s32 arg1, s32 arg2) {
+s32 KyteFireFlys_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
     return 0;
 }
 
 // offset: 0x4CC | func: 10 | export: 10
-s32 KyteFireFlys_func_4CC(Object* arg0) {
-    return 8;
+s32 KyteFireFlys_KyteTarget_Func_4CC(Object* self) {
+    return KYTE_TARGET_FUNC10_FLAG_8;
 }
 
 // offset: 0x4DC | func: 11

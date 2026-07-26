@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -70,7 +71,7 @@ void MoonSeedReceptacle_ctor(void *dll) { }
 void MoonSeedReceptacle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void MoonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 reset) {
+void MoonSeedReceptacle_obj_Setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 reset) {
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
@@ -109,7 +110,7 @@ void MoonSeedReceptacle_setup(Object* self, MoonSeedReceptacle_Setup* setup, s32
 }
 
 // offset: 0x118 | func: 1 | export: 1
-void MoonSeedReceptacle_control(Object* self) {
+void MoonSeedReceptacle_obj_Control(Object* self) {
     MoonSeedReceptacle_Data *objData;
     MoonSeedReceptacle_Setup *objSetup;
     Object *kyte;
@@ -246,10 +247,10 @@ void MoonSeedReceptacle_control(Object* self) {
 }
 
 // offset: 0x998 | func: 2 | export: 2
-void MoonSeedReceptacle_update(Object *self) { }
+void MoonSeedReceptacle_obj_Update(Object *self) { }
 
 // offset: 0x9A4 | func: 3 | export: 3
-void MoonSeedReceptacle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void MoonSeedReceptacle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     MoonSeedReceptacle_Data* objData;
     u8 otherColourR;
     u8 colourR;
@@ -278,22 +279,22 @@ void MoonSeedReceptacle_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs
 }
 
 // offset: 0xB88 | func: 4 | export: 4
-void MoonSeedReceptacle_free(Object* self, s32 onlySelf) {
+void MoonSeedReceptacle_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0xBC8 | func: 5 | export: 5
-u32 MoonSeedReceptacle_get_model_flags(Object *self){
+u32 MoonSeedReceptacle_obj_GetModelFlags(Object *self){
     return MODFLAGS_1;
 }
 
 // offset: 0xBD8 | func: 6 | export: 6
-u32 MoonSeedReceptacle_get_data_size(Object *self, u32 a1) {
+u32 MoonSeedReceptacle_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(MoonSeedReceptacle_Data);
 }
 
 // offset: 0xBEC | func: 7 | export: 7
-s32 MoonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
+s32 MoonSeedReceptacle_KyteTarget_Interact(Object* self, s32 arg1) {
     MoonSeedReceptacle_Data* objData  = self->data;
     s32 returnVal = FALSE;
 
@@ -319,22 +320,22 @@ s32 MoonSeedReceptacle_func_BEC(Object* self, s32 arg1) {
 }
 
 // offset: 0xD00 | func: 8 | export: 8
-u32 MoonSeedReceptacle_func_D00(Object *self, u32 a1, u32 a2) {
+s32 MoonSeedReceptacle_KyteTarget_Func_D00(Object *self, s32 a1, s32 a2) {
     return 0;
 }
 
 // offset: 0xD18 | func: 9 | export: 9
-u32 MoonSeedReceptacle_func_D18(Object *self, u32 a1, u32 a2) {
+s32 MoonSeedReceptacle_KyteTarget_Approach(Object *self, s32 a1, s32 a2) {
     return 0;
 }
 
 // offset: 0xD30 | func: 10 | export: 10
-u32 MoonSeedReceptacle_func_D30(Object *self){
-    return 2;
+s32 MoonSeedReceptacle_KyteTarget_Func_D30(Object *self){
+    return KYTE_TARGET_FUNC10_FLAG_2;
 }
 
 // offset: 0xD40 | func: 11
-void MoonSeedReceptacle_func_D40(Object* self) {
+static void MoonSeedReceptacle_func_D40(Object* self) {
     MoonSeedReceptacle_Data* objData;
     MoonSeedReceptacle_Setup* objSetup;
     CurveSetup* curveSetup;

@@ -8,14 +8,14 @@ _exports:
 .dword GPbonfire_dtor
 
 # export table
-.dword GPbonfire_setup
-.dword GPbonfire_control
-.dword GPbonfire_update
-.dword GPbonfire_print
-.dword GPbonfire_free
-.dword GPbonfire_get_model_flags
-.dword GPbonfire_get_data_size
-.dword GPbonfire_start_burning
-.dword GPbonfire_func_A08
-.dword GPbonfire_func_A20
-.dword GPbonfire_func_A38
+.dword GPbonfire_obj_Setup
+.dword GPbonfire_obj_Control
+.dword GPbonfire_obj_Update
+.dword GPbonfire_obj_Print
+.dword GPbonfire_obj_Free
+.dword GPbonfire_obj_GetModelFlags
+.dword GPbonfire_obj_GetDataSize
+.dword GPbonfire_KyteTarget_Interact
+.dword GPbonfire_KyteTarget_Func_A08
+.dword GPbonfire_KyteTarget_Approach
+.dword GPbonfire_KyteTarget_Func_A38

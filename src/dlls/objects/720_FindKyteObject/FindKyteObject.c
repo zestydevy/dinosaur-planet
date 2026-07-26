@@ -4,6 +4,7 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 
 typedef struct {
 /*00*/ f32 timer;
@@ -29,7 +30,7 @@ void FindKyteObject_ctor(void *dll) { }
 void FindKyteObject_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void FindKyteObject_setup(Object *self, ObjSetup *setup, s32 arg2) {
+void FindKyteObject_obj_Setup(Object *self, ObjSetup *setup, s32 arg2) {
     FindKyteObject_Data *objdata;
 
     objdata = self->data;
@@ -38,7 +39,7 @@ void FindKyteObject_setup(Object *self, ObjSetup *setup, s32 arg2) {
 }
 
 // offset: 0x64 | func: 1 | export: 1
-void FindKyteObject_control(Object *self) {
+void FindKyteObject_obj_Control(Object *self) {
     CurveSetup *curveSetup;
     FindKyteObject_Setup *setup;
     Object *kyte;
@@ -110,42 +111,42 @@ void FindKyteObject_control(Object *self) {
 }
 
 // offset: 0x3AC | func: 2 | export: 2
-void FindKyteObject_update(Object *self) { }
+void FindKyteObject_obj_Update(Object *self) { }
 
 // offset: 0x3B8 | func: 3 | export: 3
-void FindKyteObject_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void FindKyteObject_obj_Print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
 
 // offset: 0x3D0 | func: 4 | export: 7
-s32 FindKyteObject_func_3D0(s32 arg0, s32 arg1) {
+s32 FindKyteObject_KyteTarget_Interact(Object* self, s32 arg1) {
     return 0;
 }
 
 // offset: 0x3E4 | func: 5 | export: 8
-s32 FindKyteObject_func_3E4(s32 arg0, s32 arg1, s32 arg2) {
+s32 FindKyteObject_KyteTarget_Func_3E4(Object* self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x3FC | func: 6 | export: 4
-void FindKyteObject_free(Object *self, s32 a1) {
+void FindKyteObject_obj_Free(Object *self, s32 a1) {
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x43C | func: 7 | export: 5
-u32 FindKyteObject_get_model_flags(Object *self) {
+u32 FindKyteObject_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x44C | func: 8 | export: 6
-u32 FindKyteObject_get_data_size(Object *self, u32 a1) {
+u32 FindKyteObject_GetDataSize(Object *self, u32 a1) {
     return sizeof(FindKyteObject_Data);
 }
 
 // offset: 0x460 | func: 9 | export: 9
-s32 FindKyteObject_func_460(s32 arg0, s32 arg1, s32 arg2) {
+s32 FindKyteObject_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
     return 0;
 }
 
 // offset: 0x478 | func: 10 | export: 10
-s32 FindKyteObject_func_478(s32 arg0) {
-    return 1;
+s32 FindKyteObject_KyteTarget_Func_478(Object* self) {
+    return KYTE_TARGET_FUNC10_FLAG_1;
 }
