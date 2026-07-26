@@ -89,7 +89,7 @@ s32 dll_34_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* 
     sp4C.unk0 = obj;
     sp4C.unk44 = 0;
     sp4C.unk48 = 0;
-    sp4C.unk5E = (s8) id;
+    sp4C.unk5E = id;
     sp4C.unk8 = 0;
     sp4C.unk4 = -1;
     sp4C.unk60 = 0xFF;
