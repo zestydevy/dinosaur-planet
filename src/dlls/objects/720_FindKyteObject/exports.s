@@ -8,14 +8,14 @@ _exports:
 .dword FindKyteObject_dtor
 
 # export table
-/*0*/ .dword FindKyteObject_setup
-/*1*/ .dword FindKyteObject_control
-/*2*/ .dword FindKyteObject_update
-/*3*/ .dword FindKyteObject_print
-/*4*/ .dword FindKyteObject_free
-/*5*/ .dword FindKyteObject_get_model_flags
-/*6*/ .dword FindKyteObject_get_data_size
-/*7*/ .dword FindKyteObject_func_3D0
-/*8*/ .dword FindKyteObject_func_3E4
-/*9*/ .dword FindKyteObject_func_460
-/*10*/ .dword FindKyteObject_func_478
+/*0*/ .dword FindKyteObject_obj_Setup
+/*1*/ .dword FindKyteObject_obj_Control
+/*2*/ .dword FindKyteObject_obj_Update
+/*3*/ .dword FindKyteObject_obj_Print
+/*4*/ .dword FindKyteObject_obj_Free
+/*5*/ .dword FindKyteObject_GetModelFlags 
+/*6*/ .dword FindKyteObject_GetDataSize
+/*7*/ .dword FindKyteObject_KyteTarget_Interact
+/*8*/ .dword FindKyteObject_KyteTarget_Func_3E4
+/*9*/ .dword FindKyteObject_KyteTarget_Approach
+/*10*/ .dword FindKyteObject_KyteTarget_Func_478

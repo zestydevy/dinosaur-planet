@@ -3,6 +3,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dll.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "game/objects/object.h"
 #include "macros.h"
 #include "sys/gfx/animseq.h"
@@ -43,7 +44,7 @@ void perchobject_ctor(void *dll) { }
 void perchobject_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void perchobject_setup(Object* self, s32 arg1, s32 arg2) {
+void perchobject_obj_Setup(Object* self, s32 arg1, s32 arg2) {
     PerchObject_Data* objData = self->data;
 
     objData->stateIndex = STATE_0_Initialise;
@@ -52,7 +53,7 @@ void perchobject_setup(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x74 | func: 1 | export: 1
-void perchobject_control(Object* self) {
+void perchobject_obj_Control(Object* self) {
     PerchObject_Data *objData;
     PerchObject_Setup *objSetup;
     Object *kyte;
@@ -113,7 +114,7 @@ void perchobject_control(Object* self) {
 }
 
 // offset: 0x25C | func: 2 | export: 2
-void perchobject_update(Object *self) { }
+void perchobject_obj_Update(Object *self) { }
 
 // offset: 0x268 | func: 3 | export: 3
 void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
@@ -124,23 +125,23 @@ void perchobject_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 
 
 // offset: 0x2BC | func: 4 | export: 4
-void perchobject_free(Object* self, s32 arg1) {
+void perchobject_obj_Free(Object* self, s32 arg1) {
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x2FC | func: 5 | export: 5
-u32 perchobject_get_model_flags(Object *self) {
+u32 perchobject_obj_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x30C | func: 6 | export: 6
-u32 perchobject_get_data_size(Object *self, u32 a1) {
+u32 perchobject_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(PerchObject_Data);
 }
 
 // offset: 0x320 | func: 7 | export: 7
 // Called when Kyte finishes landing on unpressed switch (just before switch gets pressed down)
-s32 perchobject_land_on_perch(Object* self, s32 arg1) {
+s32 perchobject_KyteTarget_Interact(Object* self, s32 arg1) {
     PerchObject_Data* objData;
     s32 landedOnPerch;
 
@@ -160,13 +161,13 @@ s32 perchobject_land_on_perch(Object* self, s32 arg1) {
 }
 
 // offset: 0x388 | func: 8 | export: 8
-u32 perchobject_func_388(Object *self, s32 arg1, s32 arg2) {
+s32 perchobject_KyteTarget_func_388(Object *self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x3A0 | func: 9 | export: 9
 // Called when Kyte begins landing (entering slower flapping state while close to perch)
-u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
+s32 perchobject_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
     Object *kyte;
     s16 flag;
     PerchObject_Data *objData;
@@ -191,8 +192,8 @@ u32 perchobject_approach_perch(Object* self, s32 arg1, f32* deltaY) {
 }
 
 // offset: 0x460 | func: 10 | export: 10
-u32 perchobject_func_460(Object *self) {
-    return 4;
+s32 perchobject_KyteTarget_Func_460(Object *self) {
+    return KYTE_TARGET_FUNC10_FLAG_4;
 }
 
 // offset: 0x470 | func: 11

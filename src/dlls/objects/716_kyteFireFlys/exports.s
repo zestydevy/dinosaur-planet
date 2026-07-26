@@ -8,14 +8,14 @@ _exports:
 .dword KyteFireFlys_dtor
 
 # export table
-/*0*/ .dword KyteFireFlys_setup
-/*1*/ .dword KyteFireFlys_control
-/*2*/ .dword KyteFireFlys_update
-/*3*/ .dword KyteFireFlys_print
-/*4*/ .dword KyteFireFlys_free
-/*5*/ .dword KyteFireFlys_get_model_flags
-/*6*/ .dword KyteFireFlys_get_data_size
-/*7*/ .dword KyteFireFlys_func_354
-/*8*/ .dword KyteFireFlys_func_49C
-/*9*/ .dword KyteFireFlys_func_4B4
-/*10*/ .dword KyteFireFlys_func_4CC
+/*0*/ .dword KyteFireFlys_obj_Setup
+/*1*/ .dword KyteFireFlys_obj_Control
+/*2*/ .dword KyteFireFlys_obj_Update
+/*3*/ .dword KyteFireFlys_obj_Print
+/*4*/ .dword KyteFireFlys_obj_Free
+/*5*/ .dword KyteFireFlys_obj_GetModelFlags
+/*6*/ .dword KyteFireFlys_obj_GetDataSize
+/*7*/ .dword KyteFireFlys_KyteTarget_Interact
+/*8*/ .dword KyteFireFlys_KyteTarget_Func_49C
+/*9*/ .dword KyteFireFlys_KyteTarget_Approach
+/*10*/ .dword KyteFireFlys_KyteTarget_Func_4CC

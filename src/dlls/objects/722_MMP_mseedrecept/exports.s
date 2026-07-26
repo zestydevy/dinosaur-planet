@@ -8,14 +8,14 @@ _exports:
 .dword MoonSeedReceptacle_dtor
 
 # export table
-/*0*/ .dword MoonSeedReceptacle_setup
-/*1*/ .dword MoonSeedReceptacle_control
-/*2*/ .dword MoonSeedReceptacle_update
-/*3*/ .dword MoonSeedReceptacle_print
-/*4*/ .dword MoonSeedReceptacle_free
-/*5*/ .dword MoonSeedReceptacle_get_model_flags
-/*6*/ .dword MoonSeedReceptacle_get_data_size
-/*7*/ .dword MoonSeedReceptacle_func_BEC
-/*8*/ .dword MoonSeedReceptacle_func_D00
-/*9*/ .dword MoonSeedReceptacle_func_D18
-/*10*/ .dword MoonSeedReceptacle_func_D30
+/*0*/ .dword MoonSeedReceptacle_obj_Setup
+/*1*/ .dword MoonSeedReceptacle_obj_Control
+/*2*/ .dword MoonSeedReceptacle_obj_Update
+/*3*/ .dword MoonSeedReceptacle_obj_Print
+/*4*/ .dword MoonSeedReceptacle_obj_Free
+/*5*/ .dword MoonSeedReceptacle_obj_GetModelFlags
+/*6*/ .dword MoonSeedReceptacle_obj_GetDataSize
+/*7*/ .dword MoonSeedReceptacle_KyteTarget_Interact
+/*8*/ .dword MoonSeedReceptacle_KyteTarget_Func_D00
+/*9*/ .dword MoonSeedReceptacle_KyteTarget_Approach
+/*10*/ .dword MoonSeedReceptacle_KyteTarget_Func_D30

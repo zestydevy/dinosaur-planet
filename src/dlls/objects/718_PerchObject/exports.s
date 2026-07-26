@@ -8,14 +8,14 @@ _exports:
 .dword perchobject_dtor
 
 # export table
-/*0*/ .dword perchobject_setup
-/*1*/ .dword perchobject_control
-/*2*/ .dword perchobject_update
+/*0*/ .dword perchobject_obj_Setup
+/*1*/ .dword perchobject_obj_Control
+/*2*/ .dword perchobject_obj_Update
 /*3*/ .dword perchobject_print
-/*4*/ .dword perchobject_free
-/*5*/ .dword perchobject_get_model_flags
-/*6*/ .dword perchobject_get_data_size
-/*7*/ .dword perchobject_land_on_perch
-/*8*/ .dword perchobject_func_388
-/*9*/ .dword perchobject_approach_perch
-/*10*/ .dword perchobject_func_460
+/*4*/ .dword perchobject_obj_Free
+/*5*/ .dword perchobject_obj_GetModelFlags
+/*6*/ .dword perchobject_obj_GetDataSize
+/*7*/ .dword perchobject_KyteTarget_Interact
+/*8*/ .dword perchobject_KyteTarget_func_388
+/*9*/ .dword perchobject_KyteTarget_Approach
+/*10*/ .dword perchobject_KyteTarget_Func_460

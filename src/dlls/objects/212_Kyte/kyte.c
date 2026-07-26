@@ -3,6 +3,7 @@
 #include "sys/objlib.h"
 #include "dlls/objects/278_flameblast.h"
 #include "dlls/objects/332_FXEmit.h"
+#include "dlls/objects/common/kyte_target.h"
 
 typedef struct {
     s16 unk0;
@@ -69,7 +70,7 @@ typedef struct {
     u8 pad23C[0x278 - 0x23C];
 } DLL212_Data;
 
-typedef void (*Bss0_Callback)(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+typedef void (*Bss0_Callback)(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
 
 /*0x0*/ static u32 data_0[] = {
     0x0000000d, 0x00000005, 0xffffffff, 0x0000000b, 0x0000030a, 0x3f800000, 0x3f800000, 0x3f800000, 
@@ -116,12 +117,12 @@ typedef void (*Bss0_Callback)(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* ar
 
 /*0x0*/ static Bss0_Callback bss_0[4];
 
-static void Kyte_func_4020(DLL212_3FF4* arg0, s32 arg1);
+static void Kyte_func_4020(DLL212_3FF4* self, s32 arg1);
 static void Kyte_func_3F44(Object *self, DLL212_Data* objdata);
 static s32 Kyte_func_3A2C(Object* self, DLL212_Data* objdata);
-static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
-static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
-static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+static s32 Kyte_func_27D8(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+static s32 Kyte_func_2B58(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+static s32 Kyte_func_2DA4(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
 
 // offset: 0x0 | ctor
 void Kyte_ctor(void* dll) { }
@@ -246,33 +247,34 @@ u32 Kyte_obj_GetDataSize(Object* self, u32 offsetAddr) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_1D2C.s")
 
 // offset: 0x1F14 | func: 36
-static Object* Kyte_func_1F14(Object* self, s32 arg1) {
-    Object* temp_a0;
-    Object* var_s4;
-    s32 sp4C;
-    Object** var_s0;
-    f32 temp_fv0;
-    f32 var_fs0;
+static Object* Kyte_getClosestTarget(Object* self, s32 flag) {
+    Object* targetObject;
+    Object* outObject;
+    s32 count;
+    Object** targetObjects;
+    f32 targetDistance;
+    f32 distance;
     s32 i;
 
-    var_s4 = NULL;
-    var_fs0 = M_INFINITY_F;
-    var_s0 = objGetAllOfType(OBJTYPE_KyteTarget, &sp4C);
-    for (i = 0; i < sp4C; i++) {
-        temp_a0 = var_s0[i];
-        if ((((DLL_Unknown*)temp_a0->dll)->vtbl)->func[10].withOneArgS32(temp_a0) & arg1) {
-            temp_fv0 = vec3DistanceSquared(&self->globalPosition, &var_s0[i]->globalPosition);
-            if (temp_fv0 < var_fs0) {
-                var_s4 = var_s0[i];
-                var_fs0 = temp_fv0;
+    outObject = NULL;
+    distance = M_INFINITY_F;
+    targetObjects = objGetAllOfType(OBJTYPE_KyteTarget, &count);
+    for (i = 0; i < count; i++) {
+        targetObject = targetObjects[i];
+        if ((((DLL_IKyteTarget*)targetObject->dll)->vtbl)->func10(targetObject) & flag) {
+            targetDistance = vec3DistanceSquared(&self->globalPosition, &targetObjects[i]->globalPosition);
+            if (targetDistance < distance) {
+                outObject = targetObjects[i];
+                distance = targetDistance;
             }
         }
     }
-    return var_s4;
+
+    return outObject;
 }
 
 // offset: 0x200C | func: 37
-void Kyte_func_200C(s32 arg0, Kyte_Unk3* arg1, Kyte_Unk2* arg2, s32 arg3) {
+void Kyte_func_200C(Object* self, Kyte_Unk3* arg1, Kyte_Unk2* arg2, s32 arg3) {
     arg1->unk0 = arg3;
     arg1->unk4 = arg3;
     arg1->unkC = arg3;
@@ -290,7 +292,7 @@ void Kyte_func_200C(s32 arg0, Kyte_Unk3* arg1, Kyte_Unk2* arg2, s32 arg3) {
 }
 
 // offset: 0x20A4 | func: 38
-f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32 arg4) {
+f32 Kyte_func_20A4(Object* self, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32 arg4) {
     f32 spA4;
     f32 var_fv0_2;
     Kyte_Unk2* sp9C;
@@ -306,7 +308,7 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
     Vec3f sp5C;
     f32 sp58;
     f32 var_fv1;
-    Object* sp50;
+    Object* targetObj;
     s32 temp_v0_4;
     s32 temp_v1_2;
     Kyte_Unk2* temp;
@@ -320,7 +322,7 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
     if (arg1->unk2E == 0) {
         sp58 = 2.0f;
         sp58 = 2.0f;
-        var_fv1 = vec3Distance(&objGetPlayer()->globalPosition, &arg0->globalPosition) / 400.0f;
+        var_fv1 = vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition) / 400.0f;
     }
     arg1->unk20->unk4 = 2.5f + var_fv1;
     if (arg4 != 0) {
@@ -338,9 +340,9 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
             spA4 = var_fv0;
         }
     }
-    sp88.f[0] = arg0->srt.transl.x;
-    sp88.f[1] = arg0->srt.transl.y;
-    sp88.f[2] = arg0->srt.transl.z;
+    sp88.f[0] = self->srt.transl.x;
+    sp88.f[1] = self->srt.transl.y;
+    sp88.f[2] = self->srt.transl.z;
     sp78 = 0;
     if (arg1->unk2C & 8) {
         if (arg1->unk2C & 0x100) {
@@ -348,25 +350,25 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
             sp78 = 1;
         }
         if (arg1->unk2C & 0x80) {
-            sp50 = Kyte_func_1F14(arg0, 4);
-            if (sp50 != NULL) {
-                if ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 1, &sp94) != 0) {
+            targetObj = Kyte_getClosestTarget(self, 4);
+            if (targetObj != NULL) {
+                if ((((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Approach(targetObj, 1, &sp94) != 0) {
                     // FAKE
                     if (!temp_v0_4);
                     sp78 = 1;
-                    if ((sp94 != 0.0f) && ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 0, 0) == 0)) {
-                        (((DLL_Unknown*)sp50->dll)->vtbl)->func[7].withTwoArgsS32(sp50, 5);
+                    if ((sp94 != 0.0f) && ((((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Approach(targetObj, 0, 0) == 0)) {
+                        (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 5);
                     }
-                    if ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 3, 0) != 0) {
+                    if ((((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Approach(targetObj, 3, 0) != 0) {
                         arg1->unk2C &= ~0x12;
                     }
-                    sp58 = arg0->srt.transl.y + sp94;
+                    sp58 = self->srt.transl.y + sp94;
                 }
             }
         }
         if (sp78 == 0) {
-            if (trackGetHeightNearest(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp94, 0U) == 0) {
-                sp58 = arg0->srt.transl.y - sp94;
+            if (trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp94, 0U) == 0) {
+                sp58 = self->srt.transl.y - sp94;
                 sp78 = 1;
             }
         }
@@ -392,36 +394,36 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
         if (sp78 != 0) {
             sp88.f[1] = sp58;
         }
-        sp68.f[0] = sp88.f[0] - arg0->srt.transl.x;
-        sp68.f[1] = sp88.f[1] - arg0->srt.transl.y;
-        sp68.f[2] = sp88.f[2] - arg0->srt.transl.z;
+        sp68.f[0] = sp88.f[0] - self->srt.transl.x;
+        sp68.f[1] = sp88.f[1] - self->srt.transl.y;
+        sp68.f[2] = sp88.f[2] - self->srt.transl.z;
         var_fv0 = sqrtf(SQ(sp68.f[0]) + SQ(sp68.f[1]) + SQ(sp68.f[2]));
         if (((sp9C->unk8 + 0.4f) * gUpdateRateF) < var_fv0) {
             var_fv1 = (sp9C->unk8 * gUpdateRateF) / var_fv0;
             sp5C.f[0] = sp68.f[0] * var_fv1;
             sp5C.f[1] = sp68.f[1] * var_fv1;
             sp5C.f[2] = sp68.f[2] * var_fv1;
-            sp88.f[0] = sp5C.f[0] + arg0->srt.transl.x;
-            sp88.f[1] = sp5C.f[1] + arg0->srt.transl.y;
-            sp88.f[2] = sp5C.f[2] + arg0->srt.transl.z;
+            sp88.f[0] = sp5C.f[0] + self->srt.transl.x;
+            sp88.f[1] = sp5C.f[1] + self->srt.transl.y;
+            sp88.f[2] = sp5C.f[2] + self->srt.transl.z;
         }
     } else {
         if (sp78 != 0) {
             sp88.f[1] = sp58;
         }
-        if ((arg1->unk2C & 0x20) && (sp58 == arg0->srt.transl.y) && (arg1->unk10 == -1)) {
+        if ((arg1->unk2C & 0x20) && (sp58 == self->srt.transl.y) && (arg1->unk10 == -1)) {
             arg1->unk10 = arg1->unk28;
             arg1->unk2C &= ~0x20;
         }
     }
-    bss_0[arg1->unk4](arg0, &sp88, arg1->unk14 * gUpdateRateF, sp9C, &arg1->unk10, &sp98, arg1);
-    if (objAnimAdvance(arg0, sp98, gUpdateRateF, NULL) != 0) {
+    bss_0[arg1->unk4](self, &sp88, arg1->unk14 * gUpdateRateF, sp9C, &arg1->unk10, &sp98, arg1);
+    if (objAnimAdvance(self, sp98, gUpdateRateF, NULL) != 0) {
         arg1->unk10 = -1;
         sp74 = 1;
     }
-    arg0->srt.transl.x = sp88.f[0];
-    arg0->srt.transl.y = sp88.f[1];
-    arg0->srt.transl.z = sp88.f[2];
+    self->srt.transl.x = sp88.f[0];
+    self->srt.transl.y = sp88.f[1];
+    self->srt.transl.z = sp88.f[2];
     if ((sp74 != 0 && arg1->unk10 == -1) || arg1->unk4 == arg1->unkC) {
         if (arg1->unk14 >= 0/*.0f*/) {
             var_fv1 = arg1->unk14;
@@ -450,12 +452,12 @@ f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32
             }
         }
     }
-    arg1->unk24 = arg0->srt.yaw;
+    arg1->unk24 = self->srt.yaw;
     return sp7C;
 }
 
 // offset: 0x27D8 | func: 39
-static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_27D8(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 sp44;
     f32 sp40;
     f32 sp3C;
@@ -469,21 +471,21 @@ static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     s32 sp20;
 
     sp20 = -1;
-    sp40 = arg1->x - arg0->srt.transl.x;
-    sp38 = arg1->z - arg0->srt.transl.z;
-    sp3C = arg1->y - arg0->srt.transl.y;
-    sp32 = arg0->srt.yaw;
+    sp40 = arg1->x - self->srt.transl.x;
+    sp38 = arg1->z - self->srt.transl.z;
+    sp3C = arg1->y - self->srt.transl.y;
+    sp32 = self->srt.yaw;
     sp44 = sqrtf(SQ(sp40) + SQ(sp38));
-    arg0->srt.yaw = mathAtan2f(sp40, sp38) + 0x8000;
-    arg0->srt.pitch = mathAtan2f(sp3C, sp44);
-    temp_v1 = arg0->srt.yaw - (sp32 & 0xFFFF);
+    self->srt.yaw = mathAtan2f(sp40, sp38) + 0x8000;
+    self->srt.pitch = mathAtan2f(sp3C, sp44);
+    temp_v1 = self->srt.yaw - (sp32 & 0xFFFF);
     CIRCLE_WRAP(temp_v1);
-    arg0->srt.roll = (arg0->srt.roll + (s32) (temp_v1 * 16.0f)) / 2;
-    if (arg0->srt.roll > 0x3000) {
-        arg0->srt.roll = 0x3000;
+    self->srt.roll = (self->srt.roll + (s32) (temp_v1 * 16.0f)) / 2;
+    if (self->srt.roll > 0x3000) {
+        self->srt.roll = 0x3000;
     }
-    if (arg0->srt.roll < -0x3000) {
-        arg0->srt.roll = -0x3000;
+    if (self->srt.roll < -0x3000) {
+        self->srt.roll = -0x3000;
     }
     if (arg2 == 0.0f) {
         arg2 = 0.0001f;
@@ -498,7 +500,7 @@ static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     if (*arg4 != -1) {
         var_a1 = *arg4;
         sp28 = sp28;
-        var_fv1 = (arg0->animProgress * 0.01f) + (var_fv1 * (1.0f - arg0->animProgress));
+        var_fv1 = (self->animProgress * 0.01f) + (var_fv1 * (1.0f - self->animProgress));
     } else {
         var_fa1 = 0;
         var_a1 = arg3->unk10[(s32)var_fa1];
@@ -515,19 +517,19 @@ static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
         sp28 *= 1023.0f;
     }
     *arg5 = var_fv1;
-    if (var_a1 != arg0->curModAnimId) {
+    if (var_a1 != self->curModAnimId) {
         sp28 = sp28;
-        objAnimSet(arg0, var_a1, 0/*.0f*/, 0U);
+        objAnimSet(self, var_a1, 0/*.0f*/, 0U);
     }
     if (sp20 != -1) {
-        objAnimSetBlend(arg0, sp20, sp28);
+        objAnimSetBlend(self, sp20, sp28);
     }
     arg6->unk2C &= ~8;
     return 0;
 }
 
 // offset: 0x2B58 | func: 40
-static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_2B58(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 var_ft4;
     f32 sp30;
     f32 sp2C;
@@ -538,20 +540,20 @@ static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     s32 var_a1;
 
     var_ft4 = 0;
-    if (arg0->srt.roll != 0) {
-        arg0->srt.roll >>= 1;
+    if (self->srt.roll != 0) {
+        self->srt.roll >>= 1;
     }
-    if (arg0->srt.pitch != 0) {
-        arg0->srt.pitch >>= 1;
+    if (self->srt.pitch != 0) {
+        self->srt.pitch >>= 1;
     }
-    sp30 = arg0->srt.transl.x - arg1->x;
-    sp28 = arg0->srt.transl.z - arg1->z;
-    sp2C = arg0->srt.transl.y - arg1->y;
+    sp30 = self->srt.transl.x - arg1->x;
+    sp28 = self->srt.transl.z - arg1->z;
+    sp2C = self->srt.transl.y - arg1->y;
     if (!(arg6->unk2C & 4)) {
         var_ft4 = sqrtf(SQ(sp30) + SQ(sp28));
-        temp_v1 = mathAtan2f(sp30, sp28) - (arg0->srt.yaw & 0xFFFF);
+        temp_v1 = mathAtan2f(sp30, sp28) - (self->srt.yaw & 0xFFFF);
         CIRCLE_WRAP(temp_v1);
-        arg0->srt.yaw += (temp_v1 >> 2);
+        self->srt.yaw += (temp_v1 >> 2);
     }
     // FAKE
     if (sp30 != 0.0f);
@@ -564,7 +566,7 @@ static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     }
     if (*arg4 != -1) {
         var_a1 = *arg4;
-        var_fv1 = (arg0->animProgress * 0.01f) + (var_fv1 * (1.0f - arg0->animProgress));
+        var_fv1 = (self->animProgress * 0.01f) + (var_fv1 * (1.0f - self->animProgress));
     } else {
         if (var_ft4 > 0/*.0f*/) {
             var_fv0 = 1/*.0f*/;
@@ -573,8 +575,8 @@ static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
         }
         var_a1 = arg3->unk10[(s32) var_fv0];
     }
-    if (var_a1 != arg0->curModAnimId) {
-        objAnimSet(arg0, var_a1, 0/*.0f*/, 0U);
+    if (var_a1 != self->curModAnimId) {
+        objAnimSet(self, var_a1, 0/*.0f*/, 0U);
     }
     *arg5 = var_fv1;
     arg6->unk2C &= ~8;
@@ -582,7 +584,7 @@ static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
 }
 
 // offset: 0x2DA4 | func: 41
-static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_2DA4(Object* self, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 temp_fv1;
     f32 sp40;
     f32 sp3C;
@@ -593,16 +595,16 @@ static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     f32 var_fa0;
 
     sp38 = 0.0f;
-    sp40 = arg0->srt.transl.x - arg1->x;
-    sp3C = arg0->srt.transl.z - arg1->z;
-    if (arg0->srt.roll != 0) {
-        arg0->srt.roll >>= 1;
+    sp40 = self->srt.transl.x - arg1->x;
+    sp3C = self->srt.transl.z - arg1->z;
+    if (self->srt.roll != 0) {
+        self->srt.roll >>= 1;
     }
-    if (arg0->srt.pitch != 0) {
-        arg0->srt.pitch >>= 1;
+    if (self->srt.pitch != 0) {
+        self->srt.pitch >>= 1;
     }
     if (!(arg6->unk2C & 4)) {
-        arg0->srt.yaw = mathAtan2f(sp40, sp3C);
+        self->srt.yaw = mathAtan2f(sp40, sp3C);
     }
     if (*arg4 != -1) {
         var_a1 = *arg4;
@@ -611,14 +613,14 @@ static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
     } else {
         if (arg6->unk2C & 2) {
             arg6->unk2C |= 8;
-            temp_v0_4 = arg0->srt.yaw - arg6->unk24;
+            temp_v0_4 = self->srt.yaw - arg6->unk24;
             if (temp_v0_4 >= 0) {
                 var_v1 = temp_v0_4;
             } else {
                 var_v1 = -temp_v0_4;
             }
             sp38 = var_v1 * 0.00005f;
-            temp_v0_4 = arg0->srt.yaw - arg6->unk24;
+            temp_v0_4 = self->srt.yaw - arg6->unk24;
             if (temp_v0_4 >= 0) {
                 var_v1 = temp_v0_4;
             } else {
@@ -635,59 +637,59 @@ static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, 
             temp_fv1 = sqrtf((sp40 * sp40) + (sp3C * sp3C)) * gUpdateRateInverseF;
             var_fa0 = (((temp_fv1 / arg3->unk8) * (f32) (arg3->unk14 - 1)) + 1.0f);
             var_a1 = arg3->unk10[(s32)var_fa0];
-            objGetAnimChange(arg0, temp_fv1, &sp38);
+            objGetAnimChange(self, temp_fv1, &sp38);
         }
     }
-    if (var_a1 != arg0->curModAnimId) {
-        objAnimSet(arg0, var_a1, 0.0f, 0U);
+    if (var_a1 != self->curModAnimId) {
+        objAnimSet(self, var_a1, 0.0f, 0U);
     }
     *arg5 = sp38;
     return 0;
 }
 
 // offset: 0x300C | func: 42
-void Kyte_func_300C(Object* arg0) {
+void Kyte_func_300C(Object* self) {
     ObjectShadow* sp2C;
     f32 sp28;
 
-    sp2C = arg0->shadow;
+    sp2C = self->shadow;
     sp28 = 0.0f;
-    sp2C->tr.x = arg0->srt.transl.x;
-    sp2C->tr.z = arg0->srt.transl.z;
-    if (trackGetHeightFloor(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp28, 0U) != 0) {
-        sp2C->tr.y = arg0->srt.transl.y - sp28;
+    sp2C->tr.x = self->srt.transl.x;
+    sp2C->tr.z = self->srt.transl.z;
+    if (trackGetHeightFloor(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp28, 0U) != 0) {
+        sp2C->tr.y = self->srt.transl.y - sp28;
     }
 }
 
 // offset: 0x3098 | func: 43
-s32 Kyte_func_3098(Object* arg0, Kyte_Unk* arg1) {
+s32 Kyte_func_3098(Object* self, Kyte_Unk* arg1) {
     Object* sp2C;
     s32 var_v0;
 
     if (!arg1->unk48) {
-        objExpr_func_80032CF8(arg0, NULL, &arg1->unk0, 0x78);
+        objExpr_func_80032CF8(self, NULL, &arg1->unk0, 0x78);
         return 0;
     }
     if (!arg1->unk49) {
         sp2C = objGetPlayer();
     } else {
-        sp2C = objGetNearestTypeTo(arg1->unk49, arg0, NULL);
+        sp2C = objGetNearestTypeTo(arg1->unk49, self, NULL);
     }
     if (arg1->unk48 & 2) {
-        arg0->srt.yaw += (objAngleToObjectXZ(arg0, sp2C, NULL) >> 3) & 0xFFFF & 0xFFFF;
+        self->srt.yaw += (objAngleToObjectXZ(self, sp2C, NULL) >> 3) & 0xFFFF & 0xFFFF;
     }
-    objExpr_func_80032CF8(arg0, sp2C, arg1, 0x78);
+    objExpr_func_80032CF8(self, sp2C, arg1, 0x78);
     return 1;
 }
 
 
 // offset: 0x319C | func: 44
-s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL212_Data* arg4) {
+s32 Kyte_func_319C(Object* self, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL212_Data* arg4) {
     s32 sp4C;
     s32 var_v0;
     s32 var_v1;
     s32 sp34[4] = { 0, 48, 4, 50 };
-    Object* sp30;
+    Object* targetObj;
     SidekickStats* sp2C;
 
     arg4->unk38 = arg4->unk34;
@@ -735,19 +737,19 @@ s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL2
         }
     }
     if (sp4C & 0x400000) {
-        sp30 = Kyte_func_1F14(arg0, 8);
-        if (sp30 != NULL) {
-            sp30 = sp30;
+        targetObj = Kyte_getClosestTarget(self, 8);
+        if (targetObj != NULL) {
+            targetObj = targetObj;
             sp2C = gDLL_29_Gplay->vtbl->get_sidekick_stats();
-            sp2C->redFood += (((DLL_Unknown*)sp30->dll)->vtbl)->func[7].withTwoArgsS32(sp30, 2);
+            sp2C->redFood += (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 2);
         } else {
             sp4C &= ~0x400000;
         }
     }
     if (sp4C & 0x20000) {
-        sp30 = Kyte_func_1F14(arg0, 0x10);
-        if (sp30 != NULL) {
-            (((DLL_Unknown*)sp30->dll)->vtbl)->func[7].withTwoArgsS32(sp30, 6);
+        targetObj = Kyte_getClosestTarget(self, 0x10);
+        if (targetObj != NULL) {
+            (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 6);
             arg1->unk2C |= 0x20;
             arg1->unk28 = 0x100;
         } else {
@@ -755,9 +757,9 @@ s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL2
         }
     }
     if (sp4C & 0x40000) {
-        sp30 = Kyte_func_1F14(arg0, 0x20);
-        if (sp30 != NULL) {
-            (((DLL_Unknown*)sp30->dll)->vtbl)->func[7].withTwoArgsS32(sp30, 7);
+        targetObj = Kyte_getClosestTarget(self, 0x20);
+        if (targetObj != NULL) {
+            (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 7);
             arg1->unk2C |= 0x20;
             arg1->unk28 = 0x100;
         } else {
@@ -767,14 +769,14 @@ s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL2
     if (sp4C & 0x80000) {
         arg1->unk2C |= 0x20;
         arg1->unk28 = 0x100;
-        func_80026128(arg0, 0x1A, 1, -1);
-        arg0->animProgress = 0.0f;
+        func_80026128(self, 0x1A, 1, -1);
+        self->animProgress = 0.0f;
     }
     if (sp4C & 0x800000) {
         arg1->unk2C |= 0x80;
-        sp30 = Kyte_func_1F14(arg0, 4);
-        if (sp30 != NULL) {
-            arg4->unk3C = (((DLL_Unknown*)sp30->dll)->vtbl)->func[9].withThreeArgsS32(sp30, 2, 0);
+        targetObj = Kyte_getClosestTarget(self, 4);
+        if (targetObj != NULL) {
+            arg4->unk3C = (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Approach(targetObj, 2, 0);
         } else {
             arg4->unk3C = 500;
         }
@@ -787,16 +789,16 @@ s32 Kyte_func_319C(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, u32 arg3, DLL2
 }
 
 // offset: 0x35C0 | func: 45
-s32 Kyte_func_35C0(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, DLL212_Data* arg3) {
-    Object* sp3C;
+s32 Kyte_func_35C0(Object* self, Kyte_Unk3* arg1, Kyte_Unk* arg2, DLL212_Data* arg3) {
+    Object* targetObj;
     u8 sp3B;
     Vec3f sp2C;
     s32 sp28;
     DLL212_Data* sp24;
 
     sp28 = 0;
-    sp24 = arg0->data;
-    arg0->unkAF |= 8;
+    sp24 = self->data;
+    self->unkAF |= 8;
     sp3B = mainGetBits(BIT_Kyte_Flight_Talk_Sequence);
     if (arg3->unk3C != -1) {
         arg3->unk3C -= gUpdateRate;
@@ -815,15 +817,15 @@ s32 Kyte_func_35C0(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, DLL212_Data* a
     if (sp3B != 0xFF) {
         if ((arg3->unk34 & 0x4000) && (arg1->unk2C & 2)) {
             if (arg3->unk34 & 0x1000) {
-                arg0->unkAF &= ~8;
-                if ((arg0->unkAF & 1) && sp3B) {
+                self->unkAF &= ~8;
+                if ((self->unkAF & 1) && sp3B) {
                     joyDisableButtons(0, A_BUTTON);
-                    gDLL_3_Animation->vtbl->start_obj_sequence(sp3B, arg0, -1);
+                    gDLL_3_Animation->vtbl->start_obj_sequence(sp3B, self, -1);
                     mainSetBits(BIT_Kyte_Flight_Talk_Sequence, 0xFFU);
                 }
             }
             if ((arg3->unk34 & 0x2000) && sp3B) {
-                gDLL_3_Animation->vtbl->start_obj_sequence(sp3B, arg0, -1);
+                gDLL_3_Animation->vtbl->start_obj_sequence(sp3B, self, -1);
                 arg3->unk34 &= ~0x2000;
                 mainSetBits(BIT_Kyte_Flight_Talk_Sequence, 0xFFU);
             }
@@ -835,30 +837,30 @@ s32 Kyte_func_35C0(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk* arg2, DLL212_Data* a
             arg3->unk30 = -1;
         }
         if (arg3->unk30 < 0) {
-            Kyte_func_3F44(arg0, arg3);
-            sp3C = Kyte_func_1F14(arg0, 2);
-            if (sp3C != NULL) {
-                (((DLL_Unknown*)sp3C->dll)->vtbl)->func[7].withTwoArgs(sp3C, 1);
+            Kyte_func_3F44(self, arg3);
+            targetObj = Kyte_getClosestTarget(self, 2);
+            if (targetObj != NULL) {
+                (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 1);
             }
             arg3->unk34 &= ~0x10;
         }
     } else if ((arg3->unk34 & 0x10) && ((arg3->unk34 & 4) || ((arg3->unk34 & 0x12) && (arg3->unk38 & 0x10)))) {
-        sp3C = Kyte_func_1F14(arg0, 2);
-        if (sp3C != NULL) {
-            if (Kyte_func_3A2C(arg0, arg3) != 0) {
-                (((DLL_Unknown*)sp3C->dll)->vtbl)->func[7].withTwoArgs(sp3C, 0);
+        targetObj = Kyte_getClosestTarget(self, 2);
+        if (targetObj != NULL) {
+            if (Kyte_func_3A2C(self, arg3) != 0) {
+                (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 0);
             }
         }
     }
     if (arg3->unk34 & 0x400000) {
-        sp3C = objGetNearestTypeTo(OBJTYPE_FireFly, arg0, 0);
-        sp2C.f[0] = sp3C->srt.transl.x - arg3->unk18.x;
-        sp2C.f[1] = sp3C->srt.transl.y - arg3->unk18.y;
-        sp2C.f[2] = sp3C->srt.transl.z - arg3->unk18.z;
-        if ((sp3C != NULL) && (sqrtf(SQ(sp2C.f[0]) + SQ(sp2C.f[1]) + SQ(sp2C.f[2])) < 2.0f)) {
-            sp3C = Kyte_func_1F14(arg0, 8);
-            if (sp3C != NULL) {
-                (((DLL_Unknown*)sp3C->dll)->vtbl)->func[7].withTwoArgs(sp3C, 3);
+        targetObj = objGetNearestTypeTo(OBJTYPE_FireFly, self, 0);
+        sp2C.f[0] = targetObj->srt.transl.x - arg3->unk18.x;
+        sp2C.f[1] = targetObj->srt.transl.y - arg3->unk18.y;
+        sp2C.f[2] = targetObj->srt.transl.z - arg3->unk18.z;
+        if (targetObj != NULL && sqrtf(SQ(sp2C.f[0]) + SQ(sp2C.f[1]) + SQ(sp2C.f[2])) < 2.0f) {
+            targetObj = Kyte_getClosestTarget(self, 8);
+            if (targetObj != NULL) {
+                (((DLL_IKyteTarget*)targetObj->dll)->vtbl)->Interact(targetObj, 3);
             }
         }
     }

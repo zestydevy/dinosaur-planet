@@ -9,6 +9,7 @@
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/519_SC_levelcontrol.h"
 #include "dlls/objects/721_SCbeacon.h"
@@ -23,7 +24,7 @@ void SCbeacon_ctor(void *dll) { }
 void SCbeacon_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCbeacon_setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
+void SCbeacon_obj_Setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
     SCbeacon_Data* objData = self->data;
 
     self->animCallback = SCbeacon_anim_callback;
@@ -59,7 +60,7 @@ void SCbeacon_setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x110 | func: 1 | export: 1
-void SCbeacon_control(Object* self) {
+void SCbeacon_obj_Control(Object* self) {
     SCbeacon_Data* objData;
     SCbeacon_Setup* objSetup;
     Object* sidekick;
@@ -142,29 +143,29 @@ void SCbeacon_control(Object* self) {
 }
 
 // offset: 0x4F0 | func: 2 | export: 2
-void SCbeacon_update(Object *self) { }
+void SCbeacon_obj_Update(Object *self) { }
 
 // offset: 0x4FC | func: 3 | export: 3
-void SCbeacon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SCbeacon_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x550 | func: 4 | export: 4
-void SCbeacon_free(Object* self, s32 arg1) {
+void SCbeacon_obj_Free(Object* self, s32 arg1) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
 
 // offset: 0x5D8 | func: 5 | export: 5
-u32 SCbeacon_get_model_flags(Object *self){
+u32 SCbeacon_obj_GetModelFlags(Object *self){
     return MODFLAGS_1;
 }
 
 // offset: 0x5E8 | func: 6 | export: 6
-u32 SCbeacon_get_data_size(Object *self, u32 a1) {
+u32 SCbeacon_obj_GetDataSize(Object *self, u32 a1) {
     return sizeof(SCbeacon_Data);
 }
 
@@ -176,7 +177,7 @@ u32 SCbeacon_get_data_size(Object *self, u32 a1) {
   *
   * `finishLighting` == 1: advances beacon to "lit" state, and (if all beacons are lit) plays the DF entrance pool seq 
   */
-int SCbeacon_handle_kyte_flame_seqs(Object* self, s32 finishLighting) {
+s32 SCbeacon_KyteTarget_Interact(Object* self, s32 finishLighting) {
     SCbeacon_Data* objData = self->data;
     s32 isBeingLit = FALSE;
     
@@ -216,12 +217,12 @@ int SCbeacon_handle_kyte_flame_seqs(Object* self, s32 finishLighting) {
 }
 
 // offset: 0x7D4 | func: 8 | export: 8
-s32 SCbeacon_func_7D4(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+s32 SCbeacon_KyteTarget_Func_7D4(Object *self, s32 arg1, s32 arg2) {
     return 0;
 }
 
 // offset: 0x7EC | func: 9 | export: 9
-s32 SCbeacon_func_7EC(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+s32 SCbeacon_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
     return 0;
 }
 
@@ -231,8 +232,8 @@ s32 SCbeacon_func_7EC(UNK_TYPE_32 arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
   *
   * TODO: what does the 2 signify, Red Energy cost? 
   */
-s32 SCbeacon_func_804(Object* self) {
-    return 2;
+s32 SCbeacon_KyteTarget_Func_804(Object* self) {
+    return KYTE_TARGET_FUNC10_FLAG_2;
 }
 
 // offset: 0x814 | func: 11

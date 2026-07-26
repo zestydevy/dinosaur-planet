@@ -1,17 +1,17 @@
 .text = 0x0:
 perchobject_ctor = 0x0;
 perchobject_dtor = 0xC;
-perchobject_setup = 0x18;
-perchobject_control = 0x74;
-perchobject_update = 0x25C;
+perchobject_obj_Setup = 0x18;
+perchobject_obj_Control = 0x74;
+perchobject_obj_Update = 0x25C;
 perchobject_print = 0x268;
-perchobject_free = 0x2BC;
-perchobject_get_model_flags = 0x2FC;
-perchobject_get_data_size = 0x30C;
-perchobject_land_on_perch = 0x320;
-perchobject_func_388 = 0x388;
-perchobject_approach_perch = 0x3A0;
-perchobject_func_460 = 0x460;
+perchobject_obj_Free = 0x2BC;
+perchobject_obj_GetModelFlags = 0x2FC;
+perchobject_obj_GetDataSize = 0x30C;
+perchobject_KyteTarget_Interact = 0x320;
+perchobject_KyteTarget_func_388 = 0x388;
+perchobject_KyteTarget_Approach = 0x3A0;
+perchobject_KyteTarget_Func_460 = 0x460;
 perchobject_anim_callback = 0x470;
 
 .rodata = 0x604:
