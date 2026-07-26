@@ -53,7 +53,7 @@ s32 dimPartfx_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, voi
     }
     sp64.unk44 = 0;
     sp64.unk48 = 0;
-    sp64.unk5E = (s8) id;
+    sp64.unk5E = id;
     sp64.unk0 = obj;
     sp64.unk8 = 0;
     sp64.unk4 = -1;

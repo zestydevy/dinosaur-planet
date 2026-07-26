@@ -1,0 +1,11 @@
+.text = 0x0:
+swhPartfx_ctor = 0x0;
+swhPartfx_dtor = 0xC;
+swhPartfx_Func_18 = 0x18;
+swhPartfx_Func_20 = 0x20;
+swhPartfx_Spawn = 0x2C;
+
+.rodata = 0x1028:
+
+.bss = 0x1118:
+bss_0 = 0x0; // absolute:0x1118

@@ -1,9 +1,9 @@
 .text = 0x0:
-dll_35_ctor = 0x0;
-dll_35_dtor = 0xC;
-dll_35_Func_18 = 0x18;
-dll_35_Func_20 = 0x20;
-dll_35_Func_194 = 0x194;
+shrinePartfx_ctor = 0x0;
+shrinePartfx_dtor = 0xC;
+shrinePartfx_Func_18 = 0x18;
+shrinePartfx_Func_20 = 0x20;
+shrinePartfx_Spawn = 0x194;
 
 .rodata = 0x3838:
 
