@@ -1,0 +1,23 @@
+.text = 0x0:
+forcepointPartfx_ctor = 0x0;
+forcepointPartfx_dtor = 0xC;
+forcepointPartfx_Func_18 = 0x18;
+forcepointPartfx_Func_20 = 0x20;
+forcepointPartfx_Spawn = 0x194;
+
+.rodata = 0x374C:
+
+.data = 0x3B3C:
+data_0 = 0x0; // absolute:0x3B3C
+data_C = 0xC; // absolute:0x3B48
+data_40 = 0x40; // absolute:0x3B7C
+data_44 = 0x44; // absolute:0x3B80
+data_48 = 0x48; // absolute:0x3B84
+data_4C = 0x4C; // absolute:0x3B88
+data_50 = 0x50; // absolute:0x3B8C
+data_54 = 0x54; // absolute:0x3B90
+data_58 = 0x58; // absolute:0x3B94
+data_5C = 0x5C; // absolute:0x3B98
+
+.bss = 0x3B9C:
+bss_0 = 0x0; // absolute:0x3B9C
