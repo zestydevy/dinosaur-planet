@@ -1,0 +1,11 @@
+.text = 0x0:
+dll_45_ctor = 0x0;
+dll_45_dtor = 0xC;
+dll_45_Func_18 = 0x18;
+dll_45_Func_20 = 0x20;
+dll_45_Func_2C = 0x2C;
+
+.rodata = 0xE6C:
+
+.bss = 0xF4C:
+bss_0 = 0x0; // absolute:0xF4C
