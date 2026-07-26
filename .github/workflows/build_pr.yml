@@ -10,11 +10,13 @@ jobs:
     runs-on: ubuntu-24.04
     steps:
     - name: Checkout this repo
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
       with:
         ref: ${{ github.event.pull_request.head.ref }}
         repository: ${{ github.event.pull_request.head.repo.full_name }}
         submodules: recursive
+        # Required to allow PR actions to download the baserom
+        allow-unsafe-pr-checkout: true
     - name: Install system packages
       run: |
         sudo apt-get update
@@ -29,7 +31,7 @@ jobs:
         . .venv/bin/activate
         python3 ./dino.py update-ido
     - name: Checkout baserom
-      uses: actions/checkout@v2
+      uses: actions/checkout@v7
       with:
         repository: zestydevy/dinosaur-planet-private
         token: ${{ secrets.PRIVATE_REPO_ACCESS }}
