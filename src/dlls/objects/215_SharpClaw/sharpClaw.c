@@ -167,7 +167,7 @@ typedef enum {
     0x0206, 0x0167, 0x0165, 0x0206
 };
 
-/*0x0*/ static SRT bss_0;
+/*0x0*/ static SRT sFXTransform;
 /*0x1C*/ static s32 bss_1C;
 /*0x20*/ static ObjFSA_StateCallback sAnimStateCallbacks[26];
 /*0x88*/ static ObjFSA_StateCallback sLogicStateCallbacks[14];
@@ -530,7 +530,7 @@ int SharpClaw_animCallback(Object* self, Object* animObj, AnimObj_Data* animData
     }
     
     if (self->seqSlot != -1) {
-        if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 1U) == 0) {
+        if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 1) == 0) {
             func_800267A4(self);
             return 1;
         }
@@ -591,7 +591,7 @@ static s32 SharpClaw_func_267C(u8 message, Object* baddie);
 void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     SharpClaw_DataActual* objData;
     s32 hit;
-    s32 temp_v0_2;
+    s32 result;
 
     objData = baddie->objdata;
 
@@ -609,10 +609,10 @@ void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     SharpClaw_func_1E2C(self, baddie, fsa);
     objExprEyeIdle(self, &baddie->unk3BC);
 
-    temp_v0_2 = gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
-    if (temp_v0_2 == 1) {
+    result = gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
+    if (result == 1) {
         baddie->unk3B2 |= 4;
-    } else if (temp_v0_2 == 2) {
+    } else if (result == 2) {
         baddie->unk3B2 &= ~4;
     }
     
@@ -633,32 +633,33 @@ void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             (fsa->animState == SharpClaw_ASTATE_18) || 
             (baddie->unk3B2 & 0x10)
         ) {
-            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &bss_0);
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &sFXTransform);
             if (hit) {
-                SharpClaw_func_2044(self, &bss_0, 0);
+                SharpClaw_func_2044(self, &sFXTransform, FALSE);
             }
         } else {
-            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &bss_0);
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &sFXTransform);
             if (hit) {
-                SharpClaw_func_2044(self, &bss_0, 1);
+                SharpClaw_func_2044(self, &sFXTransform, TRUE);
             }
         }
     } else {
         if (((fsa->animState == SharpClaw_ASTATE_15) || (fsa->animState == SharpClaw_ASTATE_5)) 
             && !(baddie->unk3B2 & 0x10)
         ) {
-            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &bss_0);
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, NULL, 7, &baddie->unk3A8, &sFXTransform);
             if (hit) {
-                SharpClaw_func_2044(self, &bss_0, 1);
+                SharpClaw_func_2044(self, &sFXTransform, TRUE);
             }
         } else {
-            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &bss_0);
+            hit = gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_94, 7, &baddie->unk3A8, &sFXTransform);
             if (hit) {
-                SharpClaw_func_2044(self, &bss_0, 0);
+                SharpClaw_func_2044(self, &sFXTransform, FALSE);
             }
         }
     }
     
+    //React to explosions/projectiles
     if ((hit == Damage_Type_Explosion) || 
         (hit == Damage_Type_E) || 
         (hit == Damage_Type_Projectile)
@@ -676,6 +677,7 @@ void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         return;
     }
     
+    //Handle other kinds of damage
     if (hit) {
         baddie->unk3B4 = 2;
         if (objData->unk4 < 240.0f) {
@@ -1064,7 +1066,7 @@ s32 SharpClaw_animState0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->analogInputPower >= 0.2f) {
-        return FSA_NEXTSTATE_ASYNC(1);
+        return FSA_NEXTSTATE_ASYNC(SharpClaw_ASTATE_1);
     }
     
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 0);
@@ -1109,7 +1111,7 @@ s32 SharpClaw_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->speed < thresholds[0]) {
         animChanged = TRUE;
         if (idx == 1) {
-            return FSA_NEXTSTATE_SYNC(0);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_ASTATE_0);
         }
         idx--;
     } else if (thresholds[1] <= fsa->speed) {
@@ -1586,7 +1588,7 @@ s32 SharpClaw_animState23(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (!(fsa->unk34A & 1)) {
-        dll_amSfx->Play(self, 0xB21, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_B21_Dissipating_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
         fsa->unk34A |= 1;
     }
     
@@ -1618,7 +1620,7 @@ s32 SharpClaw_animState24(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_SYNC(0);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_ASTATE_0);
     } else {
         return 0;
     }
@@ -1628,7 +1630,7 @@ s32 SharpClaw_animState24(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 s32 SharpClaw_logicState0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->target != NULL) {
         if ((4.0f * gUpdateRateF) < fsa->logicStateTime) {
-            return FSA_NEXTSTATE_SYNC(3);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_3);
         }
 
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_1);
@@ -1646,7 +1648,7 @@ s32 SharpClaw_logicState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
 
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_SYNC(0);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_0);
     } else {
         return 0;
     }
@@ -1668,14 +1670,14 @@ s32 SharpClaw_logicState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
         } else if (baddie->unk3B0 & 2) {
             dll_amSfx->Play(self, dTauntSounds[0], MAX_VOLUME, &baddie->unk3A8, NULL, 0, NULL);
-            return FSA_NEXTSTATE_SYNC(4);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_4);
         } else {
-            return FSA_NEXTSTATE_SYNC(4);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_4);
         }
     }
 
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_SYNC(4);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_4);
     } else {
         return 0;
     }
@@ -1687,10 +1689,10 @@ s32 SharpClaw_logicState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->targetDist < (s32) (baddie->unk3E2 * 0.55f)) {
         baddie->unk3B0 &= ~0x10;
-        return FSA_NEXTSTATE_SYNC(5);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_5);
     }
     
-    return FSA_NEXTSTATE_SYNC(11);
+    return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_11);
 }
 
 // offset: 0x4600 | func: 49
@@ -1711,10 +1713,10 @@ s32 SharpClaw_logicState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if ((target != self) && (baddie->unk3B0 & 1)) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_13);
         } else {
-            return FSA_NEXTSTATE_SYNC(12);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_12);
         }
     } else {
-        return FSA_NEXTSTATE_SYNC(12);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_12);
     }
     
     gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, updateRate, 4);
@@ -1724,7 +1726,7 @@ s32 SharpClaw_logicState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
 // offset: 0x46F8 | func: 50
 s32 SharpClaw_logicState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    return FSA_NEXTSTATE_SYNC(4);
+    return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_4);
 }
 
 // offset: 0x4710 | func: 51
@@ -1741,21 +1743,21 @@ s32 SharpClaw_logicState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             objData->freezeTimer = 0.0f;
             baddie->unk3B2 &= ~0x80;
             if (fsa->hitpoints > 0) {
-                return FSA_NEXTSTATE_SYNC(12);
+                return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_12);
             } else {
-                return FSA_NEXTSTATE_SYNC(9);
+                return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_9);
             }
         }
     } else if (fsa->hitpoints <= 0) {
-        return FSA_NEXTSTATE_SYNC(9);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_9);
     } else if (fsa->unk33A) {
         if (fsa->animState == SharpClaw_ASTATE_21) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_22);
         } else if (fsa->hitpoints < mathRnd(2, 4)) {
-            return FSA_NEXTSTATE_SYNC(8);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_8);
         } else {
             baddie->unk3B6 = 300;
-            return FSA_NEXTSTATE_SYNC(12);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_12);
         }
     }
 
@@ -1767,7 +1769,7 @@ s32 SharpClaw_logicState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_5);
     } else if (fsa->unk33A) {
-        return FSA_NEXTSTATE_SYNC(12);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_12);
     }
 
     return 0;
@@ -1794,7 +1796,7 @@ s32 SharpClaw_logicState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
 
         objSendMesg(objGetPlayer(), 0xE0000, self, 0);
-        return FSA_NEXTSTATE_SYNC(10);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_10);
     } else {
         return 0;
     }
@@ -1835,7 +1837,7 @@ s32 SharpClaw_logicState11(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
         if ((fsa->targetDist < (baddie->unk3E2 * 0.55f)) && (baddie->unk3B4 == 2)) {
             baddie->unk3B0 &= ~0x10;
-            return FSA_NEXTSTATE_SYNC(5);
+            return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_5);
         }
         
         if (vox->unk25 == 0) {
@@ -1872,6 +1874,7 @@ s32 SharpClaw_logicState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
         
         SharpClaw_func_2534(1, self);
+
         if (gDLL_2_Camera->vtbl->get_target_object() != self) {
             if (objData->unk0 >= 7) {
                 if (baddie->unk3B0 & 1) {
@@ -1887,8 +1890,8 @@ s32 SharpClaw_logicState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
         flags = gDLL_33_BaddieControl->vtbl->func5(self, fsa, 75.0f);
 
-        if (baddie->unk3B6 > 0x14) {
-            baddie->unk3B6 -= 0x14;
+        if (baddie->unk3B6 > 20) {
+            baddie->unk3B6 -= 20;
         }
 
         if ((objData->unkC < 2) || (objData->unkC >= 0xE)) {
@@ -1991,7 +1994,7 @@ s32 SharpClaw_logicState13(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->unk33D = 0;
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, (s8*)&baddie->unk3B4, 0, 0, 0, 1);
         baddie->unk3B0 &= ~0x10;
-        return FSA_NEXTSTATE_SYNC(3);
+        return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_3);
     }
     
     gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_1);
