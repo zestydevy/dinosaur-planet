@@ -44,6 +44,7 @@
 49 = engine/49
 50 = engine/50
 51 = engine/51
+52 = engine/52
 53 = engine/53_movelib
 54 = engine/54_pickup
 56 = engine/56_putdown
