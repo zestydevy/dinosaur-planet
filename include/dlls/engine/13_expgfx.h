@@ -21,7 +21,7 @@ typedef struct {
     s32 unk48;
     s32 unk4C[3];
     u16 unk58[3];
-    s8 unk5E;
+    u8 unk5E;
     u8 unk5F;
     u8 unk60;
     s8 unk61;

@@ -23,18 +23,18 @@
 /*0x0*/ static SRT bss_0;
 
 // offset: 0x0 | ctor
-void dll_34_ctor(void* dll) { }
+void forcepointPartfx_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_34_dtor(void* dll) { }
+void forcepointPartfx_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_34_Func_18(void) {
+void forcepointPartfx_Func_18(void) {
 
 }
 
 // offset: 0x20 | func: 1 | export: 2
-void dll_34_Func_20(s32 arg0) {
+void forcepointPartfx_Func_20(s32 arg0) {
     data_48 += (gUpdateRateF * 0.001f);
     if (data_48 > 1.0f) {
         data_48 = 0.1f;
@@ -56,7 +56,7 @@ void dll_34_Func_20(s32 arg0) {
 }
 
 // offset: 0x194 | func: 2 | export: 1
-s32 dll_34_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* data) {
+s32 forcepointPartfx_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* data) {
     ExpgfxStruct sp4C;
     s32 _pad2;
     SRT sp30;
@@ -71,10 +71,12 @@ s32 dll_34_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* 
         data_44 = 0.3f;
     }
     if (obj == NULL) {
+        // STUBBED_PRINTF("\nPARTFX warning NULL no longer allowed for object...returning type %d\n\n", id); // default.dol
         return -1;
     }
     if (flags & 0x200000) {
         if (transform == NULL) {
+            // STUBBED_PRINTF("ERROR partfx EXF_NOOWNER & no attrib %d\n", id); // default.dol
             return -1;
         }
         sp4C.transform.transl.x = transform->transl.x;
@@ -89,7 +91,7 @@ s32 dll_34_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* 
     sp4C.unk0 = obj;
     sp4C.unk44 = 0;
     sp4C.unk48 = 0;
-    sp4C.unk5E = (s8) id;
+    sp4C.unk5E = id;
     sp4C.unk8 = 0;
     sp4C.unk4 = -1;
     sp4C.unk60 = 0xFF;
@@ -1092,11 +1094,13 @@ s32 dll_34_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* 
         sp4C.unk42 = 0x47;
         break;
     default:
+        // STUBBED_PRINTF("PARTFX warning type < %d > not found.. returning\n", id); // default.dol
         return -1;
     }
 
     sp4C.unk44 |= flags;
     if ((sp4C.unk44 & 1) && (sp4C.unk44 & 2)) {
+        // STUBBED_PRINTF("error in partfx ABS and REL %d\n", id); // default.dol
         sp4C.unk44 ^= 2;
     }
     if (sp4C.unk44 & 1) {

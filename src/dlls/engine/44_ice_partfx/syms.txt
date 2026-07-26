@@ -1,0 +1,11 @@
+.text = 0x0:
+icePartfx_ctor = 0x0;
+icePartfx_dtor = 0xC;
+icePartfx_Func_18 = 0x18;
+icePartfx_Func_20 = 0x20;
+icePartfx_Spawn = 0x2C;
+
+.rodata = 0xE6C:
+
+.bss = 0xF4C:
+bss_0 = 0x0; // absolute:0xF4C

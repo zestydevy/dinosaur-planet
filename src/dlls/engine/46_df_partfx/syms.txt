@@ -1,0 +1,11 @@
+.text = 0x0:
+dfPartfx_ctor = 0x0;
+dfPartfx_dtor = 0xC;
+dfPartfx_Func_18 = 0x18;
+dfPartfx_Func_20 = 0x20;
+dfPartfx_Spawn = 0x2C;
+
+.rodata = 0x600:
+
+.bss = 0x650:
+bss_0 = 0x0; // absolute:0x650

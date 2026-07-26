@@ -1,0 +1,11 @@
+.text = 0x0:
+dimbossPartfx_ctor = 0x0;
+dimbossPartfx_dtor = 0xC;
+dimbossPartfx_Func_18 = 0x18;
+dimbossPartfx_Func_20 = 0x20;
+dimbossPartfx_Spawn = 0x2C;
+
+.rodata = 0x13AC:
+
+.bss = 0x14EC:
+bss_0 = 0x0; // absolute:0x14EC

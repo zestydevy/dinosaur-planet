@@ -28,18 +28,18 @@
 /*0x0*/ static SRT bss_0;
 
 // offset: 0x0 | ctor
-void dll_35_ctor(void* dll) { }
+void shrinePartfx_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_35_dtor(void* dll) { }
+void shrinePartfx_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_35_Func_18(void) {
+void shrinePartfx_Func_18(void) {
 
 }
 
 // offset: 0x20 | func: 1 | export: 2
-void dll_35_Func_20(s32 arg0) {
+void shrinePartfx_Func_20(s32 arg0) {
     data_48 += (gUpdateRateF * 0.001f);
     if (data_48 > 1.0f) {
         data_48 = 0.1f;
@@ -61,7 +61,7 @@ void dll_35_Func_20(s32 arg0) {
 }
 
 // offset: 0x194 | func: 2 | export: 1
-s32 dll_35_Func_194(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* data) {
+s32 shrinePartfx_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, void* data) {
     ExpgfxStruct sp3C;
     s32 temp_v0;
     s32 _pad[2];

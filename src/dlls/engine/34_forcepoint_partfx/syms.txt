@@ -1,9 +1,9 @@
 .text = 0x0:
-dll_34_ctor = 0x0;
-dll_34_dtor = 0xC;
-dll_34_Func_18 = 0x18;
-dll_34_Func_20 = 0x20;
-dll_34_Spawn = 0x194;
+forcepointPartfx_ctor = 0x0;
+forcepointPartfx_dtor = 0xC;
+forcepointPartfx_Func_18 = 0x18;
+forcepointPartfx_Func_20 = 0x20;
+forcepointPartfx_Spawn = 0x194;
 
 .rodata = 0x374C:
 
