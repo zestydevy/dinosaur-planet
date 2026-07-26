@@ -13,16 +13,6 @@ typedef struct {
 } DLL212_3FF4;
 
 typedef struct {
-    u8 pad0[0x8];
-    s32 unk8;
-    u8 padC[0x24-0xC];
-    s16 unk24;
-    u16 pad26;
-    s32 unk28;
-    u16 unk2C;
-} Kyte_Unk3;
-
-typedef struct {
     HeadAnimation unk0;
     u8 pad24[0x48 - 0x24];
     u8 unk48;
@@ -30,13 +20,35 @@ typedef struct {
 } Kyte_Unk;
 
 typedef struct {
-    u32 pad0;
-    u32 pad4;
+    f32 unk0;
+    f32 unk4;
     f32 unk8;
-    u32 padC;
+    f32 unkC;
     s32* unk10;
     s32 unk14;
 } Kyte_Unk2;
+
+typedef struct {
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
+    s32 unkC;
+    s32 unk10;
+    f32 unk14;
+    f32 unk18;
+    Kyte_Unk2* unk1C;
+    Kyte_Unk2* unk20;
+    s16 unk24;
+    u16 pad26;
+    s32 unk28;
+    u16 unk2C;
+    u8 unk2E;
+} Kyte_Unk3;
+
+typedef struct {
+    CurvesStruct unk0;
+    f32* unk9C;
+} Kyte_Unk4;
 
 typedef struct {
     void *unk0; // loaded dll
@@ -56,6 +68,8 @@ typedef struct {
     s32 unk238;
     u8 pad23C[0x278 - 0x23C];
 } DLL212_Data;
+
+typedef void (*Bss0_Callback)(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
 
 /*0x0*/ static u32 data_0[] = {
     0x0000000d, 0x00000005, 0xffffffff, 0x0000000b, 0x0000030a, 0x3f800000, 0x3f800000, 0x3f800000, 
@@ -100,11 +114,14 @@ typedef struct {
     0x00000000, 0x00000000, 0x00000000, 0x00000000
 };
 
-/*0x0*/ static u8 bss_0[0x10];
+/*0x0*/ static Bss0_Callback bss_0[4];
 
 static void Kyte_func_4020(DLL212_3FF4* arg0, s32 arg1);
 static void Kyte_func_3F44(Object *self, DLL212_Data* objdata);
 static s32 Kyte_func_3A2C(Object* self, DLL212_Data* objdata);
+static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
+static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6);
 
 // offset: 0x0 | ctor
 void Kyte_ctor(void* dll) { }
@@ -255,13 +272,190 @@ static Object* Kyte_func_1F14(Object* self, s32 arg1) {
 }
 
 // offset: 0x200C | func: 37
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_200C.s")
+void Kyte_func_200C(s32 arg0, Kyte_Unk3* arg1, Kyte_Unk2* arg2, s32 arg3) {
+    arg1->unk0 = arg3;
+    arg1->unk4 = arg3;
+    arg1->unkC = arg3;
+    arg1->unk14 = 0.5f;
+    arg1->unk18 = 0.0f;
+    arg1->unk1C = &arg2[arg3];
+    arg1->unk20 = arg2;
+    arg1->unk10 = -1;
+    arg1->unk24 = 0;
+    arg1->unk2C = 0;
+    arg2->unk4 = 2.5f;
+    bss_0[0] = Kyte_func_27D8;
+    bss_0[1] = Kyte_func_2B58;
+    bss_0[2] = Kyte_func_2DA4;
+}
 
 // offset: 0x20A4 | func: 38
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/212_Kyte/Kyte_func_20A4.s")
+f32 Kyte_func_20A4(Object* arg0, Kyte_Unk3* arg1, Kyte_Unk4* arg2, s32 arg3, s32 arg4) {
+    f32 spA4;
+    f32 var_fv0_2;
+    Kyte_Unk2* sp9C;
+    f32 sp98;
+    f32 sp94;
+    Vec3f sp88;
+    f32 var_fv0;
+    f32 var_fa1;
+    s32 sp7C;
+    s32 sp78;
+    s32 sp74;
+    Vec3f sp68;
+    Vec3f sp5C;
+    f32 sp58;
+    f32 var_fv1;
+    Object* sp50;
+    s32 temp_v0_4;
+    s32 temp_v1_2;
+    Kyte_Unk2* temp;
+
+    sp7C = 0;
+    sp74 = 0;
+    sp98 = 0.0f;
+    var_fv1 = 0.0f;
+    sp9C = arg1->unk1C;
+    sp58 = 2.0f;
+    if (arg1->unk2E == 0) {
+        sp58 = 2.0f;
+        sp58 = 2.0f;
+        var_fv1 = vec3Distance(&objGetPlayer()->globalPosition, &arg0->globalPosition) / 400.0f;
+    }
+    arg1->unk20->unk4 = 2.5f + var_fv1;
+    if (arg4 != 0) {
+        var_fa1 = -1.0f;
+    } else {
+        var_fa1 = 1.0f;
+    }
+    var_fv0_2 =((arg1->unk20[arg3].unk4 * var_fa1) - arg1->unk14);
+    spA4 = var_fv1 = var_fv0_2 / 15.0f;
+    if (sp9C->unkC < var_fv1) {
+        spA4 = sp9C->unkC;
+    } else {
+        var_fv0 = -sp9C->unkC;
+        if (var_fv1 < var_fv0) {
+            spA4 = var_fv0;
+        }
+    }
+    sp88.f[0] = arg0->srt.transl.x;
+    sp88.f[1] = arg0->srt.transl.y;
+    sp88.f[2] = arg0->srt.transl.z;
+    sp78 = 0;
+    if (arg1->unk2C & 8) {
+        if (arg1->unk2C & 0x100) {
+            sp58 = arg2->unk9C[3];
+            sp78 = 1;
+        }
+        if (arg1->unk2C & 0x80) {
+            sp50 = Kyte_func_1F14(arg0, 4);
+            if (sp50 != NULL) {
+                if ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 1, &sp94) != 0) {
+                    // FAKE
+                    if (!temp_v0_4);
+                    sp78 = 1;
+                    if ((sp94 != 0.0f) && ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 0, 0) == 0)) {
+                        (((DLL_Unknown*)sp50->dll)->vtbl)->func[7].withTwoArgsS32(sp50, 5);
+                    }
+                    if ((((DLL_Unknown*)sp50->dll)->vtbl)->func[9].withThreeArgsS32(sp50, 3, 0) != 0) {
+                        arg1->unk2C &= ~0x12;
+                    }
+                    sp58 = arg0->srt.transl.y + sp94;
+                }
+            }
+        }
+        if (sp78 == 0) {
+            if (trackGetHeightNearest(arg0, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &sp94, 0U) == 0) {
+                sp58 = arg0->srt.transl.y - sp94;
+                sp78 = 1;
+            }
+        }
+    }
+    if (!(arg1->unk2C & 2)) {
+        arg1->unk14 += spA4 * gUpdateRateF;
+        if (arg2->unk0.unk0 >= 1.0f) {
+            arg2->unk0.unk0 = 0.99f;
+        }
+        curves_func_800053B0(&arg2->unk0, arg1->unk14);
+        if ((arg2->unk0.unk10 == 4 && arg4 == 0) || (arg2->unk0.unk10 == 0 && arg4 != 0)) {
+            if (arg1->unk2C & 0x10) {
+                arg1->unk2C &= ~0x10;
+                arg1->unk2C |= 2;
+            } else {
+                sp7C = 1;
+            }
+            arg1->unk0 = arg3;
+        }
+        sp88.f[0] = arg2->unk0.unk68.x;
+        sp88.f[1] = arg2->unk0.unk68.y;
+        sp88.f[2] = arg2->unk0.unk68.z;
+        if (sp78 != 0) {
+            sp88.f[1] = sp58;
+        }
+        sp68.f[0] = sp88.f[0] - arg0->srt.transl.x;
+        sp68.f[1] = sp88.f[1] - arg0->srt.transl.y;
+        sp68.f[2] = sp88.f[2] - arg0->srt.transl.z;
+        var_fv0 = sqrtf(SQ(sp68.f[0]) + SQ(sp68.f[1]) + SQ(sp68.f[2]));
+        if (((sp9C->unk8 + 0.4f) * gUpdateRateF) < var_fv0) {
+            var_fv1 = (sp9C->unk8 * gUpdateRateF) / var_fv0;
+            sp5C.f[0] = sp68.f[0] * var_fv1;
+            sp5C.f[1] = sp68.f[1] * var_fv1;
+            sp5C.f[2] = sp68.f[2] * var_fv1;
+            sp88.f[0] = sp5C.f[0] + arg0->srt.transl.x;
+            sp88.f[1] = sp5C.f[1] + arg0->srt.transl.y;
+            sp88.f[2] = sp5C.f[2] + arg0->srt.transl.z;
+        }
+    } else {
+        if (sp78 != 0) {
+            sp88.f[1] = sp58;
+        }
+        if ((arg1->unk2C & 0x20) && (sp58 == arg0->srt.transl.y) && (arg1->unk10 == -1)) {
+            arg1->unk10 = arg1->unk28;
+            arg1->unk2C &= ~0x20;
+        }
+    }
+    bss_0[arg1->unk4](arg0, &sp88, arg1->unk14 * gUpdateRateF, sp9C, &arg1->unk10, &sp98, arg1);
+    if (objAnimAdvance(arg0, sp98, gUpdateRateF, NULL) != 0) {
+        arg1->unk10 = -1;
+        sp74 = 1;
+    }
+    arg0->srt.transl.x = sp88.f[0];
+    arg0->srt.transl.y = sp88.f[1];
+    arg0->srt.transl.z = sp88.f[2];
+    if ((sp74 != 0 && arg1->unk10 == -1) || arg1->unk4 == arg1->unkC) {
+        if (arg1->unk14 >= 0/*.0f*/) {
+            var_fv1 = arg1->unk14;
+        } else {
+            var_fv1 = -arg1->unk14;
+        }
+        if (var_fv1 < sp9C->unk0) {
+            temp_v1_2 = arg1->unkC;
+            temp_v0_4 = arg1->unk4;
+            if (temp_v1_2 != temp_v0_4 && (((temp_v0_4 + 1) != (0, temp_v1_2)) || temp_v1_2 == arg1->unk0)) {
+                arg1->unk4++;
+                arg1->unk10 = sp9C->unk10[arg1->unk4 + sp9C->unk14];
+                arg1->unk1C = &arg1->unk20[arg1->unk4];
+            }
+        }
+        if (arg1->unk14 >= 0/*.0f*/) {
+            var_fv1 = arg1->unk14;
+        } else {
+            var_fv1 = -arg1->unk14;
+        }
+        if (sp9C->unk8 < var_fv1) {
+            if (arg1->unk4 != 0) {
+                arg1->unk4--;
+                arg1->unk10 = sp9C->unk10[arg1->unk4 + sp9C->unk14];
+                arg1->unk1C = &arg1->unk20[arg1->unk4];
+            }
+        }
+    }
+    arg1->unk24 = arg0->srt.yaw;
+    return sp7C;
+}
 
 // offset: 0x27D8 | func: 39
-s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 sp44;
     f32 sp40;
     f32 sp3C;
@@ -333,7 +527,7 @@ s32 Kyte_func_27D8(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* ar
 }
 
 // offset: 0x2B58 | func: 40
-s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 var_ft4;
     f32 sp30;
     f32 sp2C;
@@ -388,7 +582,7 @@ s32 Kyte_func_2B58(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* ar
 }
 
 // offset: 0x2DA4 | func: 41
-s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
+static s32 Kyte_func_2DA4(Object* arg0, Vec3f* arg1, f32 arg2, Kyte_Unk2* arg3, s32* arg4, f32* arg5, Kyte_Unk3* arg6) {
     f32 temp_fv1;
     f32 sp40;
     f32 sp3C;
