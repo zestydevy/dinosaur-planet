@@ -1,4 +1,5 @@
 #include "common.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/object_id.h"
@@ -8,6 +9,9 @@
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+
+#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 //TODO: use header instead
 typedef struct {
@@ -62,14 +66,13 @@ typedef struct {
     0xff, 0xff, 0xff, 0xff
 };
 
+/*0x18*/ static ObjFSA_StateCallback bss_18[4];
+/*0x28*/ static ObjFSA_StateCallback bss_28[6];
+
 static void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 
-// offset: 0x0 | func: 0
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_0.s")
-#else
 static s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 static s32 dll_228_func_16B0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 static s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
@@ -82,7 +85,8 @@ static s32 dll_228_func_1BAC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 static s32 dll_228_func_1C14(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 static s32 dll_228_func_1C58(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
-void dll_228_func_0(void) {
+// offset: 0x0 | func: 0
+static void dll_228_func_0(void) {
     bss_18[0] = dll_228_func_1460;
     bss_18[1] = dll_228_func_16B0;
     bss_18[2] = dll_228_func_17B4;
@@ -95,19 +99,11 @@ void dll_228_func_0(void) {
     bss_28[4] = dll_228_func_1C14;
     bss_28[5] = dll_228_func_1C58;
 }
-#endif
 
 // offset: 0x9C | ctor
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_ctor.s")
-#else
-
-static void dll_228_func_0(void);
-
 void dll_228_ctor(void* dll) {
-    void dll_228_func_0();
+    dll_228_func_0();
 }
-#endif
 
 // offset: 0xDC | dtor
 void dll_228_dtor(void* dll) { }
@@ -156,7 +152,7 @@ void dll_228_control(Object* self) {
     f32 time;
 
     objData = self->data;
-    objSetup = (DLL228_Setup*)self->setup;
+    objSetup = (Baddie_Setup*)self->setup;
     
     if (self->unkDC != 0) {
         return;
@@ -426,10 +422,6 @@ static s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, 
             return M_45_DEGREES;
     }
 }
-
-//These seem to need to be defined after `dll_228_func_618`?
-/*0x18*/ static ObjFSA_StateCallback bss_18[4];
-/*0x28*/ static ObjFSA_StateCallback bss_28[6];
 
 // offset: 0xD08 | func: 13
 void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
