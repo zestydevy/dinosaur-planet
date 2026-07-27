@@ -1,0 +1,17 @@
+.text = 0x0:
+dll_58_ctor = 0x0;
+dll_58_dtor = 0xC;
+dll_58_Func_18 = 0x18;
+dll_58_Func_264 = 0x264;
+dll_58_Func_8A4 = 0x8A4;
+dll_58_Func_14D4 = 0x14D4;
+dll_58_Func_14E0 = 0x14E0;
+
+.rodata = 0x1530:
+
+.data = 0x1530:
+data_0 = 0x0; // absolute:0x1530
+data_10 = 0x10; // absolute:0x1540
+
+.bss = 0x1550:
+bss_0 = 0x0; // absolute:0x1550

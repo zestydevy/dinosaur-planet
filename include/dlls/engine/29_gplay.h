@@ -30,8 +30,7 @@ typedef struct {
 
 // size: 0x14
 typedef struct {
-    s16 unk0;
-    s16 unk2;
+    s16 unk0[2];
     s16 unk4;
     s16 unk6;
     s16 unk8[2];

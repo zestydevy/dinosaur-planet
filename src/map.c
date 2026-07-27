@@ -2840,11 +2840,11 @@ void map_func_8004773C(void) {
         sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
         sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == -2) {
-            if (sp40->unk0 != -1) {
-                lfxRestoreAction(player, player, sp40->unk0, 0, 0, 0);
+            if (sp40->unk0[0] != -1) {
+                lfxRestoreAction(player, player, sp40->unk0[0], 0, 0, 0);
             }
-            if (sp40->unk2 != -1) {
-                lfxRestoreAction(player, player, sp40->unk2, 0, 0, 0);
+            if (sp40->unk0[1] != -1) {
+                lfxRestoreAction(player, player, sp40->unk0[1], 0, 0, 0);
             }
             if (sp40->unk4 != -1) {
                 lfxRestoreAction(player, player, sp40->unk4, 0, 0, 0);
