@@ -559,7 +559,7 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
     }
     a2->unk4 = beam;
     bzero(&laction, sizeof(LightAction));
-    laction.unk12.asByte = 0x15;
+    laction.unk12 = 0x15;
     laction.unk19 = 0xFF;
     laction.unk1a = 0xFF;
     laction.unk18 = 0;
@@ -588,7 +588,7 @@ void dll_437_func_31F4(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
 static void dll_437_func_380C(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_1A8* arg2, s32 arg3) {
     LightAction laction;
 
-    laction.unk12.asByte = 2;
+    laction.unk12 = 2;
     laction.unke = 0;
     laction.unk1b = 0;
     laction.unk0 = 0;

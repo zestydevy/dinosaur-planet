@@ -2852,17 +2852,17 @@ void map_func_8004773C(void) {
             if (sp40->unk6 != -1) {
                 lfxRestoreAction(player, player, sp40->unk6, 0, 0, 0);
             }
-            if (sp40->unk8 != -1) {
-                lfxRestoreAction(player, player, sp40->unk8, 0, 0, 0);
+            if (sp40->unk8[0] != -1) {
+                lfxRestoreAction(player, player, sp40->unk8[0], 0, 0, 0);
             }
-            if (sp40->unkA != -1) {
-                lfxRestoreAction(player, player, sp40->unkA, 0, 0, 0);
+            if (sp40->unk8[1] != -1) {
+                lfxRestoreAction(player, player, sp40->unk8[1], 0, 0, 0);
             }
-            if (sp40->unkC != -1) {
-                lfxRestoreAction(player, player, sp40->unkC, 0, 0, 0);
+            if (sp40->unkC[0] != -1) {
+                lfxRestoreAction(player, player, sp40->unkC[0], 0, 0, 0);
             }
-            if (sp40->unkE != -1) {
-                lfxRestoreAction(player, player, sp40->unkE, 0, 0, 0);
+            if (sp40->unkC[1] != -1) {
+                lfxRestoreAction(player, player, sp40->unkC[1], 0, 0, 0);
             }
             lightSetInside(sp40->isInside & 1);
             if (sp3C->unk4 != -1) {

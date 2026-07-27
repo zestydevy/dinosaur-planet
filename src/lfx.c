@@ -12,7 +12,7 @@ s32 lfxAction(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4, s3
     assetRomLoadSection((void *)lAction, LACTIONS_BIN, actionIndex * sizeof(LightAction), sizeof(LightAction));
     if (lAction) {
         if (arg5) {
-            lAction->unk12.asByte |= 0x40;
+            lAction->unk12 |= 0x40;
             if (lAction->unk1b == 2) {
                 gDLL_57->vtbl->func1(lAction);
             } else if (lAction->unk1b == 5) {
@@ -42,7 +42,7 @@ s32 lfxRestoreAction(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 a
     if (lAction != NULL) {
         lAction->unk0 = 0xC;
         if (arg5 != 0) {
-            lAction->unk12.asByte |= 0x40;
+            lAction->unk12 |= 0x40;
             if (lAction->unk1b == 2) {
                 gDLL_57->vtbl->func1(lAction);
             } else if (lAction->unk1b == 5) {

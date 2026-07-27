@@ -153,7 +153,7 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
     lfxStruct = objData->lightAction;
     if (lfxStruct != NULL) {
         STUBBED_PRINTF("trying to kill fire crystal light\n");
-        lfxStruct->unk12.asByte = 2;
+        lfxStruct->unk12 = 2;
         objData->lightAction->unke = 0;
         objData->lightAction->unk1b = 0;
         gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
