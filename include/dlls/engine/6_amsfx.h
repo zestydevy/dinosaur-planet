@@ -716,7 +716,8 @@ enum SoundID {
     SOUND_990 = 0x990,
 
     SOUND_999_Mechanical_Ratcheting = 0x999,
-    SOUND_99a_Mechanical_Ratcheting = 0x99a,
+    SOUND_99A_Mechanical_Ratcheting = 0x99A,
+    SOUND_99B = 0x99B,
 
     SOUND_99F_Metal_Hinge_Squeak = 0x99F,
 
