@@ -678,6 +678,8 @@ enum SoundID {
     
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
+
+    SOUND_88B_Pulley_Operating = 0x88B, 
     
     SOUND_88D_Footstep_Marsh = 0x88D, //Sticky squelchy footstep [FOOTSTEP FOLEY]
     
@@ -717,8 +719,9 @@ enum SoundID {
 
     SOUND_999_Mechanical_Ratcheting = 0x999,
     SOUND_99A_Mechanical_Ratcheting = 0x99A,
-    SOUND_99B = 0x99B,
-
+    SOUND_99B_Flame_Extinguish = 0x99B,
+    
+    SOUND_99E_Flame_Crackling_Loop = 0x99E,
     SOUND_99F_Metal_Hinge_Squeak = 0x99F,
 
     SOUND_9A0 = 0x9A0,

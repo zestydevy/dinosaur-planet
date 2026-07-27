@@ -8,14 +8,14 @@ DFP_RotatePuzzle_obj_Print = 0x67C;
 DFP_RotatePuzzle_obj_Free = 0x694;
 DFP_RotatePuzzle_obj_GetModelFlags = 0x760;
 DFP_RotatePuzzle_obj_GetDataSize = 0x770;
-DFP_RotatePuzzle_func_784 = 0x784;
-DFP_RotatePuzzle_func_7A0 = 0x7A0;
-DFP_RotatePuzzle_func_8A0 = 0x8A0;
+DFP_RotatePuzzle_animCallback = 0x784;
+DFP_RotatePuzzle_createFlameFXEmit = 0x7A0;
+DFP_RotatePuzzle_checkIfFlameExtinguished = 0x8A0;
 
 .rodata = 0x11D0:
 
 .data = 0x11D0:
-data_0 = 0x0; // absolute:0x11D0
+dTimers = 0x0; // absolute:0x11D0
 
 .bss = 0x11E0:
-bss_0 = 0x0; // absolute:0x11E0
+sFlameFXEmits = 0x0; // absolute:0x11E0

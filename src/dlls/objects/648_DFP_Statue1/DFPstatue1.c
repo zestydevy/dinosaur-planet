@@ -3,23 +3,43 @@
 
 typedef struct {
     ObjSetup base;
-    s8 unk18;
-    s8 unk19;
+    s8 yaw;
+    s8 statueIdx;       //Which of the 4 statues this is (see note below)
     u16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
+    u16 unk1C;
+    s16 gamebitUnused;
+    s16 gamebitMove;    //The statue moves when this gamebit is set (by hitting the Projectile Switch underneath)
 } DFP_Statue1_Setup;
 
 typedef struct {
-    s16 unk0;
-    s16 gamebit;
-    u8 unk4;
-    u8 unk5;
+    s16 gamebitUnused;
+    s16 gamebitMove;    //The statue moves when this gamebit is set (by hitting the Projectile Switch underneath)
+    u8 hasMoved;        //Boolean: whether the statue is currently leaning over
+    u8 statueIdx;       //Which of the 4 statues this is (see note below)
 } DFP_Statue1_Data;
 
-/*0x0*/ static s16 data_0 = 0;
-/*0x4*/ static u8 data_4 = 0;
+/* 
+    Note about statue indices:
+
+    The statues' unused internal indices (objData->statueIdx) are arranged like this:
+    Statue 0 is the one just to your left as you walk into the puzzle room 
+    (entering from the SpellStone Holder room's connecting corridor), 
+    and then statues 1, 2, 3 proceed in clockwise order (viewing the room from above).
+
+    Confusingly, the order of the statues' gamebits is handled differently!
+    BIT_672 is for the statue just to the left of the perch switch (viewed from the 
+    centre of the room), and then gamebits 673, 674, 675 are for the other statues, 
+    proceeding in anticlockwise order around the room (viewed from above).
+    The DFP_RotatePuzzle DLL's code uses this gamebit ordering for the statues.
+*/
+
+typedef enum {
+    DFP_Statue1_ANIMCMD_1_Start_Blowing_at_Flames = 1,
+    DFP_Statue1_ANIMCMD_2_Stop_Blowing_at_Flames = 2
+} DFP_Statue1_AnimMessages;
+
+/*0x0*/ static s16 dNumStatuesLeaning = 0;
+/*0x4*/ static u8 dResetAllStatues = FALSE;
 
 static void DFP_Statue1_tick(Object* self);
 static int DFP_Statue1_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
@@ -34,15 +54,16 @@ void DFP_Statue1_dtor(void* dll) { }
 void DFP_Statue1_obj_Setup(Object* self, DFP_Statue1_Setup* objSetup, s32 reset) {
     DFP_Statue1_Data* objData;
 
-    objData = self->data;
-    self->srt.yaw = objSetup->unk18 << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     self->animCallback = DFP_Statue1_animCallback;
-    objData->unk5 = objSetup->unk19;
-    objData->unk0 = objSetup->unk1E;
-    objData->gamebit = objSetup->unk20;
+    
+    objData = self->data;
+    objData->statueIdx = objSetup->statueIdx;
+    objData->gamebitUnused = objSetup->gamebitUnused;
+    objData->gamebitMove = objSetup->gamebitMove;
 
-    if (mainGetBits(objData->gamebit)) {
-        objData->unk4 = 1;
+    if (mainGetBits(objData->gamebitMove)) {
+        objData->hasMoved = TRUE;
     }
     
     self->stateFlags |= OBJSTATE_PRINT_DISABLED;
@@ -55,8 +76,8 @@ void DFP_Statue1_obj_Control(Object* self) {
 
 // offset: 0xF0 | func: 2 | export: 2
 void DFP_Statue1_obj_Update(Object* self) {
-    if (data_0 == 4) {
-        data_0 = 0;
+    if (dNumStatuesLeaning == 4) {
+        dNumStatuesLeaning = 0;
     }
 }
 
@@ -79,26 +100,29 @@ u32 DFP_Statue1_obj_GetDataSize(Object* self, u32 offsetAddr) {
 // offset: 0x170 | func: 7
 void DFP_Statue1_tick(Object* self) {
     DFP_Statue1_Data* objData = self->data;
-    s16 gamebitValue = mainGetBits(objData->gamebit);
+    s16 gamebitMoveValue = mainGetBits(objData->gamebitMove);
     
-    if ((objData->unk4 == 0) && (gamebitValue != 0) && mainGetBits(BIT_671)) {
+    //The statue leans forward and blows at the flames when its gamebit is set
+    if ((objData->hasMoved == FALSE) && (gamebitMoveValue != FALSE) && mainGetBits(BIT_DFP_RotatePuzzle_Started)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-        objData->unk4 = 1;
+        objData->hasMoved = TRUE;
     }
     
-    if ((data_4 != 0) && (objData->unk4 != 0) && mainGetBits(BIT_671)) {
-        mainSetBits(objData->gamebit, 0);
+    //When all 4 statues are leaning, reset them back to their original position
+    if (dResetAllStatues && objData->hasMoved && mainGetBits(BIT_DFP_RotatePuzzle_Started)) {
+        mainSetBits(objData->gamebitMove, FALSE);
         gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-        objData->unk4 = 0;
-        data_0--;
-        if (data_0 == 0) {
-            data_4 = 0;
+        objData->hasMoved = FALSE;
+
+        dNumStatuesLeaning--;
+        if (dNumStatuesLeaning == 0) {
+            dResetAllStatues = FALSE;
         }
     }
 }
 
 // offset: 0x2C0 | func: 8
-int DFP_Statue1_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+int DFP_Statue1_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {  
     DFP_Statue1_Data* objData;
     s32 i;
 
@@ -106,19 +130,21 @@ int DFP_Statue1_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
     animData->unk7A = -1;
     animData->unk62 = 0;
 
+    //Set a gamebit while the statue is blowing at the flames (indexed 5 gamebits after the gamebit that moves the statue)
     for (i = 0; i < animData->messageCount; i++) {
         switch (animData->messages[i]) {
-        case 1:
-            mainSetBits(objData->gamebit + 5, 1);
+        case DFP_Statue1_ANIMCMD_1_Start_Blowing_at_Flames:
+            mainSetBits(objData->gamebitMove + 5, TRUE);
             break;
-        case 2:
-            mainSetBits(objData->gamebit + 5, 0);
-            data_0++;
-            if (data_0 == 4) {
-                data_4 = 1;
+        case DFP_Statue1_ANIMCMD_2_Stop_Blowing_at_Flames:
+            mainSetBits(objData->gamebitMove + 5, FALSE);
+            dNumStatuesLeaning++;
+            if (dNumStatuesLeaning == 4) {
+                dResetAllStatues = TRUE;
             }
             break;
         }
+
         animData->messages[i] = 0;
     }
     
