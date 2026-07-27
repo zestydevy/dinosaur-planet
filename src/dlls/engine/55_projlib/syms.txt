@@ -1,0 +1,9 @@
+.text = 0x0:
+projlib_ctor = 0x0;
+projlib_dtor = 0xC;
+projlib_Func_18 = 0x18;
+projlib_Func_304 = 0x304;
+projlib_Func_580 = 0x580;
+
+.rodata = 0x734:
+str_0 = 0x0; // absolute:0x734
