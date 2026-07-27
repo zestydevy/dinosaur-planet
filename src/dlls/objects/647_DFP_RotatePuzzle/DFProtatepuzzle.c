@@ -302,16 +302,16 @@ s32 DFP_RotatePuzzle_checkIfFlameExtinguished(Object* self, u8 statueIdx) {
     #define ANGLE_ZONE_3_MIN -26000                         //-142.822 degrees
     #define ANGLE_ZONE_3_MAX (ANGLE_ZONE_3_MIN + 2000)      //-131.836 degrees
 
-    //Wheel's Z pointing towards the statue to the right of the perch switch
+    //Wheel's Z-axis pointing towards the statue to the right of the perch switch
     #define IN_ANGLE_ZONE_0 (ANGLE_ZONE_0_MAX > self->srt.yaw) && (self->srt.yaw > ANGLE_ZONE_0_MIN) 
 
-    //Wheel's Z pointing towards the statue on the left as you walk in
+    //Wheel's Z-axis pointing towards the statue on the left as you walk in
     #define IN_ANGLE_ZONE_1 (ANGLE_ZONE_1_MIN < self->srt.yaw) && (self->srt.yaw < ANGLE_ZONE_1_MAX) 
 
-    //Wheel's Z pointing towards the statue on the right as you walk in
+    //Wheel's Z-axis pointing towards the statue on the right as you walk in
     #define IN_ANGLE_ZONE_2 (ANGLE_ZONE_2_MAX > self->srt.yaw) && (self->srt.yaw > ANGLE_ZONE_2_MIN) 
 
-    //Wheel's Z pointing towards the statue to the left of the perch switch
+    //Wheel's Z-axis pointing towards the statue to the left of the perch switch
     #define IN_ANGLE_ZONE_3 (ANGLE_ZONE_3_MIN < self->srt.yaw) && (self->srt.yaw < ANGLE_ZONE_3_MAX) 
 
     DFP_RotatePuzzle_Data* objData;
