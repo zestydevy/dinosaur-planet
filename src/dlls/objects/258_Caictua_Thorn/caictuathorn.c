@@ -4,6 +4,12 @@
 
 typedef struct {
     ObjSetup base;
+    s16 unk18;
+    s16 unk1A;
+    s16 unk1C;
+    s16 unk1E;
+    s16 unk20;
+    s16 unk22;
 } Caictua_Thorn_Setup;
 
 // offset: 0x0 | ctor

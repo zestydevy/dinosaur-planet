@@ -3,14 +3,32 @@
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 
+//TODO: use header instead
+typedef struct {
+    ObjSetup base;
+    s16 unk18;
+    s16 unk1A;
+    s16 unk1C;
+    s16 unk1E;
+    s16 unk20;
+    s16 unk22;
+} Caictua_Thorn_Setup;
+
 typedef struct {
     Baddie_Setup baddie;
 } DLL228_Setup;
+
+typedef struct {
+    s8 unk0[8];
+    Vec3f unk8;  //coords for attachPoint 0
+    s8 unk14[4];
+} DLL228_DataActualSplit;
 
 typedef struct {
     f32 unk0;
@@ -21,9 +39,8 @@ typedef struct {
     s16 unk12;
     s16 unk14;
     s16 unk16;
-    s8 unk18[8];
-    Vec3f unk20;
-    s8 unk2C[12];
+    DLL228_DataActualSplit unk18[1];
+    s8 unk30[8];
     Vec3f unk38;
 } DLL228_DataActual; //44
 
@@ -44,24 +61,53 @@ typedef struct {
     0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
     0xff, 0xff, 0xff, 0xff
 };
-/*0x8C*/ static u32 data_8C[] = {
-    0x02060167, 0x01650206, 0x00000000, 0x00000000, 0x00000000
-};
 
-/*0x0*/ static u8 bss_0[0x8];
-/*0x8*/ static u8 bss_8[0x4];
-/*0xC*/ static u8 bss_C[0x4];
-/*0x10*/ static u8 bss_10[0x4];
-/*0x14*/ static u8 bss_14[0x4];
-/*0x18*/ static ObjFSA_StateCallback bss_18[4];
-/*0x28*/ static ObjFSA_StateCallback bss_28[6];
+static void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 
 // offset: 0x0 | func: 0
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_0.s")
+#else
+static s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_16B0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+static s32 dll_228_func_1A74(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1AB4(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1AF0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1BAC(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1C14(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 dll_228_func_1C58(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+void dll_228_func_0(void) {
+    bss_18[0] = dll_228_func_1460;
+    bss_18[1] = dll_228_func_16B0;
+    bss_18[2] = dll_228_func_17B4;
+    bss_18[3] = dll_228_func_1888;
+    
+    bss_28[0] = dll_228_func_1A74;
+    bss_28[1] = dll_228_func_1AB4;
+    bss_28[2] = dll_228_func_1AF0;
+    bss_28[3] = dll_228_func_1BAC;
+    bss_28[4] = dll_228_func_1C14;
+    bss_28[5] = dll_228_func_1C58;
+}
+#endif
 
 // offset: 0x9C | ctor
-void dll_228_ctor(void* dll);
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_ctor.s")
+#else
+
+static void dll_228_func_0(void);
+
+void dll_228_ctor(void* dll) {
+    void dll_228_func_0();
+}
+#endif
 
 // offset: 0xDC | dtor
 void dll_228_dtor(void* dll) { }
@@ -89,7 +135,7 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     bzero(objData, sizeof(DLL228_DataActual));
     
     objData->unk4 = objSetup->unk2C * 60.0f;
-    objData->unk8 = mathRnd(0xA, 0x12C);
+    objData->unk8 = mathRnd(10, 300);
     objData->unk10 = 0;
     objData->unk12 = 0;
     
@@ -103,14 +149,6 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x244 | func: 2 | export: 1
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_control.s")
-#else
-
-static void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-
 void dll_228_control(Object* self) {
     s32 pad;
     Baddie* objData;
@@ -159,7 +197,6 @@ void dll_228_control(Object* self) {
     
     self->srt.transl.y = objSetup->base.y - 2.0f;
 }
-#endif
 
 // offset: 0x43C | func: 3 | export: 2
 void dll_228_update(Object* self) { }
@@ -174,7 +211,7 @@ void dll_228_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     
     if (visibility && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-        objGetAttachPointWorldSpace(self, 0, &objData->unk20.x, &objData->unk20.y, &objData->unk20.z, 0);
+        objGetAttachPointWorldSpace(self, 0, &objData->unk18[0].unk8.x, &objData->unk18[0].unk8.y, &objData->unk18[0].unk8.z, 0);
         objGetAttachPointWorldSpace(self, 1, &objData->unk38.x, &objData->unk38.y, &objData->unk38.z, 0);
     }
 }
@@ -224,22 +261,19 @@ void dll_228_func_5E8(Object* self, u8 message, s32 unused) {
 }
 
 // offset: 0x618 | func: 10
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_618.s")
-#else
 void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 /*0x0*/ static SRT bss_0;
-    Object* player = objGetPlayer(); //6C
-/*0x8C*/ s16 data_8C[] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //64, 66, 68, 6A
-    Vec3f sp58; //58, 5C, 60
+    Object* player = objGetPlayer();
+/*0x8C*/ s16 data_8C[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    Vec3f delta;
     s32 count;
     s32 scaleIdx;
 
     if (fsa->target != NULL) {
-        sp58.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
-        sp58.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
-        sp58.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
-        fsa->targetDist = sqrtf(SQ(sp58.f[0]) + SQ(sp58.f[1]) + SQ(sp58.f[2]));
+        delta.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
+        delta.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
+        delta.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
+        fsa->targetDist = sqrtf(SQ(delta.f[0]) + SQ(delta.f[1]) + SQ(delta.f[2]));
     }
     
     if (!(baddie->unk3B0 & 0x20)) {
@@ -267,10 +301,9 @@ void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         }
     }
 }
-#endif
 
 // offset: 0x938 | func: 11
-f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
+static f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
     f32 temp_ft4;
     f32 temp_ft4_2;
     f32 temp_fv0;
@@ -334,10 +367,7 @@ f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
 }
 
 // offset: 0xAA0 | func: 12
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_AA0.s")
-#else
-s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
+static s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
     f32 sp6C;
     f32 temp_fa0;
     f32 temp_fs3;
@@ -354,9 +384,9 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
     
     dx = originX - targetX;
     dz = originZ - targetZ;
-    dy = targetY - originY;
     dx = sqrtf(SQ(dx) + SQ(dz));
-    
+
+    dy = targetY - originY;
     sp6C = ((dy * arg7) + SQ(speed));
     dz = SQ(sp6C);
     temp_fa0 = SQ(arg7) * (SQ(dx) + SQ(dy));
@@ -396,15 +426,12 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
             return M_45_DEGREES;
     }
 }
-#endif
+
+//These seem to need to be defined after `dll_228_func_618`?
+/*0x18*/ static ObjFSA_StateCallback bss_18[4];
+/*0x28*/ static ObjFSA_StateCallback bss_28[6];
 
 // offset: 0xD08 | func: 13
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_D08.s")
-#else
-
-static f32 dll_228_func_938(s16 a0, f32 a1, f32 a2);
-
 void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     s16 angle;
     s16 yawDiff;
@@ -429,7 +456,6 @@ void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_18, bss_28);
     self->animObj = baddie->unk3AC;
 }
-#endif
 
 // offset: 0xEC0 | func: 14
 void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
@@ -466,7 +492,65 @@ void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x10BC | func: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_10BC.s")
+static void dll_228_func_10BC(Object* self, Baddie* baddie) {
+    DLL228_DataActual* objData;
+    ObjSetup* thornSetup;
+    Object* thorn;
+    f32 speed;
+    f32 tickCount;
+    s16 pitch;
+    f32 originX;
+    f32 originY;
+    f32 originZ;
+    f32 targetX;
+    f32 targetY;
+    f32 targetZ;
+    s32 i;
+
+    objData = baddie->objdata;
+    
+    i = 2;
+    while (i--) {
+        thornSetup = objAllocSetup(sizeof(Caictua_Thorn_Setup), OBJ_Caictua_Thorn);
+        originX = objData->unk18[i].unk8.x;
+        originY = objData->unk18[i].unk8.y;
+        originZ = objData->unk18[i].unk8.z;
+        targetX = baddie->fsa.target->srt.transl.x;
+        targetY = baddie->fsa.target->srt.transl.y + 25.0f;
+        targetZ = baddie->fsa.target->srt.transl.z;
+        thornSetup->loadFlags = 1;
+        thornSetup->byte5 = 1;
+        thornSetup->byte6 = 0xFF;
+        thornSetup->fadeDistance = 0xFF;
+        thornSetup->x = originX;
+        thornSetup->y = originY;
+        thornSetup->z = originZ;
+
+        thorn = objSetupObject(thornSetup, 4 | 1, -1, -1, NULL);
+        if (thorn != NULL) {
+            speed = baddie->fsa.targetDist / 30.0f;
+            if (speed < 1.5f) {
+                speed = 1.5f;
+            } else if (speed > 5.0f) {
+                speed = 5.0f;
+            }
+            
+            tickCount = baddie->fsa.targetDist / (speed * gUpdateRateF);
+            targetX += (tickCount * baddie->fsa.target->velocity.x);
+            targetY += (tickCount * baddie->fsa.target->velocity.y);
+            targetZ += (tickCount * baddie->fsa.target->velocity.z);
+            pitch = dll_228_func_AA0(originX, originY, originZ, targetX, targetY, targetZ, speed, -0.03f, 0);
+
+            thorn->srt.pitch = pitch;
+            thorn->srt.yaw = mathAtan2f(targetX - originX, targetZ - originZ);
+
+            thorn->velocity.f[0] = (Cosf(pitch) * speed) * Sinf(thorn->srt.yaw);
+            thorn->velocity.f[1] = Sinf(pitch) * speed;
+            thorn->velocity.f[2] = (Cosf(pitch) * speed) * Cosf(thorn->srt.yaw);
+            thorn->unkC4 = self;
+        }
+    }
+}
 
 // offset: 0x1394 | func: 16
 static void dll_228_func_1394(Object* self) {
@@ -478,7 +562,7 @@ static void dll_228_func_1394(Object* self) {
     for (objects = objGetObjects(&index, &count); index < count; index++) {
         obj = objects[index];
         if ((self != obj) && (obj->id == OBJ_Caictua)) {
-            ((DLL_Unknown*)obj->dll)->vtbl->func[8].withThreeArgsS32(obj, 0x81, 0);
+            ((DLL_Unknown*)obj->dll)->vtbl->func[8].withThreeArgsS32(obj, 0x81, 0); //TODO: use interface
         }
     }
 }
@@ -543,7 +627,29 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x16B0 | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_16B0.s")
+s32 dll_228_func_16B0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie = self->data;
+    
+    fsa->unk341 = 1;
+    if (fsa->enteredAnimState != 0) {
+        objAnimSet(self, 0, 0.0f, 0);
+        fsa->unk33A = 0;
+    }
+    
+    fsa->animTickDelta = 0.015f;
+    
+    if (fsa->unk308 & 0x40) {
+        fsa->unk308 &= ~0x40;
+        dll_228_func_10BC(self, baddie);
+        gDLL_6_AMSFX->vtbl->Play(self, 0x71F, MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    
+    if (fsa->unk33A != 0) {
+        return 1;
+    } else {
+        return 0;
+    }
+}
 
 // offset: 0x17B4 | func: 19
 s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
@@ -621,7 +727,7 @@ s32 dll_228_func_1A74(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1AB4 | func: 22
-s32 dll_228_func_1AB4(s32 self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 dll_228_func_1AB4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->hitpoints <= 0) {
         return 3;
     }
