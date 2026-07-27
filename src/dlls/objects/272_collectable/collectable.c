@@ -606,7 +606,7 @@ void collectable_collect(Object* self) {
             break;
         case OBJ_DIMAlpineRoot2: 
             dll_amSfx->Play(self, SOUND_506_Chomping_Food, MAX_VOLUME, 0, 0, 0, 0);
-            mainSetBits(BIT_3E9, 1);
+            mainSetBits(BIT_DIM_Blizzard_Alpine_Root_Eaten, 1);
             self->unkDC = 1;
             objdata->rootTimer = 1200;
             return;

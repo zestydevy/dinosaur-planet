@@ -8,6 +8,7 @@
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/496_SnowHorn.h"
+#include "dlls/objects/common/vehicle.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -26,9 +27,9 @@
 
 typedef enum {
     DIMSnowHorn_IDX_0_Shackled,         //The SnowHorn shackled beside one of the snow houses
-    DIMSnowHorn_IDX_1_Famished,         //The fallen SnowHorn who needs to be fed Alpine Roots
-    DIMSnowHorn_IDX_2_Leap_of_Faith,    //The SnowHorn in the Leap of Faith cave
-    DIMSnowHorn_IDX_3_Blizzard          //The SnowHorn whom Sabre rides through the blizzard
+    DIMSnowHorn_IDX_1_Famished,         //The fallen SnowHorn who needs to be saved from a SharpClaw and fed Alpine Roots
+    DIMSnowHorn_IDX_2_Leap,             //The SnowHorn in the Leap of Faith cave
+    DIMSnowHorn_IDX_3_Blizzard          //The SnowHorn summoned by the Horn of Truth, whom Sabre can ride through the blizzard
 } DIMSnowHorn_CharacterIndices;
 
 typedef struct {
@@ -41,44 +42,53 @@ typedef struct {
     ObjFSA_Data fsa;
     MoveLibData moveData;
     HeadAnimation headAnim;
-    Vec3f unk828[4];
+    Vec3f particleAttachCoords[4];
     s32 unk858;
     s32 unk85C;
-    Vec3f unk860;
+    Vec3f riderPosition;
     s8 unk86C[0x8FC - 0x86C];
-    s16 unk8FC;
-    s16 unk8FE;
-    s16 unk900;
-    u8 unk902;
+    s16 fidgetTimer;
+    s16 minTurn;
+    s16 energy;
+    u8 mountState;
     u8 unk903;
     u8 characterIdx;
-    u8 unk905;
-    u8 unk906;
-    u8 unk907;
-    u8 unk908;
+    u8 chatSequenceIdx;
+    u8 flags;
+    u8 dismountToRight;
+    u8 mountFromLeft;
     u8 unk909;
     s16 unk90A;
 } DIMSnowHorn_Data;
 
 typedef enum {
-    DIMSnowHorn_ASTATE_0,
-    DIMSnowHorn_ASTATE_1,
-    DIMSnowHorn_ASTATE_2,
-    DIMSnowHorn_ASTATE_3,
-    DIMSnowHorn_ASTATE_4,
-    DIMSnowHorn_ASTATE_5,
-    DIMSnowHorn_ASTATE_6,
-    DIMSnowHorn_ASTATE_7,
-    DIMSnowHorn_ASTATE_8,
-    DIMSnowHorn_ASTATE_9,
-    DIMSnowHorn_ASTATE_10,
-    DIMSnowHorn_ASTATE_11,
-    DIMSnowHorn_ASTATE_12
+    DIMSnowHorn_ASTATE_0_Init,                      //Switches state based on the character
+    DIMSnowHorn_ASTATE_1_Shackled_Idle,             //Shackled SnowHorn standing around
+    DIMSnowHorn_ASTATE_2_Shackled_Fidget,           //Shackled SnowHorn scratching back/shaking off snow
+    DIMSnowHorn_ASTATE_3_Leap_Idle,                 //Leap of Faith cave SnowHorn standing around
+    DIMSnowHorn_ASTATE_4_Leap_Fidget,               //Leap of Faith cave SnowHorn scratching back/shaking off snow
+    DIMSnowHorn_ASTATE_5_Famished_Fallen,           //Famished SnowHorn being attacked by a SharpClaw
+    DIMSnowHorn_ASTATE_6_Famished_Met,              //Famished SnowHorn saved from the SharpClaw, but still needs feeding
+    DIMSnowHorn_ASTATE_7_Famished_Fed_Once,     //Fanished SnowHorn fed one Alpine Root, and waiting for a second one
+    DIMSnowHorn_ASTATE_8_Vehicle_Idle,              //SnowHorn standing around, waiting for the player
+    DIMSnowHorn_ASTATE_9_Vehicle_Sit,               //SnowHorn sitting down and getting back up again after an input (unused?)
+    DIMSnowHorn_ASTATE_10_Vehicle_Turn_on_Spot,     //SnowHorn turning (without walking forward)
+    DIMSnowHorn_ASTATE_11_Vehicle_Walking,          //SnowHorn walking (can turn slightly)
+    DIMSnowHorn_ASTATE_12_Vehicle_Tusk_Attack       //SnowHorn attacking with tusks
 } DIMSnowHorn_AnimStates;
 
 typedef enum {
     DIMSnowHorn_LSTATE_0_Top
 } DIMSnowHorn_LogicStates;
+
+typedef enum {
+    DIMSnowHorn_FLAG_1 = 1,
+    DIMSnowHorn_FLAG_2 = 2,
+    DIMSnowHorn_FLAG_4 = 4,
+    DIMSnowHorn_FLAG_8 = 8,
+    DIMSnowHorn_FLAG_10 = 0x10,
+    DIMSnowHorn_FLAG_20_Already_Freed = 0x20
+} DIMSnowHorn_Flags;
 
 /*0x0*/ static s16 dEnergyBarTexIDs[] = { TEXTABLE_1C8_CMDMENU_Early_Energy_Bar };
 /*0x4*/ static Vec3f dTerrainTestPoints[] = {
@@ -104,47 +114,59 @@ typedef enum {
 
 /*0x0*/ static ObjFSA_StateCallback sAnimStateCallbacks[13];
 /*0x34*/ static ObjFSA_StateCallback sLogicStateCallbacks[1];
-/*0x38*/ static Texture* sEnergyBarTextures[1];
-/*0x3C*/ static u32 _bss_3C;
+/*0x38*/ static Texture* sEnergyBarTextures[2];
 /*0x40*/ static MtxF sRiderMtx;
 
-static void DIMSnowHorn_func_7C0(Object* self);
-static void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber);
-static void DIMSnowHorn_func_E88(Gfx** gdl, Texture* tex, s32 frame);
-static void DIMSnowHorn_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
+static void DIMSnowHorn_updateShadow(Object* self);
+static void DIMSnowHorn_tickVehicle(Object* self, s32 updateRate, s32 iterationNumber);
+static void DIMSnowHorn_gfxSetTexture(Gfx** gdl, Texture* tex, s32 frame);
+static void DIMSnowHorn_createAnimParticles(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa);
 static int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static void DIMSnowHorn_func_1C78(Object* self);
-static s32 DIMSnowHorn_animState0(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState1(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState2(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState3(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState4(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState5(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState6(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState7(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState8(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState9(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState10(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState11(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DIMSnowHorn_animState12(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static int DIMSnowHorn_animCallbackVehicle(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void DIMSnowHorn_lookAtPlayerWhenNearby(Object* self);
+
+static s32 DIMSnowHorn_animState0Init(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState1ShackledIdle(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState2ShackledFidget(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState3LeapIdle(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState4LeapFidget(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState5FamishedFallen(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState6FamishedMet(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState7FanishedFedOnce(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState8VehicleIdle(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState9VehicleSit(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState10VehicleTurn(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState11VehicleWalk(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DIMSnowHorn_animState12VehicleAttack(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
+
 static s32 DIMSnowHorn_logicState0(Object* obj, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
 static void DIMSnowHorn_initFSACallbacks(void) {
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_0] = DIMSnowHorn_animState0;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_1] = DIMSnowHorn_animState1;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_2] = DIMSnowHorn_animState2;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_3] = DIMSnowHorn_animState3;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_4] = DIMSnowHorn_animState4;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_5] = DIMSnowHorn_animState5;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_6] = DIMSnowHorn_animState6;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_7] = DIMSnowHorn_animState7;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_8] = DIMSnowHorn_animState8;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_9] = DIMSnowHorn_animState9;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_10] = DIMSnowHorn_animState10;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_11] = DIMSnowHorn_animState11;
-    sAnimStateCallbacks[DIMSnowHorn_ASTATE_12] = DIMSnowHorn_animState12;
+    //Anim states
+    {
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_0_Init] = DIMSnowHorn_animState0Init;
+
+        //Shackled SnowHorn
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_1_Shackled_Idle]   = DIMSnowHorn_animState1ShackledIdle;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_2_Shackled_Fidget] = DIMSnowHorn_animState2ShackledFidget;
+
+        //Leap of Faith cave SnowHorn
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_3_Leap_Idle]   = DIMSnowHorn_animState3LeapIdle;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_4_Leap_Fidget] = DIMSnowHorn_animState4LeapFidget;
+
+        //Famished SnowHorn
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_5_Famished_Fallen]   = DIMSnowHorn_animState5FamishedFallen;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_6_Famished_Met]      = DIMSnowHorn_animState6FamishedMet;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_7_Famished_Fed_Once] = DIMSnowHorn_animState7FanishedFedOnce;
+
+        //Vehicle
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_8_Vehicle_Idle]          = DIMSnowHorn_animState8VehicleIdle;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_9_Vehicle_Sit]           = DIMSnowHorn_animState9VehicleSit;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_10_Vehicle_Turn_on_Spot] = DIMSnowHorn_animState10VehicleTurn;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_11_Vehicle_Walking]      = DIMSnowHorn_animState11VehicleWalk;
+        sAnimStateCallbacks[DIMSnowHorn_ASTATE_12_Vehicle_Tusk_Attack]  = DIMSnowHorn_animState12VehicleAttack;
+    }
     
     sLogicStateCallbacks[DIMSnowHorn_LSTATE_0_Top] = DIMSnowHorn_logicState0;
 }
@@ -185,8 +207,8 @@ void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset)
     
     objData = self->data;
     objData->characterIdx = objSetup->characterIdx;
-    objData->unk8FE = 5;
-    objData->unk900 = 1000;
+    objData->minTurn = 5;
+    objData->energy = 1000;
 
     if (self->shadow != NULL) {
         self->shadow->flags |= OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR;
@@ -202,11 +224,11 @@ void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset)
     objData->fsa.unk4.mode = 0;
     
     if (objData->characterIdx == DIMSnowHorn_IDX_3_Blizzard) {
-        objData->unk906 |= 0x10;
+        objData->flags |= DIMSnowHorn_FLAG_10;
     }
     
     if ((objData->characterIdx != DIMSnowHorn_IDX_0_Shackled) && 
-        (objData->characterIdx != DIMSnowHorn_IDX_2_Leap_of_Faith)
+        (objData->characterIdx != DIMSnowHorn_IDX_2_Leap)
     ) {
         collider = &objData->fsa.unk4;
         gDLL_27->vtbl->init(collider, DLL27FLAG_4000000 | DLL27FLAG_2000000, DLL27FLAG_200000 | DLL27FLAG_20, DLL27MODE_1);
@@ -233,49 +255,53 @@ void DIMSnowHorn_obj_Control(Object* self) {
     fsa = self->data;
     objData = self->data;
 
-    objData->unk8FE = 5;
+    objData->minTurn = 5;
 
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     
-    if (objData->unk902 == 2) {
+    //Handle rideable SnowHorn
+    if (objData->mountState == VEHICLE_Mounted) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         fsa->unk4.mode = 1;
 
         for (i = 0; i < gUpdateRate; i++) {
-            DIMSnowHorn_func_87C(self, 1, i);
+            DIMSnowHorn_tickVehicle(self, 1, i);
         }
     } else {
         fsa->unk4.mode = 0;
         gDLL_27->vtbl->reset(self, &fsa->unk4);
-        DIMSnowHorn_func_87C(self, gUpdateRate, -1);
+        DIMSnowHorn_tickVehicle(self, gUpdateRate, -1);
     }
     
-    if (objData->unk902 == 0) {
+    if (objData->mountState == VEHICLE_NoRider) {
         gDLL_9_Newclouds->vtbl->func7.withOneArg(0);
     } else {
         gDLL_9_Newclouds->vtbl->func7.withOneArg(1);
     }
     
+    //Handle head look-at/head animation
     if ((objData->characterIdx != DIMSnowHorn_IDX_0_Shackled) && 
-        (objData->characterIdx != DIMSnowHorn_IDX_2_Leap_of_Faith)
+        (objData->characterIdx != DIMSnowHorn_IDX_2_Leap)
     ) {
-        
+        //Don't animate rideable SnowHorn
     } else {
-        DIMSnowHorn_func_1C78(self);
+        //Animate non-vehicle SnowHorn
+        DIMSnowHorn_lookAtPlayerWhenNearby(self);
         objExpr_func_800328F0(self, &objData->headAnim, 0.0f);
     }
     
+    //Handle mounting/dismounting rideable SnowHorn
     if ((objData->characterIdx == DIMSnowHorn_IDX_3_Blizzard) || 
         (objData->characterIdx == DIMSnowHorn_IDX_1_Famished)
     ) {
-        if ((objData->unk902 == 0) && (fsa->animState == DIMSnowHorn_ASTATE_8)) {
-            if ((((DLL_Unknown*)player->dll)->vtbl->func[70].withOneArgS32(player) == 30) && (joyGetPressed(0) & A_BUTTON)) {
+        if ((objData->mountState == VEHICLE_NoRider) && (fsa->animState == DIMSnowHorn_ASTATE_8_Vehicle_Idle)) {
+            if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == 30) && (joyGetPressed(0) & A_BUTTON)) {
                 joyDisableButtons(0, A_BUTTON);
                 mainSetBits(BIT_3E3, 1);
                 mainSetBits(BIT_5BA, 1);
-                objData->unk900 = 1000;
+                objData->energy = 1000;
             }
-        } else if ((objData->unk902 == 2) && (joyGetPressed(0) & A_BUTTON)) {
+        } else if ((objData->mountState == VEHICLE_Mounted) && (joyGetPressed(0) & A_BUTTON)) {
             distance = 100.0f;
             if (objGetNearestTypeTo(OBJTYPE_DismountPoint, self, &distance) != NULL) {
                 joyDisableButtons(0, A_BUTTON);
@@ -285,12 +311,13 @@ void DIMSnowHorn_obj_Control(Object* self) {
         }
     }
     
+    //Update eyes/eyelids, and shadow
     objExprEyeIdle(self, &objData->headAnim);
-    DIMSnowHorn_func_7C0(self);
+    DIMSnowHorn_updateShadow(self);
 }
 
 // offset: 0x7C0 | func: 3
-void DIMSnowHorn_func_7C0(Object* self) {
+void DIMSnowHorn_updateShadow(Object* self) {
     SRT xform;
     MtxF mtx;
 
@@ -308,7 +335,7 @@ void DIMSnowHorn_func_7C0(Object* self) {
 }
 
 // offset: 0x87C | func: 4
-void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
+void DIMSnowHorn_tickVehicle(Object* self, s32 updateRate, s32 iterationNumber) {
     DIMSnowHorn_Data* objData;
     ObjFSA_Data* fsa;
     Camera* cam;
@@ -330,20 +357,25 @@ void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
     fsa->hitpoints = 0;
     fsa->flags &= ~OBJFSA_FLAG_8000;
     
-    if (objData->unk902 == 2) {
-        if (mainGetBits(BIT_3E2)) {
-            objData->unk900 -= updateRate;
+    if (objData->mountState == VEHICLE_Mounted) {
+        //Lose energy while riding through the blizzard
+        //(@bug: doesn't check which SnowHorn this is, so it can affect the Famished SnowHorn if the gamebit is somehow set!)
+        if (mainGetBits(BIT_DIM_Depleting_Blizzard_SnowHorn_Energy)) {
+            objData->energy -= updateRate;
         }
         
-        if (mainGetBits(BIT_3E9)) {
-            mainSetBits(BIT_3E9, 0);
-            objData->unk900 = 1000;
+        //Refill the blizzard SnowHorn's energy on eating one of the plains' scattered Alpine Roots
+        if (mainGetBits(BIT_DIM_Blizzard_Alpine_Root_Eaten)) {
+            mainSetBits(BIT_DIM_Blizzard_Alpine_Root_Eaten, FALSE);
+            objData->energy = 1000;
         }
         
-        if (objData->unk900 < 0) {
-            objData->unk900 = 0;
+        //Handle when the SnowHorn's energy runs out
+        if (objData->energy < 0) {
+            objData->energy = 0;
         }
         
+        //Handle controls
         fsa->xAnalogInput = joyGetStickXBuffered(0, iterationNumber);
         fsa->yAnalogInput = joyGetStickYBuffered(0, iterationNumber);
         fsa->unk310 = joyGetPressedBuffered(0, iterationNumber);
@@ -363,7 +395,7 @@ void DIMSnowHorn_func_87C(Object* self, s32 updateRate, s32 iterationNumber) {
     }
     
     gDLL_18_objfsa->vtbl->tick(self, fsa, updateRate, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
-    DIMSnowHorn_func_FA0(self, objData, fsa);
+    DIMSnowHorn_createAnimParticles(self, objData, fsa);
 }
 
 // offset: 0xAD4 | func: 5 | export: 2
@@ -378,11 +410,12 @@ void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, T
     
     objData = self->data;
     
-    if ((objData->unk906 & 0x10)) {
+    if ((objData->flags & DIMSnowHorn_FLAG_10)) {
         return;
     }
     
-    if ((objData->characterIdx == DIMSnowHorn_IDX_3_Blizzard) && (objData->unk902 == 2)) {            
+    //Draw an energy bar while riding the Blizzard SnowHorn
+    if ((objData->characterIdx == DIMSnowHorn_IDX_3_Blizzard) && (objData->mountState == VEHICLE_Mounted)) {            
         dl = *gdl;
             
         gDPSetCombineMode(dl, G_CC_MODULATEIA_PRIM, G_CC_MODULATEIA_PRIM);
@@ -390,16 +423,16 @@ void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, T
         gDPSetOtherMode(dl, G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_POINT | G_TT_NONE | G_TL_TILE | 
             G_TD_CLAMP | G_TP_NONE | G_CYC_1CYCLE | G_PM_NPRIMITIVE, G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
         dlApplyOtherMode(&dl);
-        gSPLoadGeometryMode(dl, 0x00000004 | 0x00200000);
+        gSPLoadGeometryMode(dl, G_SHADE | G_SHADING_SMOOTH);
         dlApplyGeometryMode(&dl);
         dlSetPrimColor(&dl, 0xFF, 0xFF, 0xFF, 0xFF);
-        DIMSnowHorn_func_E88(&dl, sEnergyBarTextures[0], 0);
+        DIMSnowHorn_gfxSetTexture(&dl, sEnergyBarTextures[0], 0);
 
         //TODO: figure out what these macros are
         {
             Gfx *_g = (Gfx *) dl;
             dl = _g + 1;
-            _g->words.w0 = (((((objData->unk900 / 5) + 0x50) & 0xFFF) << 0xC) | 0xE4000000) | 0x90;
+            _g->words.w0 = (((((objData->energy / 5) + 0x50) & 0xFFF) << 0xC) | 0xE4000000) | 0x90;
             _g->words.w1 = 0x00050050;
         }
         
@@ -422,18 +455,18 @@ void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, T
     
     if (visibility == -1) { 
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f); 
-        objGetAttachPointWorldSpace(self, 1, &objData->unk860.x, &objData->unk860.y, &objData->unk860.z, 0); 
-        objGetAttachPointBoneWorldPositions(self, 2, ARRAYCOUNT(objData->unk828), objData->unk828); 
+        objGetAttachPointWorldSpace(self, 1, &objData->riderPosition.x, &objData->riderPosition.y, &objData->riderPosition.z, 0); 
+        objGetAttachPointBoneWorldPositions(self, 2, ARRAYCOUNT(objData->particleAttachCoords), objData->particleAttachCoords); 
     }
    
-    if (objData->unk902 != 2) {
+    if (objData->mountState != VEHICLE_Mounted) {
         if (visibility) {
             objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-            objGetAttachPointWorldSpace(self, 1, &objData->unk860.x, &objData->unk860.y, &objData->unk860.z, 0);
-            objGetAttachPointBoneWorldPositions(self, 2, ARRAYCOUNT(objData->unk828), objData->unk828);
+            objGetAttachPointWorldSpace(self, 1, &objData->riderPosition.x, &objData->riderPosition.y, &objData->riderPosition.z, 0);
+            objGetAttachPointBoneWorldPositions(self, 2, ARRAYCOUNT(objData->particleAttachCoords), objData->particleAttachCoords);
         }
         
-        ((DLL_53_movelib *) gTempDLLInsts[1])->vtbl->func3(self, &objData->moveData, 0);
+        ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func3(self, &objData->moveData, 0);
     }
 }
 
@@ -453,7 +486,7 @@ u32 DIMSnowHorn_obj_GetDataSize(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0xE88 | func: 10
-void DIMSnowHorn_func_E88(Gfx** gdl, Texture* tex, s32 frame) {
+void DIMSnowHorn_gfxSetTexture(Gfx** gdl, Texture* tex, s32 frame) {
     Gfx* dl;
     s32 i;
 
@@ -478,7 +511,7 @@ void DIMSnowHorn_func_E88(Gfx** gdl, Texture* tex, s32 frame) {
 }
 
 // offset: 0xFA0 | func: 11
-void DIMSnowHorn_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa) {
+void DIMSnowHorn_createAnimParticles(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* fsa) {
     u8 i;
     SRT fxTransform; 
     u8 count;
@@ -501,14 +534,14 @@ void DIMSnowHorn_func_FA0(Object* self, DIMSnowHorn_Data* objData, ObjFSA_Data* 
     i = 0;
     while (bits) {
         if (bits & 1) {
-            fxTransform.transl.f[0] = objData->unk828[i].f[0];
-            fxTransform.transl.f[1] = objData->unk828[i].f[1];
-            fxTransform.transl.f[2] = objData->unk828[i].f[2];
+            fxTransform.transl.f[0] = objData->particleAttachCoords[i].f[0];
+            fxTransform.transl.f[1] = objData->particleAttachCoords[i].f[1];
+            fxTransform.transl.f[2] = objData->particleAttachCoords[i].f[2];
             fxTransform.scale = 0.004f;
 
             count = mathRnd(2, 6);
             while (count) {
-                gDLL_17_partfx->vtbl->spawn(self, 0x1F9 + mathRnd(0, 1), &fxTransform, 0x10001, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_1F9 + mathRnd(0, 1), &fxTransform, 0x10001, -1, NULL);
                 count--;
             }
         }
@@ -524,8 +557,8 @@ s32 DIMSnowHorn_vehicle_CanMount(Object* self, Object* player) {
     DIMSnowHorn_Data* objData = self->data;
     
     if ((objData->characterIdx == DIMSnowHorn_IDX_0_Shackled) || 
-        (objData->characterIdx == DIMSnowHorn_IDX_2_Leap_of_Faith) || 
-        (fsa->animState != DIMSnowHorn_ASTATE_8)
+        (objData->characterIdx == DIMSnowHorn_IDX_2_Leap) || 
+        (fsa->animState != DIMSnowHorn_ASTATE_8_Vehicle_Idle)
     ) {
         return 0;
     }
@@ -537,7 +570,7 @@ s32 DIMSnowHorn_vehicle_CanMount(Object* self, Object* player) {
     if (((DLL_210_Player*) player->dll)->vtbl->func70(player) == 30) { 
         if (joyGetPressed(0) & A_BUTTON) { 
             joyDisableButtons(0, A_BUTTON); 
-            objData->unk906 |= 4;
+            objData->flags |= DIMSnowHorn_FLAG_4;
             return TRUE;
         }
     }
@@ -548,35 +581,35 @@ s32 DIMSnowHorn_vehicle_CanMount(Object* self, Object* player) {
 // offset: 0x124C | func: 13 | export: 8
 s32 DIMSnowHorn_vehicle_GetMountSide(Object* self) {
     DIMSnowHorn_Data* objData = self->data;
-    return (objData->unk908 != 0) ? 1 : 2;
+    return objData->mountFromLeft ? VEHICLE_SIDE_Left : VEHICLE_SIDE_Right;
 }
 
 // offset: 0x1274 | func: 14 | export: 9
 void DIMSnowHorn_vehicle_GetRiderPosition(Object* self, f32* ox, f32* oy, f32* oz) {
     DIMSnowHorn_Data* objData = self->data;
     
-    *ox = objData->unk860.x;
-    *oy = objData->unk860.y;
-    *oz = objData->unk860.z;
+    *ox = objData->riderPosition.x;
+    *oy = objData->riderPosition.y;
+    *oz = objData->riderPosition.z;
 }
 
 // offset: 0x1298 | func: 15 | export: 10
 s32 DIMSnowHorn_vehicle_CanDismount(Object* self, s32 arg1) {
     DIMSnowHorn_Data* objData = self->data;
 
-    if (objData->unk906 & 2) {
+    if (objData->flags & DIMSnowHorn_FLAG_2) {
         mainSetBits(BIT_3E3, 0);
-        objData->unk906 &= ~2;
-        return 1;
+        objData->flags &= ~DIMSnowHorn_FLAG_2;
+        return TRUE;
     } else {
-        return 0;
+        return FALSE;
     }
 }
 
 // offset: 0x1310 | func: 16 | export: 11
 s32 DIMSnowHorn_vehicle_GetDismountSide(Object* self) {
     DIMSnowHorn_Data* objData = self->data;
-    return (objData->unk907 != 0) ? 2 : 1;
+    return objData->dismountToRight ? VEHICLE_SIDE_Right : VEHICLE_SIDE_Left;
 }
 
 // offset: 0x1338 | func: 17 | export: 12
@@ -597,26 +630,26 @@ void DIMSnowHorn_vehicle_GetCameraPosition(Object* self, f32* ox, f32* oy, f32* 
 
 // offset: 0x13FC | func: 18 | export: 13
 s32 DIMSnowHorn_vehicle_GetMountState(Object* self) {
-    return 0;
+    return VEHICLE_NoRider; //@bug?: doesn't get objData->mountState
 }
 
 // offset: 0x140C | func: 19 | export: 14
 void DIMSnowHorn_vehicle_SetMountState(Object* self, s32 state) {
     DIMSnowHorn_Data* objData = self->data;
-    objData->unk902 = state;
+    objData->mountState = state;
 }
 
 // offset: 0x141C | func: 20 | export: 15
-void DIMSnowHorn_vehicle_GetPlayerAnim(Object* self, f32* arg1, s32* arg2) {
-    *arg1 = 0.0f;
-    *arg2 = 0;
+void DIMSnowHorn_vehicle_GetPlayerAnim(Object* self, f32* animProgress, s32* animIndex) {
+    *animProgress = 0.0f;
+    *animIndex = 0;
 }
 
 // offset: 0x1444 | func: 21 | export: 16
 f32 DIMSnowHorn_vehicle_Func16(Object* self, f32* oAnimDelta) {
     DIMSnowHorn_Data* objData = self->data;
     
-    if (objData->fsa.animState == DIMSnowHorn_ASTATE_11) {
+    if (objData->fsa.animState == DIMSnowHorn_ASTATE_11_Vehicle_Walking) {
         *oAnimDelta = -objData->fsa.animTickDelta;
     } else {
         *oAnimDelta = 0.005f;
@@ -675,58 +708,58 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
     case DIMSnowHorn_IDX_0_Shackled: 
         animData->unk62 = 0;
         if (self->seqSlot == SEQSLOT_NONE) {
+            //Gift a gear to Sabre after being freed
             for (i = 0; i < animData->messageCount; i++) {
                 mainSetBits(BIT_DIM_Gear_1, 1);
             }
         }
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_1_Shackled_Idle);
         break;
     case DIMSnowHorn_IDX_1_Famished:
         animData->unk62 = 0;
         if (self->seqSlot != SEQSLOT_NONE) {
-            switch (objData->unk905) {
+            switch (objData->chatSequenceIdx) {
             case 0:
-                animState = DIMSnowHorn_ASTATE_6;
+                animState = DIMSnowHorn_ASTATE_6_Famished_Met;
                 break;
             case 1:
-                animState = DIMSnowHorn_ASTATE_6;
+                animState = DIMSnowHorn_ASTATE_6_Famished_Met;
                 break;
             case 2: 
-                animState = DIMSnowHorn_ASTATE_7;
+                animState = DIMSnowHorn_ASTATE_7_Famished_Fed_Once;
                 break;
             case 3:
-                animState = DIMSnowHorn_ASTATE_7;
+                animState = DIMSnowHorn_ASTATE_7_Famished_Fed_Once;
                 break;
             case 4:
             default:
-                animState = DIMSnowHorn_ASTATE_8;
+                animState = DIMSnowHorn_ASTATE_8_Vehicle_Idle;
                 break;
             }
         } else {
-// block_17: //TODO: try to remove? (https://decomp.me/scratch/MWw2F)
-            animState = DIMSnowHorn_ASTATE_8;
+            animState = DIMSnowHorn_ASTATE_8_Vehicle_Idle;
         }
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, animState);
         break;
-    case DIMSnowHorn_IDX_2_Leap_of_Faith:
+    case DIMSnowHorn_IDX_2_Leap:
         animData->unk62 = 0;
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_3);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_3_Leap_Idle);
         break;
     case DIMSnowHorn_IDX_3_Blizzard:
         if (self->seqSlot == SEQSLOT_NONE) {
             if (animData->unk62 == 0) {
-                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_8);
-                objData->unk905 = 0;
+                gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DIMSnowHorn_ASTATE_8_Vehicle_Idle);
+                objData->chatSequenceIdx = 0;
             }
 
             if (mainGetBits(BIT_3D8)) {
-                objData->unk905 = 5;
+                objData->chatSequenceIdx = 5;
                 mainSetBits(BIT_3D8, 0);
-                objData->unk906 &= ~0x10;
+                objData->flags &= ~DIMSnowHorn_FLAG_10;
             }
             
-            if (objData->unk905 == 5) {
-                DIMSnowHorn_func_1860(self, animObj, animData, prevCallbackValue);
+            if (objData->chatSequenceIdx == 5) {
+                DIMSnowHorn_animCallbackVehicle(self, animObj, animData, prevCallbackValue);
             } else {
                 animData->unk62 = 0;
             }
@@ -741,9 +774,9 @@ int DIMSnowHorn_animCallback(Object* self, Object* animObj, AnimObj_Data* animDa
 }
 
 // offset: 0x1860 | func: 26
-int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
-    /*0x6C*/ static f32 _data_6C = 0.0f;
-    /*0x70*/ static s8 _data_70 = 0;
+int DIMSnowHorn_animCallbackVehicle(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    /*0x6C*/ static f32 dVehicleAnimCallbackMaxDistance = 0.0f;
+    /*0x70*/ static s8 dVehicleAnimCallbackCount = 0;
 
     s32 pad1;
     s32 outValue;
@@ -751,13 +784,13 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
     f32 diffZ;
     f32 dx;
     f32 dz;
-    f32 sp3C;
+    f32 distance;
     f32 otherDist;
     s32 yawDiff;
     DIMSnowHorn_Data* objData;
     ObjFSA_Data* fsa;
 
-    outValue = 0;
+    outValue = FALSE;
     
     fsa = &((DIMSnowHorn_Data*)self->data)->fsa;
     objData = self->data;
@@ -767,11 +800,11 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
             animData->unk4C.x = self->srt.transl.f[0];
             animData->unk4C.y = self->srt.transl.f[1];
             animData->unk4C.z = self->srt.transl.f[2];
-            _data_6C = 10000.0f;
-            _data_70 = 0;
+            dVehicleAnimCallbackMaxDistance = 10000.0f;
+            dVehicleAnimCallbackCount = 0;
         }
 
-        outValue = 1;
+        outValue = TRUE;
         
         fsa->unk4.mode = 1;
         animData->unk7A = 0;
@@ -779,35 +812,35 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
         
         diffX = animData->unk4C.f[0] - self->srt.transl.f[0];
         diffZ = animData->unk4C.f[2] - self->srt.transl.f[2];
-        sp3C = sqrtf(SQ(diffX) + SQ(diffZ));
-        if (sp3C <= _data_6C) {
-            _data_70++;
+        distance = sqrtf(SQ(diffX) + SQ(diffZ));
+        if (distance <= dVehicleAnimCallbackMaxDistance) {
+            dVehicleAnimCallbackCount++;
         }
         
         dx = animObj->srt.transl.f[0] - animData->unk4C.f[0];
         dz = animObj->srt.transl.f[2] - animData->unk4C.f[2];
         otherDist = sqrtf(SQ(dx) + SQ(dz));
-        if (otherDist <= sp3C) {
-            objData->unk8FE = 0;
+        if (otherDist <= distance) {
+            objData->minTurn = 0;
             yawDiff = self->srt.yaw - (animObj->srt.yaw & 0xFFFF);
             CIRCLE_WRAP(yawDiff);
-            
             if (yawDiff > M_90_DEGREES) {
                 yawDiff = M_90_DEGREES;
             }
             if (yawDiff < -M_90_DEGREES) {
                 yawDiff = -M_90_DEGREES;
             }
+
             if ((yawDiff < 0x100) && (yawDiff > -0x100)) {
                 self->srt.yaw = animObj->srt.yaw;
                 animData->unk62 = 0;
                 animData->unk7A = animData->unk7C;
                 animData->prevTime = animData->time - 1;
-                outValue = 0;
+                outValue = FALSE;
             } else {
-                if (fsa->animState == DIMSnowHorn_ASTATE_11) {
+                if (fsa->animState == DIMSnowHorn_ASTATE_11_Vehicle_Walking) {
                     fsa->enteredAnimState = TRUE;
-                    fsa->prevAnimState = DIMSnowHorn_ASTATE_8;
+                    fsa->prevAnimState = DIMSnowHorn_ASTATE_8_Vehicle_Idle;
                     fsa->animState = fsa->prevAnimState;
                 }
                 fsa->xAnalogInput = -mathSinfInterp(-animObj->srt.yaw) * 60.0f;
@@ -823,15 +856,15 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
             dz = dz / otherDist;
             fsa->xAnalogInput = -dx * 50.0f;
             fsa->yAnalogInput = dz * 50.0f;
-            self->srt.transl.f[0] = animData->unk4C.f[0] + (sp3C * dx);
-            self->srt.transl.f[2] = animData->unk4C.f[2] + (sp3C * dz);
+            self->srt.transl.f[0] = animData->unk4C.f[0] + (distance * dx);
+            self->srt.transl.f[2] = animData->unk4C.f[2] + (distance * dz);
             gDLL_18_objfsa->vtbl->func3(&animObj->srt);
             fsa->unk30C = 0;
             fsa->unk310 = 0;
             fsa->unk324 = 0;
             gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
         }
-        _data_6C = sp3C;
+        dVehicleAnimCallbackMaxDistance = distance;
     } else {
         fsa->unk4.mode = 0;
         gDLL_27->vtbl->reset(self, &fsa->unk4);
@@ -842,7 +875,7 @@ int DIMSnowHorn_func_1860(Object* self, Object* animObj, AnimObj_Data* animData,
 }
 
 // offset: 0x1C78 | func: 27
-void DIMSnowHorn_func_1C78(Object* self) {
+void DIMSnowHorn_lookAtPlayerWhenNearby(Object* self) {
     DIMSnowHorn_Data* objData;
     Object* player;
 
@@ -850,8 +883,8 @@ void DIMSnowHorn_func_1C78(Object* self) {
     
     player = objGetPlayer();
     if (player != NULL) {
-        if ((vec3Distance(&player->globalPosition, &self->globalPosition) < 300.0f) && (objData->unk902 == 0)) {
-            objData->headAnim.aimIsActive = 1;
+        if ((vec3Distance(&player->globalPosition, &self->globalPosition) < 300.0f) && (objData->mountState == VEHICLE_NoRider)) {
+            objData->headAnim.aimIsActive = TRUE;
             objData->headAnim.headAimX = player->srt.transl.x;
             objData->headAnim.headAimY = player->srt.transl.y;
             objData->headAnim.headAimZ = player->srt.transl.z;
@@ -859,7 +892,7 @@ void DIMSnowHorn_func_1C78(Object* self) {
         }
     }
     
-    objData->headAnim.aimIsActive = 0;
+    objData->headAnim.aimIsActive = FALSE;
 }
 
 // offset: 0x1D34 | func: 28
@@ -873,61 +906,61 @@ static void DIMSnowHorn_stop(Object* self, ObjFSA_Data* fsa) {
     self->velocity.z = 0.0f;
 }
 
-/*0x74*/ static s16 _data_74[] = {
-    0x0103, 
-    0x000b 
+/*0x74*/ static s16 dIdleFidgetAnims[] = {
+    SnowHorn_MODANIM1_3_Idle_Fidget, 
+    SnowHorn_MODANIM0_11_Shaking_Off 
 };
-/*0x78*/ static f32 _data_78[] = {
+/*0x78*/ static f32 dIdleFidgetAnimSpeeds[] = {
     0.0031, 
     0.005 
 };
 
-/*0x80*/ static s16 _data_80[2] = {
+/*0x80*/ static s16 dWalkingAnims[2] = {
     SnowHorn_MODANIM0_0_Idle_LOOP, 
     SnowHorn_MODANIM0_3_Walk_LOOP
 };
-/*0x84*/ static f32 _data_84[] = {
+/*0x84*/ static f32 dWalkSpeedThresholds[] = {
     0.0, 0.05, 
     0.03, 0.85
 };
 
 // offset: 0x1D68 | func: 29
-s32 DIMSnowHorn_animState0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState0Init(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
     switch (objData->characterIdx) {
     case DIMSnowHorn_IDX_0_Shackled:
-        if (mainGetBits(BIT_F3)) {
-            objData->unk906 |= 0x20;
+        if (mainGetBits(BIT_DIM_Shackled_SnowHorn_Freed)) {
+            objData->flags |= DIMSnowHorn_FLAG_20_Already_Freed;
         }
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_1);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_1_Shackled_Idle);
     case DIMSnowHorn_IDX_1_Famished:
-        if (mainGetBits(BIT_16F)) {
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
-        } else if (mainGetBits(BIT_28)) {
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_7);
-        } else if (mainGetBits(BIT_27)) {
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_6);
+        if (mainGetBits(BIT_DIM_Famished_SnowHorn_Fed_Two_Alpine_Roots)) {
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
+        } else if (mainGetBits(BIT_DIM_Famished_SnowHorn_Fed_One_Alpine_Root)) {
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_7_Famished_Fed_Once);
+        } else if (mainGetBits(BIT_DIM_Famished_SnowHorn_Met)) {
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_6_Famished_Met);
         } else {
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_5);
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_5_Famished_Fallen);
         }
-    case DIMSnowHorn_IDX_2_Leap_of_Faith:
+    case DIMSnowHorn_IDX_2_Leap:
         if (mainGetBits(BIT_Horn_of_Truth)) {
-            objData->unk905 = 8;
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3);
+            objData->chatSequenceIdx = 8;
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3_Leap_Idle);
         } else {
-            objData->unk905 = 6;
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3);
+            objData->chatSequenceIdx = 6;
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_3_Leap_Idle);
         }
     case DIMSnowHorn_IDX_3_Blizzard:
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
     default:
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
     }
 }
 
 // offset: 0x1EB0 | func: 30
-s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState1ShackledIdle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
     objData = self->data;
@@ -936,20 +969,23 @@ s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     fsa->flags |= OBJFSA_FLAG_200000;
     
+    //Play standing animation
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
-        if (self->curModAnimId != _data_80[0]) {
-            objAnimSet(self, _data_80[0], 0.0f, 0);
+        if (self->curModAnimId != dWalkingAnims[0]) {
+            objAnimSet(self, dWalkingAnims[0], 0.0f, 0);
         }
-        objData->unk8FC = mathRnd(1200, 2400);
+        objData->fidgetTimer = mathRnd(1200, 2400);
     }
     
-    objData->unk8FC -= (s32)updateRate;
-    if (objData->unk8FC <= 0) {
-        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_2);
+    //Play an idle fidget animation at random intervals (scratching her back/shaking off snow)
+    objData->fidgetTimer -= (s32)updateRate;
+    if (objData->fidgetTimer <= 0) {
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_2_Shackled_Fidget);
     }
     
-    if (!(objData->unk906 & 0x20) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
+    //Play a sequence when talked to ("Can you help me get free?")
+    if (!(objData->flags & DIMSnowHorn_FLAG_20_Already_Freed) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
         joyDisableButtons(0, A_BUTTON);
     }
@@ -958,7 +994,7 @@ s32 DIMSnowHorn_animState1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2024 | func: 31
-s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState2ShackledFidget(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 animIdx;
     DIMSnowHorn_Data* objData;
 
@@ -969,16 +1005,16 @@ s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->flags |= OBJFSA_FLAG_200000;
     
     if (fsa->enteredAnimState) {
-        animIdx = mathRnd(0, 1);
-        fsa->animTickDelta = _data_78[animIdx];
-        objAnimSet(self, _data_74[animIdx], 0.0f, 0);
+        animIdx = mathRnd(0, ARRAYCOUNT(dIdleFidgetAnims) - 1);
+        fsa->animTickDelta = dIdleFidgetAnimSpeeds[animIdx];
+        objAnimSet(self, dIdleFidgetAnims[animIdx], 0.0f, 0);
     }
     
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_1);
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_1_Shackled_Idle);
     }
     
-    if (!(objData->unk906 & 0x20) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
+    if (!(objData->flags & DIMSnowHorn_FLAG_20_Already_Freed) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         dll_anim->start_obj_sequence(5, self, -1);
         joyDisableButtons(0, A_BUTTON);
     }
@@ -987,35 +1023,36 @@ s32 DIMSnowHorn_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2174 | func: 32
-s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState3LeapIdle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
     DIMSnowHorn_stop(self, fsa);
 
     fsa->flags |= OBJFSA_FLAG_200000;
     
+    //Play standing animation
     if (fsa->enteredAnimState) {
         fsa->animTickDelta = 0.005f;
-        if (self->curModAnimId != _data_80[0]) {
-            objAnimSet(self, _data_80[0], 0.0f, 0);
+        if (self->curModAnimId != dWalkingAnims[0]) {
+            objAnimSet(self, dWalkingAnims[0], 0.0f, 0);
         }
-        objData->unk8FC = mathRnd(1200, 2400);
+        objData->fidgetTimer = mathRnd(1200, 2400);
     }
     
-    objData->unk8FC -= (s32) updateRate;
-    if (objData->unk8FC <= 0) {
-        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_4);
+    objData->fidgetTimer -= (s32) updateRate;
+    if (objData->fidgetTimer <= 0) {
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_4_Leap_Fidget);
     }
     
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         if (mainGetBits(BIT_Horn_of_Truth)) {
-            objData->unk905 = 8;
+            objData->chatSequenceIdx = 8;
         }
         
-        gDLL_3_Animation->vtbl->start_obj_sequence(objData->unk905, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(objData->chatSequenceIdx, self, -1);
 
-        if (objData->unk905 == 6) {
-            objData->unk905++;
+        if (objData->chatSequenceIdx == 6) {
+            objData->chatSequenceIdx++;
         }
         
         joyDisableButtons(0, A_BUTTON);
@@ -1025,7 +1062,7 @@ s32 DIMSnowHorn_animState3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x22FC | func: 33
-s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState4LeapFidget(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
     s32 animIdx;
 
@@ -1037,22 +1074,22 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (fsa->enteredAnimState) {
         animIdx = mathRnd(0, 1);
-        fsa->animTickDelta = _data_78[animIdx];
-        objAnimSet(self, _data_74[animIdx], 0.0f, 0);
+        fsa->animTickDelta = dIdleFidgetAnimSpeeds[animIdx];
+        objAnimSet(self, dIdleFidgetAnims[animIdx], 0.0f, 0);
     }
     
     if (fsa->unk33A) {
-        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_3);
+        return FSA_NEXTSTATE_ASYNC(DIMSnowHorn_ASTATE_3_Leap_Idle);
     }
     
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         if (mainGetBits(BIT_Horn_of_Truth)) {
-            objData->unk905 = 8;
+            objData->chatSequenceIdx = 8;
         }
         
-        dll_anim->start_obj_sequence(objData->unk905, self, -1);
-        if (objData->unk905 == 6) {
-            objData->unk905++;
+        dll_anim->start_obj_sequence(objData->chatSequenceIdx, self, -1);
+        if (objData->chatSequenceIdx == 6) {
+            objData->chatSequenceIdx++;
         }
         
         joyDisableButtons(0, A_BUTTON);
@@ -1062,7 +1099,7 @@ s32 DIMSnowHorn_animState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2470 | func: 34
-s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState5FamishedFallen(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
     DIMSnowHorn_stop(self, fsa);
@@ -1078,17 +1115,19 @@ s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         }
     }
     
-    if (mainGetBits(BIT_172)) {
+    //Don't allow interaction until the SharpClaw attacker is defeated
+    if (mainGetBits(BIT_DIM_Defeated_SharpClaw_Hurting_Fallen_SnowHorn)) {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     } else {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
     
+    //Play a sequence when talked to, teaching the Flame Command to Tricky
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        objData->unk905 = 0;
+        objData->chatSequenceIdx = 0;
         gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
         mainSetBits(BIT_Tricky_Learned_Flame, 1);
-        mainSetBits(BIT_27, 1);
+        mainSetBits(BIT_DIM_Famished_SnowHorn_Met, 1);
         joyDisableButtons(0, A_BUTTON);
     }
     
@@ -1096,7 +1135,7 @@ s32 DIMSnowHorn_animState5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x25E4 | func: 35
-s32 DIMSnowHorn_animState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState6FamishedMet(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
 
     DIMSnowHorn_stop(self, fsa);
@@ -1116,13 +1155,13 @@ s32 DIMSnowHorn_animState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (self->unkAF & ARROW_FLAG_4_Highlighted) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_DIM_Alpine_Roots)) {
-            objData->unk905 = 2;
+            objData->chatSequenceIdx = 2;
             gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
-            mainSetBits(BIT_28, 1);
+            mainSetBits(BIT_DIM_Famished_SnowHorn_Fed_One_Alpine_Root, 1);
             mainSetBits(BIT_DIM_Alpine_Roots, mainGetBits(BIT_DIM_Alpine_Roots) - 1);
             joyDisableButtons(0, A_BUTTON);
         } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
-            objData->unk905 = 1;
+            objData->chatSequenceIdx = 1;
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
             joyDisableButtons(0, A_BUTTON);
         }
@@ -1132,7 +1171,7 @@ s32 DIMSnowHorn_animState6(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x27D4 | func: 36
-s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState7FanishedFedOnce(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData;
     s8 value;
 
@@ -1150,9 +1189,9 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     if (self->unkAF & ARROW_FLAG_4_Highlighted) {
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_DIM_Alpine_Roots)) {
-            objData->unk905 = 4;
+            objData->chatSequenceIdx = 4;
             gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
-            mainSetBits(BIT_16F, 1);
+            mainSetBits(BIT_DIM_Famished_SnowHorn_Fed_Two_Alpine_Roots, 1);
             
             value = mainGetBits(BIT_DIM_Alpine_Roots);
             if (--value < 0) {
@@ -1160,7 +1199,7 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             }
             mainSetBits(BIT_DIM_Alpine_Roots, value);
         } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
-            objData->unk905 = 3;
+            objData->chatSequenceIdx = 3;
             gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
             joyDisableButtons(0, A_BUTTON);
         }
@@ -1170,7 +1209,7 @@ s32 DIMSnowHorn_animState7(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x29B8 | func: 37
-s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState8VehicleIdle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
     DIMSnowHorn_stop(self, fsa);
@@ -1181,8 +1220,8 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->animStateTime = 0;
         fsa->animTickDelta = 0.005f;
         fsa->unk2B0 = 8.0f;
-        if (self->curModAnimId != _data_80[0]) {
-            objAnimSet(self, _data_80[0], 0.0f, 0);
+        if (self->curModAnimId != dWalkingAnims[0]) {
+            objAnimSet(self, dWalkingAnims[0], 0.0f, 0);
         }
     }
     
@@ -1190,7 +1229,7 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
          (self->curModAnimId == SnowHorn_MODANIM2_10_Walk_Outro_R)) 
          && fsa->unk33A
     ) {
-        objAnimSet(self, _data_80[0], 0.0f, 0);
+        objAnimSet(self, dWalkingAnims[0], 0.0f, 0);
         fsa->animTickDelta = 0.005f;
     }
     
@@ -1200,22 +1239,26 @@ s32 DIMSnowHorn_animState8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->analogInputPower = 0;
     }
     
-    if ((fsa->prevAnalogInputPower > 0) && (fsa->analogInputPower > 0) && (fsa->unk328 >= objData->unk8FE)) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_10);
+    if ((fsa->prevAnalogInputPower > 0) && (fsa->analogInputPower > 0) && (fsa->unk328 >= objData->minTurn)) {
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_10_Vehicle_Turn_on_Spot);
     }
-    if ((fsa->prevAnalogInputPower > 0.1f) && (fsa->analogInputPower > 0.1f) && (fsa->unk328 < objData->unk8FE)) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_11);
+    if ((fsa->prevAnalogInputPower > 0.1f) && (fsa->analogInputPower > 0.1f) && (fsa->unk328 < objData->minTurn)) {
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_11_Vehicle_Walking);
     }
     
-    if (fsa->unk310 & 0x8000) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
+    if (fsa->unk310 & A_BUTTON) {
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12_Vehicle_Tusk_Attack);
     } else {
         return 0;
     }
 }
 
 // offset: 0x2BA0 | func: 38
-s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+/**
+  * An unused state! Maybe the idle state's intended to branch to this after a while, 
+  * or it could be meant for after running out of energy in the blizzard? 
+  */
+s32 DIMSnowHorn_animState9VehicleSit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
     
     fsa->flags |= OBJFSA_FLAG_200000;
@@ -1229,11 +1272,11 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
                 objAnimSet(self, SnowHorn_MODANIM2_5_Sit_Idle_LOOP, 0.0f, 0);
                 fsa->animTickDelta = 0.005f;
             } else {
-                return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+                return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
             }
         }
         
-        if (objData->unk900 != 0) {
+        if (objData->energy != 0) {
             if ((fsa->animTickDelta > 0.0f) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
                 fsa->animTickDelta = -fsa->animTickDelta;
             }
@@ -1241,14 +1284,15 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
         break;
     case SnowHorn_MODANIM2_5_Sit_Idle_LOOP:
-        if ((objData->unk900 != 0) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
+        //Get bacl up when pressing a button or moving the joystick
+        if ((objData->energy != 0) && ((fsa->unk310 != 0) || (fsa->xAnalogInput != 0.0f) || (fsa->yAnalogInput != 0.0f))) {
             objAnimSet(self, SnowHorn_MODANIM2_7_Sit_Outro, 0.0f, 0);
             fsa->animTickDelta = 0.014f;
         }
         break;
     case SnowHorn_MODANIM2_7_Sit_Outro:
-        if (fsa->unk33A != 0) {
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+        if (fsa->unk33A) {
+            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
         }
         break;
     default:
@@ -1261,16 +1305,16 @@ s32 DIMSnowHorn_animState9(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2D90 | func: 39
-s32 DIMSnowHorn_animState10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState10VehicleTurn(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_Data* objData = self->data;
 
     fsa->flags |= OBJFSA_FLAG_200000;
 
-    if ((fsa->unk328 < objData->unk8FE) || (fsa->analogInputPower == 0.0f)) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+    if ((fsa->unk328 < objData->minTurn) || (fsa->analogInputPower == 0.0f)) {
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
     }
 
-    if (fsa->unk32A < -0xAF) {
+    if (fsa->unk32A < -175) {
         fsa->unk32A = -fsa->unk32A;
     }
     
@@ -1283,134 +1327,149 @@ s32 DIMSnowHorn_animState10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     
     gDLL_18_objfsa->vtbl->func7(self, fsa, updateRate, 8);
     
-    if (fsa->unk310 & 0x8000) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
+    if (fsa->unk310 & A_BUTTON) {
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12_Vehicle_Tusk_Attack);
     } else {
         return 0;
     }
 }
 
 // offset: 0x2EEC | func: 40
-s32 DIMSnowHorn_animState11(Object* self, ObjFSA_Data* fsa, f32 arg2) {
+s32 DIMSnowHorn_animState11VehicleWalk(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     u8 one;
     DIMSnowHorn_Data *objData = self->data;
-    f32 temp_fv0;
-    f32 var_fa0;
-    f32 var_fv1;
+    s32 pad;
+    f32 walkFactor;
+    f32 walkSpeed;
     f32 animProgress;
     s16 curModAnimId;
-    f32 new_var2;
-    s32 animCondition1;
+    s32 animChanged;
     s32 returnValue;
-    s32 animCondition2;
-    s32 animIndex;
-    f32 *temp_v0;
+    s32 startingWalk;
+    s32 walkAnimIdx;
+    f32 *thresholds;
 
     fsa->flags |= OBJFSA_FLAG_200000;
 
     if (fsa->enteredAnimState) {
-        self->srt.yaw += fsa->unk32A * 0xB6;
+        self->srt.yaw += fsa->unk32A * M_1_DEGREE;
         fsa->unk328 = 0;
         fsa->unk32A = 0;
     }
 
+    //Handle joystick deadzone
     if (fsa->analogInputPower < 0.05f){
         fsa->analogInputPower = 0.0f;
         fsa->unk328 = 0;
         fsa->unk32A = 0;
     }
 
+    //Turn while walking
     if (fsa->unk328 < 90){
-        self->srt.yaw += ((fsa->unk32A * arg2) / 36.0f) * 182.0f;
+        self->srt.yaw += ((fsa->unk32A * updateRate) / 36.0f) * 182.0f;
     } else {
-        return 9;
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
     }
 
-    var_fa0 = fsa->analogInputPower;
-    if (var_fa0 < 0.0f){
-        var_fa0 = 0.0f;
-    }
-    if (var_fa0 > 1.0f){
-        var_fa0 = 1.0f;
-    }
-
-    //Handle SnowHorn running out of energy 
-    //(@bug: causes a softlock since there's no fail state cutscene to reset you back to before the blizzard)
-    if (objData->unk900 == 0){
-        var_fa0 = 0; //set speed to zero?
-    }
-
-    var_fv1 = var_fa0 * 0.85f;
-    if (var_fv1 < 0){
-        var_fv1 = 0;
-    }
-
-    fsa->speed += ((var_fv1 - fsa->speed) / fsa->unk2B0) * arg2;
-    if (self->srt.pitch > 0){
-        var_fv1 -= mathSinfInterp(self->srt.pitch) * 0.3f;
-    } else {
-        var_fv1 -= mathSinfInterp(self->srt.pitch) * 0.15f;
-    }
-    if (var_fv1 < _data_84[2]){
-        var_fv1 = _data_84[2];
-    }
-
-    fsa->unk278 += ((var_fv1 - fsa->unk278) / fsa->unk2B0) * arg2;
-
-    animCondition1 = 0;
-    one = 1;
-
-    animProgress = self->animProgress;
-
-    for (animIndex = 0; self->curModAnimId != _data_80[animIndex] && animIndex < 2; animIndex++);
-
-    if (animIndex > 1){
-        animIndex = 0;
-    }
-
-    if (self->curModAnimId == SnowHorn_MODANIM2_8_Walk_Intro){
-        animIndex = 1;
-    }
-
-    temp_v0 = &_data_84[animIndex * 2];
-    if (fsa->speed < temp_v0[0]){
-        animCondition1 = 1;
-        if (animIndex == 1){
-            return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+    //Handle walk speed
+    {
+        walkFactor = fsa->analogInputPower;
+        if (walkFactor < 0.0f){
+            walkFactor = 0.0f;
         }
-        animIndex -= one;
-    } else if (temp_v0[1] <= fsa->speed){
-        animCondition1 = 1;
-        if (animIndex == 0){
-            animProgress = 0.0f;
+        if (walkFactor > 1.0f){
+            walkFactor = 1.0f;
         }
-        animIndex++;
-    }
 
-    animCondition2 = 1;
-    if (fsa->unk33A && self->curModAnimId == SnowHorn_MODANIM2_8_Walk_Intro){
-        animCondition1 = 1;
-        animCondition2 = 0;
-    }
+        // Handle SnowHorn running out of energy 
+        /* (@bug: causes a softlock, since you're stuck riding the SnowHorn and 
+          there's no fail state cutscene to reset you back to before the blizzard) */
+        if (objData->energy == 0){
+            walkFactor = 0;
+        }
 
-    if (animCondition1){
-        if ((animIndex == 1) && animCondition2){
-            objAnimSet(self, SnowHorn_MODANIM2_8_Walk_Intro, animProgress, 0);
+        walkSpeed = walkFactor * 0.85f;
+        if (walkSpeed < 0){
+            walkSpeed = 0;
+        }
+
+        fsa->speed += ((walkSpeed - fsa->speed) / fsa->unk2B0) * updateRate;
+        if (self->srt.pitch > 0){
+            walkSpeed -= mathSinfInterp(self->srt.pitch) * 0.3f;
         } else {
-            objAnimSet(self, _data_80[animIndex], animProgress, 0);
+            walkSpeed -= mathSinfInterp(self->srt.pitch) * 0.15f;
         }
-    }
-    objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
 
-    if (fsa->unk310 & 0x8000){
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12);
+        if (walkSpeed < dWalkSpeedThresholds[2]){
+            walkSpeed = dWalkSpeedThresholds[2];
+        }
+
+        fsa->unk278 += ((walkSpeed - fsa->unk278) / fsa->unk2B0) * updateRate;
+    }
+
+    //Handle animations
+    {
+        animChanged = FALSE;
+        one = 1;
+
+        animProgress = self->animProgress;
+
+        //Find the current walkAnimIdx
+        {
+            for (walkAnimIdx = 0; self->curModAnimId != dWalkingAnims[walkAnimIdx] && walkAnimIdx < ARRAYCOUNT_S(dWalkingAnims); walkAnimIdx++);
+            
+            if (walkAnimIdx > 1){
+                walkAnimIdx = 0;
+            }
+
+            if (self->curModAnimId == SnowHorn_MODANIM2_8_Walk_Intro){
+                walkAnimIdx = 1;
+            }
+        }
+
+        //Compare the walk speed with the walk anims' min/max speed thresholds, to determine whether anim should change
+        thresholds = &dWalkSpeedThresholds[walkAnimIdx * 2];
+        if (fsa->speed < thresholds[0]){
+            animChanged = TRUE;
+            if (walkAnimIdx == 1){
+                return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
+            }
+            walkAnimIdx -= one;
+        } else if (thresholds[1] <= fsa->speed){
+            animChanged = TRUE;
+            if (walkAnimIdx == 0){
+                animProgress = 0.0f;
+            }
+            walkAnimIdx++;
+        }
+
+        //Check whether a walk intro animation should be played
+        startingWalk = TRUE;
+        if (fsa->unk33A && (self->curModAnimId == SnowHorn_MODANIM2_8_Walk_Intro)){
+            animChanged = TRUE;
+            startingWalk = FALSE;
+        }
+
+        //Play/advance walk animations
+        if (animChanged){
+            if ((walkAnimIdx == 1) && startingWalk){
+                objAnimSet(self, SnowHorn_MODANIM2_8_Walk_Intro, animProgress, 0);
+            } else {
+                objAnimSet(self, dWalkingAnims[walkAnimIdx], animProgress, 0);
+            }
+        }
+        objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
+    }
+
+    if (fsa->unk310 & A_BUTTON){
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_12_Vehicle_Tusk_Attack);
     } else {
         return 0;
     }
 }
 
 // offset: 0x32C0 | func: 41
-s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DIMSnowHorn_animState12VehicleAttack(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     ObjectHitInfo* objHits;
     DIMSnowHorn_Data* objData;
 
@@ -1422,17 +1481,17 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DIMSnowHorn_stop(self, fsa);
     
     if (fsa->enteredAnimState) {
-        objData->unk906 &= ~8;
+        objData->flags &= ~DIMSnowHorn_FLAG_8;
         objHits->unk58 |= 0x200;
         objAnimSet(self, SnowHorn_MODANIM2_4_Tusk_Attack, 0.0f, 0);
         fsa->animTickDelta = 0.013f;
     }
     
     if ((objHits->unk58 & 0x200) && (objHits->unk9D & 2)) {
-        objData->unk906 |= 8;
+        objData->flags |= DIMSnowHorn_FLAG_8;
     }
 
-    if (objData->unk906 & 8) {
+    if (objData->flags & DIMSnowHorn_FLAG_8) {
         objHits->unk5F = 0;
         objHits->unk60 = 0;
         objHits->unk58 &= ~0x200;
@@ -1443,7 +1502,7 @@ s32 DIMSnowHorn_animState12(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     }
     
     if (self->animProgress > 0.9f) {
-        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8);
+        return FSA_NEXTSTATE_SYNC(DIMSnowHorn_ASTATE_8_Vehicle_Idle);
     } else {
         return 0;
     }

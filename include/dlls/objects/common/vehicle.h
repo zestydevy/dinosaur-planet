@@ -12,6 +12,11 @@ enum VehicleMountState {
 	VEHICLE_Dismounting = 3
 };
 
+typedef enum {
+	VEHICLE_SIDE_Left = 1,
+	VEHICLE_SIDE_Right = 2
+} VehicleMountSide;
+
 DLL_INTERFACE(DLL_IVehicle) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 	/*7*/ s32 (*CanMount)(Object *self, Object *rider);
