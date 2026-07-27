@@ -593,9 +593,13 @@ enum SoundID {
     SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
     SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
 
+    SOUND_71F = 0x71F,
+    SOUND_720 = 0x720,
     SOUND_721 = 0x721,
     SOUND_722_Impact_Wobble = 0x722, //Pollen
+    SOUND_723 = 0x723,
 
+    SOUND_72C = 0x72C,
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
     SOUND_72E_Lock_Disengage = 0x72E,   //Z-targetting
 

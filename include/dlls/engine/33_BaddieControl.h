@@ -38,14 +38,14 @@ typedef struct {
 /*3B2*/ u16 unk3B2;
 /*3B4*/ u8 unk3B4;
 /*3B5*/ u8 _unk3B5;
-/*3B6*/ s16 unk3B6;
+/*3B6*/ s16 unk3B6; //related to having a target, or targetting the player?
 /*3B8*/ u8 unk3B8;
 /*3B9*/ s8 nextWeaponID; // BaddieWeapon
 /*3BA*/ s8 unk3BA;
 /*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
 /*3E0*/ s16 unk3E0; //droppedItemIdx
-/*3E2*/ u16 unk3E2; //max vision distance?
+/*3E2*/ u16 unk3E2; //maxTargetDistance
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8; //timer related to damage effects? (flashing red etc.)
 /*3EC*/ f32 unk3EC;
