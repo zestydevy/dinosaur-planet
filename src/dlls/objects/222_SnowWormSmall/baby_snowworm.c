@@ -400,7 +400,7 @@ void SnowWormSmall_func_D0C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 
     objData = baddie->objdata;
     
-    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
     if ((target != NULL) && !(baddie->unk3B0 & 4)) {
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 8, -1);
         fsa->unk33D = 0;

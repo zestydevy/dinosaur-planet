@@ -776,7 +776,7 @@ void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     player = objGetPlayer();
 
     if (!(baddie->unk3B0 & 0x40) && (((DLL_210_Player*)player->dll)->vtbl->func50(player) != 0x40)) {
-        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
         if (target != NULL) {
             gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
             fsa->unk33D = 0;
@@ -852,7 +852,7 @@ void SharpClaw_func_18EC(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         }
         
         if ((fsa->enteredAnimState || fsa->unk33A) && !(baddie->unk3B0 & 0x40) && (((DLL_210_Player*)player->dll)->vtbl->func50(player) != 0x40)) {           
-            target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+            target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
             if (target != NULL) {
                 gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
                 fsa->target = target;

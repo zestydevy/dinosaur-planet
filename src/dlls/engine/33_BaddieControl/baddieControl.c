@@ -371,39 +371,45 @@ s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead
 }
 
 // offset: 0xF60 | func: 11 | export: 16
-s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+/**
+  * Checks whether a baddie should stop attacking the player. They'll disengage if any of these conditions are met:
+  *
+  * - The baddie has no health.
+  * - The player is outside the baddie's specified `maxTargetDist` (if the `checkTargetDist` arg is used).
+  * - The player is in a sequence
+  * - The player is dead.
+  * - `trackGetLineIntersect` returns nonzero.
+  */
+s32 BaddieControl_func_F60(Object* obj, ObjFSA_Data* fsa, f32 maxTargetDist, s32 checkTargetDist) {
     Object* player;
-    TrackLineIntersectResult sp48;
-    Vec3f sp3C;
-    s32 var_v1;
+    TrackLineIntersectResult intersectResult;
+    Vec3f playerCoords;
+    s32 outValue;
 
     player = objGetPlayer();
-    var_v1 = 0;
+    outValue = FALSE;
     if (fsa->unk33A != 0) {
         if ((player == fsa->target) && (fsa->hitpoints != 0)) {
-            if ((arg2 < fsa->targetDist) && (arg3 != 0)) {
-                var_v1 = 1;
+            if ((fsa->targetDist > maxTargetDist) && (checkTargetDist)) {
+                outValue = TRUE;
+            } else if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
+                outValue = TRUE;
+            } else if (((DLL_210_Player*)player->dll)->vtbl->get_health(player) <= 0) {
+                outValue = TRUE;
             } else {
-                if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
-                    var_v1 = 1;
-                } else {
-                    if (((DLL_210_Player*)player->dll)->vtbl->get_health(player) <= 0) {
-                        var_v1 = 1;
-                    } else {
-                        sp3C.x = player->srt.transl.x;
-                        sp3C.y = player->srt.transl.y + 10.0f;
-                        sp3C.z = player->srt.transl.z;
-                        if (trackGetLineIntersect(&arg0->srt.transl, &sp3C, 1.0f, 0, &sp48, arg0, 4, -1, 0U, 0) != 0) {
-                            var_v1 = 1;
-                        }
-                    }
+                playerCoords.x = player->srt.transl.x;
+                playerCoords.y = player->srt.transl.y + 10.0f;
+                playerCoords.z = player->srt.transl.z;
+                if (trackGetLineIntersect(&obj->srt.transl, &playerCoords, 1.0f, 0, &intersectResult, obj, 4, -1, 0, 0)) {
+                    outValue = TRUE;
                 }
             }
         } else {
-            var_v1 = 1;
+            outValue = TRUE;
         }
     }
-    return var_v1;
+
+    return outValue;
 }
 
 // offset: 0x10F4 | func: 12 | export: 17

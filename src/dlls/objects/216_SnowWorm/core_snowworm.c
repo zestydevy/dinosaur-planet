@@ -479,11 +479,11 @@ void SnowWorm_func_EBC(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     Object* target;
 
     if (baddie->unk3B0 & 4) {
-        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, 55.0f, 0x8000);
+        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, 55.0f, M_180_DEGREES);
     } else if (baddie->unk3B0 & 8) {
-        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2 * 0.5f, 0x8000);
+        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2 * 0.5f, M_180_DEGREES);
     } else {
-        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+        target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
     }
     
     if (target != NULL) {
