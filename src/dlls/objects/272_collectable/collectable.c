@@ -146,7 +146,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     //Setup light effects (TODO: update when lfxActions are better understood)
     if (self->def->unk87 & 0x10) {
         if (1){ }
-        lfxAction.unk12.asByte = 25;
+        lfxAction.unk12 = 25;
         lfxAction.unke = 0;
         lfxAction.unk15 = 0;
         lfxAction.unk16 = 0;
@@ -656,7 +656,7 @@ void collectable_collect(Object* self) {
     self->srt.scale = objdef->scale;
     self->unkDC = 1;
     if (objdef->unk87 & 0x10) {
-        lfxAction.unk12.asByte = 2;
+        lfxAction.unk12 = 2;
         lfxAction.unke = 0;
         lfxAction.unk1b = 0;
         lfxAction.unk10 = self->unkD6;

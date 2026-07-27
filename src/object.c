@@ -1581,7 +1581,7 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
     }
 
     if (obj->def->unk87 & 0x10) {
-        lAction.unk12.asByte = 2;
+        lAction.unk12 = 2;
         lAction.unke = 0;
         lAction.unk10 = obj->unkD6;
         lAction.unk1b = 0;

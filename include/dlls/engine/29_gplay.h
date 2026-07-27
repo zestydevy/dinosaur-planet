@@ -34,10 +34,8 @@ typedef struct {
     s16 unk2;
     s16 unk4;
     s16 unk6;
-    s16 unk8;
-    s16 unkA;
-    s16 unkC;
-    s16 unkE;
+    s16 unk8[2];
+    s16 unkC[2];
     s16 isInside;
     s16 unk12; //cameraActionID?
 } PlayerLightActions;

@@ -15,10 +15,8 @@ typedef struct {
 /*000C*/ s16 unkC;  //y coord?
 /*000E*/ u16 unke;  //LAction.bin index
 /*0010*/ u16 unk10; //lightLayer (lights' influences can be combined when on different layers)
-/*0012*/ union {
-             u16 asShort;
-             u8 asByte;
-         } unk12;
+/*0012*/ u8 unk12;
+/*0013*/ u8 unk13;
 /*0014*/ u8 unk14;
 /*0015*/ u8 unk15; //colour1_r
 /*0016*/ u8 unk16; //colour1_g

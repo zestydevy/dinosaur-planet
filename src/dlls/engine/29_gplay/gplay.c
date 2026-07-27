@@ -245,10 +245,10 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.map.lightActions[i].unk2 = -1;
         sState.save.map.lightActions[i].unk4 = -1;
         sState.save.map.lightActions[i].unk6 = -1;
-        sState.save.map.lightActions[i].unk8 = -1;
-        sState.save.map.lightActions[i].unkA = -1;
-        sState.save.map.lightActions[i].unkC = -1;
-        sState.save.map.lightActions[i].unkE = -1;
+        sState.save.map.lightActions[i].unk8[0] = -1;
+        sState.save.map.lightActions[i].unk8[1] = -1;
+        sState.save.map.lightActions[i].unkC[0] = -1;
+        sState.save.map.lightActions[i].unkC[1] = -1;
         sState.save.map.lightActions[i].unk12 = -1;
 
         sState.save.map.envActions[i].unk0 = 43000.0f;
