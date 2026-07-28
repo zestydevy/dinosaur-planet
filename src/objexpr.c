@@ -142,7 +142,7 @@ void objExpr_func_80032C0C(Object* obj, Object* otherObj, HeadAnimation* arg2, s
     sp1C->yaw = arg2->headGoalAngle;
 }
 
-void func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators, s32 maxAngle) {
+void objExpr_func_80032CF8(Object* obj, Object* targetObj, HeadAnimation* headAnimators, s32 maxAngle) {
     f32 dx;
     f32 dz;
     f32 dy;
