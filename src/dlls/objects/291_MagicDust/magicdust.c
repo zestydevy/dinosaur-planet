@@ -32,7 +32,7 @@ void MagicDust_setup(Object* self, MagicDust_Setup* objSetup, s32 arg2) {
 
     colliderArg = 3;
 
-    angle = mathRnd(0, 0xFFFF);
+    angle = mathRnd(0, M_360_DEGREES - 1);
     speed = (mathRnd(39, 44) / 100.0f);
     self->velocity.x = mathSinfInterp(angle) * speed;
     self->velocity.z = mathCosfInterp(angle) * speed;
