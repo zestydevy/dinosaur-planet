@@ -1,5 +1,13 @@
-#include "sys/gfx/texture.h"
 #include "dlls/engine/7_newday.h"
+#include "sys/gfx/texture.h"
+#include "sys/curves.h"
+#include "sys/envfx.h"
+#include "sys/lighting.h"
+#include "sys/newshadows.h"
+#include "sys/main.h"
+#include "sys/memory.h"
+#include "sys/rand.h"
+#include "dll.h"
 
 #define DAYTIME 18000.0f //5am
 #define NIGHTTIME 75600.0f //9pm
@@ -15,15 +23,10 @@
 /*0x4*/ static u32 _data_4 = 0x00000000;
 /*0x8*/ static f32 _data_8 = 0.0;
 /*0xC*/ static f32 _data_C = 0.0;
-/*0x10*/ static f32 _data_10[] = {
-    0.0, 0.1
-};
-/*0x18*/ static f32 _data_18 = 0.0;
-/*0x1C*/ static f32 _data_1C = 1.0f;
-/*0x20*/ static u32 _data_20 = 0x00000000;
-/*0x24*/ static f32 _data_24 = 0.0;
-/*0x28*/ static f32 _data_28 = 1;
-/*0x2C*/ static u32 _data_2C = 0x00000000;
+/*0x10*/ static s32 _data_10 = 0;
+/*0x14*/ static f32 _data_14 = 0.1f;
+/*0x18*/ static Vec3f _data_18 = VEC3F(0.0f, 1.0f, 0.0f);
+/*0x24*/ static Vec3f _data_24 = VEC3F(0.0f, 1.0f, 0.0f);
 /*0x30*/ static u32 _data_30 = 0xffffffff;
 /*0x34*/ static u32 _data_34 = 255; //clouds R
 /*0x38*/ static u32 _data_38 = 255; //clouds G
@@ -38,12 +41,12 @@
 /*0x5C*/ static f32 _data_5C = NOON; //time of day
 /*0x60*/ static u32 _data_60 = 0x00000000;
 /*0x64*/ static u32 _data_64 = 0x00000000;
-/*0x68*/ static u32 _data_68 = 0x00000000;
-/*0x6C*/ static f32 _data_6C = 55.0;
-/*0x70*/ static f32 _data_70[] = {
-    55, 100, 210, 125, 55, 55, 55, 55, 
-    60, 210, 120, 55, 55, 55, 55, 60, 
-    220, 240, 55, 55
+/*0x68*/ static s16 _data_68 = 0;
+         // splines
+/*0x6C*/ static f32 _data_6C[][7] = {
+    {55, 55, 100, 210, 125, 55, 55}, 
+    {55, 55, 60,  210, 120, 55, 55}, 
+    {55, 55, 60,  220, 240, 55, 55}
 };
 /*0xC0*/ static u32 _data_C0 = 0x00000000;
 /*0xC4*/ static f32 _data_C4 = 1.0;
@@ -106,27 +109,9 @@ typedef struct
 /*034*/ f32 unk34;
 /*038*/ u8 _unk38[8];
 /*040*/ f32 unk40;
-/*044*/ f32 unk44;
-/*048*/ f32 unk48;
-/*04C*/ f32 unk4C;
-/*050*/ f32 unk50;
-/*054*/ f32 unk54;
-/*058*/ f32 unk58;
-/*05C*/ f32 unk5C;
-/*060*/ f32 unk60;
-/*064*/ f32 unk64;
-/*068*/ f32 unk68;
-/*06C*/ f32 unk6C;
-/*070*/ f32 unk70;
-/*074*/ f32 unk74;
-/*078*/ f32 unk78;
-/*07C*/ f32 unk7C;
-/*080*/ f32 unk80;
-/*084*/ f32 unk84;
-/*088*/ f32 unk88;
-/*08C*/ f32 unk8C;
-/*090*/ f32 unk90;
-/*094*/ f32 unk94;
+/*044*/ f32 unk44[7]; // spline
+/*060*/ f32 unk60[7]; // spline
+/*07C*/ f32 unk7C[7]; // spline
 /*098*/ u8 _unk98[0xc0 - 0x98];
 /*0C0*/ f32 timeSeconds; //time of day (seconds)
 /*0C4*/ f32 unkC4;
@@ -295,13 +280,209 @@ void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2464.s")
 
 // offset: 0x30FC | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_30FC.s")
+void dll_7_func_30FC(void) {
+    if ((_bss_30 != NULL) && (_bss_30 != NULL)) {
+        if (_bss_30->unk8 != NULL) {
+            texFreeTexture(_bss_30->unk8);
+        }
+        if (_bss_30->unkC != NULL) {
+            texFreeTexture(_bss_30->unkC);
+        }
+        if (_bss_30->unk10 != NULL) {
+            texFreeTexture(_bss_30->unk10);
+        }
+        if (_bss_30->unk14 != NULL) {
+            texFreeTexture(_bss_30->unk14);
+        }
+        if (_bss_30->unk18 != NULL) {
+            texFreeTexture(_bss_30->unk18);
+        }
+        if (_bss_30->unk1C != NULL) {
+            texFreeTexture(_bss_30->unk1C);
+        }
+        if (_bss_30->unk0 != NULL) {
+            mmFree(_bss_30->unk0);
+        }
+        if (_bss_30->unk4 != NULL) {
+            mmFree(_bss_30->unk4);
+        }
+        mmFree(_bss_30);
+        _bss_30 = NULL;
+    }
+}
 
 // offset: 0x3294 | func: 19
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_3294.s")
 
 // offset: 0x4484 | func: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_4484.s")
+void dll_7_func_4484(void) {
+    f32 sp8C;
+    f32 sp88;
+    f32 var_fa0;
+    f32 sp80;
+    f32 sp7C;
+    f32 sp78;
+    s32 temp_ft0;
+    s32 sp70;
+    s32 sp6C;
+    s32 sp68;
+    s32 sp64;
+    s32 sp60;
+    f32 temp_fv0_2;
+    s32 sp4C;
+    s32 sp54;
+
+    if (_bss_30 == NULL) {
+        return;
+    }
+    var_fa0 = SQ(_data_18.f[0]) + SQ(_data_18.f[1]) + SQ(_data_18.f[2]);
+    if (var_fa0 != 0.0f) {
+        var_fa0 = sqrtf(var_fa0);
+    } else {
+        var_fa0 = 1.0f;
+    }
+    _data_18.f[0] /= var_fa0;
+    _data_18.f[1] /= var_fa0;
+    _data_18.f[2] /= var_fa0;
+    var_fa0 = SQ(_data_24.f[0]) + SQ(_data_24.f[1]) + SQ(_data_24.f[2]);
+    if (var_fa0 != 0.0f) {
+        var_fa0 = sqrtf(var_fa0);
+
+    } else {
+        var_fa0 = 1.0f;
+    }
+    _data_24.f[0] /= var_fa0;
+    _data_24.f[1] /= var_fa0;
+    _data_24.f[2] /= var_fa0;
+    sp8C = _data_5C / 86400.0f;
+    if (sp8C < 0.0f) {
+        sp8C = 0.0f;
+    }
+    if (sp8C > 1.0f) {
+        sp8C = 1.0f;
+    }
+    sp54 = gDLL_7_Newday->vtbl->func10();
+    if (sp54 < 0) {
+        sp54 = 0;
+    } else if (sp54 >= 5) {
+        sp54 = 4;
+    }
+    if (sp8C <= 0.25f) {
+        sp4C = 0;
+        sp88 = sp8C / 0.25f;
+    } else if (sp8C <= 0.5f) {
+        sp4C = 1;
+        sp88 = (sp8C - 0.25f) / 0.25f;
+    } else if (sp8C <= 0.75f) {
+        sp4C = 2;
+        sp88 = (sp8C - 0.5f) / 0.25f;
+    } else {
+        sp4C = 3;
+        sp88 = (sp8C - 0.75f) / 0.25f;
+    }
+    sp70 = (s32) curvesCatmullRom(&_bss_30->unk44[sp4C], sp88, NULL);
+    sp6C = (s32) curvesCatmullRom(&_bss_30->unk60[sp4C], sp88, NULL);
+    sp68 = (s32) curvesCatmullRom(&_bss_30->unk7C[sp4C], sp88, NULL);
+    if (sp54 != _data_10) {
+        sp64 = (s32) curvesCatmullRom(&_data_6C[0][sp4C], sp88, NULL);
+        sp60 = (s32) curvesCatmullRom(&_data_6C[1][sp4C], sp88, NULL);
+        temp_ft0 = (s32) curvesCatmullRom(&_data_6C[2][sp4C], sp88, NULL);
+        sp70 = (s32) ((f32) sp64 + (_data_0 * (f32) (sp70 - sp64)));
+        sp6C = (s32) ((f32) sp60 + (_data_0 * (f32) (sp6C - sp60)));
+        sp68 = (s32) ((f32) temp_ft0 + (_data_0 * (f32) (sp68 - temp_ft0)));
+    }
+    if (mainGetBits(0x77A) != 0) {
+        sp70 += mathRnd(0, 0x4B) + 0xB4;
+        sp6C += mathRnd(0, 0x4B) + 0x50;
+        sp68 += mathRnd(0, 0x4B) + 0x50;
+    } else if (mainGetBits(0x77B) != 0) {
+        sp70 += mathRnd(0, 0x4B) + 0xB4;
+        sp6C += mathRnd(0, 0x4B) + 0xB4;
+        sp68 += mathRnd(0, 0x4B) + 0x50;
+    }
+    if (mainGetBits(0x77C) != 0) {
+        sp70 += mathRnd(0, 0x4B) + 0x50;
+        sp6C += mathRnd(0, 0x4B) + 0x50;
+        sp68 += mathRnd(0, 0x4B) + 0xB4;
+    }
+    if (mainGetBits(0x77D) != 0) {
+        sp70 += mathRnd(0, 0x4B) + 0x50;
+        sp6C += mathRnd(0, 0x4B) + 0xB4;
+        sp68 += mathRnd(0, 0x4B) + 0x50;
+    }
+    if (sp70 < 0) {
+        sp70 = 0;
+    }
+    if (sp70 >= 0x100) {
+        sp70 = 0xFF;
+    }
+    if (sp6C < 0) {
+        sp6C = 0;
+    }
+    if (sp6C >= 0x100) {
+        sp6C = 0xFF;
+    }
+    if (sp68 < 0) {
+        sp68 = 0;
+    }
+    if (sp68 >= 0x100) {
+        sp68 = 0xFF;
+    }
+    if (sp70 < 0) {
+        sp70 = 0;
+    }
+    if (sp70 >= 0x100) {
+        sp70 = 0xFF;
+    }
+    if (sp6C < 0) {
+        sp6C = 0;
+    }
+    if (sp6C >= 0x100) {
+        sp6C = 0xFF;
+    }
+    if (sp68 < 0) {
+        sp68 = 0;
+    }
+    if (sp68 >= 0x100) {
+        sp68 = 0xFF;
+    }
+    gDLL_8_newfog->vtbl->func6(&sp70, &sp6C, &sp68);
+    _data_34 = (u32) sp70;
+    _data_38 = (u32) sp6C;
+    _data_3C = (u32) sp68;
+    if ((_data_5C >= 18000.0f) && (_data_5C <= 75600.0f)) {
+        lightUpdateSkyLight(_data_18.f[0], _data_18.f[1], _data_18.f[2], 
+            (u8) (160.0f - (_data_18.f[1] * 30.0f)), 0xFF, 0x3C, -0x1E, 
+            (u8) sp70, (u8) sp6C, (u8) sp68);
+        shadows_func_8004D698(_data_18.f[0], _data_18.f[1], _data_18.f[2], 0x64);
+        gDLL_12_Minic->vtbl->func5(_data_18.f[0], _data_18.f[1], _data_18.f[2], 1);
+        D_80090CAC = 1.0f;
+        return;
+    }
+    temp_fv0_2 = (f32) _data_68 / 255.0f;
+    D_80090CAC = 1.0f - temp_fv0_2;
+    if (temp_fv0_2 != 1.0f) {
+        sp78 = _data_18.f[0] + ((_data_24.f[0] - _data_18.f[0]) * temp_fv0_2);
+        sp7C = _data_18.f[1] + ((_data_24.f[1] - _data_18.f[1]) * temp_fv0_2);
+        sp80 = _data_18.f[2] + ((_data_24.f[2] - _data_18.f[2]) * temp_fv0_2);
+        lightUpdateSkyLight(sp78, sp7C, sp80, 
+            (u8) (160.0f - (sp7C * 30.0f)), 0xFF, 0x3C, -0x1E, 
+            (u8) sp70, (u8) sp6C, (u8) sp68);
+        shadows_func_8004D698(sp78, sp7C, sp80, 0x64);
+        gDLL_12_Minic->vtbl->func5(_data_18.f[0], _data_18.f[1], _data_18.f[2], 0);
+    } else {
+        lightUpdateSkyLight(_data_24.f[0], _data_24.f[1], _data_24.f[2], 
+            (u8) (160.0f - (_data_24.f[1] * 30.0f)), 0xFF, 0x3C, -0x1E, 
+            (u8) sp70, (u8) sp6C, (u8) sp68);
+        shadows_func_8004D698(_data_24.f[0], _data_24.f[1], _data_24.f[2], 0x64);
+        gDLL_12_Minic->vtbl->func5(_data_24.f[0], _data_24.f[1], _data_24.f[2], 0);
+    }
+    if (D_80090CAC < 0.0f) {
+        D_80090CAC = 0.0f;
+    } else if (D_80090CAC > 1.0f) {
+        D_80090CAC = 1.0f;
+    }
+}
 
 // offset: 0x5124 | func: 21
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5124.s")

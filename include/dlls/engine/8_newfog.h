@@ -14,7 +14,7 @@ DLL_INTERFACE(DLL_8_newfog) {
 /*3*/ void (*func3)(Gfx **);
 /*4*/ UnknownDLLFunc func4;
 /*5*/ UnknownDLLFunc func5;
-/*6*/ UnknownDLLFunc func6;
+/*6*/ void (*func6)(s32*, s32*, s32*);
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;
 /*9*/ UnknownDLLFunc func9;
