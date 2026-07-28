@@ -68,7 +68,7 @@ void MAGICMaker_control(Object *self) {
                 bonedustSetup->base.y = self->srt.transl.y;
                 bonedustSetup->base.z = self->srt.transl.z + mathRnd(-300, 300);
                 bonedustSetup->unk24 = -1;
-                bonedustObj = objSetupObject((ObjSetup*)bonedustSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+                bonedustObj = objSetupObject(&bonedustSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 if (bonedustObj) {
                     ((DLL_BoneDust*)bonedustObj->dll)->vtbl->func10(bonedustObj, 0, -0.75f, 0);
                 }

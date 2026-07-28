@@ -67,16 +67,16 @@ typedef struct {
     -MASK_SPEED
 };
 
-static void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols);
+static void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols);
 
 // offset: 0x0 | ctor
-void DIMTent_ctor(void *dll) { }
+void DIMTent_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DIMTent_dtor(void *dll) { }
+void DIMTent_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
+void DIMTent_obj_Setup(Object* self, DIMTent_Setup* objSetup, s32 reset) {
     DIMTent_Data* objData = self->data;
 
     self->srt.yaw = objSetup->yaw << 8;
@@ -96,7 +96,7 @@ void DIMTent_setup(Object* self, DIMTent_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0xD4 | func: 1 | export: 1
-void DIMTent_control(Object* self) {
+void DIMTent_obj_Control(Object* self) {
     Object* listedObject;
     DIMTent_Setup* objSetup;
     DIMTent_Data* objData;
@@ -174,45 +174,45 @@ void DIMTent_control(Object* self) {
             cogSetup->gamebitCount = NO_GAMEBIT;
             cogSetup->objHitsValue = 5;
             cogSetup->yaw = self->srt.yaw >> 8;
-            objSetupObject((ObjSetup*)cogSetup, 5, self->mapID, -1, NULL);
+            objSetupObject(&cogSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
         }
     }
 }
 
 // offset: 0x37C | func: 2 | export: 2
-void DIMTent_update(Object *self) { }
+void DIMTent_obj_Update(Object* self) { }
 
 // offset: 0x388 | func: 3 | export: 3
-void DIMTent_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DIMTent_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DIMTent_Data* objData = self->data;
 
     if (visibility) {
         if (objData->isBurning == TRUE) {
-            DIMTent_draw_mask(self, gdl, mtxs, (Vtx_t**)vtxs, pols);
+            DIMTent_drawMask(self, gdl, mtxs, (Vtx_t**)vtxs, pols);
         }
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x430 | func: 4 | export: 4
-void DIMTent_free(s32 self, s32 arg1) {
+void DIMTent_obj_Free(s32 self, s32 onlySelf) {
     if (dModGfxDLL) {
         dllFree(dModGfxDLL);
     }
 }
 
 // offset: 0x480 | func: 5 | export: 5
-u32 DIMTent_get_model_flags(Object *self) {
+u32 DIMTent_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x490 | func: 6 | export: 6
-u32 DIMTent_get_data_size(Object *self, u32 a1) {
+u32 DIMTent_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DIMTent_Data);
 }
 
 // offset: 0x4A4 | func: 7
-void DIMTent_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
+void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
     Vtx_t* initVtx;
     DIMTent_Data* objData;
     s32 index;

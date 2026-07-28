@@ -358,7 +358,7 @@ void assetThreadLoadNextFromQueue(void) {
 
         switch (sp2C.unk0) {
             case 5:
-                assetQueueCompletedLoad(5, (u32*)objSetupObjectActual(sp2C.unk8ObjSetup, 1, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
+                assetQueueCompletedLoad(5, (u32*)objSetupObjectActual(sp2C.unk8ObjSetup, OBJINIT_STANDALONE, sp2C.unkC, sp2C.unk10, sp2C.unk14, sp2C.unk18), (u8*)1, 0, 0);
                 break;
             case 3:
                 tmp = texLoadTextureActual(sp2C.blockId, 0);

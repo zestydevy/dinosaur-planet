@@ -92,7 +92,7 @@ void SB_ShipGun_control(Object *self) {
     s32 i;
     SB_ShipGun_Data *objdata;
     SRT transform;
-    s16 *sp44;
+    SeqJoint* sp44;
 
     player = objGetPlayer();
     objdata = self->data;
@@ -195,7 +195,7 @@ void SB_ShipGun_control(Object *self) {
         } else if (objdata->unk6 < (-0x1F40)) {
             objdata->unk6 = -0x1F40;
         }
-        *sp44 = objdata->unk6;
+        sp44->pitch = objdata->unk6;
         objdata->unk8 -= gUpdateRate;
         if (objdata->unk8 < 0) {
             camGetObjectChildPosition(self, &sp98, &sp94, &sp90);

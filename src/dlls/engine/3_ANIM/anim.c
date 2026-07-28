@@ -12,6 +12,7 @@
 #include "sys/asset.h"
 #include "sys/curves.h"
 #include "sys/dll.h"
+#include "sys/objexpr.h"
 #include "sys/pi.h"
 #include "sys/joypad.h"
 #include "sys/math.h"
@@ -405,7 +406,7 @@ static Object* anim_toggle_override(Object* animObj, AnimObj_Data* st, AnimObj_S
 static s32 anim_process_event(Object* animObj, ModelInstance* animObjModelInst, AnimCurvesEvent** events, s8 arg3, s32* arg4);
 static void anim_get_actor_and_model_inst(Object* animObj, Object** actorObject, ModelInstance** actorModelInstance);
 static s32 anim_do_code_event(Object* animObj, Object* actor, AnimObj_Data* st, s32* codeEvents, s16 codeEventTime, s16 numCodeEvents, s8 arg6, s8 arg7);
-static void anim_func_9EC8(Object* actor, s16* arg1, s32 arg2);
+static void anim_func_9EC8(Object* actor, SeqJoint* arg1, s32 arg2);
 static void anim_func_72E0(Object* animObj);
 static void anim_do_obj_anim_callback(Object* actor, Object* animObj, AnimObj_Data* st, s8 arg3);
 static void anim_handle_seq_end(Object* animObj, Object* actor, AnimObj_Data* st);
@@ -976,7 +977,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
     ObjSetup* setup;
     Object* player;
     s32 _pad2;
-    s16* headSeqJoint;
+    SeqJoint* headSeqJoint;
 
     setup = animObj->setup;
     animObj->srt.transl.x = setup->x;
@@ -1078,21 +1079,21 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
                 } else {
                     var_fv1 = 0.0f;
                 }
-                headSeqJoint[0] = st->unk122 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint->pitch = st->unk122 + (s16) (var_fv1 * 182.044f);
                 
                 if (st->channelTotalKeys[CHANNEL_headRotateY] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateY, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                headSeqJoint[1] = st->unk120 + (s16) (var_fv1 * 182.044f);
+                headSeqJoint->yaw = st->unk120 + (s16) (var_fv1 * 182.044f);
 
                 if (st->channelTotalKeys[CHANNEL_headRotateZ] != 0) {
                     var_fv1 = anim_channel_value(st, CHANNEL_headRotateZ, time);
                 } else {
                     var_fv1 = 0.0f;
                 }
-                headSeqJoint[2] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint->roll = (s16) (var_fv1 * 182.044f);
 
                 if (st->unk7A & ANIM7AFLAG_UNK400) {
                     anim_func_9EC8(actor, headSeqJoint, st->unk142_4);
@@ -1108,7 +1109,7 @@ static void anim_apply_channel_values(Object* animObj, Object* actor, AnimObj_Da
                 } else {
                     var_fv1 = 0.0f;
                 }
-                headSeqJoint[0] = (s16) (var_fv1 * 182.044f);
+                headSeqJoint->pitch = (s16) (var_fv1 * 182.044f);
             }
             if (1){} // @fake
         }
@@ -3877,27 +3878,27 @@ void anim_set_anim_counter2(s16 value) {
 s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4, s16 arg5, s16 arg6) {
     s16 sp56;
     s16 temp_v0;
-    s16* sp50;
+    SeqJoint* seqJoint;
     f32 sp4C;
     f32 var_fv0;
     f32 var_fv1;
     s32 var_a0;
     f32 sp34[3];
     Object* sp30;
+    int new_var;
 
     sp30 = objGetPlayer();
     arg3 *= 182.04f;
     arg4 *= 182.04f;
     arg2 *= 182.04f;
+
     if (st->unk62 == 4) {
         st->unk7A &= ~ANIM7AFLAG_OVERRIDE_ROT;
         if (objExpr_func_80034804(actor, 0) != NULL) {
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
         }
         st->unkF4 = anim_func_9B70;
-        st->unk4C.f[0] = 0.0f;
-        st->unk4C.f[1] = 0.0f;
-        st->unk4C.f[2] = 0.0f;
+        st->unk4C.f[2] = st->unk4C.f[1] = st->unk4C.f[0] = 0.0f;
         temp_v0 = objAngleToObjectXZ(actor, sp30, NULL);
         if (temp_v0 >= 0) {
             var_a0 = temp_v0;
@@ -3959,24 +3960,25 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
             st->unk58 = 1.0001f;
         }
         actor->srt.yaw += (s16) (st->unk24 * st->yawDiff);
-        sp50 = objExpr_func_80034804(actor, 0);
-        if (sp50 != NULL) {
+        seqJoint = objExpr_func_80034804(actor, 0);
+        if (seqJoint != NULL) {
             st->unk7A &= ~ANIM7AFLAG_OVERRIDE_HEAD;
-            var_fv0 = (objAngleToObjectXZ(actor, sp30, NULL) * st->unk58) + (sp50[1] * (1.0f - st->unk58)) ;
+            var_fv1 = objAngleToObjectXZ(actor, sp30, NULL);
+            var_fv0 = (seqJoint->yaw * (1.0f - st->unk58)) + (var_fv1 * st->unk58);
             if (var_fv0 < -arg4) {
                 var_fv0 = -arg4;
             } else {
                 var_fv1 = MIN(arg4, var_fv0);
                 var_fv0 = var_fv1;
             }
-            sp50[1] = var_fv0;
+            seqJoint->yaw = var_fv0;
             var_fv0 = st->pitchDiff * st->unk58;
-            sp50[0] = var_fv0;
-
-            if (var_fv0 < (f32) -(arg4 >> 1)) {
-                var_fv0 = (f32) -(arg4 >> 1);
-            } else if (var_fv0 > (f32) (arg4 >> 1)) {
-                var_fv0 = (f32) (arg4 >> 1);
+            seqJoint->pitch = var_fv0;
+            
+            if (var_fv0 < -(arg4 >> 1)) {
+                var_fv0 = -(arg4 >> 1);
+            } else if (var_fv0 > (arg4 >> 1)) {
+                var_fv0 = (arg4 >> 1);
                 if (var_fv0){} // @fake
             }
         }
@@ -3993,9 +3995,9 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
         if (st->unk58 > 1.0f) {
             st->unk62 = 0;
             st->unk7A |= ANIM7AFLAG_OVERRIDE_HEAD;
-            sp50 = objExpr_func_80034804(actor, 0);
-            st->unk120 = sp50[1];
-            st->unk122 = sp50[0];
+            seqJoint = objExpr_func_80034804(actor, 0);
+            st->unk120 = seqJoint->yaw;
+            st->unk122 = seqJoint->pitch;
             if (st->unk58 > 1.0f) {
                 st->unk7A |= ANIM7AFLAG_OVERRIDE_MODEL;
             }
@@ -4007,13 +4009,12 @@ s32 anim_func_9524(Object* actor, AnimObj_Data* st, s16 arg2, s16 arg3, s16 arg4
 
 // offset: 0x9B70 | func: 64
 static void anim_func_9B70(Object* arg1, Object* animObj, AnimObj_Data* st) {
-    s16* temp_v0;
+    SeqJoint* seqJoint;
 
-    //NOTE: sequence bone should probably be a struct instead of s16*?
-    temp_v0 = objExpr_func_80034804(arg1, 0);
-    if (temp_v0 != NULL) {
-        temp_v0[1] = 0;
-        temp_v0[0] = 0;
+    seqJoint = objExpr_func_80034804(arg1, 0);
+    if (seqJoint != NULL) {
+        seqJoint->yaw = 0;
+        seqJoint->pitch = 0;
     }
 }
 
@@ -4108,32 +4109,32 @@ s32 anim_func_9E88(f32 arg0, f32 arg1, f32 arg2) {
 }
 
 // offset: 0x9EC8 | func: 72
-static void anim_func_9EC8(Object* actor, s16* arg1, s32 arg2) {
-    s16 *temp_v0;
+static void anim_func_9EC8(Object* actor, SeqJoint* seqJoint, s32 seqJointIDCount) {
+    SeqJoint* joint;
     s32 *temp_v1;
     s32 i;
-    s32 *var_s0;
+    s32 *seqJointIDs;
     
-    var_s0 = objExpr_func_800349B0();
-    temp_v1 = var_s0;
-    if (arg2 == 0){
-        arg2 = 9;
+    seqJointIDs = objExpr_func_800349B0();
+    temp_v1 = seqJointIDs;
+    if (seqJointIDCount == 0){
+        seqJointIDCount = 9;
     }
     
-    if (arg1 == NULL){
+    if (seqJoint == NULL){
         return;
     }
     
-    for (i = 1; i < arg2; i++){
-        temp_v0 = objExpr_func_80034804(actor, var_s0[i]);
-        if (temp_v0 != NULL){
-            temp_v0[1] = arg1[1];
-            temp_v0[0] = arg1[0];
-            temp_v0[2] = arg1[2];
+    for (i = 1; i < seqJointIDCount; i++){
+        joint = objExpr_func_80034804(actor, seqJointIDs[i]);
+        if (joint != NULL){
+            joint->yaw = seqJoint->yaw;
+            joint->pitch = seqJoint->pitch;
+            joint->roll = seqJoint->roll;
         }
     }
     
-    var_s0 = temp_v1 + 1;
+    seqJointIDs = temp_v1 + 1;
 }
 
 // offset: 0x9F90 | func: 73 | export: 32

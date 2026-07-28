@@ -1,0 +1,15 @@
+.text = 0x0:
+CannonClaw_ctor = 0x0;
+CannonClaw_dtor = 0xC;
+CannonClaw_obj_Setup = 0x18;
+CannonClaw_obj_Control = 0x4C;
+CannonClaw_die = 0x1B4;
+CannonClaw_obj_Update = 0x200;
+CannonClaw_obj_Print = 0x20C;
+CannonClaw_obj_Free = 0x26C;
+CannonClaw_obj_GetModelFlags = 0x27C;
+CannonClaw_obj_GetDataSize = 0x28C;
+
+.rodata = 0x2F0:
+
+.bss = 0x2F0:

@@ -2735,8 +2735,8 @@ s32 func_8005B274(f32* arg0, f32* arg1, f32 arg2, f32 arg3, f32 arg4, s8 arg5) {
     return 0;
 }
 
-//parent_object_to_mobile_map_object?
-void trackIntersect_func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
+//trackIntersectParentObjToMobileMap / trackIntersectChangeObjCoordinateSpace ?
+void trackIntersect_func_8005B5B8(Object* obj, Object* mobileMapObj, s32 transformLocalVectors) {
     Object* parent;
     ObjectHitInfo* hitInfo;
     f32 speedY;
@@ -2744,9 +2744,9 @@ void trackIntersect_func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
     f32 speedZ;
     s32 dYaw;
 
-    parent = arg0->parent;
+    parent = obj->parent;
 
-    if (parent == arg1) {
+    if (parent == mobileMapObj) {
         return;
     }
 
@@ -2754,56 +2754,56 @@ void trackIntersect_func_8005B5B8(Object* arg0, Object* arg1, s32 arg2) {
     if (parent != NULL) {
         camUpdateObjectMatrix(parent);
     }
-    if (arg1 != NULL) {
-        camUpdateObjectMatrix(arg1);
+    if (mobileMapObj != NULL) {
+        camUpdateObjectMatrix(mobileMapObj);
     }
 
-    arg0->parent = arg1;
-    hitInfo = arg0->objhitInfo;
+    obj->parent = mobileMapObj;
+    hitInfo = obj->objhitInfo;
 
     if (parent != NULL) {
-        camTransformPointByObject(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, &arg0->globalPosition.x, &arg0->globalPosition.y, &arg0->globalPosition.z, parent);
-        camTransformPointByObject(arg0->prevLocalPosition.x, arg0->prevLocalPosition.y, arg0->prevLocalPosition.z, &arg0->prevGlobalPosition.x, &arg0->prevGlobalPosition.y, &arg0->prevGlobalPosition.z, parent);
-        camRotatePointByObject(arg0->velocity.x, 0, arg0->velocity.z, &speedX, &speedY, &speedZ, parent);
-        dYaw = parent->srt.yaw + arg0->srt.yaw;
+        camTransformPointByObject(obj->srt.transl.x, obj->srt.transl.y, obj->srt.transl.z, &obj->globalPosition.x, &obj->globalPosition.y, &obj->globalPosition.z, parent);
+        camTransformPointByObject(obj->prevLocalPosition.x, obj->prevLocalPosition.y, obj->prevLocalPosition.z, &obj->prevGlobalPosition.x, &obj->prevGlobalPosition.y, &obj->prevGlobalPosition.z, parent);
+        camRotatePointByObject(obj->velocity.x, 0, obj->velocity.z, &speedX, &speedY, &speedZ, parent);
+        dYaw = parent->srt.yaw + obj->srt.yaw;
     } else {
-        speedX = arg0->velocity.x;
-        speedZ = arg0->velocity.z;
-        dYaw = arg0->srt.yaw;
+        speedX = obj->velocity.x;
+        speedZ = obj->velocity.z;
+        dYaw = obj->srt.yaw;
     }
 
-    if (arg2 != 0) {
-        parent = arg0->parent;
-        if (arg0->parent != NULL) {
-            camInverseTransformPointByObject(arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, &arg0->srt.transl.x, &arg0->srt.transl.y, &arg0->srt.transl.z, arg0->parent);
-            camInverseTransformPointByObject(arg0->prevGlobalPosition.x, arg0->prevGlobalPosition.y, arg0->prevGlobalPosition.z, &arg0->prevLocalPosition.x, &arg0->prevLocalPosition.y, &arg0->prevLocalPosition.z, arg0->parent);
-            camInverseRotatePointByObject(speedX, 0, speedZ, &arg0->velocity.x, &speedY, &arg0->velocity.z, arg0->parent);
-            dYaw -= arg0->parent->srt.yaw;
+    if (transformLocalVectors != FALSE) {
+        parent = obj->parent;
+        if (obj->parent != NULL) {
+            camInverseTransformPointByObject(obj->globalPosition.x, obj->globalPosition.y, obj->globalPosition.z, &obj->srt.transl.x, &obj->srt.transl.y, &obj->srt.transl.z, obj->parent);
+            camInverseTransformPointByObject(obj->prevGlobalPosition.x, obj->prevGlobalPosition.y, obj->prevGlobalPosition.z, &obj->prevLocalPosition.x, &obj->prevLocalPosition.y, &obj->prevLocalPosition.z, obj->parent);
+            camInverseRotatePointByObject(speedX, 0, speedZ, &obj->velocity.x, &speedY, &obj->velocity.z, obj->parent);
+            dYaw -= obj->parent->srt.yaw;
             CIRCLE_WRAP(dYaw)
-            arg0->srt.yaw = dYaw;
+            obj->srt.yaw = dYaw;
         } else {
-            arg0->srt.transl.x = arg0->globalPosition.x;
-            arg0->srt.transl.y = arg0->globalPosition.y;
-            arg0->srt.transl.z = arg0->globalPosition.z;
-            arg0->prevLocalPosition.x = arg0->prevGlobalPosition.x;
-            arg0->prevLocalPosition.y = arg0->prevGlobalPosition.y;
-            arg0->prevLocalPosition.z = arg0->prevGlobalPosition.z;
-            arg0->velocity.x = speedX;
-            arg0->velocity.z = speedZ;
-            arg0->srt.yaw = dYaw;
+            obj->srt.transl.x = obj->globalPosition.x;
+            obj->srt.transl.y = obj->globalPosition.y;
+            obj->srt.transl.z = obj->globalPosition.z;
+            obj->prevLocalPosition.x = obj->prevGlobalPosition.x;
+            obj->prevLocalPosition.y = obj->prevGlobalPosition.y;
+            obj->prevLocalPosition.z = obj->prevGlobalPosition.z;
+            obj->velocity.x = speedX;
+            obj->velocity.z = speedZ;
+            obj->srt.yaw = dYaw;
         }
     }
 
     if (hitInfo != NULL) {
-        hitInfo->unk10.x = arg0->srt.transl.x;
-        hitInfo->unk10.y = arg0->srt.transl.y;
-        hitInfo->unk10.z = arg0->srt.transl.z;
-        hitInfo->unk20.x = arg0->globalPosition.x;
-        hitInfo->unk20.y = arg0->globalPosition.y;
-        hitInfo->unk20.z = arg0->globalPosition.z;
+        hitInfo->unk10.x = obj->srt.transl.x;
+        hitInfo->unk10.y = obj->srt.transl.y;
+        hitInfo->unk10.z = obj->srt.transl.z;
+        hitInfo->unk20.x = obj->globalPosition.x;
+        hitInfo->unk20.y = obj->globalPosition.y;
+        hitInfo->unk20.z = obj->globalPosition.z;
     }
 
-    if (arg0->controlNo == OBJCONTROL_Player) {
-        ((DLL_27*)gDLL_27)->vtbl->reset(arg0, ((DLL_210_Player*)arg0->dll)->vtbl->func57(arg0));
+    if (obj->controlNo == OBJCONTROL_Player) {
+        ((DLL_27*)gDLL_27)->vtbl->reset(obj, ((DLL_210_Player*)obj->dll)->vtbl->func57(obj));
     }
 }

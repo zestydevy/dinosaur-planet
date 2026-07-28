@@ -320,7 +320,7 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
 s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg3, s16 arg4) {
     Object* temp_v0;
     s16 sp38[2];
-    s16* temp_v0_3;
+    SeqJoint* seqJoint;
 
     temp_v0 = objGetPlayer();
     sp38[0] = arg3;
@@ -342,9 +342,9 @@ s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 ar
             objAnimAdvance(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
                 arg1->unk7A |= 8;
-                temp_v0_3 = objExpr_func_80034804(arg0, 0);
-                arg1->unk120 = temp_v0_3[1];
-                arg1->unk122 = temp_v0_3[0];
+                seqJoint = objExpr_func_80034804(arg0, 0);
+                arg1->unk120 = seqJoint->yaw;
+                arg1->unk122 = seqJoint->pitch;
                 arg2->unk498 = 0;
                 arg1->unk62 = 0;
                 arg1->unk7A |= 4;

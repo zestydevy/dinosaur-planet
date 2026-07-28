@@ -1,0 +1,18 @@
+.text = 0x0:
+DFP_Statue1_ctor = 0x0;
+DFP_Statue1_dtor = 0xC;
+DFP_Statue1_obj_Setup = 0x18;
+DFP_Statue1_obj_Control = 0xB4;
+DFP_Statue1_obj_Update = 0xF0;
+DFP_Statue1_obj_Print = 0x124;
+DFP_Statue1_obj_Free = 0x13C;
+DFP_Statue1_obj_GetModelFlags = 0x14C;
+DFP_Statue1_obj_GetDataSize = 0x15C;
+DFP_Statue1_tick = 0x170;
+DFP_Statue1_animCallback = 0x2C0;
+
+.rodata = 0x44C:
+
+.data = 0x44C:
+data_0 = 0x0; // absolute:0x44C
+data_4 = 0x4; // absolute:0x450

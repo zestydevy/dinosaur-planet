@@ -1,0 +1,12 @@
+.text = 0x0:
+IMSpaceRing_ctor = 0x0;
+IMSpaceRing_dtor = 0xC;
+IMSpaceRing_obj_Setup = 0x18;
+IMSpaceRing_obj_Control = 0x7C;
+IMSpaceRing_obj_Update = 0x164;
+IMSpaceRing_obj_Print = 0x170;
+IMSpaceRing_obj_Free = 0x1C4;
+IMSpaceRing_obj_GetModelFlags = 0x1D4;
+IMSpaceRing_obj_GetDataSize = 0x1E4;
+
+.rodata = 0x238:

@@ -619,81 +619,90 @@ void objHitUpdateHitModels(s32 arg0) {
     }
 }
 
-u8 func_80026DF4(Object* obj, Unk80026DF4* arg1, u8 arg2, u8 arg3, f32* arg4) {
-    SRT sp70;
+u8 func_80026DF4(Object* obj, Unk80026DF4* hitConfigs, u8 hitConfigCount, u8 flinchStarted, f32* animSpeed) {
+    SRT srtFX;
     s32 i;
-    Unk80026DF4* sp68;
+    Unk80026DF4* hitConfig;
     DLL_IModgfx* loadedDLL;
     ModelInstance *modelInst;
-    s32 sp5C;
-    f32 sp58;
+    s32 hitSphereID;
+    f32 partfxArg;
     s32 sp48[4] = {0x08, 0xB4, 0xF0, 0xFF};
+    s32 damageType;
 
-    if (arg3 != 0) {
+    if (flinchStarted) {
         // STUBBED_PRINTF("hitstate frame=%f\n", obj->animProgress); // (default.dol)
-        if (objAnimAdvance(obj, *arg4, gUpdateRateF, NULL)) {
-            arg3 = 0;
+        if (objAnimAdvance(obj, *animSpeed, gUpdateRateF, NULL)) {
+            flinchStarted = FALSE;
         }
     }
-    i = func_8002601C(obj, NULL, &sp5C, NULL, &sp70.transl.x, &sp70.transl.y, &sp70.transl.z);
-    if (i != 0) {
+
+    damageType = func_8002601C(obj, NULL, &hitSphereID, NULL, &srtFX.transl.x, &srtFX.transl.y, &srtFX.transl.z);
+    if (damageType != 0) {
         modelInst = obj->modelInsts[obj->modelInstIdx];
-        sp70.transl.x += gWorldX;
-        sp70.yaw = 0;
-        sp70.pitch = 0;
-        sp70.transl.z += gWorldZ;
-        sp70.roll = 0;
-        sp70.scale = 1.0f;
-        sp5C = modelInst->model->hitSpheres[sp5C].unkC;
-        if (sp5C >= arg2) {
+        srtFX.transl.x += gWorldX;
+        srtFX.yaw = 0;
+        srtFX.pitch = 0;
+        srtFX.transl.z += gWorldZ;
+        srtFX.roll = 0;
+        srtFX.scale = 1.0f;
+        hitSphereID = modelInst->model->hitSpheres[hitSphereID].unkC;
+        if (hitSphereID >= hitConfigCount) {
             STUBBED_PRINTF("objHitReact.c: sphere overflow!\n");
             // STUBBED_PRINTF("objHitReact.c: sphere overflow! %d\n", sp5C); // (default.dol)
-            sp5C = 0;
+            hitSphereID = 0;
         }
-        sp68 = &arg1[sp5C];
-        if (i != 15) {
-            if (sp68->unk0 >= 0) {
-                dll_amSfx->Play(obj, sp68->unk0, MAX_VOLUME, 0, 0, 0, 0);
+
+        hitConfig = &hitConfigs[hitSphereID];
+        if (damageType != Damage_Type_Projectile) {
+            if (hitConfig->sound1 >= 0) {
+                dll_amSfx->Play(obj, hitConfig->sound1, MAX_VOLUME, 0, 0, 0, 0);
             }
-            if (sp68->unk2 >= 0) {
-                dll_amSfx->Play(obj, sp68->unk2, MAX_VOLUME, 0, 0, 0, 0);
+            if (hitConfig->sound2 >= 0) {
+                dll_amSfx->Play(obj, hitConfig->sound2, MAX_VOLUME, 0, 0, 0, 0);
             }
             // @fake
-            if (!i) {}
-            if (sp68->unk8 == 1) {
-                loadedDLL = dllLoadActual(DLL_ID_106, 1U, FALSE);
+            if (damageType) {}
+
+            if (hitConfig->useModGfx == TRUE) {
+                loadedDLL = dllLoadActual(DLL_ID_106, 1, FALSE);
                 // @fake
                 if (1) {}
-                loadedDLL->vtbl->func0(0, 1, &sp70, 0x401, -1, sp48);
+                loadedDLL->vtbl->func0(0, 1, &srtFX, 0x401, -1, sp48);
                 if (loadedDLL != NULL) {
                     dllFree(loadedDLL);
                 }
             } else {
-                sp58 = 0.014f;
-                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_325, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp58);
-                sp70.scale = 92.0f;
-                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
-                sp58 = 0.015f;
-                sp70.scale = 231.0f;
-                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &sp70, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &sp58);
-                sp70.transl.x -= obj->globalPosition.x;
-                sp70.transl.y -= obj->globalPosition.y;
-                sp70.transl.z -= obj->globalPosition.z;
-                sp70.scale = 123.0f;
+                partfxArg = 0.014f;
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_325, &srtFX, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &partfxArg);
+
+                srtFX.scale = 92.0f;
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &srtFX, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+
+                partfxArg = 0.015f;
+                srtFX.scale = 231.0f;
+                gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_323, &srtFX, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &partfxArg);
+
+                srtFX.transl.x -= obj->globalPosition.x;
+                srtFX.transl.y -= obj->globalPosition.y;
+                srtFX.transl.z -= obj->globalPosition.z;
+                srtFX.scale = 123.0f;
                 for (i = 0; i < 15; i++) {
-                    gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_324, &sp70, PARTFXFLAG_2, -1, NULL);
+                    gDLL_17_partfx->vtbl->spawn(obj, PARTICLE_324, &srtFX, PARTFXFLAG_2, -1, NULL);
                 }
             }
         }
-        if (!arg3) {
-            if (sp68->unk4 >= 0) {
-                objAnimSet(obj, sp68->unk4, 0.0f, 0);
-                *arg4 = sp68->unkC;
-                arg3 = 1;
+
+        if (flinchStarted == FALSE) {
+            if (hitConfig->modAnimIdx1 >= 0) {
+                objAnimSet(obj, hitConfig->modAnimIdx1, 0.0f, 0);
+                *animSpeed = hitConfig->animSpeed1;
+                flinchStarted = TRUE;
             }
         }
     }
-    return arg3;
+
+    return flinchStarted;
 }
 
 void objHitDoHitDetection(s32 arg0) {

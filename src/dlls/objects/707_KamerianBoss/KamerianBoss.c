@@ -51,10 +51,10 @@ typedef struct {
 } KamerianBoss_Setup;
 
 enum KDModAnims {
-    KD_MODANIM_DETATCH_LEFT_PIPE = 0,
-    KD_MODANIM_DETATCH_LEFT_PIPE_ALT = 1, // With right wing open
-    KD_MODANIM_DETATCH_RIGHT_PIPE = 2,
-    KD_MODANIM_DETATCH_RIGHT_PIPE_ALT = 3, // With left wing open
+    KD_MODANIM_DETACH_LEFT_PIPE = 0,
+    KD_MODANIM_DETACH_LEFT_PIPE_ALT = 1, // With right wing open
+    KD_MODANIM_DETACH_RIGHT_PIPE = 2,
+    KD_MODANIM_DETACH_RIGHT_PIPE_ALT = 3, // With left wing open
     KD_MODANIM_OPEN_LEFT_WING = 4,
     KD_MODANIM_OPEN_LEFT_WING_ALT = 5, // With right wing open
     KD_MODANIM_OPEN_RIGHT_WING = 6,
@@ -137,11 +137,11 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
 }
 
 // offset: 0x1B4 | func: 3
-static void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 arg4, s16 arg5, f32 arg6, s32 objID) {
+static void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s16 yaw, s16 pitch, f32 speed, s32 objID) {
     ObjSetup *setup;
     Object *projectile;
 
-    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid
+    setup = objAllocSetup(0x24, objID); // KamerianFlame/KamerianAcid (TODO: use KamerianFlame_Setup)
     setup->x = x;
     setup->y = y;
     setup->z = z;
@@ -151,11 +151,11 @@ static void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s1
     setup->fadeDistance = 0xFF;
     projectile = objSetupObject(setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (projectile != NULL) {
-        projectile->srt.pitch = arg5;
-        projectile->srt.yaw = arg4;
-        projectile->velocity.x = Cosf(arg5) * Sinf(arg4) * arg6;
-        projectile->velocity.y = Sinf(arg5) * arg6;
-        projectile->velocity.z = Cosf(arg5) * Cosf(arg4) * arg6;
+        projectile->srt.pitch = pitch;
+        projectile->srt.yaw = yaw;
+        projectile->velocity.x = Cosf(pitch) * Sinf(yaw) * speed;
+        projectile->velocity.y = Sinf(pitch) * speed;
+        projectile->velocity.z = Cosf(pitch) * Cosf(yaw) * speed;
         projectile->unkC4 = self;
     }
 }
@@ -171,7 +171,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
     self->animCallback = NULL;
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
-    objAnimSet(self, KD_MODANIM_DETATCH_RIGHT_PIPE, 0.0f, 0);
+    objAnimSet(self, KD_MODANIM_DETACH_RIGHT_PIPE, 0.0f, 0);
     bzero(objdata, sizeof(KamerianBoss_Data));
     objdata->health = 10;
     objdata->animTickDelta = 0.0f;
@@ -507,13 +507,13 @@ void KamerianBoss_control(Object *self) {
             if (objdata->rightPipeYOffset < 15000) {
                 objdata->rightPipeYOffset += gUpdateRate * 50;
             }
-            objExpr_func_80034804(self, 4)[7] = objdata->rightPipeYOffset;
+            objExpr_func_80034804(self, 4)->translateY = objdata->rightPipeYOffset;
         }
         if (objdata->leftPipeYOffset != 0) {
             if (objdata->leftPipeYOffset < 15000) {
                 objdata->leftPipeYOffset += gUpdateRate * 50;
             }
-            objExpr_func_80034804(self, 3)[7] = objdata->leftPipeYOffset;
+            objExpr_func_80034804(self, 3)->translateY = objdata->leftPipeYOffset;
         }
         // Useless assignment of v1? required to match
         var_v1 = 0;
@@ -528,12 +528,12 @@ void KamerianBoss_control(Object *self) {
         }
         if ((objdata->animFinished != 0) && (objdata->animTickDelta != 0.0f)) {
             switch (self->curModAnimId) {
-            case KD_MODANIM_DETATCH_RIGHT_PIPE:
-            case KD_MODANIM_DETATCH_RIGHT_PIPE_ALT:
+            case KD_MODANIM_DETACH_RIGHT_PIPE:
+            case KD_MODANIM_DETACH_RIGHT_PIPE_ALT:
                 KamerianBoss_enable_hit_sphere(0);
                 break;
-            case KD_MODANIM_DETATCH_LEFT_PIPE:
-            case KD_MODANIM_DETATCH_LEFT_PIPE_ALT:
+            case KD_MODANIM_DETACH_LEFT_PIPE:
+            case KD_MODANIM_DETACH_LEFT_PIPE_ALT:
                 KamerianBoss_enable_hit_sphere(1);
                 break;
             case KD_MODANIM_OPEN_RIGHT_WING:
@@ -601,7 +601,7 @@ void KamerianBoss_control(Object *self) {
                         KamerianBoss_disable_hit_sphere(13);
                         KamerianBoss_disable_hit_sphere(14);
                         objAnimSet(self, 
-                            objdata->leftWingOpened ? KD_MODANIM_DETATCH_RIGHT_PIPE_ALT : KD_MODANIM_DETATCH_RIGHT_PIPE, 
+                            objdata->leftWingOpened ? KD_MODANIM_DETACH_RIGHT_PIPE_ALT : KD_MODANIM_DETACH_RIGHT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
                         objdata->rightPipeYOffset = 1;
@@ -622,7 +622,7 @@ void KamerianBoss_control(Object *self) {
                         KamerianBoss_disable_hit_sphere(8);
                         KamerianBoss_disable_hit_sphere(9);
                         objAnimSet(self, 
-                            objdata->rightWingOpened ? KD_MODANIM_DETATCH_LEFT_PIPE_ALT : KD_MODANIM_DETATCH_LEFT_PIPE, 
+                            objdata->rightWingOpened ? KD_MODANIM_DETACH_LEFT_PIPE_ALT : KD_MODANIM_DETACH_LEFT_PIPE, 
                             0.0f, 0);
                         objdata->animTickDelta = 0.005f;
                         objdata->leftPipeYOffset = 1;

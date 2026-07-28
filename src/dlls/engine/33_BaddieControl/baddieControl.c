@@ -7,6 +7,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/gfx/animseq.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
@@ -95,43 +96,50 @@ s32 BaddieControl_func_264(UNK_PTR *arg0, UNK_PTR *arg1) {
 }
 
 // offset: 0x278 | func: 2 | export: 4
-void BaddieControl_func_278(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16* arg4, u16* arg5) {
-    Baddie* sp2C;
-    Vec3f sp20;
-    Object* temp_v1;
-    s32 temp_a0;
-    s32 temp_v0;
-    s16 var_a1;
-    s32 var_v1;
-    u16 temp_v0_2;
+void BaddieControl_func_278(Object* obj, Object* target, u8 turnMultiplier, u16* oTurnAmount, s16* oYawDiff, u16* oDistance) {
+    Baddie* baddie;
+    Vec3f delta;
+    s32 angleToTarget;
+    s16 wsObjYaw;
+    s32 yawDiff;
+    u16 yawDiffU;
 
-    sp2C = arg0->data;
-    if ((arg0 == NULL) || (arg1 == NULL)) {
-        *arg3 = 0;
-        *arg4 = 0;
-        *arg5 = 0;
+    baddie = obj->data;
+
+    if ((obj == NULL) || (target == NULL)) {
+        *oTurnAmount = 0;
+        *oYawDiff = 0;
+        *oDistance = 0;
         return;
     }
-    sp20.x = arg1->globalPosition.f[0] - arg0->globalPosition.f[0];
-    sp20.y = arg1->globalPosition.f[1] - arg0->globalPosition.f[1];
-    sp20.z = arg1->globalPosition.f[2] - arg0->globalPosition.f[2];
-    temp_v0 = mathAtan2f(-sp20.x, -sp20.z);
-    if (arg0->parent != NULL) {
-        var_a1 = arg0->srt.yaw + arg0->parent->srt.yaw;
+
+    delta.x = target->globalPosition.f[0] - obj->globalPosition.f[0];
+    delta.y = target->globalPosition.f[1] - obj->globalPosition.f[1];
+    delta.z = target->globalPosition.f[2] - obj->globalPosition.f[2];
+    angleToTarget = mathAtan2f(-delta.x, -delta.z);
+
+    //Get Baddie object's worldSpace yaw, by adding its parent's yaw
+    if (obj->parent != NULL) {
+        wsObjYaw = obj->srt.yaw + obj->parent->srt.yaw;
     } else {
-        var_a1 = arg0->srt.yaw;
+        wsObjYaw = obj->srt.yaw;
     }
-    var_v1 = temp_v0 - (var_a1 & 0xFFFF);
-    CIRCLE_WRAP(var_v1)
-    temp_v0_2 = var_v1;
-    *arg4 = var_v1;
-    if ((temp_v0_2 < 0x31C4) || (temp_v0_2 >= 0xCE3C)) {
-        sp2C->unk3B2 &= ~0x10;
+
+    //Get yawDiff to target
+    yawDiff = angleToTarget - (wsObjYaw & 0xFFFF);
+    CIRCLE_WRAP(yawDiff)
+    yawDiffU = yawDiff;
+    *oYawDiff = yawDiff;
+
+    //Check if yawDiff is within -70 to +70 degree range
+    if ((0x31C4 > yawDiffU) || (yawDiffU >= (M_360_DEGREES - 0x31C4))) {
+        baddie->unk3B2 &= ~0x10;
     } else {
-        sp2C->unk3B2 |= 0x10;
+        baddie->unk3B2 |= 0x10;
     }
-    *arg3 = (temp_v0_2 / (0x10000 / arg2));
-    *arg5 = (u32) VECTOR_MAGNITUDE(sp20);
+
+    *oTurnAmount = yawDiffU / (M_360_DEGREES / turnMultiplier);
+    *oDistance = (u32) VECTOR_MAGNITUDE(delta);
 }
 
 // offset: 0x4EC | func: 3 | export: 2
@@ -371,39 +379,45 @@ s32 BaddieControl_func_ED0(Object* baddieObj, Baddie* baddieData, u8 checkIfDead
 }
 
 // offset: 0xF60 | func: 11 | export: 16
-s32 BaddieControl_func_F60(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3) {
+/**
+  * Checks whether a baddie should stop attacking the player. They'll disengage if any of these conditions are met:
+  *
+  * - The baddie has no health.
+  * - The player is outside the baddie's specified `maxTargetDist` (if the `checkTargetDist` arg is used).
+  * - The player is in a sequence
+  * - The player is dead.
+  * - `trackGetLineIntersect` returns nonzero.
+  */
+s32 BaddieControl_func_F60(Object* obj, ObjFSA_Data* fsa, f32 maxTargetDist, s32 checkTargetDist) {
     Object* player;
-    TrackLineIntersectResult sp48;
-    Vec3f sp3C;
-    s32 var_v1;
+    TrackLineIntersectResult intersectResult;
+    Vec3f playerCoords;
+    s32 outValue;
 
     player = objGetPlayer();
-    var_v1 = 0;
+    outValue = FALSE;
     if (fsa->unk33A != 0) {
         if ((player == fsa->target) && (fsa->hitpoints != 0)) {
-            if ((arg2 < fsa->targetDist) && (arg3 != 0)) {
-                var_v1 = 1;
+            if ((fsa->targetDist > maxTargetDist) && (checkTargetDist)) {
+                outValue = TRUE;
+            } else if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
+                outValue = TRUE;
+            } else if (((DLL_210_Player*)player->dll)->vtbl->get_health(player) <= 0) {
+                outValue = TRUE;
             } else {
-                if (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) == 0) {
-                    var_v1 = 1;
-                } else {
-                    if (((DLL_210_Player*)player->dll)->vtbl->get_health(player) <= 0) {
-                        var_v1 = 1;
-                    } else {
-                        sp3C.x = player->srt.transl.x;
-                        sp3C.y = player->srt.transl.y + 10.0f;
-                        sp3C.z = player->srt.transl.z;
-                        if (trackGetLineIntersect(&arg0->srt.transl, &sp3C, 1.0f, 0, &sp48, arg0, 4, -1, 0U, 0) != 0) {
-                            var_v1 = 1;
-                        }
-                    }
+                playerCoords.x = player->srt.transl.x;
+                playerCoords.y = player->srt.transl.y + 10.0f;
+                playerCoords.z = player->srt.transl.z;
+                if (trackGetLineIntersect(&obj->srt.transl, &playerCoords, 1.0f, 0, &intersectResult, obj, 4, -1, 0, 0)) {
+                    outValue = TRUE;
                 }
             }
         } else {
-            var_v1 = 1;
+            outValue = TRUE;
         }
     }
-    return var_v1;
+
+    return outValue;
 }
 
 // offset: 0x10F4 | func: 12 | export: 17

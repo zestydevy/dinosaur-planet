@@ -1,0 +1,13 @@
+.text = 0x0:
+CCCannonSwitch_ctor = 0x0;
+CCCannonSwitch_dtor = 0xC;
+CCCannonSwitch_obj_Setup = 0x18;
+CCCannonSwitch_obj_Control = 0xC8;
+CCCannonSwitch_obj_Update = 0x2D4;
+CCCannonSwitch_obj_Print = 0x2E0;
+CCCannonSwitch_obj_Free = 0x334;
+CCCannonSwitch_obj_GetModelFlags = 0x344;
+CCCannonSwitch_obj_GetDataSize = 0x354;
+
+.rodata = 0x3B0:
+str_0 = 0x0; // absolute:0x3B0

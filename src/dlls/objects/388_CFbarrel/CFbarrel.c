@@ -406,7 +406,7 @@ static void CFbarrel_func_1214(Object* self) {
             explSetup->base.x = self->srt.transl.x;
             explSetup->base.y = self->srt.transl.y;
             explSetup->base.z = self->srt.transl.z;
-            objSetupObject((ObjSetup*)explSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+            objSetupObject(&explSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             objdata->unk13 = 1;
             if (self->parent != NULL) {
                 objdata->unk2C = 3.5f;

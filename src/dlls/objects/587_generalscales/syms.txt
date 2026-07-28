@@ -1,0 +1,20 @@
+.text = 0x0:
+GeneralScales_ctor = 0x0;
+GeneralScales_dtor = 0xC;
+GeneralScales_obj_Setup = 0x18;
+GeneralScales_obj_Control = 0x194;
+GeneralScales_obj_Update = 0x340;
+GeneralScales_obj_Print = 0x34C;
+GeneralScales_obj_Free = 0x418;
+GeneralScales_obj_GetModelFlags = 0x524;
+GeneralScales_obj_GetDataSize = 0x534;
+GeneralScales_handleMaskMessages = 0x548;
+GeneralScales_drawMask = 0x75C;
+
+.rodata = 0xD04:
+sMaskTris = 0x0; // absolute:0xD04 type:u32
+sMaskVertCoords = 0xC0; // absolute:0xDC4 type:f32 force_migration:True function_owner:GeneralScales_drawMask
+jtbl_120 = 0x120; // absolute:0xE24 force_migration:True function_owner:GeneralScales_handleMaskMessages
+
+.bss = 0xE54:
+sVanishMask = 0x0; // absolute:0xE54

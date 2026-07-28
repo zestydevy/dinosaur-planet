@@ -1,0 +1,12 @@
+.text = 0x0:
+WM_MovePlatform_ctor = 0x0;
+WM_MovePlatform_dtor = 0xC;
+WM_MovePlatform_obj_Setup = 0x18;
+WM_MovePlatform_obj_Control = 0x74;
+WM_MovePlatform_obj_Update = 0x6E4;
+WM_MovePlatform_obj_Print = 0x6F0;
+WM_MovePlatform_obj_Free = 0x744;
+WM_MovePlatform_obj_GetModelFlags = 0x754;
+WM_MovePlatform_obj_GetDataSize = 0x764;
+
+.rodata = 0x7CC:

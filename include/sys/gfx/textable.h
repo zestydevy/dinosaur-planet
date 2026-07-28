@@ -459,7 +459,7 @@ enum TexTable {
     TEXTABLE_1C5_CMDMENU_InfoScroll_BG = 0x1C5, // TEX0:521
     TEXTABLE_1C6_CMDMENU_InfoScroll_SelfShadow = 0x1C6, // TEX0:522
     TEXTABLE_1C7_CMDMENU_Early_Krystal = 0x1C7, // TEX0:529             [OLD UI]
-    TEXTABLE_1C8 = 0x1C8, // TEX0:530
+    TEXTABLE_1C8_CMDMENU_Early_Energy_Bar = 0x1C8, // TEX0:530          [OLD UI] (Used by DIMSnowHorn)
     TEXTABLE_1C9_CMDMENU_Grub_Blue_Full = 0x1C9, // TEX0:580
     TEXTABLE_1CA = 0x1CA, // TEX0:531
     TEXTABLE_1CB_CMDMENU_Grub_Blue_Half = 0x1CB, // TEX0:581

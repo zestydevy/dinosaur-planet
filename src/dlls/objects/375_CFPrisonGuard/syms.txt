@@ -1,0 +1,14 @@
+.text = 0x0:
+CFPrisonGuard_ctor = 0x0;
+CFPrisonGuard_dtor = 0xC;
+CFPrisonGuard_obj_Setup = 0x18;
+CFPrisonGuard_obj_Control = 0xD0;
+CFPrisonGuard_obj_Update = 0x274;
+CFPrisonGuard_obj_Print = 0x2D0;
+CFPrisonGuard_obj_Free = 0x42C;
+CFPrisonGuard_obj_GetModelFlags = 0x494;
+CFPrisonGuard_obj_GetDataSize = 0x4A4;
+CFPrisonGuard_animCallback = 0x4B8;
+
+.rodata = 0xA80:
+str_0 = 0x0; // absolute:0xA80

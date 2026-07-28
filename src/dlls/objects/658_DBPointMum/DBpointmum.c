@@ -1,17 +1,19 @@
 #include "common.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
+#include "sys/math.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "dlls/engine/53_movelib.h"
 
-typedef s32 (*PointBackBSSUnk0_UnkC)(void*, s32, s32);
+typedef s32 (*PointBackBSSUnk0_UnkC)(void*, AnimObj_Data*, s32);
 
 typedef struct {
     s32 unk0; //flags?
     s16 unk4; //gamebitID
     s16 unk6;
-    s32 unk8;
+    s16 unk8;
     PointBackBSSUnk0_UnkC unkC; //function
 } PointBackBSSUnk0;
 
@@ -20,19 +22,6 @@ typedef struct {
     u8 unk9D;
 } PointBack_funcACC_UnkArg1;
 
-typedef struct {
-    s8 _unk0[0x8E - 0x0];
-    u8 unk8E;
-} PointBack_func1308_arg1; //might be AnimObj_Data?
-
-// same as DLL53Func17F4Arg1?
-typedef struct {
-    s8 _unk0[0x2C - 0x0];
-    s8 unk2C;
-    s8 unk2D;
-} DLL658_func19FC_arg1;
-
-// same as DLL53Func17F4Arg2?
 typedef struct {
     Vec3f unk0;
     Vec3f unkC;
@@ -43,12 +32,6 @@ typedef struct {
 } DLL658_func19FC_arg2;
 
 typedef struct {
-    s8 _unk0[0x13 - 0x0];
-    u8 unk13[0x1B - 0x13];
-    s8 unk1B;
-} PointBack_func2178_arg1;
-
-typedef struct {
     ObjSetup base;
     s16 unk18;
 } PointBack_Setup;
@@ -56,11 +39,16 @@ typedef struct {
 typedef struct {
     MoveLibData unk0;
     HeadAnimation unk4B8;
-    s8 _unk4DC[0x51C - 0x4DC];
+    HeadAnimation unk4DC;
+    UnkFunc_80024108Struct unk500;
     s32 unk51C; //bitfield for creating 4 effects in print function?
     s32 _unk520;
     u8 unk524;
-    s8 _unk525[0x688 - 0x525];
+    s8 _unk525[0x52C - 0x525];
+    Object* unk52C;
+    UnkCurvesStruct unk530;
+    Vec3f unk638[2];
+    DLL658_func19FC_arg2 unk650;
     DLL27_Data unk688;
     s8 _unk8E8[0x920 - 0x8E8];
 } PointBack_Data;
@@ -76,37 +64,18 @@ typedef struct {
     s16 unk2;
 } PointBack_Sound;
 
-typedef struct {
-    PointBack_Sound unk0[3];
-    f32 unkC[18];
-} PointBack_Data10;
-
-/*0x10*/ static PointBack_Data10 _data_10 = {
-    {
+/*0x10*/ static PointBack_Sound _data_10[] = {
         {SOUND_A4E_Dinosaur_Grunt, 0x1000}, 
         {SOUND_A4F_Dinosaur_Grunt, 0x1000}, 
         {SOUND_A50_Dinosaur_Grunt, 0x1000}
-    }, 
-    {
-        0, 
-        0, 
-        -30, 
-        0, 
-        0, 
-        0, 
-        30, 
-        0, 
-        0, 
-        0, 
-        -30, 
-        0, 
-        0, 
-        0, 
-        30, 
-        0, 
-        7.5, 
-        7.5
-    }
+};
+/*0x1C*/ static Vec3f _data_1C[] = {
+    VEC3F(0, 0, -30), 
+    VEC3F(0, 0, 0), 
+    VEC3F(30, 0, 0), 
+    VEC3F(0, -30, 0), 
+    VEC3F(0, 0, 30), 
+    VEC3F(0, 7.5, 7.5)
 };
 
 /*0x64*/ static u32 _data_64[] = {
@@ -134,6 +103,9 @@ typedef struct {
 
 /*0x0*/ static PointBackBSSUnk0* _bss_0;
 
+static s32 dll_658_func_720(Object* self, s32 arg1);
+static s32 dll_658_func_2178(Object* self, UnkFunc_80024108Struct* arg1);
+
 // offset: 0x0 | ctor
 void dll_658_ctor(void *dll) { }
 
@@ -145,13 +117,6 @@ void dll_658_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_setup.s")
 
 // offset: 0x358 | func: 1 | export: 1
-void dll_658_control(Object *self);
-
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_control.s")
-#else
-static void dll_658_func_720(Object* self, s32 arg1);
-
 void dll_658_control(Object* self) {
     PointBack_Data* objData;
 
@@ -162,7 +127,6 @@ void dll_658_control(Object* self) {
     gDLL_27->vtbl->func_5A8(self, &objData->unk688);
     gDLL_27->vtbl->func_624(self, &objData->unk688, gUpdateRateF);
 }
-#endif
 
 // offset: 0x430 | func: 2 | export: 2
 void dll_658_update(Object *self) { }
@@ -212,12 +176,12 @@ u32 dll_658_get_data_size(Object *self, u32 a1) {
 }
 
 // offset: 0x61C | func: 7
-s32 dll_658_func_61C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
+int dll_658_func_61C(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     PointBackBSSUnk0* temp_v1;
     PointBack_Data* objData;
 
     objData = self->data;
-    if (((DLL_Unknown*)gTempDLLInsts[1])->vtbl->func[4].withFiveArgsS32((s32)self, arg2, (s32)objData, 1, 1)) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(self, animData, &objData->unk0, 1, 1)) {
         return 1;
     }
     
@@ -233,14 +197,88 @@ s32 dll_658_func_61C(Object* self, s32 arg1, s32 arg2, s32 arg3) {
     }
     
     if (temp_v1->unkC != NULL) {
-        return temp_v1->unkC(self, arg2, 0);
+        return temp_v1->unkC(self, animData, 0);
     }
 
     return 0;
 }
 
 // offset: 0x720 | func: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_720.s")
+s32 dll_658_func_720(Object* self, s32 arg1) {
+    MoveLibData* moveData;
+    PointBack_Data* objData;
+    PointBackBSSUnk0* var_s0;
+    s32 bitIsSet;
+    
+    objData = self->data;
+    moveData = &objData->unk0;
+    bitIsSet = FALSE;
+    
+    if (moveData->unk499) {
+        return 0;
+    }
+    
+    var_s0 = &_bss_0[objData->unk524];
+    
+    if (var_s0->unk4 != NO_GAMEBIT) {
+        if (mainGetBits(var_s0->unk4)) {
+            bitIsSet = TRUE;
+            objData->unk524++;
+            var_s0 = &_bss_0[objData->unk524];
+        }
+    }
+
+    //fake
+    if (var_s0->unk0) { }
+    
+    if ((var_s0->unkC != NULL) && var_s0->unkC(self, 0, bitIsSet)) {
+        objData->unk524++;
+    }
+    
+    if ((self->unkAF & 1) || (var_s0->unk0 & 2)) {
+        if (var_s0->unk0 & 0x40) {
+            mainSetBits(var_s0->unk4, 1);
+        }
+        
+        if (!(var_s0->unk0 & 2)) {
+            joyDisableButtons(0, 0x8000);
+        }
+        
+        if ((var_s0->unk0 & 0x20) && gDLL_1_cmdmenu->vtbl->was_this_item_used(0x86D)) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(var_s0->unk8, self, -1);
+            mainSetBits(var_s0->unk4, 1);
+            mainSetBits(0x86D, 0);
+        } else if (var_s0->unk6 != -1) {
+            if ((var_s0->unk0 & 1) || (self->unkAF & 1)) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(var_s0->unk6, self, -1);
+            }
+            var_s0->unk6 = -1;
+        } else if ((var_s0->unk8 != -1) && ((var_s0->unk0 & 1) || (self->unkAF & 1))) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(var_s0->unk8, self, -1);
+        }
+    }
+    
+    if (mathRnd(0, 0xC8) == 0) {
+        objExpr_func_80034B54(self, &objData->unk4B8, &_data_10[mathRnd(0, 2)].soundID, 0);
+    }
+    objExpr_func_80034BC0(self, &objData->unk4B8);
+    objExprEyeIdle(self, &objData->unk4DC);
+    
+    objData->unk51C = dll_658_func_2178(self, &objData->unk500);
+    
+    if (var_s0->unk0 & 1) {
+        moveData->unk498 = 7;
+    } else {
+        moveData->unk498 = 7;
+        if (moveData->unk498) {
+            moveData->unk498 = 0;
+        }
+    }
+    
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, moveData);
+    
+    return 0;
+}
 
 // offset: 0xACC | func: 9
 s32 dll_658_func_ACC(Object* self, PointBack_funcACC_UnkArg1* arg1, s32 arg2) {
@@ -300,15 +338,78 @@ s32 dll_658_func_F30(Object* self, s32 arg1, s32 arg2) {
 }
 
 // offset: 0x1064 | func: 12
+#if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_1064.s")
+#else
+
+static CurveSetup* dll_658_func_153C(Object* self, s32 arg1, Vec3f* arg2, s32 arg3);
+static s32 dll_658_func_1618(Object* self, UnkCurvesStruct* arg1, CurveSetup* arg2, f32 arg3, u8 arg4, f32* arg5, f32* animSpeed);
+static s32 dll_658_func_19FC(Object* self, CurveSetup* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4);
+
+s32 dll_658_func_1064(Object* self, s32 arg1, s32 arg2) {
+    f32 animSpeed; //44
+    f32 distance; //40
+    Vec3f* sp30; //30
+    PointBack_Data* objData;
+
+    animSpeed = 0.0f;
+    distance = 17000.0f;
+    objData = self->data;
+    
+    if (arg1 != 0) {
+        return 0;
+    } 
+    
+    if (arg2 != 0) {
+        objAnimSet(self, 0xD, 0.0f, 0);
+        return 0;
+    } 
+    
+    self->velocity.x = 0.0f;
+    self->velocity.y = 0.0f;
+    self->velocity.z = 0.0f;
+    animSpeed = 0.004f;
+
+    switch (self->curModAnimId) {
+    case 1:
+        if (dll_658_func_1618(self, &objData->unk530, (void*)objData->unk638, 0.3f, 0, &objData->unk650.unk24.z, &animSpeed) != 0) {
+            mainSetBits(BIT_41F, 1);
+            objAnimSet(self, 3, 0.0f, 0);
+        }
+        break;
+    case 3:
+        if (mathRnd(0, 0x64) == 0) {
+            objAnimSet(self, 1, 0.0f, 0);
+        }
+        animSpeed = 0.004f;
+        break;
+    default:
+        objData->unk52C = objFindClosestObject(self, 0x339, &distance);
+        if (objData->unk52C != NULL) {
+            sp30 = objData->unk638;
+            bcopy(&self->srt.transl, sp30, sizeof(Vec3f));
+            dll_658_func_19FC(self, dll_658_func_153C(self, 0, &sp30[1], 1), &sp30[0], &sp30[4], 0.5f);
+            animSpeed = 0.004f;
+            self->unkDC = 0;
+            objAnimSet(self, 1, 0.0f, 0);
+        }
+        break;
+    }
+
+    objAnimAdvance(self, animSpeed, gUpdateRate, &objData->unk500);
+    objMove(self, self->velocity.x, self->velocity.f[1], self->velocity.f[2]);
+    
+    return 0;
+}
+#endif
 
 // offset: 0x1308 | func: 13
-s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
+s32 dll_658_func_1308(Object* self, AnimObj_Data* animData, s32 arg2) {
     PointBack_Setup* objSetup;
     PointBack_Data* objData;
 
-    if (arg1 != NULL) {
-        if (arg1->unk8E == 1) {
+    if (animData != NULL) {
+        if (animData->messages[0] == 1) {
             joyGetPressed(0); //@bug: called without being used/stored
             
             if (joyGetPressed(0) & B_BUTTON) {
@@ -317,7 +418,7 @@ s32 dll_658_func_1308(Object* self, PointBack_func1308_arg1* arg1, s32 arg2) {
                 return 1;
             }
         }
-        arg1->unk8E = 0;
+        animData->messages[0] = 0;
         
     } else if (mainGetBits(BIT_42A)) {
         mainSetBits(BIT_41F, 0);
@@ -410,8 +511,8 @@ s32 dll_658_func_1944(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
 }
 
 // offset: 0x19FC | func: 18
-s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4) {
-    f32 spline[4];
+s32 dll_658_func_19FC(Object* self, CurveSetup* arg1, DLL658_func19FC_arg2* arg2, f32* arg3, f32 arg4) {
+    Vec4f spline;
     s16 rot[3];
     s32 returnVal;
 
@@ -440,23 +541,23 @@ s32 dll_658_func_19FC(Object* self, DLL658_func19FC_arg1* arg1, DLL658_func19FC_
         }
     }
     
-    spline[0] = arg2->unk0.x;
-    spline[1] = arg2->unkC.x;
-    spline[2] = arg2->unk18.x;
-    spline[3] = arg2->unk24.x;
-    self->srt.transl.x = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.x;
+    spline.f[1] = arg2->unkC.x;
+    spline.f[2] = arg2->unk18.x;
+    spline.f[3] = arg2->unk24.x;
+    self->srt.transl.x = curvesHermite(spline.f, *arg3, 0);
     
-    spline[0] = arg2->unk0.y;
-    spline[1] = arg2->unkC.y;
-    spline[2] = arg2->unk18.y;
-    spline[3] = arg2->unk24.y;
-    self->srt.transl.y = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.y;
+    spline.f[1] = arg2->unkC.y;
+    spline.f[2] = arg2->unk18.y;
+    spline.f[3] = arg2->unk24.y;
+    self->srt.transl.y = curvesHermite(spline.f, *arg3, 0);
     
-    spline[0] = arg2->unk0.z;
-    spline[1] = arg2->unkC.z;
-    spline[2] = arg2->unk18.z;
-    spline[3] = arg2->unk24.z;
-    self->srt.transl.z = curvesHermite(spline, *arg3, 0);
+    spline.f[0] = arg2->unk0.z;
+    spline.f[1] = arg2->unkC.z;
+    spline.f[2] = arg2->unk18.z;
+    spline.f[3] = arg2->unk24.z;
+    self->srt.transl.z = curvesHermite(spline.f, *arg3, 0);
     
     return returnVal;
 }
@@ -527,14 +628,14 @@ f32 dll_658_func_1C24(DLL658_func19FC_arg2* arg0, Vec3f* arg1, Vec3f* arg2, Vec3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/658_DBPointMum/dll_658_func_1E14.s")
 
 // offset: 0x2178 | func: 21
-s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
+s32 dll_658_func_2178(Object* self, UnkFunc_80024108Struct* arg1) {
     PointBack_Data* objData;
-    u8 outValue;
+    u8 flags;
     s32 i;
 
     objData = self->data;
 
-    for (outValue = 0, i = 0; i < arg1->unk1B; i++){
+    for (flags = 0, i = 0; i < arg1->unk1B; i++){
         switch (arg1->unk13[i]) {
         case 0:
             dll_amSfx->Play(self, SOUND_A50_Dinosaur_Grunt, MAX_VOLUME, 0, 0, 0, 0);
@@ -548,49 +649,49 @@ s32 dll_658_func_2178(Object* self, PointBack_func2178_arg1* arg1) {
         case 10:
             objExpr_func_80034B54(self, 
                 &objData->unk4B8, 
-                &_data_10.unk0[mathRnd(0, 2)].soundID, 
+                &_data_10[mathRnd(0, 2)].soundID, 
                 0);
             continue;
         case 1:
-            outValue |= 1;
+            flags |= 1;
             continue;
         case 2:
-            outValue |= 2;
+            flags |= 2;
             continue;
         case 3:
-            outValue |= 4;
+            flags |= 4;
             continue;
         case 4:
-            outValue |= 8;
+            flags |= 8;
             continue;
         }
     }
     
-    if (outValue) {
+    if (flags) {
         dll_amSfx->Play(self, SOUND_A73, MAX_VOLUME, 0, 0, 0, 0);
     }
     
-    return outValue;
+    return flags;
 }
 
 // offset: 0x23CC | func: 22
 void dll_658_func_23CC(Object* self, s16 seqBoneID, s16 arg2, s16 arg3) {
-    s16 *seqBone;
+    SeqJoint* seqJoint;
     
-    seqBone = objExpr_func_80034804(self, seqBoneID);
+    seqJoint = objExpr_func_80034804(self, seqBoneID);
     
-    if (!seqBone){
+    if (!seqJoint){
         return;
     }
     
-    seqBone[1] += (arg2 - seqBone[1]) >> 1;
-    seqBone[0] += (arg3 - seqBone[0]) >> 1;
+    seqJoint->yaw += (arg2 - seqJoint->yaw) >> 1;
+    seqJoint->pitch += (arg3 - seqJoint->pitch) >> 1;
 
-    //@bug? Should one of these lines be affecting seqBone[0] instead? 
-    seqBone[1] = (seqBone[1] < -0x1555) ? -0x1555 : ((seqBone[1] > 0x1555) ? 0x1555 : seqBone[1]);
-    seqBone[1] = (seqBone[1] < -0x1555) ? -0x1555 : ((seqBone[1] > 0x1555) ? 0x1555 : seqBone[1]);
+    //@bug? Should one of these lines be affecting seqJoint->pitch instead? 
+    seqJoint->yaw = (seqJoint->yaw < -0x1555) ? -0x1555 : ((seqJoint->yaw > 0x1555) ? 0x1555 : seqJoint->yaw);
+    seqJoint->yaw = (seqJoint->yaw < -0x1555) ? -0x1555 : ((seqJoint->yaw > 0x1555) ? 0x1555 : seqJoint->yaw);
 
-    if (arg2 ){ }
+    if (arg2) { }
 }
 
 /*0x0*/ static const char str_0[] = " ACt Number %i ";

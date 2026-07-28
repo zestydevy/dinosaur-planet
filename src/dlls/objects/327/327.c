@@ -16,13 +16,13 @@ typedef struct {
 } DLL327_Setup;
 
 // offset: 0x0 | ctor
-void dll_327_ctor(void *dll) { }
+void DLL327_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_327_dtor(void *dll) { }
+void DLL327_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
+void DLL327_obj_Setup(Object* self, DLL327_Setup* objSetup, s32 reset) {
     f32 factor;
     
     self->srt.flags |= OBJFLAG_UNK_2;
@@ -61,7 +61,7 @@ void dll_327_setup(Object* self, DLL327_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x170 | func: 1 | export: 1
-void dll_327_control(Object* self) {
+void DLL327_obj_Control(Object* self) {
     DLL327_Setup *objSetup;
     f32 animSpeed;
     f32 animSpeedTemp;
@@ -85,24 +85,24 @@ void dll_327_control(Object* self) {
 }
 
 // offset: 0x230 | func: 2 | export: 2
-void dll_327_update(Object *self) { }
+void DLL327_obj_Update(Object *self) { }
 
 // offset: 0x23C | func: 3 | export: 3
-void dll_327_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DLL327_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x290 | func: 4 | export: 4
-void dll_327_free(Object *self, s32 a1) { }
+void DLL327_obj_Free(Object *self, s32 onlySelf) { }
 
 // offset: 0x2A0 | func: 5 | export: 5
-u32 dll_327_get_model_flags(Object *self) {
+u32 DLL327_obj_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x2B0 | func: 6 | export: 6
-u32 dll_327_get_data_size(Object *self, u32 a1){
+u32 DLL327_obj_GetDataSize(Object *self, u32 offsetAddress){
     return 0;
 }

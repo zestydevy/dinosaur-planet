@@ -189,5 +189,5 @@ Object* KyteFireFlys_create_firefly(Object* self, s32 variance, s32 quarterVaria
     setup->fxRange = variance;
     setup->varianceZ = quarterVariance;
     setup->varianceY = quarterVariance;
-    return objSetupObject(&setup->base, (4 | 1), -1, -1, NULL);
+    return objSetupObject(&setup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), -1, -1, NULL);
 }

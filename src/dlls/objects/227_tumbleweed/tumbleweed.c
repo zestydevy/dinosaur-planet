@@ -834,5 +834,5 @@ void Tumbleweed_create_twigs(Object* self) {
     setup->yaw = self->srt.yaw;
     setup->carryingGold = 0;
     setup->interactRadius = 64.0f;
-    objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
+    objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

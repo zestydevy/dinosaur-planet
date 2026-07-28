@@ -1,10 +1,7 @@
 #include "common.h"
+#include "dlls/objects/258_Caictua_Thorn.h"
 #include "game/objects/object.h"
 #include "sys/math.h"
-
-typedef struct {
-    ObjSetup base;
-} Caictua_Thorn_Setup;
 
 // offset: 0x0 | ctor
 void Caictua_Thorn_ctor(void* dll) { }

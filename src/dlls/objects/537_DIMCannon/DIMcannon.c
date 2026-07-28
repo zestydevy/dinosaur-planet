@@ -1,104 +1,102 @@
+#include "PR/ultratypes.h"
 #include "common.h"
+#include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/210_player.h"
+#include "dlls/objects/537_DIMcannon.h"
+#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
+#include "sys/objexpr.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/541_DIMexplosion.h"
 
-/*0x0*/ static DLL_IModgfx* _data_0 = NULL;
+/*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 
+/* ObjData for DIMCannon */
+typedef struct {
+    Object* targetObj;
+    Vec3f targetCoords;
+    f32 targetDistSq;
+    Vec3f muzzleCoords;
+    s16 fireCooldown;
+    s16 enemyAimCooldown;
+    u8 state;
+    u8 fire;
+    u8 distracted;
+    s8 interactLockTimer;
+} DIMCannon_Data;
+
+typedef enum {
+    DIMCannon_STATE_1_Controlled_by_CannonClaw_Aim_Hostile = 1, //CannonClaw aims and fires - sets silo-hiding gamebit when a target approaches
+    DIMCannon_STATE_2_Controlled_by_CannonClaw_Idle,            //Unused state! No aiming - just sets silo-hiding gamebit when a target approaches
+    DIMCannon_STATE_3_Controlled_by_Player,                     //The player has mounted the cannon turret
+    DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile,  //CannonClaw aims but doesn't fire - DOESN'T retreat into silo when a target approaches
+    DIMCannon_STATE_5_Idle,                                     //No CannonClaw, player can interact and mount the cannon turret
+    DIMCannon_STATE_6_Retreated_into_Silo                       //Sets a silo-exiting gamebit when the target backs off
+} DIMCannon_States;
+
+/* ObjSetup for DIMCannonBall */
 typedef struct {
     ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-    s16 unk24;
-    s16 unk26;
-    s8 unk28;
-    u8 unk29;
-    u8 unk2A;
-    u8 unk2B;
-} DLL537_Setup; //used by DIMCannon
-
-typedef struct {
-    Object* unk0;
-    Vec3f unk4;
-    f32 unk10;
-    Vec3f unk14;
-    s16 unk20;
-    s16 unk22;
-    u8 unk24;
-    u8 unk25;
-    u8 unk26;
-    s8 unk27;
-} DLL537_Data;
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
+    s8 yaw;
     s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
+    s16 velocityY;
+    s16 velocityX;
     s16 unk1E;
     s16 unk20;
     s16 unk22;
 } DIMCannonBall_Setup;
 
+/* ObjData for DIMCannonBall */
 typedef struct {
-    s8 unk0;
+    u8 createModGfx;
 } DIMCannonBall_Data;
 
-typedef struct {
-    u8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    u8 unk4;
-    u8 unk5;
-    u8 unk6;
-    u8 unk7;
-} Unk_Data;
-
-static int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
-static void dll_537_func_1150(Object* self);
-static void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup);
-static void dll_537_func_1640(Object* self);
-static void dll_537_func_16AC(Object* self);
+static int DIMCannon_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void DIMCannon_aimCannonClaw(Object* self, f32 x, f32 y, f32 z, f32 targetDist);
+static void DIMCannon_fireWhenReady(Object* self);
+static void DIMCannon_setupCannonBall(Object* self, DIMCannonBall_Setup* objSetup);
+static void DIMCannon_tickCannonBall(Object* self);
+static void DIMCannon_freeCannonBall(Object* self);
+static Object* DIMCannon_createCannonBallExplosion(Object* self);
 
 // offset: 0x0 | ctor
-void dll_537_ctor(void *dll) { }
+void DIMCannon_ctor(void *dll) { }
 
 // offset: 0xC | dtor
-void dll_537_dtor(void *dll) { }
+void DIMCannon_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
-    DLL537_Data* objData;
+void DIMCannon_obj_Setup(Object* self, DIMCannon_Setup* objSetup, s32 reset) {
+    DIMCannon_Data* objData;
 
     objInitMesgQueue(self, 4);
 
     if (self->id == OBJ_DIMCannonBall) {
-        dll_537_func_1314(self, (DIMCannonBall_Setup*)objSetup);
+        //Cannonball
+        DIMCannon_setupCannonBall(self, (DIMCannonBall_Setup*)objSetup);
     } else {
+        //Cannon
+
         objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
         objData = self->data;
-        self->unkAF |= 8;
-        self->animCallback = dll_537_func_A94;
-        self->srt.yaw = objSetup->unk28 << 8;
-        _data_0 = dllLoad(DLL_ID_137, 1);
+
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        self->animCallback = DIMCannon_animCallback;
+        self->srt.yaw = objSetup->yaw << 8;
+
+        dModGfxDLL = dllLoad(DLL_ID_137, 1);
         
-        if (mainGetBits(objSetup->unk1A)) {
-            objData->unk27 = 60;
-            objData->unk24 = 5;
-        } else if (mainGetBits(objSetup->unk1C)) {
-            objData->unk24 = 4;
+        if (mainGetBits(objSetup->gamebitCannonClawDead)) {
+            objData->interactLockTimer = 60;
+            objData->state = DIMCannon_STATE_5_Idle;
+        } else if (mainGetBits(objSetup->gamebitCannonClawAboard)) {
+            objData->state = DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile;
         }
     }
 
@@ -107,204 +105,227 @@ void dll_537_setup(Object* self, DLL537_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x178 | func: 1 | export: 1
-void dll_537_control(Object *self);
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/537_DIMCannon/dll_537_control.s")
-#else
+void DIMCannon_obj_Control(Object* self) {
+    DIMCannon_Data* objData;
+    DIMCannon_Setup* objSetup;
+    Object* player;
+    Object* sidekick;
+    f32 animSpeed;
+    u32 distracted;
+    Object* cannonPtr;
 
-static void dll_537_func_1430(Object* self);
-static void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4);
-
-void dll_537_control(Object* self) {
-    DLL537_Data* objData;
-    DLL537_Setup* objSetup; //50
-    Object* player; //4C
-    Object* sidekick; //48
-    f32 var_fv0;
-    u8 temp_v0;
-    Object* sp3C; //3C
-    u32 var_v0;
-
-    objSetup = (DLL537_Setup*)self->setup;
+    objSetup = (DIMCannon_Setup*)self->setup;
     sidekick = objGetSidekick();
     
     if (self->id == OBJ_DIMCannonBall) {
-        dll_537_func_1430(self);
+        DIMCannon_tickCannonBall(self);
         return;
     }
     
     if (self->unkAF & ARROW_FLAG_8_No_Targetting) {
-        if (mainGetBits(objSetup->unk1A)) {
+        if (mainGetBits(objSetup->gamebitCannonClawDead)) {
             self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
         }
     }
     
-    var_v0 = 0;
     objData = self->data;
-    if (sidekick != NULL) {
 
-        objData->unk26 = ((DLL_Unknown*)sidekick->dll)->vtbl->func[24].withOneArgS32(sidekick);
-        if (objData->unk24 != 6) {
-            ((DLL_Unknown*)sidekick->dll)->vtbl->func[14].withTwoArgs(sidekick, 2);
+    distracted = FALSE;
+    if (sidekick != NULL) {
+        objData->distracted = ((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick);
+        if (objData->state != DIMCannon_STATE_6_Retreated_into_Silo) {
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
         } else {
-            var_v0 = objData->unk26;
-            if (var_v0 != 0) {
-                ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
-                var_v0 = objData->unk26 = 0;
+            distracted = objData->distracted;
+            if (distracted) {
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
+                distracted = objData->distracted = FALSE;
             }
         }
     } else {
-        objData->unk26 = var_v0;
+        objData->distracted = distracted;
     }
     
-    if ((var_v0 = objData->unk26)) {
-        objData->unk0 = sidekick;
+    //Choose the CannonClaw's target (pick the sidekick when distracted, or else the player - if they're not on a vehicle)
+    if ((distracted = objData->distracted)) {
+        objData->targetObj = sidekick;
     } else {
         player = objGetPlayer();
-        if (((DLL_Unknown*)player->dll)->vtbl->func[7].withOneArgS32(player)) {
-            objData->unk0 = NULL;
+        if (((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
+            objData->targetObj = NULL;
         } else {
-            objData->unk0 = player;
+            objData->targetObj = player;
         }
     }
     
+    //Return to idle animation when recoil animation ends
     if ((self->curModAnimId == 1) && (self->animProgress >= 1.0f)) {
         objAnimSet(self, 0, 0, 0);
     }
     
     self->srt.flags &= ~OBJFLAG_INVISIBLE;
     
-    switch (objData->unk24) {
-    case 5:
-        if (objData->unk27 > 0) {
-            objData->unk27 -= gUpdateRate;
-        } else if (self->unkAF & 1) {
-            sp3C = self;
-            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, TRUE, 0, sizeof(&sp3C), &sp3C, 0x32, Cam_Ease_All);
-            objData->unk24 = 3;
+    switch (objData->state) {
+    case DIMCannon_STATE_5_Idle:
+        //No gunner, player can mount cannon
+
+        if (objData->interactLockTimer > 0) {
+            objData->interactLockTimer -= gUpdateRate;
+        } else if (self->unkAF & ARROW_FLAG_1_Interacted) {
+            cannonPtr = self;
+            gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMCANNON, TRUE, 0, sizeof(&cannonPtr), &cannonPtr, 50, Cam_Ease_All);
+            objData->state = DIMCannon_STATE_3_Controlled_by_Player;
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
-            objData->unk27 = 0x3C;
-            self->unkAF |= 8;
+            objData->interactLockTimer = 60;
+            self->unkAF |= ARROW_FLAG_8_No_Targetting;
+
+            //@bug: doesn't block A_BUTTON, so the player attacks while mounting the cannon
         }
-        objData->unk25 = 0;
-        objData->unk20 = 0;
-        objData->unk22 = 0;
+
+        objData->fire = FALSE;
+        objData->fireCooldown = 0;
+        objData->enemyAimCooldown = 0;
         break;
-    case 4:
-        dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
-        if (mainGetBits(objSetup->unk1A)) {
-            objData->unk24 = 5;
-        } else if ((objData->unk0 != NULL) && (mainGetBits(objSetup->unk1E) == 0) && (vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition) < (((f32) objSetup->unk26 * 250000.0f) / 100.0f))) {
-            objData->unk24 = 1;
+    case DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile:
+        //CannonClaw aims, but doesn't fire
+
+        DIMCannon_aimCannonClaw(self, objData->targetCoords.x, objData->targetCoords.y, objData->targetCoords.z, objData->targetDistSq);
+        
+        if (mainGetBits(objSetup->gamebitCannonClawDead)) {
+            //Check if the CannonClaw died
+            objData->state = DIMCannon_STATE_5_Idle;
+        } else if (objData->targetObj && 
+            (mainGetBits(objSetup->gamebitCannonClawTruce) == FALSE) && 
+            (vec3DistanceXZSquared(&self->globalPosition, &objData->targetObj->globalPosition) < (objSetup->hostileRange * SQ(500.0f) / SQ(10)))
+        ) {
+            //Become hostile if the target comes into range and the truce gamebit isn't set
+            objData->state = DIMCannon_STATE_1_Controlled_by_CannonClaw_Aim_Hostile;
         }
-        objData->unk25 = 0;
-        objData->unk20 = 0;
-        objData->unk22 = 0;
+
+        objData->fire = FALSE;
+        objData->fireCooldown = 0;
+        objData->enemyAimCooldown = 0;
         break;
-    case 1:
-        if (mainGetBits(objSetup->unk1A)) {
-            objData->unk24 = 5;
-        } else if (mainGetBits(objSetup->unk1E)) {
-            objData->unk24 = 4;
-        } else {
-            if (objData->unk0 != NULL) {
-                objData->unk4.x = objData->unk0->srt.transl.x;
-                objData->unk4.y = objData->unk0->srt.transl.y;
-                objData->unk4.z = objData->unk0->srt.transl.z;
-                
-                if (objData->unk20 > 0) {
-                    objData->unk20 -= gUpdateRate;
+    case DIMCannon_STATE_1_Controlled_by_CannonClaw_Aim_Hostile:
+        if (mainGetBits(objSetup->gamebitCannonClawDead)) {
+            objData->state = DIMCannon_STATE_5_Idle;
+        } else if (mainGetBits(objSetup->gamebitCannonClawTruce)) {
+            objData->state = DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile;
+        } else if (objData->targetObj != NULL) {
+            objData->targetCoords.x = objData->targetObj->srt.transl.x;
+            objData->targetCoords.y = objData->targetObj->srt.transl.y;
+            objData->targetCoords.z = objData->targetObj->srt.transl.z;
+            
+            if (objData->fireCooldown > 0) {
+                objData->fireCooldown -= gUpdateRate;
+            }
+            
+            if (objData->enemyAimCooldown > 0) {
+                objData->enemyAimCooldown -= gUpdateRate;
+            }
+            
+            objData->targetDistSq = vec3DistanceXZSquared(&self->globalPosition, &objData->targetObj->globalPosition);
+            
+            if ((objData->targetDistSq < SQ(objSetup->rangeSiloRetreat)) && (objData->distracted == FALSE)) {
+                //If the target comes close while the CannonClaw isn't distracted, set a gamebit so the cannon can retreat into its silo
+                sidekick = objGetSidekick();
+                if (sidekick != NULL) {
+                    ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
                 }
-                
-                if (objData->unk22 > 0) {
-                    objData->unk22 -= gUpdateRate;
-                }
-                
-                objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
-                if ((objData->unk10 < (f32) SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
-                    sidekick = objGetSidekick();
-                    if (sidekick != NULL) {
-                        ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
-                    }
-                    mainSetBits(objSetup->unk20, 1);
-                    objData->unk24 = 6;
-                } else {
-                    dll_537_func_DAC(self, objData->unk4.x, objData->unk4.y, objData->unk4.z, objData->unk10);
-                    dll_537_func_1150(self);
-                    if (((objSetup->unk26 * 260100.0f) / 100.0f) < objData->unk10) {
-                        objData->unk24 = 4;
-                    }
-                }
+
+                mainSetBits(objSetup->gamebitSiloEnter, TRUE);
+                objData->state = DIMCannon_STATE_6_Retreated_into_Silo;
             } else {
-                objData->unk24 = 4;
+                DIMCannon_aimCannonClaw(self, objData->targetCoords.x, objData->targetCoords.y, objData->targetCoords.z, objData->targetDistSq);
+                DIMCannon_fireWhenReady(self);
+
+                //Become nonhostile when the target's out of firing range
+                if (objData->targetDistSq > ((objSetup->hostileRange * SQ(510.0f)) / SQ(10))) {
+                    objData->state = DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile;
+                }
+            }
+        } else {
+            objData->state = DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile;
+        }
+
+        break;
+    case DIMCannon_STATE_6_Retreated_into_Silo:
+        if (objData->targetObj) {
+            objData->targetCoords.x = objData->targetObj->srt.transl.x;
+            objData->targetCoords.y = objData->targetObj->srt.transl.y;
+            objData->targetCoords.z = objData->targetObj->srt.transl.z;
+            objData->targetDistSq = vec3DistanceXZSquared(&self->globalPosition, &objData->targetObj->globalPosition);
+            
+            if (objData->targetDistSq > ((objSetup->hostileRange * SQ(300.0f)) / SQ(10))) {
+                mainSetBits(objSetup->gamebitSiloExit, TRUE);
+                objData->state = DIMCannon_STATE_1_Controlled_by_CannonClaw_Aim_Hostile;
             }
         }
         break;
-    case 6:
-        if (objData->unk0 != NULL) {
-            objData->unk4.x = objData->unk0->srt.transl.x;
-            objData->unk4.y = objData->unk0->srt.transl.y;
-            objData->unk4.z = objData->unk0->srt.transl.z;
-            objData->unk10 = vec3DistanceXZSquared(&self->globalPosition, &objData->unk0->globalPosition);
-            if (((objSetup->unk26 * 90000.0f) / 100.0f) < objData->unk10) {
-                mainSetBits(objSetup->unk22, 1);
-                objData->unk24 = 1;
-            }
-        }
-        break;
-    case 2:
-        if ((objData->unk10 < SQ(objSetup->unk2B)) && (objData->unk26 == 0)) {
+    case DIMCannon_STATE_2_Controlled_by_CannonClaw_Idle:
+        if ((objData->targetDistSq < SQ(objSetup->rangeSiloRetreat)) && (objData->distracted == FALSE)) {
             sidekick = objGetSidekick();
             if (sidekick != NULL) {
-                ((DLL_Unknown*)sidekick->dll)->vtbl->func[21].withThreeArgs(sidekick, 0, 0);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
             }
-            mainSetBits(objSetup->unk20, 1);
-            objData->unk24 = 6;
+
+            mainSetBits(objSetup->gamebitSiloEnter, TRUE);
+            objData->state = DIMCannon_STATE_6_Retreated_into_Silo;
         }
         break;
     }
 
-    if ((self->curModAnimId == 0) || (self->curModAnimId != 1)) {
-        var_fv0 = 0.01f;
-    } else {
-        var_fv0 = 0.025f;
+    //Handle animation
+    {
+        //Use a faster animSpeed during the recoil animation
+        if ((self->curModAnimId == 0) || (self->curModAnimId != 1)) {
+            animSpeed = 0.01f;
+        } else {
+            animSpeed = 0.025f;
+        }
+        objAnimAdvance(self, animSpeed, gUpdateRateF, 0);
     }
-    objAnimAdvance(self, var_fv0, gUpdateRateF, 0);
 }
 
-#endif
-
 // offset: 0x8F0 | func: 2 | export: 2
-void dll_537_update(Object *self) { }
+void DIMCannon_obj_Update(Object *self) { }
 
 // offset: 0x8FC | func: 3 | export: 3
-void dll_537_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DLL537_Data* objData;
+void DIMCannon_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    DIMCannon_Data* objData;
 
     if (self->id != OBJ_DIMCannonBall) {
+        //Cannon
         objData = self->data;
         if (visibility) {
             objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-            objGetAttachPointWorldSpace(self, 1, &objData->unk14.x, &objData->unk14.y, &objData->unk14.z, 0);
+
+            //Store muzzle coords (as a reference point for firing)
+            objGetAttachPointWorldSpace(self, 1, &objData->muzzleCoords.x, &objData->muzzleCoords.y, &objData->muzzleCoords.z, 0);
         }
-    } else if (visibility) {
-        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+    } else {
+        //Cannonball
+        if (visibility) {
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+        }
     }
 }
 
 // offset: 0x9BC | func: 4 | export: 4
-void dll_537_free(Object* self, s32 arg1) {
+void DIMCannon_obj_Free(Object* self, s32 onlySelf) {
     if (self->id == OBJ_DIMCannonBall) {
-        dll_537_func_1640(self);
+        //Cannonball
+        DIMCannon_freeCannonBall(self);
     } else {
-        dllFree(_data_0);
+        //Cannon
+        dllFree(dModGfxDLL);
     }
     
     objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
 // offset: 0xA48 | func: 5 | export: 5
-u32 dll_537_get_model_flags(Object* self) {
+u32 DIMCannon_obj_GetModelFlags(Object* self) {
     if (self->id == OBJ_DIMCannonBall) {
         return MODFLAGS_NONE;
     } else {
@@ -313,19 +334,18 @@ u32 dll_537_get_model_flags(Object* self) {
 }
 
 // offset: 0xA6C | func: 6 | export: 6
-s32 dll_537_get_data_size(Object* self, s32 arg1) {
+s32 DIMCannon_obj_GetDataSize(Object* self, s32 offsetAddr) {
     if (self->id == OBJ_DIMCannonBall) {
-        // return sizeof(DIMCannonBall_Data);
-        return 1; //TODO: figure out why the size is 1 here, but dll_537_func_16AC needs a longer struct
+        return sizeof(DIMCannonBall_Data);
     } else {
-        return sizeof(DLL537_Data);
+        return sizeof(DIMCannon_Data);
     }
 }
 
 // offset: 0xA94 | func: 7
-int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
-    DLL537_Data* objData;
-    DLL537_Setup* objSetup;
+int DIMCannon_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    DIMCannon_Data* objData;
+    DIMCannon_Setup* objSetup;
     s32 pad;
 
     animData->unk62 = 0;
@@ -333,31 +353,33 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
     
     objData = self->data;
 
-    pad = objData->unk24 & 0xFF;
-    switch (pad) {
-    case 3:
-        if (objData->unk27 > 0) {
-            objData->unk27 -= gUpdateRate;
+    switch (objData->state) {
+    case DIMCannon_STATE_3_Controlled_by_Player:
+        if (objData->interactLockTimer > 0) {
+            objData->interactLockTimer -= gUpdateRate;
         } else {      
-            s16* jointAngle;
+            SeqJoint* barrelJoint;
             s32 angle;
             
-            jointAngle = objExpr_func_80034804(self, 0);
-            angle = -*jointAngle;
-            self->srt.yaw -= joyGetStickX(0) * 4;
+            barrelJoint = objExpr_func_80034804(self, 0);
+            angle = -barrelJoint->pitch;
+            self->srt.yaw -= joyGetStickX(0) * 4; //@framerate-dependent
 
-            if (objData->unk20 > 0) {
-                objData->unk20 -= gUpdateRate;
+            //Decrement the fire cooldown timer
+            if (objData->fireCooldown > 0) {
+                objData->fireCooldown -= gUpdateRate;
             }
     
-            if (objData->unk22 > 0) {
-                objData->unk22 -= gUpdateRate;
+            //Decrement the enemy's aim cooldown timer (doesn't affect player aiming)
+            if (objData->enemyAimCooldown > 0) {
+                objData->enemyAimCooldown -= gUpdateRate;
             }
             
-            if ((joyGetButtons(0) & A_BUTTON) && (objData->unk20 <= 0)) {
-                angle += 800;
+            //Raise the cannon barrel while holding A
+            if ((joyGetButtons(0) & A_BUTTON) && (objData->fireCooldown <= 0)) {
+                angle += 800; //@framerate-dependent
             } else {
-                angle -= 1200;
+                angle -= 1200; //@framerate-dependent
             }
             
             if (angle > M_45_DEGREES) {
@@ -367,35 +389,38 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
                 angle = 0;
             }
             
-            if ((joyGetReleased(0) & A_BUTTON) && (objData->unk20 <= 0)) {
-                objData->unk25 = 1;
+            //Fire when letting go of A
+            if ((joyGetReleased(0) & A_BUTTON) && (objData->fireCooldown <= 0)) {
+                objData->fire = TRUE;
             }
-            dll_537_func_1150(self);
+            DIMCannon_fireWhenReady(self);
             
+            //Exit the cannon when pressing Z
             if (joyGetPressed(0) & Z_TRIG) {
                 gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 0, Cam_Ease_All);
-                objData->unk24 = 5;
-                objData->unk27 = 60;
+                objData->state = DIMCannon_STATE_5_Idle;
+                objData->interactLockTimer = 60;
                 animData->unk9D |= 4;
                 self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
             }
             
+            //Ease the barrel towards its goal pitch
             angle = -angle;
-            angle -= (u16)(*jointAngle);
+            angle -= (u16)(barrelJoint->pitch);
             CIRCLE_WRAP(angle);            
-            *jointAngle += angle >> 2;
+            barrelJoint->pitch += angle >> 2;
         }
         break;
     default:
         self->srt.flags &= ~OBJFLAG_INVISIBLE;
         if (animData->lastMessage == 1) {
-            objSetup = (DLL537_Setup*)self->setup;
-            mainSetBits(objSetup->unk18, 1);
+            objSetup = (DIMCannon_Setup*)self->setup;
+            mainSetBits(objSetup->gamebitSiloCoverOpen, TRUE);
         }
         
         animData->lastMessage = 0;
-        if (objData->unk24 != 6) {
-            objData->unk24 = 4;
+        if (objData->state != DIMCannon_STATE_6_Retreated_into_Silo) {
+            objData->state = DIMCannon_STATE_4_Controlled_by_CannonClaw_Aim_Nonhostile;
         }
         break;
     } 
@@ -404,178 +429,191 @@ int dll_537_func_A94(Object* self, Object* overrideObj, AnimObj_Data* animData, 
 }
 
 // offset: 0xDAC | func: 8
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/537_DIMCannon/dll_537_func_DAC.s")
-#else
-void dll_537_func_DAC(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4) {
-    s32 pad2;
-    f32 temp_fv1;
-    f32 var_fs1;
-    s32 var_s1;
-    // f32 pad;
-    s32 var_s2;
-    f32 temp_fv0_2; //temp_fv0_2
-    f32 temp_fs0; //sp 80
-    s16* sp78; //78
+void DIMCannon_aimCannonClaw(Object* self, f32 x, f32 y, f32 z, f32 targetDist) {
+    s32 pad[5];
+    s32 dPitchAngle;
+    s32 aimFinished;
+    SeqJoint* barrelJoint;
     s32 dYaw;
-    f32 sp70; //70
-    s32 var_s3;
-    f32 temp_fa0;
-    f32 temp_fs1;
-    f32 temp_fs2;
-    s32 pad = 0;
-    DLL537_Data* objData; //58
-
+    f32 aimVectorY;
+    f32 targetDiffY;
+    s32 aimShift;
+    f32 aimVectorX;
+    f32 sqAimVectorY;
+    f32 distance;
+    DIMCannon_Data* objData;
     
     objData = self->data;
-    if (objData->unk22 > 0) {
+
+    //Don't adjust aim if the CannonClaw fired recently
+    if (objData->enemyAimCooldown > 0) {
         return;
     }
 
-    sp78 = objExpr_func_80034804(self, 0);
-    
-    temp_fs2 = 2500.0f;
-    arg4 = sqrtf(arg4);
-    temp_fs1 = arg4 * 2.2f;
-
-    temp_fs0 = (temp_fs2 = SQ(temp_fs2) - SQ(temp_fs1));
-    
-    var_s2 = 0;
-    if (temp_fs2 >= 0) {
-        var_s1 = mathAtan2f(temp_fs1, sqrtf(temp_fs2)) >> 1;
-    } else {
-        var_s1 = 0x2000;
-        var_s2 = 1;
-    }
-    
-    temp_fv0_2 = (objData->unk14.y - arg2) - 10.0f;
-    if (temp_fv0_2 > 0.0f) {
-        var_s3 = -0xB6;
-    } else {
-        var_s3 = 0xB6;
-    }
-    
-    while (var_s2 == 0) {
-        f32 temp = 4.0f;
-        temp_fs0 = (temp * 1.1f) * temp_fv0_2;
-
-        sp70 = mathSinfInterp(var_s1) * 50.0f;
-        temp_fv1 = SQ(sp70) - temp_fs0;
+    //Calculate the barrel pitch angle needed for the cannon to hit its target, and animate towards it 
+    {
+        barrelJoint = objExpr_func_80034804(self, 0);
         
-        
-        if (temp_fs0 <= SQ(sp70)) {
-            f32 temp1 = -1.1f;
-            f32 temp2 = -1.1f;
+        sqAimVectorY = 2500.0f;
 
-            temp_fv1 = sqrtf(temp_fv1);
-            if (temp1 + temp2) {  
+        //Get actual target distance (distance is passed as square)
+        targetDist = sqrtf(targetDist);
+
+        aimVectorX = targetDist * 2.2f;
+        sqAimVectorY = SQ(sqAimVectorY) - SQ(aimVectorX);
+        
+        aimFinished = FALSE;
+        if (sqAimVectorY >= 0) {
+            dPitchAngle = mathAtan2f(aimVectorX, sqrtf(sqAimVectorY)) >> 1;
+        } else {
+            dPitchAngle = M_45_DEGREES;
+            aimFinished = TRUE;
+        }
+        
+        targetDiffY = (objData->muzzleCoords.y - y) - 10.0f;
+        if (targetDiffY > 0.0f) {
+            aimShift = -M_1_DEGREE;
+        } else {
+            aimShift = M_1_DEGREE;
+        }
+        
+        while (aimFinished == FALSE) {
+            f32 aimCoefficient = 4.0f;
+
+            aimVectorY = mathSinfInterp(dPitchAngle) * 50.0f;
+            aimVectorX = SQ(aimVectorY) - ((aimCoefficient * -1.1f) * targetDiffY);
+
+            if (SQ(aimVectorY) >= aimCoefficient * -1.1f * targetDiffY) {
+                f32 temp1 = -1.1f;
+                f32 temp2 = -1.1f;
+
+                aimVectorX = sqrtf(aimVectorX);
+                if (aimVectorY) {}
+                if ((temp1 + temp2) != 0.0f) { 
+                }
             }
 
-                //fake
-                sp70++;
-                sp70--;
+            distance = mathCosfInterp(dPitchAngle) * 50.0f * aimVectorX;
+            
+            dPitchAngle += aimShift;
+            
+            if ((distance > targetDist) && (aimShift > 0)) {
+                aimFinished = TRUE;
+            }
+            
+            if ((distance < targetDist) && (aimShift < 0)) {
+                aimFinished = TRUE;
+            }
+            
+            if (dPitchAngle > M_45_DEGREES) {
+                dPitchAngle = M_45_DEGREES;
+                aimFinished = TRUE;
+            } else if (dPitchAngle < 0) {
+                dPitchAngle = 0;
+                aimFinished = TRUE;
+            }
         }
 
-        temp_fs1 = mathCosfInterp(var_s1) * 50.0f;
-        temp_fs0 = temp_fs1 * temp_fv1;
+        dPitchAngle = -dPitchAngle;
+        dPitchAngle -= (barrelJoint->pitch & 0xFFFF);
+        CIRCLE_WRAP(dPitchAngle);
         
-        var_s1 += var_s3;
+        //Ease barrel joint towards goal angle
+        barrelJoint->pitch += dPitchAngle >> 2; //@framerate-dependent
+    }
+
+    //Calculate the yaw needed for the cannon to hit its target, animate towards it, and decide whether to fire
+    {
+        //Get the angle between the cannon and the target
+        x -= self->srt.transl.x;
+        z -= self->srt.transl.z;
+        dYaw = ((s16)mathAtan2f(x, z)) - (self->srt.yaw & 0xFFFF);
+        CIRCLE_WRAP(dYaw);
+
+        if (dYaw > M_45_DEGREES/2) {
+            dYaw = M_45_DEGREES/2;
+        }
+        if (dYaw < -M_45_DEGREES/2) {
+            dYaw = -M_45_DEGREES/2;
+        }
+
+        if (aimVectorX) {}
         
-        if ((arg4 < temp_fs0) && (var_s3 > 0)) {
-            var_s2 = 1;
+        //Fire if the cannon's yaw is within ~11 degrees of aiming directly at the target
+        if ((M_45_DEGREES/4 > dYaw) && (dYaw > -M_45_DEGREES/4)) {
+            objData->fire = TRUE;
         }
-        if ((temp_fs0 < arg4) && (var_s3 < 0)) {
-            var_s2 = 1;
+        
+        //Don't fire if the target is too close
+        if (objData->targetDistSq < SQ(100)) {
+            objData->fire = FALSE;
         }
-        if (var_s1 > 0x2000) {
-            var_s1 = 0x2000;
-            var_s2 = 1;
-        } else if (var_s1 < 0) {
-            var_s1 = 0;
-            var_s2 = 1;
-        }
+        
+        self->srt.yaw += dYaw >> 2; //@framerate-dependent
     }
-
-    var_s1 = -var_s1;
-    var_s1 -= (*sp78 & 0xFFFF);
-    CIRCLE_WRAP(var_s1);
-    
-    *sp78 += (var_s1 >> 2);
-
-    arg1 -= self->srt.transl.x;
-    arg3 -= self->srt.transl.z;
-    dYaw = mathAtan2f(arg1, arg3) - (self->srt.yaw & 0xFFFF);
-
-    CIRCLE_WRAP(dYaw);
-    if (dYaw > 0x1000) {
-        dYaw = 0x1000;
-    }
-    if (dYaw < -0x1000) {
-        dYaw = -0x1000;
-    }
-    if ((dYaw < 0x800) && (dYaw >= -0x7FF)) {
-        objData->unk25 = 1;
-    }
-    if (objData->unk10 < 10000.0f) {
-        objData->unk25 = pad;
-    }
-    self->srt.yaw += dYaw >> 2;
 }
-#endif
 
 // offset: 0x1150 | func: 9
-void dll_537_func_1150(Object* self) {
+void DIMCannon_fireWhenReady(Object* self) {
     DIMCannonBall_Setup* shotSetup;
     Object* shot;
-    s16* angle;
-    DLL537_Data* objData;
-    DLL537_Setup* objSetup;
+    SeqJoint* barrelJoint;
+    DIMCannon_Data* objData;
+    DIMCannon_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DLL537_Setup*)self->setup;
+    objSetup = (DIMCannon_Setup*)self->setup;
     
-    if (objData->unk25 && (objData->unk20 <= 0)) {
-        angle = objExpr_func_80034804(self, 0);
-        
-        shotSetup = (DIMCannonBall_Setup*)objAllocSetup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
-        shotSetup->base.loadFlags = objSetup->base.loadFlags;
-        shotSetup->base.byte6 = objSetup->base.byte6;
-        shotSetup->base.byte5 = objSetup->base.byte5;
-        shotSetup->base.fadeDistance = objSetup->base.fadeDistance;
-        shotSetup->base.x = objData->unk14.x;
-        shotSetup->base.y = objData->unk14.y;
-        shotSetup->base.z = objData->unk14.z;
-        shotSetup->unk18 = self->srt.yaw >> 8;
-        shotSetup->unk1A = mathSinfInterp(*angle) * 50.0f;
-        shotSetup->unk1C = mathCosfInterp(*angle) * 50.0f;
-        
-        shot = objSetupObject((ObjSetup*)shotSetup, 5, self->mapID, -1, NULL);
-        shot->unkC4 = self;
-        
-        objData->unk25 = 0;
-        objData->unk22 = 50;
-        
-        if (objData->unk24 == 3) {
-            objData->unk20 = 100;
-        } else {
-            objData->unk20 = mathRnd(objSetup->unk29, objSetup->unk2A);
-        }
-        
-        objAnimSet(self, 1, 0, 0);
+    //Return early if the cannon doesn't need to fire
+    if ((objData->fire == FALSE) || (objData->fireCooldown > 0)) {
+        return;
     }
+
+    //Get the cannon's barrel seqJoint
+    barrelJoint = objExpr_func_80034804(self, 0);
+    
+    //Create a cannonball
+    {
+        shotSetup = (DIMCannonBall_Setup*)objAllocSetup(sizeof(DIMCannonBall_Setup), OBJ_DIMCannonBall);
+        shotSetup->base.loadFlags    = objSetup->base.loadFlags;
+        shotSetup->base.loadDistance = objSetup->base.byte6;
+        shotSetup->base.fadeFlags    = objSetup->base.byte5;
+        shotSetup->base.fadeDistance = objSetup->base.fadeDistance;
+        shotSetup->base.x = objData->muzzleCoords.x;
+        shotSetup->base.y = objData->muzzleCoords.y;
+        shotSetup->base.z = objData->muzzleCoords.z;
+        shotSetup->yaw = self->srt.yaw >> 8;
+        shotSetup->velocityY = mathSinfInterp(barrelJoint->pitch) * 50.0f;
+        shotSetup->velocityX = mathCosfInterp(barrelJoint->pitch) * 50.0f;
+        
+        shot = objSetupObject(&shotSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, NULL);
+        shot->unkC4 = self;
+    }
+    
+    objData->fire = FALSE;
+    objData->enemyAimCooldown = 50;
+    
+    if (objData->state == DIMCannon_STATE_3_Controlled_by_Player) {
+        objData->fireCooldown = 100;
+    } else {
+        objData->fireCooldown = mathRnd(objSetup->cooldownMin, objSetup->cooldownMax);
+    }
+    
+    //Play recoil animation
+    objAnimSet(self, 1, 0, 0);
 }
 
 // offset: 0x1314 | func: 10
-void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
+void DIMCannon_setupCannonBall(Object* self, DIMCannonBall_Setup* objSetup) {
     f32 verticalSpeed;
     f32 lateralSpeed;
     DIMCannonBall_Data* objData;
     ObjectHitInfo* objHits;
-    s32 hitsValue = 1;
 
-    self->srt.yaw = objSetup->unk18 << 8;
-    verticalSpeed = objSetup->unk1A * 0.1f;
-    lateralSpeed = objSetup->unk1C * 0.1f;
+    self->srt.yaw = objSetup->yaw << 8;
+    verticalSpeed = objSetup->velocityY * 0.1f;
+    lateralSpeed = objSetup->velocityX * 0.1f;
+
     self->velocity.x = mathSinfInterp(self->srt.yaw) * lateralSpeed;
     self->velocity.y = -verticalSpeed;
     self->velocity.z = mathCosfInterp(self->srt.yaw) * lateralSpeed;
@@ -589,74 +627,83 @@ void dll_537_func_1314(Object* self, DIMCannonBall_Setup* objSetup) {
     }
 
     objData = self->data;
-    objData->unk0 = 1;
+    objData->createModGfx = TRUE;
 
     objHits = self->objhitInfo;
     if (objHits != NULL) {
-        objHits->unkA1 = hitsValue;
+        objHits->unkA1 = 1;
     }
     
     self->stateFlags |= OBJSTATE_PRINT_DISABLED;
 }
 
 // offset: 0x1430 | func: 11
-void dll_537_func_1430(Object* self) {
+void DIMCannon_tickCannonBall(Object* self) {
     ObjectHitInfo* objHits;
     s32 pad;
-    Unk_Data* objData;
+    DIMCannonBall_Data* objData;
     
+    //Apply gravity and move
     self->velocity.y += -0.022f * gUpdateRateF;
     objMove(self, self->velocity.x * gUpdateRateF, self->velocity.y * gUpdateRateF, self->velocity.z * gUpdateRateF);
 
+    //Handle colliding with objects (ignoring the parent cannon object)
     objHits = self->objhitInfo;
     if (objHits != NULL) {
         func_80026128(self, 5, 1, 0);
         if ((objHits->unk48 != NULL) && (objHits->unk48 != self->unkC4)) {
-            dll_537_func_16AC(self);
+            DIMCannon_createCannonBallExplosion(self);
             objFreeObject(self);
         }
     }
     
+    //Handle colliding with terrain
     if (self->objhitInfo->unk9D != 0) {
-        dll_537_func_16AC(self);
+        DIMCannon_createCannonBallExplosion(self);
         objFreeObject(self);
     }
     
+    //Unload after 20 seconds
     self->unkDC += gUpdateRate;
-    if (self->unkDC > 1200) {
+    if (self->unkDC > 20 * 60) {
         objFreeObject(self);
     }
     
     objData = self->data;
     
+    //Align model with velocity vector
     self->srt.pitch = mathAtan2f(self->velocity.y, sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)));
     
-    if (objData->unk0 != 0) {
-        _data_0->vtbl->func0(self, 2, 0, 0x10002, -1, 0);
-        objData->unk0 = 0;
+    //Create modGfx
+    if (objData->createModGfx) {
+        dModGfxDLL->vtbl->func0(self, 2, 0, 0x10002, -1, 0);
+        objData->createModGfx = FALSE;
     }
 }
 
 // offset: 0x1640 | func: 12
-void dll_537_func_1640(Object* self) {
+void DIMCannon_freeCannonBall(Object* self) {
     gDLL_14_Modgfx->vtbl->func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x16AC | func: 13
-void dll_537_func_16AC(Object* self) {
-    Unk_Data* objData; //This should be the cannonball's data, but `dll_537_get_data_size` says `DIMCannonBall_Data` has a size of 1?
-    DIMExplosion_Setup* explosion;
+Object* DIMCannon_createCannonBallExplosion(Object* self) {
+    DIMCannonBall_Setup* objSetup; 
+    DIMExplosion_Setup* boomSetup;
 
-    objData = self->data;
+    //@bug: accidentally reading from `self->data` instead of `self->setup` (causes explosions to become invisible)!
+    // We know `DIMCannonBall_Data` is only 1 byte long, and the parent->child
+    // inheritance pattern below suggests Rare expected to read from an ObjSetup:
+    objSetup = (DIMCannonBall_Setup*)self->data; 
     
-    explosion = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
-    explosion->base.loadFlags = objData->unk4; //Is objData storing an objSetup here? The offsets match as it's setting up the explosion's objSetup
-    explosion->base.byte6 = objData->unk6;
-    explosion->base.byte5 = objData->unk5;
-    explosion->base.fadeDistance = objData->unk7;
-    explosion->base.x = self->srt.transl.x;
-    explosion->base.y = self->srt.transl.y;
-    explosion->base.z = self->srt.transl.z;
-    objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+    boomSetup = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    boomSetup->base.loadFlags = objSetup->base.loadFlags;
+    boomSetup->base.loadDistance = objSetup->base.loadDistance;
+    boomSetup->base.fadeFlags = objSetup->base.fadeFlags;
+    boomSetup->base.fadeDistance = objSetup->base.fadeDistance;
+    boomSetup->base.x = self->srt.transl.x;
+    boomSetup->base.y = self->srt.transl.y;
+    boomSetup->base.z = self->srt.transl.z;
+    return objSetupObject(&boomSetup->base, (OBJINIT_STANDALONE | OBJINIT_FLAG4), self->mapID, -1, self->parent);
 }

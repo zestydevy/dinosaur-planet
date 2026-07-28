@@ -8,10 +8,10 @@ _exports:
 .dword ChukaChuck_dtor
 
 # export table
-/*0*/ .dword ChukaChuck_setup
-/*1*/ .dword ChukaChuck_control
-/*2*/ .dword ChukaChuck_update
-/*3*/ .dword ChukaChuck_print
-/*4*/ .dword ChukaChuck_free
-/*5*/ .dword ChukaChuck_get_model_flags
-/*6*/ .dword ChukaChuck_get_data_size
+/*0*/ .dword ChukaChuck_obj_Setup
+/*1*/ .dword ChukaChuck_obj_Control
+/*2*/ .dword ChukaChuck_obj_Update
+/*3*/ .dword ChukaChuck_obj_Print
+/*4*/ .dword ChukaChuck_obj_Free
+/*5*/ .dword ChukaChuck_obj_GetModelFlags
+/*6*/ .dword ChukaChuck_obj_GetDataSize

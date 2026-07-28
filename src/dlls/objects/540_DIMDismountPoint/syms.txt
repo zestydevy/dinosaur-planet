@@ -1,0 +1,15 @@
+.text = 0x0:
+DIMDismountPoint_ctor = 0x0;
+DIMDismountPoint_dtor = 0xC;
+DIMDismountPoint_obj_Setup = 0x18;
+DIMDismountPoint_obj_Control = 0xFC;
+DIMDismountPoint_obj_Update = 0x108;
+DIMDismountPoint_obj_Print = 0x114;
+DIMDismountPoint_obj_Free = 0x168;
+DIMDismountPoint_obj_GetModelFlags = 0x1A8;
+DIMDismountPoint_obj_GetDataSize = 0x1B8;
+DIMDismountPoint_Func_1CC = 0x1CC;
+DIMDismountPoint_Func_28C = 0x28C;
+
+.rodata = 0x33C:
+_oob_rodata_0 = 0x0; // absolute:0x33C

@@ -4,16 +4,16 @@
 _exports:
 
 # ctor/dtor
-.dword dll_228_ctor
-.dword dll_228_dtor
+.dword Caictua_ctor
+.dword Caictua_dtor
 
 # export table
-/*0*/ .dword dll_228_setup
-/*1*/ .dword dll_228_control
-/*2*/ .dword dll_228_update
-/*3*/ .dword dll_228_print
-/*4*/ .dword dll_228_free
-/*5*/ .dword dll_228_get_model_flags
-/*6*/ .dword dll_228_get_data_size
-/*7*/ .dword dll_228_func_5D4
-/*8*/ .dword dll_228_func_5E8
+/*0*/ .dword Caictua_obj_Setup
+/*1*/ .dword Caictua_obj_Control
+/*2*/ .dword Caictua_obj_Update
+/*3*/ .dword Caictua_obj_Print
+/*4*/ .dword Caictua_obj_Free
+/*5*/ .dword Caictua_obj_GetModelFlags
+/*6*/ .dword Caictua_obj_GetDataSize
+/*7*/ .dword Caictua_GetAnimState
+/*8*/ .dword Caictua_ReceiveMessage

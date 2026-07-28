@@ -164,7 +164,7 @@ void LanternFireFly_control(Object* self) {
             lfxSetup->base.z = self->srt.transl.z;
             lfxSetup->unk1E = mathRnd(0, 1) + 0x1AA;
             lfxSetup->unk22 = -1;
-            objData->lfxEmitter = objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+            objData->lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             
             if ((objData->flagLightPerFirefly) != True) {
                 dLightCreated = TRUE;

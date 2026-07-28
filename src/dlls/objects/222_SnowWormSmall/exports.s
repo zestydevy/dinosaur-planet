@@ -8,12 +8,12 @@ _exports:
 .dword SnowWormSmall_dtor
 
 # export table
-/*0*/ .dword SnowWormSmall_setup
-/*1*/ .dword SnowWormSmall_control
-/*2*/ .dword SnowWormSmall_update
-/*3*/ .dword SnowWormSmall_print
-/*4*/ .dword SnowWormSmall_free
-/*5*/ .dword SnowWormSmall_get_model_flags
-/*6*/ .dword SnowWormSmall_get_data_size
-/*7*/ .dword SnowWormSmall_get_anim_state
-/*8*/ .dword SnowWormSmall_receive_message
+/*0*/ .dword SnowWormSmall_obj_Setup
+/*1*/ .dword SnowWormSmall_obj_Control
+/*2*/ .dword SnowWormSmall_obj_Update
+/*3*/ .dword SnowWormSmall_obj_Print
+/*4*/ .dword SnowWormSmall_obj_Free
+/*5*/ .dword SnowWormSmall_obj_GetModelFlags
+/*6*/ .dword SnowWormSmall_obj_GetDataSize
+/*7*/ .dword SnowWormSmall_GetAnimState
+/*8*/ .dword SnowWormSmall_ReceiveMessage

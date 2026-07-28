@@ -155,7 +155,7 @@ Object* PortalSpellDoor_create_anim_obj(Object* self) {
     animObjSetup->x = self->srt.transl.x;
     animObjSetup->y = self->srt.transl.y;
     animObjSetup->z = self->srt.transl.z;
-    portalDoorAnim = objSetupObject(animObjSetup, 5, -1, -1, self->parent);
+    portalDoorAnim = objSetupObject(animObjSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
     portalDoorAnim->def->scale = self->def->scale;
     portalDoorAnim->srt.scale = 1.0f;
     return portalDoorAnim;

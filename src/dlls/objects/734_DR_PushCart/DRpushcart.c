@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/object.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
@@ -164,7 +165,7 @@ void dll_734_func_D30(Object* self, s32 arg1) {
     lfxSetup->base.z = self->srt.transl.z;
     lfxSetup->unk1E = arg1;
     lfxSetup->unk22 = -1;
-    objSetupObject((ObjSetup*)lfxSetup, 5, self->mapID, -1, self->parent);
+    objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 
 // offset: 0xDD8 | func: 9
@@ -385,7 +386,7 @@ Object* dll_734_func_1624(Object* self, Vec3f* coord) {
     barrelSetup->base.z = coord->z;
     barrelSetup->unk18 = self->srt.yaw;
     barrelSetup->unk19 = 1;
-    return objSetupObject((ObjSetup*)barrelSetup, 5, self->mapID, -1, self);
+    return objSetupObject(&barrelSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self);
 }
 
 // offset: 0x16EC | func: 14

@@ -351,7 +351,7 @@ static void dll_243_func_EEC(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
         objdata->unk8 -= gUpdateRateF;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_718, NULL, PARTFXFLAG_2, -1, &objdata->unk8);
     }
-    if (gDLL_33_BaddieControl->vtbl->func17(self, fsa, (f32) baddie->unk3E2, 0x8000) != NULL) {
+    if (gDLL_33_BaddieControl->vtbl->func17(self, fsa, (f32) baddie->unk3E2, M_180_DEGREES) != NULL) {
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 4, -1);
         fsa->unk33D = 0;
         baddie->unk3B6 = 1;

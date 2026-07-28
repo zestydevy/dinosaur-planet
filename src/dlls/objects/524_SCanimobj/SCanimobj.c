@@ -1,17 +1,18 @@
 #include "common.h"
+#include "dlls/engine/3_animation.h"
 #include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/objlib.h"
 
 // offset: 0x0 | ctor
-void SCAnimObj_ctor(void *dll) { }
+void SCAnimObj_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void SCAnimObj_dtor(void *dll) { }
+void SCAnimObj_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
+void SCAnimObj_obj_Setup(Object* self, AnimObj_Setup* objSetup, s32 reset) {
     AnimObj_Data* objData;
 
     objSetPriority(self, OBJPRIORITY_ANIM);
@@ -26,12 +27,12 @@ void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
     self->unkE0 = 0;
     
     if ((self->unkDC == 0) && (objSetup->sequenceIdBitfield != 1)) {
-        gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
+        dll_anim->init_curve(objData, objSetup);
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     } else if ((self->unkDC != 0) && ((objSetup->sequenceIdBitfield + 1) != self->unkDC)) {
-        gDLL_3_Animation->vtbl->free_curve(objData);
+        dll_anim->free_curve(objData);
         if (objSetup->sequenceIdBitfield != -1) {
-            gDLL_3_Animation->vtbl->init_curve(objData, objSetup);
+            dll_anim->init_curve(objData, objSetup);
         }
         self->unkDC = objSetup->sequenceIdBitfield + 1;
     }
@@ -43,7 +44,7 @@ void SCAnimObj_setup(Object* self, AnimObj_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x1A0 | func: 1 | export: 1
-void SCAnimObj_control(Object* self) {
+void SCAnimObj_obj_Control(Object* self) {
     s32 index;
     Object** objects;
     Object* obj;
@@ -62,7 +63,7 @@ void SCAnimObj_control(Object* self) {
         return;
     }
         
-    index = gDLL_3_Animation->vtbl->tick_obj(self, gUpdateRateMirror);
+    index = dll_anim->tick_obj(self, gUpdateRateMirror);
     if ((index != 0) && (self->seqSlot == SEQSLOT_ANIMOBJ)) {
         temp = objData->seqSlot;
         matchObj = NULL;
@@ -88,7 +89,7 @@ void SCAnimObj_control(Object* self) {
         
         if ((matchCount < 2) && (matchObj != NULL) && (matchObj->seqSlot != SEQSLOT_NONE)) {
             matchObj->seqSlot = SEQSLOT_NONE;
-            gDLL_3_Animation->vtbl->end_obj_sequence(temp);
+            dll_anim->end_obj_sequence(temp);
         }
         self->seqSlot = SEQSLOT_NONE;
     }
@@ -117,14 +118,14 @@ void SCAnimObj_control(Object* self) {
 }
 
 // offset: 0x3F8 | func: 2 | export: 2
-void SCAnimObj_update(Object *self) { }
+void SCAnimObj_obj_Update(Object* self) { }
 
 // offset: 0x404 | func: 3 | export: 3
-void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SCAnimObj_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     static SRT sTransform;
     s32 i;
 
-    if (visibility != 0) {
+    if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         
         if (self->unkE0 & 7) {
@@ -132,22 +133,22 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
         }
         
         if (self->unkE0 & 1) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_425, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_426, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
         }
         
         if (self->unkE0 & 2) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
+            dll_partfx->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);
         }
         
         if (self->unkE0 & 4) {
             for (i = 0; i < 20; i++) {
-                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);   
+                dll_partfx->spawn(self, PARTICLE_427, &sTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, 0);   
             }
             
             for (i = 0; i < 7; i++) {
@@ -166,13 +167,13 @@ void SCAnimObj_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangl
 }
 
 // offset: 0x824 | func: 4 | export: 4
-void SCAnimObj_free(Object* self, s32 arg1) {
+void SCAnimObj_obj_Free(Object* self, s32 onlySelf) {
     AnimObj_Data* objData;
     s32 i;
 
     objData = self->data;
     
-    gDLL_3_Animation->vtbl->free_curve(objData);
+    dll_anim->free_curve(objData);
 
     for (i = 0; i < 4; i++) {
         if (objData->sfxHandles[i]) {
@@ -188,11 +189,11 @@ void SCAnimObj_free(Object* self, s32 arg1) {
 }
 
 // offset: 0x930 | func: 5 | export: 5
-u32 SCAnimObj_get_model_flags(Object *self) {
+u32 SCAnimObj_obj_GetModelFlags(Object* self) {
     return MODFLAGS_8 | MODFLAGS_SHADOW | MODFLAGS_1;
 }
 
 // offset: 0x940 | func: 6 | export: 6
-u32 SCAnimObj_get_data_size(Object *self, u32 a1) {
+u32 SCAnimObj_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(AnimObj_Data);
 }

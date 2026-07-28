@@ -1,0 +1,18 @@
+.text = 0x0:
+WCKingEarthWalker_ctor = 0x0;
+WCKingEarthWalker_dtor = 0xC;
+WCKingEarthWalker_obj_Setup = 0x18;
+WCKingEarthWalker_obj_Control = 0x114;
+WCKingEarthWalker_obj_Update = 0x254;
+WCKingEarthWalker_obj_Print = 0x260;
+WCKingEarthWalker_obj_Free = 0x2E4;
+WCKingEarthWalker_obj_GetModelFlags = 0x2F4;
+WCKingEarthWalker_obj_GetDataSize = 0x304;
+WCKingEarthWalker_updateShadow = 0x318;
+WCKingEarthWalker_animCallback = 0x3F4;
+
+.rodata = 0x478:
+
+.data = 0x478:
+data_0 = 0x0; // absolute:0x478
+data_4 = 0x4; // absolute:0x47C
