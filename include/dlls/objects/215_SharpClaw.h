@@ -12,7 +12,7 @@ typedef enum {
     SharpClaw_MODANIM0_1_Patrol_LOOP,           //A patrolling walk cycle, with weapon held up in right hand and slung over shoulder
     SharpClaw_MODANIM0_2_Walk_LOOP,             //A more casual walk cycle, with arms loose
     SharpClaw_MODANIM0_3_Run_LOOP,              //Bounding on all fours
-    SharpClaw_MODANIM0_4_Walk_LOOP,             //Similar to [mAnim0_2], but with softer timing on the contacts
+    SharpClaw_MODANIM0_4_Fast_Walk_LOOP,        //Similar to [mAnim0_2], but with softer timing on the contacts
     SharpClaw_MODANIM0_5_Jump,                  //Winding up into big jump, with a landing and settle      
     SharpClaw_MODANIM0_6_Prone_Peering,         //Lying prone, with weight resting on arms/elbows on a slightly elevated surface. Peering out as though over a step/into water? Flicks weapon slightly.
     SharpClaw_MODANIM0_7_Prone_Bop_L,           //From [mAnim0_6], looks to the left, then raises weapon overhead and bops it to the left
