@@ -1,0 +1,21 @@
+.text = 0x0:
+DFP_RotatePuzzle_ctor = 0x0;
+DFP_RotatePuzzle_dtor = 0xC;
+DFP_RotatePuzzle_obj_Setup = 0x18;
+DFP_RotatePuzzle_obj_Control = 0x114;
+DFP_RotatePuzzle_obj_Update = 0x670;
+DFP_RotatePuzzle_obj_Print = 0x67C;
+DFP_RotatePuzzle_obj_Free = 0x694;
+DFP_RotatePuzzle_obj_GetModelFlags = 0x760;
+DFP_RotatePuzzle_obj_GetDataSize = 0x770;
+DFP_RotatePuzzle_animCallback = 0x784;
+DFP_RotatePuzzle_createFlameFXEmit = 0x7A0;
+DFP_RotatePuzzle_checkIfFlameExtinguished = 0x8A0;
+
+.rodata = 0x11D0:
+
+.data = 0x11D0:
+dTimers = 0x0; // absolute:0x11D0
+
+.bss = 0x11E0:
+sFlameFXEmits = 0x0; // absolute:0x11E0

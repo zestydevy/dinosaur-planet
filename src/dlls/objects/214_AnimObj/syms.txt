@@ -1,0 +1,10 @@
+.text = 0x0:
+AnimObj_ctor = 0x0;
+AnimObj_dtor = 0xC;
+AnimObj_obj_Setup = 0x18;
+AnimObj_obj_Control = 0x19C;
+AnimObj_obj_Update = 0x318;
+AnimObj_obj_Print = 0x324;
+AnimObj_obj_Free = 0x378;
+AnimObj_obj_GetModelFlags = 0x484;
+AnimObj_obj_GetDataSize = 0x494;

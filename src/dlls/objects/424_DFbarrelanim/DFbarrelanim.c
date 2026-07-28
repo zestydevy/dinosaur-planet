@@ -97,7 +97,7 @@ void DFbarrelanim_control(Object* self) {
             explosion->x = self->srt.transl.x;
             explosion->y = self->srt.transl.y + 8.0f;
             explosion->z = self->srt.transl.z;
-            objSetupObject(explosion, 5, self->mapID, -1, self->parent);
+            objSetupObject(explosion, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
             self->srt.transl.y -= 12.0f;

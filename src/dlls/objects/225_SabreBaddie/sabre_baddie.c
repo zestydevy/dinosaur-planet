@@ -388,7 +388,7 @@ void dll_225_func_C10(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         return;
     }
     
-    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
     if (target) {
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0, 1);
         fsa->unk33D = 0;

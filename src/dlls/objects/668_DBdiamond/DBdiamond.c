@@ -49,11 +49,11 @@ void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void DBdiamond_control(Object *self) {
-    Object *player;
-    DBDiamond_Setup *setup;
-    DBDiamond_Data *objdata;
-    s16 *sequenceBone;
+void DBdiamond_control(Object* self) {
+    Object* player;
+    DBDiamond_Setup* setup;
+    DBDiamond_Data* objdata;
+    SeqJoint* seqJoint;
 
     player = objGetPlayer();
     setup = (DBDiamond_Setup *)self->setup;
@@ -68,8 +68,8 @@ void DBdiamond_control(Object *self) {
             objdata->unk0 = 1;
         }
     }
-    sequenceBone = objExpr_func_80034804(self, 0);
-    sequenceBone[1] += 0x650;
+    seqJoint = objExpr_func_80034804(self, 0);
+    seqJoint->yaw += 0x650; //@framerate-dependent
 }
 
 // offset: 0x204 | func: 2 | export: 2

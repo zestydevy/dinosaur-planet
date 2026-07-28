@@ -55,9 +55,9 @@ enum CFLevelControl_Flags {
 };
 /*0x28*/ static s16 _data_28[1] = { NO_GAMEBIT }; // unused
 /*0x2C*/ static s16 _data_2C[2] = { BIT_4DC, BIT_SpellStone_CRF_Activated };
-/*0x30*/ static s16 _data_30[1] = { BIT_30A };
+/*0x30*/ static s16 _data_30[1] = { BIT_CRF_Play_Seq_005D_Treasure_Room_Door_Opening_Sequences };
 /*0x34*/ static s16 _data_34[2] = { BIT_8D1, BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Five };
-/*0x38*/ static s16 _data_38[1] = { BIT_477 };
+/*0x38*/ static s16 _data_38[1] = { BIT_477_CRF_Treasure_Room_Doors_Opened };
 /*0x3C*/ static s16 _data_3C[1] = { BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left };
 /*0x40*/ static s16 _data_40[1] = { BIT_528 };
 /*0x44*/ static s16 _data_44[1] = { BIT_4BE };
@@ -192,7 +192,7 @@ void CFLevelControl_control(Object *self) {
         objdata->flags &= ~CFLEVELCONTROL_FLAG_1;
     }
     CFLevelControl_func_3F0(self, _data_D0, _data_110);
-    if (CFLevelControl_func_82C(BIT_30A, _data_20, GAMEBITS_COUNT(_data_20))) {
+    if (CFLevelControl_func_82C(BIT_CRF_Play_Seq_005D_Treasure_Room_Door_Opening_Sequences, _data_20, GAMEBITS_COUNT(_data_20))) {
         mainSetBits(BIT_33D, 1);
     }
     CFLevelControl_func_82C(BIT_4BE, _data_34, GAMEBITS_COUNT(_data_34));

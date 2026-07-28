@@ -35,26 +35,26 @@ u16 gFootstepSfxBank2[36] = {
     0, 0, 0, 0
 };
 u16 gFootstepSfxBank3[36] = {
-    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
-    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
-    SOUND_61_Footstep, SOUND_62_Footstep, SOUND_61_Footstep, SOUND_62_Footstep, 
-    SOUND_65_Footstep, SOUND_66_Footstep, SOUND_368, SOUND_369, 
-    SOUND_27C, SOUND_27D, SOUND_27C, SOUND_27D, 
-    SOUND_6D_Water_Footstep, SOUND_6E_Water_Footstep, SOUND_6D_Water_Footstep, SOUND_6E_Water_Footstep, 
-    SOUND_280, SOUND_281, SOUND_280, SOUND_281, 
-    SOUND_406, SOUND_404, SOUND_406, SOUND_404, 
-    0, SOUND_88D, 0, SOUND_88D
+    SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, 
+    SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, 
+    SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, SOUND_61_Footstep_Soft, SOUND_62_Footstep_Soft, 
+    SOUND_65_Footstep_Snow, SOUND_66_Footstep_Snow, SOUND_368_Footstep_Snow, SOUND_369_Footstep_Snow, 
+    SOUND_27C_Footstep_Wood, SOUND_27D_Footstep_Wood, SOUND_27C_Footstep_Wood, SOUND_27D_Footstep_Wood, 
+    SOUND_6D_Footstep_Water_Wade, SOUND_6E_Footstep_Water_Wade, SOUND_6D_Footstep_Water_Wade, SOUND_6E_Footstep_Water_Wade, 
+    SOUND_280_Footstep_Stone, SOUND_281_Footstep_Stone, SOUND_280_Footstep_Stone, SOUND_281_Footstep_Stone, 
+    SOUND_406_Footstep_Ice, SOUND_404_Footstep_Ice, SOUND_406_Footstep_Ice, SOUND_404_Footstep_Ice, 
+    0, SOUND_88D_Footstep_Marsh, 0, SOUND_88D_Footstep_Marsh
 };
 u16 gFootstepSfxBank4[36] = {
-    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
-    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
-    SOUND_63_Footstep, SOUND_64_Footstep, SOUND_63_Footstep, SOUND_64_Footstep, 
-    SOUND_67_Footstep, SOUND_68_Footstep, SOUND_36A, SOUND_36B, 
-    SOUND_27E, SOUND_27F, SOUND_27E, SOUND_27F, 
-    SOUND_6F_Water_Footstep, SOUND_70_Water_Footstep, SOUND_6F_Water_Footstep, SOUND_70_Water_Footstep, 
-    SOUND_282, SOUND_283, SOUND_282, SOUND_283, 
-    SOUND_407, SOUND_402, SOUND_407, SOUND_402, 
-    0, SOUND_88D, 0, SOUND_88D
+    SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, 
+    SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, 
+    SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, SOUND_63_Footstep_Firm, SOUND_64_Footstep_Firm, 
+    SOUND_67_Footstep_Grit, SOUND_68_Footstep_Grit, SOUND_36A_Footstep_Grit, SOUND_36B_Footstep_Grit, 
+    SOUND_27E_Footstep_Wood, SOUND_27F_Footstep_Wood, SOUND_27E_Footstep_Wood, SOUND_27F_Footstep_Wood, 
+    SOUND_6F_Footstep_Water_Puddle, SOUND_70_Footstep_Water_Puddle, SOUND_6F_Footstep_Water_Puddle, SOUND_70_Footstep_Water_Puddle, 
+    SOUND_282_Footstep_Stone_Hard, SOUND_283_Footstep_Stone_Hard, SOUND_282_Footstep_Stone_Hard, SOUND_283_Footstep_Stone_Hard, 
+    SOUND_407_Footstep_Ice, SOUND_402_Footstep_Ice, SOUND_407_Footstep_Ice, SOUND_402_Footstep_Ice, 
+    0, SOUND_88D_Footstep_Marsh, 0, SOUND_88D_Footstep_Marsh
 };
 u16 gFootstepSfxBank5[10] = {
     SOUND_7B1, SOUND_7B1, SOUND_7B1, SOUND_7B1, 

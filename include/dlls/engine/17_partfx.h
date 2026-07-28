@@ -60,6 +60,7 @@ enum ParticleID {
     PARTICLE_19E = 0x19E,
     PARTICLE_19F = 0x19F,
     PARTICLE_1A0 = 0x1A0,
+    PARTICLE_1A5 = 0x1A5,
     PARTICLE_1A9 = 0x1A9,
     PARTICLE_1AA = 0x1AA,
     PARTICLE_1AB = 0x1AB,
@@ -78,6 +79,7 @@ enum ParticleID {
     /* --- DLL 36 START --- */
     PARTICLE_1F4 = 0x1F4,
     PARTICLE_1F7 = 0x1F7,
+    PARTICLE_1F9 = 0x1F9,
     PARTICLE_202 = 0x202,
     PARTICLE_203 = 0x203, //fire
     PARTICLE_204 = 0x204, //floating ember
@@ -199,6 +201,7 @@ enum ParticleID {
     PARTICLE_525 = 0x525,
     PARTICLE_526 = 0x526,
     PARTICLE_529 = 0x529,
+    PARTICLE_52A = 0x52A,
     PARTICLE_53C = 0x53C,
     PARTICLE_53D = 0x53D,
     PARTICLE_549 = 0x549,
@@ -214,6 +217,8 @@ enum ParticleID {
     PARTICLE_553 = 0x553,
     PARTICLE_554 = 0x554,
     PARTICLE_555 = 0x555,
+    PARTICLE_556 = 0x556,
+    PARTICLE_55E = 0x55E,
     /* --- DLL 34 START --- */
     PARTICLE_5DD = 0x5DD,
     PARTICLE_5ED = 0x5ED,
@@ -286,5 +291,7 @@ DLL_INTERFACE(DLL_17) {
 /*1*/ s32 (*spawn)(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *data);
 /*2*/ s32 (*func2)(s32 arg0);
 };
+
+#define dll_partfx (gDLL_17_partfx->vtbl)
 
 #endif // _DLL_17_H

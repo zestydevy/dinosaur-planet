@@ -83,11 +83,11 @@ typedef struct ObjFSA_Data {
 /*300*/ u8 _unk300[0x304 - 0x300];
 /*304*/ s32 unk304;
 /*308*/ u32 unk308; // model anim event bits
-/*30C*/ s32 unk30C;
-/*310*/ s32 unk310;
+/*30C*/ s32 unk30C; // value of joyGetButtonsBuffered?
+/*310*/ s32 unk310; // value of joyGetPressedBuffered?
 /*314*/ u8 _unk314[0x322 - 0x314];
 /*322*/ s16 logicStateTime; // time spent in current logic state (caps at 10000)
-/*324*/ s16 unk324;
+/*324*/ s16 unk324; // yaw-related?
 /*326*/ s16 unk326;
 /*328*/ s16 unk328; // yaw in degrees (absolute value) (sorta, more to this)
 /*32A*/ s16 unk32A; // yaw in degrees (sorta, more to this)

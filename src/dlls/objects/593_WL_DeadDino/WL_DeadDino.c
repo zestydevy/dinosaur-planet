@@ -1,5 +1,6 @@
 #include "PR/os.h"
 #include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/291_magicdust.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
@@ -36,38 +37,38 @@ typedef enum {
 } DeadDino_States;
 
 /*0x0*/ static Unk80026DF4 dJointHitSounds[] = {
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0677, 0xffff, 0xffff, 0xffff, 1, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0377, 0xffff, 0xffff, 0xffff, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0},
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}, 
-    {0x0000, 0x0000, 0x0000, 0x0000, 0, 0, 0}
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_677_Metal_Clang, NO_SOUND, -1, -1, TRUE, 0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    {SOUND_377_Metal_Smack, NO_SOUND, -1, -1, 0,    0, 0}, 
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4,
+    EMPTY_UNK80026DF4
 };
 
-static int WL_DeadDino_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
-static Object* WL_DeadDino_create_magic_dust(Object* self);
+static int WL_DeadDino_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static Object* WL_DeadDino_createMagicDust(Object* self);
 
 // offset: 0x0 | ctor
 void WL_DeadDino_ctor(void *dll) { }
@@ -76,13 +77,13 @@ void WL_DeadDino_ctor(void *dll) { }
 void WL_DeadDino_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_DeadDino_setup(Object* self, DeadDino_Setup* objSetup, s32 reset) {
+void WL_DeadDino_obj_Setup(Object* self, DeadDino_Setup* objSetup, s32 reset) {
     DeadDino_Data* objData = self->data;
     ObjectHitInfo* objHits;
     
     objInitMesgQueue(self, 4);
     
-    self->animCallback = WL_DeadDino_anim_callback;
+    self->animCallback = WL_DeadDino_animCallback;
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = objSetup->pitch;
     
@@ -95,7 +96,7 @@ void WL_DeadDino_setup(Object* self, DeadDino_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0xD8 | func: 1 | export: 1
-void WL_DeadDino_control(Object* self) {
+void WL_DeadDino_obj_Control(Object* self) {
     DeadDino_Setup* objSetup;
     s16 newModanimIdx;
     TextureAnimator* eyeL;
@@ -224,10 +225,10 @@ void WL_DeadDino_control(Object* self) {
 }
 
 // offset: 0x61C | func: 2 | export: 2
-void WL_DeadDino_update(Object *self) { }
+void WL_DeadDino_obj_Update(Object *self) { }
 
 // offset: 0x628 | func: 3 | export: 3
-void WL_DeadDino_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_DeadDino_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DeadDino_Data* objdata;
 
     objdata = self->data;
@@ -253,25 +254,25 @@ void WL_DeadDino_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
         dll_amSfx->Play(self, SOUND_B1F_Slow_Magic_Chimes, MAX_VOLUME, NULL, NULL, 0, NULL);
         objdata->vanished = TRUE;
         objdata->vanishTimer = 0.0f;
-        WL_DeadDino_create_magic_dust(self);
+        WL_DeadDino_createMagicDust(self);
     }
 }
 
 // offset: 0x7BC | func: 4 | export: 4
-void WL_DeadDino_free(Object *self, s32 a1) { }
+void WL_DeadDino_obj_Free(Object *self, s32 onlySelf) { }
 
 // offset: 0x7CC | func: 5 | export: 5
-u32 WL_DeadDino_get_model_flags(Object* self) {
+u32 WL_DeadDino_obj_GetModelFlags(Object* self) {
     return MODFLAGS_1;
 }
 
 // offset: 0x7DC | func: 6 | export: 6
-u32 WL_DeadDino_get_data_size(Object *self, u32 a1) {
+u32 WL_DeadDino_obj_GetDataSize(Object *self, u32 offsetAddr) {
     return sizeof(DeadDino_Data);
 }
 
 // offset: 0x7F0 | func: 7
-int WL_DeadDino_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+int WL_DeadDino_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     DeadDino_Data* objData;
     s32 i;
 
@@ -301,7 +302,7 @@ void WL_DeadDino_func_8E4(void) {
 }
 
 // offset: 0x8EC | func: 9
-static Object* WL_DeadDino_create_magic_dust(Object* self) {
+static Object* WL_DeadDino_createMagicDust(Object* self) {
     MagicDust_Setup* magicSetup;
 
     magicSetup = objAllocSetup(sizeof(MagicDust_Setup), OBJ_MagicDustMid);
@@ -317,5 +318,5 @@ static Object* WL_DeadDino_create_magic_dust(Object* self) {
     magicSetup->base.loadDistance = 0xFF;
     magicSetup->base.fadeDistance = 0xFF;
     magicSetup->base.objId = OBJ_MagicDustMid;
-    return objSetupObject((ObjSetup*)magicSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+    return objSetupObject(&magicSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
 }

@@ -5,6 +5,7 @@
 #include "dlls/objects/423_DFbarrel.h"
 #include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 
@@ -239,7 +240,7 @@ void DFbarrel_handle_damage(Object* self) {
         explosion->base.x = self->srt.transl.x;
         explosion->base.y = self->srt.transl.y;
         explosion->base.z = self->srt.transl.z;
-        objSetupObject((ObjSetup*)explosion, 5, self->mapID, -1, self->parent);
+        objSetupObject(&explosion->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);

@@ -103,7 +103,7 @@ void DFSH_ObjCreator_control(Object* self) {
             sharpClawSetup->quarterHitpoints = 3;
             break;
         }
-        sharpClaw = objSetupObject((ObjSetup*)sharpClawSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
+        sharpClaw = objSetupObject(&sharpClawSetup->base, OBJINIT_FLAG4 | OBJINIT_STANDALONE, self->mapID, -1, self->parent);
         if (sharpClaw != NULL) {
             sharpClawBaddie = sharpClaw->data;
             if (sharpClawBaddie != NULL) {

@@ -15,7 +15,7 @@ void DIMExplosion_ctor(void *dll) { }
 void DIMExplosion_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMExplosion_setup(Object* self, DIMExplosion_Setup* objSetup, s32 arg2) {
+void DIMExplosion_obj_Setup(Object* self, DIMExplosion_Setup* objSetup, s32 reset) {
     DIMExplosion_Data* objData = self->data;
     
     objData->initialScale = 0.01f;
@@ -25,7 +25,7 @@ void DIMExplosion_setup(Object* self, DIMExplosion_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0xA0 | func: 1 | export: 1
-void DIMExplosion_control(Object* self) {
+void DIMExplosion_obj_Control(Object* self) {
     TextureAnimator* texAnim;
 
     //Scroll texture
@@ -48,10 +48,10 @@ void DIMExplosion_control(Object* self) {
 }
 
 // offset: 0x180 | func: 2 | export: 2
-void DIMExplosion_update(Object *self) { }
+void DIMExplosion_obj_Update(Object *self) { }
 
 // offset: 0x18C | func: 3 | export: 3
-void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 visibility) {
+void DIMExplosion_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DIMExplosion_Data* objData;
     Gfx mode;
     Model* model;
@@ -90,7 +90,7 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             self->opacityWithFade = 0xFF;
         }
         
-        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
     
     //Draw model 0 (outer explosion)
@@ -104,19 +104,19 @@ void DIMExplosion_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tri
             modelInstance->displayList[dlInfo->idx] = mode;
         }
         
-        objprintDrawModel(self, arg1, arg2, arg3, arg4, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x354 | func: 4 | export: 4
-void DIMExplosion_free(Object *self, s32 a1) { }
+void DIMExplosion_obj_Free(Object *self, s32 onlySelf) { }
 
 // offset: 0x364 | func: 5 | export: 5
-u32 DIMExplosion_get_model_flags(Object *self) {
+u32 DIMExplosion_obj_GetModelFlags(Object *self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x374 | func: 6 | export: 6
-u32 DIMExplosion_get_data_size(Object *self, u32 a1){
+u32 DIMExplosion_obj_GetDataSize(Object *self, u32 offsetAddr){
     return sizeof(DIMExplosion_Data);
 }

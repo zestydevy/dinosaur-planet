@@ -1,0 +1,12 @@
+.text = 0x0:
+DIMWoodDoor_ctor = 0x0;
+DIMWoodDoor_dtor = 0xC;
+DIMWoodDoor_obj_Setup = 0x18;
+DIMWoodDoor_obj_Control = 0xAC;
+DIMWoodDoor_obj_Update = 0x268;
+DIMWoodDoor_obj_Print = 0x274;
+DIMWoodDoor_obj_Free = 0x2C8;
+DIMWoodDoor_obj_GetModelFlags = 0x2D8;
+DIMWoodDoor_obj_GetDataSize = 0x2E8;
+
+.rodata = 0x340:

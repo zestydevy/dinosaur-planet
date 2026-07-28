@@ -25,31 +25,31 @@ typedef struct {
 /*000*/ ObjFSA_Data fsa;
 /*34C*/ Unk80009024 unk34C;
 /*374*/ Unk80008E40 unk374;
-/*39C*/ s16 unk39C; // gamebitID
-/*39E*/ s16 unk39E; // gamebitID
+/*39C*/ s16 unk39C; // gamebitID (set when baddie dies?)
+/*39E*/ s16 unk39E; // gamebitID (unset when baddie dies?)
 /*3A0*/ s16 unk3A0;
 /*3A2*/ s16 unk3A2;
 /*3A4*/ s16 unk3A4;
 /*3A6*/ s16 unk3A6;
-/*3A8*/ u32 unk3A8;
+/*3A8*/ u32 unk3A8; //soundHandle
 /*3AC*/ Object *unk3AC;
 /*3B0*/ u8 unk3B0; //flags
 /*3B1*/ u8 _unk3B1;
-/*3B2*/ u16 unk3B2;
+/*3B2*/ u16 unk3B2; //flags (0x80 is frozen?)
 /*3B4*/ u8 unk3B4;
 /*3B5*/ u8 _unk3B5;
-/*3B6*/ s16 unk3B6;
+/*3B6*/ s16 unk3B6; //related to acquiring a target/targetting the player?
 /*3B8*/ u8 unk3B8;
 /*3B9*/ s8 nextWeaponID; // BaddieWeapon
 /*3BA*/ s8 unk3BA;
 /*3BB*/ s8 weaponID; // BaddieWeapon
 /*3BC*/ HeadAnimation unk3BC;
 /*3E0*/ s16 unk3E0; //droppedItemIdx
-/*3E2*/ u16 unk3E2; //max vision distance?
+/*3E2*/ u16 unk3E2; //maxTargetDistance
 /*3E4*/ f32 unk3E4;
-/*3E8*/ f32 unk3E8;
+/*3E8*/ f32 unk3E8; //timer related to damage effects? (flashing red etc.)
 /*3EC*/ f32 unk3EC;
-/*3F0*/ u8 unk3F0;
+/*3F0*/ s8 unk3F0; //hit react index (for an array of modAnimIds)?
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
 /*3F4*/ void *objdata; // pointer to remaining object data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;
@@ -106,7 +106,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*1*/ void (*dtor)(void *dll);
 /*2*/ f32 (*func2)(Object* arg0, f32 arg1, f32 arg2, f32 arg3, Object* arg4);
 /*3*/ void (*func3)(Object *obj, ObjFSA_Data *fsa, Baddie *baddie, f32 arg3, f32 arg4);
-/*4*/ void (*func4)(Object* arg0, Object* arg1, u8 arg2, u16* arg3, s16* arg4, u16* arg5);
+/*4*/ void (*func4)(Object* obj, Object* target, u8 turnMultiplier, u16* oTurnAmount, s16* oYawDiff, u16* oDistance);
 /*5*/ s32 (*func5)(Object* obj, ObjFSA_Data* fsa, f32 arg2);
 /*6*/ s32 (*func6)(UNK_PTR *arg0, UNK_PTR *arg1);
 /*7*/ u16 (*func7)(Object* arg0);
@@ -118,7 +118,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*13*/ s32 (*func13)(Object* arg0, Baddie* baddie, ObjFSA_StateCallback *arg2, ObjFSA_StateCallback *arg3, s16 arg4, f32* arg5, f32* arg6, s32* arg7);
 /*14*/ Object* (*func14)(Object* arg0, Baddie* baddie, u16 *arg2, s32 arg3, s32 arg4, s16 arg5, s16 arg6);
 /*15*/ void (*free)(Object* arg0, Baddie* baddie, u8 arg2);
-/*16*/ s32 (*func16)(Object* arg0, ObjFSA_Data* fsa, f32 arg2, s32 arg3);
+/*16*/ s32 (*func16)(Object* obj, ObjFSA_Data* fsa, f32 maxTargetDist, s32 checkTargetDist);
 /*17*/ Object *(*func17)(Object* baddieObj, ObjFSA_Data* fsa, f32 distanceThreshold, s32 angleThreshold);
 /*18*/ Object *(*drop_collectable)(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
@@ -127,5 +127,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*22*/ void (*change_weapon)(Object* obj, Baddie* baddie);
 /*23*/ f32 (*get_health_ratio)(Object* obj); // Gets current health on a scale from 0-1
 };
+
+#define dll_baddieControl (gDLL_33_BaddieControl->vtbl)
 
 #endif // _DLL_33_H

@@ -1,0 +1,13 @@
+.text = 0x0:
+NWGeyser_ctor = 0x0;
+NWGeyser_dtor = 0xC;
+NWGeyser_obj_Setup = 0x18;
+NWGeyser_obj_Control = 0x4C;
+NWGeyser_obj_Update = 0x100;
+NWGeyser_obj_Print = 0x10C;
+NWGeyser_obj_Free = 0x124;
+NWGeyser_obj_GetModelFlags = 0x134;
+NWGeyser_obj_GetDataSize = 0x144;
+NWGeyser_animCallback = 0x158;
+
+.rodata = 0x2EC:

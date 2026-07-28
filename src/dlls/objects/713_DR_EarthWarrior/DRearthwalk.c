@@ -753,7 +753,7 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
         case 10:
             break;
         case 14:
-            dll_amSfx->Play(actor, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+            dll_amSfx->Play(actor, SOUND_57_Dinosaur_Death_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
             dll_amSfx->Play(actor, SOUND_9E, MAX_VOLUME, NULL, NULL, 0, NULL);
             for (partIdx = 0; partIdx != 10; partIdx++) {
                 gDLL_17_partfx->vtbl->spawn(actor, PARTICLE_3C, NULL, 2, -1, NULL);
@@ -1127,16 +1127,16 @@ s32 DRearthwalk_func_31F8(Object *self, ObjFSA_Data *fsa, f32 updateRate) {
 
 // offset: 0x3210 | func: 35
 static void DRearthwalk_func_3210(Object* self, s16 arg1, s16 arg2) {
-    s16* temp_v0;
+    SeqJoint* seqJoint;
 
-    temp_v0 = objExpr_func_80034804(self, 9);
-    if (temp_v0 != NULL) {
-        temp_v0[1] += ((arg1 - temp_v0[1]) >> 5);
-        temp_v0[0] += ((arg2 - temp_v0[0]) >> 5);
+    seqJoint = objExpr_func_80034804(self, 9);
+    if (seqJoint != NULL) {
+        seqJoint->yaw += ((arg1 - seqJoint->yaw) >> 5);
+        seqJoint->pitch += ((arg2 - seqJoint->pitch) >> 5);
         
-        // @bug? should be clamping [0]?
-        temp_v0[1] = CLAMP_EXPR(temp_v0[1], -0x1555, 0x1555);
-        temp_v0[1] = CLAMP_EXPR(temp_v0[1], -0x1555, 0x1555);
+        // @bug? should be clamping seqJoint->pitch?
+        seqJoint->yaw = CLAMP_EXPR(seqJoint->yaw, -0x1555, 0x1555);
+        seqJoint->yaw = CLAMP_EXPR(seqJoint->yaw, -0x1555, 0x1555);
     }
 }
 

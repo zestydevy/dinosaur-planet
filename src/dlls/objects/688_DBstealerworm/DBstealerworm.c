@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
+#include "dlls/engine/3_animation.h"
 #include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/interaction_arrow.h"
@@ -15,27 +16,13 @@ typedef struct {
     f32 resetTimeThreshold;
     f32 roarSoundTimer;
     f32 roarSoundInterval;
-    union {
-        struct {
-            u32 pad10_19: 13;
-            u32 unk10_18: 1;
-            u32 pad10_15 : 3;
-            u32 unk10_14 : 1;
-            u32 pad10_2 : 10;
-            u32 pad10_1 : 1;
-            u32 pad10_0 : 1;
-        };
-        struct {
-            u8 flags;
-            u8 unk11;
-            u8 unk12_0 : 1;
-            u8 unk12_1 : 1;
-            u8 unk13;
-        };
-    };
+    u32 flags: 8;
+    u32 turnFlags : 8;
+    u32 unusedBit : 1;
+    u32 flagChangeTarget : 1;
     Object* stolenEgg;
     u8 targetIdx;
-    f32 unk1C;
+    f32 aggroCounter;
 } DBStealerWorm_DataActual;
 
 typedef struct {
@@ -64,6 +51,16 @@ typedef enum {
     DBStealerWorm_LSTATE_4_Dormant,
     DBStealerWorm_LSTATE_5_Engage
 } DBStealerWorm_LogicStates;
+
+typedef enum {
+    DBStealerWorm_FLAG_1_Spit = 1,
+    DBStealerWorm_FLAG_2_Create_Particle = 2,
+    DBStealerWorm_FLAG_4_Create_Particles = 4
+} DBStealerWorm_Flags;
+
+typedef enum {
+    DBStealerWorm_TURNFLAG_4 = 4
+} DBStealerWorm_TurnFlags;
 
 /*0x0*/ static u32 dHurtSounds[] = {
     SOUND_5FF_Cry_Hurt, 
@@ -152,58 +149,58 @@ typedef enum {
 static void DBStealerWorm_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void DBStealerWorm_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
 static void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void DBStealerWorm_handle_spit_and_fx_flags(Object* self, Baddie* baddie);
+static void DBStealerWorm_handleSpitAndFxFlags(Object* self, Baddie* baddie);
 static void DBStealerWorm_spit(Object* self, Baddie* baddie);
 
-static s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_3_stand_still(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_4_stand_and_spit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState0PopOutOfGround(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState1BurstIntoGround(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState2BiteAttack(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState3StandStill(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState4StandAndSpit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState5Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState6Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState7RunToObject(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState8PickUpEgg(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_animState9ThrowEgg(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
-static s32 DBStealerWorm_logic_state_0_top(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_logic_state_1_hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_logic_state_2_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_logic_state_3_dead(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_logic_state_4_dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 DBStealerWorm_logic_state_5_engage(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState4Dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 DBStealerWorm_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-static void DBStealerWorm_init_fsa_callbacks(void) {
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_0_Pop_Out_of_Ground] = DBStealerWorm_anim_state_0_pop_out_of_ground;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_1_Burst_Into_Ground] = DBStealerWorm_anim_state_1_burst_into_ground;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_2_Bite_Attack]       = DBStealerWorm_anim_state_2_bite_attack;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_3_Stand_Still]       = DBStealerWorm_anim_state_3_stand_still;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_4_Stand_and_Spit]    = DBStealerWorm_anim_state_4_stand_and_spit;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_5_Hit]               = DBStealerWorm_anim_state_5_hit;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_6_Dying]             = DBStealerWorm_anim_state_6_dying;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_7_Run_to_Object]     = DBStealerWorm_anim_state_7_run_to_object;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_8_Pick_Up_Egg]       = DBStealerWorm_anim_state_8_pick_up_egg;
-    sAnimStateCallbacks[DBStealerWorm_ASTATE_9_Throw_Egg]         = DBStealerWorm_anim_state_9_throw_egg;
+static void DBStealerWorm_initFSACallbacks(void) {
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_0_Pop_Out_of_Ground] = DBStealerWorm_animState0PopOutOfGround;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_1_Burst_Into_Ground] = DBStealerWorm_animState1BurstIntoGround;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_2_Bite_Attack]       = DBStealerWorm_animState2BiteAttack;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_3_Stand_Still]       = DBStealerWorm_animState3StandStill;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_4_Stand_and_Spit]    = DBStealerWorm_animState4StandAndSpit;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_5_Hit]               = DBStealerWorm_animState5Hit;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_6_Dying]             = DBStealerWorm_animState6Dying;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_7_Run_to_Object]     = DBStealerWorm_animState7RunToObject;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_8_Pick_Up_Egg]       = DBStealerWorm_animState8PickUpEgg;
+    sAnimStateCallbacks[DBStealerWorm_ASTATE_9_Throw_Egg]         = DBStealerWorm_animState9ThrowEgg;
     
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_0_Top]     = DBStealerWorm_logic_state_0_top;
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_1_Hit]     = DBStealerWorm_logic_state_1_hit;
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_2_Dying]   = DBStealerWorm_logic_state_2_dying;
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_3_Dead]    = DBStealerWorm_logic_state_3_dead;
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_4_Dormant] = DBStealerWorm_logic_state_4_dormant;
-    sLogicStateCallbacks[DBStealerWorm_LSTATE_5_Engage]  = DBStealerWorm_logic_state_5_engage;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_0_Top]     = DBStealerWorm_logicState0Top;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_1_Hit]     = DBStealerWorm_logicState1Hit;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_2_Dying]   = DBStealerWorm_logicState2Dying;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_3_Dead]    = DBStealerWorm_logicState3Dead;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_4_Dormant] = DBStealerWorm_logicState4Dormant;
+    sLogicStateCallbacks[DBStealerWorm_LSTATE_5_Engage]  = DBStealerWorm_logicState5Engage;
 }
 
 // offset: 0xE4 | ctor
 void DBStealerWorm_ctor(void* dll) {
-    DBStealerWorm_init_fsa_callbacks();
+    DBStealerWorm_initFSACallbacks();
 }
 
 // offset: 0x124 | dtor
 void DBStealerWorm_dtor(void* dll) { }
 
 // offset: 0x130 | func: 1 | export: 0
-void DBStealerWorm_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
+void DBStealerWorm_obj_Setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
     u8 flags;
@@ -241,7 +238,7 @@ void DBStealerWorm_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x2E8 | func: 2 | export: 1
-void DBStealerWorm_control(Object* self) {
+void DBStealerWorm_obj_Control(Object* self) {
     Baddie* baddie;
     ObjFSA_Data* fsa;
     Baddie_Setup* objSetup;
@@ -258,10 +255,10 @@ void DBStealerWorm_control(Object* self) {
     }
     
     if (self->unkE0 == 0) {
-        self->srt.transl.f[0] = objSetup->base.x;
-        self->srt.transl.f[1] = objSetup->base.y;
-        self->srt.transl.f[2] = objSetup->base.z;
-        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
+        self->srt.transl.x = objSetup->base.x;
+        self->srt.transl.y = objSetup->base.y;
+        self->srt.transl.z = objSetup->base.z;
+        dll_anim->start_obj_sequence(objSetup->unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }
@@ -291,12 +288,12 @@ void DBStealerWorm_control(Object* self) {
 }
 
 // offset: 0x474 | func: 3 | export: 2
-void DBStealerWorm_update(Object* self) {
+void DBStealerWorm_obj_Update(Object* self) {
     gDLL_18_objfsa->vtbl->func2(self, self->data, sAnimStateCallbacks);
 }
 
 // offset: 0x4C4 | func: 4 | export: 3
-void DBStealerWorm_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DBStealerWorm_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
     Object* egg;
@@ -323,7 +320,7 @@ void DBStealerWorm_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 }
 
 // offset: 0x614 | func: 5 | export: 4
-void DBStealerWorm_free(Object* self, s32 onlySelf) {
+void DBStealerWorm_obj_Free(Object* self, s32 onlySelf) {
     Baddie* baddie;
 
     baddie = self->data;
@@ -338,23 +335,23 @@ void DBStealerWorm_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x6B8 | func: 6 | export: 5
-u32 DBStealerWorm_get_model_flags(Object* self) {
+u32 DBStealerWorm_obj_GetModelFlags(Object* self) {
     return (MODFLAGS_EVENTS | MODFLAGS_8 | MODFLAGS_1);
 }
 
 // offset: 0x6C8 | func: 7 | export: 6
-u32 DBStealerWorm_get_data_size(Object* self, u32 offsetAddr) {
+u32 DBStealerWorm_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DBStealerWorm_Data);
 }
 
 // offset: 0x6DC | func: 8 | export: 7
-s16 DBStealerWorm_get_anim_state(Object* self, s32 unused) {
+s16 DBStealerWorm_GetAnimState(Object* self, s32 unused) {
     Baddie* baddie = self->data;
     return baddie->fsa.animState;
 }
 
 // offset: 0x6F0 | func: 9 | export: 8
-void DBStealerWorm_receive_message(Object* self, u8 message, s32 unused) {
+void DBStealerWorm_ReceiveMessage(Object* self, u8 message, s32 unused) {
     Baddie* baddie = self->data;
 
     switch (message) {
@@ -417,11 +414,11 @@ void DBStealerWorm_func_72C(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 void DBStealerWorm_func_A74(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     DBStealerWorm_DataActual* objData = baddie->objdata;
     
-    DBStealerWorm_handle_spit_and_fx_flags(self, baddie);
+    DBStealerWorm_handleSpitAndFxFlags(self, baddie);
     
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.17f, 1);
     
-    if (!(objData->unk11 & 4)) {
+    if ((objData->turnFlags & DBStealerWorm_TURNFLAG_4) == FALSE) {
         gDLL_18_objfsa->vtbl->turn_to_target(self, fsa, gUpdateRateF, 4);
     }
     
@@ -462,7 +459,7 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         return;
     }
 
-    objData->unk11 = 0;
+    objData->turnFlags = 0;
     
     if (objData->resetTimer > 0.0f) {
         if ((fsa->logicState != DBStealerWorm_LSTATE_3_Dead) || (baddie->unk3B0 & 1)) {
@@ -503,22 +500,22 @@ void DBStealerWorm_func_BA0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
 }
 
 // offset: 0xF20 | func: 13
-void DBStealerWorm_handle_spit_and_fx_flags(Object* self, Baddie* baddie) {
+void DBStealerWorm_handleSpitAndFxFlags(Object* self, Baddie* baddie) {
     DBStealerWorm_DataActual* objData;
     s32 i;
 
     objData = baddie->objdata;
     
-    if ((objData->flags & 1) && (baddie->fsa.target != NULL)) {
+    if ((objData->flags & DBStealerWorm_FLAG_1_Spit) && (baddie->fsa.target != NULL)) {
         STUBBED_PRINTF(" Fireing Projectile at Player ");
         DBStealerWorm_spit(self, baddie);
     }
     
-    if (objData->flags & 2) {
+    if (objData->flags & DBStealerWorm_FLAG_2_Create_Particle) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_345, NULL, 1, -1, NULL);
     }
     
-    if (objData->flags & 4) {
+    if (objData->flags & DBStealerWorm_FLAG_4_Create_Particles) {
         for (i = 0; i < 10; i++) {
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_343, NULL, 1, -1, NULL);
         }
@@ -564,15 +561,15 @@ void DBStealerWorm_spit(Object* self, Baddie* baddie) {
 }
 
 // offset: 0x11C0 | func: 15
-static void DBStealerWorm_func_11C0(Object* self, s16 pitch, s16 roll) {
+static void DBStealerWorm_setSeqJointRotation(Object* self, s16 pitch, s16 roll) {
     SeqJoint* seqJoint;
-    s32* seqJointID;
+    s32* seqJointIDs;
     s32 i;
 
-    seqJointID = objExpr_func_800349B0();
+    seqJointIDs = objExpr_func_800349B0();
     
-    for (i = 4, seqJointID++; i < 36; i += 4, seqJointID++) {
-        seqJoint = (SeqJoint*)objExpr_func_80034804(self, *seqJointID);
+    for (i = 1; i < 9; i++) {
+        seqJoint = objExpr_func_80034804(self, seqJointIDs[i]);
         if (seqJoint != NULL) {
             seqJoint->roll = roll;
             seqJoint->pitch = pitch;
@@ -589,7 +586,6 @@ static s32 DBStealerWorm_func_1284(Object* self, Object* target, f32 arg2, f32 t
     s16 dYaw;
     f32 yDiff;
 
-    
     baddie = self->data;
     dYaw = objAngleToObjectXZ(self, target, &distance);
 
@@ -622,7 +618,7 @@ static s32 DBStealerWorm_func_1284(Object* self, Object* target, f32 arg2, f32 t
 }
 
 // offset: 0x13B0 | func: 17
-static s32 DBStealerWorm_avoid_objects(Object* self, s32* objTypes, f32* avoidScaleFactors, s32 count, f32 maxTurnSpeed) {
+static s32 DBStealerWorm_avoidObjects(Object* self, s32* objTypes, f32* avoidScaleFactors, s32 count, f32 maxTurnSpeed) {
     Baddie* baddie;
     s32 i;
     Object* obj;
@@ -703,7 +699,7 @@ static s32 DBStealerWorm_avoid_objects(Object* self, s32* objTypes, f32* avoidSc
 /**
   * Used to find either the player or the sidekick (whoever's closest).
   */
-static Object* DBStealerWorm_find_target(Object* self, s32* objTypes, s32 count, f32* distance) { //DBstealerworm_find_target?
+static Object* DBStealerWorm_findTarget(Object* self, s32* objTypes, s32 count, f32* distance) { //DBstealerworm_find_target?
     Object* obj;
     Object* matchObj;
 
@@ -720,7 +716,7 @@ static Object* DBStealerWorm_find_target(Object* self, s32* objTypes, s32 count,
 }
 
 // offset: 0x1734 | func: 19
-s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState0PopOutOfGround(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad;
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
@@ -754,16 +750,16 @@ s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa,
     
     if (fsa->unk33A) {
         baddie->unk3B6 = TRUE;
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
         objData->targetIdx++;
     }
 
     if (fsa->unk308 & 0x200) {
         fsa->unk308 &= ~0x200;
-        objData->flags |= 4;
+        objData->flags |= DBStealerWorm_FLAG_4_Create_Particles;
     }
     if (self->animProgress < 0.7f) {
-        objData->flags |= 2;
+        objData->flags |= DBStealerWorm_FLAG_2_Create_Particle;
     }
     
     gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 1), dChirpSounds);
@@ -773,7 +769,7 @@ s32 DBStealerWorm_anim_state_0_pop_out_of_ground(Object* self, ObjFSA_Data* fsa,
 }
 
 // offset: 0x19B0 | func: 20
-s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState1BurstIntoGround(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
 
@@ -792,7 +788,7 @@ s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa,
     
     if (self->animProgress > 0.25f) {
         objData = baddie->objdata;
-        objData->flags |= 2;
+        objData->flags |= DBStealerWorm_FLAG_2_Create_Particle;
     }
     
     if (fsa->enteredAnimState) {
@@ -809,7 +805,7 @@ s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa,
         fsa->unk33D = 0;
         baddie->unk3B6 = FALSE;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
         objData->targetIdx++;
     }
     
@@ -819,7 +815,7 @@ s32 DBStealerWorm_anim_state_1_burst_into_ground(Object* self, ObjFSA_Data* fsa,
 }
 
 // offset: 0x1B50 | func: 21
-s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState2BiteAttack(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
 
@@ -859,10 +855,10 @@ s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 u
     fsa->unk278 = 0.0f;
     
     if (fsa->unk33A) {
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
     }
     
-    objData->flags |= 2;
+    objData->flags |= DBStealerWorm_FLAG_2_Create_Particle;
     gDLL_18_objfsa->vtbl->func12(self, fsa, 0, mathRnd(0, 2), dChirpSounds);
     gDLL_18_objfsa->vtbl->func12(self, fsa, 7, mathRnd(0, 2), dChirpSounds);
     
@@ -870,7 +866,7 @@ s32 DBStealerWorm_anim_state_2_bite_attack(Object* self, ObjFSA_Data* fsa, f32 u
 }
 
 // offset: 0x1DA4 | func: 22
-s32 DBStealerWorm_anim_state_3_stand_still(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState3StandStill(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredAnimState) {
         STUBBED_PRINTF("New State [%s]\n", "standStill");
     }
@@ -896,7 +892,7 @@ s32 DBStealerWorm_anim_state_3_stand_still(Object* self, ObjFSA_Data* fsa, f32 u
 }
 
 // offset: 0x1E8C | func: 23
-s32 DBStealerWorm_anim_state_4_stand_and_spit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState4StandAndSpit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s8 entered;
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
@@ -923,23 +919,23 @@ s32 DBStealerWorm_anim_state_4_stand_and_spit(Object* self, ObjFSA_Data* fsa, f3
     
     fsa->unk341 = 1;
     objData = baddie->objdata;
-    objData->flags |= 2;
+    objData->flags |= DBStealerWorm_FLAG_2_Create_Particle;
     
     if (fsa->unk308 & 1) {
         fsa->unk308 &= ~1;
-        objData->flags |= 1;
+        objData->flags |= DBStealerWorm_FLAG_1_Spit;
         dll_amSfx->Play(self, dChirpSounds[3], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     if (fsa->unk33A != 0) {
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
     }
     
     return 0;
 }
 
 // offset: 0x2010 | func: 24
-s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState5Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Object* weapon;
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
@@ -978,14 +974,14 @@ s32 DBStealerWorm_anim_state_5_hit(Object* self, ObjFSA_Data* fsa, f32 updateRat
     fsa->unk278 = 0.0f;
     if (fsa->unk33A != 0) {
         objData = baddie->objdata;
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
     }
     
     return 0;
 }
 
 // offset: 0x2278 | func: 25
-s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState6Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
 
@@ -1006,7 +1002,7 @@ s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateR
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
         gDLL_18_objfsa->vtbl->func21(self, fsa, PARTICLE_3C, 0xA, 0);
-        dll_amSfx->Play(self, SOUND_57, MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(self, SOUND_57_Dinosaur_Death_Roar, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
 
         objData = baddie->objdata;
@@ -1049,7 +1045,7 @@ s32 DBStealerWorm_anim_state_6_dying(Object* self, ObjFSA_Data* fsa, f32 updateR
 }
 
 // offset: 0x25BC | func: 26
-s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState7RunToObject(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
     f32 turnSpeedFactor;
@@ -1059,8 +1055,8 @@ s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32
     
     baddie = self->data;
     objData = baddie->objdata;
-    objData->flags |= 2;
-    objData->unk10_18 = 0;
+    objData->flags |= DBStealerWorm_FLAG_2_Create_Particle;
+    objData->turnFlags &= ~DBStealerWorm_TURNFLAG_4;
     
     if (fsa->enteredAnimState) {
         STUBBED_PRINTF("New State [%s]\n", "run to object");
@@ -1088,19 +1084,19 @@ s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32
 
     turnSpeedFactor = baddie->unk3B8 / 40.0f;
     if (DBStealerWorm_func_1284(self, fsa->target, 7, turnSpeedFactor, 0.2f)) {
-        objData->unk10_14 = 1;
+        objData->flagChangeTarget = TRUE;
         objData->targetIdx++;
     }
 
     if (objIsObjectType(fsa->target, dTargetObjTypes[objData->targetIdx]) == FALSE) {
         STUBBED_PRINTF(" LOCK is Not of Given Type");
-        objData->unk10_14 = 1;
+        objData->flagChangeTarget = TRUE;
     }
 
-    DBStealerWorm_avoid_objects(self, dObjTypes, dAvoidScaleFactors, ARRAYCOUNT(dObjTypes), turnSpeedFactor);
+    DBStealerWorm_avoidObjects(self, dObjTypes, dAvoidScaleFactors, ARRAYCOUNT(dObjTypes), turnSpeedFactor);
     
-    if (objData->unk10_14) {
-        DBStealerWorm_func_11C0(self, 0, 0);
+    if (objData->flagChangeTarget) {
+        DBStealerWorm_setSeqJointRotation(self, 0, 0);
     } else if (objData->stolenEgg == NULL) {
         pitch = -(fsa->unk278 * 2535.0f);
         roll = -(fsa->unk27C * 2535.0f);
@@ -1119,7 +1115,7 @@ s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32
             roll = minAngle;
         }
         
-        DBStealerWorm_func_11C0(self, pitch, roll);
+        DBStealerWorm_setSeqJointRotation(self, pitch, roll);
     }
     
     objGetAnimChange(self, fsa->unk278, &fsa->animTickDelta);
@@ -1128,7 +1124,7 @@ s32 DBStealerWorm_anim_state_7_run_to_object(Object* self, ObjFSA_Data* fsa, f32
 }
 
 // offset: 0x2924 | func: 27
-s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState8PickUpEgg(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     DBStealerWorm_DataActual* objData;
     Baddie* baddie;
 
@@ -1142,7 +1138,7 @@ s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 u
     fsa->unk27C = 0.0f;
     
     objData = baddie->objdata;
-    objData->unk11 |= 4;
+    objData->turnFlags |= DBStealerWorm_TURNFLAG_4;
     
     if (fsa->unk308 & 0x200) {
         objData->stolenEgg = fsa->target;
@@ -1158,7 +1154,7 @@ s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 u
     }
     
     if (fsa->unk33A) {
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
         objData->targetIdx++;
     }
     
@@ -1166,7 +1162,7 @@ s32 DBStealerWorm_anim_state_8_pick_up_egg(Object* self, ObjFSA_Data* fsa, f32 u
 }
 
 // offset: 0x2A30 | func: 28
-s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_animState9ThrowEgg(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
 
@@ -1180,7 +1176,7 @@ s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 upd
     fsa->unk27C = 0.0f;
     
     objData = baddie->objdata;
-    objData->unk11 |= 4;
+    objData->turnFlags |= DBStealerWorm_TURNFLAG_4;
     
     if (fsa->unk308 & 0x200) {
         objSendMesg(objData->stolenEgg, 0x11, self, (void*)0x11);
@@ -1196,7 +1192,7 @@ s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 upd
     }
 
     if (fsa->unk33A) {
-        objData->unk12_1 = 1;
+        objData->flagChangeTarget = TRUE;
         objData->targetIdx++;
     }
     
@@ -1204,7 +1200,7 @@ s32 DBStealerWorm_anim_state_9_throw_egg(Object* self, ObjFSA_Data* fsa, f32 upd
 }
 
 // offset: 0x2B38 | func: 29
-s32 DBStealerWorm_logic_state_0_top(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
         STUBBED_PRINTF("New AI State [%s]\n", "aiTop");
     }
@@ -1225,7 +1221,7 @@ s32 DBStealerWorm_logic_state_0_top(Object* self, ObjFSA_Data* fsa, f32 updateRa
 }
 
 // offset: 0x2B98 | func: 30
-s32 DBStealerWorm_logic_state_1_hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
     
@@ -1241,7 +1237,7 @@ s32 DBStealerWorm_logic_state_1_hit(Object* self, ObjFSA_Data* fsa, f32 updateRa
     
     if (fsa->unk33A) {
         objData = baddie->objdata;
-        objData->unk1C += 170.0f;
+        objData->aggroCounter += 170.0f;
         return FSA_NEXTSTATE_SYNC(DBStealerWorm_LSTATE_5_Engage);
     }
     
@@ -1249,9 +1245,9 @@ s32 DBStealerWorm_logic_state_1_hit(Object* self, ObjFSA_Data* fsa, f32 updateRa
 }
 
 // offset: 0x2BF8 | func: 31
-s32 DBStealerWorm_logic_state_2_dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    Baddie *baddie;
-    DBStealerWorm_DataActual *objData;
+s32 DBStealerWorm_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie;
+    DBStealerWorm_DataActual* objData;
     
     baddie = self->data;
     
@@ -1280,7 +1276,7 @@ s32 DBStealerWorm_logic_state_2_dying(Object* self, ObjFSA_Data* fsa, f32 update
 }
 
 // offset: 0x2CE0 | func: 32
-s32 DBStealerWorm_logic_state_3_dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     
     if (fsa->enteredLogicState) {
@@ -1295,7 +1291,7 @@ s32 DBStealerWorm_logic_state_3_dead(Object* self, ObjFSA_Data* fsa, f32 updateR
 }
 
 // offset: 0x2D48 | func: 33
-s32 DBStealerWorm_logic_state_4_dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_logicState4Dormant(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
     DBStealerWorm_DataActual* objData;
 
@@ -1317,13 +1313,13 @@ s32 DBStealerWorm_logic_state_4_dormant(Object* self, ObjFSA_Data* fsa, f32 upda
 }
 
 // offset: 0x2DC4 | func: 34
-s32 DBStealerWorm_logic_state_5_engage(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 DBStealerWorm_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad;
     DBStealerWorm_DataActual* objData;
     Baddie_Setup* objSetup;
     f32 distance;
     s16 objType;
-    u32 temp;
+    u32 targetIdx;
     Baddie* baddie;
     
     baddie = self->data;
@@ -1335,9 +1331,9 @@ s32 DBStealerWorm_logic_state_5_engage(Object* self, ObjFSA_Data* fsa, f32 updat
     }
     
     objData = baddie->objdata;
-    if (fsa->enteredLogicState || objData->unk10_14) { 
-        objData->unk10_18 = 0;
-        objData->unk10_14 = 0;
+    if (fsa->enteredLogicState || objData->flagChangeTarget) { 
+        objData->turnFlags &= ~DBStealerWorm_TURNFLAG_4;
+        objData->flagChangeTarget = FALSE;
         
         if (objData->targetIdx == 0) {
             self->srt.transl.x = objSetup->base.x;
@@ -1354,15 +1350,15 @@ s32 DBStealerWorm_logic_state_5_engage(Object* self, ObjFSA_Data* fsa, f32 updat
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, dTargetAnimStates[objData->targetIdx]);
         }
 
-        temp = objData->targetIdx;
-        if (temp >= 6) {
+        targetIdx = objData->targetIdx;
+        if (targetIdx >= 6) {
             objData->targetIdx = 0;
         }
     } else if ((fsa->unk33A != 0) && (objData->stolenEgg == NULL)) {
-        if (objData->unk1C > 100.0f) {
-            objData->unk1C -= 100.0f;
+        if (objData->aggroCounter > 100.0f) {
+            objData->aggroCounter -= 100.0f;
             distance = 200.0f;
-            fsa->target = DBStealerWorm_find_target(self, dObjTypes, ARRAYCOUNT(dObjTypes) - 1, &distance);
+            fsa->target = DBStealerWorm_findTarget(self, dObjTypes, ARRAYCOUNT(dObjTypes) - 1, &distance);
             if (fsa->target != NULL) {
                 if (distance < 50.0f) {
                     gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_2_Bite_Attack);

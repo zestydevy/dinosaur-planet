@@ -1,16 +1,16 @@
 .text = 0x0:
 WL_DeadDino_ctor = 0x0;
 WL_DeadDino_dtor = 0xC;
-WL_DeadDino_setup = 0x18;
-WL_DeadDino_control = 0xD8;
-WL_DeadDino_update = 0x61C;
-WL_DeadDino_print = 0x628;
-WL_DeadDino_free = 0x7BC;
-WL_DeadDino_get_model_flags = 0x7CC;
-WL_DeadDino_get_data_size = 0x7DC;
-WL_DeadDino_anim_callback = 0x7F0;
+WL_DeadDino_obj_Setup = 0x18;
+WL_DeadDino_obj_Control = 0xD8;
+WL_DeadDino_obj_Update = 0x61C;
+WL_DeadDino_obj_Print = 0x628;
+WL_DeadDino_obj_Free = 0x7BC;
+WL_DeadDino_obj_GetModelFlags = 0x7CC;
+WL_DeadDino_obj_GetDataSize = 0x7DC;
+WL_DeadDino_animCallback = 0x7F0;
 WL_DeadDino_func_8E4 = 0x8E4;
-WL_DeadDino_create_magic_dust = 0x8EC;
+WL_DeadDino_createMagicDust = 0x8EC;
 
 .rodata = 0xA40:
 

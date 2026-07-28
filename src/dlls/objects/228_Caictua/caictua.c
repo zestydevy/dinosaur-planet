@@ -1,74 +1,147 @@
 #include "common.h"
+#include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/251_weapons.h"
+#include "dlls/objects/228_Caictua.h"
+#include "dlls/objects/258_Caictua_Thorn.h"
+#include "game/objects/interaction_arrow.h"
+#include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "sys/math.h"
+#include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
+
+#include "prevent_bss_reordering.h"
 
 typedef struct {
     Baddie_Setup baddie;
 } DLL228_Setup;
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    s16 unk10;
-    s16 unk12;
-    s16 unk14;
-    s16 unk16;
-    s8 unk18[8];
-    Vec3f unk20;
-    s8 unk2C[12];
-    Vec3f unk38;
-} DLL228_DataActual; //44
+    s8 unk0[12];
+    Vec3f origin;  //Coords for the attachPoint the thorn will be fired from
+} CaictuaAimData;
 
 typedef struct {
-    Baddie unk0;
-    DLL228_DataActual unk3FC; //0x3FC
-} DLL228_Data; //440
+    f32 respawnTimer;           //Timer counting up until the Caictua respawns
+    f32 respawnDuration;        //Interval between dying and respawning
+    f32 unk8;                   //Given a random value during setup, and zeroed when dying/disengaging, but otherwise unused
+    f32 unkC;                   //Zeroed when dying/disengaging, but otherwise unused
+    s16 deltaYaw;               //How much to turn by on the current tick
+    s16 thornCooldown;          //Countdown until more thorns can be fired at the player
+    CaictuaAimData aim[2];      //Coords for the attachPoints the thorns are fired from
+} Caictua_DataActual;
 
-/*0x0*/ static s32 data_0[] = {
-    0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 
-    0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 
-    0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 0x00000002, 
-    0x00000002, 0x00000002, 0x00000002, 0x00000002
+typedef struct {
+    Baddie baddie;
+    Caictua_DataActual objData;
+} Caictua_Data;
+
+typedef enum {
+    Caictua_ASTATE_0_Idle,
+    Caictua_ASTATE_1_Attacking,
+    Caictua_ASTATE_2_Hit,
+    Caictua_ASTATE_3_Dying
+} Caictua_AnimStates;
+
+typedef enum {
+    Caictua_LSTATE_0_Top,
+    Caictua_LSTATE_1_Hit,
+    Caictua_LSTATE_2_Dying,
+    Caictua_LSTATE_3_Dead,
+    Caictua_LSTATE_4_Disengage,
+    Caictua_LSTATE_5_Engage
+} Caictua_LogicStates;
+
+/*0x0*/ static s32 dHitAnimStateMap[] = {
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit, 
+    Caictua_ASTATE_2_Hit
 };
-/*0x70*/ static s8 data_70[] = {
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 0xff, 
-    0xff, 0xff, 0xff, 0xff
-};
-/*0x8C*/ static u32 data_8C[] = {
-    0x02060167, 0x01650206, 0x00000000, 0x00000000, 0x00000000
+/*0x70*/ static s8 dHitDamageMap[] = {
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1, 
+    -1,     -1,     -1,     -1
 };
 
-/*0x0*/ static u8 bss_0[0x8];
-/*0x8*/ static u8 bss_8[0x4];
-/*0xC*/ static u8 bss_C[0x4];
-/*0x10*/ static u8 bss_10[0x4];
-/*0x14*/ static u8 bss_14[0x4];
-/*0x18*/ static ObjFSA_StateCallback bss_18[4];
-/*0x28*/ static ObjFSA_StateCallback bss_28[6];
+/*0x18*/ static ObjFSA_StateCallback sAnimStateCallbacks[4];
+/*0x28*/ static ObjFSA_StateCallback sLogicStateCallbacks[6];
+
+static void Caictua_checkHit(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void Caictua_tickWithTarget(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+static void Caictua_tickWithoutTarget(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
+
+static s32 Caictua_animState0Idle(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_animState1Attacking(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_animState2Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_animState3Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+
+static s32 Caictua_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_logicState3Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_logicState4Disengage(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 Caictua_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_0.s")
+static void Caictua_initFSACallbacks(void) {
+    sAnimStateCallbacks[Caictua_ASTATE_0_Idle]       = Caictua_animState0Idle;
+    sAnimStateCallbacks[Caictua_ASTATE_1_Attacking]  = Caictua_animState1Attacking;
+    sAnimStateCallbacks[Caictua_ASTATE_2_Hit]        = Caictua_animState2Hit;
+    sAnimStateCallbacks[Caictua_ASTATE_3_Dying]      = Caictua_animState3Dying;
+    
+    sLogicStateCallbacks[Caictua_LSTATE_0_Top]       = Caictua_logicState0Top;
+    sLogicStateCallbacks[Caictua_LSTATE_1_Hit]       = Caictua_logicState1Hit;
+    sLogicStateCallbacks[Caictua_LSTATE_2_Dying]     = Caictua_logicState3Dying;
+    sLogicStateCallbacks[Caictua_LSTATE_3_Dead]      = Caictua_logicState3Dead;
+    sLogicStateCallbacks[Caictua_LSTATE_4_Disengage] = Caictua_logicState4Disengage;
+    sLogicStateCallbacks[Caictua_LSTATE_5_Engage]    = Caictua_logicState5Engage;
+}
 
 // offset: 0x9C | ctor
-void dll_228_ctor(void* dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_ctor.s")
+void Caictua_ctor(void* dll) {
+    Caictua_initFSACallbacks();
+}
 
 // offset: 0xDC | dtor
-void dll_228_dtor(void* dll) { }
+void Caictua_dtor(void* dll) { }
 
 // offset: 0xE8 | func: 1 | export: 0
-void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
-    DLL228_DataActual* objData;
+void Caictua_obj_Setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
+    Caictua_DataActual* objData;
     Baddie* baddie;
     u8 flags;
 
@@ -76,7 +149,7 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     
     flags = 2;
     if (reset != 0) {
-        flags = 3;
+        flags = 2 | 1;
     }
     if ((objSetup->unk2B & 0x20) == FALSE) {
         flags |= 8;
@@ -86,44 +159,37 @@ void dll_228_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     self->animCallback = NULL;
     
     objData = baddie->objdata;
-    bzero(objData, sizeof(DLL228_DataActual));
+    bzero(objData, sizeof(Caictua_DataActual));
     
-    objData->unk4 = objSetup->unk2C * 60.0f;
-    objData->unk8 = mathRnd(0xA, 0x12C);
-    objData->unk10 = 0;
-    objData->unk12 = 0;
+    objData->respawnDuration = objSetup->unk2C * 60.0f;
+    objData->unk8 = mathRnd(10, 300);
+    objData->deltaYaw = 0;
+    objData->thornCooldown = 0;
     
     objAnimSet(self, 0, 0.0f, 0);
     
-    baddie->fsa.animState = 0;
-    baddie->fsa.logicState = 0;
+    baddie->fsa.animState = Caictua_ASTATE_0_Idle;
+    baddie->fsa.logicState = Caictua_LSTATE_0_Top;
     baddie->fsa.unk4.mode = 0;
     
     func_800267A4(self);
 }
 
 // offset: 0x244 | func: 2 | export: 1
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_control.s")
-#else
-
-static void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-static void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa);
-
-void dll_228_control(Object* self) {
+void Caictua_obj_Control(Object* self) {
     s32 pad;
-    Baddie* objData;
+    Baddie* baddie;
     Baddie_Setup* objSetup;
     f32 time;
 
-    objData = self->data;
-    objSetup = (DLL228_Setup*)self->setup;
+    baddie = self->data;
+    objSetup = (Baddie_Setup*)self->setup;
     
     if (self->unkDC != 0) {
         return;
     }
     
+    //Play a sequence when dying
     if (self->unkE0 == 0) {
         self->srt.transl.x = objSetup->base.x;
         self->srt.transl.y = objSetup->base.y;
@@ -133,54 +199,54 @@ void dll_228_control(Object* self) {
         return;
     }
     
-    if (gDLL_33_BaddieControl->vtbl->func11(self, objData, 0) == FALSE) {
-        objData->unk3B6 = 0;
+    if (gDLL_33_BaddieControl->vtbl->func11(self, baddie, 0) == FALSE) {
+        baddie->unk3B6 = FALSE;
         return;
     }
     
-    if ((objData->unk3B0 & 0x10) && (gDLL_7_Newday->vtbl->func8(&time) == FALSE)) {
-        objData->unk3B6 = 0;
+    if ((baddie->unk3B0 & 0x10) && (gDLL_7_Newday->vtbl->func8(&time) == FALSE)) {
+        baddie->unk3B6 = FALSE;
         return;
     }
     
-    dll_228_func_618(self, objData, &objData->fsa);
+    Caictua_checkHit(self, baddie, &baddie->fsa);
     
-    if (objData->unk3B6 == 1) {
-        if (gDLL_33_BaddieControl->vtbl->func16(self, &objData->fsa, objData->unk3E2, 1)) {
-            objData->unk3B6 = 0;
+    //Check whether the Caictua is still targetting the player
+    if (baddie->unk3B6 == TRUE) {
+        if (gDLL_33_BaddieControl->vtbl->func16(self, &baddie->fsa, baddie->unk3E2, TRUE)) {
+            baddie->unk3B6 = FALSE;
         }
     }
     
-    if (objData->unk3B6 == 0) {
-        dll_228_func_EC0(self, objData, &objData->fsa);
+    if (baddie->unk3B6 == FALSE) {
+        Caictua_tickWithoutTarget(self, baddie, &baddie->fsa);
     } else {
-        dll_228_func_D08(self, objData, &objData->fsa);
+        Caictua_tickWithTarget(self, baddie, &baddie->fsa);
     }
     
     self->srt.transl.y = objSetup->base.y - 2.0f;
 }
-#endif
 
 // offset: 0x43C | func: 3 | export: 2
-void dll_228_update(Object* self) { }
+void Caictua_obj_Update(Object* self) { }
 
 // offset: 0x448 | func: 4 | export: 3
-void dll_228_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void Caictua_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Baddie* baddie;
-    DLL228_DataActual* objData;
+    Caictua_DataActual* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
     
     if (visibility && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
-        objGetAttachPointWorldSpace(self, 0, &objData->unk20.x, &objData->unk20.y, &objData->unk20.z, 0);
-        objGetAttachPointWorldSpace(self, 1, &objData->unk38.x, &objData->unk38.y, &objData->unk38.z, 0);
+        objGetAttachPointWorldSpace(self, 0, &objData->aim[0].origin.x, &objData->aim[0].origin.y, &objData->aim[0].origin.z, 0);
+        objGetAttachPointWorldSpace(self, 1, &objData->aim[1].origin.x, &objData->aim[1].origin.y, &objData->aim[1].origin.z, 0);
     }
 }
 
 // offset: 0x50C | func: 5 | export: 4
-void dll_228_free(Object* self, s32 onlySelf) {
+void Caictua_obj_Free(Object* self, s32 onlySelf) {
     Baddie* baddie = self->data;
     
     objFreeObjectType(self, OBJTYPE_Baddie);
@@ -194,23 +260,23 @@ void dll_228_free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0x5B0 | func: 6 | export: 5
-u32 dll_228_get_model_flags(Object* self) {
+u32 Caictua_obj_GetModelFlags(Object* self) {
     return MODFLAGS_1 | MODFLAGS_8 | MODFLAGS_EVENTS;
 }
 
 // offset: 0x5C0 | func: 7 | export: 6
-u32 dll_228_get_data_size(Object* self, u32 offsetAddr) {
-    return sizeof(DLL228_Data);
+u32 Caictua_obj_GetDataSize(Object* self, u32 offsetAddr) {
+    return sizeof(Caictua_Data);
 }
 
 // offset: 0x5D4 | func: 8 | export: 7
-s16 dll_228_func_5D4(Object* self, s32 arg1) {
+s16 Caictua_GetAnimState(Object* self, s32 unused) {
     Baddie* baddie = self->data;
     return baddie->fsa.animState;
 }
 
 // offset: 0x5E8 | func: 9 | export: 8
-void dll_228_func_5E8(Object* self, u8 message, s32 unused) {
+void Caictua_ReceiveMessage(Object* self, u8 message, s32 unused) {
     Baddie* baddie = self->data;
     
     switch (message) {
@@ -224,22 +290,19 @@ void dll_228_func_5E8(Object* self, u8 message, s32 unused) {
 }
 
 // offset: 0x618 | func: 10
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_618.s")
-#else
-void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-/*0x0*/ static SRT bss_0;
-    Object* player = objGetPlayer(); //6C
-/*0x8C*/ s16 data_8C[] = { 0x0206, 0x0167, 0x0165, 0x0206 }; //64, 66, 68, 6A
-    Vec3f sp58; //58, 5C, 60
+void Caictua_checkHit(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+/*0x0*/ static SRT sHitSRT;
+    Object* player = objGetPlayer();
+/*0x8C*/ s16 dFXScales[] = { 0x0206, 0x0167, 0x0165, 0x0206 };
+    Vec3f delta;
     s32 count;
     s32 scaleIdx;
 
     if (fsa->target != NULL) {
-        sp58.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
-        sp58.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
-        sp58.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
-        fsa->targetDist = sqrtf(SQ(sp58.f[0]) + SQ(sp58.f[1]) + SQ(sp58.f[2]));
+        delta.f[0] = fsa->target->globalPosition.f[0] - self->globalPosition.f[0];
+        delta.f[1] = fsa->target->globalPosition.f[1] - self->globalPosition.f[1];
+        delta.f[2] = fsa->target->globalPosition.f[2] - self->globalPosition.f[2];
+        fsa->targetDist = sqrtf(SQ(delta.f[0]) + SQ(delta.f[1]) + SQ(delta.f[2]));
     }
     
     if (!(baddie->unk3B0 & 0x20)) {
@@ -247,30 +310,29 @@ void dll_228_func_618(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     }
 
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0);
-    if ((fsa->hitpoints > 0) && (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, data_0, data_70, 1, &baddie->unk3A8, &bss_0))) {
+    if ((fsa->hitpoints > 0) && (gDLL_33_BaddieControl->vtbl->check_hit(self, fsa, &baddie->unk34C, baddie->unk39E, dHitAnimStateMap, dHitDamageMap, Caictua_LSTATE_1_Hit, &baddie->unk3A8, &sHitSRT))) {
         scaleIdx = ((DLL_251_Weapons*)player->linkedObject->dll)->vtbl->func19(player->linkedObject);
         if (scaleIdx > 3) {
             scaleIdx = 3;
         }
 
-        bss_0.scale = data_8C[scaleIdx];
-        gDLL_17_partfx->vtbl->spawn(self, 0x323, &bss_0, 0x200001, -1, NULL);
+        sHitSRT.scale = dFXScales[scaleIdx];
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_323, &sHitSRT, 0x200001, -1, NULL);
         
-        bss_0.transl.x -= self->srt.transl.f[0];
-        bss_0.transl.y -= self->srt.transl.f[1];
-        bss_0.transl.z -= self->srt.transl.f[2];
-        bss_0.scale = data_8C[scaleIdx];
+        sHitSRT.transl.x -= self->srt.transl.f[0];
+        sHitSRT.transl.y -= self->srt.transl.f[1];
+        sHitSRT.transl.z -= self->srt.transl.f[2];
+        sHitSRT.scale = dFXScales[scaleIdx];
         
         count = 4;
         while (count--) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x324, &bss_0, 2, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_324, &sHitSRT, 2, -1, NULL);
         }
     }
 }
-#endif
 
 // offset: 0x938 | func: 11
-f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
+static f32 Caictua_calculateDeltaYaw(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
     f32 temp_ft4;
     f32 temp_ft4_2;
     f32 temp_fv0;
@@ -286,7 +348,7 @@ f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
     var_fa0 = 0.0f;
     
     isNegative = yawDiff < 0;
-    if (isNegative != 0) {
+    if (isNegative) {
         yawDiff = -yawDiff;
         yawSpeed = -yawSpeed;
     }
@@ -334,10 +396,7 @@ f32 dll_228_func_938(s32 yawDiff, f32 yawSpeed, f32 maxAngle) {
 }
 
 // offset: 0xAA0 | func: 12
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_AA0.s")
-#else
-s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
+static s16 Caictua_calculateThornPitch(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 targetY, f32 targetZ, f32 speed, f32 arg7, s32 arg8) {
     f32 sp6C;
     f32 temp_fa0;
     f32 temp_fs3;
@@ -354,9 +413,9 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
     
     dx = originX - targetX;
     dz = originZ - targetZ;
-    dy = targetY - originY;
     dx = sqrtf(SQ(dx) + SQ(dz));
-    
+
+    dy = targetY - originY;
     sp6C = ((dy * arg7) + SQ(speed));
     dz = SQ(sp6C);
     temp_fa0 = SQ(arg7) * (SQ(dx) + SQ(dy));
@@ -396,19 +455,12 @@ s16 dll_228_func_AA0(f32 originX, f32 originY, f32 originZ, f32 targetX, f32 tar
             return M_45_DEGREES;
     }
 }
-#endif
 
 // offset: 0xD08 | func: 13
-#if 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_D08.s")
-#else
-
-static f32 dll_228_func_938(s16 a0, f32 a1, f32 a2);
-
-void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+void Caictua_tickWithTarget(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     s16 angle;
     s16 yawDiff;
-    DLL228_DataActual* objData;
+    Caictua_DataActual* objData;
     Object* player;
     f32 dx;
     f32 dz;
@@ -420,39 +472,40 @@ void dll_228_func_D08(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     yawDiff = angle - (self->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(yawDiff);
     
-    objData->unk10 += dll_228_func_938(yawDiff, objData->unk10, 45);
-    self->srt.yaw += objData->unk10;
+    objData->deltaYaw += Caictua_calculateDeltaYaw(yawDiff, objData->deltaYaw, 45);
+    self->srt.yaw += objData->deltaYaw;
     
     gDLL_33_BaddieControl->vtbl->func10(self, fsa, 0.0f, -1);
     baddie->unk3AC = self->animObj;
     self->animObj = NULL;
-    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_18, bss_28);
+    gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, sAnimStateCallbacks, sLogicStateCallbacks);
     self->animObj = baddie->unk3AC;
 }
-#endif
 
 // offset: 0xEC0 | func: 14
-void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
-    DLL228_DataActual* objData;
+void Caictua_tickWithoutTarget(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
+    Caictua_DataActual* objData;
     Object* target;
     Baddie_Setup* objSetup;
 
     objData = baddie->objdata;
-    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, 0x8000);
+    target = gDLL_33_BaddieControl->vtbl->func17(self, fsa, baddie->unk3E2, M_180_DEGREES);
     objSetup = (Baddie_Setup*)self->setup;
     
+    //Acquire a target
     if ((target != NULL) && !(baddie->unk3B0 & 4)) {
         gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0, -1);
         fsa->unk33D = 0;
         fsa->target = target;
-        baddie->unk3B6 = 1;
+        baddie->unk3B6 = TRUE;
         return;
     }
     
-    if ((objData->unk0 > 0.0f) && ((fsa->logicState != 3) || (baddie->unk3B0 & 1))) {
-        if (objData->unk4 <= objData->unk0) {
+    //Respawn after a while
+    if ((objData->respawnTimer > 0.0f) && ((fsa->logicState != Caictua_LSTATE_3_Dead) || (baddie->unk3B0 & 1))) {
+        if (objData->respawnTimer >= objData->respawnDuration) {
             gDLL_33_BaddieControl->vtbl->func9(self, fsa, &baddie->unk34C, baddie->unk39E, NULL, 0, 0, 0, -1);
-            objData->unk0 = 0.0f;
+            objData->respawnTimer = 0.0f;
             fsa->hitpoints = objSetup->quarterHitpoints * 4;
             self->srt.transl.x = objSetup->base.x;
             self->srt.transl.y = objSetup->base.y;
@@ -461,15 +514,73 @@ void dll_228_func_EC0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             return;
         }
         
-        objData->unk0 += gUpdateRateF;
+        objData->respawnTimer += gUpdateRateF;
     }
 }
 
 // offset: 0x10BC | func: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_10BC.s")
+static void Caictua_shootThorn(Object* self, Baddie* baddie) {
+    Caictua_DataActual* objData;
+    ObjSetup* thornSetup;
+    Object* thorn;
+    f32 speed;
+    f32 tickCount;
+    s16 pitch;
+    f32 originX;
+    f32 originY;
+    f32 originZ;
+    f32 targetX;
+    f32 targetY;
+    f32 targetZ;
+    s32 i;
+
+    objData = baddie->objdata;
+    
+    //Fire two thorns
+    i = 2;
+    while (i--) {
+        thornSetup = objAllocSetup(sizeof(Caictua_Thorn_Setup), OBJ_Caictua_Thorn);
+        originX = objData->aim[i].origin.x;
+        originY = objData->aim[i].origin.y;
+        originZ = objData->aim[i].origin.z;
+        targetX = baddie->fsa.target->srt.transl.x;
+        targetY = baddie->fsa.target->srt.transl.y + 25.0f;
+        targetZ = baddie->fsa.target->srt.transl.z;
+        thornSetup->loadFlags = OBJSETUP_LOAD_LEVEL;
+        thornSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
+        thornSetup->loadDistance = 0xFF;
+        thornSetup->fadeDistance = 0xFF;
+        thornSetup->x = originX;
+        thornSetup->y = originY;
+        thornSetup->z = originZ;
+
+        thorn = objSetupObject(thornSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        if (thorn != NULL) {
+            speed = baddie->fsa.targetDist / 30.0f;
+            if (speed < 1.5f) {
+                speed = 1.5f;
+            } else if (speed > 5.0f) {
+                speed = 5.0f;
+            }
+            
+            tickCount = baddie->fsa.targetDist / (speed * gUpdateRateF);
+            targetX += tickCount * baddie->fsa.target->velocity.x;
+            targetY += tickCount * baddie->fsa.target->velocity.y;
+            targetZ += tickCount * baddie->fsa.target->velocity.z;
+            pitch = Caictua_calculateThornPitch(originX, originY, originZ, targetX, targetY, targetZ, speed, -0.03f, 0);
+
+            thorn->srt.pitch = pitch;
+            thorn->srt.yaw = mathAtan2f(targetX - originX, targetZ - originZ);
+            thorn->velocity.x = Cosf(pitch) * speed * Sinf(thorn->srt.yaw);
+            thorn->velocity.y = Sinf(pitch) * speed;
+            thorn->velocity.z = Cosf(pitch) * speed * Cosf(thorn->srt.yaw);
+            thorn->unkC4 = self;
+        }
+    }
+}
 
 // offset: 0x1394 | func: 16
-static void dll_228_func_1394(Object* self) {
+static void Caictua_cactusToCactusCommunication(Object* self) {
     s32 index;
     s32 count;
     Object* obj;
@@ -478,22 +589,22 @@ static void dll_228_func_1394(Object* self) {
     for (objects = objGetObjects(&index, &count); index < count; index++) {
         obj = objects[index];
         if ((self != obj) && (obj->id == OBJ_Caictua)) {
-            ((DLL_Unknown*)obj->dll)->vtbl->func[8].withThreeArgsS32(obj, 0x81, 0);
+            dll_Caictua(obj)->ReceiveMessage(obj, 0x81, 0);
         }
     }
 }
 
 // offset: 0x1460 | func: 17
-s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_animState0Idle(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     s16 angle;
-    DLL228_DataActual* objData;
+    Caictua_DataActual* objData;
     s16 yawDiff;
     Object* player;
     Baddie* baddie;
     Vec3f v;
     Vec3s16 vCactus16;
     Vec3s16 vPlayer16;
-    u8 sp37;
+    u8 hasLineOfSight;
 
     baddie = self->data;
     objData = baddie->objdata;
@@ -509,8 +620,8 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     self->objhitInfo->unk5E = 1;
     func_80028D2C(self);
     
-    if (objData->unk12 >= gUpdateRate) {
-        objData->unk12 -= gUpdateRate;
+    if (objData->thornCooldown >= gUpdateRate) {
+        objData->thornCooldown -= gUpdateRate;
     } else {
         //Check if the caictua has line-of-sight to the player
         player = objGetPlayer();
@@ -532,9 +643,9 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             v.f[2] = player->srt.transl.z; 
             vox_func_80007EE0(&v, &vPlayer16);
 
-            if (vox_func_80008048(&vPlayer16, &vCactus16, NULL, &sp37, 0) || (sp37 == 1)) {
-                objData->unk12 = mathRnd(120, 240);
-                return 2;
+            if (vox_func_80008048(&vPlayer16, &vCactus16, NULL, &hasLineOfSight, 0) || (hasLineOfSight == TRUE)) {
+                objData->thornCooldown = mathRnd(120, 240);
+                return FSA_NEXTSTATE_SYNC(Caictua_ASTATE_1_Attacking);
             }
         }
     }
@@ -543,31 +654,54 @@ s32 dll_228_func_1460(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x16B0 | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/228_Caictua/dll_228_func_16B0.s")
+s32 Caictua_animState1Attacking(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Baddie* baddie = self->data;
+    
+    fsa->unk341 = 1;
+
+    if (fsa->enteredAnimState) {
+        objAnimSet(self, 0, 0.0f, 0);
+        fsa->unk33A = FALSE;
+    }
+    
+    fsa->animTickDelta = 0.015f;
+    
+    if (fsa->unk308 & 0x40) {
+        fsa->unk308 &= ~0x40;
+        Caictua_shootThorn(self, baddie);
+        dll_amSfx->Play(self, SOUND_71F, MAX_VOLUME, NULL, NULL, 0, NULL);
+    }
+    
+    if (fsa->unk33A) {
+        return FSA_NEXTSTATE_SYNC(Caictua_ASTATE_0_Idle);
+    } else {
+        return 0;
+    }
+}
 
 // offset: 0x17B4 | func: 19
-s32 dll_228_func_17B4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_animState2Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     fsa->unk341 = 3;
     
     if (fsa->enteredAnimState) {
         objAnimSet(self, 0, 0.0f, 0);
-        fsa->unk33A = 0;
+        fsa->unk33A = FALSE;
     }
     
     fsa->animTickDelta = 0.015f;
     
     if (fsa->enteredAnimState) {
-        dll_228_func_1394(self);
-        dll_amSfx->Play(self, 0x720, MAX_VOLUME, NULL, NULL, 0, NULL);
+        Caictua_cactusToCactusCommunication(self);
+        dll_amSfx->Play(self, SOUND_720, MAX_VOLUME, NULL, NULL, 0, NULL);
     }
     
     return 0;
 }
 
 // offset: 0x1888 | func: 20
-s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_animState3Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    DLL228_DataActual* objData;
+    Caictua_DataActual* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
@@ -578,15 +712,15 @@ s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;
-        self->unkAF |= 8;
-        gDLL_18_objfsa->vtbl->func21(self, fsa, 0x3C, 0xA, 0);
-        dll_amSfx->Play(self, 0x723, MAX_VOLUME, NULL, NULL, 0, NULL);
+        self->unkAF |= ARROW_FLAG_8_No_Targetting;
+        gDLL_18_objfsa->vtbl->func21(self, fsa, 60, 10, 0);
+        dll_amSfx->Play(self, SOUND_723, MAX_VOLUME, NULL, NULL, 0, NULL);
         func_800267A4(self);
     }
     
     if (fsa->enteredAnimState) {
         objAnimSet(self, 0, 0.0f, 0);
-        fsa->unk33A = 0;
+        fsa->unk33A = FALSE;
     }
     
     fsa->animTickDelta = 0.0f;
@@ -597,72 +731,74 @@ s32 dll_228_func_1888(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->opacity = 0;
     }
     
-    if (fsa->unk33A && (self->opacity == 0) && (objData->unk0 == 0.0f)) {
-        objData->unk0 = 1.0f;
-        mainSetBits(baddie->unk39E, 0);
-        mainSetBits(baddie->unk39C, 1);
+    if (fsa->unk33A && (self->opacity == 0) && (objData->respawnTimer == 0.0f)) {
+        objData->respawnTimer = 1.0f;
+        mainSetBits(baddie->unk39E, FALSE);
+        mainSetBits(baddie->unk39C, TRUE);
         objAnimSet(self, 0, 0.0f, 0);
-        baddie->unk3B6 = 0;
-        fsa->animState = 0;
+        baddie->unk3B6 = FALSE;
+        fsa->animState = Caictua_ASTATE_0_Idle;
     }
     
     return 0;
 }
 
 // offset: 0x1A74 | func: 21
-s32 dll_228_func_1A74(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_logicState0Top(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->target != NULL) {
         fsa->unk27C = 0.0f;
         fsa->unk278 = 0.0f;
-        return 6;
+        return FSA_NEXTSTATE_SYNC(Caictua_LSTATE_5_Engage);
     }
     
     return 0;
 }
 
 // offset: 0x1AB4 | func: 22
-s32 dll_228_func_1AB4(s32 self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_logicState1Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->hitpoints <= 0) {
-        return 3;
+        return FSA_NEXTSTATE_SYNC(Caictua_LSTATE_2_Dying);
     }
     
     if (fsa->unk33A) {
-        return 6;
+        return FSA_NEXTSTATE_SYNC(Caictua_LSTATE_5_Engage);
     }
     
     return 0;
 }
 
 // offset: 0x1AF0 | func: 23
-s32 dll_228_func_1AF0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_logicState3Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    DLL228_DataActual* objData;
+    Caictua_DataActual* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
     
     if (fsa->enteredLogicState) {
-        objData->unk0 = 0.0f;
+        objData->respawnTimer = 0.0f;
         objData->unkC = 0.0f;
         objData->unk8 = 0.0f;
-        fsa->animState = 3;
+        fsa->animState = Caictua_ASTATE_3_Dying;
     } else if (fsa->unk33A) {
         objSendMesgMany(0, 3, self, 0xE0000, self);
         
+        //@bug?: freeing before reaching next state, so a collectable won't be dropped?
         if (self->setup == NULL) {
             objFreeObject(self);
         }
 
-        return 4;
+        return FSA_NEXTSTATE_SYNC(Caictua_LSTATE_3_Dead);
     }
     
     return 0;
 }
 
 // offset: 0x1BAC | func: 24
-s32 dll_228_func_1BAC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_logicState3Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
     
+    //Drop a collectable
     if (fsa->enteredLogicState) {
         gDLL_33_BaddieControl->vtbl->drop_collectable(self, baddie->unk3E0, -1, 0);
     }
@@ -671,32 +807,33 @@ s32 dll_228_func_1BAC(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x1C14 | func: 25
-s32 dll_228_func_1C14(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    DLL228_DataActual* objData;
+s32 Caictua_logicState4Disengage(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    Caictua_DataActual* objData;
     Baddie* baddie;
 
     baddie = self->data;
     objData = baddie->objdata;
     
-    if (fsa->enteredLogicState != 0) {
-        objData->unk0 = 0.0f;
+    if (fsa->enteredLogicState) {
+        objData->respawnTimer = 0.0f;
         objData->unkC = 0.0f;
         objData->unk8 = 0.0f;
-        fsa->animState = 0;
+        fsa->animState = Caictua_ASTATE_0_Idle;
     }
+
     return 0;
 }
 
 // offset: 0x1C58 | func: 26
-s32 dll_228_func_1C58(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 Caictua_logicState5Engage(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie = self->data;
 
     if (fsa->unk33A || fsa->enteredLogicState) {
-        if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, 1)) {
-            return 5;
+        if (gDLL_33_BaddieControl->vtbl->func16(self, fsa, baddie->unk3E2, TRUE)) {
+            return FSA_NEXTSTATE_SYNC(Caictua_LSTATE_4_Disengage);
         }
         
-        fsa->animState = 0;
+        fsa->animState = Caictua_ASTATE_0_Idle;
     }
     
     return 0;

@@ -42,4 +42,6 @@ DLL_INTERFACE(DLL_3_animation) {
 /*32*/ s32 (*func32)(s32 arg0, s32 arg1);
 };
 
+#define dll_anim (gDLL_3_Animation->vtbl)
+
 #endif //_DLLS_3_H

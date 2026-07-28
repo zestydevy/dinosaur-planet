@@ -63,7 +63,7 @@ typedef struct {
     ObjSetup base;
     /** isObjSeq2CurveIndex (1 bit) | sequenceID (11 bits) | actorIndex (4 bits) */
     s16 sequenceIdBitfield;
-    s16 unk1A;
+    s16 unk1A; // event gamebit?
     s16 target; // target (actor) object ID + 4
     s8 unk1E;
     s8 seqSlot;

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/object.h"
 #include "sys/objhits.h"
 
 #include "dlls/objects/226_tumbleweedbush.h"
@@ -268,7 +269,7 @@ s8 TumbleweedBush_create_tumbleweed(Object* self) {
         }
     }
     
-    objData->heldWeeds[weedIdx] = objSetupObject((ObjSetup*)weedSetup, 5, self->mapID, -1, self->parent);
+    objData->heldWeeds[weedIdx] = objSetupObject(&weedSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     ((DLL_227_Tumbleweed*)objData->heldWeeds[weedIdx]->dll)->vtbl->set_home(objData->heldWeeds[weedIdx], self->srt.transl.x, self->srt.transl.z);
     objData->tumbleweedsGrown++;
     return weedIdx;

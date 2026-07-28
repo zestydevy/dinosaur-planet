@@ -376,7 +376,7 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     sporeSetup->base.loadFlags = 2;
     sporeSetup->angularRange = objSetup->sporeAngularRange << 8;
     sporeSetup->windAngle = self->srt.yaw;
-    objSetupObject((ObjSetup*)sporeSetup, 5, -1, -1, NULL);
+    objSetupObject(&sporeSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
 }
 
 // offset: 0xCF8 | func: 14
@@ -428,7 +428,7 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
         debrisSetup->unk3C = 7;
         debrisSetup->unk3E = -1;
         debrisSetup->unk40 = -1;
-        objSetupObject((ObjSetup*)debrisSetup, 5, -1, -1, NULL);
+        objSetupObject(&debrisSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     }
     
     self->objhitInfo->unk58 |= 0x40;

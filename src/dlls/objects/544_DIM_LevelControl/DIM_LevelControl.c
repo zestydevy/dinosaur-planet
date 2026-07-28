@@ -45,7 +45,7 @@ void DIM_LevelControl_control(Object *self) {
 
     objdata = self->data;
     sp34 = !mainGetBits(BIT_3E3);
-    temp_a1 = mainGetBits(BIT_3E2) & sp34;
+    temp_a1 = mainGetBits(BIT_DIM_Depleting_Blizzard_SnowHorn_Energy) & sp34;
     if (temp_a1 != objdata->unk0) {
         mainSetBits(BIT_3E8, temp_a1);
         objdata->unk0 = temp_a1;

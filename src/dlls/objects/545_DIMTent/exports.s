@@ -8,10 +8,10 @@ _exports:
 .dword DIMTent_dtor
 
 # export table
-/*0*/ .dword DIMTent_setup
-/*1*/ .dword DIMTent_control
-/*2*/ .dword DIMTent_update
-/*3*/ .dword DIMTent_print
-/*4*/ .dword DIMTent_free
-/*5*/ .dword DIMTent_get_model_flags
-/*6*/ .dword DIMTent_get_data_size
+/*0*/ .dword DIMTent_obj_Setup
+/*1*/ .dword DIMTent_obj_Control
+/*2*/ .dword DIMTent_obj_Update
+/*3*/ .dword DIMTent_obj_Print
+/*4*/ .dword DIMTent_obj_Free
+/*5*/ .dword DIMTent_obj_GetModelFlags
+/*6*/ .dword DIMTent_obj_GetDataSize

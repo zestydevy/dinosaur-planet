@@ -9,7 +9,7 @@
 typedef struct {
     u16 bankAndClipID; //bankID (1 bit), clipID (15 bit)
     u8 volume;
-    u8 unk3;
+    u8 minVolume; //Minimum volume when applying distance-based falloff
     u8 pitch; //100 for base pitch (default: 0 interpretted as 100)
     u8 pan;
     u8 unk6; //reverb strength?
@@ -84,7 +84,11 @@ enum SoundID {
     SOUND_4E_Tricky_Slow_Snarl = 0x4E,     //Tricky low & slow, starting to think he's all talk
     SOUND_4F_Bassy_Pulse_Loop = 0X4F,      //wWwWwWwWwWwWwWwWwWwWwWwWwWw
 
-    SOUND_57 = 0x57,
+    SOUND_53_General_Scales_Hurt = 0x53,   //Unsure if this is actually General Scales, but it sounds like him!
+    SOUND_54_General_Scales_Hurt = 0x54,
+    SOUND_55_General_Scales_Hurt = 0x55,
+    SOUND_56_General_Scales_Hurt = 0x56,
+    SOUND_57_Dinosaur_Death_Roar = 0x57,
     SOUND_58_Water_Splash = 0x58,          //Water Splash
     SOUND_59_Rattling = 0x59,              //sounds like 0x08 but higher pitch kinda
     SOUND_5A_SandWorm_Roar = 0X5A,         //CCsandwormBoss
@@ -94,22 +98,22 @@ enum SoundID {
     SOUND_5E_Bubbling = 0x5E,              //does not loop
     SOUND_5F = 0X5F,                       //distant and long roar
     SOUND_60 = 0X60,                       //some kind of creature bellowing?
-    SOUND_61_Footstep = 0x61,              //Normal footstep
-    SOUND_62_Footstep = 0x62,              //Normal footstep
-    SOUND_63_Footstep = 0x63,              //Normal footstep
-    SOUND_64_Footstep = 0x64,              //Normal footstep
-    SOUND_65_Footstep = 0x65,              //Crunchy footstep
-    SOUND_66_Footstep = 0x66,              //Crunchy footstep
-    SOUND_67_Footstep = 0x67,              //Crunchy footstep
-    SOUND_68_Footstep = 0x68,              //Crunchy footstep
-    SOUND_69_Creaky_Step = 0x69,           //Creaky footstep
-    SOUND_6A_Creaky_Step = 0x6A,           //Creaky footstep
-    SOUND_6B_Creaky_Step = 0x6B,           //Creaky footstep
-    SOUND_6C_Creaky_Step = 0x6C,           //Creaky footstep
-    SOUND_6D_Water_Footstep = 0x6D,        //Soggy footstep
-    SOUND_6E_Water_Footstep = 0x6E,        //Soggy footstep
-    SOUND_6F_Water_Footstep = 0x6F,        //Soggy footstep
-    SOUND_70_Water_Footstep = 0x70,        //Soggy footstep
+    SOUND_61_Footstep_Soft = 0x61,         //Soft ground (soil/grass/gravel/etc.) [FOOTSTEP FOLEY]
+    SOUND_62_Footstep_Soft = 0x62,         //Soft ground (soil/grass/gravel/etc.) [FOOTSTEP FOLEY]
+    SOUND_63_Footstep_Firm = 0x63,         //Harder ground                        [FOOTSTEP FOLEY]
+    SOUND_64_Footstep_Firm = 0x64,         //Harder ground                        [FOOTSTEP FOLEY]
+    SOUND_65_Footstep_Snow = 0x65,         //Crunchy snow compacting underfoot    [FOOTSTEP FOLEY]
+    SOUND_66_Footstep_Snow = 0x66,         //Crunchy snow compacting underfoot    [FOOTSTEP FOLEY]
+    SOUND_67_Footstep_Grit = 0x67,         //Rough terrain                        [FOOTSTEP FOLEY]
+    SOUND_68_Footstep_Grit = 0x68,         //Rough terrain                        [FOOTSTEP FOLEY]
+    SOUND_69_Footstep_Wood_Creaky = 0x69,  //Creaky old wood                      [FOOTSTEP FOLEY]
+    SOUND_6A_Footstep_Wood_Creaky = 0x6A,  //Creaky old wood                      [FOOTSTEP FOLEY]
+    SOUND_6B_Footstep_Wood_Solid = 0x6B,   //Hardwood (ladders etc.)              [FOOTSTEP FOLEY]
+    SOUND_6C_Footstep_Wood_Solid = 0x6C,   //Hardwood (ladders etc.)              [FOOTSTEP FOLEY]
+    SOUND_6D_Footstep_Water_Wade = 0x6D,   //Deeper water                         [FOOTSTEP FOLEY]
+    SOUND_6E_Footstep_Water_Wade = 0x6E,   //Deeper water                         [FOOTSTEP FOLEY]
+    SOUND_6F_Footstep_Water_Puddle = 0x6F, //Soggy footstep                       [FOOTSTEP FOLEY]
+    SOUND_70_Footstep_Water_Puddle = 0x70, //Soggy footstep                       [FOOTSTEP FOLEY]
     SOUND_71_Water_Move = 0x71,            //Water is moved 
     SOUND_72_Water_Wave = 0x72,            //Water is moved So hard it makes a wave
     SOUND_73_Thunder = 0x73,               //
@@ -139,8 +143,13 @@ enum SoundID {
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
 
+    SOUND_90_Heavier_Whoosh = 0x90,
+    SOUND_91_Heavy_Whoosh = 0x91,
+
     SOUND_95_Explosion = 0x95, //Cannon
     SOUND_96_Cannon = 0x96, //SB_ShipGun
+    
+    SOUND_99_Punchy_Smack = 0x99,
 
     SOUND_9B_Transporter_Hiss = 0x9B,
 
@@ -156,33 +165,63 @@ enum SoundID {
     SOUND_AF_Take_Out_Staff = 0xAF,
     SOUND_B0_Put_Back_Staff = 0xB0,
 
-    SOUND_C8 = 0xC8,   
-    SOUND_C9 = 0xC9,    
-    SOUND_CA = 0xCA,    
-    SOUND_CB = 0xCB,        
+    SOUND_B6_Weapon_Whoosh = 0xB6,
 
+    SOUND_C2_CloudRunner_Chirp_Double = 0xC2,  
+    SOUND_C3_CloudRunner_Chirp = 0xC3,  
+    SOUND_C4_CloudRunner_Chirp_Descending = 0xC4,  
+    SOUND_C5_CloudRunner_Chirp_Warble = 0xC5,  
+
+    SOUND_C8_CC_HighTop_Do_Not_Swim = 0xC8, //"Do not swim in these waters! The currents are strong, they will drag you straight under."
+    SOUND_C9_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_1 = 0xC9, //"WE ARE QUAN ATA LACHU, SIX STARS OF EIGHT. BY YOUR WILL YOU HAVE ALMOST [...]"
+    SOUND_CA_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_2 = 0xCA, //"Do you mean General Scales?" (Sabre) 
+    SOUND_CB_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_3 = 0xCB, //"NOT SCALES. EVIL."
+    SOUND_CC_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_4 = 0xCC, //"WHEN WE ARE ONE, THE MAJESTIC 8 SHALL BE ALIGNED. WHEN THIS IS COMPLETE, EVIL SHALL BE BANISHED FOREVER."
+    SOUND_CD_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_5 = 0xCD, //"Majestic 8? Eight planets in alignment?" (Sabre)
+    SOUND_CE_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_6 = 0xCE, //"DINOSAUR PLANET AND YOUR OWN WORLD, ARE BUT TWO OF THE MAJESTIC 8. [...]"
+    SOUND_CF_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_7 = 0xCF, //"You mean they actually exist??" (Sabre)
+    SOUND_D0_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_8 = 0xD0, //"THE KRAZOA FOUGHT A GREAT WAR AGAINST EVIL. MANY AEONS IN THE PAST. [...]"
+    SOUND_D1_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_9 = 0xD1, //"IF EVIL SUCCEEDS IN EXTRACTING THIS PLANET'S SOURCE OF MAGIC ENERGY, THEN EVIL HAS WON. WE CANNOT STOP THE DARKNESS."
+    SOUND_D2_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_10 = 0xD2, //"GO TO THE KRAZOA. GO TO THE KRAZOA. GO TO THE KRAZOA. [...]"
+    SOUND_D3_WM_Quan_Ata_Lachu_6th_Spirit_Deposited_11 = 0xD3, //"So that's why Krystal saw the mirage... the Krazoa need us to help them. Krystal must go there immediately!" (Sabre)
+
+    SOUND_D6_Krystal_Hup = 0xD6,           //player attack sfx
+    SOUND_D7_Krystal_Hut = 0xD7,           //player attack sfx
+    SOUND_D8_Krystal_Huh = 0xD8,           //player attack sfx
     SOUND_D9_Krystal_Hurt_Agh = 0xD9,      //player hurt sfx
     SOUND_DA_Krystal_Hurt_Ough = 0xDA,     //player hurt sfx
     SOUND_DB_Krystal_Hurt_Ack = 0xDB,      //player hurt sfx
     SOUND_DC_Krystal_Hurt_Ogh = 0xDC,      //player hurt sfx
     SOUND_DD_Krystal_Hurt_Augh = 0xDD,     //player hurt sfx
     SOUND_DE_Krystal_Hurt_Ugh = 0xDE,      //player hurt sfx 
-
+    SOUND_DF_Krystal_Hah = 0xDF,           //player sfx 
+    SOUND_E0_Krystal_Hoo = 0xE0,           //player sfx 
     SOUND_E1_Krystal_Ugh = 0xE1,           //SCtotemstrength
     SOUND_E2_Krystal_Yuh = 0xE2,
     SOUND_E3_Krystal_Yaahh = 0xE3,
     SOUND_E4_Krystal_Yeah = 0xE4,
-    
+    SOUND_E5_Krystal_Huh = 0xE5,
+    SOUND_E6_Krystal_Yah = 0xE6,
     SOUND_E7_Krystal_Hyeh = 0xE7,          //SCtotemstrength
-    
+    SOUND_E8_Explosion = 0xE8,
     SOUND_E9_Krystal_Heel = 0xE9,          //"*whistle* Come here!"
     SOUND_EA_Krystal_Find = 0xEA,          //"Seek it out!"
     SOUND_EB_Krystal_Flame = 0xEB,         //"Fight!"
     SOUND_EC_Krystal_Distract = 0xEC,      //"Distract them!"
     SOUND_ED_Krystal_Guard = 0xED,         //"Look after it."
     SOUND_EE_Krystal_Fetch = 0xEE,         //"Go play!"
-    
+    SOUND_EF_Sabre_Heel = 0xEF,            //"*whistle* Here boy!"
+    SOUND_F0_Krystal_Hurt_Uuugh = 0xF0,    //player hurt sfx 
+    SOUND_F1_Sabre_Heel = 0xF1,            //"Seek it out!"
     SOUND_F2_Garbled_Message = 0xF2,    //(sped up)I'veHadAGarbledMessageFromTheWizardSomethingAboutAFloatingMountainHiddenWithinAStorm
+    SOUND_F3_Sabre_Distract = 0xF3,        //"Distract 'em!"
+    SOUND_F4_Sabre_Guard = 0xF4,           //"Look after it!"
+    SOUND_F5_Krystal_Faint = 0xF5,         //player hurt sfx 
+    SOUND_F6_SH_Queen_EarthWalker_Saved_2 = 0xF6, //"Thank you for saving my son, and for saving me."
+    SOUND_F7_Flap_Heavy = 0xF7,
+    SOUND_F8_Flap_Quiet = 0xF8,
+    SOUND_F9_Flap = 0xF9,
+    SOUND_FA_Low_Crunch = 0xFA,
    
     SOUND_10A_Galleon_Roar = 0x10A,
 
@@ -190,19 +229,51 @@ enum SoundID {
 
     SOUND_115_ScorpionRobot_LaserFire = 0x115,
 
+    SOUND_117_Brawl = 0x117,
+    SOUND_118_Cartoon_Fling = 0x118,
+
+    SOUND_125_Metal_Clunk = 0x125,
+
+    SOUND_12C_Metal_Unclunk = 0x12C,
+
     SOUND_129_SnowHorn_Yawn_1 = 0x129,
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
 
     SOUND_140_Galleon_Propeller_Loop = 0x140,
 
+    SOUND_142_Krystal_Play = 0x142,          //"Go play!"
+    SOUND_143_Krystal_Fetch = 0x143,         //"Fetch!"
+    SOUND_144_Krystal_Chase = 0x144,         //"Chase!" (Scrapped recreational sidekick commands?)
+    SOUND_145_Krystal_Hide_and_Seek = 0x145, //"Hide and Seek!"
+    SOUND_146_Krystal_Tag = 0x146,           //"Tag."
+    SOUND_147_Krystal_Tug_of_War = 0x147,    //"Tug o' War!"
+    SOUND_148_Krystal_Rodeo = 0x148,         //"Rodeo!"
+    SOUND_149_Sabre_Fetch = 0x149,           //"Fetch!"
+    SOUND_14A_Sabre_Chase = 0x14A,           //"Chase!"
+    SOUND_14B_Sabre_Hide_and_Seek = 0x14B,   //"Hide and Seek!"
+    SOUND_14C_Sabre_Tag = 0x14C,             //"Tag!"
+    SOUND_14D_Sabre_Tug_of_War = 0x14D,      //"Tug of War!"
+    SOUND_14E_Sabre_Rodeo = 0x14E,           //"Rodeo!"
+
+    SOUND_153_SharpClaw_Here_Fishy = 0x153, //"Heeere fishy! *laughs*"
+    SOUND_154_SharpClaw_Here_Fishy_Fishy = 0x154,   //"Heeere fishy-fishy! *laughs*"
+    SOUND_155_Tricky_Hey_Look_at_This = 0x155,      //(Heard along the path to the SnowHorn geyser area in the One Hour Footage)
+    SOUND_156_Tricky_Wait_Theres_Something_Close_By = 0x156, //(Heard along the path to the SnowHorn geyser area in the One Hour Footage)
     SOUND_157_Bird_Call_Warbling = 0x157, //NWsfx
     SOUND_158_Bird_Call_Whistle_Descending = 0x158, //NWsfx
-
+    SOUND_159_DFPT_Kyte_SpellStone_Holder = 0x159, //"Krystal! It's the SpellStone Holder!"
     SOUND_15A_Bird_Call_Whistle_Ascending = 0x15A, //NWsfx
     SOUND_15B_Bird_Call_Squawk = 0x15B, //NWsfx
 
+    SOUND_160_Toy_Squeak = 0x160, //Unused?
     SOUND_161_Toy_Squeak = 0x161,
+    
+    SOUND_163_Toy_Double_Squeak = 0x163, //Unused?
+
+    SOUND_169_SharpClaw_Taunt_1 = 0x169, //"Hey you! *snort* C'mon and fight! *snort*"
+    SOUND_16A_SharpClaw_Taunt_2 = 0x16A, //"C'mon! *snort* Are you chicken? Hrgh."
+    SOUND_16B_SharpClaw_Taunt_3 = 0x16B, //"C'mooon! Press Z to fight."
 
     SOUND_174_Machinery_Move_A = 0x174, //SB_ShipGun
     SOUND_175_Machinery_Move_B = 0x175, //SB_ShipGun
@@ -213,15 +284,26 @@ enum SoundID {
     SOUND_17A_Galleon_Roar = 0x17A,
     SOUND_17B_Galleon_Rumble_Loop = 0x17B,
 
-    SOUND_Sabre_Freezing_A = 0x183,     //"I'm freezing!"
-    SOUND_Sabre_Exit_Icy_Water = 0x184, //"That's much better!"
+    SOUND_183_Sabre_Freezing_A = 0x183,     //"I'm freezing!"
+    SOUND_184_Sabre_Exit_Icy_Water = 0x184, //"That's much better!"
 
-    SOUND_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
+    SOUND_193_Sabre_Freezing_B = 0x193,     //"That's too cold for me!"
+    SOUND_194_Metal_Clunk = 0x194,
+
+    SOUND_197_Cartoon_Fling = 0x197,
 
     SOUND_19A_Magic_Reverse_Cymbal = 0x19A, //SpellOverlay
+    
+    SOUND_1C9_SharpClaw_Snore_Loop = 0x1C9,
+
+    SOUND_1CF_CRF_Uncle_Help_Me = 0x1CF, //"Help me!" (UNUSED)
+    SOUND_1D0_CRF_Uncle_Get_Me_Out = 0x1D0, //"Get me out of here!"
+    SOUND_1D1 = 0x1D1, //Silent
 
     SOUND_1D2_Roar = 0x1D2, // Deleted genprops object
     SOUND_1D3 = 0x1D3,
+    SOUND_1D4_Metal_Ratcheting_Loop = 0x1D4,
+    SOUND_1D5_Metal_Squeak = 0x1D5,
 
     SOUND_1e1_Stone_Moving_Loop = 0x1e1,
 
@@ -237,8 +319,16 @@ enum SoundID {
     SOUND_226_Fall_Impact = 0x226,
 
     SOUND_236_SharpClaw_Argh = 0x236, //DR_NiceSharpy
-
-    SOUND_239_SharpClaw_Snort = 0x239, //DR_NiceSharpy
+    SOUND_237_SharpClaw_Arghhh = 0x237,
+    SOUND_238_SharpClaw_Snort = 0x238,
+    SOUND_239_SharpClaw_Rah_Snort = 0x239, //DR_NiceSharpy
+    SOUND_23A_SharpClaw_Ugh_Snort = 0x23A,
+    SOUND_23B_SharpClaw_Hyah = 0x23B,
+    SOUND_23C_SharpClaw_Ryah = 0x23C,
+    SOUND_23D_SharpClaw_Hhhhah = 0x23D,
+    SOUND_23E_SharpClaw_Rrrgh = 0x23E,
+    SOUND_23F_SharpClaw_Nyeh_Nyah = 0x23F,
+    SOUND_240_SharpClaw_Snort = 0x240,
 
     SOUND_242_Failure_Glissando = 0x242,
 
@@ -253,15 +343,15 @@ enum SoundID {
 
     SOUND_27A_Wood_Creak_A = 0x27A,
     SOUND_27B_Wood_Creak_B = 0x27B,
-    SOUND_27C = 0x27C,
-    SOUND_27D = 0x27D,
-    SOUND_27E = 0x27E,
-    SOUND_27F = 0x27F,
+    SOUND_27C_Footstep_Wood = 0x27C, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27D_Footstep_Wood = 0x27D, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27E_Footstep_Wood = 0x27E, //Creaky old wood [FOOTSTEP FOLEY]
+    SOUND_27F_Footstep_Wood = 0x27F, //Creaky old wood [FOOTSTEP FOLEY]
 
-    SOUND_280 = 0x280,
-    SOUND_281 = 0x281,
-    SOUND_282 = 0x282,
-    SOUND_283 = 0x283,
+    SOUND_280_Footstep_Stone = 0x280, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_281_Footstep_Stone = 0x281, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_282_Footstep_Stone_Hard = 0x282, //Solid terrain [FOOTSTEP FOLEY]
+    SOUND_283_Footstep_Stone_Hard = 0x283, //Solid terrain [FOOTSTEP FOLEY]
 
     SOUND_284_SB_Kyte_Heeelp = 0x284,
     SOUND_285_SB_Kyte_Find_the_wizard_and_get_me_out_of_here = 0x285,
@@ -325,10 +415,10 @@ enum SoundID {
     SOUND_366_GuardClaw_Rawr = 0x366,
     SOUND_367_GuardClaw_SharpClaw_Only = 0x367,
 
-    SOUND_368 = 0x368,
-    SOUND_369 = 0x369,
-    SOUND_36A = 0x36A,
-    SOUND_36B = 0x36B,
+    SOUND_368_Footstep_Snow = 0x368, //Creaky snow compacting underfoot [FOOTSTEP FOLEY]
+    SOUND_369_Footstep_Snow = 0x369, //Creaky snow compacting underfoot [FOOTSTEP FOLEY]
+    SOUND_36A_Footstep_Grit = 0x36A, //Rougher ground [FOOTSTEP FOLEY]
+    SOUND_36B_Footstep_Grit = 0x36B, //Rougher ground [FOOTSTEP FOLEY]
 
     SOUND_36E_Lever_Clunk = 0x36e, // used by many levers (e.g. ones leading to Cape Claw courtyard)
 
@@ -339,11 +429,17 @@ enum SoundID {
     SOUND_375_Smack1 = 0x375,
     SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
+    SOUND_378_Metal_Whack = 0x378,
+    SOUND_379_Metal_Slice = 0x379,
+
+    SOUND_37B_Snowy_Crunch = 0x37B,
 
     SOUND_380_Scorching_Impact = 0x380, //DRbullet
 
     SOUND_386_Squelched_Impact = 0x386, //DRbullet
 
+    SOUND_387_Wood_Impact = 0x387, //DIMWoodDoor
+    SOUND_388_Wood_Smash = 0x388, //DIMWoodDoor
     SOUND_389_Explosion = 0x389, //DIMExplosion
 
     SOUND_3D6 = 0x3D6, // used in SHroot (DLL 510)
@@ -355,12 +451,12 @@ enum SoundID {
     SOUND_3EC_Water_Wade_Slow_A = 0x3EC,
     SOUND_3ED_Water_Wade_Slow_B = 0x3ED,
 
-    SOUND_402 = 0x402,
+    SOUND_402_Footstep_Ice = 0x402, //Creaky ice [FOOTSTEP FOLEY]
     SOUND_403 = 0x403,
-    SOUND_404 = 0x404,
+    SOUND_404_Footstep_Ice = 0x404, //Creaky ice [FOOTSTEP FOLEY]
 
-    SOUND_406 = 0x406,
-    SOUND_407 = 0x407,
+    SOUND_406_Footstep_Ice = 0x406, //Creaky ice [FOOTSTEP FOLEY]
+    SOUND_407_Footstep_Ice = 0x407, //Creaky ice [FOOTSTEP FOLEY]
 
     SOUND_43C_Target_Highlighted = 0x43C, // camera DLL [Interaction Arrow]
     SOUND_43D_Transporter_Fire = 0x43D,
@@ -514,9 +610,13 @@ enum SoundID {
     SOUND_711_Sabre_Test_of_Strength_2 = 0x711, //DBSH_Symbol
     SOUND_712_Sabre_Test_of_Strength_3 = 0x712, //DBSH_Symbol
 
+    SOUND_71F = 0x71F,
+    SOUND_720 = 0x720,
     SOUND_721 = 0x721,
     SOUND_722_Impact_Wobble = 0x722, //Pollen
+    SOUND_723 = 0x723,
 
+    SOUND_72C = 0x72C,
     SOUND_72D_Lock_On = 0x72D,          //Z-targetting
     SOUND_72E_Lock_Disengage = 0x72E,   //Z-targetting
 
@@ -567,6 +667,8 @@ enum SoundID {
 
     SOUND_7F6_Firefly_Twinkle_Loop = 0x7F6,
 
+    SOUND_809_Mechanical_Ratcheting_Loop = 0x809,
+
     SOUND_80B_Crackling_Freezing = 0x80B,
     SOUND_80C_Steam_Hissing = 0x80C,
 
@@ -597,8 +699,10 @@ enum SoundID {
     
     SOUND_883_Footstep_Mud_1 = 0x883, //player 
     SOUND_884_Footstep_Mud_2 = 0x884, //player 
+
+    SOUND_88B_Pulley_Operating = 0x88B, 
     
-    SOUND_88D = 0x88D,
+    SOUND_88D_Footstep_Marsh = 0x88D, //Sticky squelchy footstep [FOOTSTEP FOLEY]
     
     SOUND_8A0_Deflate_Honk = 0x8A0,             //SHrocketmushroom
     SOUND_8A1_Spore_Launched = 0x8A1,           //SHrocketmushroom
@@ -635,7 +739,11 @@ enum SoundID {
     SOUND_990 = 0x990,
 
     SOUND_999_Mechanical_Ratcheting = 0x999,
-    SOUND_99a_Mechanical_Ratcheting = 0x99a,
+    SOUND_99A_Mechanical_Ratcheting = 0x99A,
+    SOUND_99B_Flame_Extinguish = 0x99B,
+    
+    SOUND_99E_Flame_Crackling_Loop = 0x99E,
+    SOUND_99F_Metal_Hinge_Squeak = 0x99F,
 
     SOUND_9A0 = 0x9A0,
     SOUND_9A1 = 0x9A1,
@@ -718,10 +826,15 @@ enum SoundID {
     SOUND_B31_Item_Collection_Chime = 0xB31,
 
     SOUND_B38 = 0xB38,
+    
+    SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     SOUND_B47 = 0xB47,
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
+
+    SOUND_B63 = 0xB63,
+    SOUND_B64 = 0xB64,
 
     SOUND_B6B_Magic_Gliss_Mid = 0xB6B, //MagicDust (when collected)
     SOUND_B6C_Magic_Gliss_Large = 0xB6C, //MagicDust (when collected)
@@ -750,8 +863,6 @@ enum SoundID {
     SOUND_BA8_Randorn_Calling_Krystal_1 = 0xBA8,
     SOUND_BA8_Randorn_Calling_Krystal_2 = 0xBA9,
     SOUND_BA8_Randorn_Calling_Krystal_3 = 0xBAA,
-
-    SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     NO_SOUND = -1
 };

@@ -462,21 +462,21 @@ void objfsa_func_F78(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
 
 // offset: 0x1008 | func: 11 | export: 11
 void objfsa_turn_to_target(Object *obj, ObjFSA_Data *data, f32 updateRate, s32 turnDuration) {
-    f32 var_fv0;
-    f32 var_fv1;
-    s32 var_v1;
+    f32 dx;
+    f32 dz;
+    s32 dYaw;
 
     if (data->target != NULL) {
         if (data->target->parent == obj->parent) {
-            var_fv0 = data->target->srt.transl.x - obj->srt.transl.x;
-            var_fv1 = data->target->srt.transl.z - obj->srt.transl.z;
+            dx = data->target->srt.transl.x - obj->srt.transl.x;
+            dz = data->target->srt.transl.z - obj->srt.transl.z;
         } else {
-            var_fv0 = obj->globalPosition.x - data->target->globalPosition.x;
-            var_fv1 = obj->globalPosition.z - data->target->globalPosition.z;
+            dx = obj->globalPosition.x - data->target->globalPosition.x;
+            dz = obj->globalPosition.z - data->target->globalPosition.z;
         }
-        var_v1 = mathAtan2f(-var_fv0, -var_fv1) - (obj->srt.yaw & 0xFFFF);
-        CIRCLE_WRAP(var_v1)
-        obj->srt.yaw += (s32) (((f32) var_v1 * gUpdateRateF) / ((f32) turnDuration * 3.0f));
+        dYaw = mathAtan2f(-dx, -dz) - (obj->srt.yaw & 0xFFFF);
+        CIRCLE_WRAP(dYaw)
+        obj->srt.yaw += (s32) (((f32) dYaw * gUpdateRateF) / ((f32) turnDuration * 3.0f));
     }
 }
 

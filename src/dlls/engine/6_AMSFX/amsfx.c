@@ -862,8 +862,8 @@ static void amSfx_func_1F78(void) {
             }
         }
         vol = (s32) (sSndSlots[i].volume * sSndSlots[i].distVolume) >> 7;
-        if (vol < sSndSlots[i].def.unk3) {
-            vol = sSndSlots[i].def.unk3;
+        if (vol < sSndSlots[i].def.minVolume) {
+            vol = sSndSlots[i].def.minVolume;
         }
         if (vol != (s8)sSndSlots[i].unk13) {
             sSndSlots[i].unk13 = vol;

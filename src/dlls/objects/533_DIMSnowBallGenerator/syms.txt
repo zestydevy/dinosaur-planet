@@ -1,0 +1,12 @@
+.text = 0x0:
+DIMSnowBallGenerator_ctor = 0x0;
+DIMSnowBallGenerator_dtor = 0xC;
+DIMSnowBallGenerator_obj_Setup = 0x18;
+DIMSnowBallGenerator_obj_Control = 0x50;
+DIMSnowBallGenerator_obj_Update = 0x1B4;
+DIMSnowBallGenerator_obj_Print = 0x1C0;
+DIMSnowBallGenerator_obj_Free = 0x214;
+DIMSnowBallGenerator_obj_GetModelFlags = 0x224;
+DIMSnowBallGenerator_obj_GetDataSize = 0x234;
+
+.rodata = 0x288:

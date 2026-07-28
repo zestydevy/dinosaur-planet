@@ -139,5 +139,5 @@ Object* FireFlyLantern_create_firefly(Object* self) {
     firefly->lifetime = 2600;
     firefly->varianceZ = 40;
     firefly->varianceY = 30;
-    return objSetupObject((ObjSetup*)firefly, 5, -1, -1, self->parent);
+    return objSetupObject(&firefly->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
 }
