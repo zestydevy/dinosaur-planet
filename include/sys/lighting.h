@@ -40,7 +40,7 @@ void light_func_8001E818(Object*, Model*, ModelInstance*);
 void lightDimAmbient(u8 r, u8 g, u8 b, f32 t);
 void lightClearEmitters(void);
 void lightSetInside(s32 inside);
-u8 lightGetInside(void);
+s32 lightGetInside(void);
 void lightUpdateSkyLight(f32 dirX, f32 dirY, f32 dirZ, u8 arg3, u8 arg4, s8 arg5, s8 arg6, u8 r, u8 g, u8 b);
 void lightModelSphereMapping(ModelInstance*);
 void lightBlockSphereMapping(Block* block, s32 blockX, s32 blockZ);

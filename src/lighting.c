@@ -471,7 +471,7 @@ void lightSetInside(s32 inside) {
     gInsideLighting = (u8) inside;
 }
 
-u8 lightGetInside(void) {
+s32 lightGetInside(void) {
     return gInsideLighting;
 }
 

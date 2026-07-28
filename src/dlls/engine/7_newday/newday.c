@@ -140,9 +140,27 @@ typedef struct
 /*115*/ u8 _unk115[3];
 } NewDayStruct;
 
-/*0x0*/ static u8 _bss_0[0x26]; // DAT_810296a0
-/*0x26*/ static u8 _bss_26; // DAT_810296c6
-/*0x27*/ static u8 _bss_27; // DAT_810296c7
+// size: 0x28
+typedef struct {
+    u16* unk0;
+    u16* unk4;
+    u16* unk8;
+    u16* unkC;
+    u16* unk10;
+    u16* unk14;
+    u16 unk18;
+    u16 unk1A;
+    u16 unk1C;
+    u16 unk1E;
+    u16 unk20;
+    u16 unk22;
+    s8 unk24;
+    u8 unk25;
+    u8 unk26;
+    u8 unk27;
+} BSS0;
+
+/*0x0*/ static BSS0 _bss_0;
 /*0x28*/ static u8 _bss_28[0x4]; // DAT_810296c8
 /*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
 /*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
@@ -617,45 +635,191 @@ void dll_7_func_5124(f32 x, f32 y, f32 z) {
 }
 
 /*0x2A0*/ static u32 _data_2A0 = 0x00000000;
-/*0x2A4*/ static u32 _data_2A4 = 0x00000000;
-/*0x2A8*/ static u32 _data_2A8[] = {
-    0x00000000, 0x00000000
-};
 
 // offset: 0x56F8 | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_56F8.s")
+s32 dll_7_func_56F8(Gfx** gdl) {
+    /*0x2A4*/ static u8 _data_2A4 = 0;
+    f32 transp;
+
+    _data_2A4 += 1;
+    transp = _data_C4 / 200.0f;
+    if (transp < 0.0f) {
+        transp = 0.0f;
+    }
+    if (transp == 0.0f) {
+        return 0;
+    }
+    dlSetFogColor(gdl, 0xFF, 0xFF, 0xDC, (u8) (0xFF - (s16) (transp * 255.0f)));
+    return 1;
+}
 
 // offset: 0x57C0 | func: 23
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_57C0.s")
+void dll_7_func_57C0(void) {
+    bzero(&_bss_0, sizeof(_bss_0));
+    _bss_0.unk26 = mainGetBits(BIT_SC_UNKNOWN_2BA);
+}
 
 // offset: 0x5818 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5818.s")
+void dll_7_func_5818(void) {
+    u8 isNight;
+    f32 time;
+    Object* player;
+    s32 _pad;
+
+    if (lightGetInside() != 0) {
+        _bss_0.unk27 |= 0x10;
+    }
+    isNight = gDLL_7_Newday->vtbl->func8(&time);
+    if ((isNight != _bss_0.unk25) || (_bss_0.unk27 & 0x10)) {
+        _bss_0.unk24 = 0x3C;
+        _bss_0.unk27 &= ~0x10;
+    }
+    if (_bss_0.unk24 > 0) {
+        _bss_0.unk24--;
+        if (!isNight) {
+            switch (_bss_0.unk24) {
+            case 0x3B:
+                _bss_0.unk26++;
+                if (_bss_0.unk26 >= 28) {
+                    _bss_0.unk26 = 0;
+                }
+                if ((_bss_0.unk27 & 1) && (lightGetInside() == 0)) {
+                    envfxAction(NULL, NULL, _bss_0.unkC[_bss_0.unk26], 0);
+                }
+                mainSetBits(BIT_SC_UNKNOWN_2BA, _bss_0.unk26);
+                break;
+            case 0x31:
+                if ((_bss_0.unk27 & 1) && (_bss_0.unk4[_bss_0.unk26] != 0) && (lightGetInside() == 0)) {
+                    player = objGetPlayer();
+                    envfxAction(player, player, _bss_0.unk4[_bss_0.unk26], 0);
+                }
+                break;
+            case 0x27:
+                if ((_bss_0.unk27 & 1) && (lightGetInside() == 0)) {
+                    envfxAction(NULL, NULL, _bss_0.unk0[_bss_0.unk26], 0);
+                }
+                break;
+            case 0x1D:
+                if ((_bss_0.unk27 & 1) && (lightGetInside() == 0)) {
+                    envfxAction(NULL, NULL, _bss_0.unk8[_bss_0.unk26], 0);
+                }
+                break;
+            case 0x13:
+                if ((_bss_0.unk27 & 2) && (lightGetInside() == 0)) {
+                    lfxAction(NULL, NULL, _bss_0.unk10[_bss_0.unk26], 0, 0, 0);
+                }
+                break;
+            case 0x9:
+                if ((_bss_0.unk27 & 2) && (lightGetInside() == 0)) {
+                    lfxAction(NULL, NULL, _bss_0.unk14[_bss_0.unk26], 0, 0, 0);
+                }
+                break;
+            }
+        }
+        if (_bss_0.unk24 <= 0) {
+            if (lightGetInside() == 0) {
+                player = objGetPlayer();
+                if (isNight) {
+                    if (_bss_0.unk27 & 4) {
+                        if (_bss_0.unk1E != 0) {
+                            gDLL_5_AMSEQ2->vtbl->set(player, _bss_0.unk1E, NULL, 0, NULL);
+                        }
+                        if (_bss_0.unk22 != 0) {
+                            gDLL_5_AMSEQ2->vtbl->set(player, _bss_0.unk22, NULL, 0, NULL);
+                        }
+                    }
+                    if (_bss_0.unk27 & 8) {
+                        lfxAction(NULL, NULL, _bss_0.unk1A, 0, 0, 0);
+                    }
+                } else {
+                    if (_bss_0.unk27 & 4) {
+                        if (_bss_0.unk1C != 0) {
+                            gDLL_5_AMSEQ2->vtbl->set(player, _bss_0.unk1C, NULL, 0, NULL);
+                        }
+                        if (_bss_0.unk20 != 0) {
+                            gDLL_5_AMSEQ2->vtbl->set(player, _bss_0.unk20, NULL, 0, NULL);
+                        }
+                    }
+                    if (_bss_0.unk27 & 8) {
+                        lfxAction(NULL, NULL, _bss_0.unk18, 0, 0, 0);
+                    }
+                }
+            }
+            _bss_0.unk24 = 0;
+        }
+    }
+    _bss_0.unk25 = isNight;
+}
 
 // offset: 0x5D20 | func: 25 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D20.s")
+void dll_7_func_5D20(u8 arg0) {
+    _bss_0.unk27 &= ~0xF;
+    _bss_0.unk27 |= (arg0 & 0xF);
+    _bss_0.unk27 |= 0x10;
+}
 
 // offset: 0x5D6C | func: 26 | export: 17
 s32 dll_7_func_5D6C(void) {
-    return _bss_27 & 0xF;
+    return _bss_0.unk27 & 0xF;
 }
 
 // offset: 0x5D90 | func: 27 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D90.s")
+void dll_7_func_5D90(u16* arg0, u16* arg1, u16* arg2, u16* arg3) {
+    _bss_0.unkC = arg0;
+    _bss_0.unk0 = arg1;
+    _bss_0.unk8 = arg2;
+    _bss_0.unk4 = arg3;
+}
 
 // offset: 0x5DBC | func: 28 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5DBC.s")
+void dll_7_func_5DBC(u16* arg0, u16* arg1, u16 arg2, u16 arg3) {
+    _bss_0.unk10 = arg0;
+    _bss_0.unk14 = arg1;
+    _bss_0.unk18 = arg2;
+    _bss_0.unk1A = arg3;
+}
 
 // offset: 0x5E00 | func: 29 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E00.s")
+void dll_7_func_5E00(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
+    _bss_0.unk1C = arg0;
+    _bss_0.unk1E = arg1;
+    _bss_0.unk20 = arg2;
+    _bss_0.unk22 = arg3;
+}
 
 // offset: 0x5E5C | func: 30 | export: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E5C.s")
+void dll_7_func_5E5C(u8 arg0) {
+    if (arg0 >= 28) {
+        arg0 = 0;
+    }
+    _bss_0.unk26 = arg0;
+    mainSetBits(BIT_SC_UNKNOWN_2BA, arg0);
+}
 
 // offset: 0x5EB4 | func: 31 | export: 22
 u8 dll_7_func_5EB4(void) {
-    return _bss_26;
+    return _bss_0.unk26;
 }
 
 // offset: 0x5ED0 | func: 32 | export: 23
-s32 dll_7_func_5ED0(Gfx **gdl);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5ED0.s")
+s32 dll_7_func_5ED0(Gfx** gdl) {
+    /*0x2A8*/ static u8 _data_2A8 = 0;
+
+    s16 tmp;
+    f32 var_fv0;
+
+    _data_2A8 += 1;
+    var_fv0 = _data_C4 / 200.0f;
+    if (var_fv0 < 0.0f) {
+        var_fv0 = 0.0f;
+    }
+    if (var_fv0 == 0.0f) {
+        return 0;
+    }
+    dlSetFogColor(gdl, 0xFF, 0xFF, 0xDC, 0xFF);
+    tmp = (s32) (var_fv0 * 355.0f);
+    gSPFogFactor((*gdl)++, 
+        128000 / (((tmp * 2) - tmp) + 150), 
+        (-76800 - (tmp << 8)) / (((tmp * 2) - tmp) + 150));
+    return 1;
+}
