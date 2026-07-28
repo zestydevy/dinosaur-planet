@@ -290,11 +290,24 @@ typedef enum {
 } SnowClaw_ModAnims;
 
 typedef enum {
+    SharpClaw_MESSAGE_1_Others_Attacking = 1,
+    SharpClaw_MESSAGE_2_Had_Priority_Over_Allies = 2
+} SharpClaw_Messages;
+
+typedef enum {
     SharpClaw_FOOTSTEP_Soft,
     SharpClaw_FOOTSTEP_Wood,
     SharpClaw_FOOTSTEP_Snow,
     SharpClaw_FOOTSTEP_Water,
     SharpClaw_FOOTSTEP_Stone
 } SharpClaw_FootstepSounds;
+
+DLL_INTERFACE(DLL_214_SharpClaw) {
+    /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
+    /*07*/ s32 (*GetLogicState)(Object* self);
+    /*08*/ u8 (*ReceiveMessage)(Object* self, u8 message);
+};
+
+#define dll_sharpClaw(obj) (((DLL_214_SharpClaw*)obj->dll)->vtbl)
 
 #endif //_DLLS_215_H

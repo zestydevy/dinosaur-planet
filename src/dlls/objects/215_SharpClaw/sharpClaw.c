@@ -14,12 +14,12 @@
 #include "sys/objtype.h"
 
 typedef struct {
-    s8 unk0;
+    s8 unk0; //Index/count related to locking on?
     u8 maxTurnAcceleration;
     u8 turnAcceleration;
-    f32 unk4;
-    s16 unk8;
-    u8 unkA;
+    f32 hitComboTimer;
+    s16 hitCombo;
+    u8 messageReceived;
     u16 turnAmount;
     s16 targetYawDiff;
     u16 targetDistance;
@@ -570,11 +570,11 @@ void SharpClaw_ReceiveMessage(Object* self, u8 message) {
     objData = baddie->objdata;
 
     switch (message) {
-    case 1:
-        objData->unkA = 1;
+    case SharpClaw_MESSAGE_1_Others_Attacking:
+        objData->messageReceived = SharpClaw_MESSAGE_1_Others_Attacking;
         break;
-    case 2:
-        objData->unkA = 2;
+    case SharpClaw_MESSAGE_2_Had_Priority_Over_Allies:
+        objData->messageReceived = SharpClaw_MESSAGE_2_Had_Priority_Over_Allies;
         break;
     }
 }
@@ -719,7 +719,7 @@ void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         func_80026160(self);
     }
 
-    objData->unk4 += gUpdateRateF;
+    objData->hitComboTimer += gUpdateRateF;
 
     if (baddie->unk3B0 & 0x80) {
         if ((fsa->animState == SharpClaw_ASTATE_16_Attack_Anticlockwise) ||
@@ -774,23 +774,27 @@ void SharpClaw_func_E88(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     //Handle other kinds of damage
     if (hit) {
         baddie->unk3B4 = 2;
-        if (objData->unk4 < 240.0f) {
-            objData->unk8++;
+
+        //Count successive hits
+        if (objData->hitComboTimer < 240.0f) {
+            objData->hitCombo++;
         } else {
-            objData->unk8 = 0;
+            objData->hitCombo = 0;
         }
 
         if (fsa->hitpoints > 0) {
-            objData->unk4 = 0.0f;
-            if (objData->unk8 >= 2) {
-                objData->unk8 = 0;
+            objData->hitComboTimer = 0.0f;
+
+            //Dodge after being struck three times in succession
+            if (objData->hitCombo >= 2) {
+                objData->hitCombo = 0;
                 fsa->logicState = SharpClaw_LSTATE_8_Dodge;
                 fsa->enteredLogicState = TRUE;
-                if (SharpClaw_areAnyAlliesAttacking(2, self)) {
-                    objData->unkA = 1;
+                if (SharpClaw_areAnyAlliesAttacking(SharpClaw_MESSAGE_2_Had_Priority_Over_Allies, self)) {
+                    objData->messageReceived = SharpClaw_MESSAGE_1_Others_Attacking;
                 }
-            } else if (SharpClaw_areAnyAlliesAttacking(2, self)) {
-                objData->unkA = 1;
+            } else if (SharpClaw_areAnyAlliesAttacking(SharpClaw_MESSAGE_2_Had_Priority_Over_Allies, self)) {
+                objData->messageReceived = SharpClaw_MESSAGE_1_Others_Attacking;
             }
         }
     }
@@ -865,7 +869,7 @@ void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     SharpClaw_DataActual* objData;
     Object* target;
     Object* player;
-    u32 temp = 2;
+    u32 message = SharpClaw_MESSAGE_2_Had_Priority_Over_Allies;
 
     objData = baddie->objdata;
     player = objGetPlayer();
@@ -877,8 +881,8 @@ void SharpClaw_func_17A0(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
             fsa->unk33D = 0;
             fsa->target = target;
             baddie->unk3B0 &= ~0x10;
-            baddie->unk3B4 = temp;
-            objData->unkA = temp;
+            baddie->unk3B4 = message;
+            objData->messageReceived = message;
         }
     }
 }
@@ -954,7 +958,7 @@ void SharpClaw_func_18EC(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
                 fsa->unk33D = 0;
                 baddie->unk3B0 &= ~0x10;
                 baddie->unk3B4 = 2;
-                objData->unkA = 2;
+                objData->messageReceived = SharpClaw_MESSAGE_2_Had_Priority_Over_Allies;
             }
         }
     }
@@ -1090,8 +1094,8 @@ static void SharpClaw_messageAllAttackingAllies(u8 message, Object* self) {
         if (self != objects[index]) {
             for (j = 0; j < ARRAYCOUNT(dAllyObjectIDs); j++) {
                 if (objects[index]->id == (s32)dAllyObjectIDs[j]){
-                    if (((DLL_IBaddie*)objects[index]->dll)->vtbl->get_fsa_state(objects[index]) == SharpClaw_LSTATE_12_Attack) {
-                        ((DLL_IBaddie*)objects[index]->dll)->vtbl->send_message(objects[index], message);
+                    if (dll_sharpClaw(objects[index])->GetLogicState(objects[index]) == SharpClaw_LSTATE_12_Attack) {
+                        dll_sharpClaw(objects[index])->ReceiveMessage(objects[index], message);
                     }
                 }
             }
@@ -1242,9 +1246,9 @@ s32 SharpClaw_animState2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         if (fsa->targetDist < 80.0f) {
             //Hop backward when too close to the target
             if (mathRnd(0, 4) == 0) {
-                SharpClaw_messageAllAttackingAllies(1, self);
+                SharpClaw_messageAllAttackingAllies(SharpClaw_MESSAGE_1_Others_Attacking, self);
                 objData = baddie->objdata;
-                objData->unkA = 2;
+                objData->messageReceived = SharpClaw_MESSAGE_2_Had_Priority_Over_Allies;
             }
 
             if (fsa->enteredAnimState) {
@@ -1974,12 +1978,14 @@ s32 SharpClaw_logicState12Attack(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 
     if ((fsa->unk33A) || (fsa->enteredLogicState)) {
         objData = baddie->objdata;
-        if (objData->unkA == 1) {
+
+        //Don't attack while other SharpClaw are attacking
+        if (objData->messageReceived == SharpClaw_MESSAGE_1_Others_Attacking) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, SharpClaw_ASTATE_2);
             return 0;
         }
 
-        SharpClaw_messageAllAttackingAllies(1, self);
+        SharpClaw_messageAllAttackingAllies(SharpClaw_MESSAGE_1_Others_Attacking, self);
 
         if (gDLL_2_Camera->vtbl->get_target_object() != self) {
             if (objData->unk0 >= 7) {
