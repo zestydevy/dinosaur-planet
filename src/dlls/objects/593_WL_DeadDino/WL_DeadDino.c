@@ -243,9 +243,9 @@ void WL_DeadDino_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
     }
 
     if (objdata->vanishTimer >= 1.8f) {
-        gDLL_32->vtbl->func2(self, PARTICLE_330, NULL);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, NULL);
     } else {
-        gDLL_32->vtbl->func2(self, PARTICLE_32F, &objdata->vanishTimer);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_32F, &objdata->vanishTimer);
     }
 
     objdata->vanishTimer += (gUpdateRateF * 0.01f);

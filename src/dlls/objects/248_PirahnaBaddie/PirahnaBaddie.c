@@ -173,15 +173,15 @@ void dll_248_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (objdata->flags & 0x30) {
             if (objdata->flags & 0x10) {
-                gDLL_32->vtbl->func2(self, 0x330, &objdata->unk18);
-                gDLL_32->vtbl->func2(self, 0x330, &objdata->unk18);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &objdata->unk18);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &objdata->unk18);
                 objdata->flags &= ~0x10;
             }
-            gDLL_32->vtbl->func2(self, 0x32F, &objdata->unk18);
+            gDLL_32_modelfx->vtbl->func2(self, 0x32F, &objdata->unk18);
         }
         if (objdata->flags & 8) {
-            gDLL_32->vtbl->func2(self, 0x333, &objdata->unk18);
-            gDLL_32->vtbl->func2(self, 0x334, &objdata->unk18);
+            gDLL_32_modelfx->vtbl->func2(self, 0x333, &objdata->unk18);
+            gDLL_32_modelfx->vtbl->func2(self, 0x334, &objdata->unk18);
             objdata->flags &= ~0x8;
         }
     }

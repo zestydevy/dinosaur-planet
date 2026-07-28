@@ -24,7 +24,7 @@
 29 = engine/29_gplay
 30 = engine/30_task
 31 = engine/31_flash
-32 = engine/32
+32 = engine/32_modelfx
 33 = engine/33_BaddieControl
 34 = engine/34_forcepoint_partfx
 35 = engine/35_shrine_partfx

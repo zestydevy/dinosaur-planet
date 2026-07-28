@@ -31,7 +31,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
-#include "dlls/engine/32.h"
+#include "dlls/engine/32_modelfx.h"
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/54_pickup.h"
 #include "dlls/engine/56.h"
@@ -76,7 +76,7 @@ enum DLL_ID {
     DLL_ID_GPLAY = 29,
     DLL_ID_TASK = 30,
     DLL_ID_FLASH = 31,
-    DLL_ID_32 = 32,
+    DLL_ID_32_MODELFX = 32,
     DLL_ID_33 = 33,
     DLL_ID_34 = 34, // partfx related
     DLL_ID_35 = 35, // partfx related
@@ -241,7 +241,7 @@ extern DLL_17 *gDLL_17_partfx;
 extern DLL_18_objfsa *gDLL_18_objfsa;
 extern DLL_75 *gDLL_75;
 extern DLL_56 *gDLL_56;
-extern DLL_32 *gDLL_32;
+extern DLL_32_modelfx *gDLL_32_modelfx;
 extern DLL_33_BaddieControl *gDLL_33_BaddieControl;
 extern DLL_59_minimap *gDLL_59_Minimap;
 extern DLL_54 *gDLL_54_pickup;
