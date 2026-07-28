@@ -35,7 +35,7 @@
 /*0x14*/ static f32 _data_14 = 0.1f;
 /*0x18*/ static Vec3f _data_18 = VEC3F(0.0f, 1.0f, 0.0f);
 /*0x24*/ static Vec3f _data_24 = VEC3F(0.0f, 1.0f, 0.0f);
-/*0x30*/ static u32 _data_30 = 0xffffffff;
+/*0x30*/ static s32 _data_30 = -1;
 /*0x34*/ static s32 _data_34 = 255; //clouds R
 /*0x38*/ static s32 _data_38 = 255; //clouds G
 /*0x3C*/ static s32 _data_3C = 255; //clouds B
@@ -58,7 +58,7 @@
 };
 /*0xC0*/ static Object* _data_C0 = NULL;
 /*0xC4*/ static f32 _data_C4 = 1.0;
-/*0xC8*/ static u32 _data_C8 = 0x00000000;
+/*0xC8*/ static u8 _data_C8 = 0;
 /*0xCC*/ static u32 _data_CC[] = {
     0x001da400, 0x00489b44, 0x1d0c351c, 0xff8fbfff, 0x74baffdb, 0xffffb0ff, 0xffffffe8, 0xd3ff82ff, 
     0xff4fa3ff, 0xb4ffff6f, 0xa7ffffff, 0xa5f5b78c, 0xffcd00ff, 0x9800ff81, 0x24f26021, 0x99356b68, 
@@ -69,26 +69,9 @@
     0x8080537a, 0x6046c900, 0xfe4d0061, 0x1e4155c3, 0xdbf41e41, 0x55cbdb85, 0x1e41556f, 0x0c861e41, 
     0x55318ad8, 0x1e4155ff, 0xd5511e41, 0x55ff0c00
 };
-/*0x1BC*/ static u32 _data_1BC = 0x00000000;
-/*0x1C0*/ static u32 _data_1C0 = 0x00000000;
-/*0x1C4*/ static u32 _data_1C4 = 0x00000000;
-/*0x1C8*/ static f32 _data_1C8 = 0.0;
-/*0x1CC*/ static u32 _data_1CC[] = {
-    0x00000003, 0x00020000, 0x001f0000, 0x0000000f, 0x000f0003, 0x00040002, 0x00000000, 0x001f0000, 
-    0x000f000f, 0x00040001, 0x0002001f, 0x0000001f, 0x001f000f, 0x000f0001, 0x00000002, 0x001f001f, 
-    0x0000001f, 0x000f000f
-};
-/*0x214*/ static u32 _data_214[] = {
-    0xffec0014, 0x00000000, 0x03e00014, 0x00140000, 0x03e003e0, 0x00000000, 0x000001e0, 0x01e0ffec, 
-    0xffec0000, 0x00000000, 0x0014ffec, 0x000003e0, 0x00000000
-};
-/*0x248*/ static u32 _data_248[] = {
-    0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
-    0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
-};
 
-typedef struct
-{
+// size: 0x118
+typedef struct {
 /*000*/ DLTri *unk0;
 /*004*/ Vtx *unk4;
 /*008*/ Texture *unk8;
@@ -97,40 +80,40 @@ typedef struct
 /*014*/ Texture *unk14;
 /*018*/ Texture *unk18;
 /*01C*/ Texture *unk1C;
-/*020*/ UNK_TYPE_32 unk20;
+/*020*/ s32 unk20;
 /*024*/ u8 _unk20[8];
 /*02C*/ f32 unk2C;
 /*030*/ f32 unk30;
 /*034*/ f32 unk34;
 /*038*/ u8 _unk38[8];
 /*040*/ f32 unk40;
-/*044*/ f32 unk44[7]; // spline
-/*060*/ f32 unk60[7]; // spline
-/*07C*/ f32 unk7C[7]; // spline
+/*044*/ f32 unk44[3][7]; // splines
 /*098*/ u8 _unk98[0xc0 - 0x98];
 /*0C0*/ f32 timeSeconds; //time of day (seconds)
 /*0C4*/ f32 unkC4;
 /*0C8*/ f32 unkC8;
-/*0CC*/ UNK_TYPE_32 unkCC;
-/*0D0*/ UNK_TYPE_32 unkD0;
-/*0D4*/ u8 _unkD4[8];
-/*0DC*/ UNK_TYPE_32 unkDC;
-/*0E0*/ UNK_TYPE_32 unkE0;
+/*0CC*/ s32 unkCC;
+/*0D0*/ s32 unkD0;
+/*0D4*/ u8 _unkD4[4];
+/*0D8*/ s32 unkD8;
+/*0DC*/ s32 unkDC;
+/*0E0*/ s32 unkE0;
 /*0E4*/ s32 unkE4;
-/*0E8*/ UNK_TYPE_32 unkE8;
-/*0EC*/ UNK_TYPE_32 unkEC;
-/*0F0*/ UNK_TYPE_32 unkF0;
-/*0F4*/ UNK_TYPE_32 unkF4;
-/*0F8*/ UNK_TYPE_32 unkF8;
-/*0FC*/ UNK_TYPE_32 unkFC;
-/*100*/ UNK_TYPE_32 unk100;
-/*104*/ UNK_TYPE_32 unk104;
-/*108*/ UNK_TYPE_32 unk108;
-/*10C*/ UNK_TYPE_32 unk10C;
+/*0E8*/ s32 unkE8;
+/*0EC*/ s32 unkEC;
+/*0F0*/ s32 unkF0;
+/*0F4*/ s32 unkF4;
+/*0F8*/ s32 unkF8;
+/*0FC*/ s32 unkFC;
+/*100*/ s32 unk100;
+/*104*/ s32 unk104;
+/*108*/ s32 unk108;
+/*10C*/ s32 unk10C;
 /*110*/ u8 unk110;
 /*111*/ u8 unk111;
-/*112*/ u8 _unk112[2];
-/*114*/ UNK_TYPE_8 unk114;
+/*112*/ u8 unk112;
+/*113*/ u8 unk113;
+/*114*/ u8 unk114;
 /*115*/ u8 _unk115[3];
 } NewDayStruct;
 
@@ -155,12 +138,19 @@ typedef struct {
 } BSS0;
 
 /*0x0*/ static BSS0 _bss_0;
-/*0x28*/ static u8 _bss_28[0x4]; // DAT_810296c8
-/*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
-/*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
+/*0x28*/ static f32 _bss_28;
+/*0x2C*/ static f32 _bss_2C;
+/*0x30*/ static NewDayStruct *_bss_30;
 /*0x34*/ static u8 _bss_34[0x28];
 
+s32 dll_7_func_DF4(f32* outTime);
+static void dll_7_func_21CC(void);
+static void dll_7_func_30FC(void);
+static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs);
+static void dll_7_func_4484(void);
 static void dll_7_func_5124(f32 x, f32 y, f32 z);
+static void dll_7_func_57C0(void);
+static void dll_7_func_5818(void);
 
 // offset: 0x0 | ctor
 void dll_7_ctor(void *self) { }
@@ -169,20 +159,92 @@ void dll_7_ctor(void *self) { }
 void dll_7_dtor(void *self) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_7_func_18(Object *arg0, Object *arg1, void *arg2, s32 arg3);
+void dll_7_func_18(Object *arg0, Object *arg1, EnvFxAction *arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_18.s")
 
 // offset: 0x910 | func: 1 | export: 1
-void dll_7_func_910(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_910.s")
+void dll_7_func_910(void) {
+    if (_bss_30 != NULL) {
+        dll_7_func_30FC();
+    }
+    envfxAction(NULL, NULL, 4, 0);
+    lightSetInside(0);
+    _data_30 = -1;
+    dll_7_func_4484();
+    _data_18.x = 0.0f;
+    _data_18.y = 1.0f;
+    _data_18.z = 0.0f;
+    _data_24.x = 0.0f;
+    _data_24.y = 1.0f;
+    _data_24.z = 0.0f;
+    light_func_8001CDE4(0xFF, 0xFF, 0xFF, 1, 0);
+    dll_7_func_57C0();
+}
 
 // offset: 0xA10 | func: 2 | export: 2
-void dll_7_func_A10(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_A10.s")
+void dll_7_func_A10(s32 arg0, s32 arg1) {
+/*0x1BC*/ static s32 _data_1BC = 0x00000000;
+    f32 sp34;
+    s32 _pad;
+    f32 sp2C;
+    PlayerEnvActions* sp28;
+
+    sp2C = 0.0f;
+    sp28 = gDLL_29_Gplay->vtbl->get_current_player_envactions();
+    _data_C8 = 0;
+    if (_bss_30 != NULL) {
+        if (_bss_30->unkDC != 0) {
+            _bss_30->timeSeconds += _bss_30->unkC4 * gUpdateRateF;
+        }
+        sp34 = _bss_30->timeSeconds;
+        if (sp34 >= 86400.0f) {
+            sp34 -= 86400.0f;
+            _bss_30->timeSeconds -= 86400.0f;
+        } else if (sp34 < 0.0f) {
+            sp34 += 86400.0f;
+            _bss_30->timeSeconds += 86400.0f;
+        }
+        if (dll_7_func_DF4(&sp2C) != 0) {
+            if (_data_1BC == 0) {
+                _data_1BC = 1;
+            }
+        } else if (_data_1BC) {
+            _bss_30->unkE4 += 1;
+            if (_bss_30->unkE4 >= 0x1F) {
+                _bss_30->unkE4 = 0;
+            }
+            _data_1BC = 0;
+        }
+        if (0) { } // @fake
+        if (_bss_30->unk112 & 0x40) {
+            dll_7_func_21CC();
+        }
+        if (_bss_30 != NULL) {
+            _data_5C = sp34;
+            if (objGetPlayer() != NULL) {
+                sp28->unk0 = _bss_30->timeSeconds;
+            }
+        } else {
+            _data_5C = 43200.0f;
+        }
+        if ((objGetPlayer() != NULL) && (_bss_30 != NULL)) {
+            sp28->unk0 = _bss_30->timeSeconds;
+        }
+    }
+    _data_58 = 0;
+    dll_7_func_5818();
+}
+
+/*0x1C0*/ static u32 _data_1C0 = 0x00000000;
+/*0x1C4*/ static u32 _data_1C4 = 0x00000000;
 
 // offset: 0xC58 | func: 3 | export: 3
-void dll_7_func_C58(Gfx **gdl, Mtx **arg1, u8 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_C58.s")
+void dll_7_func_C58(Gfx** gdl, Mtx** mtxs, u8 arg2) {
+    if ((lightGetInside() == 0) && (arg2 != 0)) {
+        dll_7_func_3294(gdl, mtxs);
+    }
+    dll_7_func_4484();
+}
 
 // offset: 0xCDC | func: 4 | export: 4
 void dll_7_func_CDC(f32* timeSeconds) {
@@ -192,11 +254,21 @@ void dll_7_func_CDC(f32* timeSeconds) {
 }
 
 // offset: 0xD08 | func: 5 | export: 5
-void dll_7_func_D08(f32* arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D08.s")
+void dll_7_func_D08(f32* arg0) {
+    if (_bss_30 != NULL) {
+        *arg0 = (f32) _bss_30->unkDC;
+    } else {
+        *arg0 = 0.0f;
+    }
+}
 
 // offset: 0xD50 | func: 6 | export: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D50.s")
+void dll_7_func_D50(f32 arg0) {
+    if (_bss_30 != NULL) {
+        _bss_30->unkDC = (s32) arg0;
+        _bss_30->unkC4 = (f32) _bss_30->unkDC / 60.0f;
+    }
+}
 
 // offset: 0xDAC | func: 7 | export: 7
 void dll_7_func_DAC(s32 *param1) {
@@ -275,27 +347,294 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
 }
 
 // offset: 0xFFC | func: 12 | export: 12
-s32 dll_7_func_FFC(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_FFC.s")
+s32 dll_7_func_FFC(void) {
+    if (_bss_30 != NULL) {
+        return _bss_30->unkE8;
+    } else {
+        return 0;
+    }
+}
 
 // offset: 0x102C | func: 13 | export: 13
 void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_102C.s")
 
 // offset: 0x20D4 | func: 14 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_20D4.s")
+void dll_7_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
+    if (_bss_30 != NULL) {
+        *arg0 =  _data_34;
+        *arg1 =  _data_38;
+        *arg2 =  _data_3C;
+    } else {
+        *arg0 = 0xFF;
+        *arg1 = 0xFF;
+        *arg2 = 0xFF;
+    }
+}
 
 // offset: 0x2130 | func: 15 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2130.s")
+void dll_7_func_2130(u8* arg0, u8* arg1, u8* arg2, u8* arg3, u8* arg4, u8* arg5) {
+    if (_bss_30 != NULL) {
+        *arg0 = _data_40;
+        *arg1 = _data_44;
+        *arg2 = _data_48;
+        *arg3 = _data_4C;
+        *arg4 = _data_50;
+        *arg5 = _data_54;
+    } else {
+        *arg0 = 0xFF;
+        *arg1 = 0xFF;
+        *arg2 = 0xFF;
+        *arg3 = 0xFF;
+        *arg4 = 0xFF;
+        *arg5 = 0xFF;
+    }
+}
+
+/*0x1C8*/ static f32 _data_1C8 = 0.0;
 
 // offset: 0x21CC | func: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_21CC.s")
+static void dll_7_func_21CC(void) {
+    f32 temp_fv1;
+    f32 var_fv0;
+    s32 i;
+
+    if (_data_4 != 0) {
+        temp_fv1 = (f32) _bss_30->unkCC * 10.0f;
+        if (temp_fv1 < 100.0f) {
+            _data_C8 = 1;
+            _bss_30->timeSeconds = _data_8;
+            _data_0 = 1.0f;
+        } else {
+            _data_1C8 = 1.0f / temp_fv1;
+            var_fv0 = (f32) ((s32) _data_8 - (s32) _bss_30->timeSeconds);
+            if (_bss_30->unk112 & 1) {
+                _bss_30->unk112 ^= 1;
+                var_fv0 = 0.0f;
+            }
+            if (var_fv0 < 0.0f) {
+                var_fv0 = (86400.0f - _bss_30->timeSeconds) + _data_8;
+            }
+            _bss_28 = var_fv0 / temp_fv1;
+            _bss_2C = (_data_C - _bss_30->unk40) / temp_fv1;
+        }
+        _data_4 = 0;
+    }
+    _bss_30->timeSeconds += _bss_28 * gUpdateRateF;
+    _bss_30->unk40 += _bss_2C * gUpdateRateF;
+    _data_0 += _data_1C8 * gUpdateRateF;
+    if (_data_0 >= 1.0f) {
+        _bss_30->unk112 ^= 0x40;
+        _data_1C8 = 0.0f;
+        _data_0 = 0.0f;
+        for (i = 0; i < (3 * 7); i++) {
+            ((f32*)_data_6C)[i] = ((f32*)_bss_30->unk44)[i];
+        }
+        _data_60 = (u32) _data_10;
+        if (_bss_30->unkD8 != 0) {
+            dll_7_func_30FC();
+        }
+    }
+}
 
 // offset: 0x2464 | func: 17
+#ifndef NON_MATCHING
+/*0x1CC*/ static u32 _data_1CC[] = {
+    0x00000003, 0x00020000, 0x001f0000, 0x0000000f, 0x000f0003, 0x00040002, 0x00000000, 0x001f0000, 
+    0x000f000f, 0x00040001, 0x0002001f, 0x0000001f, 0x001f000f, 0x000f0001, 0x00000002, 0x001f001f, 
+    0x0000001f, 0x000f000f
+};
+/*0x214*/ static u32 _data_214[] = {
+    0xffec0014, 0x00000000, 0x03e00014, 0x00140000, 0x03e003e0, 0x00000000, 0x000001e0, 0x01e0ffec, 
+    0xffec0000, 0x00000000, 0x0014ffec, 0x000003e0, 0x00000000
+};
+/*0x248*/ static u32 _data_248[] = {
+    0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
+    0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
+};
+void dll_7_func_2464(EnvFxAction*, f32, f32, f32);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2464.s")
+#else
+struct thing {
+    s16 ob[3];
+    s16 tc[2];
+};
+struct thing2 {
+    s16 v[3];
+    s16 _unk6[6];
+};
+void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
+    s32 var_v1;
+    s32 i;
+    s32 j;
+    struct thing2 sp94[] = {
+        {{0x0000, 0x0003, 0x0002}, {0x0000, 0x001f, 0x0000, 0x0000, 0x000f, 0x000f}}, 
+        {{0x0003, 0x0004, 0x0002}, {0x0000, 0x0000, 0x001f, 0x0000, 0x000f, 0x000f}}, 
+        {{0x0004, 0x0001, 0x0002}, {0x001f, 0x0000, 0x001f, 0x001f, 0x000f, 0x000f}}, 
+        {{0x0001, 0x0000, 0x0002}, {0x001f, 0x001f, 0x0000, 0x001f, 0x000f, 0x000f}}
+    };
+    struct thing sp60[] = {
+        {{0xffec, 0x0014, 0x0000}, {0x0000, 0x03e0}}, 
+        {{0x0014, 0x0014, 0x0000}, {0x03e0, 0x03e0}}, 
+        {{0x0000, 0x0000, 0x0000}, {0x01e0, 0x01e0}}, 
+        {{0xffec, 0xffec, 0x0000}, {0x0000, 0x0000}}, 
+        {{0x0014, 0xffec, 0x0000}, {0x03e0, 0x0000}}
+    };
+    struct thing sp2C[] = {
+        {{0xffec, 0x0014, 0x0000}, {0x0000, 0x07e0}}, 
+        {{0x0014, 0x0014, 0x0000}, {0x07e0, 0x07e0}}, 
+        {{0x0000, 0x0000, 0x0000}, {0x03e0, 0x03e0}}, 
+        {{0xffec, 0xffec, 0x0000}, {0x0000, 0x0000}}, 
+        {{0x0014, 0xffec, 0x0000}, {0x07e0, 0x0000}}
+    };
+
+    _bss_30 = NULL;
+    _bss_30 = mmAlloc(sizeof(NewDayStruct), ALLOC_TAG_SKY_COL, ALLOC_NAME("nday:tzones2"));
+    if (_bss_30 != NULL) {
+        _bss_30->unk20 = 0;
+        _bss_30->unk2C = arg1;
+        _bss_30->unk30 = arg2;
+        _bss_30->unk34 = arg3;
+        _bss_30->unkE0 = arg0->unk5D;
+        _bss_30->unk110 = (u8) arg0->unk4E;
+        _bss_30->unk111 = (u8) arg0->unk50;
+        _bss_30->unkDC = arg0->unk52;
+        _bss_30->unkDC = 0x168;
+        _bss_30->timeSeconds = (f32) ((_bss_30->unk111 * 0x3C) + (_bss_30->unk110 * 0xE10));
+        if (arg0->unk5D == 0) {
+            _bss_30->unkC8 = 0.8f;
+        } else if (arg0->unk5D == 1) {
+            _bss_30->unkC8 = 1.0f;
+        } else if (arg0->unk5D == 2) {
+            _bss_30->unkC8 = 0.8f;
+        } else if (arg0->unk5D == 3) {
+            _bss_30->unkC8 = 0.55f;
+        }
+        if (arg0->unk54 == 0) {
+            _bss_30->unk40 = _bss_30->unkC8 * 2000.0f;
+        } else if (arg0->unk54 == 1) {
+            _bss_30->unk40 = _bss_30->unkC8 * 10000.0f;
+        } else if (arg0->unk54 == 2) {
+            _bss_30->unk40 = _bss_30->unkC8 * 12000.0f;
+        } else if (arg0->unk54 == 3) {
+            _bss_30->unk40 = _bss_30->unkC8 * 14000.0f;
+        }
+        _bss_30->unkC4 = (f32) _bss_30->unkDC / 60.0f;
+        _bss_30->unk112 = arg0->unk58;
+        _bss_30->unkCC = 0;
+        _bss_30->unkD0 = 0;
+        _bss_30->unkE4 = mathRnd(0, 0x1C);
+        _bss_30->unkE8 = (s32) arg0->unk56;
+        _bss_30->unk0 = mmAlloc(0x100, ALLOC_TAG_GFX_COL, ALLOC_NAME("newday:NTri"));
+        _bss_30->unk4 = mmAlloc(0x140, ALLOC_TAG_GFX_COL, ALLOC_NAME("newday:Vtx"));
+        var_v1 = 0;
+        for (i = 0; i < 5; i++) {
+            _bss_30->unk4[var_v1].v.ob[0] = sp60[i].ob[0] * 1000;
+            _bss_30->unk4[var_v1].v.ob[1] = sp60[i].ob[1] * 1000;
+            _bss_30->unk4[var_v1].v.ob[2] = sp60[i].ob[2];
+            _bss_30->unk4[var_v1].v.tc[0] = sp60[i].tc[0];
+            _bss_30->unk4[var_v1].v.tc[1] = sp60[i].tc[1];
+            _bss_30->unk4[var_v1].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[1] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[2] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[3] = 0xFF;
+            var_v1 += 1;
+        }
+        var_v1 = 5;
+        for (i = 0; i < 5; i++) {
+            _bss_30->unk4[var_v1].v.ob[0] = sp2C[i].ob[0] * 1000;
+            _bss_30->unk4[var_v1].v.ob[1] = sp2C[i].ob[1] * 1000;
+            _bss_30->unk4[var_v1].v.ob[2] = sp2C[i].ob[2];
+            _bss_30->unk4[var_v1].v.tc[0] = sp2C[i].tc[0];
+            _bss_30->unk4[var_v1].v.tc[1] = sp2C[i].tc[1];
+            _bss_30->unk4[var_v1].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[1] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[2] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[3] = 0xFF;
+            var_v1 += 1;
+        }
+        var_v1 = 10;
+        for (i = 0; i < 5; i++) {
+            _bss_30->unk4[var_v1].v.ob[0] = sp60[i].ob[0] * 1000;
+            _bss_30->unk4[var_v1].v.ob[1] = sp60[i].ob[1] * 1000;
+            _bss_30->unk4[var_v1].v.ob[2] = sp60[i].ob[2];
+            _bss_30->unk4[var_v1].v.tc[0] = sp60[i].tc[0] << 1;
+            _bss_30->unk4[var_v1].v.tc[1] = sp60[i].tc[1] << 1;
+            _bss_30->unk4[var_v1].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[1] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[2] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[3] = 0xFF;
+            var_v1 += 1;
+        }
+        var_v1 = 15;
+        for (i = 0; i < 5; i++) {
+            _bss_30->unk4[var_v1].v.ob[0] = sp2C[i].ob[0] * 1000;
+            _bss_30->unk4[var_v1].v.ob[1] = sp2C[i].ob[1] * 1000;
+            _bss_30->unk4[var_v1].v.ob[2] = sp2C[i].ob[2];
+            _bss_30->unk4[var_v1].v.tc[0] = sp2C[i].tc[0];
+            _bss_30->unk4[var_v1].v.tc[1] = sp2C[i].tc[1];
+            _bss_30->unk4[var_v1].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[1] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[2] = 0xFF;
+            _bss_30->unk4[var_v1].v.cn[3] = 0xFF;
+            var_v1 += 1;
+        }
+        _bss_30->unk114 = 0;
+        var_v1 = 0;
+        for (i = 0; i < 4; i++) {
+            for (j = 0; j < 4; j++) {
+                _bss_30->unk0[var_v1].v0 = sp94[j].v[0];
+                _bss_30->unk0[var_v1].v1 = sp94[j].v[1];
+                _bss_30->unk0[var_v1].v2 = sp94[j].v[2];
+                var_v1++;
+                arg0++; arg0--; // @fake
+            }
+        }
+        _bss_30->unk44[0][0] = (f32) arg0->unkC;
+        _bss_30->unk44[0][1] = (f32) arg0->unkC;
+        _bss_30->unk44[0][2] = (f32) arg0->unkD;
+        _bss_30->unk44[0][3] = (f32) arg0->unkE;
+        _bss_30->unk44[0][4] = (f32) arg0->unkF;
+        _bss_30->unk44[0][5] = (f32) arg0->unkC;
+        _bss_30->unk44[0][6] = (f32) arg0->unkC;
+        
+        _bss_30->unk44[1][0] = (f32) arg0->unk14;
+        _bss_30->unk44[1][1] = (f32) arg0->unk14;
+        _bss_30->unk44[1][2] = (f32) arg0->unk15;
+        _bss_30->unk44[1][3] = (f32) arg0->unk16;
+        _bss_30->unk44[1][4] = (f32) arg0->unk17;
+        _bss_30->unk44[1][5] = (f32) arg0->unk14;
+        _bss_30->unk44[1][6] = (f32) arg0->unk14;
+        
+        _bss_30->unk44[2][0] = (f32) arg0->unk1C;
+        _bss_30->unk44[2][1] = (f32) arg0->unk1C;
+        _bss_30->unk44[2][2] = (f32) arg0->unk1D;
+        _bss_30->unk44[2][3] = (f32) arg0->unk1E;
+        _bss_30->unk44[2][4] = (f32) arg0->unk1F;
+        _bss_30->unk44[2][5] = (f32) arg0->unk1C;
+        _bss_30->unk44[2][6] = (f32) arg0->unk1C;
+        _bss_30->unk8 = texLoadTexture(0x20D);
+        _bss_30->unkC = texLoadTexture(0x20C);
+        _bss_30->unk10 = texLoadTexture(0x20E);
+        _bss_30->unk14 = texLoadTexture(0x20F);
+        _bss_30->unkEC = arg0->unk2E + 0x210;
+        _bss_30->unkF0 = arg0->unk30 + 0x210;
+        _bss_30->unkF4 = arg0->unk32 + 0x210;
+        _bss_30->unkF8 = arg0->unk34 + 0x210;
+        _bss_30->unkFC = arg0->unk3E + 0x210;
+        _bss_30->unk100 = arg0->unk40 + 0x210;
+        _bss_30->unk104 = arg0->unk42 + 0x210;
+        _bss_30->unk108 = arg0->unk44 + 0x210;
+        _bss_30->unk18 = texLoadTexture(_bss_30->unkEC);
+        _bss_30->unk1C = texLoadTexture(_bss_30->unkF0);
+        _bss_30->unk10C = 0;
+        _data_30 = -1;
+    }
+}
+#endif
 
 // offset: 0x30FC | func: 18
-void dll_7_func_30FC(void) {
+static void dll_7_func_30FC(void) {
     if ((_bss_30 != NULL) && (_bss_30 != NULL)) {
         if (_bss_30->unk8 != NULL) {
             texFreeTexture(_bss_30->unk8);
@@ -327,7 +666,7 @@ void dll_7_func_30FC(void) {
 }
 
 // offset: 0x3294 | func: 19
-void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
+static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
     DLTri* spEC;
     Vtx* spE8;
     SRT spD0;
@@ -572,7 +911,7 @@ void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
 }
 
 // offset: 0x4484 | func: 20
-void dll_7_func_4484(void) {
+static void dll_7_func_4484(void) {
     f32 sp8C;
     f32 sp88;
     f32 var_fa0;
@@ -637,9 +976,9 @@ void dll_7_func_4484(void) {
         sp4C = 3;
         sp88 = (sp8C - 0.75f) / 0.25f;
     }
-    sp70 = (s32) curvesCatmullRom(&_bss_30->unk44[sp4C], sp88, NULL);
-    sp6C = (s32) curvesCatmullRom(&_bss_30->unk60[sp4C], sp88, NULL);
-    sp68 = (s32) curvesCatmullRom(&_bss_30->unk7C[sp4C], sp88, NULL);
+    sp70 = (s32) curvesCatmullRom(&_bss_30->unk44[0][sp4C], sp88, NULL);
+    sp6C = (s32) curvesCatmullRom(&_bss_30->unk44[1][sp4C], sp88, NULL);
+    sp68 = (s32) curvesCatmullRom(&_bss_30->unk44[2][sp4C], sp88, NULL);
     if (sp54 != _data_10) {
         sp64 = (s32) curvesCatmullRom(&_data_6C[0][sp4C], sp88, NULL);
         sp60 = (s32) curvesCatmullRom(&_data_6C[1][sp4C], sp88, NULL);
@@ -892,13 +1231,13 @@ s32 dll_7_func_56F8(Gfx** gdl) {
 }
 
 // offset: 0x57C0 | func: 23
-void dll_7_func_57C0(void) {
+static void dll_7_func_57C0(void) {
     bzero(&_bss_0, sizeof(_bss_0));
     _bss_0.unk26 = mainGetBits(BIT_SC_UNKNOWN_2BA);
 }
 
 // offset: 0x5818 | func: 24
-void dll_7_func_5818(void) {
+static void dll_7_func_5818(void) {
     u8 isNight;
     f32 time;
     Object* player;

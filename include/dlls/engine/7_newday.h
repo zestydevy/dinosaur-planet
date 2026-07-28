@@ -2,15 +2,16 @@
 #define _DLLS_7_H
 
 #include "PR/ultratypes.h"
+#include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "sys/envfx.h"
 #include "dll_def.h"
 #include "types.h"
-#include "game/objects/object.h"
-#include "PR/gbi.h"
 
 DLL_INTERFACE(DLL_7_newday) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 // Unmatched
-/*0*/ void (*func0)(Object *arg0, Object *arg1, void *arg2, s32 arg3);
+/*0*/ void (*func0)(Object *arg0, Object *arg1, EnvFxAction *arg2, s32 arg3);
 // Unmatched
 /*1*/ void (*func1)(void);
 // Unmatched
