@@ -1,4 +1,9 @@
+#include "dlls/engine/17_partfx.h"
 #include "dlls/engine/7_newday.h"
+#include "dlls/objects/332_FXEmit.h"
+#include "game/gamebits.h"
+#include "game/objects/object.h"
+#include "game/objects/object_id.h"
 #include "sys/gfx/texture.h"
 #include "sys/curves.h"
 #include "sys/envfx.h"
@@ -7,6 +12,9 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/rand.h"
+#include "sys/objects.h"
+#include "sys/objtype.h"
+#include "sys/vi.h"
 #include "dll.h"
 
 #define DAYTIME 18000.0f //5am
@@ -48,7 +56,7 @@
     {55, 55, 60,  210, 120, 55, 55}, 
     {55, 55, 60,  220, 240, 55, 55}
 };
-/*0xC0*/ static u32 _data_C0 = 0x00000000;
+/*0xC0*/ static Object* _data_C0 = NULL;
 /*0xC4*/ static f32 _data_C4 = 1.0;
 /*0xC8*/ static u32 _data_C8 = 0x00000000;
 /*0xCC*/ static u32 _data_CC[] = {
@@ -83,13 +91,6 @@
 };
 /*0x288*/ static f32 _data_288[] = {
     0, 0, 4600
-};
-/*0x294*/ static f32 _data_294[] = {
-    0, 0, 200, 0
-};
-/*0x2A4*/ static u32 _data_2A4 = 0x00000000;
-/*0x2A8*/ static u32 _data_2A8[] = {
-    0x00000000, 0x00000000
 };
 
 typedef struct
@@ -391,21 +392,21 @@ void dll_7_func_4484(void) {
         sp6C = (s32) ((f32) sp60 + (_data_0 * (f32) (sp6C - sp60)));
         sp68 = (s32) ((f32) temp_ft0 + (_data_0 * (f32) (sp68 - temp_ft0)));
     }
-    if (mainGetBits(0x77A) != 0) {
+    if (mainGetBits(BIT_77A) != 0) {
         sp70 += mathRnd(0, 0x4B) + 0xB4;
         sp6C += mathRnd(0, 0x4B) + 0x50;
         sp68 += mathRnd(0, 0x4B) + 0x50;
-    } else if (mainGetBits(0x77B) != 0) {
+    } else if (mainGetBits(BIT_77B) != 0) {
         sp70 += mathRnd(0, 0x4B) + 0xB4;
         sp6C += mathRnd(0, 0x4B) + 0xB4;
         sp68 += mathRnd(0, 0x4B) + 0x50;
     }
-    if (mainGetBits(0x77C) != 0) {
+    if (mainGetBits(BIT_77C) != 0) {
         sp70 += mathRnd(0, 0x4B) + 0x50;
         sp6C += mathRnd(0, 0x4B) + 0x50;
         sp68 += mathRnd(0, 0x4B) + 0xB4;
     }
-    if (mainGetBits(0x77D) != 0) {
+    if (mainGetBits(BIT_77D) != 0) {
         sp70 += mathRnd(0, 0x4B) + 0x50;
         sp6C += mathRnd(0, 0x4B) + 0xB4;
         sp68 += mathRnd(0, 0x4B) + 0x50;
@@ -413,37 +414,37 @@ void dll_7_func_4484(void) {
     if (sp70 < 0) {
         sp70 = 0;
     }
-    if (sp70 >= 0x100) {
+    if (sp70 > 0xFF) {
         sp70 = 0xFF;
     }
     if (sp6C < 0) {
         sp6C = 0;
     }
-    if (sp6C >= 0x100) {
+    if (sp6C > 0xFF) {
         sp6C = 0xFF;
     }
     if (sp68 < 0) {
         sp68 = 0;
     }
-    if (sp68 >= 0x100) {
+    if (sp68 > 0xFF) {
         sp68 = 0xFF;
     }
     if (sp70 < 0) {
         sp70 = 0;
     }
-    if (sp70 >= 0x100) {
+    if (sp70 > 0xFF) {
         sp70 = 0xFF;
     }
     if (sp6C < 0) {
         sp6C = 0;
     }
-    if (sp6C >= 0x100) {
+    if (sp6C > 0xFF) {
         sp6C = 0xFF;
     }
     if (sp68 < 0) {
         sp68 = 0;
     }
-    if (sp68 >= 0x100) {
+    if (sp68 > 0xFF) {
         sp68 = 0xFF;
     }
     gDLL_8_newfog->vtbl->func6(&sp70, &sp6C, &sp68);
@@ -485,7 +486,141 @@ void dll_7_func_4484(void) {
 }
 
 // offset: 0x5124 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5124.s")
+void dll_7_func_5124(f32 x, f32 y, f32 z) {
+    SRT partSrt;
+    SRT sp98;
+    s32 sx;
+    s32 sy;
+    s32 sz;
+    s32 fbZ;
+    Camera* camera;
+    FXEmit_Setup* fxSetup;
+    f32 cx;
+    f32 cy;
+    f32 cz;
+    f32 camDirX;
+    f32 camDirY;
+    f32 camDirZ;
+    f32 lx;
+    f32 ly;
+    f32 lz;
+    f32 sp50[3] = {0.0f, 0.0f, 200.0f};
+    u16 temp2;
+    Object* player;
+    s32 pad;
+    f32 temp;
+    s32 scrCenterX;
+    s32 scrCenterY;
+    f32 transp;
+
+    camera = camGet();
+    player = objGetPlayer();
+    transp = 0.0f;
+    if (_data_C0 == 0) {
+        fxSetup = objAllocSetup(sizeof(FXEmit_Setup), OBJ_FXEmit);
+        fxSetup->base.loadDistance = 0xFF;
+        fxSetup->base.fadeDistance = 0xFF;
+        fxSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+        fxSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
+        fxSetup->base.x = camera->srt.transl.x;
+        fxSetup->base.y = camera->srt.transl.y;
+        fxSetup->base.z = camera->srt.transl.z;
+        fxSetup->toggleGamebit = BIT_7DC;
+        fxSetup->disableGamebit = NO_GAMEBIT;
+        fxSetup->yaw = 0;
+        fxSetup->flagConfig = 1;
+        fxSetup->pitch = 0;
+        fxSetup->roll = 0;
+        fxSetup->rollSpeed = 0;
+        fxSetup->pitchSpeed = 0;
+        fxSetup->yawSpeed = 0;
+        fxSetup->activationRange = 0;
+        fxSetup->bank = 0;
+        fxSetup->indexInBank = PARTICLE_53D;
+        fxSetup->fxRate = 1;
+        _data_C0 = objSetupObject((ObjSetup*)fxSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, player->mapID, -1, player->parent);
+        if (_data_C0 == 0) {
+            return;
+        }
+    }
+    if (_data_C0 == 0) {
+        return;
+    }
+
+    lx = x - gWorldX;
+    ly = y;
+    lz = z - gWorldZ;
+    partSrt.transl.x = x;
+    partSrt.transl.y = y;
+    partSrt.transl.z = z;
+    partSrt.scale = 1.0f;
+    partSrt.yaw = 0;
+    partSrt.roll = 0;
+    partSrt.pitch = 0;
+    camProjectPoint(lx, ly, lz, &cx, &cy, &cz);
+    camClipToScreen(cx, cy, cz, &sx, &sy, NULL);
+    if ((sx >= 0) && (sx <= 320) && (sy >= 0) && (sx <= 240)) {
+        scrCenterX = sx - 160;
+        scrCenterY = sy - 120;
+        temp = SQ(scrCenterX) + SQ(scrCenterY);
+        if (temp != 0.0f) {
+            _data_C4 = sqrtf(temp);
+        } else {
+            _data_C4 = 0.0f;
+        }
+    } else {
+        _data_C4 = 200.0f;
+    }
+    fbZ = viObjDepth(sx, sy, (Object* )0x3039);
+    camGetVec3ToCameraNormalized(lx, ly, lz, &camDirX, &camDirY, &camDirZ);
+    lx += (camDirX * 20.0f);
+    ly += (camDirY * 20.0f);
+    lz += (camDirZ * 20.0f);
+    camProjectPoint(lx, ly, lz, &cx, &cy, &cz);
+    camClipToScreen(cx, cy, cz, NULL, NULL, &sz);
+    mainSetBits(BIT_7DC, 0);
+    if ((viContainsPoint(sx, sy) != 0) && (sz > 0) && (sz < fbZ)) {
+        if (_data_C4 != 0.0f) {
+            transp = _data_C4 / 200.0f;
+        } else {
+            transp = 0.0f;
+        }
+        player = objGetPlayer();
+        gDLL_17_partfx->vtbl->spawn(player, PARTICLE_53C, &partSrt, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, &transp);
+        sp50[0] = 0;
+        sp50[1] = 0;
+        sp50[2] = 1000.0f;
+        sp98.transl.x = 0;
+        sp98.transl.y = 0;
+        sp98.transl.z = 0;
+        sp98.scale = 1.0f;
+        sp98.yaw = -camera->srt.yaw;
+        sp98.roll = camera->srt.roll;
+        sp98.pitch = camera->srt.pitch;
+        mathRotateRPY(&sp98, sp50);
+        sp50[0] += camera->srt.transl.x;
+        sp50[1] += camera->srt.transl.y;
+        sp50[2] += camera->srt.transl.z;
+        _data_C0->srt.transl.x = sp50[0];
+        _data_C0->srt.transl.y = sp50[1];
+        _data_C0->srt.transl.z = sp50[2];
+        x -= _data_C0->srt.transl.x;
+        y -= _data_C0->srt.transl.y;
+        z -= _data_C0->srt.transl.z;
+        temp = mathAtan2f(x, z);
+        temp2 = ((s32) (f32) mathAtan2f(x, y)) & 0xFFFF;
+        _data_C0->srt.yaw = temp;
+        _data_C0->srt.pitch = -temp2;
+        _data_C0->srt.roll = camera->srt.roll;
+        mainSetBits(BIT_7DC, 1);
+    }
+}
+
+/*0x2A0*/ static u32 _data_2A0 = 0x00000000;
+/*0x2A4*/ static u32 _data_2A4 = 0x00000000;
+/*0x2A8*/ static u32 _data_2A8[] = {
+    0x00000000, 0x00000000
+};
 
 // offset: 0x56F8 | func: 22
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_56F8.s")
