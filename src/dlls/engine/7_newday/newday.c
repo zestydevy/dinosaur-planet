@@ -36,9 +36,9 @@
 /*0x18*/ static Vec3f _data_18 = VEC3F(0.0f, 1.0f, 0.0f);
 /*0x24*/ static Vec3f _data_24 = VEC3F(0.0f, 1.0f, 0.0f);
 /*0x30*/ static u32 _data_30 = 0xffffffff;
-/*0x34*/ static u32 _data_34 = 255; //clouds R
-/*0x38*/ static u32 _data_38 = 255; //clouds G
-/*0x3C*/ static u32 _data_3C = 255; //clouds B
+/*0x34*/ static s32 _data_34 = 255; //clouds R
+/*0x38*/ static s32 _data_38 = 255; //clouds G
+/*0x3C*/ static s32 _data_3C = 255; //clouds B
 /*0x40*/ static u32 _data_40 = 0x00000000;
 /*0x44*/ static u32 _data_44 = 0x00000000;
 /*0x48*/ static u32 _data_48 = 0x00000000;
@@ -48,7 +48,7 @@
 /*0x58*/ static u8 _data_58 = 0;
 /*0x5C*/ static f32 _data_5C = NOON; //time of day
 /*0x60*/ static u32 _data_60 = 0x00000000;
-/*0x64*/ static u32 _data_64 = 0x00000000;
+/*0x64*/ static s16 _data_64 = 0;
 /*0x68*/ static s16 _data_68 = 0;
          // splines
 /*0x6C*/ static f32 _data_6C[][7] = {
@@ -86,17 +86,11 @@
     0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
     0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
 };
-/*0x27C*/ static f32 _data_27C[] = {
-    0, 0, 4600
-};
-/*0x288*/ static f32 _data_288[] = {
-    0, 0, 4600
-};
 
 typedef struct
 {
-/*000*/ void *unk0;
-/*004*/ void *unk4;
+/*000*/ DLTri *unk0;
+/*004*/ Vtx *unk4;
 /*008*/ Texture *unk8;
 /*00C*/ Texture *unkC;
 /*010*/ Texture *unk10;
@@ -165,6 +159,8 @@ typedef struct {
 /*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
 /*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
 /*0x34*/ static u8 _bss_34[0x28];
+
+static void dll_7_func_5124(f32 x, f32 y, f32 z);
 
 // offset: 0x0 | ctor
 void dll_7_ctor(void *self) { }
@@ -331,7 +327,249 @@ void dll_7_func_30FC(void) {
 }
 
 // offset: 0x3294 | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_3294.s")
+void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
+    DLTri* spEC;
+    Vtx* spE8;
+    SRT spD0;
+    SRT spB8;
+    Camera* camera = camGet();
+    f32 var_fv1_2;
+    f32 spA4[3];
+    f32 prevFarPlane;
+    s16 var_v1;
+    f32 sp90[3] = {0, 0, 4600.0f};
+    f32 sp84[3] = {0, 0, 4600.0f};
+    f32 sp80;
+    s32 var_v0;
+    f32 var_fv1;
+    f32 sp74;
+    f32 sp70;
+    f32 var_fa0;
+    s32 sp68;
+
+    sp68 = 0;
+    spD0.roll = 0;
+    spD0.pitch = 0;
+    spD0.yaw = 0;
+    spD0.scale = 1.0f;
+    spD0.transl.x = 0/*.0f*/;
+    spD0.transl.y = 0/*.0f*/;
+    spD0.transl.z = 0/*.0f*/;
+    spB8.roll = 0;
+    spB8.pitch = 0;
+    spB8.yaw = 0;
+    spB8.scale = 1.0f;
+    spB8.transl.x = 0/*.0f*/;
+    spB8.transl.y = 0/*.0f*/;
+    spB8.transl.z = 0/*.0f*/;
+    gDLL_7_Newday->vtbl->func7(&sp68);
+    if (camera == NULL || _bss_30 == NULL) {
+        return;
+    }
+
+    prevFarPlane = camGetFarPlane();
+    camSetFarPlaneLerp(15000.0f, 0);
+    var_fv1 = (_data_5C - 18000.0f) / 57600.0f;
+    if (var_fv1 < 0/*.0f*/) {
+        var_fv1 = 0/*.0f*/;
+    } else if (var_fv1 > 1.0f) {
+        var_fv1 = 1.0f;
+    }
+    if (var_fv1 < 0.1f) {
+        if (var_fv1 < 0/*.0f*/) {
+            _data_64 = 0;
+        } else {
+            _data_64 = var_fv1 * 2550.0f;
+        }
+    } else if (var_fv1 > 0.9f) {
+        if (var_fv1 > 1.0f) {
+            _data_64 = 0;
+        } else {
+            _data_64 = (0.1f - (var_fv1 - 0.9f)) * 2550.0f;
+        }
+    } else {
+        _data_64 = 0xFF;
+    }
+    var_fv1 *= 32676.0f;
+    sp74 = (_data_5C - 18000.0f) / 28800.0f;
+    if (sp74 < 0/*.0f*/) {
+        sp74 = 0/*.0f*/;
+    }
+    if (sp74 > 1.0f) {
+        sp74 = 1.0f - (sp74 - 1.0f);
+    }
+    sp74 = 1.0f - (0.55f * sp74);
+    spA4[0] = 2.0f * sp90[0];
+    spA4[1] = 2.0f * sp90[1];
+    spA4[2] = 2.0f * sp90[2];
+    sp80 = _bss_30->unk40;
+    spD0.yaw = var_fv1;
+    mathRotateRPY(&spD0, spA4);
+    spD0.pitch = 0;
+    spD0.yaw = 0;
+    spD0.scale = 1.0f;
+    spD0.roll = (s16) sp80;
+    mathRotateRPY(&spD0, spA4);
+    _data_18.x = spA4[0];
+    _data_18.y = spA4[1];
+    _data_18.z = spA4[2];
+    spD0.transl.x = (s16)spA4[0] + camera->tx;
+    spD0.transl.y = (s16)spA4[1] + camera->ty;
+    spD0.transl.z = (s16)spA4[2] + camera->tz;
+    spD0.scale = 0.05f * sp74;
+    spD0.roll = 0;
+    spD0.yaw = 0x10000 - camera->srt.yaw;
+    spD0.pitch = camera->srt.pitch;
+    if (trackGetSunGlareOn() != 0) {
+        dll_7_func_5124(spD0.transl.x, spD0.transl.y, spD0.transl.z);
+    } else if (_data_C0 != NULL) {
+        objFreeObject(_data_C0);
+        _data_C0 = NULL;
+    }
+    var_fa0 = _data_5C;
+    if (var_fa0 >= 75600.0f) {
+        var_fa0 -= 75600;
+    } else {
+        var_fa0 += 10800.0f;
+    }
+    var_fv1_2 = var_fa0 / 28800.0f;
+    if (var_fv1_2 < 0/*.0f*/) {
+        var_fv1_2 = 0/*.0f*/;
+    } else if (var_fv1_2 > 1.0f) {
+        var_fv1_2 = 1.0f;
+    }
+    if (var_fv1_2 < 0.1f) {
+        if (var_fv1_2 < 0/*.0f*/) {
+            _data_68 = 0;
+        } else {
+            _data_68 = var_fv1_2 * 2550.0f;
+        }
+    } else if (var_fv1_2 > 0.9f) {
+        if (var_fv1_2 > 1.0f) {
+            _data_68 = 0;
+        } else {
+            _data_68 = (0.1f - (var_fv1_2 - 0.9f)) * 2550.0f;
+        }
+    } else {
+        _data_68 = 0xFF;
+    }
+    
+    var_fv1_2 *= 32676.0f;
+    sp70 = var_fa0 / 14400.0f;
+    if (sp70 < 0/*.0f*/) {
+        sp70 = 0/*.0f*/;
+    }
+    if (sp70 > 1.0f) {
+        sp70 = 1.0f - (sp70 - 1.0f);
+    }
+    sp70 = 1.0f - (0.55f * sp70);
+    spA4[0] = 2.0f * sp84[0];
+    spA4[1] = 2.0f * sp84[1];
+    spA4[2] = 2.0f * sp84[2];
+    spB8.yaw = var_fv1_2;
+    mathRotateRPY(&spB8, spA4);
+    spB8.pitch = 0;
+    spB8.yaw = 0;
+    spB8.scale = 1.0f;
+    spB8.roll = (s16) sp80;
+    mathRotateRPY(&spB8, spA4);
+    _data_24.x = spA4[0];
+    _data_24.y = spA4[1];
+    _data_24.z = spA4[2];
+    spB8.transl.x = (s16)spA4[0] + camera->tx;
+    spB8.transl.y = (s16)spA4[1] + camera->ty;
+    spB8.transl.z = (s16)spA4[2] + camera->tz;
+    spB8.scale = 0.05f * sp70;
+    spB8.roll = 0;
+    spB8.yaw = 0x10000 - camera->srt.yaw;
+    spB8.pitch = camera->srt.pitch;
+    for (var_v0 = 0; var_v0 < 5; var_v0++) {
+        _bss_30->unk4[var_v0].v.cn[0] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[1] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[2] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[3] = 0xFF;
+    }
+    
+    for (var_v0 = 5; var_v0 < 10; var_v0++) {
+        _bss_30->unk4[var_v0].v.cn[0] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[1] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[2] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[3] = 0xFF;
+    }
+    
+    var_fa0 = 1.0f - sp70;
+    for (var_v0 = 10; var_v0 < 15; var_v0++) {
+        if (var_v0 == 0) {
+            _bss_30->unk4[var_v0].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v0].v.cn[1] = 0xFF;
+            _bss_30->unk4[var_v0].v.cn[2] = 0xFF;
+        } else {
+            _bss_30->unk4[var_v0].v.cn[0] = 0xFF;
+            _bss_30->unk4[var_v0].v.cn[1] = (155/*.0f*/) + (var_fa0 * 100/*.0f*/);
+            _bss_30->unk4[var_v0].v.cn[2] = (105/*.0f*/) + (var_fa0 * 150/*.0f*/);
+        }
+        _bss_30->unk4[var_v0].v.cn[3] = 0xFF;
+    }
+
+    for (var_v0 = 15; var_v0 < 20; var_v0++) {
+        _bss_30->unk4[var_v0].v.cn[0] = 0xFF;
+        _bss_30->unk4[var_v0].v.cn[1] = (205/*.0f*/) + (var_fa0 * 50/*.0f*/);
+        _bss_30->unk4[var_v0].v.cn[2] = (155/*.0f*/) + (var_fa0 * 100/*.0f*/);
+        _bss_30->unk4[var_v0].v.cn[3] = 0xFF;
+    }
+    
+    gDLL_8_newfog->vtbl->func5(gdl);
+    gSPLoadGeometryMode(*gdl, G_SHADE | G_SHADING_SMOOTH);
+    dlApplyGeometryMode(gdl);
+    gDPSetCombineLERP(*gdl, TEXEL0, 0, SHADE, 0, TEXEL0, 0, SHADE, 0, PRIMITIVE, COMBINED, PRIMITIVE_ALPHA, COMBINED, COMBINED, 0, ENVIRONMENT, 0);
+    dlApplyCombine(gdl);
+    gDPSetOtherMode(*gdl,
+        G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_XLU_SURF | G_RM_XLU_SURF2);
+    dlApplyOtherMode(gdl);
+    if (_data_64 > 0) {
+        spD0.scale = 0.05f * sp74;
+        spEC = _bss_30->unk0;
+        spE8 = _bss_30->unk4;
+        camSetupObjectSRTMatrix(gdl, mtxs, &spD0, 1.0f, 0.0f, NULL);
+        texDPTextures(gdl, _bss_30->unk8, NULL, RENDER_Z_COMPARE | RENDER_ANTI_ALIASING, 0, FALSE, FALSE);
+        dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, (u8) _data_64);
+        gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(spE8), 5, 0);
+        dlTriangles(gdl, spEC, 4);
+        spD0.scale = 0.1f;
+        spEC = _bss_30->unk0;
+        spE8 = _bss_30->unk4 + 5;
+        camSetupObjectSRTMatrix(gdl, mtxs, &spD0, 1.0f, 0.0f, NULL);
+        texDPTextures(gdl, _bss_30->unk14, NULL, RENDER_Z_COMPARE | RENDER_ANTI_ALIASING, 0, FALSE, FALSE);
+        var_v1 = (s16)var_fv1 >> 6;
+        if (var_v1 > 0xFF) {
+            var_v1 = 0xFF;
+        }
+        dlSetPrimColor(gdl, 0xFF, (u8) (((f32) var_v1 / 2.5f) + 150.0f), var_v1, (u8) _data_64);
+        gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(spE8), 5, 0);
+        dlTriangles(gdl, spEC, 4);
+    }
+    gDLL_8_newfog->vtbl->func5(gdl);
+    if (_data_68 > 0) {
+        spB8.scale = 0.04f * sp70;
+        spEC = _bss_30->unk0;
+        spE8 = _bss_30->unk4 + 10;
+        camSetupObjectSRTMatrix(gdl, mtxs, &spB8, 1.0f, 0.0f, NULL);
+        texDPTextures(gdl, _bss_30->unk10, NULL, RENDER_Z_COMPARE | RENDER_ANTI_ALIASING, 0, FALSE, FALSE);
+        dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, (u8) _data_68);
+        gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(spE8), 5, 0);
+        dlTriangles(gdl, spEC, 4);
+        spB8.scale = 0.1f;
+        camSetupObjectSRTMatrix(gdl, mtxs, &spB8, 1.0f, 0.0f, NULL);
+        var_v1 = (s16)var_fv1_2 >> 6;
+        if (var_v1 > 0xFF) {
+            var_v1 = 0xFF;
+        }
+        texDPTextures(gdl, _bss_30->unk14, NULL, RENDER_Z_COMPARE | RENDER_ANTI_ALIASING, 0, FALSE, FALSE);
+        dlSetPrimColor(gdl, 0xFF, ((var_v1 / 5) + 0xC8), (u8) (((f32) var_v1 / 2.5f) + 150.0f), (u8) (_data_68 / 2));
+    }
+    camSetFarPlaneLerp(prevFarPlane, 0);
+}
 
 // offset: 0x4484 | func: 20
 void dll_7_func_4484(void) {
@@ -466,9 +704,9 @@ void dll_7_func_4484(void) {
         sp68 = 0xFF;
     }
     gDLL_8_newfog->vtbl->func6(&sp70, &sp6C, &sp68);
-    _data_34 = (u32) sp70;
-    _data_38 = (u32) sp6C;
-    _data_3C = (u32) sp68;
+    _data_34 = sp70;
+    _data_38 = sp6C;
+    _data_3C = sp68;
     if ((_data_5C >= 18000.0f) && (_data_5C <= 75600.0f)) {
         lightUpdateSkyLight(_data_18.f[0], _data_18.f[1], _data_18.f[2], 
             (u8) (160.0f - (_data_18.f[1] * 30.0f)), 0xFF, 0x3C, -0x1E, 
@@ -504,7 +742,7 @@ void dll_7_func_4484(void) {
 }
 
 // offset: 0x5124 | func: 21
-void dll_7_func_5124(f32 x, f32 y, f32 z) {
+static void dll_7_func_5124(f32 x, f32 y, f32 z) {
     SRT partSrt;
     SRT sp98;
     s32 sx;
