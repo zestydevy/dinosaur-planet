@@ -141,10 +141,10 @@ void CFPrisonGuard_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs,
         objData->vanishTimer += 0.01f * gUpdateRate;
         
         if (objData->vanishTimer < 1.5f) {
-            gDLL_32->vtbl->func2(self, PARTICLE_32F, &objData->vanishTimer);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_32F, &objData->vanishTimer);
         } else {
-            gDLL_32->vtbl->func2(self, PARTICLE_330, &objData->vanishTimer);
-            gDLL_32->vtbl->func2(self, PARTICLE_330, &objData->vanishTimer);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &objData->vanishTimer);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &objData->vanishTimer);
         }
     }
 }

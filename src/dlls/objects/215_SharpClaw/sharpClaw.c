@@ -512,20 +512,20 @@ void SharpClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
     //Create particles while frozen
     if (objData->freezeTimer > 0.0f) {
-        gDLL_32->vtbl->func2(self, PARTICLE_52A, NULL);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_52A, NULL);
     }
 
     if (baddie->unk3B2 & (0x40 | 0x20)) {
         if (baddie->unk3B2 & 0x20) {
-            gDLL_32->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
-            gDLL_32->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
         }
-        gDLL_32->vtbl->func2(self, PARTICLE_32F, &baddie->unk3E8);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_32F, &baddie->unk3E8);
     }
 
     if (baddie->unk3B2 & 0x100) {
-        gDLL_32->vtbl->func2(self, PARTICLE_333, &baddie->unk3E8);
-        gDLL_32->vtbl->func2(self, PARTICLE_334, &baddie->unk3E8);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_333, &baddie->unk3E8);
+        gDLL_32_modelfx->vtbl->func2(self, PARTICLE_334, &baddie->unk3E8);
         baddie->unk3B2 &= ~0x100;
     }
 }

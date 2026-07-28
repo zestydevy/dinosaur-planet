@@ -235,7 +235,7 @@ void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset)
         gDLL_27->vtbl->reset(self, collider);
     }
     
-    mainCreateTempDLL(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objData->moveData, -0x1FFF, 0x2AAA, 3);
     
     objData->moveData.unk4A9 |= 8;

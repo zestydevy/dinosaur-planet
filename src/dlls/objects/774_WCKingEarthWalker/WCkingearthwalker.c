@@ -42,7 +42,7 @@ void WCKingEarthWalker_obj_Setup(Object* self, WCKingEarthWalker_Setup* objSetup
 
     self->animCallback = WCKingEarthWalker_animCallback;
     
-    mainCreateTempDLL(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objData->moveData, -0x1FFF, 0x31C6, 2);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objData->moveData, 0, data_0, 2);
     
