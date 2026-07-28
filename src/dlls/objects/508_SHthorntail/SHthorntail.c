@@ -281,7 +281,7 @@ void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
     self->shadow->distFadeMinOpacity = 90;
     self->animCallback = SHthorntail_animCallback;
     objdata->state = -1;
-    mainCreateTempDLL(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_MOVELIB);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -0x1FFF, 0x2AAA, 3);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 0x190, 0x1E);
     objdata->movedata.unk4A9 &= ~0x8;
@@ -339,7 +339,7 @@ void SHthorntail_obj_Print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x504 | func: 4 | export: 4
 void SHthorntail_obj_Free(Object *self, s32 onlySelf) {
-    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_MOVELIB);
     objFreeObjectType(self, OBJTYPE_40);
 }
 
