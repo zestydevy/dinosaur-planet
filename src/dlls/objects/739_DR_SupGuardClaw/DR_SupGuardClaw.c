@@ -8,6 +8,7 @@
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/215_SharpClaw.h"
 #include "dll.h"
 
 typedef struct {
@@ -62,12 +63,12 @@ typedef enum {
 };
 
 /*0x18*/ static s16 dModAnimsSharpClaw[] = {
-    0, 
-    0x206, 
-    0x127, 
-    0, 
-    0x30a, 
-    0x0
+    SharpClaw_MODANIM0_0_Idle_LOOP, 
+    SharpClaw_MODANIM2_6_Campfire_Cold_LOOP, 
+    SharpClaw_MODANIM1_39_Hunched_Strafe_L_LOOP, 
+    SharpClaw_MODANIM0_0_Idle_LOOP, 
+    SharpClaw_MODANIM3_10_Head_Scratch, 
+    SharpClaw_MODANIM0_0_Idle_LOOP
 };
 
 //TODO: finish and move to GuardClaw header, or a separate header just for a model's modanim?
