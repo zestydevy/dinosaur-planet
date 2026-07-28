@@ -174,7 +174,7 @@ void DR_NPC_setup(Object* self, DR_NPC_Setup* objSetup, s32 reset) {
 
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
-    mainCreateTempDLL(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_MOVELIB);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func2(self, &objData->movedata, -0x11C7, 0x3554, 3);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func5(&objData->movedata, 300, 120);
     ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func6(&objData->movedata, dDLL53Array2, dDLL53Array1, 3);
@@ -283,7 +283,7 @@ void DR_NPC_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle**
 void DR_NPC_free(Object* self, s32 onlySelf) {
     DR_NPC_Setup* objSetup = (DR_NPC_Setup*)self->setup;
 
-    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_MOVELIB);
 
     if (objSetup->characterType != DR_NPC_SharpClaw) {
         objFreeObjectType(self, OBJTYPE_Baddie);

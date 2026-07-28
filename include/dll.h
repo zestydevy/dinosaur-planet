@@ -8,7 +8,7 @@
 #include "dlls/engine/5_amseq.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/7_newday.h"
-#include "dlls/engine/8.h"
+#include "dlls/engine/8_newfog.h"
 #include "dlls/engine/9_newclouds.h"
 #include "dlls/engine/10_newstars.h"
 #include "dlls/engine/11_newlfx.h"
@@ -31,7 +31,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/30_task.h"
 #include "dlls/engine/31_flash.h"
-#include "dlls/engine/32.h"
+#include "dlls/engine/32_modelfx.h"
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/54_pickup.h"
 #include "dlls/engine/56.h"
@@ -52,7 +52,7 @@ enum DLL_ID {
     DLL_ID_AMSEQ = 5,
     DLL_ID_AMSFX = 6,
     DLL_ID_NEWDAY = 7,
-    DLL_ID_8 = 8,
+    DLL_ID_NEWFOG = 8,
     DLL_ID_NEWCLOUDS = 9,
     DLL_ID_NEWSTARS = 10,
     DLL_ID_NEWLFX = 11,
@@ -62,7 +62,7 @@ enum DLL_ID {
     DLL_ID_PROJGFX = 15,
     DLL_ID_16 = 16,
     DLL_ID_PARTFX = 17,
-    DLL_ID_18 = 18,
+    DLL_ID_OBJFSA = 18,
     DLL_ID_GAMEPLAY = 19,
     DLL_ID_SCREENS = 20,
     DLL_ID_TEXT = 21,
@@ -76,31 +76,31 @@ enum DLL_ID {
     DLL_ID_GPLAY = 29,
     DLL_ID_TASK = 30,
     DLL_ID_FLASH = 31,
-    DLL_ID_32 = 32,
-    DLL_ID_33 = 33,
-    DLL_ID_34 = 34, // partfx related
-    DLL_ID_35 = 35, // partfx related
-    DLL_ID_36 = 36, // partfx related
-    DLL_ID_37 = 37, // partfx related
-    DLL_ID_38 = 38, // partfx related
-    DLL_ID_39 = 39, // partfx related
-    DLL_ID_40 = 40, // partfx related
-    DLL_ID_41 = 41, // partfx related
-    DLL_ID_42 = 42, // partfx related
-    DLL_ID_43 = 43, // partfx related
-    DLL_ID_44 = 44, // partfx related
-    DLL_ID_45 = 45, // partfx related
-    DLL_ID_46 = 46, // partfx related
-    DLL_ID_47 = 47, // partfx related
-    DLL_ID_48 = 48, // partfx related
-    DLL_ID_49 = 49, // partfx related
-    DLL_ID_50 = 50, // partfx related
-    DLL_ID_51 = 51, // partfx related
-    DLL_ID_52 = 52, // partfx related
-    DLL_ID_53_MOVELIB = 53,
-    DLL_ID_54 = 54,
-    
-    DLL_ID_56 = 56,
+    DLL_ID_MODELFX = 32,
+    DLL_ID_BADDIECONTROL = 33,
+    DLL_ID_FORCEPOINT_PARTFX = 34,
+    DLL_ID_SHRINE_PARTFX = 35,
+    DLL_ID_DIM_PARTFX = 36,
+    DLL_ID_WM_PARTFX = 37,
+    DLL_ID_NW_PARTFX = 38,
+    DLL_ID_SWC_PARTFX = 39,
+    DLL_ID_SHP_PARTFX = 40,
+    DLL_ID_CLF_PARTFX = 41,
+    DLL_ID_BAY_PARTFX = 42,
+    DLL_ID_BAD_PARTFX = 43,
+    DLL_ID_ICE_PARTFX = 44,
+    DLL_ID_REX_PARTFX = 45,
+    DLL_ID_DF_PARTFX = 46,
+    DLL_ID_DIMBOSS_PARTFX = 47,
+    DLL_ID_SWH_PARTFX = 48,
+    DLL_ID_DAK_PARTFX = 49,
+    DLL_ID_WC_PARTFX = 50,
+    DLL_ID_MMP_PARTFX = 51,
+    DLL_ID_BWC_PARTFX = 52,
+    DLL_ID_MOVELIB = 53,
+    DLL_ID_PICKUP = 54,
+    DLL_ID_PROJLIB = 55,
+    DLL_ID_PUTDOWN = 56,
     DLL_ID_57 = 57,
     DLL_ID_58 = 58,
     DLL_ID_MINIMAP = 59,
@@ -116,16 +116,18 @@ enum DLL_ID {
     DLL_ID_69 = 69, //empty
     DLL_ID_OLD_LEVELSELECT = 70,
     DLL_ID_OLD_SELECTION = 71, //SwapStone choices
-
+    DLL_ID_72 = 72,
     DLL_ID_OLD_PICMENU = 73,
     DLL_ID_PICMENU = 74,
-    DLL_ID_75 = 75,
+    DLL_ID_FRONTEND = 75,
     DLL_ID_76 = 76,
     DLL_ID_SCARAB = 77,     //Shop minigame counter
     DLL_ID_CREDITS = 78,
     DLL_ID_SELECTION = 79,  //SwapStone/ShopKeeper selection screens
     DLL_ID_80 = 80,         //empty
-
+    DLL_ID_SWAPHOLLOW = 81,
+    DLL_ID_82 = 82,
+    DLL_ID_83 = 83,
     DLL_ID_CAMNORMAL = 84,              //Start of camera module DLLs
     DLL_ID_ATTENTIONCAM = 85,
     DLL_ID_CAM1STPERSON = 86,
@@ -227,7 +229,7 @@ extern DLL_29_gplay *gDLL_29_Gplay;
 extern DLL_30_task *gDLL_30_Task;
 extern DLL_31_flash *gDLL_31_Flash;
 extern DLL_74_picmenu *gDLL_74_Picmenu;
-extern DLL_8 *gDLL_8;
+extern DLL_8_newfog *gDLL_8_newfog;
 extern DLL_9_newclouds *gDLL_9_Newclouds;
 extern DLL_10_newstars *gDLL_10_Newstars;
 extern DLL_4_race *gDLL_4_Race;
@@ -241,7 +243,7 @@ extern DLL_17 *gDLL_17_partfx;
 extern DLL_18_objfsa *gDLL_18_objfsa;
 extern DLL_75 *gDLL_75;
 extern DLL_56 *gDLL_56;
-extern DLL_32 *gDLL_32;
+extern DLL_32_modelfx *gDLL_32_modelfx;
 extern DLL_33_BaddieControl *gDLL_33_BaddieControl;
 extern DLL_59_minimap *gDLL_59_Minimap;
 extern DLL_54 *gDLL_54_pickup;

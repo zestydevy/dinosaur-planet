@@ -529,30 +529,30 @@
 
 // offset: 0x0 | ctor
 void dll_32_ctor(void *dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_ctor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_ctor.s")
 
 // offset: 0x218 | dtor
 void dll_32_dtor(void *dll);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_dtor.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_dtor.s")
 
 // offset: 0x2C8 | func: 0 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_2C8.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2C8.s")
 
 // offset: 0x2D0 | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_2D0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2D0.s")
 
 // offset: 0x2DC | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_2DC.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2DC.s")
 
 // offset: 0x4B0 | func: 3 | export: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_4B0.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_4B0.s")
 
 // offset: 0x92C | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_92C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_92C.s")
 
 // offset: 0x1314 | func: 5 | export: 5
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_1314.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_1314.s")
 #else
 /*static*/ s32 dll_32_func_1D3C(f32* a0, f32* a1, f32* a2);
 
@@ -690,7 +690,7 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
 
 // offset: 0x1D3C | func: 6
 #ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32/dll_32_func_1D3C.s")
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_1D3C.s")
 #else
 // https://decomp.me/scratch/os9k5
 s32 dll_32_func_1D3C(f32* a0, f32* a1, f32* a2) {

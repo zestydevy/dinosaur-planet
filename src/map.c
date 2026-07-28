@@ -634,7 +634,7 @@ void trackTick(s32 arg0) {
         if (gTrackFlags & TRACKFLAG_SKY) {
             gDLL_12_Minic->vtbl->func2();
         }
-        gDLL_8->vtbl->func2();
+        gDLL_8_newfog->vtbl->func2();
         gDLL_7_Newday->vtbl->func2();
         gDLL_9_Newclouds->vtbl->func3();
         blockTexanimTick();
@@ -701,10 +701,10 @@ void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** v
     gDLL_58->vtbl->func2();
     if (gTrackFlags & TRACKFLAG_SUN_GLARE) {
         if (gDLL_7_Newday->vtbl->func23(&gMainDL) == 0) {
-            gDLL_8->vtbl->func3(&gMainDL);
+            gDLL_8_newfog->vtbl->func3(&gMainDL);
         }
     } else {
-        gDLL_8->vtbl->func3(&gMainDL);
+        gDLL_8_newfog->vtbl->func3(&gMainDL);
     }
     D_800B51E4 = camGet();
     blockColorTableTick();
@@ -2815,7 +2815,7 @@ void map_func_8004773C(void) {
     gDLL_17_partfx->vtbl->func0();
     gDLL_12_Minic->vtbl->func4();
     gDLL_12_Minic->vtbl->func1();
-    gDLL_8->vtbl->func1();
+    gDLL_8_newfog->vtbl->func1();
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();
@@ -2840,11 +2840,11 @@ void map_func_8004773C(void) {
         sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
         sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == -2) {
-            if (sp40->unk0 != -1) {
-                lfxRestoreAction(player, player, sp40->unk0, 0, 0, 0);
+            if (sp40->unk0[0] != -1) {
+                lfxRestoreAction(player, player, sp40->unk0[0], 0, 0, 0);
             }
-            if (sp40->unk2 != -1) {
-                lfxRestoreAction(player, player, sp40->unk2, 0, 0, 0);
+            if (sp40->unk0[1] != -1) {
+                lfxRestoreAction(player, player, sp40->unk0[1], 0, 0, 0);
             }
             if (sp40->unk4 != -1) {
                 lfxRestoreAction(player, player, sp40->unk4, 0, 0, 0);
@@ -5398,7 +5398,7 @@ void mapWarpPlayer(s32 warpID, s8 fadeToBlack) {
     }
     gDLL_12_Minic->vtbl->func4();
     gDLL_12_Minic->vtbl->func1();
-    gDLL_8->vtbl->func1();
+    gDLL_8_newfog->vtbl->func1();
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
     gDLL_10_Newstars->vtbl->func0();

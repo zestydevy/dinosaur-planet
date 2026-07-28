@@ -1454,7 +1454,7 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
         dll_210_func_1D8EC(player, arg1, gUpdateRate);
     }
     if (arg1->unk87C == 0x1D7) {
-        gDLL_32->vtbl->func4(arg2, arg3, player);
+        gDLL_32_modelfx->vtbl->func4(arg2, arg3, player);
         *_data_0 += gUpdateRate;
         if ((*_data_0 >= 0x65) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {
             dll_210_add_magic(player, -1);
@@ -1462,14 +1462,14 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
         }
     }
     if (arg1->unk886 != 0) {
-        gDLL_32->vtbl->func2(player, arg1->unk886, 0);
+        gDLL_32_modelfx->vtbl->func2(player, arg1->unk886, 0);
     }
     arg1->unk886 = 0;
     if (arg1->unk8BE == 1) {
         dll_210_func_9E00(player);
     }
     if (arg1->spirits != 0) {
-        gDLL_32->vtbl->func5(arg2, arg3, player);
+        gDLL_32_modelfx->vtbl->func5(arg2, arg3, player);
     }
     if (gDLL_7_Newday->vtbl->func12() != 0) {
         dll_210_func_41F4(player, arg1);
@@ -3808,8 +3808,8 @@ void dll_210_func_9E00(Object* player) {
         _bss_3C -= 0.2f * gUpdateRateF;
     } else {
         _bss_3C = 40.0f;
-        gDLL_32->vtbl->func3(player, 40.0f - sp2C->unk844, 0x3F4, 0x14, 2);
-        gDLL_32->vtbl->func3(player, 40.0f - sp2C->unk844, 0x3F7, 0x14, 2);
+        gDLL_32_modelfx->vtbl->func3(player, 40.0f - sp2C->unk844, 0x3F4, 0x14, 2);
+        gDLL_32_modelfx->vtbl->func3(player, 40.0f - sp2C->unk844, 0x3F7, 0x14, 2);
     }
 }
 #endif

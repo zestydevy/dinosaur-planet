@@ -241,8 +241,8 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.file.sidekicks[i].blueFood = 4;
         sState.save.file.sidekicks[i].redFood = 5;
 
-        sState.save.map.lightActions[i].unk0 = -1;
-        sState.save.map.lightActions[i].unk2 = -1;
+        sState.save.map.lightActions[i].unk0[0] = -1;
+        sState.save.map.lightActions[i].unk0[1] = -1;
         sState.save.map.lightActions[i].unk4 = -1;
         sState.save.map.lightActions[i].unk6 = -1;
         sState.save.map.lightActions[i].unk8[0] = -1;

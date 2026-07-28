@@ -14,7 +14,7 @@ s32 envfxAction(Object *calledBy, Object *target, u16 actionIndex, s32 arg3) {
         if ((envFx->unk5C < 3) || (envFx->unk5C == 4)) {
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);
         } else if (envFx->unk5C == 3) {
-            gDLL_8->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
+            gDLL_8_newfog->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
         } else if (envFx->unk5C == 5)	{
             gDLL_7_Newday->vtbl->func0(calledBy, target, envFx, arg3);
 		} else if (envFx->unk5C == 6)	{
@@ -36,7 +36,7 @@ s32 envfxRestoreAction(Object *calledBy, Object *target, u16 actionIndex, s32 ar
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);
         } else if (envFx->unk5C == 3)	{
             envFx->unk2A = 0;
-            gDLL_8->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
+            gDLL_8_newfog->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
         } else if (envFx->unk5C == 5)	{
             gDLL_7_Newday->vtbl->func0(calledBy, target, envFx, arg3);
         } else if (envFx->unk5C == 6)	{

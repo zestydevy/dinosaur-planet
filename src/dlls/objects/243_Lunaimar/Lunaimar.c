@@ -201,10 +201,10 @@ void dll_243_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         if (baddie->unk3B2 & 0x60) {
             if (baddie->unk3B2 & 0x20) {
-                gDLL_32->vtbl->func2(self, 0x330, &baddie->unk3E8);
-                gDLL_32->vtbl->func2(self, 0x330, &baddie->unk3E8);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &baddie->unk3E8);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &baddie->unk3E8);
             }
-            gDLL_32->vtbl->func2(self, 0x32F, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, 0x32F, &baddie->unk3E8);
         }
     }
 }

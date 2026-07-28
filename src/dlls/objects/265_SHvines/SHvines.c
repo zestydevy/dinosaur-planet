@@ -40,7 +40,7 @@ void SHvines_setup(Object* self, SHvines_Setup* objSetup, s32 arg2) {
     
     self->srt.yaw = objSetup->yaw << 8;
     
-    mainCreateTempDLL(DLL_ID_53_MOVELIB);
+    mainCreateTempDLL(DLL_ID_MOVELIB);
 
     modelInstance = self->modelInsts[self->modelInstIdx];
     model = modelInstance->model;
@@ -119,7 +119,7 @@ void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x470 | func: 4 | export: 4
 void SHvines_free(Object* self, s32 arg1) {
     objFreeObjectType(self, OBJTYPE_TrickyTarget);
-    mainRemoveTempDLL(DLL_ID_53_MOVELIB);
+    mainRemoveTempDLL(DLL_ID_MOVELIB);
 }
 
 // offset: 0x4C4 | func: 5 | export: 5

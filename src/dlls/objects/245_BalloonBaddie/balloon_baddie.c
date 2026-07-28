@@ -194,16 +194,16 @@ void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
         // dying particles
         if (objdata->flags & (BALLOONBADDIE_DEATHFX1 | BALLOONBADDIE_DEATHFX2)) {
             if (objdata->flags & BALLOONBADDIE_DEATHFX1) {
-                gDLL_32->vtbl->func2(self, PARTICLE_330, &objdata->fadeoutTimer);
-                gDLL_32->vtbl->func2(self, PARTICLE_330, &objdata->fadeoutTimer);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &objdata->fadeoutTimer);
+                gDLL_32_modelfx->vtbl->func2(self, 0x330, &objdata->fadeoutTimer);
                 objdata->flags &= ~BALLOONBADDIE_DEATHFX1;
             }
-            gDLL_32->vtbl->func2(self, PARTICLE_32F, &objdata->fadeoutTimer);
+            gDLL_32_modelfx->vtbl->func2(self, 0x32F, &objdata->fadeoutTimer);
         }
         // respawning particles
         if (objdata->flags & BALLOONBADDIE_RESPAWNED) {
-            gDLL_32->vtbl->func2(self, PARTICLE_333, &objdata->fadeoutTimer);
-            gDLL_32->vtbl->func2(self, PARTICLE_334, &objdata->fadeoutTimer);
+            gDLL_32_modelfx->vtbl->func2(self, 0x333, &objdata->fadeoutTimer);
+            gDLL_32_modelfx->vtbl->func2(self, 0x334, &objdata->fadeoutTimer);
             objdata->flags &= ~BALLOONBADDIE_RESPAWNED;
         }
     }

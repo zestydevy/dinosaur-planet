@@ -6,7 +6,7 @@
 #include "types.h"
 #include "game/objects/object.h"
 
-DLL_INTERFACE(DLL_32) {
+DLL_INTERFACE(DLL_32_modelfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ UnknownDLLFunc func0;
 /*1*/ UnknownDLLFunc func1;

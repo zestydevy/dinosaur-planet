@@ -70,7 +70,7 @@ DLL_28_screen_fade *gDLL_28_ScreenFade = NULL;
 DLL_2_camera *gDLL_2_Camera = NULL;
 DLL_3_animation *gDLL_3_Animation = NULL;
 DLL_7_newday *gDLL_7_Newday = NULL;
-DLL_8 *gDLL_8 = NULL;
+DLL_8_newfog *gDLL_8_newfog = NULL;
 DLL_9_newclouds *gDLL_9_Newclouds = NULL;
 DLL_10_newstars *gDLL_10_Newstars = NULL;
 DLL_12_minic *gDLL_12_Minic = NULL;
@@ -103,7 +103,7 @@ DLL_56 *gDLL_56 = NULL;
 DLL_30_task *gDLL_30_Task = NULL;
 DLL_31_flash *gDLL_31_Flash = NULL;
 DLL_76 *gDLL_76 = NULL;
-DLL_32 *gDLL_32 = NULL;
+DLL_32_modelfx *gDLL_32_modelfx = NULL;
 DLL_33_BaddieControl *gDLL_33_BaddieControl = NULL;
 DLL_59_minimap *gDLL_59_Minimap = NULL;
 DLL_54 *gDLL_54_pickup = NULL;
@@ -233,12 +233,12 @@ void mainInit(void) {
         gDLL_1_cmdmenu = dllLoad(DLL_ID_CMDMENU, 15);
         gDLL_2_Camera = dllLoad(DLL_ID_CAMERA, 23);
         gDLL_23 = dllLoad(DLL_ID_23, 8);  // 0x12 in SFA
-        gDLL_18_objfsa = dllLoad(DLL_ID_18, 22); // 0x0F in SFA
+        gDLL_18_objfsa = dllLoad(DLL_ID_OBJFSA, 22); // 0x0F in SFA
         gDLL_3_Animation = dllLoad(DLL_ID_ANIM, 29);
         gDLL_28_ScreenFade = dllLoad(DLL_ID_SCREEN_FADE, 4); // 0x16 in SFA
         gDLL_25 = dllLoad(DLL_ID_25, 14);                    // not present in SFA
         gDLL_7_Newday = dllLoad(DLL_ID_NEWDAY, 15);
-        gDLL_8 = dllLoad(DLL_ID_8, 12); // 0x06 in SFA
+        gDLL_8_newfog = dllLoad(DLL_ID_NEWFOG, 12); // 0x06 in SFA
         gDLL_9_Newclouds = dllLoad(DLL_ID_NEWCLOUDS, 8);
         gDLL_10_Newstars = dllLoad(DLL_ID_NEWSTARS, 3);
         gDLL_12_Minic = dllLoad(DLL_ID_MINIC, 10);
@@ -259,13 +259,13 @@ void mainInit(void) {
         gDLL_74_Picmenu = dllLoad(DLL_ID_PICMENU, 7);
         gDLL_27 = dllLoad(DLL_ID_27, 9); // 0x15 in SFA
         gDLL_29_Gplay = dllLoad(DLL_ID_GPLAY, 36);
-        gDLL_56 = dllLoad(DLL_ID_56, 10); // not present in SFA
+        gDLL_56 = dllLoad(DLL_ID_PUTDOWN, 10); // not present in SFA
         gDLL_30_Task = dllLoad(DLL_ID_TASK, 6);
         gDLL_31_Flash = dllLoad(DLL_ID_FLASH, 2); // param is 0x24 in SFA
-        gDLL_32 = dllLoad(DLL_ID_32, 6);          // 0x18 in SFA
-        gDLL_33_BaddieControl = dllLoad(DLL_ID_33, 22);         // 0x19 in SFA
+        gDLL_32_modelfx = dllLoad(DLL_ID_MODELFX, 6);          // 0x18 in SFA
+        gDLL_33_BaddieControl = dllLoad(DLL_ID_BADDIECONTROL, 22);         // 0x19 in SFA
         gDLL_59_Minimap = dllLoad(DLL_ID_MINIMAP, 2);
-        gDLL_54_pickup = dllLoad(DLL_ID_54, 12); // 0x2F in SFA
+        gDLL_54_pickup = dllLoad(DLL_ID_PICKUP, 12); // 0x2F in SFA
         gDLL_57 = dllLoad(DLL_ID_57, 4);
         gDLL_58 = dllLoad(DLL_ID_58, 2);
         gDLL_30_Task->vtbl->load_recently_completed();
@@ -882,7 +882,7 @@ s32 mainRemoveTempDLL(s32 id) {
 
 void mainLoadFrontend(void) {
     if (gDLL_76 == 0) {
-        gDLL_75 = dllLoad(DLL_ID_75, 10);
+        gDLL_75 = dllLoad(DLL_ID_FRONTEND, 10);
         gDLL_76 = dllLoad(DLL_ID_76, 3);
     }
 }
