@@ -57,8 +57,8 @@ typedef enum {
 };
 
 /*0x10*/ static TalkSounds dSoundsSharpClaw[] = {
-    {SOUND_236_SharpClaw_Argh,    0x1000},
-    {SOUND_239_SharpClaw_Snort,   0x1000}
+    {SOUND_236_SharpClaw_Argh,        0x1000},
+    {SOUND_239_SharpClaw_Rah_Snort,   0x1000}
 };
 
 /*0x18*/ static s16 dModAnimsSharpClaw[] = {

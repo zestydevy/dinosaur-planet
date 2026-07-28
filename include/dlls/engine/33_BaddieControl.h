@@ -38,7 +38,7 @@ typedef struct {
 /*3B2*/ u16 unk3B2;
 /*3B4*/ u8 unk3B4;
 /*3B5*/ u8 _unk3B5;
-/*3B6*/ s16 unk3B6; //related to having a target, or targetting the player?
+/*3B6*/ s16 unk3B6; //related to acquiring a target/targetting the player?
 /*3B8*/ u8 unk3B8;
 /*3B9*/ s8 nextWeaponID; // BaddieWeapon
 /*3BA*/ s8 unk3BA;
@@ -49,7 +49,7 @@ typedef struct {
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8; //timer related to damage effects? (flashing red etc.)
 /*3EC*/ f32 unk3EC;
-/*3F0*/ s8 unk3F0; //modAnimIdx?
+/*3F0*/ s8 unk3F0; //hit react index (for an array of modAnimIds)?
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
 /*3F4*/ void *objdata; // pointer to remaining object data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;

@@ -15,5 +15,5 @@ _exports:
 /*4*/ .dword SharpClaw_obj_Free
 /*5*/ .dword SharpClaw_obj_GetModelFlags
 /*6*/ .dword SharpClaw_obj_GetDataSize
-/*7*/ .dword SharpClaw_Func_A30
-/*8*/ .dword SharpClaw_Func_A40
+/*7*/ .dword SharpClaw_GetLogicState
+/*8*/ .dword SharpClaw_ReceiveMessage

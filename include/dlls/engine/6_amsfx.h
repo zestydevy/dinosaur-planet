@@ -143,8 +143,13 @@ enum SoundID {
     SOUND_8E_Magic_Chime = 0x8E,  // used by collectable DLL
     SOUND_8F_Water_Paddle = 0x8F, // used by DFlog
 
+    SOUND_90_Heavier_Whoosh = 0x90,
+    SOUND_91_Heavy_Whoosh = 0x91,
+
     SOUND_95_Explosion = 0x95, //Cannon
     SOUND_96_Cannon = 0x96, //SB_ShipGun
+    
+    SOUND_99_Punchy_Smack = 0x99,
 
     SOUND_9B_Transporter_Hiss = 0x9B,
 
@@ -159,6 +164,8 @@ enum SoundID {
 
     SOUND_AF_Take_Out_Staff = 0xAF,
     SOUND_B0_Put_Back_Staff = 0xB0,
+
+    SOUND_B6_Weapon_Whoosh = 0xB6,
 
     SOUND_C2_CloudRunner_Chirp_Double = 0xC2,  
     SOUND_C3_CloudRunner_Chirp = 0xC3,  
@@ -312,8 +319,16 @@ enum SoundID {
     SOUND_226_Fall_Impact = 0x226,
 
     SOUND_236_SharpClaw_Argh = 0x236, //DR_NiceSharpy
-
-    SOUND_239_SharpClaw_Snort = 0x239, //DR_NiceSharpy
+    SOUND_237_SharpClaw_Arghhh = 0x237,
+    SOUND_238_SharpClaw_Snort = 0x238,
+    SOUND_239_SharpClaw_Rah_Snort = 0x239, //DR_NiceSharpy
+    SOUND_23A_SharpClaw_Ugh_Snort = 0x23A,
+    SOUND_23B_SharpClaw_Hyah = 0x23B,
+    SOUND_23C_SharpClaw_Ryah = 0x23C,
+    SOUND_23D_SharpClaw_Hhhhah = 0x23D,
+    SOUND_23E_SharpClaw_Rrrgh = 0x23E,
+    SOUND_23F_SharpClaw_Nyeh_Nyah = 0x23F,
+    SOUND_240_SharpClaw_Snort = 0x240,
 
     SOUND_242_Failure_Glissando = 0x242,
 
@@ -414,6 +429,8 @@ enum SoundID {
     SOUND_375_Smack1 = 0x375,
     SOUND_376_Smack2 = 0x376,
     SOUND_377_Metal_Smack = 0x377,
+    SOUND_378_Metal_Whack = 0x378,
+    SOUND_379_Metal_Slice = 0x379,
 
     SOUND_37B_Snowy_Crunch = 0x37B,
 
