@@ -57,8 +57,6 @@ typedef struct {
     u8 flags;
     u8 dismountToRight;
     u8 mountFromLeft;
-    u8 unk909;
-    s16 unk90A;
 } DIMSnowHorn_Data;
 
 typedef enum {
