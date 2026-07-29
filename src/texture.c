@@ -1187,9 +1187,6 @@ void texRenderRestoreState(void) {
 }
 
 // official name: texDPTextureX ?
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextureSimple.s")
-#else
 // https://decomp.me/scratch/fpYm1
 s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options) {
     s32 pad_sp84;
@@ -1259,7 +1256,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
                 }
             }
             temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
-            renderFlags = temp_v1 | renderFlags;
+            renderFlags |= temp_v1;
             if ((basetex != gCurrTex0) || (blendtex != gCurrTex1) || (force != 0)) {
                 gCurrTex0 = basetex;
                 gCurrTex1 = blendtex;
@@ -1290,7 +1287,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
         var_a0 = 0;
         if (tex != NULL) {
             temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
-            renderFlags = temp_v1 | renderFlags;
+            renderFlags |= temp_v1;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
             hasPalette = TEX_FORMAT(tex->format) == TEX_FORMAT_CI4;
@@ -1318,7 +1315,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
                 temp = 37;
             } else if (renderFlags & RENDER_SUBSURFACE) {
                 if (renderMipmaps != 0) {
-                    temp = 49;
+                    temp = 33;
                 } else {
                     temp += 24;
                 }
@@ -1369,7 +1366,6 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
     *gdl = dl;
     return 0;
 }
-#endif
 
 #ifndef NON_EQUIVALENT
 #pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextures.s")
