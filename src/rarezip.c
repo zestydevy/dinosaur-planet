@@ -63,29 +63,36 @@ static const char str_80099ed4[] = "rzipUncompress:overflow i:%08x o:%08x %d\n";
 static const char str_80099f00[] = "rzipUncompress(%08x,%08x,...) overflow %d/%d\n";
 
 // official name: rzipUncompress
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/rarezip/rarezipUncompress.s")
-#else
 u8 *rarezipUncompress(u8 *compressedInput, u8 *decompressedOutput, s32 outputSize) {
+    u8 *end = decompressedOutput + outputSize;
+
     rarezip_inflate_input = compressedInput + 5;
     rarezip_inflate_output = decompressedOutput;
     rarezip_num_bits = 0;
     rarezip_bit_buffer = 0;
 
-    if (rarezip_inflate_input){} // fake match
-    
+    if (gHuftTable) {}                  // fake match
+    if (rarezip_inflate_input) {}       // fake match
+    if (rarezip_inflate_input) {}       // fake match
+    if (gHuftTable) {}                  // fake match
+
     while (rarezip_inflate_block() != 0) {
-        
     }
 
+    // The empty tail checks (see str_80099eb0/str_80099ed4/str_80099f00) are
+    // likely the remains of a compiled-out overflow-check debug path.
     if (outputSize != -1) {
-        if (((!decompressedOutput) && (!decompressedOutput)) && (!decompressedOutput)){} // fake match
-        if (compressedInput){} // fake match
+        if ((!decompressedOutput) && (!decompressedOutput) && (!decompressedOutput)) {} // fake match
+        if ((!decompressedOutput) && (!decompressedOutput) && (!decompressedOutput)) {} // fake match
+        if (compressedInput) {}                                                        // fake match
+        if (rarezip_inflate_output > end) {
+        }
+        if (rarezip_inflate_output > end) {
+        }
     }
-    
+
     return decompressedOutput;
 }
-#endif
 
 // official name: huft_build
 void rarezip_huft_build(u32 *b, u32 n, u32 s, u16 *d, u16 *e, huft **t, s32 *m) {
