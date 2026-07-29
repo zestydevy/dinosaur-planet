@@ -41,7 +41,7 @@ u8 BYTE_800b2e23;
 
 void objprint_func_800357B4(Object*, ModelInstance*, Model*);
 ModelInstance *objprintDrawChildModel(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
-void objprint_func_80036890(Object*, s32);
+s32 objprint_func_80036890(Object*, s32);
 void objprint_func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
 
 void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
@@ -607,12 +607,7 @@ void objprintUpdateLockIconCoords(Object* arg0) {
     }
 }
 
-#ifndef NON_MATCHING
-void objprint_func_80036890(Object* arg0, s32 arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/objprint/objprint_func_80036890.s")
-#else
-// https://decomp.me/scratch/cjUgO
-void objprint_func_80036890(Object* arg0, s32 arg1) {
+s32 objprint_func_80036890(Object* arg0, s32 arg1) {
     s32 sp6C; // a1
     Gfx* temp_a1_2;
     s32 sp64;
@@ -643,19 +638,23 @@ void objprint_func_80036890(Object* arg0, s32 arg1) {
     s16 var_t2;
     s32 new_var_2;
     u8 *var_s7;
+    Vtx *newp;
+    s32 var_dual;
 
-    var_s6 = arg0->unk70;
-    temp_t5 =  arg0->modelInsts[arg0->modelInstIdx]->model;
-    sp34 = arg0->def->pTextures;
-    sp64 = arg0->def->numAnimatedFrames;
+    newp = arg0->unk70;
+    var_s6 = newp;
     temp_s2 = arg0->modelInsts[arg0->modelInstIdx];
+    temp_t5 = temp_s2->model;
+    var_dual = (s32)arg0->def;
+    sp34 = ((ObjDef*)var_dual)->pTextures;
+    sp64 = ((ObjDef*)var_dual)->numAnimatedFrames;
     for (sp6C = 0; sp6C < sp64; sp6C++, var_s6++) {
         var_t1 = var_s6->n.tc[0];
         var_t2 = var_s6->n.tc[1];
         var_s7 = sp34;
         var_s7 += sp6C << 1;
         var_s7++;
-        for (var_s0 = 0; var_s0 < temp_t5->textureAnimationCount; var_s0++) {
+        for (var_s0 = 0; var_s0 < (var_dual = temp_t5->textureAnimationCount); var_s0++) {
             temp_t4 = &temp_t5->faces[temp_t5->textureAnimations[var_s0].unkB];
             if (temp_t4->tagB == var_s7[0]) {
                 if (temp_t4->materialID != 0xFF) {
@@ -711,9 +710,6 @@ void objprint_func_80036890(Object* arg0, s32 arg1) {
         }
     }
 }
-
-#endif
-
 void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     s32 sp6C;
     s32 sp68;
