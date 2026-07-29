@@ -16,6 +16,7 @@
 #include "sys/objtype.h"
 #include "sys/vi.h"
 #include "dll.h"
+#include "gbi_extra.h"
 
 #define DAYTIME 18000.0f //5am
 #define NIGHTTIME 75600.0f //9pm
@@ -28,7 +29,7 @@
 #define TICKS_IN_SECOND (60)
 
 /*0x0*/ static f32 _data_0 = 0.0;
-/*0x4*/ static u32 _data_4 = 0x00000000;
+/*0x4*/ static s32 _data_4 = 0;
 /*0x8*/ static f32 _data_8 = 0.0;
 /*0xC*/ static f32 _data_C = 0.0;
 /*0x10*/ static s32 _data_10 = 0;
@@ -39,15 +40,15 @@
 /*0x34*/ static s32 _data_34 = 255; //clouds R
 /*0x38*/ static s32 _data_38 = 255; //clouds G
 /*0x3C*/ static s32 _data_3C = 255; //clouds B
-/*0x40*/ static u32 _data_40 = 0x00000000;
-/*0x44*/ static u32 _data_44 = 0x00000000;
-/*0x48*/ static u32 _data_48 = 0x00000000;
-/*0x4C*/ static u32 _data_4C = 0x00000000;
-/*0x50*/ static u32 _data_50 = 0x00000000;
-/*0x54*/ static u32 _data_54 = 0x00000000;
+/*0x40*/ static s32 _data_40 = 0;
+/*0x44*/ static s32 _data_44 = 0;
+/*0x48*/ static s32 _data_48 = 0;
+/*0x4C*/ static s32 _data_4C = 0;
+/*0x50*/ static s32 _data_50 = 0;
+/*0x54*/ static s32 _data_54 = 0;
 /*0x58*/ static u8 _data_58 = 0;
 /*0x5C*/ static f32 _data_5C = NOON; //time of day
-/*0x60*/ static u32 _data_60 = 0x00000000;
+/*0x60*/ static s32 _data_60 = 0;
 /*0x64*/ static s16 _data_64 = 0;
 /*0x68*/ static s16 _data_68 = 0;
          // splines
@@ -59,15 +60,47 @@
 /*0xC0*/ static Object* _data_C0 = NULL;
 /*0xC4*/ static f32 _data_C4 = 1.0;
 /*0xC8*/ static u8 _data_C8 = 0;
-/*0xCC*/ static u32 _data_CC[] = {
-    0x001da400, 0x00489b44, 0x1d0c351c, 0xff8fbfff, 0x74baffdb, 0xffffb0ff, 0xffffffe8, 0xd3ff82ff, 
-    0xff4fa3ff, 0xb4ffff6f, 0xa7ffffff, 0xa5f5b78c, 0xffcd00ff, 0x9800ff81, 0x24f26021, 0x99356b68, 
-    0x26660b00, 0x45070041, 0xffffffff, 0xffffca00, 0xfe4d0061, 0xff74c862, 0x003b65e0, 0x7f00532c, 
-    0xfefe1300, 0x6926fffe, 0x26cd2d3d, 0xfffd00a9, 0x1339fefe, 0xfe0879d0, 0xce0000ff, 0xa100fffe, 
-    0xe25c833f, 0xffff93b4, 0x5b43fffe, 0xfed23882, 0xff00007a, 0x11019800, 0x95240057, 0xff48ff65, 
-    0x0665ffe6, 0x83ffb02f, 0xfe00003f, 0x00005c8e, 0xff00005c, 0x99c6ff00, 0x25acffff, 0xff3535ff, 
-    0x8080537a, 0x6046c900, 0xfe4d0061, 0x1e4155c3, 0xdbf41e41, 0x55cbdb85, 0x1e41556f, 0x0c861e41, 
-    0x55318ad8, 0x1e4155ff, 0xd5511e41, 0x55ff0c00
+/*0xCC*/ static u8 _data_CC[][6] = {
+    {0x00, 0x1d, 0xa4, 0x00, 0x00, 0x48}, 
+    {0x9b, 0x44, 0x1d, 0x0c, 0x35, 0x1c}, 
+    {0xff, 0x8f, 0xbf, 0xff, 0x74, 0xba}, 
+    {0xff, 0xdb, 0xff, 0xff, 0xb0, 0xff}, 
+    {0xff, 0xff, 0xff, 0xe8, 0xd3, 0xff}, 
+    {0x82, 0xff, 0xff, 0x4f, 0xa3, 0xff}, 
+    {0xb4, 0xff, 0xff, 0x6f, 0xa7, 0xff}, 
+    {0xff, 0xff, 0xa5, 0xf5, 0xb7, 0x8c}, 
+    {0xff, 0xcd, 0x00, 0xff, 0x98, 0x00}, 
+    {0xff, 0x81, 0x24, 0xf2, 0x60, 0x21}, 
+    {0x99, 0x35, 0x6b, 0x68, 0x26, 0x66}, 
+    {0x0b, 0x00, 0x45, 0x07, 0x00, 0x41}, 
+    {0xff, 0xff, 0xff, 0xff, 0xff, 0xff}, 
+    {0xca, 0x00, 0xfe, 0x4d, 0x00, 0x61}, 
+    {0xff, 0x74, 0xc8, 0x62, 0x00, 0x3b}, 
+    {0x65, 0xe0, 0x7f, 0x00, 0x53, 0x2c}, 
+    {0xfe, 0xfe, 0x13, 0x00, 0x69, 0x26}, 
+    {0xff, 0xfe, 0x26, 0xcd, 0x2d, 0x3d}, 
+    {0xff, 0xfd, 0x00, 0xa9, 0x13, 0x39}, 
+    {0xfe, 0xfe, 0xfe, 0x08, 0x79, 0xd0}, 
+    {0xce, 0x00, 0x00, 0xff, 0xa1, 0x00}, 
+    {0xff, 0xfe, 0xe2, 0x5c, 0x83, 0x3f}, 
+    {0xff, 0xff, 0x93, 0xb4, 0x5b, 0x43}, 
+    {0xff, 0xfe, 0xfe, 0xd2, 0x38, 0x82}, 
+    {0xff, 0x00, 0x00, 0x7a, 0x11, 0x01}, 
+    {0x98, 0x00, 0x95, 0x24, 0x00, 0x57}, 
+    {0xff, 0x48, 0xff, 0x65, 0x06, 0x65}, 
+    {0xff, 0xe6, 0x83, 0xff, 0xb0, 0x2f}, 
+    {0xfe, 0x00, 0x00, 0x3f, 0x00, 0x00}, 
+    {0x5c, 0x8e, 0xff, 0x00, 0x00, 0x5c}, 
+    {0x99, 0xc6, 0xff, 0x00, 0x25, 0xac}, 
+    {0xff, 0xff, 0xff, 0x35, 0x35, 0xff}, 
+    {0x80, 0x80, 0x53, 0x7a, 0x60, 0x46}, 
+    {0xc9, 0x00, 0xfe, 0x4d, 0x00, 0x61}, 
+    {0x1e, 0x41, 0x55, 0xc3, 0xdb, 0xf4}, 
+    {0x1e, 0x41, 0x55, 0xcb, 0xdb, 0x85}, 
+    {0x1e, 0x41, 0x55, 0x6f, 0x0c, 0x86}, 
+    {0x1e, 0x41, 0x55, 0x31, 0x8a, 0xd8}, 
+    {0x1e, 0x41, 0x55, 0xff, 0xd5, 0x51}, 
+    {0x1e, 0x41, 0x55, 0xff, 0x0c, 0x00}
 };
 
 // size: 0x118
@@ -94,20 +127,13 @@ typedef struct {
 /*0C8*/ f32 unkC8;
 /*0CC*/ s32 unkCC;
 /*0D0*/ s32 unkD0;
-/*0D4*/ u8 _unkD4[4];
+/*0D4*/ s32 unkD4;
 /*0D8*/ s32 unkD8;
 /*0DC*/ s32 unkDC;
 /*0E0*/ s32 unkE0;
 /*0E4*/ s32 unkE4;
 /*0E8*/ s32 unkE8;
-/*0EC*/ s32 unkEC;
-/*0F0*/ s32 unkF0;
-/*0F4*/ s32 unkF4;
-/*0F8*/ s32 unkF8;
-/*0FC*/ s32 unkFC;
-/*100*/ s32 unk100;
-/*104*/ s32 unk104;
-/*108*/ s32 unk108;
+/*0EC*/ s32 unkEC[8];
 /*10C*/ s32 unk10C;
 /*110*/ u8 unk110;
 /*111*/ u8 unk111;
@@ -145,10 +171,12 @@ typedef struct {
 
 s32 dll_7_func_DF4(f32* outTime);
 static void dll_7_func_21CC(void);
+void dll_7_func_2464(EnvFxAction*, f32, f32, f32);
 static void dll_7_func_30FC(void);
 static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs);
 static void dll_7_func_4484(void);
 static void dll_7_func_5124(f32 x, f32 y, f32 z);
+static s32 dll_7_func_56F8(Gfx** gdl);
 static void dll_7_func_57C0(void);
 static void dll_7_func_5818(void);
 
@@ -159,8 +187,118 @@ void dll_7_ctor(void *self) { }
 void dll_7_dtor(void *self) { }
 
 // offset: 0x18 | func: 0 | export: 0
+// official name: doDayAction
+#ifndef NON_MATCHING
 void dll_7_func_18(Object *arg0, Object *arg1, EnvFxAction *arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_18.s")
+#else
+void dll_7_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
+    PlayerEnvActions* temp_v0;
+    s32 i;
+
+    temp_v0 = gDLL_29_Gplay->vtbl->get_current_player_envactions();
+    if ((arg2 != NULL) && (arg2->unk26 < 2)) {
+        if ((&_bss_30)[arg2->unk26] == NULL) {
+            if (!(arg2->unk58 & 0x20) && (arg2->unk58 & 2)) {
+                arg2->unk58 |= 0x40;
+                if (arg0 != NULL) {
+                    dll_7_func_2464(arg2, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z);
+                    return;
+                }
+                dll_7_func_2464(arg2, 0.0f, 0.0f, 0.0f);
+            }
+        } else if ((&_bss_30)[arg2->unk26] != NULL) {
+            if (arg2->unk58 & 2) {
+                (&_bss_30)[arg2->unk26]->unk112 |= 0x40;
+                _data_4 = 1;
+                if (arg2->unk58 & 1) {
+                    _data_8 = (&_bss_30)[arg2->unk26]->timeSeconds;
+                    _bss_30->unk112 |= 1;
+                } else {
+                    _data_8 = (f32) ((arg2->unk50 * 0x3C) + (arg2->unk4E * 0xE10));
+                }
+                if (arg2->unk5D == 0) {
+                    _bss_30->unkC8 = 0.9f;
+                } else if (arg2->unk5D == 1) {
+                    _bss_30->unkC8 = 1.0f;
+                } else if (arg2->unk5D == 2) {
+                    _bss_30->unkC8 = 0.9f;
+                } else if (arg2->unk5D == 3) {
+                    _bss_30->unkC8 = 0.75f;
+                }
+                if (arg2->unk54 == 0) {
+                    _bss_30->unk40 = _bss_30->unkC8 * 2000.0f;
+                } else if (arg2->unk54 == 1) {
+                    _bss_30->unk40 = _bss_30->unkC8 * 10000.0f;
+                } else if (arg2->unk54 == 2) {
+                    _bss_30->unk40 = _bss_30->unkC8 * 12000.0f;
+                } else if (arg2->unk54 == 3) {
+                    _bss_30->unk40 = _bss_30->unkC8 * 14000.0f;;
+                }
+                _bss_30->unkE8 = (s32) arg2->unk56;
+                _data_C = (&_bss_30)[arg2->unk26]->unk40;
+                (&_bss_30)[arg2->unk26]->unkDC = (s32) arg2->unk52;
+                (&_bss_30)[arg2->unk26]->unkDC = 0x168;
+                (&_bss_30)[arg2->unk26]->unkC4 = (f32) (&_bss_30)[arg2->unk26]->unkDC / 60.0f;
+                (&_bss_30)[arg2->unk26]->unkCC = (s32) arg2->unk2A;
+                (&_bss_30)[arg2->unk26]->unkD0 = (s32) arg2->unk2C;
+                (&_bss_30)[arg2->unk26]->unkD8 = 0;
+                (&_bss_30)[arg2->unk26]->unkD4 = 1;
+                temp_v0->unk4 = (s16) arg2->unk24 - 1;
+                _data_10 = 0;
+                _data_60 = 1;
+                for (i = 0; i < (3 * 7); i++) {
+                    ((f32*)_data_6C)[i] = ((f32*)_bss_30->unk44)[i];
+                }
+                _bss_30->unk44[0][0] = (f32) arg2->unkC;
+                _bss_30->unk44[0][1] = (f32) arg2->unkC;
+                _bss_30->unk44[0][2] = (f32) arg2->unkD;
+                _bss_30->unk44[0][3] = (f32) arg2->unkE;
+                _bss_30->unk44[0][4] = (f32) arg2->unkF;
+                _bss_30->unk44[0][5] = (f32) arg2->unkC;
+                _bss_30->unk44[0][6] = (f32) arg2->unkC;
+                _bss_30->unk44[1][0] = (f32) arg2->unk14;
+                _bss_30->unk44[1][1] = (f32) arg2->unk14;
+                _bss_30->unk44[1][2] = (f32) arg2->unk15;
+                _bss_30->unk44[1][3] = (f32) arg2->unk16;
+                _bss_30->unk44[1][4] = arg2->unk17;
+                _bss_30->unk44[1][5] = arg2->unk14;
+                _bss_30->unk44[1][6] = arg2->unk14;
+                _bss_30->unk44[2][0] = arg2->unk1C;
+                _bss_30->unk44[2][1] = arg2->unk1C;
+                _bss_30->unk44[2][2] = arg2->unk1D;
+                _bss_30->unk44[2][3] = arg2->unk1E;
+                _bss_30->unk44[2][4] = arg2->unk1F;
+                _bss_30->unk44[2][5] = arg2->unk1C;
+                _bss_30->unk44[2][6] = arg2->unk1C;
+                _bss_30->unkEC[0] = arg2->unk2E + 0x210;
+                _bss_30->unkEC[1] = arg2->unk30 + 0x210;
+                _bss_30->unkEC[2] = arg2->unk32 + 0x210;
+                _bss_30->unkEC[3] = arg2->unk34 + 0x210;
+                _bss_30->unkEC[4] = arg2->unk3E + 0x210;
+                _bss_30->unkEC[5] = arg2->unk40 + 0x210;
+                _bss_30->unkEC[6] = arg2->unk42 + 0x210;
+                _bss_30->unkEC[7] = arg2->unk44 + 0x210;
+                _bss_30->unk114 = 1;
+            } else if (arg2->unk58 & 0x20) {
+                (&_bss_30)[arg2->unk26]->unk112 |= 0x40;
+                _data_4 = 1;
+                _bss_30->unkC8 = 1.0f;
+                _bss_30->unk40 = _bss_30->unkC8 * 10000.0f;
+                _data_C = (&_bss_30)[arg2->unk26]->unk40;
+                (&_bss_30)[arg2->unk26]->unkDC = (s32) arg2->unk52;
+                (&_bss_30)[arg2->unk26]->unkDC = 0x168;
+                (&_bss_30)[arg2->unk26]->unkC4 = (f32) (&_bss_30)[arg2->unk26]->unkDC / 60.0f;
+                (&_bss_30)[arg2->unk26]->unkD8 = 1;
+                (&_bss_30)[arg2->unk26]->unkD4 = 0;
+                (&_bss_30)[arg2->unk26]->unkCC = (s32) arg2->unk2A;
+                (&_bss_30)[arg2->unk26]->unkD0 = (s32) arg2->unk2C;
+                _bss_30->unk114 = 0;
+            }
+        }
+    }
+}
+#endif
 
 // offset: 0x910 | func: 1 | export: 1
 void dll_7_func_910(void) {
@@ -183,7 +321,7 @@ void dll_7_func_910(void) {
 
 // offset: 0xA10 | func: 2 | export: 2
 void dll_7_func_A10(s32 arg0, s32 arg1) {
-/*0x1BC*/ static s32 _data_1BC = 0x00000000;
+    /*0x1BC*/ static s32 _data_1BC = 0x00000000;
     f32 sp34;
     s32 _pad;
     f32 sp2C;
@@ -234,9 +372,6 @@ void dll_7_func_A10(s32 arg0, s32 arg1) {
     _data_58 = 0;
     dll_7_func_5818();
 }
-
-/*0x1C0*/ static u32 _data_1C0 = 0x00000000;
-/*0x1C4*/ static u32 _data_1C4 = 0x00000000;
 
 // offset: 0xC58 | func: 3 | export: 3
 void dll_7_func_C58(Gfx** gdl, Mtx** mtxs, u8 arg2) {
@@ -356,8 +491,249 @@ s32 dll_7_func_FFC(void) {
 }
 
 // offset: 0x102C | func: 13 | export: 13
-void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_102C.s")
+void dll_7_func_102C(Gfx** gdl, Mtx** arg1) {
+    /*0x1C0*/ static s16 _data_1C0 = 0;
+    /*0x1C4*/ static s16 _data_1C4 = 0;
+    f32 sp64;
+    s32 temp_v0_8;
+    f32 sp5C;
+    f32 sp58;
+    f32 var_fv0;
+    f32 sp50;
+    s32 temp_t8;
+    s32 temp_t6;
+    s32 sp44;
+    Camera* sp40;
+    Texture* sp3C;
+    Texture* sp38;
+    f32 fov;
+    f32 sp30;
+    f32 fa1;
+
+    sp44 = 0;
+    texRenderReset();
+    var_fv0 = _data_5C / 86400.0f;
+    if (var_fv0 < 0.0f) {
+        var_fv0 = 0.0f;
+    }
+    if (var_fv0 > 1.0f) {
+        var_fv0 = 1.0f;
+    }
+    sp30 = 0.0f;
+    if ((var_fv0 >= 0.0f) && (var_fv0 < (1.0f/8.0f))) {
+        sp30 = var_fv0 / (1.0f/8.0f);
+    } else if ((var_fv0 >= (1.0f/8.0f)) && (var_fv0 < (2.0f/8.0f))) {
+        sp44 = 1;
+        sp30 = (var_fv0 - (1.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (2.0f/8.0f)) && (var_fv0 < (3.0f/8.0f))) {
+        sp44 = 2;
+        sp30 = (var_fv0 - (2.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (3.0f/8.0f)) && (var_fv0 < (4.0f/8.0f))) {
+        sp44 = 3;
+        sp30 = (var_fv0 - (3.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (4.0f/8.0f)) && (var_fv0 < (5.0f/8.0f))) {
+        sp44 = 4;
+        sp30 = (var_fv0 - (4.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (5.0f/8.0f)) && (var_fv0 < (6.0f/8.0f))) {
+        sp44 = 5;
+        sp30 = (var_fv0 - (5.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (6.0f/8.0f)) && (var_fv0 < (7.0f/8.0f))) {
+        sp44 = 6;
+        sp30 = (var_fv0 - (6.0f/8.0f)) / (1.0f/8.0f);
+    } else if ((var_fv0 >= (7.0f/8.0f)) && (var_fv0 <= (8.0f/8.0f))) {
+        sp44 = 7;
+        sp30 = (var_fv0 - (7.0f/8.0f)) / (1.0f/8.0f);
+    }
+    if ((_bss_30 != NULL) && (sp44 != _data_30) && (_data_C8 == 0)) {
+        _bss_30->unk10C = sp44;
+        if (_bss_30->unk114 != 0) {
+            _bss_30->unk18 = _bss_30->unk1C;
+            _bss_30->unk18->refCount += 1;
+            _data_1C0 = _data_1C4;
+        } else {
+            if (_bss_30->unk18 != NULL) {
+                texFreeTexture(_bss_30->unk18);
+            }
+            _bss_30->unk18 = NULL;
+        }
+        if (_bss_30->unk1C != NULL) {
+            texFreeTexture(_bss_30->unk1C);
+        }
+        _bss_30->unk1C = NULL;
+        if (_bss_30->unk10C == 0) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[0]);
+                _data_1C0 = _bss_30->unkEC[0] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[1]);
+            _data_1C4 = _bss_30->unkEC[1] - 0x210;
+        } else if (_bss_30->unk10C == 1) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[1]);
+                _data_1C0 = _bss_30->unkEC[1] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[2]);
+            _data_1C4 = _bss_30->unkEC[2] - 0x210;
+        } else if (_bss_30->unk10C == 2) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[2]);
+                _data_1C0 = _bss_30->unkEC[2] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[3]);
+            _data_1C4 = _bss_30->unkEC[3] - 0x210;
+        } else if (_bss_30->unk10C == 3) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[3]);
+                _data_1C0 = _bss_30->unkEC[3] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[4]);
+            _data_1C4 = _bss_30->unkEC[4] - 0x210;
+        } else if (_bss_30->unk10C == 4) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[4]);
+                _data_1C0 = _bss_30->unkEC[4] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[5]);
+            _data_1C4 = _bss_30->unkEC[5] - 0x210;
+        } else if (_bss_30->unk10C == 5) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[5]);
+                _data_1C0 = _bss_30->unkEC[5] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[6]);
+            _data_1C4 = _bss_30->unkEC[6] - 0x210;
+        } else if (_bss_30->unk10C == 6) {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[6]);
+                _data_1C0 = _bss_30->unkEC[6] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[7]);
+            _data_1C4 = _bss_30->unkEC[7] - 0x210;
+        } else {
+            if (_bss_30->unk114 != 1) {
+                _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[7]);
+                _data_1C0 = _bss_30->unkEC[7] - 0x210;
+            }
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[0]);
+            _data_1C4 = _bss_30->unkEC[0] - 0x210;
+        }
+        if (_bss_30->unk114 != 0) {
+            _bss_30->unk114--;
+        }
+    } else if (_data_C8 != 0) {
+        if (_bss_30->unk1C != NULL) {
+            texFreeTexture(_bss_30->unk1C);
+        }
+        if (_bss_30->unk18 != NULL) {
+            texFreeTexture(_bss_30->unk18);
+        }
+        if (_bss_30->unk10C < 7) {
+            _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[_bss_30->unk10C - 1]);
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[_bss_30->unk10C]);
+            _data_1C0 = _bss_30->unkEC[_bss_30->unk10C - 1] - 0x210;
+            _data_1C4 = _bss_30->unkEC[_bss_30->unk10C] - 0x210;
+        } else {
+            _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[0]);
+            _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[7]);
+            _data_1C0 = _bss_30->unkEC[7] - 0x210;
+            _data_1C4 = _bss_30->unkEC[0] - 0x210;
+        }
+    }
+    _data_30 = sp44;
+    if (sp30 > 1.0f) {
+        sp30 = 1.0f;
+    }
+    if (sp30 < 0.0f) {
+        sp30 = 0.0f;
+    }
+    _data_4C = _data_CC[_data_1C0][0] + ((f32) (_data_CC[_data_1C4][0] - _data_CC[_data_1C0][0]) * sp30);
+    _data_50 = _data_CC[_data_1C0][1] + ((f32) (_data_CC[_data_1C4][1] - _data_CC[_data_1C0][1]) * sp30);
+    _data_54 = _data_CC[_data_1C0][2] + ((f32) (_data_CC[_data_1C4][2] - _data_CC[_data_1C0][2]) * sp30);
+    _data_40 = _data_CC[_data_1C0][3] + ((f32) (_data_CC[_data_1C4][3] - _data_CC[_data_1C0][3]) * sp30);
+    _data_44 = _data_CC[_data_1C0][4] + ((f32) (_data_CC[_data_1C4][4] - _data_CC[_data_1C0][4]) * sp30);
+    _data_48 = _data_CC[_data_1C0][5] + ((f32) (_data_CC[_data_1C4][5] - _data_CC[_data_1C0][5]) * sp30);
+    if (_bss_30 == NULL) {
+        sp3C = texLoadTexture(0x210);
+        sp38 = texLoadTexture(0x210);
+    } else {
+        sp3C = _bss_30->unk18;
+        sp38 = _bss_30->unk1C;
+    }
+    sp40 = camGet();
+    fov = camGetFOV();
+
+    sp5C = (((sp50 = (f32) (sp3C->height | ((sp3C->widthHeightHi & 0xF) << 8))) * (fov * 0.5f)) / 180.0f) * 3.0f;
+    sp58 = mathCosfInterp((s16) (-sp40->roll)) * sp5C;
+    fa1 = (((sp50 * 0.5f) - 6.0f) - ((3.0f * (sp50 * (f32) sp40->pitch)) / 32768.0f));
+    sp64 = (fa1 + sp58) * 32.0f;
+    gSPLoadGeometryMode(*gdl, 0);
+    dlApplyGeometryMode(gdl);
+    gDPLoadTextureBlockS((*gdl)++, 
+        sp3C + 1, 
+        G_IM_FMT_RGBA, 
+        G_IM_SIZ_16b, 
+        4, 
+        256, 
+        0, 
+        G_TX_NOMIRROR | G_TX_CLAMP, 
+        G_TX_NOMIRROR | G_TX_CLAMP, 
+        G_TX_NOMASK, G_TX_NOMASK, 
+        G_TX_NOLOD, G_TX_NOLOD);
+    gDPLoadMultiBlockS((*gdl)++, 
+        sp38 + 1, 
+        (s16) sp38->sizeBytes >> 3, 
+        1, 
+        G_IM_FMT_RGBA, 
+        G_IM_SIZ_16b, 
+        4, 
+        256, 
+        0, 
+        G_TX_NOMIRROR | G_TX_CLAMP, 
+        G_TX_NOMIRROR | G_TX_CLAMP, 
+        G_TX_NOMASK, G_TX_NOMASK, 
+        G_TX_NOLOD, G_TX_NOLOD);
+    if (_data_C0 != NULL) {
+        if (dll_7_func_56F8(gdl) == 0) {
+            gDLL_8_newfog->vtbl->func5(gdl);
+        }
+    } else {
+        gDLL_8_newfog->vtbl->func5(gdl);
+    }
+    dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, (u8) (s16) (255.0f * sp30));
+    gDPSetCombineLERP(*gdl, 
+        TEXEL1, TEXEL0, ENV_ALPHA, TEXEL0, TEXEL1, TEXEL0, ENVIRONMENT, TEXEL0, 
+        PRIMITIVE, COMBINED, PRIMITIVE_ALPHA, COMBINED, COMBINED, 0, PRIMITIVE, 0);
+    dlApplyCombine(gdl);
+    gDPSetOtherMode(*gdl, 
+        G_AD_PATTERN | G_CD_MAGICSQ | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_NONE | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_OPA_SURF | G_RM_OPA_SURF2);
+    dlApplyOtherMode(gdl);
+    temp_v0_8 = viGetCurrentSize();
+    temp_t6 = (temp_v0_8 >> 0x10) & 0xFFFF;
+    temp_t8 = (temp_v0_8 & 0xFFFF);
+    sp58 /= (temp_t6 >> 1);
+    sp58 *= 1024.0f;
+    gSPTextureRectangle((*gdl)++, 
+        0, 
+        0, 
+        temp_t8 << 2, 
+        temp_t6 << 2, 
+        G_TX_RENDERTILE, 
+        0, 
+        (s32)sp64, 
+        qs510(1), 
+        -(s32)sp58);
+    gDLBuilder->needsPipeSync = 1;
+    if (_bss_30 == NULL) {
+        if (sp3C != NULL) {
+            texFreeTexture(sp3C);
+        }
+        if (sp38 != NULL) {
+            texFreeTexture(sp38);
+        }
+    }
+    texRenderReset();
+}
 
 // offset: 0x20D4 | func: 14 | export: 14
 void dll_7_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
@@ -617,16 +993,16 @@ void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
         _bss_30->unkC = texLoadTexture(0x20C);
         _bss_30->unk10 = texLoadTexture(0x20E);
         _bss_30->unk14 = texLoadTexture(0x20F);
-        _bss_30->unkEC = arg0->unk2E + 0x210;
-        _bss_30->unkF0 = arg0->unk30 + 0x210;
-        _bss_30->unkF4 = arg0->unk32 + 0x210;
-        _bss_30->unkF8 = arg0->unk34 + 0x210;
-        _bss_30->unkFC = arg0->unk3E + 0x210;
-        _bss_30->unk100 = arg0->unk40 + 0x210;
-        _bss_30->unk104 = arg0->unk42 + 0x210;
-        _bss_30->unk108 = arg0->unk44 + 0x210;
-        _bss_30->unk18 = texLoadTexture(_bss_30->unkEC);
-        _bss_30->unk1C = texLoadTexture(_bss_30->unkF0);
+        _bss_30->unkEC[0] = arg0->unk2E + 0x210;
+        _bss_30->unkEC[1] = arg0->unk30 + 0x210;
+        _bss_30->unkEC[2] = arg0->unk32 + 0x210;
+        _bss_30->unkEC[3] = arg0->unk34 + 0x210;
+        _bss_30->unkEC[4] = arg0->unk3E + 0x210;
+        _bss_30->unkEC[5] = arg0->unk40 + 0x210;
+        _bss_30->unkEC[6] = arg0->unk42 + 0x210;
+        _bss_30->unkEC[7] = arg0->unk44 + 0x210;
+        _bss_30->unk18 = texLoadTexture(_bss_30->unkEC[0]);
+        _bss_30->unk1C = texLoadTexture(_bss_30->unkEC[1]);
         _bss_30->unk10C = 0;
         _data_30 = -1;
     }
@@ -1214,7 +1590,7 @@ static void dll_7_func_5124(f32 x, f32 y, f32 z) {
 /*0x2A0*/ static u32 _data_2A0 = 0x00000000;
 
 // offset: 0x56F8 | func: 22
-s32 dll_7_func_56F8(Gfx** gdl) {
+static s32 dll_7_func_56F8(Gfx** gdl) {
     /*0x2A4*/ static u8 _data_2A4 = 0;
     f32 transp;
 
