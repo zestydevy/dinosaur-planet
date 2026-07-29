@@ -125,6 +125,7 @@ typedef struct {
 /*0x0*/ static const char str_0[] = "warning in modgfx dll no spare memory available\n";
 
 static void dll_14_func_4C0C(s16 arg0, s32 arg1);
+s32 dll_14_func_F4(ModgfxStruct* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7);
 static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
 
 // offset: 0x0 | ctor
@@ -939,7 +940,27 @@ void dll_14_func_6DE4(void* arg0) {
 }
 
 // offset: 0x6E24 | func: 35 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6E24.s")
+void dll_14_func_6E24(Object* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6) {
+    bss_AD0.unk0 = bss_7C0;
+    bss_AD0.unk5D = bss_AC4 - bss_AC0;
+    if ((arg6 == 0) && (arg5 == 0)) {
+        bss_AD0.unk54 |= 0x2000000;
+    } else {
+        bss_AD0.unk54 |= 0x4000000;
+    }
+    if (bss_AD0.unk54 & 1) {
+        if (bss_AD0.unk4 != NULL) {
+            bss_AD0.unk2C.x += bss_AD0.unk4->globalPosition.x;
+            bss_AD0.unk2C.y += bss_AD0.unk4->globalPosition.y;
+            bss_AD0.unk2C.z += bss_AD0.unk4->globalPosition.z;
+        } else {
+            bss_AD0.unk2C.x += arg0->srt.transl.x;
+            bss_AD0.unk2C.y += arg0->srt.transl.y;
+            bss_AD0.unk2C.z += arg0->srt.transl.z;
+        }
+    }
+    data_2C = dll_14_func_F4(&bss_AD0, 0, arg2, arg1, arg4, arg3, arg5, arg6);
+}
 
 // offset: 0x6F88 | func: 36 | export: 20
 void dll_14_func_6F88(s32 arg0) {
