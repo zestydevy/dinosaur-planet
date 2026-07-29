@@ -1,3 +1,4 @@
+#include "sys/main.h"
 #include "sys/gfx/texture.h"
 #include "dlls/engine/7_newday.h"
 
@@ -134,10 +135,10 @@ typedef struct
 /*0CC*/ UNK_TYPE_32 unkCC;
 /*0D0*/ UNK_TYPE_32 unkD0;
 /*0D4*/ u8 _unkD4[8];
-/*0DC*/ UNK_TYPE_32 unkDC;
+/*0DC*/ s32 unkDC;
 /*0E0*/ UNK_TYPE_32 unkE0;
 /*0E4*/ s32 unkE4;
-/*0E8*/ UNK_TYPE_32 unkE8;
+/*0E8*/ s32 unkE8;
 /*0EC*/ UNK_TYPE_32 unkEC;
 /*0F0*/ UNK_TYPE_32 unkF0;
 /*0F4*/ UNK_TYPE_32 unkF4;
@@ -154,9 +155,26 @@ typedef struct
 /*115*/ u8 _unk115[3];
 } NewDayStruct;
 
-/*0x0*/ static u8 _bss_0[0x26]; // DAT_810296a0
-/*0x26*/ static u8 _bss_26; // DAT_810296c6
-/*0x27*/ static u8 _bss_27; // DAT_810296c7
+// size: 0x28
+typedef struct {
+/*0x00*/ s32 unk0;
+/*0x04*/ s32 unk4;
+/*0x08*/ s32 unk8;
+/*0x0C*/ s32 unkC;
+/*0x10*/ s32 unk10;
+/*0x14*/ s32 unk14;
+/*0x18*/ u16 unk18;
+/*0x1A*/ u16 unk1A;
+/*0x1C*/ u16 unk1C;
+/*0x1E*/ u16 unk1E;
+/*0x20*/ u16 unk20;
+/*0x22*/ u16 unk22;
+/*0x24*/ u8 _unk24[2];
+/*0x26*/ u8 unk26;
+/*0x27*/ u8 unk27;
+} NewDayBss;
+
+/*0x0*/ static NewDayBss _bss_0; // DAT_810296a0
 /*0x28*/ static u8 _bss_28[0x4]; // DAT_810296c8
 /*0x2C*/ static u8 _bss_2C[0x4]; // DAT_810296cc
 /*0x30*/ static NewDayStruct *_bss_30; // PTR_810296d0
@@ -192,11 +210,21 @@ void dll_7_func_CDC(f32* timeSeconds) {
 }
 
 // offset: 0xD08 | func: 5 | export: 5
-void dll_7_func_D08(f32* arg0);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D08.s")
+void dll_7_func_D08(f32* arg0) {
+    if (_bss_30 != NULL) {
+        *arg0 = _bss_30->unkDC;
+    } else {
+        *arg0 = 0.0f;
+    }
+}
 
 // offset: 0xD50 | func: 6 | export: 6
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_D50.s")
+void dll_7_func_D50(f32 arg0) {
+    if (_bss_30 != NULL) {
+        _bss_30->unkDC = arg0;
+        _bss_30->unkC4 = _bss_30->unkDC / 60.0f;
+    }
+}
 
 // offset: 0xDAC | func: 7 | export: 7
 void dll_7_func_DAC(s32 *param1) {
@@ -275,15 +303,29 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
 }
 
 // offset: 0xFFC | func: 12 | export: 12
-s32 dll_7_func_FFC(void);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_FFC.s")
+s32 dll_7_func_FFC(void) {
+    if (_bss_30 != NULL) {
+        return _bss_30->unkE8;
+    }
+    return 0;
+}
 
 // offset: 0x102C | func: 13 | export: 13
 void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_102C.s")
 
 // offset: 0x20D4 | func: 14 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_20D4.s")
+void dll_7_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
+    if (_bss_30 != NULL) {
+        *arg0 = _data_34;
+        *arg1 = _data_38;
+        *arg2 = _data_3C;
+    } else {
+        *arg0 = 0xFF;
+        *arg1 = 0xFF;
+        *arg2 = 0xFF;
+    }
+}
 
 // offset: 0x2130 | func: 15 | export: 15
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2130.s")
@@ -310,34 +352,62 @@ void dll_7_func_102C(Gfx **gdl, Mtx **arg1);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_56F8.s")
 
 // offset: 0x57C0 | func: 23
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_57C0.s")
+void dll_7_func_57C0(void) {
+    bzero(&_bss_0, sizeof(_bss_0));
+    _bss_0.unk26 = mainGetBits(0x2BA);
+}
 
 // offset: 0x5818 | func: 24
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5818.s")
 
 // offset: 0x5D20 | func: 25 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D20.s")
+void dll_7_func_5D20(u8 arg0) {
+    _bss_0.unk27 &= 0xFFF0;
+    _bss_0.unk27 |= arg0 & 0xF;
+    _bss_0.unk27 |= 0x10;
+}
 
 // offset: 0x5D6C | func: 26 | export: 17
 s32 dll_7_func_5D6C(void) {
-    return _bss_27 & 0xF;
+    return _bss_0.unk27 & 0xF;
 }
 
 // offset: 0x5D90 | func: 27 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5D90.s")
+void dll_7_func_5D90(s32 arg0, s32 arg1, s32 arg2, s32 arg3) {
+    _bss_0.unkC = arg0;
+    _bss_0.unk0 = arg1;
+    _bss_0.unk8 = arg2;
+    _bss_0.unk4 = arg3;
+}
 
 // offset: 0x5DBC | func: 28 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5DBC.s")
+void dll_7_func_5DBC(s32 arg0, s32 arg1, u16 arg2, u16 arg3) {
+    _bss_0.unk10 = arg0;
+    _bss_0.unk14 = arg1;
+    _bss_0.unk18 = arg2;
+    _bss_0.unk1A = arg3;
+}
 
 // offset: 0x5E00 | func: 29 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E00.s")
+void dll_7_func_5E00(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
+    _bss_0.unk1C = arg0;
+    _bss_0.unk1E = arg1;
+    _bss_0.unk20 = arg2;
+    _bss_0.unk22 = arg3;
+}
 
 // offset: 0x5E5C | func: 30 | export: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_5E5C.s")
+void dll_7_func_5E5C(u8 arg0) {
+    if (arg0 >= 0x1C) {
+        arg0 = 0;
+    }
+    _bss_0.unk26 = arg0;
+    mainSetBits(0x2BA, arg0);
+}
 
 // offset: 0x5EB4 | func: 31 | export: 22
 u8 dll_7_func_5EB4(void) {
-    return _bss_26;
+    return _bss_0.unk26;
 }
 
 // offset: 0x5ED0 | func: 32 | export: 23
