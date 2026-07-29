@@ -5,6 +5,10 @@
 #include "sys/gfx/model.h"
 #include "sys/rand.h"
 #include "sys/main.h"
+#include "sys/objects.h"
+#include "sys/math.h"
+#include "sys/intersect.h"
+#include "dlls/engine/29_gplay.h"
 #include "dll.h"
 
 #include "dlls/objects/745_DR_Cage.h"
@@ -146,7 +150,10 @@ void dll_714_func_3280(Object* self, s32 arg1, DRCloudRunner_Data* objdata);
 /*0x30*/ static u8 _bss_30[0x40];
 
 // offset: 0x0 | func: 0
-// Needs dll_714_func_1B20/1C6C/1DE0/2E0C/303C/31CC to be decompiled (static) to match
+// Needs dll_714_func_1B20/1C6C/1DE0/2E0C/303C/31CC to be decompiled (static) to match.
+// NOTE: only add `static` to those callees in the SAME edit that decompiles this
+// function. IDO -O2 discards the body of a static function that has no C-level
+// caller in the TU (a GLOBAL_ASM caller does not count), leaving `jr ra; nop`.
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_0.s")
 
 // offset: 0x8C | ctor
@@ -166,7 +173,13 @@ void dll_714_control(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_control.s")
 
 // offset: 0x85C | func: 3
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_85C.s")
+void dll_714_func_85C(Object* self) {
+    Object* player = objGetPlayer();
+
+    if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) > 600.0f) {
+        gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 12, 0);
+    }
+}
 
 // offset: 0x8F8 | func: 4
 void dll_714_func_8F8(Object* self) {
@@ -384,7 +397,21 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_303C.s")
 
 // offset: 0x31CC | func: 33
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_31CC.s")
+s32 dll_714_func_31CC(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
+    DRCloudRunner_Data* data = self->data;
+    s32 opacity;
+
+    if (data->unk910 == 0) {
+        opacity = self->opacity;
+        opacity -= gUpdateRate;
+        if (opacity < 0) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 12, 0);
+        }
+        self->opacity = opacity;
+    }
+
+    return 0;
+}
 
 // offset: 0x3268 | func: 34
 s32 dll_714_func_3268(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
@@ -402,7 +429,18 @@ void dll_714_func_3560(s32 arg0, s32 arg1, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_3574.s")
 
 // offset: 0x37F4 | func: 38
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_37F4.s")
+void dll_714_func_37F4(Object* self, s32 arg1) {
+    DRCloudRunner_Setup* setup = objAllocSetup(0x2C, 0xD4);
+
+    setup->base.loadFlags = 2;
+    setup->base.x = self->srt.transl.x;
+    setup->base.y = self->srt.transl.y;
+    setup->base.z = self->srt.transl.z;
+    setup->unk1A = arg1;
+    setup->unk1C = 0;
+    setup->unk1E = -1;
+    objSetupObject(&setup->base, 5, self->mapID, -1, self->parent);
+}
 
 // offset: 0x38A0 | func: 39
 // Needs dll_714_func_3280 to be decompiled (static) to match
