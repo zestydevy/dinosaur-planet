@@ -16,9 +16,28 @@ s8 unk4[0x25B - 0x4];
 s8 unk25B;
 s8 unk25C[0x272 - 0x25C];
 s8 unk272;
-s8 unk273[0x910 - 0x273];
+s8 unk273[0x278 - 0x273];
+f32 unk278;
+f32 unk27C;
+s8 unk280[0x28C - 0x280];
+f32 unk28C;
+s8 unk290[0x308 - 0x290];
+s32 unk308;
+s8 unk30C[0x34C - 0x30C];
+s8 unk34C;
+s8 unk34D[0x86C - 0x34D];
+f32 unk86C;
+f32 unk870;
+f32 unk874;
+s8 unk878[0x910 - 0x878];
 s16 unk910;
-s8 unk912[0x920 - 0x912];
+s8 unk912;
+s8 unk913;
+u8 unk914;
+s8 unk915[0x917 - 0x915];
+u8 unk917;
+u8 unk918;
+s8 unk919[0x920 - 0x919];
 u8 unk920;
 } DRCloudRunner_Data;
 
@@ -29,6 +48,19 @@ s16 unk1A;
 s16 unk1C;
 s16 unk1E;
 } DRCloudRunner_Setup;
+
+typedef s32 (*DRCloudRunner_StateCallback)(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+
+s32 dll_714_func_18E0(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_1B20(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_1C6C(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_1DE0(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_2E0C(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_303C(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_31CC(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+s32 dll_714_func_3268(Object* self, DRCloudRunner_Data* objdata, s32 arg2);
+void dll_714_func_3280(Object* self, s32 arg1, DRCloudRunner_Data* objdata);
 
 /*0x0*/ static u16 _data_0[] = {
     0x091d, 0x091e, 0x091f, 0x0000
@@ -108,15 +140,17 @@ s16 unk1E;
 };
 /*0x15C*/ static u32 _data_15C = 0x00010101;
 
-/*0x0*/ static u8 _bss_0[0x20];
-/*0x20*/ static u8 _bss_20[0x8];
+/*0x0*/ static DRCloudRunner_StateCallback _bss_0[8];
+/*0x20*/ static DRCloudRunner_StateCallback _bss_20[2];
 /*0x28*/ static u8 _bss_28[0x8];
 /*0x30*/ static u8 _bss_30[0x40];
 
 // offset: 0x0 | func: 0
+// Needs dll_714_func_1B20/1C6C/1DE0/2E0C/303C/31CC to be decompiled (static) to match
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_0.s")
 
 // offset: 0x8C | ctor
+// Needs dll_714_func_0 to be decompiled (static) to match
 void dll_714_ctor(void *dll);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_ctor.s")
 
@@ -135,7 +169,17 @@ void dll_714_control(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_85C.s")
 
 // offset: 0x8F8 | func: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_8F8.s")
+void dll_714_func_8F8(Object* self) {
+    ObjectShadow* shadow = self->shadow;
+    f32 height;
+
+    height = 0.0f;
+    shadow->tr.x = self->srt.transl.x;
+    shadow->tr.z = self->srt.transl.z;
+    if (trackGetHeightFloor(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &height, 0)) {
+        shadow->tr.y = self->srt.transl.y - height;
+    }
+}
 
 // offset: 0x984 | func: 5
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_984.s")
@@ -166,37 +210,86 @@ u32 dll_714_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_F74.s")
 
 // offset: 0x10BC | func: 12 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_10BC.s")
+s32 dll_714_func_10BC(Object* self) {
+    DRCloudRunner_Data* objdata = self->data;
+    s32 ret;
+
+    if (objdata->unk918 != 0) {
+        ret = 1;
+    } else {
+        ret = 2;
+    }
+    return ret;
+}
 
 // offset: 0x10E4 | func: 13 | export: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_10E4.s")
+void dll_714_func_10E4(Object* self, f32* arg1, f32* arg2, f32* arg3) {
+    DRCloudRunner_Data* objdata = self->data;
+
+    *arg1 = objdata->unk86C;
+    *arg2 = objdata->unk870;
+    *arg3 = objdata->unk874;
+}
 
 // offset: 0x1108 | func: 14 | export: 10
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1108.s")
 
 // offset: 0x1318 | func: 15 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1318.s")
+s32 dll_714_func_1318(Object* self) {
+    DRCloudRunner_Data* objdata = self->data;
+    s32 ret;
+
+    if (objdata->unk917 != 0) {
+        ret = 2;
+    } else {
+        ret = 1;
+    }
+    return ret;
+}
 
 // offset: 0x1340 | func: 16 | export: 12
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1340.s")
 
 // offset: 0x1404 | func: 17 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1404.s")
+s32 dll_714_func_1404(Object* self) {
+    return 0;
+}
 
 // offset: 0x1414 | func: 18 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1414.s")
+void dll_714_func_1414(Object* self, s32 arg1) {
+    DRCloudRunner_Data* objdata = self->data;
+
+    objdata->unk912 = arg1;
+    if (arg1 == 1) {
+        objdata->unk34C = 0;
+        if (self->seqSlot != -1) {
+            gDLL_3_Animation->vtbl->end_obj_sequence(self->seqSlot);
+        }
+    } else {
+        objdata->unk34C = 1;
+    }
+}
 
 // offset: 0x1488 | func: 19 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_1488.s")
+void dll_714_func_1488(Object* self, f32* arg1, s32* arg2) {
+    *arg1 = 0.0f;
+    *arg2 = 0;
+}
 
 // offset: 0x14B0 | func: 20 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_14B0.s")
+f32 dll_714_func_14B0(Object* self, f32* arg1) {
+    *arg1 = 5.0f;
+    return 0.0f;
+}
 
 // offset: 0x14D8 | func: 21 | export: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_14D8.s")
+s32 dll_714_func_14D8(Object* self) {
+    return 0;
+}
 
 // offset: 0x14E8 | func: 22 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_14E8.s")
+void dll_714_func_14E8(Object* self) {
+}
 
 // offset: 0x14F4 | func: 23 | export: 19
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_14F4.s")
@@ -205,10 +298,29 @@ u32 dll_714_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_15E8.s")
 
 // offset: 0x18AC | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_18AC.s")
+void dll_714_func_18AC(Object* self, DRCloudRunner_Data* objdata) {
+    objdata->unk28C = 0.0f;
+    objdata->unk27C = 0.0f;
+    objdata->unk278 = 0.0f;
+    self->velocity.x = 0.0f;
+    self->velocity.y = 0.0f;
+    self->velocity.z = 0.0f;
+}
 
 // offset: 0x18E0 | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_18E0.s")
+s32 dll_714_func_18E0(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
+    DRCloudRunner_Data* data = self->data;
+    u32 new_var;
+
+    if (data->unk914 == 0) {
+        return 2;
+    }
+
+    func_8002674C(self);
+    new_var = 4;
+    data->unk920 = (((new_var * ((data->unk910 > 0) & 1)) * 4) & 0x10) | (data->unk920 & 0xFFEF);
+    return 3;
+}
 
 // offset: 0x1968 | func: 27
 s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
@@ -275,13 +387,16 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_31CC.s")
 
 // offset: 0x3268 | func: 34
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_3268.s")
+s32 dll_714_func_3268(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
+    return 0;
+}
 
 // offset: 0x3280 | func: 35
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_3280.s")
 
 // offset: 0x3560 | func: 36 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_3560.s")
+void dll_714_func_3560(s32 arg0, s32 arg1, s32 arg2) {
+}
 
 // offset: 0x3574 | func: 37
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_3574.s")
@@ -290,4 +405,5 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_37F4.s")
 
 // offset: 0x38A0 | func: 39
+// Needs dll_714_func_3280 to be decompiled (static) to match
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_func_38A0.s")
