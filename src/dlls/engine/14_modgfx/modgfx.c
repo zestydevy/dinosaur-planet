@@ -863,9 +863,18 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_5E50.s")
 
 // offset: 0x5FFC | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_5FFC.s")
+void dll_14_func_5FFC(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3) {
+    arg0->unk24[0].x += arg1->unk4 * data_C;
+    arg0->unk24[0].y += arg1->unk8 * data_C;
+    arg0->unk24[0].z += arg1->unkC * data_C;
+}
 
 // offset: 0x6068 | func: 23
+// blocked: register-allocation residual (18 words, 13/18 diffs are register-class
+// only; best source form found reads/writes unk106,unk108,unk10A via
+// arg0->unkXXX += (s32|s16)(arg1->unkY * data_C) triples with BSS0_9C* arg1 --
+// target hoists 2 of 3 field reads ahead of the float ops, candidate schedules
+// them just-in-time; could not find a source form reproducing that schedule.
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6068.s")
 
 // offset: 0x6100 | func: 24
