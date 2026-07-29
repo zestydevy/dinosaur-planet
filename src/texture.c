@@ -796,10 +796,6 @@ Texture *texLoadTexture(s32 id) {
 static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";
 // official name: texLoadTexture
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texLoadTextureActual.s")
-#else
-// https://decomp.me/scratch/ht6r3
 Texture* texLoadTextureActual(s32 id, u8 param2) {
     u32 binFileID; // sp74
     Texture* tex;
@@ -831,16 +827,18 @@ Texture* texLoadTextureActual(s32 id, u8 param2) {
     } else {
         id = gFile_TEXTABLE[id];
     }
-    tabEntry = id & 0xFFFF;
-    if (tabEntry & 0x8000) {
-        tab = 1; // TEX1
+    id &= 0xFFFF;
+    tabEntry = id;
+    if (id & 0x8000) {
+        tab = 1;
         binFileID = TEX1_BIN;
-        tabEntry &= 0x7FFF;
+        tabEntry = id & 0x7FFF;
     } else {
-        tab = 0; // TEX0
+        tab = 0;
         binFileID = TEX0_BIN;
     }
     
+    if ((tab * 4) + tabEntry + tabEntry) {}
     offset = gFile_TEX_TAB[tab][tabEntry] & 0xFFFFFF;
     numFrames = (gFile_TEX_TAB[tab][tabEntry] >> 24) & 0xFF;
     compressedSize = (gFile_TEX_TAB[tab][tabEntry + 1] & 0xFFFFFF) - offset;
@@ -905,8 +903,6 @@ Texture* texLoadTextureActual(s32 id, u8 param2) {
     }
     return firstTex;
 }
-#endif
-
 static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
 
 Gfx *texSetupDisplayLists(Texture *texture, Gfx *gdl) {
