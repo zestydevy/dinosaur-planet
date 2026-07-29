@@ -16,15 +16,9 @@ typedef struct {
     s32 unk3C;
     s32 unk40;
     s16 unk44;
-    s16 unk46;
-    s16 unk48;
-    s16 unk4A;
-    s16 unk4C;
-    s16 unk4E;
-    s16 unk50;
-    s16 unk52;
+    s16 unk46[7];
     s32 unk54;
-    u8 _unk58;
+    u8 unk58;
     u8 unk59;
     u8 unk5A;
     u8 unk5B;
@@ -36,7 +30,8 @@ typedef struct {
 typedef struct {
     s32 unk0;
     f32 unk4;
-    u8 _unk8[0x10 - 0x8];
+    f32 unk8;
+    f32 unkC;
     s32 unk10;
     s16 unk14;
     u8 unk16;
@@ -121,14 +116,11 @@ typedef struct {
 /*0x10*/ static f32 data_10 = 0.0;
 
 /*0x0*/ static ModgfxInstance* bss_0[496];
-/*0x7C0*/ static u8 bss_7C0[0x300];
-/*0xAC0*/ static u8 bss_AC0[0x4];
-/*0xAC4*/ static u8 bss_AC4[0x4];
-/*0xAC8*/ static u8 bss_AC8[0x8];
-/*0xAD0*/ static u8 bss_AD0[0x46];
-/*0xB16*/ static u8 bss_B16[0x2];
-/*0xB18*/ static u8 _bss_B18[0x8];
-/*0xB20*/ static u8 _bss_B20[0x10];
+/*0x7C0*/ static BSS0_9C bss_7C0[32];
+/*0xAC0*/ static BSS0_9C* bss_AC0;
+/*0xAC4*/ static BSS0_9C* bss_AC4;
+/*0xAC8*/ static s16 bss_AC8[4];
+/*0xAD0*/ static ModgfxStruct bss_AD0;
 
 /*0x0*/ static const char str_0[] = "warning in modgfx dll no spare memory available\n";
 
@@ -886,31 +878,71 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6758.s")
 
 // offset: 0x6BE8 | func: 28 | export: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6BE8.s")
+void dll_14_func_6BE8(Object* arg0, u8 arg1, u8 arg2, s32 arg3, s32 arg4) {
+    bzero(&bss_AD0, sizeof(bss_AD0));
+    bss_AD0.unk5A = 0;
+    bss_AD0.unk5B = 0;
+    bss_AD0.unk58 = arg1;
+    bss_AD0.unk44 = arg1;
+    bss_AD0.unk2C.x = 0.0f;
+    bss_AD0.unk2C.y = 0.0f;
+    bss_AD0.unk2C.z = 0.0f;
+    bss_AD0.unk20 = 0.0f;
+    bss_AD0.unk24 = 0.0f;
+    bss_AD0.unk28 = 0.0f;
+    bss_AD0.unk4 = arg0;
+    bss_AD0.unk38 = 1.0f;
+    bss_AD0.unk40 = arg3;
+    bss_AD0.unk3C = arg4;
+    bss_AD0.unk59 = arg2;
+}
 
 // offset: 0x6CA0 | func: 29 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6CA0.s")
+void dll_14_func_6CA0(void) {
+    bss_AC0 = bss_7C0;
+    bss_AC4 = bss_AC0;
+    bss_AC8[0] = 0;
+}
 
 // offset: 0x6CD8 | func: 30 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6CD8.s")
+void dll_14_func_6CD8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s32 arg5) {
+    bss_AC4->unk16 = bss_AC8[0];
+    bss_AC4->unk14 = arg4;
+    bss_AC4->unk10 = arg5;
+    bss_AC4->unk0 = arg0;
+    bss_AC4->unk4 = arg1;
+    bss_AC4->unk8 = arg2;
+    bss_AC4->unkC = arg3;
+    bss_AC4++;
+}
 
 // offset: 0x6D58 | func: 31 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6D58.s")
+void dll_14_func_6D58(void) {
+    bss_AC8[0]++;
+}
 
 // offset: 0x6D80 | func: 32 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6D80.s")
+void dll_14_func_6D80(s16 arg0) {
+    bss_AC8[0] = arg0;
+}
 
 // offset: 0x6DA8 | func: 33 | export: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6DA8.s")
+void dll_14_func_6DA8(s16 arg0) {
+    bss_AD0.unk46[bss_AC8[0]] = arg0;
+}
 
 // offset: 0x6DE4 | func: 34 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6DE4.s")
+void dll_14_func_6DE4(void* arg0) {
+    bcopy(arg0, bss_AD0.unk46, sizeof(bss_AD0.unk46));
+}
 
 // offset: 0x6E24 | func: 35 | export: 19
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6E24.s")
 
 // offset: 0x6F88 | func: 36 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6F88.s")
+void dll_14_func_6F88(s32 arg0) {
+    bss_AD0.unk54 |= arg0;
+}
 
 // offset: 0x6FB0 | func: 37 | export: 21
 s16 dll_14_func_6FB0(void) {
