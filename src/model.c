@@ -732,12 +732,7 @@ Animation* modLoadAnim(s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model
 }
 
 // official name: modLoadAnimActual
-#ifndef NON_MATCHING
-Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
-#pragma GLOBAL_ASM("asm/nonmatchings/model/modLoadAnimActual.s")
-#else
 // https://decomp.me/scratch/j3qkH
-
 Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
     s32 i;
     s32 sp28;
@@ -785,12 +780,13 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
     piRomLoadSection(ANIM_BIN, var_s1, sp24, sp20);
     if (anim != NULL) {
         sp20 = ALIGN8(model->jointCount - 1);
-        piRomLoadSection(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
+        sp24 = model->unk5C + (modanimId * sp20);
+        piRomLoadSection(AMAP_BIN, anim, sp24, sp20);
     }
 
     if (anim == NULL) {
         var_s1->referenceCount = 1;
-        if ((sp28 == -1) != 0) {
+        if (sp28 == -1) {
             sp28 = gNumLoadedAnims++;
             if (gNumLoadedAnims == 128) {
                 gNumLoadedAnims--;
@@ -807,8 +803,6 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
     if (1) { }
     return var_s1;
 }
-
-#endif
 
 void modFreeAnim(Animation* anim) {
     AnimSlot* slot;
