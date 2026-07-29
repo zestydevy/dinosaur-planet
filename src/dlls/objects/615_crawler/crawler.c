@@ -4,7 +4,9 @@
 //Used by Skeetlas/Scorpions
 
 typedef struct {
-    u8 _unk0[0x298];
+    u8 _unk0[0x292];
+    u8 unk292;
+    u8 _unk293[0x298 - 0x293];
 } DLL615_Data;
 
 /*0x0*/ static u32 _data_0[] = {
@@ -57,7 +59,12 @@ u32 dll_615_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/615_crawler/dll_615_func_19FC.s")
 
 // offset: 0x1AC8 | func: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/615_crawler/dll_615_func_1AC8.s")
+s32 dll_615_func_1AC8(Object* self, s32 arg1, s32 arg2) {
+    DLL615_Data* data = self->data;
+
+    data->unk292 = 1;
+    return 0;
+}
 
 // offset: 0x1AE8 | func: 9
 void dll_615_func_1AE8(Object* self) {
