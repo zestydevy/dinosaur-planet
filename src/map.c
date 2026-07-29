@@ -3456,9 +3456,6 @@ void blockSetupDLGroups(Block *block) {
     }
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/map/blockSetupVertices.s")
-#else
 void blockSetupVertices(Block *block) {
     s32 i;
     BlockShape *shape;
@@ -3481,7 +3478,6 @@ void blockSetupVertices(Block *block) {
         shape = &block->shapes[i];
         pverts = shape->vtxBase + block->vertices;
         ptri = shape->triBase + block->encodedTris;
-        if ((s32)verts) {}
         ptriend = &block->encodedTris[shape[1].triBase];
 
         while (ptri < ptriend)
@@ -3519,20 +3515,19 @@ void blockSetupVertices(Block *block) {
             iny = ny * 8191.0f;
             inz = nz * 8191.0f;
 
-            ptri->d0 |= inx << 18;
+            ptri->d0 |= (inx & 0x3fff) << 18;
             ptri->d1 |= (iny & 0x3fff) << 4;
-            ptri->d1 |= inz << 18;
+            ptri->d1 |= (inz & 0x3fff) << 18;
             ptri->d1 |= 0x1;
             ptri++;
         }
 
         shape = &block->shapes[i];
-        if (shape->flags & RENDER_UNK10) {
+        if (shape->flags & RENDER_DECAL) {
             shape->flags |= RENDER_UNK800;
         }
     }
 }
-#endif
 
 void blockFree(s32 blockIndex) {
     Block *block;
