@@ -111,7 +111,7 @@ typedef struct {
 
 /*0x0*/ static u32 data_0 = 0x00000000;
 /*0x4*/ static u32 data_4 = 0x00000000;
-/*0x8*/ static u32 data_8 = 0x00000000;
+/*0x8*/ static u8 data_8 = 0;
 /*0xC*/ static f32 data_C = 0.0;
 /*0x10*/ static f32 data_10 = 0.0;
 
@@ -730,7 +730,9 @@ static s16 data_2C = 0;
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4854.s")
 
 // offset: 0x4910 | func: 8 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4910.s")
+void dll_14_func_4910(void) {
+    data_8++;
+}
 
 // offset: 0x4938 | func: 9 | export: 9
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4938.s")
