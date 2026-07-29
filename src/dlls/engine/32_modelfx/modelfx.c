@@ -536,10 +536,12 @@ void dll_32_dtor(void *dll);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_dtor.s")
 
 // offset: 0x2C8 | func: 0 | export: 0
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2C8.s")
+void dll_32_func_2C8(void) {
+}
 
 // offset: 0x2D0 | func: 1 | export: 1
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2D0.s")
+void dll_32_func_2D0(s32 arg0) {
+}
 
 // offset: 0x2DC | func: 2 | export: 2
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2DC.s")
