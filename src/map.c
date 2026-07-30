@@ -4911,9 +4911,6 @@ void map_func_8004C040(u8* arg0, u8* arg1, s32 arg2) {
     }
 }
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/map/blockComputeVertexColors.s")
-#else
 typedef struct UnkSp8C {
     f32 unk0;
     f32 unk4;
@@ -4925,32 +4922,28 @@ typedef struct UnkSp8C {
     f32 unk1C;
 } UnkSp8C;
 
-// https://decomp.me/scratch/FLOC0
 void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     UnkSp8C* var_v0;
-    BlockColorTableEntry* temp_v0_7;
-    s32 var_a0;
     s32 var_a3;
+    BlockShape* blockShape;
+    s32 var_t1;
     Unk80092BC0 sp160;
-    s32 sp15C[1]; // has to be an array of size 1 and not a pointer
-    s32 sp158[1]; // has to be an array of size 1 and not a pointer
-    s32 sp154[1]; // has to be an array of size 1 and not a pointer
-    s32 sp150[1]; // has to be an array of size 1 and not a pointer
-    s32 sp14C[1]; // has to be an array of size 1 and not a pointer
-    s32 sp148[1]; // has to be an array of size 1 and not a pointer
+    s32 sp158[2];
+    s32 sp150[2];
+    s32 sp148[2];
+    s32 var_t2;
     Vtx_t* var_s1;
     f32 temp_fv0;
     f32 temp_fv1;
     f32 var_fv1;
-    s32 temp_t0;
     s16 var_s3;
     s16 var_a0_2;
     s32 renderFlags;
     s32 var_a1;
     Vtx_t *sp124;
-    s8 pad_sp123;
-    s8 pad_sp122;
-    u8 var_a1_2;
+    u8 var_a0;
+    u8 pad2;
+    u8 pad;
     u8 sp120;
     UnkSp8C* var_s0; // sp11C
     f32 sp110[3];
@@ -4964,22 +4957,21 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     u8 sp77;
     u8 sp76;
     u8 sp75;
-    s32 i; // sp64?
-    s32 var_t1;
-    s32 var_t2;
+    u8 temp_t0;
+    s32 i;
     s32 var_t3;
-    BlockShape* blockShape;
 
     sp160 = D_80092BC0;
     sp78 = 0;
     lightGetAmbient(&sp7B, &sp7A, &sp79);
+    if (!arg0->shapes[i].flags);
     sp77 = sp7B;
     sp76 = sp7A;
     sp75 = sp79;
-    arg1 *= BLOCKS_GRID_UNIT;
     arg2 *= BLOCKS_GRID_UNIT;
+    arg1 *= BLOCKS_GRID_UNIT;
     var_s0 = gDLL_11_Newlfx->vtbl->func3(0, &sp78);
-    gDLL_57->vtbl->func2(sp158, sp150, sp148, sp15C, sp154, sp14C);
+    gDLL_57->vtbl->func2(&sp158[0], &sp150[0], &sp148[0], &sp158[1], &sp150[1], &sp148[1]);
     if (var_s0 != NULL) {
         for (i = 0; i < sp78; i++) {
             var_v0 = &sp8C[i];
@@ -5004,7 +4996,7 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
         }
     }
     for (i = 0; i < arg0->shapeCount; i++) {
-        var_a1_2 = 0;
+        var_a0 = 0;
         blockShape = &arg0->shapes[i];
         renderFlags = blockShape->flags;
         if (arg0->materials[blockShape->materialIndex].texture == NULL) {
@@ -5013,17 +5005,17 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
         sp120 = 0;
         if (((renderFlags & (RENDER_MIPMAPS | RENDER_UNK20)) || (arg0->materials[blockShape->materialIndex].texture->flags & (RENDER_COMPOSITE_BASE | RENDER_COMPOSITE_OVERLAY))) 
                 && !(renderFlags & (RENDER_UNK400000 | RENDER_UNK800000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000))) {
-            var_a1_2 = 1;
+            var_a0 = 1;
         } else if (renderFlags & (RENDER_UNK400000 | RENDER_UNK2000000 | RENDER_UNK4000000 | RENDER_UNK40000000)) {
-            var_a1_2 = 2;
+            var_a0 = 2;
         } else if (renderFlags & RENDER_UNK1000000) {
-            var_a1_2 = 3;
+            var_a0 = 3;
         } else if (renderFlags & RENDER_UNK800000) {
-            var_a1_2 = 4;
+            var_a0 = 4;
         }
 
         if (!(renderFlags & RENDER_SHAPE_VISIBLE)) {
-            if ((var_a1_2 != 0) && (var_a1_2 != 3)) {
+            if ((var_a0 != 0) && (var_a0 != 3)) {
             }
             continue;
         }
@@ -5034,9 +5026,9 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
                 sp7A = sp150[0];
                 sp79 = sp148[0];
             } else if (renderFlags & RENDER_UNK40000000) {
-                sp7B = sp15C[0];
-                sp7A = sp154[0];
-                sp79 = sp14C[0];
+                sp7B = sp158[1];
+                sp7A = sp150[1];
+                sp79 = sp148[1];
             }
         } else if (blockShape->envColourMode == 0xFE) {
             sp7B = 0xFF;
@@ -5048,323 +5040,326 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
             sp79 = sp75;
         }
 
-        if (var_a1_2 != 0) {
-            var_a0 = var_a1_2;
+        if (var_a0) {
             var_s1 = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
             blockShape = &arg0->shapes[i];
             sp124 = &var_s1[blockShape[1].vtxBase];
             var_s1 += blockShape->vtxBase;
-            if ((var_a1_2 == 3) && (D_800B1847 != 0)) {
-                while ((u32) var_s1 < (u32) sp124) {
+            if ((var_a0 == 3) && (D_800B1847 != 0)) {
+                while (var_s1 < sp124) {
                     var_s1->cn[0] = sp7B;
                     var_s1->cn[1] = sp7A;
                     var_s1->cn[2] = sp79;
                     var_s1++;
                 }
             } else if (var_a0 == 1) {
-                while ((u32) var_s1 < (u32) sp124) {
-                    var_s1->cn[0] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                    var_s1->cn[1] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                    var_s1->cn[2] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
+                while (var_s1 < sp124) {
+                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                    var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                    var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                    var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                     var_s1++;
                 }
             } else if (var_a0 == 4) {
-                while ((u32) var_s1 < (u32) sp124) {
-                    if (!((s16)var_s1->flag & 3)) {
-                        var_s1->cn[0] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                        var_s1->cn[1] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                        var_s1->cn[2] = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
+                while (var_s1 < sp124) {
+                    if (((s16)var_s1->flag & 3) == 0) {
+                        temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                        var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                        var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                        var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                     }
                     var_s1++;
                 }
-            } else {
-                if (var_a0 == 2) {
-                    sp160.unk0[0] = 0;
-                    sp160.unk0[1] = 0;
-                    sp160.unk0[2] = 0;
-                    for (var_s3 = 0; var_s3 < sp78; var_s3++) {
-                        var_s1 = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
-                        blockShape = &arg0->shapes[i];
-                        sp124 = &var_s1[blockShape[1].vtxBase];
-                        var_s1 = &var_s1[blockShape->vtxBase];
-                        if (var_s0 != NULL) {
-                            var_v0 = &sp8C[var_s3];
-                            if (
-                                ((blockShape->Xmin - 0x32) << 2) < var_v0->unk0 &&
-                                var_v0->unk0 < ((blockShape->Xmax + 0x32) << 2) &&
-                                ((blockShape->Zmin - 0x32) << 2) < var_v0->unk8 &&
-                                var_v0->unk8 < ((blockShape->Zmax + 0x32) << 2)
-                            ) {
-                                sp120 = 1;
-                            }
-                        }
-                        while ((u32) var_s1 < (u32) sp124) {
-                            if (sp120 != 0) {
-                                var_v0 = &sp8C[var_s3];
-                                sp110[0] = var_s1->ob[0] - var_v0->unk0;
-                                sp110[1] = var_s1->ob[1] - var_v0->unk4;
-                                sp110[2] = var_s1->ob[2] - var_v0->unk8;
-                                temp_fv0 = sqrtf(((sp110[0] * sp110[0]) + (sp110[1] * sp110[1])) + (sp110[2] * sp110[2]));
-                                if (temp_fv0 < var_v0->unk18) {
-                                    var_t1 = var_v0->unkC;
-                                    var_t2 = var_v0->unk10;
-                                    var_t3 = var_v0->unk14;
-                                } else {
-                                    if (var_v0->unk1C < temp_fv0) {
-                                        var_t1 = 0;
-                                        var_t2 = 0;
-                                        var_t3 = 0;
-                                    } else {
-                                        var_fv1 = (temp_fv0 - var_v0->unk18);
-                                        var_fv1 *= sp7C[var_s3];
-                                        if (var_fv1 > 255.0f) {
-                                            var_fv1 = 255.0f;
-                                        }
-                                        var_fv1 = 255.0f - var_fv1;
-                                        var_t1 = ((s16)var_v0->unkC * (s16)var_fv1) >> 8;
-                                        var_t2 = ((s16)var_v0->unk10 * (s16)var_fv1) >> 8;
-                                        var_t3 = ((s16)var_v0->unk14 * (s16)var_fv1) >> 8;
-                                    }
-                                }
-                                if (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000)) {
-                                    if (arg0->shapes[i].flags & RENDER_UNK400000) {
-                                        var_a0_2 = 0;
-                                    } else {
-                                        var_a0_2 = 1;
-                                    }
-                                    if (var_s3 == 0) {
-                                        temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
-                                        switch ((s16)var_s1->flag & 3) {
-                                        case 0: /* switch 1 */
-                                            var_a1 = gBlockColorTable[temp_t0].r2;
-                                            var_a2 = gBlockColorTable[temp_t0].g2;
-                                            var_a3 = gBlockColorTable[temp_t0].b2;
-                                            break;
-                                        default: /* switch 1 */
-                                        case 1: /* switch 1 */
-                                            var_a1 = sp158[var_a0_2];
-                                            var_a2 = sp150[var_a0_2];
-                                            var_a3 = sp148[var_a0_2];
-                                            break;
-                                        case 2: /* switch 1 */
-                                            temp_v0_7 = &gBlockColorTable[temp_t0];
-                                            var_a1 = (((sp158[var_a0_2] + temp_v0_7->r) >> 1) * sp7B) >> 8;
-                                            var_a2 = (((sp150[var_a0_2] + temp_v0_7->g) >> 1) * sp7A) >> 8;
-                                            var_a3 = (((sp148[var_a0_2] + temp_v0_7->b) >> 1) * sp79) >> 8;
-                                            break;
-                                        }
-                                        var_a1 += var_t1;
-                                        var_a2 += var_t2;
-                                        var_a3 += var_t3;
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    } else {
-                                        var_a1 = var_s1->cn[0];
-                                        var_a1 += var_t1;
-                                        var_a2 = var_s1->cn[1];
-                                        var_a2 += var_t2;
-                                        var_a3 = var_s1->cn[2];
-                                        var_a3 += var_t3;
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    }
-                                } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
-                                    if (var_s3 == 0) {
-                                        var_a1 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                        var_a1 += var_t1;
-                                        var_a2 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                        var_a2 += var_t2;
-                                        var_a3 = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
-                                        var_a3 += var_t3;
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    } else {
-                                        var_a1 = var_s1->cn[0];
-                                        var_a1 += var_t1;
-                                        var_a2 = var_s1->cn[1];
-                                        var_a2 += var_t2;
-                                        var_a3 = var_s1->cn[2];
-                                        var_a3 += var_t3;
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    }
-                                } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
-                                    if (var_s3 == 0) {
-                                        var_a1 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].r2;
-                                        var_a2 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].g2;
-                                        var_a3 = gBlockColorTable[((s16)var_s1->flag >> 2) & 0xFF].b2;
-                                        if (((s16)var_s1->flag & 3) == 1) {
-                                            var_a1 += var_t1;
-                                            var_a2 += var_t2;
-                                            var_a3 += var_t3;
-                                        } else if (((s16)var_s1->flag & 3) == 2) {
-                                            var_a1 += var_t1 >> 1;
-                                            var_a2 += var_t2 >> 1;
-                                            var_a3 += var_t3 >> 1;
-                                        }
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    } else {
-                                        var_a1 = var_s1->cn[0];
-                                        var_a2 = var_s1->cn[1];
-                                        var_a3 = var_s1->cn[2];
-                                        if (((s16) var_s1->flag & 3) == 1) {
-                                            var_a1 += var_t1;
-                                            var_a2 += var_t2;
-                                            var_a3 += var_t3;
-                                        } else if (((s16) var_s1->flag & 3) == 2) {
-                                            var_a1 += var_t1 >> 1;
-                                            var_a2 += var_t2 >> 1;
-                                            var_a3 += var_t3 >> 1;
-                                        }
-                                        if (var_a1 >= 0x100) {
-                                            var_a1 = 0xFF;
-                                        }
-                                        if (var_a2 >= 0x100) {
-                                            var_a2 = 0xFF;
-                                        }
-                                        if (var_a3 >= 0x100) {
-                                            var_a3 = 0xFF;
-                                        }
-                                        var_s1->cn[0] = var_a1;
-                                        var_s1->cn[1] = var_a2;
-                                        var_s1->cn[2] = var_a3;
-                                    }
-                                }
-                            } else {
-                                if ((var_s3 == 0) && (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000))) {
-                                    if (arg0->shapes[i].flags & RENDER_UNK400000) {
-                                        var_a0_2 = 0;
-                                    } else {
-                                        var_a0_2 = 1;
-                                    }
-                                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
-                                    switch ((s16) var_s1->flag & 3) { /* irregular */
-                                    case 0:
-                                        var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
-                                        var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
-                                        var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
-                                        break;
-                                    default:
-                                    case 1:
-                                        var_s1->cn[0] = sp158[var_a0_2];
-                                        var_s1->cn[1] = sp150[var_a0_2];
-                                        var_s1->cn[2] = sp148[var_a0_2];
-                                        break;
-                                    case 2:
-                                        var_s1->cn[0] = (((sp158[var_a0_2] + gBlockColorTable[temp_t0].r) >> 1) * sp7B) >> 8;
-                                        var_s1->cn[1] = (((sp150[var_a0_2] + gBlockColorTable[temp_t0].g) >> 1) * sp7A) >> 8;
-                                        var_s1->cn[2] = (((sp148[var_a0_2] + gBlockColorTable[temp_t0].b) >> 1) * sp79) >> 8;
-                                        break;
-                                    }
-                                } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
-                                    var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                    var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                    var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
-                                } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
-                                    var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                    var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                    var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
-                                }
-                            }
-                            var_s1++;
+            } else if (var_a0 == 2) {
+                sp160.unk0[0] = 0;
+                sp160.unk0[1] = 0;
+                sp160.unk0[2] = 0;
+                for (var_s3 = 0; var_s3 < sp78; var_s3++) {
+                    var_s1 = arg0->vertices2[(arg0->vtxFlags & 1) ^ 1];
+                    blockShape = &arg0->shapes[i];
+                    sp124 = &var_s1[blockShape[1].vtxBase];
+                    var_s1 = &var_s1[blockShape->vtxBase];
+                    if (var_s0 != NULL) {
+                        var_v0 = &sp8C[var_s3];
+                        if (
+                            ((blockShape->Xmin - 0x32) << 2) < var_v0->unk0 &&
+                            var_v0->unk0 < ((blockShape->Xmax + 0x32) << 2) &&
+                            ((blockShape->Zmin - 0x32) << 2) < var_v0->unk8 &&
+                            var_v0->unk8 < ((blockShape->Zmax + 0x32) << 2)
+                        ) {
+                            sp120 = 1;
                         }
                     }
-                    if (sp78 == 0) {
-                       while ((u32) var_s1 < (u32) sp124) {
+                    while (var_s1 < sp124) {
+                        if (sp120) {
+                            var_v0 = &sp8C[var_s3];
+                            sp110[0] = var_s1->ob[0] - var_v0->unk0;
+                            sp110[1] = var_s1->ob[1] - var_v0->unk4;
+                            sp110[2] = var_s1->ob[2] - var_v0->unk8;
+                            temp_fv0 = sqrtf(((sp110[0] * sp110[0]) + (sp110[1] * sp110[1])) + (sp110[2] * sp110[2]));
+                            if (temp_fv0 < var_v0->unk18) {
+                                var_t1 = var_v0->unkC;
+                                var_t2 = var_v0->unk10;
+                                var_t3 = var_v0->unk14;
+                            } else {
+                                if (var_v0->unk1C < temp_fv0) {
+                                    var_t1 = 0;
+                                    var_t2 = 0;
+                                    var_t3 = 0;
+                                } else {
+                                    var_fv1 = (temp_fv0 - var_v0->unk18);
+                                    var_fv1 *= sp7C[var_s3];
+                                    if (var_fv1 > 255.0f) {
+                                        var_fv1 = 255.0f;
+                                    }
+                                    var_fv1 = 255.0f - var_fv1;
+                                    var_t1 = ((s16)var_v0->unkC * (s16)var_fv1) >> 8;
+                                    var_t2 = ((s16)var_v0->unk10 * (s16)var_fv1) >> 8;
+                                    var_t3 = ((s16)var_v0->unk14 * (s16)var_fv1) >> 8;
+                                }
+                            }
                             if (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000)) {
                                 if (arg0->shapes[i].flags & RENDER_UNK400000) {
                                     var_a0_2 = 0;
                                 } else {
                                     var_a0_2 = 1;
                                 }
+                                if (var_s3 == 0) {
+                                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                    switch ((s16)var_s1->flag & 3) {
+                                    case 0: /* switch 1 */
+                                        var_a1 = gBlockColorTable[temp_t0].r2;
+                                        var_a2 = gBlockColorTable[temp_t0].g2;
+                                        var_a3 = gBlockColorTable[temp_t0].b2;
+                                        break;
+                                    default: /* switch 1 */
+                                    case 1: /* switch 1 */
+                                        var_a1 = sp158[var_a0_2];
+                                        var_a2 = sp150[var_a0_2];
+                                        var_a3 = sp148[var_a0_2];
+                                        break;
+                                    case 2: /* switch 1 */
+                                        var_a1 = (((gBlockColorTable[temp_t0].r + sp158[var_a0_2]) >> 1) * sp7B) >> 8;
+                                        var_a2 = (((gBlockColorTable[temp_t0].g + sp150[var_a0_2]) >> 1) * sp7A) >> 8;
+                                        var_a3 = (((gBlockColorTable[temp_t0].b + sp148[var_a0_2]) >> 1) * sp79) >> 8;
+                                        break;
+                                    }
+                                    var_a1 += var_t1;
+                                    var_a2 += var_t2;
+                                    var_a3 += var_t3;
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                } else {
+                                    var_a1 = var_s1->cn[0];
+                                    var_a1 += var_t1;
+                                    var_a2 = var_s1->cn[1];
+                                    var_a2 += var_t2;
+                                    var_a3 = var_s1->cn[2];
+                                    var_a3 += var_t3;
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                }
+                            } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
+                                if (var_s3 == 0) {
+                                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                    var_a1 = gBlockColorTable[temp_t0].r2;
+                                    var_a1 += var_t1;
+                                    var_a2 = gBlockColorTable[temp_t0].g2;
+                                    var_a2 += var_t2;
+                                    var_a3 = gBlockColorTable[temp_t0].b2;
+                                    var_a3 += var_t3;
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                } else {
+                                    var_a1 = var_s1->cn[0];
+                                    var_a1 += var_t1;
+                                    var_a2 = var_s1->cn[1];
+                                    var_a2 += var_t2;
+                                    var_a3 = var_s1->cn[2];
+                                    var_a3 += var_t3;
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                }
+                            } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
+                                if (var_s3 == 0) {
+                                    temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                    var_a1 = gBlockColorTable[temp_t0].r2;
+                                    var_a2 = gBlockColorTable[temp_t0].g2;
+                                    var_a3 = gBlockColorTable[temp_t0].b2;
+                                    if (((s16)var_s1->flag & 3) == 1) {
+                                        var_a1 += var_t1;
+                                        var_a2 += var_t2;
+                                        var_a3 += var_t3;
+                                    } else if (((s16)var_s1->flag & 3) == 2) {
+                                        var_a1 += var_t1 >> 1;
+                                        var_a2 += var_t2 >> 1;
+                                        var_a3 += var_t3 >> 1;
+                                    }
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                } else {
+                                    var_a1 = var_s1->cn[0];
+                                    var_a2 = var_s1->cn[1];
+                                    var_a3 = var_s1->cn[2];
+                                    if (((s16) var_s1->flag & 3) == 1) {
+                                        var_a1 += var_t1;
+                                        var_a2 += var_t2;
+                                        var_a3 += var_t3;
+                                    } else if (((s16) var_s1->flag & 3) == 2) {
+                                        var_a1 += var_t1 >> 1;
+                                        var_a2 += var_t2 >> 1;
+                                        var_a3 += var_t3 >> 1;
+                                    }
+                                    if (var_a1 > 0xFF) {
+                                        var_a1 = 0xFF;
+                                    }
+                                    if (var_a2 > 0xFF) {
+                                        var_a2 = 0xFF;
+                                    }
+                                    if (var_a3 > 0xFF) {
+                                        var_a3 = 0xFF;
+                                    }
+                                    var_s1->cn[0] = var_a1;
+                                    var_s1->cn[1] = var_a2;
+                                    var_s1->cn[2] = var_a3;
+                                }
+                            }
+                        } else {
+                            if ((var_s3 == 0) && (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000))) {
+                                if (arg0->shapes[i].flags & RENDER_UNK400000) {
+                                    var_a0_2 = 0;
+                                } else {
+                                    var_a0_2 = 1;
+                                }
                                 temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
-                                switch ((s16) var_s1->flag & 3) { /* switch 2; irregular */
-                                case 0:     /* switch 2 */
+                                switch ((s16) var_s1->flag & 3) { /* irregular */
+                                case 0:
                                     var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
                                     var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
                                     var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                                     break;
-                                default:    /* switch 2 */
-                                case 1:     /* switch 2 */
+                                default:
+                                case 1:
                                     var_s1->cn[0] = sp158[var_a0_2];
                                     var_s1->cn[1] = sp150[var_a0_2];
                                     var_s1->cn[2] = sp148[var_a0_2];
                                     break;
-                                case 2:     /* switch 2 */
-                                    var_s1->cn[0] = (((sp158[var_a0_2] + gBlockColorTable[temp_t0].r) >> 1) * sp7B) >> 8;
-                                    var_s1->cn[1] = (((sp150[var_a0_2] + gBlockColorTable[temp_t0].g) >> 1) * sp7A) >> 8;
-                                    var_s1->cn[2] = (((sp148[var_a0_2] + gBlockColorTable[temp_t0].b) >> 1) * sp79) >> 8;
+                                case 2:
+                                    var_s1->cn[0] = (((gBlockColorTable[temp_t0].r + sp158[var_a0_2]) >> 1) * sp7B) >> 8;
+                                    var_s1->cn[1] = (((gBlockColorTable[temp_t0].g + sp150[var_a0_2]) >> 1) * sp7A) >> 8;
+                                    var_s1->cn[2] = (((gBlockColorTable[temp_t0].b + sp148[var_a0_2]) >> 1) * sp79) >> 8;
                                     break;
                                 }
                             } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
-                                var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                                temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                                var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                                var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                             } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
-                                var_s1->cn[0] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].r2;
-                                var_s1->cn[1] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].g2;
-                                var_s1->cn[2] = gBlockColorTable[((s16) var_s1->flag >> 2) & 0xFF].b2;
+                                temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                                var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                                var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                                var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
                             }
-                            var_s1 += 1;
                         }
+                        var_s1++;
+                    }
+                }
+                if (sp78 == 0) {
+                   while (var_s1 < sp124) {
+                        if (arg0->shapes[i].flags & (RENDER_UNK400000 | RENDER_UNK40000000)) {
+                            if (arg0->shapes[i].flags & RENDER_UNK400000) {
+                                var_a0_2 = 0;
+                            } else {
+                                var_a0_2 = 1;
+                            }
+                            temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                            switch ((s16) var_s1->flag & 3) { /* switch 2; irregular */
+                            case 0:     /* switch 2 */
+                                var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                                var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                                var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
+                                break;
+                            default:    /* switch 2 */
+                            case 1:     /* switch 2 */
+                                var_s1->cn[0] = sp158[var_a0_2];
+                                var_s1->cn[1] = sp150[var_a0_2];
+                                var_s1->cn[2] = sp148[var_a0_2];
+                                break;
+                            case 2:     /* switch 2 */
+                                var_s1->cn[0] = (((gBlockColorTable[temp_t0].r + sp158[var_a0_2]) >> 1) * sp7B) >> 8;
+                                var_s1->cn[1] = (((gBlockColorTable[temp_t0].g + sp150[var_a0_2]) >> 1) * sp7A) >> 8;
+                                var_s1->cn[2] = (((gBlockColorTable[temp_t0].b + sp148[var_a0_2]) >> 1) * sp79) >> 8;
+                                break;
+                            }
+                        } else if (arg0->shapes[i].flags & RENDER_UNK2000000) {
+                            temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                            var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                            var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                            var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
+                        } else if (arg0->shapes[i].flags & RENDER_UNK4000000) {
+                            temp_t0 = ((s16) var_s1->flag >> 2) & 0xFF;
+                            var_s1->cn[0] = gBlockColorTable[temp_t0].r2;
+                            var_s1->cn[1] = gBlockColorTable[temp_t0].g2;
+                            var_s1->cn[2] = gBlockColorTable[temp_t0].b2;
+                        }
+                        var_s1 += 1;
                     }
                 }
             }
         }
     }
 }
-#endif
 
 static const char str_8009a930[] = "######  DOING WARP  ########\n";
 
