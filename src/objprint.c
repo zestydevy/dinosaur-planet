@@ -607,61 +607,56 @@ void objprintUpdateLockIconCoords(Object* arg0) {
     }
 }
 
-s32 objprint_func_80036890(Object* arg0, s32 arg1) {
-    s32 sp6C; // a1
+s32 objprint_func_80036890(Object* obj, s32 arg1) {
+    s32 sp6C;
     Gfx* temp_a1_2;
     s32 sp64;
     Gfx* temp_t0;
-    Model* temp_t5;
+    Model* model;
     ModelFacebatch* temp_t4;
-    ModelInstance* temp_s2;
+    ModelInstance* modelInst;
     Texture* temp_a2;
     Texture* var_v1;
     Vtx* temp_a1_4;
     Vtx* temp_v0_2;
-    Vtx* var_v0_2;
+    Vtx *vtxs;
     Vtx* var_a2;
-    Vtx* var_s6;
+    Vtx* vtx;
     u8 *sp34;
     Vtx* var_v1_3;
     s16 temp_t3;
     u8 temp_s3;
     u16 temp_t6_2;
-    s32 temp_v0;
     s32 var_a0;
-    s32 var_a0_2;
     s32 var_s0;
-    s32 var_s1;
     s32 var_v0;
-    TextureAnimation* temp_v1_2;
     s16 var_t1;
     s16 var_t2;
     s32 new_var_2;
     u8 *var_s7;
-    Vtx *newp;
-    s32 var_dual;
+    s32 faketmp;
 
-    newp = arg0->unk70;
-    var_s6 = newp;
-    temp_s2 = arg0->modelInsts[arg0->modelInstIdx];
-    temp_t5 = temp_s2->model;
-    var_dual = (s32)arg0->def;
-    sp34 = ((ObjDef*)var_dual)->pTextures;
-    sp64 = ((ObjDef*)var_dual)->numAnimatedFrames;
-    for (sp6C = 0; sp6C < sp64; sp6C++, var_s6++) {
-        var_t1 = var_s6->n.tc[0];
-        var_t2 = var_s6->n.tc[1];
+    vtxs = obj->unk70;
+    vtx = vtxs;
+    modelInst = obj->modelInsts[obj->modelInstIdx];
+    model = modelInst->model;
+    faketmp = (s32)obj->def;
+    sp34 = ((ObjDef*)faketmp)->pTextures;
+    sp64 = ((ObjDef*)faketmp)->numAnimatedFrames;
+    for (sp6C = 0; sp6C < sp64; sp6C++, vtx++) {
+        var_t1 = vtx->n.tc[0];
+        var_t2 = vtx->n.tc[1];
         var_s7 = sp34;
         var_s7 += sp6C << 1;
         var_s7++;
-        for (var_s0 = 0; var_s0 < (var_dual = temp_t5->textureAnimationCount); var_s0++) {
-            temp_t4 = &temp_t5->faces[temp_t5->textureAnimations[var_s0].unkB];
+        for (var_s0 = 0; var_s0 < (faketmp = model->textureAnimationCount); var_s0++) {
+            temp_t4 = &model->faces[model->textureAnimations[var_s0].unkB];
             if (temp_t4->tagB == var_s7[0]) {
                 if (temp_t4->materialID != 0xFF) {
-                    temp_t3 = temp_t5->textureAnimations[var_s0].unk4;
-                    temp_a2 = temp_t5->materials[temp_t4->materialID].texture;
-                    var_a0 = (((s32*)var_s6)[0] >> 8) & 0xFF;
-                    temp_s3 = (((s32*)var_s6)[0]) & 0xFF;
+                    temp_t3 = model->textureAnimations[var_s0].unk4;
+                    temp_a2 = model->materials[temp_t4->materialID].texture;
+                    var_a0 = (((s32*)vtx)[0] >> 8) & 0xFF;
+                    temp_s3 = (((s32*)vtx)[0]) & 0xFF;
                     temp_t6_2 = temp_a2->animDuration >> 8;
                     if (temp_t3 >= 0) {
                         if (var_a0 >= temp_t6_2) {
@@ -670,7 +665,7 @@ s32 objprint_func_80036890(Object* arg0, s32 arg1) {
 
                         for (var_v1 = temp_a2, var_v0 = 0; var_v0 < var_a0 && var_v1 != NULL; var_v0++, var_v1 = var_v1->next);
 
-                        temp_a1_2 = &temp_s2->displayList[new_var_2 = temp_t3];
+                        temp_a1_2 = &modelInst->displayList[new_var_2 = temp_t3];
                         temp_t0 = var_v1->gdl;
                         gSPDisplayList(temp_a1_2, OS_PHYSICAL_TO_K0(temp_t0));
                         temp_t0 += var_v1->gdl2Offset + 1;
@@ -695,8 +690,8 @@ s32 objprint_func_80036890(Object* arg0, s32 arg1) {
                             }
                         }
                     }
-                    temp_v0_2 = temp_s2->vertices[((temp_s2->unk34 >> 1) & 1) ^ 1];
-                    var_v1_3 = &temp_t5->vertices[temp_t4->baseVertexID];
+                    temp_v0_2 = modelInst->vertices[((modelInst->unk34 >> 1) & 1) ^ 1];
+                    var_v1_3 = &model->vertices[temp_t4->baseVertexID];
                     temp_a1_4 = &temp_v0_2[temp_t4[1].baseVertexID];
                     var_a2 = &temp_v0_2[temp_t4->baseVertexID];
                     while ((u32) var_a2 < (u32) temp_a1_4) {
@@ -709,7 +704,9 @@ s32 objprint_func_80036890(Object* arg0, s32 arg1) {
             }
         }
     }
+    // @bug: missing return
 }
+
 void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     s32 sp6C;
     s32 sp68;

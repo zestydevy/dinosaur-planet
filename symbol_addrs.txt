@@ -1760,6 +1760,7 @@ texSetupDisplayLists = 0x8003d14c; // type:func
 texMakeDisplayList = 0x8003d254; // type:func
 texFreeTexture = 0x8003da40; // type:func
 
+modLoadAnim = 0x80019118; // type:func
 modLoadAnimActual = 0x80019164; // type:func
 modFreeAnim = 0x80019388; // type:func
 

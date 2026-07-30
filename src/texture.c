@@ -830,11 +830,11 @@ Texture* texLoadTextureActual(s32 id, u8 param2) {
     id &= 0xFFFF;
     tabEntry = id;
     if (id & 0x8000) {
-        tab = 1;
+        tab = 1; // TEX1
         binFileID = TEX1_BIN;
         tabEntry = id & 0x7FFF;
     } else {
-        tab = 0;
+        tab = 0; // TEX0
         binFileID = TEX0_BIN;
     }
     
