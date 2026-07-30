@@ -281,19 +281,10 @@ void trackIntersectBroadphase(Object* obj, AABBs32* aabb, u8 flags) {
 }
 
 /** Finds block triangles within the given bounds. */
-#ifndef NON_MATCHING
-static const char str_8009aa70[] = "Sorry Background Block list has been exceeded\n";
-UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4, s32 arg5, s32 arg6, u8 arg7);
-#pragma GLOBAL_ASM("asm/nonmatchings/intersect/func_80053B24.s")
-#else
-// N64: https://decomp.me/scratch/SMq1i
-// default.dol: https://decomp.me/scratch/pyduQ
-
-
 UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 upperY, s32 arg3, s32 arg4, s32 lowerY, s32 arg6, u8 arg7) {
     Block* temp_s0;
     Block* temp_v0;
-    Block *blocks[8];
+    Block *blocks[8]; // sp138
     f32 temp_fs1;
     Vtx_t* sp128[3];
     Vtx_t *sp124;
@@ -303,13 +294,13 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     f32 temp_fs0;
     f32 temp_fs2;
     s32 sp10C;
-    s32 numBlocks;
+    s32 numBlocks; // sp108
     s32 temp_s4; // sp104
     s32 temp_s5; // sp100
     s32 temp_s7; // spFC
     s32 temp_s3; // spF8
-    s32 lowerZ; // pad
-    s32 upperZ; // pad
+    s32 pad; // pad
+    s32 pad2; // pad
     BlockShape* temp_t9;
     BlockShape* var_s3;
     f32 temp_fv0;
@@ -431,6 +422,8 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                 sp118, temp_s4, temp_s7, temp_s5, temp_s3);
         }
         */
+        // FAKE
+        if (1);
         sp9C = &temp_s0->shapes[temp_s0->shapeCount];
         for (var_s3 = temp_s0->shapes; var_s3 < sp9C; var_s3++) {
             if (var_s3->flags & 0x2000) {
@@ -471,8 +464,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                         sp128[0] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 13) & 0x1F];
                         sp128[1] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 7) & 0x1F];
                         sp128[2] = &sp124[(temp_s0->encodedTris[sp11C].d0 >> 1) & 0x1F];
-                        // how to slti here?
-                        for (var_t0 = 0; var_t0 != 3; var_t0++) {
+                        for (var_t0 = 0; var_t0 < 3; var_t0++) {
                             var_a0_3 = sp128[var_t0]->ob[0];
                             var_v1_2 = sp128[var_t0]->ob[1];
                             var_a1_3 = sp128[var_t0]->ob[2];
@@ -514,7 +506,7 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                             temp_s3 >= minZ &&
                             maxZ >= temp_s7
                         ) {
-                            if (var_s3->animatorID != 0) {
+                            if (var_s3->animatorID != (arg7 * 0)) {
                                 temp_fs0 = (arg0->vY[0] * (arg0->vZ[1] - arg0->vZ[2])) + (arg0->vY[1] * (arg0->vZ[2] - arg0->vZ[0])) + (arg0->vY[2] * (arg0->vZ[0] - arg0->vZ[1]));
                                 temp_fs1 = (arg0->vZ[0] * (arg0->vX[1] - arg0->vX[2])) + (arg0->vZ[1] * (arg0->vX[2] - arg0->vX[0])) + (arg0->vZ[2] * (arg0->vX[0] - arg0->vX[1]));
                                 temp_fs2 = (arg0->vX[0] * (arg0->vY[1] - arg0->vY[2])) + (arg0->vX[1] * (arg0->vY[2] - arg0->vY[0])) + (arg0->vX[2] * (arg0->vY[0] - arg0->vY[1]));
@@ -530,32 +522,33 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
                                 arg0->nY = (temp_s0->encodedTris[sp11C].d1 << 0xE) >> 0x12;
                                 arg0->nZ = temp_s0->encodedTris[sp11C].d1 >> 0x12;
                             }
-                            if ((!(arg7 & 8) || !(arg0->nY >= 5791.037f)) && ((arg7 & 4) == 0 || !(arg0->nY < 5791.037f))) {
-                                arg0->unk0 = -((arg0->nY * arg0->vY[0]) + ((arg0->nX * arg0->vX[0]) + (arg0->vZ[0] * arg0->nZ))) * (1.0f / 8191.0f);
-                                temp = (sp11C) * 9;
-                                for (temp_t9_4 = temp; temp_t9_4 < (temp + 9); temp_t9_4++) {
-                                    arg0->unk1C[temp_t9_4 - temp] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
-                                }
-                                if (var_s3->flags & 0x2000) {
-                                    var_v0_3 = 0xE;
-                                } else {
-                                    if (var_s3->materialIndex == 0xFF) {
-                                        var_v0_3 = 0;
-                                    } else {
-                                        var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
-                                    }
-                                }
-                                arg0->unk2E = var_v0_3;
-                                arg0->unk30 = (highestYIndex << 4) | lowestYIndex;
-                                arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
-                                arg0++;
-                                /* default.dol
-                                if (arg0 >= ?) {
-                                    STUBBED_PRINTF("PLlist overflow!!\n");
-                                    return ?;
-                                }
-                                */
+                            if (((arg7 & 8) && (arg0->nY >= 5791.037f)) || ((arg7 & 4) && (arg0->nY < 5791.037f))) {
+                                continue;
                             }
+                            arg0->unk0 = (-((arg0->nY * arg0->vY[0]) + ((arg0->nX * arg0->vX[0]) + (arg0->nZ * arg0->vZ[0])))) * (1.0f / 8191.0f);
+                            var_t0 = (sp11C) * 9;
+                            for (temp_t9_4 = var_t0; temp_t9_4 < (var_t0 + 9); temp_t9_4++) {
+                                arg0->unk1C[temp_t9_4 - var_t0] = temp_s0->ptr_faceEdgeVectors[temp_t9_4];
+                            }
+                            if (var_s3->flags & 0x2000) {
+                                var_v0_3 = 0xE;
+                            } else {
+                                if (var_s3->materialIndex == 0xFF) {
+                                    var_v0_3 = 0;
+                                } else {
+                                    var_v0_3 = temp_s0->materials[var_s3->materialIndex].terrain_type;
+                                }
+                            }
+                            arg0->unk2E = var_v0_3;
+                            arg0->unk30 = (highestYIndex << 4) | lowestYIndex;
+                            arg0->unk2F = (temp_s0->encodedTris[sp11C].d1 & 1) | spA6;
+                            arg0++;
+                            /* default.dol
+                            if (arg0 >= ?) {
+                                STUBBED_PRINTF("PLlist overflow!!\n");
+                                return ?;
+                            }
+                            */
                         }
                     }
                 }
@@ -565,8 +558,6 @@ UnkFunc80051D68Arg3* func_80053B24(UnkFunc80051D68Arg3* arg0, s32 arg1, s32 uppe
     return arg0;
 }
 
-
-#endif
 
 UnkFunc80051D68Arg3* func_8005471C(UnkFunc80051D68Arg3* arg0, Unk8005341C* arg1, ModelInstance* arg2, f32 upperX, f32 upperY, f32 upperZ, f32 lowerX, f32 lowerY, f32 lowerZ, u8 arg9) {
     s32 var_s1;
