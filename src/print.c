@@ -302,12 +302,6 @@ int sprintf(char *str, const char *fmt, ...) {
     return ret;
 }
 
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/print/vsprintf.s")
-#else
-// https://decomp.me/scratch/fqmpD
-// DKRs (very similar) vsprintf function: https://decomp.me/scratch/ivqHu
-
 #define outchar(x) do { \
     done++;          \
     (*s++) = x;      \
@@ -384,7 +378,7 @@ int vsprintf(char* s, const char* format, va_list args) {
         /* String to be written.  */
         char *str;
 
-        char work[BUFSIZ]; // sp17B
+        char work[BUFSIZ];
 
         s32 a1;
         s32 i;
@@ -392,6 +386,23 @@ int vsprintf(char* s, const char* format, va_list args) {
         s32 v1;
         s32 a0;
         s32 digit;
+        f32 f_f12;
+        char *workend;
+        s32 e_dash;
+        f32 e_f2;
+        f32 e_f16;
+        s32 e_unused;
+        f32 e_spBC;
+        f32 e_f0;
+        s32 e_exponent;
+        s32 e_unused2;
+        f32 f_f14;
+        f32 f_f2;
+        f32 *f_temp;
+        s32 f_dash;
+        s32 f_length;
+        s32 f_v0;
+        f32 f_spBC;
 
         if (*f != '%') {
             /*   This isn't a format spec, so write everything out until the
@@ -446,7 +457,6 @@ int vsprintf(char* s, const char* format, va_list args) {
                     break;
             }
         }
-        // end of while loop
 
         if (left) {
             pad = ' ';
@@ -584,7 +594,7 @@ int vsprintf(char* s, const char* format, va_list args) {
                 /* Number of base BASE.  */
                 {
                     char *w;
-                    char *workend = &work[sizeof(work) - 1]; // spF8
+                    workend = &work[sizeof(work) - 1]; // spF8
 
                     if (gSprintfSpacingCodes) {
                         outchar(0x84);
@@ -657,15 +667,6 @@ int vsprintf(char* s, const char* format, va_list args) {
             case 'e':
             case 'E':
             {
-                s32 dash; // a3 in this scope
-                f32 f2;
-                f32 f16;
-                s32 unused;
-                f32 spBC;
-                f32 f0;
-                s32 exponent; // spB4 / s3
-                s32 unused2;
-
                 if (gSprintfSpacingCodes) {
                     done++;
                     (*s++) = 0x84;
@@ -677,53 +678,53 @@ int vsprintf(char* s, const char* format, va_list args) {
                 }
 
                 if (is_short) {
-                    nextarg(spBC, f32);
+                    nextarg(e_spBC, f32);
                 } else {
-                    nextarg(spBC, f32);
+                    nextarg(e_spBC, f32);
                 }
 
-                dash = FALSE;
-                if (*((s8*)&spBC) < 0) {
-                    dash = TRUE;
-                    spBC = -spBC;
+                e_dash = FALSE;
+                if (*((s8*)&e_spBC) < 0) {
+                    e_dash = TRUE;
+                    e_spBC = -e_spBC;
                 }
 
-                if (spBC == 0.0f) {
-                    exponent = 0;
-                    f16 = 1.0f;
-                } else if (spBC < 1.0f) {
-                    exponent = 0;
-                    f16 = 1.0f;
-                    while (spBC < f16) {
-                        f16 /= 10.0f;
-                        exponent--;
+                if (e_spBC == 0.0f) {
+                    e_exponent = 0;
+                    e_f16 = 1.0f;
+                } else if (e_spBC < 1.0f) {
+                    e_exponent = 0;
+                    e_f16 = 1.0f;
+                    while (e_spBC < e_f16) {
+                        e_f16 /= 10.0f;
+                        e_exponent--;
                     }
                 }
 
-                if (spBC >= 1.0f) {
-                    exponent = 0;
-                    f16 = 1.0f;
-                    f0 = 10.0f;
-                    while (f0 <= spBC) {
-                        f16 = f0;
-                        f0 *= 10.0f;
-                        exponent++;
+                if (e_spBC >= 1.0f) {
+                    e_exponent = 0;
+                    e_f16 = 1.0f;
+                    e_f0 = 10.0f;
+                    while (e_f0 <= e_spBC) {
+                        e_f16 = e_f0;
+                        e_f0 *= 10.0f;
+                        e_exponent++;
                     }
                 }
 
-                f2 = f16 * 0.5f;
+                e_f2 = e_f16 * 0.5f;
                 for (digit = prec; digit > 0; digit--) {
-                    f2 /= 10.0f;
+                    e_f2 /= 10.0f;
                 }
-                spBC += f2;
+                e_spBC += e_f2;
 
-                f2 = f16 * 10.0f;
-                if (spBC >= f2) {
-                    f16 = f2;
-                    exponent++;
+                e_f2 = e_f16 * 10.0f;
+                if (e_spBC >= e_f2) {
+                    e_f16 = e_f2;
+                    e_exponent++;
                 }
 
-                a0 = (dash || showsign || space) /* a1 */ + prec /* t2 */+ (prec > 0 || alt) /* v1 */ + (exponent >= 100) /* a2 */ + 5;
+                a0 = (e_dash || showsign || space) + prec + (prec > 0 || alt) + (e_exponent >= 100) + 5;
 
                 if (!left && pad == ' ') {
                     while (width-- > a0) {
@@ -731,7 +732,7 @@ int vsprintf(char* s, const char* format, va_list args) {
                     }
                 }
 
-                if (dash) {
+                if (e_dash) {
                     outchar('-');
                 } else if (showsign) {
                     outchar('+');
@@ -745,44 +746,39 @@ int vsprintf(char* s, const char* format, va_list args) {
                     }
                 }
 
-                digit = '0'; // v0
-                while (spBC >= f16) {
-                    spBC -= f16;
+                digit = '0';
+                while (e_spBC >= e_f16) {
+                    e_spBC -= e_f16;
                     digit++;
                 }
                 outchar(digit);
-                f16 /= 10.0f;
+                e_f16 /= 10.0f;
 
-                if (prec > 0 || alt /* s8 */) {
+                if (prec > 0 || alt) {
                     outchar('.');
                 }
 
                 while (prec > 0) {
                     digit = '0';
-                    while (spBC >= f16) {
-                        spBC -= f16;
+                    while (e_spBC >= e_f16) {
+                        e_spBC -= e_f16;
                         digit++;
                     }
                     outchar(digit);
-                    f16 /= 10.0f;
+                    e_f16 /= 10.0f;
                     prec--;
                 }
 
                 outchar(fc);
 
-                if (exponent < 0) {
-                    exponent = -exponent;
-                    outchar('-');
-                } else {
-                    outchar('+');
+                if (e_exponent < 0) { e_exponent = -e_exponent; outchar('-'); } else { outchar('+'); }
+
+                if (e_exponent >= 100) {
+                    outchar('0' + (e_exponent / 100));
                 }
 
-                if (exponent >= 100) {
-                    outchar('0' + (exponent / 100));
-                }
-
-                outchar('0' + ((exponent / 10) % 10));
-                outchar('0' + (exponent % 10));
+                outchar('0' + ((e_exponent / 10) % 10));
+                outchar('0' + (e_exponent % 10));
 
                 if (left) {
                     while (width-- > a0) {
@@ -796,16 +792,9 @@ int vsprintf(char* s, const char* format, va_list args) {
                 break;
             case 'f':
             {
-                f32 f12 = 1.0f;
-                f32 f14;
-                f32 f2;
-                f32 *temp; // spE4
-                s32 dash; // a3 in this scope, maybe shared with 'e' case?
-                s32 length;
-                s32 v0;
-                f32 spBC;
+                f_f12 = 1.0f;
 
-                dash = FALSE;
+                f_dash = FALSE;
 
                 if (gSprintfSpacingCodes) {
                      outchar(0x84);
@@ -816,49 +805,49 @@ int vsprintf(char* s, const char* format, va_list args) {
                 }
 
                 for (digit = 0; digit < prec; digit++) {
-                    f12 /= 10.0f;
+                    f_f12 /= 10.0f;
                 }
 
                 if (is_short) {
-                    nextarg(temp, f32 *);
-                    spBC = *temp;
+                    nextarg(f_temp, f32 *);
+                    f_spBC = *f_temp;
                 } else {
-                    nextarg(temp, f32 *);
-                    if ((u32)temp < 0x80000000 || (u32)temp >= 0x80800001) {
+                    nextarg(f_temp, f32 *);
+                    if ((u32)f_temp < 0x80000000 || (u32)f_temp >= 0x80800001) {
                         outchar('*');
                         outchar('E');
                         outchar('*');
-                        spBC = 0.0f;
+                        f_spBC = 0.0f;
                     } else {
-                        spBC = *temp;
+                        f_spBC = *f_temp;
                     }
                 }
 
-                if (spBC < 0.0f) {
-                    dash = TRUE;
-                    spBC = -spBC;
+                if (f_spBC < 0.0f) {
+                    f_dash = TRUE;
+                    f_spBC = -f_spBC;
                 }
 
-                spBC += f12 * 0.5f;
+                f_spBC += f_f12 * 0.5f;
 
                 digit = 1;
-                f2 = 1.0f;
-                f14 = 10.0f;
-                while (spBC >= f14) {
-                    f2 = f14;
-                    f14 *= 10.0f;
+                f_f2 = 1.0f;
+                f_f14 = 10.0f;
+                while (f_spBC >= f_f14) {
+                    f_f2 = f_f14;
+                    f_f14 *= 10.0f;
                     digit++;
                 }
 
-                length = (dash || showsign || space) + (prec > 0 || alt) + digit + prec;
+                f_length = (f_dash || showsign || space) + (prec > 0 || alt) + digit + prec;
 
                 if (!left && pad == ' ') {
-                    while (width-- > length) {
+                    while (width-- > f_length) {
                         outchar(pad);
                     }
                 }
 
-                if (dash) {
+                if (f_dash) {
                     outchar('-');
                 } else if (showsign) {
                     outchar('+');
@@ -867,20 +856,20 @@ int vsprintf(char* s, const char* format, va_list args) {
                 }
 
                 if (!left && pad == '0') {
-                    while (width-- > length) {
+                    while (width-- > f_length) {
                         outchar(pad);
                     }
                 }
 
                 do {
                     digit = '0';
-                    while (spBC >= f2) {
-                        spBC -= f2;
+                    while (f_spBC >= f_f2) {
+                        f_spBC -= f_f2;
                         digit++;
                     }
-                    f2 /= 10.0f;
+                    f_f2 /= 10.0f;
                     outchar(digit);
-                } while (f2 >= 1.0f);
+                } while (f_f2 >= 1.0f);
 
                 if (prec > 0 || alt) {
                     outchar('.');
@@ -888,17 +877,17 @@ int vsprintf(char* s, const char* format, va_list args) {
 
                 while (prec > 0) {
                     digit = '0';
-                    while (spBC >= f2) {
-                        spBC -= f2;
+                    while (f_spBC >= f_f2) {
+                        f_spBC -= f_f2;
                         digit++;
                     }
                     outchar(digit);
-                    f2 /= 10.0f;
+                    f_f2 /= 10.0f;
                     prec--;
                 }
 
                 if (left) {
-                    while (width-- > length) {
+                    while (width-- > f_length) {
                         outchar(' ');
                     }
                 }
@@ -922,19 +911,18 @@ int vsprintf(char* s, const char* format, va_list args) {
 
             case 's':
             {
-                static char null[] = "(null)";
-                u32 len; // a0
+
+                u32 len;
 
                 nextarg(str, char *);
 
-                // move of a1 into a0 should appear as soon as str is stored into a1
                 if (str == NULL) {
                     /* Write "(null)" if there's space.  */
-                    if (prec == -1 || prec >= (int) sizeof(null) - 1) {
-                        str = null;
-                        len = sizeof(null) - 1;
+                    if (prec == -1 || prec >= (int) sizeof(D_8009AE44) - 1) {
+                        str = (char *)D_8009AE44;
+                        len = sizeof(D_8009AE44) - 1;
                     } else {
-                        str = "";
+                        str = (char *)D_8009AE40;
                         len = 0;
                     }
                 } else {
@@ -975,15 +963,15 @@ int vsprintf(char* s, const char* format, va_list args) {
                     goto number;
                 } else {
                     /* Write "(nil)" for a nil pointer.  */
-                    static char nil[] = "(nil)";
+
                     char *p;
 
-                    width -= sizeof (nil) - 1;
+                    width -= sizeof(D_8009AE4C) - 1;
                     if (!left) {
                         PAD(' ');
                     }
 
-                    grouping = nil;
+                    grouping = (char *)D_8009AE4C;
                     while (*grouping != '\0') {
                         outchar(*grouping++);
                     }
@@ -1027,7 +1015,6 @@ int vsprintf(char* s, const char* format, va_list args) {
     *s = '\0';
     return done;
 }
-#endif
 
 void diPrintfInit(void) {
     u32 fbRes;

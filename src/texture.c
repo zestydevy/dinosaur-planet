@@ -796,10 +796,6 @@ Texture *texLoadTexture(s32 id) {
 static const char str_8009a370[] = "Error: Texture no %d out of range on load -> max=%d.!!\n";
 static const char str_8009a3a8[] = "Multiple texture fail!!\n";
 // official name: texLoadTexture
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texLoadTextureActual.s")
-#else
-// https://decomp.me/scratch/ht6r3
 Texture* texLoadTextureActual(s32 id, u8 param2) {
     u32 binFileID; // sp74
     Texture* tex;
@@ -831,16 +827,18 @@ Texture* texLoadTextureActual(s32 id, u8 param2) {
     } else {
         id = gFile_TEXTABLE[id];
     }
-    tabEntry = id & 0xFFFF;
-    if (tabEntry & 0x8000) {
+    id &= 0xFFFF;
+    tabEntry = id;
+    if (id & 0x8000) {
         tab = 1; // TEX1
         binFileID = TEX1_BIN;
-        tabEntry &= 0x7FFF;
+        tabEntry = id & 0x7FFF;
     } else {
         tab = 0; // TEX0
         binFileID = TEX0_BIN;
     }
     
+    if ((tab * 4) + tabEntry + tabEntry) {}
     offset = gFile_TEX_TAB[tab][tabEntry] & 0xFFFFFF;
     numFrames = (gFile_TEX_TAB[tab][tabEntry] >> 24) & 0xFF;
     compressedSize = (gFile_TEX_TAB[tab][tabEntry + 1] & 0xFFFFFF) - offset;
@@ -905,8 +903,6 @@ Texture* texLoadTextureActual(s32 id, u8 param2) {
     }
     return firstTex;
 }
-#endif
-
 static const char str_8009a3c4[] = "TEX Error: TexTab overflow %d,%d!!\n";
 
 Gfx *texSetupDisplayLists(Texture *texture, Gfx *gdl) {
@@ -1187,9 +1183,6 @@ void texRenderRestoreState(void) {
 }
 
 // official name: texDPTextureX ?
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextureSimple.s")
-#else
 // https://decomp.me/scratch/fpYm1
 s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOptions, s32 force, s32 options) {
     s32 pad_sp84;
@@ -1259,7 +1252,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
                 }
             }
             temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
-            renderFlags = temp_v1 | renderFlags;
+            renderFlags |= temp_v1;
             if ((basetex != gCurrTex0) || (blendtex != gCurrTex1) || (force != 0)) {
                 gCurrTex0 = basetex;
                 gCurrTex1 = blendtex;
@@ -1290,7 +1283,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
         var_a0 = 0;
         if (tex != NULL) {
             temp_v1 = (tex->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
-            renderFlags = temp_v1 | renderFlags;
+            renderFlags |= temp_v1;
             var_a0 = 1;
             var_a3_2 = pointersIntsArray;
             hasPalette = TEX_FORMAT(tex->format) == TEX_FORMAT_CI4;
@@ -1318,7 +1311,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
                 temp = 37;
             } else if (renderFlags & RENDER_SUBSURFACE) {
                 if (renderMipmaps != 0) {
-                    temp = 49;
+                    temp = 33;
                 } else {
                     temp += 24;
                 }
@@ -1369,41 +1362,39 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
     *gdl = dl;
     return 0;
 }
-#endif
 
-#ifndef NON_EQUIVALENT
-#pragma GLOBAL_ASM("asm/nonmatchings/texture/texDPTextures.s")
-#else
-// https://decomp.me/scratch/0L3c5
 void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
+    u16 new_var4;
     Gfx* temp_v0_2;
+    s32 temp_a2;
     Texture* blendtex;
     Texture* basetex;
     Texture* var_v1;
     s32 temp_a1;
-    s32 temp_a2;
     s32 var_a0;
     s32 hasTex;
-    s32 renderMipmaps;
-    s32 hasPalette;
     s32 var_v0;
-    struct PointersInts* temp_v1;
-    Gfx* sp4C;
+    s32 fogEnabled;
     struct PointersInts* var_a3_2;
+    Gfx* sp4C;
     s32 var_a2_2;
-    s32 pad[2];
+    s16 new_var2;
+    u8 new_var3;
+    s32 hasPalette;
+    Gfx* new_var;
+    s32 renderMipmaps;
 
-    hasPalette = 0;
-    renderMipmaps = 0;
+    //if (1) {}
+    //hasPalette = 0;
     sp4C = *gdl;
     if (tex0 != NULL) {
         temp_a1 = frameOptions >> 16;
         if (tex0->animDuration != 0) {
             var_a2_2 = tex0->animDuration >> 8;
         } else {
-            var_a2_2 = frameOptions * 0;
+            var_a2_2 = 0;
         }
-        
+
         basetex = tex0;
         blendtex = tex0;
         if (var_a2_2 > 1 && temp_a1 < var_a2_2) {
@@ -1429,7 +1420,8 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
                         if (renderFlags & RENDER_TEXANIM_PINGPONG) {
                             temp_a1 -= 2;
                         } else {
-                            temp_a1 = var_a2_2 - 1;
+                            temp_a1 = 1;
+                            temp_a1 = var_a2_2 - temp_a1;
                         }
                     }
                 }
@@ -1446,8 +1438,10 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
         if (tex1 != NULL) {
             blendtex = tex1;
         }
-        var_v0 = (s16) (tex0->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
+        new_var2 = (s16) (tex0->flags & ~(RENDER_TEX_BLEND | RENDER_MIPMAPS));
+        var_v0 = new_var2;
         renderFlags |= var_v0;
+        temp_a1 = renderFlags;
         if ((basetex != gCurrTex0) || (blendtex != gCurrTex1) || (force != 0)) {
             gCurrTex0 = basetex;
             gCurrTex1 = blendtex;
@@ -1458,22 +1452,27 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
                 gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
                 dlSetEnvColor(&sp4C, 0x7F, 0x7F, 0x7F, 0x7F);
             } else {
-                if ((tex0->flags & RENDER_TEX_BLEND) && (renderFlags & RENDER_TEX_BLEND)) {
+                if ((tex0->flags & RENDER_TEX_BLEND) && (temp_a1 & RENDER_TEX_BLEND)) {
                     temp_v0_2 += basetex->gdl2Offset;
                     gSPDisplayList(sp4C++, OS_PHYSICAL_TO_K0(temp_v0_2));
-                    frameOptions >>= 8;
-                    dlSetEnvColorNoSync(&sp4C, frameOptions, frameOptions, frameOptions, 0);
-                } else if (renderFlags & RENDER_UNK2000) {
+                    temp_a1 = (u16) frameOptions;
+                    temp_a1 >>= 8;
+                    dlSetEnvColorNoSync(&sp4C, temp_a1, temp_a1, temp_a1, 0);
+                } else if (temp_a1 & RENDER_UNK2000) {
                     dlSetEnvColor(&sp4C, 0xA0, 0xA0, 0xA0, 0xA0);
                 }
             }
         }
         renderMipmaps = tex0->flags & RENDER_MIPMAPS;
+        new_var3 = tex0->format;
+        new_var4 = TEX_FORMAT(new_var3);
         hasTex = 1;
         var_a3_2 = pointersIntsArray;
-        hasPalette = TEX_FORMAT(tex0->format) == TEX_FORMAT_CI4;
+        hasPalette = new_var4 == TEX_FORMAT_CI4;
     } else {
         // No texture
+        hasPalette = 0;
+        renderMipmaps = 0;
         hasTex = 0;
         var_a3_2 = pointersIntsArray + 38;
     }
@@ -1501,8 +1500,7 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
                 var_a0 = 32; // mipmap
             }
         }
-        temp_v1 = &var_a3_2[var_a0];
-        temp_a2 = temp_v1->valB | (renderFlags & temp_v1->valA);
+        temp_a2 = (renderFlags & var_a3_2[var_a0].valA) | var_a3_2[var_a0].valB;
         var_v0 = G_SHADING_SMOOTH | G_SHADE;
         if (temp_a2 & RENDER_Z_COMPARE) {
             var_v0 |= 1;
@@ -1515,11 +1513,12 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
         }
         gSPLoadGeometryMode(sp4C, var_v0);
         dlApplyGeometryMode(&sp4C);
-        sp4C->words.w0 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w0;
-        sp4C->words.w1 = (((Gfx **)temp_v1->prts)[0][(temp_a2 >> 3)]).words.w1;
+        fogEnabled = temp_a2 >> 3;
+        sp4C->words.w0 = ((Gfx*)var_a3_2[var_a0].prts[0])[fogEnabled].words.w0;
+        sp4C->words.w1 = ((Gfx*)var_a3_2[var_a0].prts[0])[fogEnabled].words.w1;
         dlApplyCombine(&sp4C);
-        sp4C->words.w0 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w0;
-        sp4C->words.w1 = (((Gfx **)temp_v1->prts)[1][temp_a2]).words.w1;
+        sp4C->words.w0 = ((Gfx*)var_a3_2[var_a0].prts[1])[temp_a2].words.w0;
+        sp4C->words.w1 = ((Gfx*)var_a3_2[var_a0].prts[1])[temp_a2].words.w1;
         if (hasPalette != 0) {
             sp4C->words.w0 |= G_TT_RGBA16;
         }
@@ -1527,7 +1526,6 @@ void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32
     }
     *gdl = sp4C;
 }
-#endif
 
 // official Name: texAnimateTexture
 void texAnimateTexture(Texture *tex, s32 *renderFlags, s32 *progress) {

@@ -282,7 +282,7 @@ bail:
         temp_v0->vertices[0] = model->vertices;
         temp_v0->vertices[1] = model->vertices;
     }
-    temp_v0->animState0 = mmAlign4((u32)s0);
+    temp_v0->animState0 = (AnimState*)mmAlign4((u32)s0);
     s0 = (u8*)(temp_v0->animState0 + 1);
     if (flags & 0x80) {
         temp_v0->animState1 = (AnimState*)s0;
@@ -312,7 +312,7 @@ bail:
         }
     }
     if (model->blendshapes != NULL) {
-        temp_v0->blendshapes = mmAlign4((u32)s0);
+        temp_v0->blendshapes = (ModelInstanceBlendshape*)mmAlign4((u32)s0);
         s0 = (u8*) (temp_v0->blendshapes + 3);
         for (i = 0; i < 3; i++) {
             temp_v0_8 = &temp_v0->blendshapes[i];
@@ -324,7 +324,7 @@ bail:
         }
     }
     if (sp30.hitSphereMalloc > 0) {
-        temp_v0->unk1C[0] = mmAlign4((u32)s0);
+        temp_v0->unk1C[0] = (void*)mmAlign4((u32)s0);
         s0 = (u8*)temp_v0->unk1C[0] + (model->hitSphereCount * 0x10);
         temp_v0->unk1C[1] = s0;
         s0 += (model->hitSphereCount * 0x10);
@@ -732,12 +732,6 @@ Animation* modLoadAnim(s16 animID, s16 modAnimID, AmapPlusAnimation* amap, Model
 }
 
 // official name: modLoadAnimActual
-#ifndef NON_MATCHING
-Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model);
-#pragma GLOBAL_ASM("asm/nonmatchings/model/modLoadAnimActual.s")
-#else
-// https://decomp.me/scratch/j3qkH
-
 Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim, Model* model) {
     s32 i;
     s32 sp28;
@@ -767,7 +761,7 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
     sp20 = gBuffer_ANIM_TAB[(animId & 1) + 1] - sp24;
 
     // FAKE
-    if (model->unk5C);
+    if (model->unk5C) {}
 
     if (anim == NULL) {
         var_s1 = mmAlloc(sp20, ALLOC_TAG_ANIMS_COL, NULL);
@@ -785,12 +779,13 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
     piRomLoadSection(ANIM_BIN, var_s1, sp24, sp20);
     if (anim != NULL) {
         sp20 = ALIGN8(model->jointCount - 1);
-        piRomLoadSection(AMAP_BIN, anim, model->unk5C + (modanimId * sp20), sp20);
+        sp24 = model->unk5C + (modanimId * sp20);
+        piRomLoadSection(AMAP_BIN, anim, sp24, sp20);
     }
 
     if (anim == NULL) {
         var_s1->referenceCount = 1;
-        if ((sp28 == -1) != 0) {
+        if (sp28 == -1) {
             sp28 = gNumLoadedAnims++;
             if (gNumLoadedAnims == 128) {
                 gNumLoadedAnims--;
@@ -798,7 +793,7 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
         }
 
         ANIM_SLOT_RC(gLoadedAnims, sp28) = animId;
-        ANIM_SLOT_ANIM(gLoadedAnims, sp28) = var_s1;
+        ANIM_SLOT_ANIM(gLoadedAnims, sp28) = (s32)var_s1;
     }
 
     // FAKE to fix s0/s1 swap
@@ -807,8 +802,6 @@ Animation* modLoadAnimActual(s16 animId, s16 modanimId, AmapPlusAnimation* anim,
     if (1) { }
     return var_s1;
 }
-
-#endif
 
 void modFreeAnim(Animation* anim) {
     AnimSlot* slot;
