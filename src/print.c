@@ -302,9 +302,6 @@ int sprintf(char *str, const char *fmt, ...) {
     return ret;
 }
 
-// https://decomp.me/scratch/fqmpD
-// DKRs (very similar) vsprintf function: https://decomp.me/scratch/ivqHu
-
 #define outchar(x) do { \
     done++;          \
     (*s++) = x;      \
@@ -381,7 +378,7 @@ int vsprintf(char* s, const char* format, va_list args) {
         /* String to be written.  */
         char *str;
 
-        char work[BUFSIZ]; // sp17B
+        char work[BUFSIZ];
 
         s32 a1;
         s32 i;
@@ -460,7 +457,6 @@ int vsprintf(char* s, const char* format, va_list args) {
                     break;
             }
         }
-        // end of while loop
 
         if (left) {
             pad = ' ';
@@ -728,7 +724,7 @@ int vsprintf(char* s, const char* format, va_list args) {
                     e_exponent++;
                 }
 
-                a0 = (e_dash || showsign || space) /* a1 */ + prec /* t2 */+ (prec > 0 || alt) /* v1 */ + (e_exponent >= 100) /* a2 */ + 5;
+                a0 = (e_dash || showsign || space) + prec + (prec > 0 || alt) + (e_exponent >= 100) + 5;
 
                 if (!left && pad == ' ') {
                     while (width-- > a0) {
@@ -750,7 +746,7 @@ int vsprintf(char* s, const char* format, va_list args) {
                     }
                 }
 
-                digit = '0'; // v0
+                digit = '0';
                 while (e_spBC >= e_f16) {
                     e_spBC -= e_f16;
                     digit++;
@@ -758,7 +754,7 @@ int vsprintf(char* s, const char* format, va_list args) {
                 outchar(digit);
                 e_f16 /= 10.0f;
 
-                if (prec > 0 || alt /* s8 */) {
+                if (prec > 0 || alt) {
                     outchar('.');
                 }
 
@@ -775,14 +771,7 @@ int vsprintf(char* s, const char* format, va_list args) {
 
                 outchar(fc);
 
-                if (e_exponent < 0) {
-                    e_exponent = -e_exponent;
-                    outchar('-');
-                } else {
-#line 780
-                    outchar('+');
-#line 783
-                }
+                if (e_exponent < 0) { e_exponent = -e_exponent; outchar('-'); } else { outchar('+'); }
 
                 if (e_exponent >= 100) {
                     outchar('0' + (e_exponent / 100));
@@ -923,11 +912,10 @@ int vsprintf(char* s, const char* format, va_list args) {
             case 's':
             {
 
-                u32 len; // a0
+                u32 len;
 
                 nextarg(str, char *);
 
-                // move of a1 into a0 should appear as soon as str is stored into a1
                 if (str == NULL) {
                     /* Write "(null)" if there's space.  */
                     if (prec == -1 || prec >= (int) sizeof(D_8009AE44) - 1) {
