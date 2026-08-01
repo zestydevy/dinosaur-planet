@@ -42,8 +42,23 @@ typedef struct {
     u16 unk28; //precipitation rate
     u16 unk2A; //precipitation-related?
     u16 unk2C; //precipitation-related?
-    u8  unk2E[0x4E - 0x2E]; //Fog min/max distances/opacities at 8 different phases of day?
-    u8  unk4E[0x59 - 0x4E];
+    //Fog min/max distances/opacities at 8 different phases of day?
+    u16 unk2E;
+    u16 unk30;
+    u16 unk32;
+    u16 unk34;
+    u8  _unk36[0x3E - 0x36];
+    u16 unk3E;
+    u16 unk40;
+    u16 unk42;
+    u16 unk44;
+    u8  _unk46[0x4E - 0x46];
+    u16 unk4E;
+    u16 unk50;
+    u16 unk52;
+    u16 unk54;
+    u16 unk56;
+    u8 unk58;
     u8  unk59; //Affects fog colour cycling? Can blend based on camera direction instead of time of day?
     u8  unk5A; //Sun texture (1: flare, 2: yellow ball sun, 3: moon, 4: hazy/obscured)
     u8  unk5B;

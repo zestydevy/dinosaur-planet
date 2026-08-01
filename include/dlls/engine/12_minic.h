@@ -13,7 +13,7 @@ DLL_INTERFACE(DLL_12_minic) {
     /*2*/ void (*func2)(void);
     /*3*/ void (*func3)(Gfx **, Mtx **);
     /*4*/ void (*func4)(void);
-    /*5*/ UnknownDLLFunc func5;
+    /*5*/ void (*func5)(f32, f32, f32, s32);
     /*6*/ void (*func6)(u8);
     /*7*/ void (*func7)(s32);
     /*8*/ void (*func8)(s32);

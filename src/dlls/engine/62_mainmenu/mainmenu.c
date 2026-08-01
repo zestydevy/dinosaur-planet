@@ -16,6 +16,8 @@
 #include "sys/rcp.h"
 #include "types.h"
 
+#include "prevent_bss_reordering.h"
+
 typedef enum {
     //Overrides for item7 (Language)
     MainMenu_ITEM_0_English = 0,
