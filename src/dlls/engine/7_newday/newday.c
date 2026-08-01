@@ -18,6 +18,8 @@
 #include "dll.h"
 #include "gbi_extra.h"
 
+/** @file official filename: newday.c */
+
 #define DAYTIME 18000.0f //5am
 #define NIGHTTIME 75600.0f //9pm
 #define NOON 12.0 * 60.0 * 60.0
@@ -192,6 +194,8 @@ void dll_7_dtor(void *self) { }
 void dll_7_func_18(Object *arg0, Object *arg1, EnvFxAction *arg2, s32 arg3);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_18.s")
 #else
+// needs dll_7_func_2464 to be static
+
 void dll_7_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
     PlayerEnvActions* temp_v0;
     s32 i;
@@ -840,6 +844,7 @@ struct thing2 {
     s16 v[3];
     s16 _unk6[6];
 };
+// https://decomp.me/scratch/iA54d
 void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
     s32 var_v1;
     s32 i;
@@ -877,7 +882,7 @@ void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
         bss_30[0]->unk111 = (u8) arg0->unk50;
         bss_30[0]->unkDC = arg0->unk52;
         bss_30[0]->unkDC = 0x168;
-        bss_30[0]->timeSeconds = (f32) ((bss_30[0]->unk111 * 0x3C) + (bss_30[0]->unk110 * 0xE10));
+        bss_30[0]->timeSeconds = (f32) ((bss_30[0]->unk110 * 0xE10) + (bss_30[0]->unk111 * 0x3C));
         if (arg0->unk5D == 0) {
             bss_30[0]->unkC8 = 0.8f;
         } else if (arg0->unk5D == 1) {
@@ -964,8 +969,9 @@ void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
                 bss_30[0]->unk0[var_v1].v1 = sp94[j].v[1];
                 bss_30[0]->unk0[var_v1].v2 = sp94[j].v[2];
                 var_v1++;
-                arg0++; arg0--; // @fake
+                //arg0++; arg0--; // @fake
             }
+            //if (sp2C[i].ob && sp2C[i].ob){}
         }
         bss_30[0]->unk44[0][0] = (f32) arg0->unkC;
         bss_30[0]->unk44[0][1] = (f32) arg0->unkC;
