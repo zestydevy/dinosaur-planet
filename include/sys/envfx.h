@@ -5,7 +5,9 @@
 #include "game/objects/object.h"
 
 typedef struct {
-    u8  pad0[0xC];
+    u8  _unk0[0x4 - 0x0];
+    f32 unk4;
+    f32 unk8;
 
     /* Fog Colour (R component) */
     u8 unkC;  //night phase 1

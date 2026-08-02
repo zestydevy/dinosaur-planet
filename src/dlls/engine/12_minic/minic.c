@@ -1,10 +1,21 @@
 #include "common.h"
 
+// size: 0x10
+typedef struct {
+    u8 unk0;
+    u8 unk1;
+    u8 unk2;
+    u8 unk3;
+    u8 _unk4[0x10 - 0x4];
+} Data0_8;
+
 // size: 0x28
 typedef struct {
-    u8 _unk0[0xC - 0x0];
+    s32 unk0;
+    s32 unk4;
+    s32 unk8;
     s32 unkC;
-    u8 _unk10[0x14 - 0x10];
+    u8 unk10;
     f32 unk14;
     f32 unk18;
     f32 unk1C;
@@ -17,20 +28,24 @@ typedef struct {
 typedef struct {
     s32 unk0;
     s32 unk4;
-    void *unk8;
-    void *unkC;
+    Data0_8 *unk8[2];
     Texture* unk10[16];
     Texture* unk50[8];
     s32 unk70;
     s32 unk74;
     s32 unk78;
     s32 unk7C;
-    void *unk80;
-    void *unk84;
+    Vtx *unk80[2];
     Data0_88 *unk88;
     Texture* unk8C;
     Texture* unk90;
-    u8 _unk94[0xB8 - 0x94];
+    u8 _unk94[0xA0 - 0x94];
+    s32 unkA0;
+    s32 unkA4;
+    s32 unkA8;
+    s32 unkAC;
+    s32 unkB0;
+    s32 unkB4;
     s32 unkB8;
     s32 unkBC;
     f32 unkC0;
@@ -44,28 +59,31 @@ typedef struct {
     f32 unkE0;
     f32 unkE4;
     f32 unkE8;
-    u8 _unkEC[0xF4 - 0xEC];
+    f32 unkEC;
+    f32 unkF0;
     s16 unkF4;
     u16 unkF6;
     u16 unkF8;
-    u16 unkFA;
+    s16 unkFA;
     u16 unkFC;
-    u8 _unkFE[0x141 - 0xFE];
+    u16 unkFE;
+    u8 _unk100[0x140 - 0x100];
+    u8 unk140;
     u8 unk141;
     u8 unk142;
     u8 unk143;
     u8 unk144;
     u8 unk145;
     u8 unk146;
-    u8 unk147;
-    u8 unk148;
+    s8 unk147;
+    s8 unk148;
     u8 _unk149[0x14C - 0x149];
     void *unk14C;
 } Data0;
 
 /*0x0*/ static Data0* data_0 = NULL;
-/*0x4*/ static u32 data_4[] = {
-    0x011c011d, 0x011e011f, 0x01200121, 0x01220123, 0x01240000
+/*0x4*/ static s16 data_4[] = {
+    0x011c, 0x011d, 0x011e, 0x011f, 0x0120, 0x0121, 0x0122, 0x0123, 0x0124, 0x0000
 };
 /*0x18*/ static s16 data_18[] = {
     0x01ae, 0x010c, 0x0128, 0x0247, 0x0388, 0x0000
@@ -93,8 +111,11 @@ typedef struct {
     0x00000001, 0x00020000, 0x00000020, 0x00000020, 0x00200000, 0x00020003, 0x00000000, 0x00200020, 
     0x00000020
 };
-/*0x108*/ static u32 data_108[] = {
-    0x00000000, 0x0c800000, 0x0c800c80, 0x00000c80
+/*0x108*/ static u16 data_108[][2] = {
+    {0x0000, 0x0000}, 
+    {0x0c80, 0x0000}, 
+    {0x0c80, 0x0c80}, 
+    {0x0000, 0x0c80}
 };
 /*0x118*/ static u8 data_118[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00
@@ -126,22 +147,9 @@ typedef struct {
 /*0x1D4*/ static f32 data_1D4 = 0.0;
 /*0x1D8*/ static f32 data_1D8 = 0.0;
 /*0x1DC*/ static s32 data_1DC = 0x00000000;
-/*0x1E0*/ static u32 data_1E0[] = {
-    0x00000002, 0x80200300, 0x20000000, 0x01800002, 0x80200000
-};
-/*0x1F4*/ static u32 data_1F4[] = {
-    0x00008000, 0x80200020
-};
-/*0x1FC*/ static u32 data_1FC[] = {
-    0x00000000, 0x03e00000, 0x03e007e0, 0x000007e0
-};
-/*0x20C*/ static u32 data_20C[] = {
-    0x00000000, 0x03e00000, 0x03e003e0, 0x000003e0
-};
-/*0x21C*/ static u32 data_21C[] = {
-    0x00000000, 0x00000000, 0x447a0000, 0x00000000, 0x00000000
-};
 
+void dll_12_func_3844(s32 arg0);
+void dll_12_func_3930(s32 arg0);
 static void dll_12_func_3A1C(void);
 
 // offset: 0x0 | ctor
@@ -154,8 +162,268 @@ void dll_12_ctor(void* dll) {
 void dll_12_dtor(void* dll) { }
 
 // offset: 0x34 | func: 0 | export: 0
-void dll_12_Func_34(Object*,Object*,void*,s32,u16);
+#ifndef NON_EQUIVALENT
+/*0x1E0*/ static u32 data_1E0[] = {
+    0x00000002, 0x80200300, 0x20000000, 0x01800002, 0x80200000
+};
+/*0x1F4*/ static u32 data_1F4[] = {
+    0x00008000, 0x80200020
+};
+void dll_12_Func_34(Object*,Object*,EnvFxAction*,s32,u16);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/12_minic/dll_12_Func_34.s")
+#else
+// https://decomp.me/scratch/grysu
+
+void dll_12_Func_34(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3, u16 arg4) {
+    PlayerEnvActions* temp_v0 = gDLL_29_Gplay->vtbl->get_current_player_envactions();
+    f32 temp_fv0;
+    f32 var_fv0;
+    //s32 temp_t9;
+    s32 var_a0_2;
+    s32 var_s0;
+    s32 var_s4;
+    s32 var_t0;
+    u8* var_v0;
+    Data0_8* var_a2;
+    Vtx* var_v0_2;
+    u8 sp54[][9] = {
+        {0x00, 0x00, 0x00, 0x02, 0x80, 0x20, 0x03, 0x00, 0x20}, 
+        {0x00, 0x00, 0x00, 0x01, 0x80, 0x00, 0x02, 0x80, 0x20}
+        //, 0x00, 0x00
+    };
+    u8 sp4C[][2] = {
+        {0x00, 0x00}, 
+        {0x80, 0x00}, 
+        {0x80, 0x20}, 
+        {0x00, 0x20}
+    };
+    s32 _pad;
+
+    if ((arg2 == NULL) || (data_0 == NULL)) {
+        return;
+    }
+    if (arg2->unk58 & 2) {
+        temp_v0->unk6 = (s16) arg2->unk24 - 1;
+        if (arg2->unk59 & 1) {
+           // temp_t9 = D_80092A84[1];
+            D_80092A84[0] = D_80092A84[1];
+            D_80092A84[1] = (s32) arg4;
+            data_1BC = 1;
+            data_0->unkA8 = (s32) arg2->unk2A;
+            data_0->unkAC = (s32) arg2->unk2C;
+            data_0->unk144 = 1;
+            data_0->unk145 = 0;
+            data_0->unkB8 = 0;
+            data_0->unkBC = 0;
+            data_0->unkEC = 0.0f;
+            data_0->unkF0 = 0.0f;
+            data_0->unkFC = arg2->unk26;
+            data_0->unk146 = (u8) arg2->unk4;
+            var_fv0 = ((f32) data_0->unkA8 / 10.0f) * 60.0f;
+            if (var_fv0 <= 60.0f) {
+                var_fv0 = 60.0f;
+            }
+            data_0->unkD4 = (((f32) data_0->unk146 - data_0->unkC4) / var_fv0) * 4.0f;
+            data_0->unkDC = ((255.0f - data_0->unkCC) / var_fv0) * 4.0f;
+            data_0->unkD0 = 1.0f / var_fv0;
+            data_0->unkE0 = arg2->unk8 / 3.0f;
+            data_0->unkE4 = 0.0f;
+            if (arg2->unk59 & 4) {
+                data_1CC = 0x28;
+                data_0->unk140 = 0;
+            } else {
+                data_1CC = -0x28;
+                data_0->unk140 = 1;
+            }
+            if (arg2->unk5D < 9) {
+                if (arg2->unk5D != data_0->unkFA) {
+                    if (data_0->unk90 != NULL) {
+                        texFreeTexture(data_0->unk90);
+                    }
+                    data_0->unk90 = NULL;
+                    data_0->unkFA = (s16) arg2->unk5D;
+                    data_0->unk90 = texLoadTexture((s32) data_4[data_0->unkFA]);
+                }
+            }
+            if (arg2->unk5A != data_0->unk147) {
+                if (arg2->unk5A != 0) {
+                    dll_12_func_3844(arg2->unk5A);
+                }
+                data_0->unk147 = (s8) arg2->unk5A;
+            }
+            if (arg2->unk5B != data_0->unk148) {
+                if (arg2->unk5B != 0) {
+                    dll_12_func_3930(arg2->unk5B);
+                }
+                data_0->unk148 = (s8) arg2->unk5B;
+                data_0->unkF6 = 0;
+                data_0->unkF8 = 0;
+            }
+            data_0->unkF4 = (s16) arg2->unk28;
+        } else if (arg2->unk59 & 2) {
+            data_1B8 = 1;
+            data_0->unkA0 = (s32) arg2->unk2A;
+            data_0->unkA4 = (s32) arg2->unk2C;
+            data_0->unk141 = 1;
+            data_0->unk142 = 0;
+            data_0->unkFE = (u16) arg2->unk26;
+            data_0->unk143 = (u8) arg2->unk4;
+            var_fv0 = ((f32) data_0->unkA0 / 10.0f) * 60.0f;
+            if (var_fv0 <= 60.0f) {
+                var_fv0 = 60.0f;
+            }
+            data_0->unkD8 = ((f32) data_0->unk143 - data_0->unkC8) / var_fv0;
+            data_0->unkE8 = arg2->unk8;
+            if (data_0->unkE8 < 1.0f) {
+                data_0->unkE8 = 1.0f;
+            }
+            data_1C0 = 10.0f / data_0->unkE8;
+            data_1C4 = data_0->unkE8 * 0.05f;
+            data_1C8 = 255.0f / (9000.0f / data_0->unkE8);
+            if (arg2->unk5A != data_0->unk147) {
+                if (arg2->unk5A != 0) {
+                    dll_12_func_3844(arg2->unk5A);
+                }
+                data_0->unk147 = (s8) arg2->unk5A;
+            }
+            if (arg2->unk5B != data_0->unk148) {
+                if (arg2->unk5B != 0) {
+                    dll_12_func_3930(arg2->unk5B);
+                }
+                data_0->unk148 = (s8) arg2->unk5B;
+                data_0->unkF6 = 0;
+                data_0->unkF8 = 0;
+            }
+            // which variable should this use for i? var_s0 seems to work best atm
+            for (var_s0 = 0; var_s0 < 8; var_s0++) {
+                data_118[var_s0] = 0;
+            }
+            data_0->unkF4 = (s16) arg2->unk28;
+            data_0->unk88 = NULL;
+            data_0->unk88 = mmAlloc(data_0->unkF4 * sizeof(Data0_88), 0xFF00FF, NULL);
+            data_0->unk8C = texLoadTexture(0x55);
+            data_0->unk80[0] = mmAlloc(4 * data_0->unkF4 * sizeof(Vtx), 0xFF00FF, NULL);
+            data_0->unk80[1] = mmAlloc(4 * data_0->unkF4 * sizeof(Vtx), 0xFF00FF, NULL);
+            data_0->unk8[0] = mmAlloc(2 * data_0->unkF4 * sizeof(Data0_8), 0xFF00FF, NULL);
+            data_0->unk8[1] = mmAlloc(2 * data_0->unkF4 * sizeof(Data0_8), 0xFF00FF, NULL);
+            //var_s4 = 0;
+            var_s0 = 0;
+            while (var_s0 < data_0->unkF4) {
+                data_0->unk88[var_s0].unk0 = var_s0;
+                data_0->unk88[var_s0].unk22 = mathRnd(0, 7);
+                data_0->unk88[var_s0].unk4 = (s32) ((data_0->unk88[var_s0].unk22 * 0x9D8) - 0x1D88);
+                data_0->unk88[var_s0].unk8 = 0x4B0;
+                data_0->unk88[var_s0].unkC = -0x2EE0;
+                data_0->unk88[var_s0].unk10 = 0;
+                data_0->unk88[var_s0].unk14 = 800.0f;
+                data_0->unk88[var_s0].unk18 = 0.0f;
+                data_0->unk88[var_s0].unk1C = 0.0f;
+                data_0->unk88[var_s0].unk20 = 1;
+                data_0->unk88[var_s0].unk24 = mathRnd(0, (s32) (s16) (s32) (2730.0f * data_1C0));
+                data_0->unk88[var_s0].unk26 = 0;
+                //var_s4 += 1;
+                var_s0 += 1;
+            }
+            for (var_t0 = 0; var_t0 < 2; var_t0++) {
+                var_a2 = data_0->unk8[data_0->unkB4];
+                var_v0_2 = data_0->unk80[data_0->unkB0];
+                var_s0 = 0;
+                //var_s4 = 0;
+                while (var_s0 < data_0->unkF4) {
+                    for (var_a0_2 = 0; var_a0_2 < 2; var_a0_2++) {
+                        var_a2->unk1 = sp54[var_a0_2][0];
+                        var_a2->unk2 = sp54[var_a0_2][3];
+                        var_a2->unk3 = sp54[var_a0_2][6];
+                        var_a2 += 1;
+                    }
+                    for (var_a0_2 = 0; var_a0_2 < 4; var_a0_2++) {
+                        var_v0_2[0].v.ob[0] = (s16) (data_108[var_a0_2][0] + data_0->unk88[var_s0].unk4);
+                        var_v0_2[0].v.ob[1] = (s16) data_0->unk88[var_s0].unk8;
+                        var_v0_2[0].v.ob[2] = (s16) (data_108[var_a0_2][1] + data_0->unk88[var_s0].unkC);
+                        var_v0_2[0].v.cn[0] = 0xFF;
+                        var_v0_2[0].v.cn[1] = 0xFF;
+                        var_v0_2[0].v.cn[2] = 0xFF;
+                        var_v0_2[0].v.cn[3] = 0xFF;
+                        var_v0_2[0].v.tc[0] = (s16) (sp4C[var_a0_2][0] << 5);
+                        var_v0_2[0].v.tc[1] = (s16) (sp4C[var_a0_2][1] << 5);
+                        var_v0_2++;
+                    }
+                    // var_v0_2[0].v.ob[0] = (s16) (data_0->unk88[var_s0].unk4 + data_108[0][0]);
+                    // var_v0_2[0].v.ob[1] = (s16) data_0->unk88[var_s0].unk8;
+                    // var_v0_2[0].v.ob[2] = (s16) (data_0->unk88[var_s0].unkC + data_108[0][1]);
+                    // var_v0_2[0].v.cn[0] = 0xFF;
+                    // var_v0_2[0].v.cn[1] = 0xFF;
+                    // var_v0_2[0].v.cn[2] = 0xFF;
+                    // var_v0_2[0].v.cn[3] = 0xFF;
+                    // var_v0_2[0].v.tc[0] = (s16) (sp4C[0][0] << 5);
+                    // var_v0_2[0].v.tc[1] = (s16) (sp4C[0][1] << 5);
+                    // var_v0_2[1].v.ob[0] = (s16) (data_0->unk88[var_s0].unk4 + data_108[1][0]);
+                    // var_v0_2[1].v.ob[1] = (s16) data_0->unk88[var_s0].unk8;
+                    // var_v0_2[1].v.ob[2] = (s16) (data_0->unk88[var_s0].unkC + data_108[1][1]);
+                    // var_v0_2[1].v.cn[0] = 0xFF;
+                    // var_v0_2[1].v.cn[1] = 0xFF;
+                    // var_v0_2[1].v.cn[2] = 0xFF;
+                    // var_v0_2[1].v.cn[3] = 0xFF;
+                    // var_v0_2[1].v.tc[0] = (s16) (sp4C[1][0] << 5);
+                    // var_v0_2[1].v.tc[1] = (s16) (sp4C[1][1] << 5);
+                    // var_v0_2[2].v.ob[0] = (s16) (data_0->unk88[var_s0].unk4 + data_108[2][0]);
+                    // var_v0_2[2].v.ob[1] = (s16) data_0->unk88[var_s0].unk8;
+                    // var_v0_2[2].v.ob[2] = (s16) (data_0->unk88[var_s0].unkC + data_108[2][1]);
+                    // var_v0_2[2].v.cn[0] = 0xFF;
+                    // var_v0_2[2].v.cn[1] = 0xFF;
+                    // var_v0_2[2].v.cn[2] = 0xFF;
+                    // var_v0_2[2].v.cn[3] = 0xFF;
+                    // var_v0_2[2].v.tc[0] = (s16) (sp4C[2][0] << 5);
+                    // var_v0_2[2].v.tc[1] = (s16) (sp4C[2][1] << 5);
+                    // var_v0_2[3].v.ob[0] = (s16) (data_0->unk88[var_s0].unk4 + data_108[3][0]);
+                    // var_v0_2[3].v.ob[1] = (s16) data_0->unk88[var_s0].unk8;
+                    // var_v0_2[3].v.ob[2] = (s16) (data_0->unk88[var_s0].unkC + data_108[3][1]);
+                    // var_v0_2[3].v.cn[0] = 0xFF;
+                    // var_v0_2[3].v.cn[1] = 0xFF;
+                    // var_v0_2[3].v.cn[2] = 0xFF;
+                    // var_v0_2[3].v.cn[3] = 0xFF;
+                    // var_v0_2[3].v.tc[0] = (s16) (sp4C[3][0] << 5);
+                    // var_v0_2[3].v.tc[1] = (s16) (sp4C[3][1] << 5);
+                   // var_v0_2 += 4;
+                   // var_s4 += 1;
+                    var_s0 += 1;
+                }
+                data_0->unkB0 = (1 - data_0->unkB0);
+                data_0->unkB4 = (1 - data_0->unkB4);
+            }
+        }
+    } else if ((arg2->unk58 & 0x20) && (data_0 != NULL)) {
+        if ((data_1BC != 0) && (arg2->unk59 & 1)) {
+            data_0->unk144 = 0;
+            data_0->unk145 = 1;
+            data_0->unkC0 = 0.0f;
+            temp_fv0 = ((f32) data_0->unkAC / 10.0f) * 60.0f;
+            data_0->unkD4 = -(data_0->unkC4 / temp_fv0) * 4.0f;
+            data_0->unkDC = -(data_0->unkCC / temp_fv0) * 4.0f;
+          //  temp_t9 = D_80092A84[1];
+            D_80092A84[0] = D_80092A84[1];
+            D_80092A84[1] = -1;
+            data_0->unkE0 = arg2->unk8 / 3.0f;
+            data_0->unkE4 = 0.0f;
+        } else if ((data_1B8 != 0) && (arg2->unk59 & 2)) {
+            data_0->unk141 = 0;
+            data_0->unk142 = 1;
+            temp_fv0 = ((f32) data_0->unkA4 / 10.0f) * 60.0f;
+            data_0->unkD8 = -(data_0->unkC8 / temp_fv0);
+        }
+    }
+}
+#endif
+
+/*0x1FC*/ static u32 data_1FC[] = {
+    0x00000000, 0x03e00000, 0x03e007e0, 0x000007e0
+};
+/*0x20C*/ static u32 data_20C[] = {
+    0x00000000, 0x03e00000, 0x03e003e0, 0x000003e0
+};
+/*0x21C*/ static u32 data_21C[] = {
+    0x00000000, 0x00000000, 0x447a0000, 0x00000000, 0x00000000
+};
 
 // offset: 0xDA4 | func: 1 | export: 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/12_minic/dll_12_Func_DA4.s")
@@ -313,21 +581,21 @@ void dll_12_Func_33C8(void) {
                 data_0->unk50[i] = 0;
             }
         }
-        if (data_0->unk8 != NULL) {
-            mmFree(data_0->unk8);
-            data_0->unk8 = NULL;
+        if (data_0->unk8[0] != NULL) {
+            mmFree(data_0->unk8[0]);
+            data_0->unk8[0] = NULL;
         }
-        if (data_0->unkC != NULL) {
-            mmFree(data_0->unkC);
-            data_0->unkC = NULL;
+        if (data_0->unk8[1] != NULL) {
+            mmFree(data_0->unk8[1]);
+            data_0->unk8[1] = NULL;
         }
-        if (data_0->unk80 != NULL) {
-            mmFree(data_0->unk80);
-            data_0->unk80 = NULL;
+        if (data_0->unk80[0] != NULL) {
+            mmFree(data_0->unk80[0]);
+            data_0->unk80[0] = NULL;
         }
-        if (data_0->unk84 != NULL) {
-            mmFree(data_0->unk84);
-            data_0->unk84 = NULL;
+        if (data_0->unk80[1] != NULL) {
+            mmFree(data_0->unk80[1]);
+            data_0->unk80[1] = NULL;
         }
         if (data_0->unk88 != NULL) {
             mmFree(data_0->unk88);
@@ -484,21 +752,21 @@ static void dll_12_func_3A1C(void) {
             data_0->unk0 = 0;
             data_0->unk4 = 0;
         }
-        if (data_0->unk8 != NULL) {
-            mmFree(data_0->unk8);
-            data_0->unk8 = NULL;
+        if (data_0->unk8[0] != NULL) {
+            mmFree(data_0->unk8[0]);
+            data_0->unk8[0] = NULL;
         }
-        if (data_0->unkC != NULL) {
-            mmFree(data_0->unkC);
-            data_0->unkC = NULL;
+        if (data_0->unk8[1] != NULL) {
+            mmFree(data_0->unk8[1]);
+            data_0->unk8[1] = NULL;
         }
-        if (data_0->unk80 != NULL) {
-            mmFree(data_0->unk80);
-            data_0->unk80 = NULL;
+        if (data_0->unk80[0] != NULL) {
+            mmFree(data_0->unk80[0]);
+            data_0->unk80[0] = NULL;
         }
-        if (data_0->unk84 != NULL) {
-            mmFree(data_0->unk84);
-            data_0->unk84 = NULL;
+        if (data_0->unk80[1] != NULL) {
+            mmFree(data_0->unk80[1]);
+            data_0->unk80[1] = NULL;
         }
         if (data_0->unk88 != NULL) {
             mmFree(data_0->unk88);
