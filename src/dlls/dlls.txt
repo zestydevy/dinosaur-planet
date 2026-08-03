@@ -6,6 +6,8 @@
 5 = engine/5_AMSEQ
 6 = engine/6_AMSFX
 7 = engine/7_newday
+8 = engine/8_newfog
+12 = engine/12_minic
 13 = engine/13_expgfx
 14 = engine/14_modgfx
 16 = engine/16
