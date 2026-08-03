@@ -16,7 +16,7 @@ typedef struct {
     /* Fog Colour (B component) */
     u8 unk1C[8];
 
-    u16 unk24; //actionID (indexed from 1)?
+    s16 unk24; //actionID (indexed from 1)?
     u16 unk26; //precipitation-related?
     u16 unk28; //precipitation rate
     u16 unk2A; //precipitation-related?
