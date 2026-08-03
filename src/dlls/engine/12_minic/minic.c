@@ -1,4 +1,5 @@
 #include "common.h"
+#include "sys/lighting.h"
 
 // size: 0x10
 typedef struct {
@@ -777,6 +778,29 @@ static void dll_12_func_3A1C(void) {
 }
 
 // offset: 0x3C38 | func: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/12_minic/dll_12_func_3C38.s")
+s32 dll_12_func_3C38(Vec3f* arg0, Vec3f* arg1, f32* arg2) {
+    f32 sp44;
+    f32 temp_ft4;
+    f32 var_fv1;
+    s32 sp38;
+    
+    sp38 = -1;
+    sp44 = (arg0->f[0] * arg1->f[0]) + (arg0->f[1] * arg1->f[1]) + (arg0->f[2] * arg1->f[2]);
+    if (sp44 >= 0.0f) {
+        sp38 = 1;
+    }
+    var_fv1 = ((arg0->f[0] * arg0->f[0]) + (arg0->f[1] * arg0->f[1])) + (arg0->f[2] * arg0->f[2]);
+    temp_ft4 = ((arg1->f[0] * arg1->f[0]) + (arg1->f[1] * arg1->f[1])) + ((arg1->f[2]) * arg1->f[2]);
+    var_fv1 *= temp_ft4;
+    if (var_fv1 != 0.0f) {
+        temp_ft4 = sqrtf(var_fv1);
+    }
+    if (temp_ft4 != 0.0f) {
+        *arg2 = sp44 / temp_ft4;
+    } else {
+        *arg2 = 0.0f;
+    }
+    return sp38;
+}
 
 /*0x0*/ static const char str_0[] = "minic error %d null\n";
