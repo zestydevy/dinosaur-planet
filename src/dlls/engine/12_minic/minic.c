@@ -789,8 +789,8 @@ s32 dll_12_func_3C38(Vec3f* arg0, Vec3f* arg1, f32* arg2) {
     if (sp44 >= 0.0f) {
         sp38 = 1;
     }
-    var_fv1 = ((arg0->f[0] * arg0->f[0]) + (arg0->f[1] * arg0->f[1])) + (arg0->f[2] * arg0->f[2]);
-    temp_ft4 = ((arg1->f[0] * arg1->f[0]) + (arg1->f[1] * arg1->f[1])) + ((arg1->f[2]) * arg1->f[2]);
+    var_fv1 = SQ(arg0->f[0]) + SQ(arg0->f[1]) + SQ(arg0->f[2]);
+    temp_ft4 = SQ(arg1->f[0]) + SQ(arg1->f[1]) + SQ(arg1->f[2]);
     var_fv1 *= temp_ft4;
     if (var_fv1 != 0.0f) {
         temp_ft4 = sqrtf(var_fv1);
