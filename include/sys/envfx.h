@@ -10,34 +10,11 @@ typedef struct {
     f32 unk8;
 
     /* Fog Colour (R component) */
-    u8 unkC;  //night phase 1
-    u8 unkD;  //night phase 2
-    u8 unkE;  //night phase 3
-    u8 unkF;  //night phase 4
-    u8 unk10; //day phase 1
-    u8 unk11; //day phase 2
-    u8 unk12; //day phase 3
-    u8 unk13; //day phase 4
-
+    u8 unkC[8];
     /* Fog Colour (G component) */
-    u8 unk14; //night phase 1
-    u8 unk15; //night phase 2
-    u8 unk16; //night phase 3
-    u8 unk17; //night phase 4
-    u8 unk18; //day phase 1
-    u8 unk19; //day phase 2
-    u8 unk1A; //day phase 3
-    u8 unk1B; //day phase 4
-
+    u8 unk14[8];
     /* Fog Colour (B component) */
-    u8 unk1C; //night phase 1
-    u8 unk1D; //night phase 2
-    u8 unk1E; //night phase 3
-    u8 unk1F; //night phase 4
-    u8 unk20; //day phase 1
-    u8 unk21; //day phase 2
-    u8 unk22; //day phase 3
-    u8 unk23; //day phase 4
+    u8 unk1C[8];
 
     u16 unk24; //actionID (indexed from 1)?
     u16 unk26; //precipitation-related?
@@ -45,16 +22,8 @@ typedef struct {
     u16 unk2A; //precipitation-related?
     u16 unk2C; //precipitation-related?
     //Fog min/max distances/opacities at 8 different phases of day?
-    u16 unk2E;
-    u16 unk30;
-    u16 unk32;
-    u16 unk34;
-    u8  _unk36[0x3E - 0x36];
-    u16 unk3E;
-    u16 unk40;
-    u16 unk42;
-    u16 unk44;
-    u8  _unk46[0x4E - 0x46];
+    u16 unk2E[8];
+    u16 unk3E[8];
     u16 unk4E;
     u16 unk50;
     u16 unk52;

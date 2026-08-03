@@ -1,14 +1,15 @@
 #ifndef _DLL_8_H
 #define _DLL_8_H
 
+#include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "sys/envfx.h"
 #include "dll_def.h"
 #include "types.h"
-#include "game/objects/object.h"
-#include "PR/gbi.h"
 
 DLL_INTERFACE(DLL_8_newfog) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(Object *, Object *, void *, s32, u16);
+/*0*/ void (*func0)(Object *, Object *, EnvFxAction *, s32, u16);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(void);
 /*3*/ void (*func3)(Gfx **);
