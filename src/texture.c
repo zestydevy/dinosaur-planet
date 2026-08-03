@@ -1363,7 +1363,7 @@ s32 texDPTextureSimple(Gfx** gdl, Texture* tex, s32 renderFlags, s32 frameOption
     return 0;
 }
 
-void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
+void texDPTextures(Gfx** gdl, Texture* tex0, Texture* tex1, s32 renderFlags, s32 frameOptions, u32 force, u32 setModes) {
     u16 new_var4;
     Gfx* temp_v0_2;
     s32 temp_a2;
