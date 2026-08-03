@@ -11,13 +11,13 @@ s32 envfxAction(Object *calledBy, Object *target, u16 actionIndex, s32 arg3) {
     envFx = mmAlloc(sizeof(EnvFxAction), COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
     assetRomLoadSection ((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
     if (envFx != NULL) {
-        if ((envFx->unk5C < 3) || (envFx->unk5C == 4)) {
+        if ((envFx->type < 3) || (envFx->type == 4)) {
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);
-        } else if (envFx->unk5C == 3) {
+        } else if (envFx->type == 3) {
             gDLL_8_newfog->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
-        } else if (envFx->unk5C == 5)	{
+        } else if (envFx->type == 5)	{
             gDLL_7_Newday->vtbl->func0(calledBy, target, envFx, arg3);
-		} else if (envFx->unk5C == 6)	{
+		} else if (envFx->type == 6)	{
             gDLL_12_Minic->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
         }
     }
@@ -32,14 +32,14 @@ s32 envfxRestoreAction(Object *calledBy, Object *target, u16 actionIndex, s32 ar
     envFx = mmAlloc(sizeof(EnvFxAction), COLOUR_TAG_WHITE, ALLOC_NAME("envfx:action1"));
     assetRomLoadSection((void **)envFx, ENVFXACT_BIN, actionIndex * sizeof(EnvFxAction), sizeof(EnvFxAction));
     if (envFx != NULL) {
-        if ((envFx->unk5C < 3) || (envFx->unk5C == 4)) {
+        if ((envFx->type < 3) || (envFx->type == 4)) {
             gDLL_9_Newclouds->vtbl->func0(calledBy, target, envFx, arg3);
-        } else if (envFx->unk5C == 3)	{
+        } else if (envFx->type == 3)	{
             envFx->unk2A = 0;
             gDLL_8_newfog->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
-        } else if (envFx->unk5C == 5)	{
+        } else if (envFx->type == 5)	{
             gDLL_7_Newday->vtbl->func0(calledBy, target, envFx, arg3);
-        } else if (envFx->unk5C == 6)	{
+        } else if (envFx->type == 6)	{
             gDLL_12_Minic->vtbl->func0(calledBy, target, envFx, arg3, actionIndex);
         }
     }
