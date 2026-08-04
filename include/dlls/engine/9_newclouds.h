@@ -1,14 +1,15 @@
 #ifndef _DLL_9_H
 #define _DLL_9_H
 
+#include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "sys/envfx.h"
 #include "dll_def.h"
 #include "types.h"
-#include "game/objects/object.h"
-#include "PR/gbi.h"
 
 DLL_INTERFACE(DLL_9_newclouds) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(Object *, Object *, void *, s32);
+/*0*/ void (*func0)(Object *, Object *, EnvFxAction *, s32);
 /*1*/ void (*func1)(void);
 /*2*/ void (*func2)(s32, s32);
 /*3*/ void (*func3)(void);
@@ -16,7 +17,6 @@ DLL_INTERFACE(DLL_9_newclouds) {
 /*5*/ UnknownDLLFunc func5;
 /*6*/ void (*func6)(Gfx **, u8, s32);
 /*7*/ UnknownDLLFunc func7;
-/*8*/ UnknownDLLFunc func8;
 };
 
 #endif // _DLL_9_H
