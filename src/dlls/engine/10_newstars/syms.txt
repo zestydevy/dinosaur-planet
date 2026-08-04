@@ -1,9 +1,9 @@
 .text = 0x0:
 newstars_ctor = 0x0;
 newstars_dtor = 0xC;
-newstars_Func_18 = 0x18;
-newstars_Func_A1C = 0xA1C;
-newstars_Func_1118 = 0x1118;
+newstars_Init = 0x18;
+newstars_Print = 0xA1C;
+newstars_Free = 0x1118;
 newstars_func_119C = 0x119C;
 
 .rodata = 0x1340:

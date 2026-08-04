@@ -52,7 +52,7 @@ void newstars_ctor(void* dll) { }
 void newstars_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void newstars_Func_18(void) {
+void newstars_Init(void) {
     u8* mem;
     s32 var_s1;
     s32 var_s4;
@@ -326,7 +326,7 @@ void newstars_Func_18(void) {
 /*0x12C*/ static s32 sStarTextureProgress = 0;
 
 // offset: 0xA1C | func: 1 | export: 1
-void newstars_Func_A1C(Gfx** gdl) {
+void newstars_Print(Gfx** gdl) {
     Mtx* temp_s4;
     Camera* camera;
     s32 dlNeedsTex;
@@ -451,7 +451,7 @@ void newstars_Func_A1C(Gfx** gdl) {
 }
 
 // offset: 0x1118 | func: 2 | export: 2
-void newstars_Func_1118(void) {
+void newstars_Free(void) {
     // @bug: missing null check!
     if (sState->membase != NULL) {
         mmFree(sState->membase);

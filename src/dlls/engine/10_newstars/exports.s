@@ -8,6 +8,6 @@ _exports:
 .dword newstars_dtor
 
 # export table
-/*0*/ .dword newstars_Func_18
-/*1*/ .dword newstars_Func_A1C
-/*2*/ .dword newstars_Func_1118
+/*0*/ .dword newstars_Init
+/*1*/ .dword newstars_Print
+/*2*/ .dword newstars_Free
