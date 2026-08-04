@@ -1,0 +1,22 @@
+.text = 0x0:
+newstars_ctor = 0x0;
+newstars_dtor = 0xC;
+newstars_Init = 0x18;
+newstars_Print = 0xA1C;
+newstars_Free = 0x1118;
+newstars_func_119C = 0x119C;
+
+.rodata = 0x1340:
+str_0 = 0x0; // absolute:0x1340
+
+.data = 0x13B0:
+sNumStars = 0x0; // absolute:0x13B0
+data_4 = 0x4; // absolute:0x13B4
+sStarTexture = 0x8; // absolute:0x13B8
+data_C = 0xC; // absolute:0x13BC
+sNeedsInit = 0x128; // absolute:0x14D8
+sStarTextureProgress = 0x12C; // absolute:0x14DC
+
+.bss = 0x14E0:
+sState = 0x0; // absolute:0x14E0
+sClusters = 0x8; // absolute:0x14E8

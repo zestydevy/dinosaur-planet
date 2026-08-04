@@ -7,10 +7,9 @@
 
 DLL_INTERFACE(DLL_10_newstars) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(void);
-/*1*/ void (*func1)(Gfx **);
-/*2*/ UnknownDLLFunc func2;
-/*3*/ UnknownDLLFunc func3;
+/*0*/ void (*Init)(void);
+/*1*/ void (*Print)(Gfx** gdl);
+/*2*/ void (*Free)(void);
 };
 
 #endif // _DLL_10_H

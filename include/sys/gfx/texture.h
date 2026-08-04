@@ -256,7 +256,7 @@ s32 texDPTextureSimple(Gfx **gdl, Texture *tex, s32 renderFlags, s32 frameOption
  * @param force - Add texture DL to main DL even if the last texture(s) set on the main DL are the same
  * @param setModes - If true, update geometry, combine, and other modes
  */
-void texDPTextures(Gfx **gdl, Texture *tex0, Texture *tex1, u32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
+void texDPTextures(Gfx **gdl, Texture *tex0, Texture *tex1, s32 renderFlags, s32 frameOptions, u32 force, u32 setModes);
 void texAnimateTexture(Texture *tex, s32 *renderFlags, s32 *progress);
 void* texGetFrameImg(Texture *tex, s32 arg1);
 Texture *texGetCached(s32 id);

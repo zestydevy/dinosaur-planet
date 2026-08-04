@@ -690,7 +690,7 @@ void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** v
         gDLL_7_Newday->vtbl->func13(&gMainDL, &gWorldRSPMatrices);
 
         if (gTrackFlags & TRACKFLAG_SKY_OBJECTS) {
-            gDLL_10_Newstars->vtbl->func1(&gMainDL);
+            gDLL_10_Newstars->vtbl->Print(&gMainDL);
         }
         gDLL_7_Newday->vtbl->func3(&gMainDL, &gWorldRSPMatrices, gTrackFlags & TRACKFLAG_SKY_OBJECTS);
     } else {
@@ -2818,7 +2818,7 @@ void map_func_8004773C(void) {
     gDLL_8_newfog->vtbl->func1();
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
-    gDLL_10_Newstars->vtbl->func0();
+    gDLL_10_Newstars->vtbl->Init();
     footstepsInit();
     gTrackFlags &= (TRACKFLAG_DISABLE_Z_BUFFER | TRACKFLAG_SKY);
     gTrackFlags |= (TRACKFLAG_BLOCK_LIGHTING | TRACKFLAG_UNK100 | TRACKFLAG_SHADOWS | TRACKFLAG_SKY_OBJECTS | TRACKFLAG_ANTI_ALIAS);
@@ -5391,7 +5391,7 @@ void mapWarpPlayer(s32 warpID, s8 fadeToBlack) {
     gDLL_8_newfog->vtbl->func1();
     gDLL_7_Newday->vtbl->func1();
     gDLL_9_Newclouds->vtbl->func1();
-    gDLL_10_Newstars->vtbl->func0();
+    gDLL_10_Newstars->vtbl->Init();
 }
 
 /** 
