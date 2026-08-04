@@ -171,32 +171,26 @@ typedef struct {
 /*0x30*/ static NewDayStruct* bss_30[2];
 /*0x38*/ static u8 _bss_38[0x24];
 
-s32 dll_7_func_DF4(f32* outTime);
-static void dll_7_func_21CC(void);
-void dll_7_func_2464(EnvFxAction*, f32, f32, f32);
-static void dll_7_func_30FC(void);
-static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs);
-static void dll_7_func_4484(void);
-static void dll_7_func_5124(f32 x, f32 y, f32 z);
-static s32 dll_7_func_56F8(Gfx** gdl);
-static void dll_7_func_57C0(void);
-static void dll_7_func_5818(void);
+s32 newday_func_DF4(f32* outTime);
+static void newday_func_21CC(void);
+static void newday_func_2464(EnvFxAction*, f32, f32, f32);
+static void newday_func_30FC(void);
+static void newday_func_3294(Gfx** gdl, Mtx** mtxs);
+static void newday_func_4484(void);
+static void newday_func_5124(f32 x, f32 y, f32 z);
+static s32 newday_func_56F8(Gfx** gdl);
+static void newday_func_57C0(void);
+static void newday_func_5818(void);
 
 // offset: 0x0 | ctor
-void dll_7_ctor(void *self) { }
+void newday_ctor(void *self) { }
 
 // offset: 0xC | dtor
-void dll_7_dtor(void *self) { }
+void newday_dtor(void *self) { }
 
 // offset: 0x18 | func: 0 | export: 0
 // official name: doDayAction
-#ifndef NON_MATCHING
-void dll_7_func_18(Object *arg0, Object *arg1, EnvFxAction *arg2, s32 arg3);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_18.s")
-#else
-// needs dll_7_func_2464 to be static
-
-void dll_7_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
+void newday_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
     PlayerEnvActions* temp_v0;
     s32 i;
 
@@ -207,10 +201,10 @@ void dll_7_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
             if (!(arg2->unk58 & 0x20) && (arg2->unk58 & 2)) {
                 arg2->unk58 |= 0x40;
                 if (arg0 != NULL) {
-                    dll_7_func_2464(arg2, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z);
+                    newday_func_2464(arg2, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z);
                     return;
                 }
-                dll_7_func_2464(arg2, 0.0f, 0.0f, 0.0f);
+                newday_func_2464(arg2, 0.0f, 0.0f, 0.0f);
             }
         } else if (bss_30[arg2->unk26] != NULL) {
             if (arg2->unk58 & 2) {
@@ -303,17 +297,16 @@ void dll_7_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
         }
     }
 }
-#endif
 
 // offset: 0x910 | func: 1 | export: 1
-void dll_7_func_910(void) {
+void newday_func_910(void) {
     if (bss_30[0] != NULL) {
-        dll_7_func_30FC();
+        newday_func_30FC();
     }
     envfxAction(NULL, NULL, 4, 0);
     lightSetInside(0);
     data_30 = -1;
-    dll_7_func_4484();
+    newday_func_4484();
     data_18.x = 0.0f;
     data_18.y = 1.0f;
     data_18.z = 0.0f;
@@ -321,12 +314,12 @@ void dll_7_func_910(void) {
     data_24.y = 1.0f;
     data_24.z = 0.0f;
     light_func_8001CDE4(0xFF, 0xFF, 0xFF, 1, 0);
-    dll_7_func_57C0();
+    newday_func_57C0();
 }
 
 // offset: 0xA10 | func: 2 | export: 2
-void dll_7_func_A10(s32 arg0, s32 arg1) {
-    /*0x1BC*/ static s32 data_1BC = 0x00000000;
+void newday_func_A10(s32 arg0, s32 arg1) {
+    /*0x1BC*/ static s32 data_1BC = 0;
     f32 sp34;
     s32 _pad;
     f32 sp2C;
@@ -347,7 +340,7 @@ void dll_7_func_A10(s32 arg0, s32 arg1) {
             sp34 += 86400.0f;
             bss_30[0]->timeSeconds += 86400.0f;
         }
-        if (dll_7_func_DF4(&sp2C) != 0) {
+        if (newday_func_DF4(&sp2C) != 0) {
             if (data_1BC == 0) {
                 data_1BC = 1;
             }
@@ -360,7 +353,7 @@ void dll_7_func_A10(s32 arg0, s32 arg1) {
         }
         if (0) { } // @fake
         if (bss_30[0]->unk112 & 0x40) {
-            dll_7_func_21CC();
+            newday_func_21CC();
         }
         if (bss_30[0] != NULL) {
             data_5C = sp34;
@@ -375,26 +368,26 @@ void dll_7_func_A10(s32 arg0, s32 arg1) {
         }
     }
     data_58 = 0;
-    dll_7_func_5818();
+    newday_func_5818();
 }
 
 // offset: 0xC58 | func: 3 | export: 3
-void dll_7_func_C58(Gfx** gdl, Mtx** mtxs, u8 arg2) {
+void newday_func_C58(Gfx** gdl, Mtx** mtxs, u8 arg2) {
     if ((lightGetInside() == 0) && (arg2 != 0)) {
-        dll_7_func_3294(gdl, mtxs);
+        newday_func_3294(gdl, mtxs);
     }
-    dll_7_func_4484();
+    newday_func_4484();
 }
 
 // offset: 0xCDC | func: 4 | export: 4
-void dll_7_func_CDC(f32* timeSeconds) {
+void newday_func_CDC(f32* timeSeconds) {
     if (bss_30[0] != NULL) {
         *timeSeconds = bss_30[0]->timeSeconds;
     }
 }
 
 // offset: 0xD08 | func: 5 | export: 5
-void dll_7_func_D08(f32* arg0) {
+void newday_func_D08(f32* arg0) {
     if (bss_30[0] != NULL) {
         *arg0 = (f32) bss_30[0]->unkDC;
     } else {
@@ -403,7 +396,7 @@ void dll_7_func_D08(f32* arg0) {
 }
 
 // offset: 0xD50 | func: 6 | export: 6
-void dll_7_func_D50(f32 arg0) {
+void newday_func_D50(f32 arg0) {
     if (bss_30[0] != NULL) {
         bss_30[0]->unkDC = (s32) arg0;
         bss_30[0]->unkC4 = (f32) bss_30[0]->unkDC / 60.0f;
@@ -411,7 +404,7 @@ void dll_7_func_D50(f32 arg0) {
 }
 
 // offset: 0xDAC | func: 7 | export: 7
-void dll_7_func_DAC(s32 *param1) {
+void newday_func_DAC(s32 *param1) {
     if (bss_30[0] != NULL) {
         *param1 = (f32)bss_30[0]->unkE4;
     } else {
@@ -424,7 +417,7 @@ void dll_7_func_DAC(s32 *param1) {
  * Checks if nighttime
  * Also sets the argument float to the seconds until nighttime/daytime
  */
-s32 dll_7_func_DF4(f32* outTime) {
+s32 newday_func_DF4(f32* outTime) {
     if (bss_30[0] == NULL) {
         *outTime = 0.0f;
         return FALSE;
@@ -450,7 +443,7 @@ s32 dll_7_func_DF4(f32* outTime) {
  * offset: 0xEA0 | func: 9 | export: 9
  * Sets the current time (in seconds), wrapping the value into a 24h range
  */
-void dll_7_func_EA0(f32 time) {
+void newday_func_EA0(f32 time) {
     f32 tWrap;
 
     tWrap = time;
@@ -469,12 +462,12 @@ void dll_7_func_EA0(f32 time) {
 }
 
 // offset: 0xF24 | func: 10 | export: 10
-s32 dll_7_func_F24(void) {
+s32 newday_func_F24(void) {
     return data_60;
 }
 
 // offset: 0xF40 | func: 11 | export: 11
-void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 *seconds) {
+void newday_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 *seconds) {
     s32 ticks = (s32)ticksF;
     
     *hours = ticks / TICKS_IN_HOUR;
@@ -487,7 +480,7 @@ void dll_7_convert_ticks_to_real_time(f32 ticksF, s16 *hours, s16 *minutes, s16 
 }
 
 // offset: 0xFFC | func: 12 | export: 12
-s32 dll_7_func_FFC(void) {
+s32 newday_func_FFC(void) {
     if (bss_30[0] != NULL) {
         return bss_30[0]->unkE8;
     } else {
@@ -496,7 +489,7 @@ s32 dll_7_func_FFC(void) {
 }
 
 // offset: 0x102C | func: 13 | export: 13
-void dll_7_func_102C(Gfx** gdl, Mtx** arg1) {
+void newday_func_102C(Gfx** gdl, Mtx** arg1) {
     /*0x1C0*/ static s16 data_1C0 = 0;
     /*0x1C4*/ static s16 data_1C4 = 0;
     f32 sp64;
@@ -698,7 +691,7 @@ void dll_7_func_102C(Gfx** gdl, Mtx** arg1) {
         G_TX_NOMASK, G_TX_NOMASK, 
         G_TX_NOLOD, G_TX_NOLOD);
     if (data_C0 != NULL) {
-        if (dll_7_func_56F8(gdl) == 0) {
+        if (newday_func_56F8(gdl) == 0) {
             gDLL_8_newfog->vtbl->func5(gdl);
         }
     } else {
@@ -741,7 +734,7 @@ void dll_7_func_102C(Gfx** gdl, Mtx** arg1) {
 }
 
 // offset: 0x20D4 | func: 14 | export: 14
-void dll_7_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
+void newday_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
     if (bss_30[0] != NULL) {
         *arg0 =  data_34;
         *arg1 =  data_38;
@@ -754,7 +747,7 @@ void dll_7_func_20D4(u8* arg0, u8* arg1, u8* arg2) {
 }
 
 // offset: 0x2130 | func: 15 | export: 15
-void dll_7_func_2130(u8* arg0, u8* arg1, u8* arg2, u8* arg3, u8* arg4, u8* arg5) {
+void newday_func_2130(u8* arg0, u8* arg1, u8* arg2, u8* arg3, u8* arg4, u8* arg5) {
     if (bss_30[0] != NULL) {
         *arg0 = data_40;
         *arg1 = data_44;
@@ -775,7 +768,7 @@ void dll_7_func_2130(u8* arg0, u8* arg1, u8* arg2, u8* arg3, u8* arg4, u8* arg5)
 /*0x1C8*/ static f32 data_1C8 = 0.0;
 
 // offset: 0x21CC | func: 16
-static void dll_7_func_21CC(void) {
+static void newday_func_21CC(void) {
     f32 temp_fv1;
     f32 var_fv0;
     s32 i;
@@ -813,29 +806,12 @@ static void dll_7_func_21CC(void) {
         }
         data_60 = (u32) data_10;
         if (bss_30[0]->unkD8 != 0) {
-            dll_7_func_30FC();
+            newday_func_30FC();
         }
     }
 }
 
 // offset: 0x2464 | func: 17
-#ifndef NON_MATCHING
-/*0x1CC*/ static u32 data_1CC[] = {
-    0x00000003, 0x00020000, 0x001f0000, 0x0000000f, 0x000f0003, 0x00040002, 0x00000000, 0x001f0000, 
-    0x000f000f, 0x00040001, 0x0002001f, 0x0000001f, 0x001f000f, 0x000f0001, 0x00000002, 0x001f001f, 
-    0x0000001f, 0x000f000f
-};
-/*0x214*/ static u32 data_214[] = {
-    0xffec0014, 0x00000000, 0x03e00014, 0x00140000, 0x03e003e0, 0x00000000, 0x000001e0, 0x01e0ffec, 
-    0xffec0000, 0x00000000, 0x0014ffec, 0x000003e0, 0x00000000
-};
-/*0x248*/ static u32 data_248[] = {
-    0xffec0014, 0x00000000, 0x07e00014, 0x00140000, 0x07e007e0, 0x00000000, 0x000003e0, 0x03e0ffec, 
-    0xffec0000, 0x00000000, 0x0014ffec, 0x000007e0, 0x00000000
-};
-void dll_7_func_2464(EnvFxAction*, f32, f32, f32);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/7_newday/dll_7_func_2464.s")
-#else
 struct thing {
     s16 ob[3];
     s16 tc[2];
@@ -844,8 +820,7 @@ struct thing2 {
     s16 v[3];
     s16 _unk6[6];
 };
-// https://decomp.me/scratch/iA54d
-void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
+static void newday_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
     s32 var_v1;
     s32 i;
     s32 j;
@@ -963,15 +938,14 @@ void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
         }
         bss_30[0]->unk114 = 0;
         var_v1 = 0;
-        for (i = 0; i < 4; i++) {
-            for (j = 0; j < 4; j++) {
-                bss_30[0]->unk0[var_v1].v0 = sp94[j].v[0];
-                bss_30[0]->unk0[var_v1].v1 = sp94[j].v[1];
-                bss_30[0]->unk0[var_v1].v2 = sp94[j].v[2];
+        i = 0;
+        for (j = 0; j < 4; j++) {
+            for (i = 0; i < 4; i++) {
+                bss_30[0]->unk0[var_v1].v0 = sp94[i].v[0];
+                bss_30[0]->unk0[var_v1].v1 = sp94[i].v[1];
+                bss_30[0]->unk0[var_v1].v2 = sp94[i].v[2];
                 var_v1++;
-                //arg0++; arg0--; // @fake
             }
-            //if (sp2C[i].ob && sp2C[i].ob){}
         }
         bss_30[0]->unk44[0][0] = (f32) arg0->r[0];
         bss_30[0]->unk44[0][1] = (f32) arg0->r[0];
@@ -1014,10 +988,9 @@ void dll_7_func_2464(EnvFxAction* arg0, f32 arg1, f32 arg2, f32 arg3) {
         data_30 = -1;
     }
 }
-#endif
 
 // offset: 0x30FC | func: 18
-static void dll_7_func_30FC(void) {
+static void newday_func_30FC(void) {
     if ((bss_30[0] != NULL) && (bss_30[0] != NULL)) {
         if (bss_30[0]->unk8 != NULL) {
             texFreeTexture(bss_30[0]->unk8);
@@ -1049,7 +1022,7 @@ static void dll_7_func_30FC(void) {
 }
 
 // offset: 0x3294 | func: 19
-static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
+static void newday_func_3294(Gfx** gdl, Mtx** mtxs) {
     DLTri* spEC;
     Vtx* spE8;
     SRT spD0;
@@ -1143,7 +1116,7 @@ static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
     spD0.yaw = 0x10000 - camera->srt.yaw;
     spD0.pitch = camera->srt.pitch;
     if (trackGetSunGlareOn() != 0) {
-        dll_7_func_5124(spD0.transl.x, spD0.transl.y, spD0.transl.z);
+        newday_func_5124(spD0.transl.x, spD0.transl.y, spD0.transl.z);
     } else if (data_C0 != NULL) {
         objFreeObject(data_C0);
         data_C0 = NULL;
@@ -1294,7 +1267,7 @@ static void dll_7_func_3294(Gfx** gdl, Mtx** mtxs) {
 }
 
 // offset: 0x4484 | func: 20
-static void dll_7_func_4484(void) {
+static void newday_func_4484(void) {
     f32 sp8C;
     f32 sp88;
     f32 var_fa0;
@@ -1464,7 +1437,7 @@ static void dll_7_func_4484(void) {
 }
 
 // offset: 0x5124 | func: 21
-static void dll_7_func_5124(f32 x, f32 y, f32 z) {
+static void newday_func_5124(f32 x, f32 y, f32 z) {
     SRT partSrt;
     SRT sp98;
     s32 sx;
@@ -1597,7 +1570,7 @@ static void dll_7_func_5124(f32 x, f32 y, f32 z) {
 /*0x2A0*/ static u32 data_2A0 = 0x00000000;
 
 // offset: 0x56F8 | func: 22
-static s32 dll_7_func_56F8(Gfx** gdl) {
+static s32 newday_func_56F8(Gfx** gdl) {
     /*0x2A4*/ static u8 data_2A4 = 0;
     f32 transp;
 
@@ -1614,13 +1587,13 @@ static s32 dll_7_func_56F8(Gfx** gdl) {
 }
 
 // offset: 0x57C0 | func: 23
-static void dll_7_func_57C0(void) {
+static void newday_func_57C0(void) {
     bzero(&bss_0, sizeof(bss_0));
     bss_0.unk26 = mainGetBits(BIT_SC_UNKNOWN_2BA);
 }
 
 // offset: 0x5818 | func: 24
-static void dll_7_func_5818(void) {
+static void newday_func_5818(void) {
     u8 isNight;
     f32 time;
     Object* player;
@@ -1712,19 +1685,19 @@ static void dll_7_func_5818(void) {
 }
 
 // offset: 0x5D20 | func: 25 | export: 16
-void dll_7_func_5D20(u8 arg0) {
+void newday_func_5D20(u8 arg0) {
     bss_0.unk27 &= ~0xF;
     bss_0.unk27 |= (arg0 & 0xF);
     bss_0.unk27 |= 0x10;
 }
 
 // offset: 0x5D6C | func: 26 | export: 17
-s32 dll_7_func_5D6C(void) {
+s32 newday_func_5D6C(void) {
     return bss_0.unk27 & 0xF;
 }
 
 // offset: 0x5D90 | func: 27 | export: 18
-void dll_7_func_5D90(u16* arg0, u16* arg1, u16* arg2, u16* arg3) {
+void newday_func_5D90(u16* arg0, u16* arg1, u16* arg2, u16* arg3) {
     bss_0.unkC = arg0;
     bss_0.unk0 = arg1;
     bss_0.unk8 = arg2;
@@ -1732,7 +1705,7 @@ void dll_7_func_5D90(u16* arg0, u16* arg1, u16* arg2, u16* arg3) {
 }
 
 // offset: 0x5DBC | func: 28 | export: 19
-void dll_7_func_5DBC(u16* arg0, u16* arg1, u16 arg2, u16 arg3) {
+void newday_func_5DBC(u16* arg0, u16* arg1, u16 arg2, u16 arg3) {
     bss_0.unk10 = arg0;
     bss_0.unk14 = arg1;
     bss_0.unk18 = arg2;
@@ -1740,7 +1713,7 @@ void dll_7_func_5DBC(u16* arg0, u16* arg1, u16 arg2, u16 arg3) {
 }
 
 // offset: 0x5E00 | func: 29 | export: 20
-void dll_7_func_5E00(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
+void newday_func_5E00(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
     bss_0.unk1C = arg0;
     bss_0.unk1E = arg1;
     bss_0.unk20 = arg2;
@@ -1748,7 +1721,7 @@ void dll_7_func_5E00(u16 arg0, u16 arg1, u16 arg2, u16 arg3) {
 }
 
 // offset: 0x5E5C | func: 30 | export: 21
-void dll_7_func_5E5C(u8 arg0) {
+void newday_func_5E5C(u8 arg0) {
     if (arg0 >= 28) {
         arg0 = 0;
     }
@@ -1757,12 +1730,12 @@ void dll_7_func_5E5C(u8 arg0) {
 }
 
 // offset: 0x5EB4 | func: 31 | export: 22
-u8 dll_7_func_5EB4(void) {
+u8 newday_func_5EB4(void) {
     return bss_0.unk26;
 }
 
 // offset: 0x5ED0 | func: 32 | export: 23
-s32 dll_7_func_5ED0(Gfx** gdl) {
+s32 newday_func_5ED0(Gfx** gdl) {
     /*0x2A8*/ static u8 data_2A8 = 0;
 
     s16 tmp;
