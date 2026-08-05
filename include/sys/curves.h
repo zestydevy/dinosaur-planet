@@ -62,8 +62,8 @@ typedef struct {
         u8 unk34;
     } type1D;
     struct {
-        u8 _unk30[0x34 - 0x30];
-        s16 unk34[4];
+        /*30*/ u8 _unk30[0x34 - 0x30];
+        /*34*/ s16 linkDist[4];
     } type1E; // EWTrobotpatrolB
     struct {
         /*30*/ s16 unk30; // gameBit

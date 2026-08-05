@@ -7,37 +7,43 @@
 #include "sys/objprint.h"
 #include "sys/rand.h"
 #include "dll.h"
+#include "macros.h"
+
+/** @file EWTrobotpatrolB(ase) ? */
+
+#define MAX_ROBOS 12
+#define MAX_NODES 24
 
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ u8 unk18[0x1A - 0x18];
-/*1A*/ u8 unk1A;
-/*1B*/ u8 unk1B;
+/*1A*/ u8 roboFadeDistance;
+/*1B*/ u8 maxSearchTime; // maximum search time (after aggro) divided by 64
 } EWTrobotpatrolB_Setup;
 
 typedef struct {
-/*00*/ Object* unk0[12];
-/*30*/ CurveSetup* unk30[24];
-/*90*/ u8 unk90;
-/*91*/ u8 unk91;
-/*92*/ u8 unk92;
-/*94*/ s16 unk94;
-/*96*/ s16 unk96;
-/*98*/ f32 unk98;
+/*00*/ Object* robos[MAX_ROBOS];
+/*30*/ CurveSetup* nodes[MAX_NODES];
+/*90*/ u8 numNodes;
+/*91*/ u8 engagingPlayer;
+/*92*/ u8 searchingForPlayer;
+/*94*/ s16 aggroCounter;
+/*96*/ s16 lastAggroCounter;
+/*98*/ f32 searchTimeElapsed;
 } EWTrobotpatrolB_Data;
 
-/*0x0*/ static CurveSetup* bss_0[24];
-/*0x60*/ static CurveSetup* bss_60;
-/*0x64*/ static Object* bss_64;
+/*0x0*/ static CurveSetup* sPathfindVisited[MAX_NODES];
+/*0x60*/ static CurveSetup* sPathfindGoal;
+/*0x64*/ static Object* sPathfindSelf;
 
-static void EWTrobotpatrolB_func_30C(Object* base, Object* robot, s32 arg2, u32 uID);
-static void EWTrobotpatrolB_func_3A4(Object* self, Object* robo, u32 uID);
-static void EWTrobotpatrolB_func_470(Object* self, Object* arg1, u32 uID);
-static CurveSetup* EWTrobotpatrolB_func_D7C(Object* self, u32 uID);
-static s16 EWTrobotpatrolB_func_60C(s32, CurveSetup*, s32, s32);
-static void EWTrobotpatrolB_func_A60(CurveSetup** arg0, u8* arg1, s32 arg2, s32 arg3, u8 arg4);
-static void EWTrobotpatrolB_func_BA0(CurveSetup**, CurveSetup**, Object*);
-static f32 EWTrobotpatrolB_func_D10(CurveSetup* node, Object* obj);
+static void EWTrobotpatrolB_roboCallback(Object* self, Object* robot, s32 aggro, u32 currUID);
+static void EWTrobotpatrolB_pathRoboRandom(Object* self, Object* robo, u32 currUID);
+static void EWTrobotpatrolB_pathRoboToPlayer(Object* self, Object* robo, u32 currUID);
+static CurveSetup* EWTrobotpatrolB_getPathNode(Object* self, u32 uID);
+static s16 EWTrobotpatrolB_calcLinkPathDistance(s32 searchIdx, CurveSetup* currNode, s32 linkUID, s32 iteration);
+static void EWTrobotpatrolB_initCurveNetworkSearchLink(CurveSetup** nodes, u8* count, s32 srcUID, s32 linkUID, u8 count2);
+static void EWTrobotpatrolB_findNodesClosestToPlayer(CurveSetup** closest, CurveSetup** nodes, Object* player);
+static f32 EWTrobotpatrolB_objDist2Node(CurveSetup* node, Object* obj);
 
 // offset: 0x0 | ctor
 void EWTrobotpatrolB_ctor(void* dll) { }
@@ -58,20 +64,22 @@ void EWTrobotpatrolB_obj_Update(Object* self) {
 
     objdata = self->data;
     setup = (EWTrobotpatrolB_Setup*)self->setup;
-    if (objdata->unk94 == objdata->unk96) {
-        objdata->unk91 = 0;
+    // If any robo has aggro, engage the player
+    if (objdata->aggroCounter == objdata->lastAggroCounter) {
+        objdata->engagingPlayer = FALSE;
     } else {
-        objdata->unk91 = 1;
-        objdata->unk96 = objdata->unk94;
+        objdata->engagingPlayer = TRUE;
+        objdata->lastAggroCounter = objdata->aggroCounter;
     }
-    if ((objdata->unk91 == 0) && (objdata->unk92 != 0)) {
-        objdata->unk98 += gUpdateRateF;
-        if ((f32) (setup->unk1B << 6) < objdata->unk98) {
-            objdata->unk92 = 0U;
-            objdata->unk98 = 0.0f;
+    // After aggro, enter a search phase for some time
+    if (!objdata->engagingPlayer && objdata->searchingForPlayer) {
+        objdata->searchTimeElapsed += gUpdateRateF;
+        if ((f32) (setup->maxSearchTime << 6) < objdata->searchTimeElapsed) {
+            objdata->searchingForPlayer = FALSE;
+            objdata->searchTimeElapsed = 0.0f;
         }
     } else {
-        objdata->unk92 = objdata->unk91;
+        objdata->searchingForPlayer = objdata->engagingPlayer;
     }
 }
 
@@ -89,9 +97,9 @@ void EWTrobotpatrolB_obj_Free(Object* self, s32 onlySelf) {
 
     objdata = self->data;
     if (onlySelf == 0) {
-        for (i = 0; i < 12; i++) {
-            if (objdata->unk0[i] != NULL) {
-                objFreeObject(objdata->unk0[i]);
+        for (i = 0; i < MAX_ROBOS; i++) {
+            if (objdata->robos[i] != NULL) {
+                objFreeObject(objdata->robos[i]);
             }
         }
     }
@@ -108,54 +116,55 @@ u32 EWTrobotpatrolB_obj_GetDataSize(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x1D0 | func: 7
-void EWTrobotpatrolB_func_1D0(Object* arg0, CurveSetup* arg1) {
+void EWTrobotpatrolB_spawnRobo(Object* self, CurveSetup* startNode) {
     EWTrobotpatrolB_Data* objdata;
     EWTrobotpatrolB_Setup* setup;
     ObjSetup* roboSetup;
     Object* robo;
     s32 i;
 
-    objdata = arg0->data;
-    setup = (EWTrobotpatrolB_Setup*)arg0->setup;
+    objdata = self->data;
+    setup = (EWTrobotpatrolB_Setup*)self->setup;
     i = 0;
-    while (objdata->unk0[i] != NULL) {
+    while (objdata->robos[i] != NULL) {
         i++;
     }
     roboSetup = objAllocSetup(sizeof(EWTrobotpatrol_Setup), OBJ_EWTrobotpatrol);
     roboSetup->actExclusions1 = setup->base.actExclusions1;
     roboSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
-    roboSetup->fadeDistance = setup->unk1A;
-    roboSetup->x = arg1->pos.x;
-    roboSetup->y = arg1->pos.y;
-    roboSetup->z = arg1->pos.z;
-    robo = objSetupObject(roboSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, arg0->parent);
-    objdata->unk0[i] = robo;
-    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AE4(robo, arg0, EWTrobotpatrolB_func_30C);
-    EWTrobotpatrolB_func_3A4(arg0, robo, arg1->uID);
+    roboSetup->fadeDistance = setup->roboFadeDistance;
+    roboSetup->x = startNode->pos.x;
+    roboSetup->y = startNode->pos.y;
+    roboSetup->z = startNode->pos.z;
+    robo = objSetupObject(roboSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
+    objdata->robos[i] = robo;
+    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AE4(robo, self, EWTrobotpatrolB_roboCallback);
+    EWTrobotpatrolB_pathRoboRandom(self, robo, startNode->uID);
 }
 
 // offset: 0x30C | func: 8
-static void EWTrobotpatrolB_func_30C(Object* base, Object* robot, s32 arg2, u32 uID) {
-    EWTrobotpatrolB_Data* objdata = base->data;
+static void EWTrobotpatrolB_roboCallback(Object* self, Object* robot, s32 aggro, u32 currUID) {
+    EWTrobotpatrolB_Data* objdata = self->data;
     
-    if (arg2 == 0) {
-        if ((objdata->unk91 != 0) || (objdata->unk92 != 0)) {
-            EWTrobotpatrolB_func_470(base, robot, uID);
+    if (aggro == 0) {
+        if (objdata->engagingPlayer || objdata->searchingForPlayer) {
+            EWTrobotpatrolB_pathRoboToPlayer(self, robot, currUID);
         } else {
-            EWTrobotpatrolB_func_3A4(base, robot, uID);
+            EWTrobotpatrolB_pathRoboRandom(self, robot, currUID);
         }
-    } else if (arg2 == 1) {
-        objdata->unk94++;
+    } else if (aggro == 1) {
+        // Can see player
+        objdata->aggroCounter++;
     }
 }
 
 // offset: 0x3A4 | func: 9
-static void EWTrobotpatrolB_func_3A4(Object* self, Object* robo, u32 uID) {
+static void EWTrobotpatrolB_pathRoboRandom(Object* self, Object* robo, u32 currUID) {
     CurveSetup* node;
     u8 max;
 
     max = 0;
-    node = EWTrobotpatrolB_func_D7C(self, uID);
+    node = EWTrobotpatrolB_getPathNode(self, currUID);
     while (node->links[max + 1] != -1 && max != 3) {
         max++;
     }
@@ -163,196 +172,215 @@ static void EWTrobotpatrolB_func_3A4(Object* self, Object* robo, u32 uID) {
 }
 
 // offset: 0x470 | func: 10
-static void EWTrobotpatrolB_func_470(Object* self, Object* arg1, u32 uID) {
+static void EWTrobotpatrolB_pathRoboToPlayer(Object* self, Object* robo, u32 currUID) {
     EWTrobotpatrolB_Data* objdata = self->data;
-    CurveSetup* var_s1;
-    CurveSetup* sp58[2];
-    s16 sp50[4];
-    s16 var_a0;
-    s32 var_a2;
+    CurveSetup* currNode;
+    CurveSetup* closestNodes[2];
+    s16 linkPathDists[4];
+    s16 shortestDist;
+    s32 bestLinkIdx;
     s32 i;
 
-    var_s1 = EWTrobotpatrolB_func_D7C(self, uID);
-    EWTrobotpatrolB_func_BA0(sp58, objdata->unk30, objGetPlayer());
-    bss_0[0] = var_s1;
-    bss_64 = self;
-    if (var_s1 == sp58[0]) {
-        bss_60 = sp58[1];
+    // Calculate distance from current node to node closest to player via each link
+    currNode = EWTrobotpatrolB_getPathNode(self, currUID);
+    EWTrobotpatrolB_findNodesClosestToPlayer(closestNodes, objdata->nodes, objGetPlayer());
+    sPathfindVisited[0] = currNode;
+    sPathfindSelf = self;
+    if (currNode == closestNodes[0]) {
+        sPathfindGoal = closestNodes[1];
     } else {
-        bss_60 = sp58[0];
+        sPathfindGoal = closestNodes[0];
     }
     for (i = 0; i < 4; i++) {
-        if (var_s1->links[i] != -1) {
-            sp50[i] = EWTrobotpatrolB_func_60C(1, var_s1, var_s1->links[i], 1);
+        if (currNode->links[i] != -1) {
+            linkPathDists[i] = EWTrobotpatrolB_calcLinkPathDistance(1, currNode, currNode->links[i], 1);
         } else {
-            sp50[i] = -1;
+            linkPathDists[i] = -1;
         }
     }
-    var_a0 = sp50[0];
-    var_a2 = 0;
+    // Choose the link with the shortest path
+    shortestDist = linkPathDists[0];
+    bestLinkIdx = 0;
     i = 1;
     while (i < 4) {
-        if ((sp50[i] != -1) && ((var_a0 == -1) || (sp50[i] < var_a0))) {
-            var_a0 = sp50[i];
-            var_a2 = i;
+        if ((linkPathDists[i] != -1) && ((shortestDist == -1) || (linkPathDists[i] < shortestDist))) {
+            shortestDist = linkPathDists[i];
+            bestLinkIdx = i;
         }
         i += 1;
     }
-    ((DLL_437_EWTrobotpatrol*)arg1->dll)->vtbl->Func_3AF8(arg1, var_s1->links[var_a2]);
+    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AF8(robo, currNode->links[bestLinkIdx]);
 }
 
 // offset: 0x60C | func: 11
-static s16 EWTrobotpatrolB_func_60C(s32 arg0, CurveSetup* arg1, s32 arg2, s32 arg3) {
-    CurveSetup* temp_v0 = EWTrobotpatrolB_func_D7C(bss_64, arg2);
-    s16 sp4C[] = {-1, -1, -1};
-    s16 var_v1;
-    u8 var_s0;
-    u8 var_s1;
+static s16 EWTrobotpatrolB_calcLinkPathDistance(s32 searchIdx, CurveSetup* currNode, s32 linkUID, s32 iteration) {
+    CurveSetup* linkNode = EWTrobotpatrolB_getPathNode(sPathfindSelf, linkUID);
+    s16 linkPathDists[] = {-1, -1, -1};
+    s16 shortestDist;
+    u8 i;
+    u8 nlinks;
     
-    var_s0 = 0;
-    var_s1 = 0;
-    if (temp_v0 == bss_60) {
-        while (arg1->uID != (u32)temp_v0->links[var_s0]) {
-            var_s0++;
+    i = 0;
+    nlinks = 0;
+    if (linkNode == sPathfindGoal) {
+        // Found goal
+        while (currNode->uID != (u32)linkNode->links[i]) {
+            i++;
         }
-        return temp_v0->type1E.unk34[var_s0];
+        return linkNode->type1E.linkDist[i];
     }
-    if (arg3 == 6) {
+    if (iteration == 6) {
+        // Too many iterations, give up
         return -1;
     }
-    while (var_s0 < arg0) {
-        if (temp_v0 == bss_0[var_s0]) {
+    while (i < searchIdx) {
+        if (linkNode == sPathfindVisited[i]) {
+            // Already visited node, bail
             return -1;
         }
-        var_s0++;
+        i++;
     }
-    bss_0[arg0++] = temp_v0;
-    var_s0 = 0;
-    while (var_s0 < 4) {
-        if ((arg1->uID != (u32)temp_v0->links[var_s0]) && (temp_v0->links[var_s0] != -1)) {
-            sp4C[var_s1] = EWTrobotpatrolB_func_60C(arg0, temp_v0, temp_v0->links[var_s0], arg3 + 1);
-            var_s1++;
+    sPathfindVisited[searchIdx++] = linkNode;
+    // Recursively calculate the dist to target for each link
+    i = 0;
+    while (i < 4) {
+        if ((currNode->uID != (u32)linkNode->links[i]) && (linkNode->links[i] != -1)) {
+            linkPathDists[nlinks] = EWTrobotpatrolB_calcLinkPathDistance(searchIdx, linkNode, linkNode->links[i], iteration + 1);
+            nlinks++;
         }
-        var_s0++;
+        i++;
     }
-    var_v1 = sp4C[0];
-    var_s0 = 1;
-    while (var_s0 < 3) {
-        if ((sp4C[var_s0] != -1) && ((var_v1 == -1) || (sp4C[var_s0] < var_v1))) {
-            var_v1 = sp4C[var_s0];
+    // Return the shortest path dist of each found, as that's the only one we care about
+    shortestDist = linkPathDists[0];
+    i = 1;
+    while (i < 3) {
+        if ((linkPathDists[i] != -1) && ((shortestDist == -1) || (linkPathDists[i] < shortestDist))) {
+            shortestDist = linkPathDists[i];
         }
-        var_s0++;
+        i++;
     }
-    if (var_v1 == -1) {
+    if (shortestDist == -1) {
         return -1;
     }
-    var_s0 = 0;
-    while (arg1->uID != (u32)temp_v0->links[var_s0]) {
-        var_s0++;
+    i = 0;
+    while (currNode->uID != (u32)linkNode->links[i]) {
+        i++;
     }
-    return temp_v0->type1E.unk34[var_s0] + var_v1;
+    return linkNode->type1E.linkDist[i] + shortestDist;
 }
 
 // offset: 0x88C | func: 12
-void EWTrobotpatrolB_func_88C(Object* arg0) {
+void EWTrobotpatrolB_initCurveNetwork(Object* self) {
     EWTrobotpatrolB_Data* objdata;
     s8 i;
-    s32 sp54[] = {0x0000001e};
-    s32 temp_v0;
-    s8 var_v1;
-    CurveSetup* temp_a2;
+    s32 nodeTypes[] = {0x1E};
+    s32 uid;
+    s8 k;
+    CurveSetup* temp;
 
-    objdata = arg0->data;    
-    for (i = 0; i < 24; i++) {
-        objdata->unk30[i] = 0;
+    objdata = self->data;
+    // Reset node list
+    for (i = 0; i < MAX_NODES; i++) {
+        objdata->nodes[i] = NULL;
     }
-    temp_v0 = gDLL_26_Curves->vtbl->func_1E4(arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, sp54, 1, -1);
-    objdata->unk30[0] = gDLL_26_Curves->vtbl->func_39C(temp_v0);
-    if ((temp_v0 != -1) && (objdata->unk30[0] != NULL)) {
-        objdata->unk90 = 1;
-        for (i = 0; i < 4; i++) {
-            if (objdata->unk30[0]->links[i] != -1) {
-                EWTrobotpatrolB_func_A60(objdata->unk30, &objdata->unk90, temp_v0, objdata->unk30[0]->links[i], 1);
-            }
+    // Get nearest 0x1E type curve node
+    uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, nodeTypes, 1, -1);
+    objdata->nodes[0] = gDLL_26_Curves->vtbl->func_39C(uid);
+    if (uid == -1) {
+        STUBBED_PRINTF(" Could Not find a nearest node ");
+        return;
+    }
+    if (objdata->nodes[0] == NULL) {
+        STUBBED_PRINTF(" Could Not get Nearest node ");
+        return;
+    }
+    // Recursively discover curve network
+    objdata->numNodes = 1;
+    for (i = 0; i < 4; i++) {
+        if (objdata->nodes[0]->links[i] != -1) {
+            EWTrobotpatrolB_initCurveNetworkSearchLink(objdata->nodes, &objdata->numNodes, uid, objdata->nodes[0]->links[i], 1);
         }
-        for (i = 0; i < (objdata->unk90 - 1); i++) {
-            var_v1 = objdata->unk90 - 2;
-            while (var_v1 >= i) {
-                if (objdata->unk30[var_v1 + 1]->uID < objdata->unk30[var_v1]->uID) {
-                    temp_a2 = objdata->unk30[var_v1];
-                    objdata->unk30[var_v1] = objdata->unk30[var_v1 + 1];
-                    objdata->unk30[var_v1 + 1] = temp_a2;
-                }
-                var_v1 -= 1;
+    }
+    // Sort nodes by UID ascending
+    for (i = 0; i < (objdata->numNodes - 1); i++) {
+        k = objdata->numNodes - 2;
+        while (k >= i) {
+            if (objdata->nodes[k + 1]->uID < objdata->nodes[k]->uID) {
+                temp = objdata->nodes[k];
+                objdata->nodes[k] = objdata->nodes[k + 1];
+                objdata->nodes[k + 1] = temp;
             }
+            k -= 1;
         }
     }
 }
 
 // offset: 0xA60 | func: 13
-static void EWTrobotpatrolB_func_A60(CurveSetup** arg0, u8* arg1, s32 arg2, s32 arg3, u8 arg4) {
-    CurveSetup* temp_a1;
+static void EWTrobotpatrolB_initCurveNetworkSearchLink(CurveSetup** nodes, u8* count, s32 srcUID, s32 linkUID, u8 count2) {
+    CurveSetup* linkNode;
     s32 i;
 
-    temp_a1 = gDLL_26_Curves->vtbl->func_39C(arg3);
-    for (i = 0; i < 24; i++) {
-        if (temp_a1 == arg0[i]) {
+    linkNode = gDLL_26_Curves->vtbl->func_39C(linkUID);
+    for (i = 0; i < MAX_NODES; i++) {
+        if (linkNode == nodes[i]) {
+            // Path loops back on itself
             return;
         }
     }
-    arg0[*arg1] = temp_a1;
-    *arg1 += 1;
-    if (arg4 != 24) {
+    nodes[*count] = linkNode;
+    *count += 1;
+    if (count2 != MAX_NODES) {
+        // Recurse
         for (i = 0; i != 4; i++) {
-            if ((arg2 != temp_a1->links[i]) && (temp_a1->links[i] != -1)) {
-                EWTrobotpatrolB_func_A60(arg0, arg1, arg3, temp_a1->links[i], arg4 + 1);
+            if ((srcUID != linkNode->links[i]) && (linkNode->links[i] != -1)) {
+                EWTrobotpatrolB_initCurveNetworkSearchLink(nodes, count, linkUID, linkNode->links[i], count2 + 1);
             }
         }
     }
 }
 
 // offset: 0xBA0 | func: 14
-static void EWTrobotpatrolB_func_BA0(CurveSetup** arg0, CurveSetup** arg1, Object* arg2) {
-    s32 var_s0;
-    s32 sp3C[2];
-    f32 temp_fv1;
-    f32 sp30[2];
-    f32 temp_fv0;
+static void EWTrobotpatrolB_findNodesClosestToPlayer(CurveSetup** closest, CurveSetup** nodes, Object* player) {
+    s32 i;
+    s32 indices[2];
+    f32 temp;
+    f32 dists[2];
+    f32 dist;
 
-    sp30[0] = EWTrobotpatrolB_func_D10(arg1[0], arg2);
-    sp30[1] = EWTrobotpatrolB_func_D10(arg1[1], arg2);
-    sp3C[0] = 0;
-    sp3C[1] = 1;
-    temp_fv1 = sp30[0];
-    if (sp30[1] < sp30[0]) {
-        sp3C[0] = 1;
-        sp3C[1] = 0;
-        sp30[0] = sp30[1];
-        sp30[1] = temp_fv1;
+    dists[0] = EWTrobotpatrolB_objDist2Node(nodes[0], player);
+    dists[1] = EWTrobotpatrolB_objDist2Node(nodes[1], player);
+    indices[0] = 0;
+    indices[1] = 1;
+    temp = dists[0];
+    if (dists[1] < dists[0]) {
+        indices[0] = 1;
+        indices[1] = 0;
+        dists[0] = dists[1];
+        dists[1] = temp;
     }
-    var_s0 = 2;
-    while (var_s0 != 24) {
-        if (arg1[var_s0] != NULL) {
-            temp_fv0 = EWTrobotpatrolB_func_D10(arg1[var_s0], arg2);
-            temp_fv1 = sp30[0];
-            if (temp_fv0 < sp30[0]) {
-                sp3C[1] = sp3C[0];
-                sp3C[0] = var_s0;
-                sp30[0] = temp_fv0;
-                sp30[1] = temp_fv1;
-            } else if (temp_fv0 < sp30[1]) {
-                sp3C[1] = var_s0;
-                sp30[1] = temp_fv0;
+    i = 2;
+    while (i != MAX_NODES) {
+        if (nodes[i] != NULL) {
+            dist = EWTrobotpatrolB_objDist2Node(nodes[i], player);
+            temp = dists[0];
+            if (dist < dists[0]) {
+                indices[1] = indices[0];
+                indices[0] = i;
+                dists[0] = dist;
+                dists[1] = temp;
+            } else if (dist < dists[1]) {
+                indices[1] = i;
+                dists[1] = dist;
             }
         }
-        var_s0 += 1;
+        i += 1;
     }
-    arg0[0] = arg1[sp3C[0]];
-    arg0[1] = arg1[sp3C[1]];
+    closest[0] = nodes[indices[0]];
+    closest[1] = nodes[indices[1]];
 }
 
 // offset: 0xD10 | func: 15
-static f32 EWTrobotpatrolB_func_D10(CurveSetup* node, Object* obj) {
+static f32 EWTrobotpatrolB_objDist2Node(CurveSetup* node, Object* obj) {
     f32 xDiff;
     f32 yDiff;
     f32 zDiff;
@@ -364,26 +392,23 @@ static f32 EWTrobotpatrolB_func_D10(CurveSetup* node, Object* obj) {
 }
 
 // offset: 0xD7C | func: 16
-static CurveSetup* EWTrobotpatrolB_func_D7C(Object* self, u32 uID) {
+static CurveSetup* EWTrobotpatrolB_getPathNode(Object* self, u32 uID) {
     EWTrobotpatrolB_Data* objdata = self->data;
     u8 currentIdx;
     u8 min;
     u8 max;
     
     // binary search
-    max = objdata->unk90 - 1;
+    max = objdata->numNodes - 1;
     min = 0;
     while (1) {
         currentIdx = (max + min) >> 1;
-        if (objdata->unk30[currentIdx]->uID < uID) {
+        if (objdata->nodes[currentIdx]->uID < uID) {
             min = currentIdx + 1;
-        } else if (objdata->unk30[currentIdx]->uID > uID) {
+        } else if (objdata->nodes[currentIdx]->uID > uID) {
             max = currentIdx - 1;
         } else {
-            return objdata->unk30[currentIdx];
+            return objdata->nodes[currentIdx];
         }
     }
 }
-
-/*0x0*/ static const char str_0[] = " Could Not find a nearest node ";
-/*0x20*/ static const char str_20[] = " Could Not get Nearest node ";
