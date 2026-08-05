@@ -1,0 +1,32 @@
+.text = 0x0:
+dll_439_ctor = 0x0;
+dll_439_dtor = 0xC;
+dll_439_obj_Setup = 0x18;
+dll_439_obj_Control = 0x2C;
+dll_439_obj_Update = 0x38;
+dll_439_obj_Print = 0xE0;
+dll_439_obj_Free = 0x134;
+dll_439_obj_GetModelFlags = 0x1AC;
+dll_439_obj_GetDataSize = 0x1BC;
+dll_439_func_1D0 = 0x1D0;
+dll_439_func_30C = 0x30C;
+dll_439_func_3A4 = 0x3A4;
+dll_439_func_470 = 0x470;
+dll_439_func_60C = 0x60C;
+dll_439_func_88C = 0x88C;
+dll_439_func_A60 = 0xA60;
+dll_439_func_BA0 = 0xBA0;
+dll_439_func_D10 = 0xD10;
+dll_439_func_D7C = 0xD7C;
+
+.rodata = 0xE70:
+str_0 = 0x0; // absolute:0xE70
+
+.data = 0xEB0:
+data_0 = 0x0; // absolute:0xEB0
+data_8 = 0x8; // absolute:0xEB8
+
+.bss = 0xEC0:
+bss_0 = 0x0; // absolute:0xEC0
+bss_60 = 0x60; // absolute:0xF20
+bss_64 = 0x64; // absolute:0xF24

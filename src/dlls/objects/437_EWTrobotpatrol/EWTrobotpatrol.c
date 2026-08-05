@@ -1,15 +1,10 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/437_EWTrobotpatrol.h"
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
 #include "sys/objtype.h"
 #include "sys/lighting.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    u8 unk1A;
-} EWTrobotpatrol_Setup;
 
 typedef struct {
     f32 unk0;
@@ -94,8 +89,8 @@ typedef struct {
     u8 unk21;
     Unk80008E40 unk24;
     u8 _unk4C[0x74 - 0x4C];
-    s32 unk74;
-    s32 (*unk78)(s32, Object*, s32, s32);
+    Object* unk74;
+    EWTrobotpatrolCallback unk78;
     u8 _unk7C[0x120 - 0x7C];
     EWTrobotpatrol_Data_120 unk120;
     u8 _unk150[0x198 - 0x150];
@@ -615,10 +610,10 @@ int dll_437_func_3AC8(Object* actor, Object* animObj, AnimObj_Data* animObjData,
 }
 
 // offset: 0x3AE4 | func: 29 | export: 7
-void dll_437_func_3AE4(Object* arg0, s32 arg1, s32 arg2) {
-    EWTrobotpatrol_Data* objdata = arg0->data;
-    objdata->unk74 = arg1;
-    objdata->unk78 = arg2;
+void dll_437_func_3AE4(Object* self, Object* base, EWTrobotpatrolCallback callback) {
+    EWTrobotpatrol_Data* objdata = self->data;
+    objdata->unk74 = base;
+    objdata->unk78 = callback;
 }
 
 // offset: 0x3AF8 | func: 30 | export: 8
