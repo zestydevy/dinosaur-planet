@@ -20,12 +20,8 @@ typedef struct {
     f32 unk30;
     f32 unk34;
     f32 unk38;
-    f32 unk3C;
-    f32 unk40;
-    f32 unk44;
-    f32 unk48;
-    f32 unk4C;
-    f32 unk50;
+    Vec3f unk3C;
+    Vec3f unk48;
     u8 _unk54[0x6C - 0x54];
     f32 unk6C;
     f32 unk70;
@@ -36,6 +32,7 @@ typedef struct {
     f32 unk84;
     f32 unk88;
     s16 unk8C;
+    u8 unk8E;
 } EWTrobotpatrol_Data_90;
 
 // size:0x30
@@ -53,7 +50,7 @@ typedef struct {
 
 // beam?
 typedef struct {
-    u8 _unk0[0x4 - 0x0];
+    f32 unk0;
     Object* unk4; // RobotBeam
     Vec3f unk8; // beam dir
     s16 _unk14;
@@ -88,17 +85,18 @@ typedef struct {
     u8 unk20;
     u8 unk21;
     Unk80008E40 unk24;
-    u8 _unk4C[0x74 - 0x4C];
+    Vec3f unk4C;
+    Vec3f unk58;
+    u8 _unk64[0x74 - 0x64];
     Object* unk74;
     EWTrobotpatrolCallback unk78;
-    u8 _unk7C[0x120 - 0x7C];
+    Object* unk7C;
+    u8 _unk80[0x120 - 0x80];
     EWTrobotpatrol_Data_120 unk120;
-    u8 _unk150[0x198 - 0x150];
-    f32 unk198;
-    u8 _unk19C[0x1A4 - 0x19C];
+    u8 _unk150[0x154 - 0x150];
+    EWTrobotpatrol_Data_154 unk154;
     u8 unk1A4;
-    f32 unk1A8;
-    u8 _unk1AC[0x1C4 - 0x1AC];
+    EWTrobotpatrol_Data_1A8 unk1A8;
     u8 unk1C4;
     f32 unk1C8;
     u8 unk1CC;
@@ -125,6 +123,7 @@ static void dll_437_func_3B70(Object*, EWTrobotpatrol_Data_1D0*, f32, f32, f32, 
 static void dll_437_func_4004(f32 arg0, f32 arg1, f32 arg2, s16* arg3, s16* arg4);
 static void dll_437_func_40A0(s16 arg0, s16 arg1, Vec3f* arg2, f32 arg3);
 
+static void dll_437_func_1164(Object* self, EWTrobotpatrol_Data* objdata);
 void dll_437_func_1414(Object*, EWTrobotpatrol_Data*, EWTrobotpatrol_Data_90*);
 void dll_437_func_1C74(Object*, EWTrobotpatrol_Data*, EWTrobotpatrol_Data_120*);
 void dll_437_func_208C(Object*, EWTrobotpatrol_Data*, EWTrobotpatrol_Data_154*);
@@ -132,12 +131,12 @@ void dll_437_func_3454(Object*, EWTrobotpatrol_Data*, EWTrobotpatrol_Data_1A8*);
 void dll_437_func_38C4(Object*, void*, s32);
 void dll_437_func_3D04(Object*, EWTrobotpatrol_Data_1D0*);
 
-void dll_437_func_31E4(EWTrobotpatrol_Data_154*, s32, Object*);
-void dll_437_func_39AC(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2);
-s32 dll_437_func_15F8(Object* arg0, EWTrobotpatrol_Data_90* arg1, EWTrobotpatrol_Data* arg2, s32 arg3);
+static void dll_437_func_31E4(EWTrobotpatrol_Data_154*, s32, Object*);
+static void dll_437_func_39AC(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2);
+static s32 dll_437_func_15F8(Object* arg0, EWTrobotpatrol_Data_90* arg1, EWTrobotpatrol_Data* arg2, s32 arg3);
 
-s32 dll_437_func_1674(Object* arg0, EWTrobotpatrol_Data_90* arg1, void* arg2);
-s32 dll_437_func_1920(Object* arg0, EWTrobotpatrol_Data_90* arg1, void* arg2);
+static s32 dll_437_func_1674(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2);
+static s32 dll_437_func_1920(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2);
 
 // offset: 0x0 | ctor
 void dll_437_ctor(void *dll) { }
@@ -177,8 +176,8 @@ void dll_437_setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
     temp_s0->unk1C8 = -0.02f;
     dll_437_func_139C(self, temp_s0, (u8*)temp_s0 + 0x90);
     dll_437_func_1BF0(self, temp_s0, &temp_s0->unk120);
-    dll_437_func_31F4(self, temp_s0, (u8*)temp_s0 + 0x1A8);
-    dll_437_func_2060(self, temp_s0, (u8*)temp_s0 + 0x154);
+    dll_437_func_31F4(self, temp_s0, &temp_s0->unk1A8);
+    dll_437_func_2060(self, temp_s0, &temp_s0->unk154);
     temp_s0->unk4 = -1;
     temp_s0->unk8 = -1;
     temp_s0->unk0 = setup->unk1A;
@@ -263,7 +262,7 @@ void dll_437_free(Object* self, s32 onlySelf) {
     objdata = self->data;
     vox_func_80008E08(&objdata->unk24);
     gDLL_13_Expgfx->vtbl->func5(self);
-    dll_437_func_380C(self, objdata, (u8*)objdata + 0x1A8, onlySelf);
+    dll_437_func_380C(self, objdata, &objdata->unk1A8, onlySelf);
 }
 
 // offset: 0xC9C | func: 5 | export: 5
@@ -276,106 +275,150 @@ u32 dll_437_get_data_size(Object *self, u32 offsetAddr) {
     return sizeof(EWTrobotpatrol_Data);
 }
 
-void dll_437_func_1164(Object* a0, EWTrobotpatrol_Data* a1);
-
 // offset: 0xCC0 | func: 7
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_CC0.s")
-#else
-void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2, void* arg3) {
-    Object* sp64;
-    EWTrobotpatrol_Data* sp60;
-    f32 sp5C;
-    f32 sp50[3];
-    Vec3s16 sp48;
-    Vec3s16 sp40;
+void dll_437_func_CC0(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatrol_Data_90* arg2, void* arg3) {
+    Object* player;
+    EWTrobotpatrol_Data* objdata2;
+    f32 playerDist;
+    f32 vec[3];
+    Vec3s16 playerVoxPos;
+    Vec3s16 selfVoxPos;
 
-    sp60 = arg0->data;
-    sp64 = objGetPlayer();
-    sp50[0] = arg0->srt.transl.x - sp64->srt.transl.x;
-    sp50[1] = arg0->srt.transl.y - sp64->srt.transl.y;
-    sp50[2] = arg0->srt.transl.z - sp64->srt.transl.z;
-    sp5C = sqrtf(SQ(sp50[0]) + SQ(sp50[1]) + SQ(sp50[2]));
-    vox_func_80007EE0(&sp64->srt.transl, &sp48);
-    sp48.s[1] += 2;
-    vox_func_80007EE0(&arg0->srt.transl, &sp40);
-    arg1->unk21 = vox_func_80008048(&sp48, &sp40, NULL, NULL, 0U);
-    if ((arg1->unk1F != 0) && (arg1->unk1F == 2)) {
+    objdata2 = self->data;
+    player = objGetPlayer();
+    vec[0] = self->srt.transl.x - player->srt.transl.x;
+    vec[1] = self->srt.transl.y - player->srt.transl.y;
+    vec[2] = self->srt.transl.z - player->srt.transl.z;
+    playerDist = sqrtf(SQ(vec[0]) + SQ(vec[1]) + SQ(vec[2]));
+    vox_func_80007EE0(&player->srt.transl, &playerVoxPos);
+    playerVoxPos.s[1] += 2;
+    vox_func_80007EE0(&self->srt.transl, &selfVoxPos);
+    objdata->unk21 = vox_func_80008048(&playerVoxPos, &selfVoxPos, NULL, NULL, 0);
+    if ((objdata->unk1F != 0) && (objdata->unk1F == 2)) {
+#ifndef AVOID_UB
+        PRAGMA_IGNORE_PUSH("-Wcast-function-type-mismatch")
+        // @fake cast
+        ((s32 (*)(Object *, Object *, s32, u32))objdata->unk78)(objdata->unk74, self, 1, 0);
+        PRAGMA_IGNORE_POP()
+#else
         arg1->unk78(arg1->unk74, arg0, 1, 0);
-        switch (arg1->unk20) {
+#endif
+        switch (objdata->unk20) {
         case 0:
-            dll_437_func_31E4((u8*)sp60 + 0x154, 2, sp64);
-            if (dll_437_func_15F8(arg0, arg2, arg1, 0) != 0) {
-                bcopy(arg1->_unk4C, &arg1->_unk4C[0xC], 0xC);
-                arg1->unk20 = 1;
-                arg1->unk18 = 0x12C;
-                return;
+            dll_437_func_31E4(&objdata2->unk154, 2, player);
+            if (dll_437_func_15F8(self, arg2, objdata, 0) != 0) {
+                bcopy(&objdata->unk4C, &objdata->unk58, sizeof(objdata->unk58));
+                objdata->unk20 = 1;
+                objdata->unk18 = 0x12C;
             }
             break;
         case 1:
-            dll_437_func_15F8(arg0, arg2, arg1, 1);
-            if ((sp5C < 300.0f) && (arg1->unk21 != 0)) {
-                arg1->unk20 = 2;
-                arg1->unk18 = 0x12C;
-                arg1->unk1A = 0;
-                return;
-            }
-            arg1->unk18 = (s16) (arg1->unk18 - gUpdateRate);
-            if (arg1->unk18 < 0) {
-                arg1->unk1E = 0;
-                arg1->unk1F = 0;
-                arg1->unk20 = 0;
+            dll_437_func_15F8(self, arg2, objdata, 1);
+            if ((playerDist < 300.0f) && (objdata->unk21 != 0)) {
+                objdata->unk20 = 2;
+                objdata->unk18 = 0x12C;
+                objdata->unk1A = 0;
+            } else {
+                objdata->unk18 -= gUpdateRate;
+                if (objdata->unk18 < 0) {
+                    objdata->unk1E = 0;
+                    objdata->unk1F = 0;
+                    objdata->unk20 = 0;
+                }
             }
             break;
         case 2:
-            dll_437_func_15F8(arg0, arg2, arg1, 1);
-            if ((sp5C > 300.0f) || (arg1->unk21 == 0)) {
-                arg1->unk20 = 1;
+            dll_437_func_15F8(self, arg2, objdata, 1);
+            if ((playerDist > 300.0f) || (objdata->unk21 == 0)) {
+                objdata->unk20 = 1;
             }
-            arg1->unk1A = (s16) (arg1->unk1A - gUpdateRate);
-            if (arg1->unk1A < 0) {
-                arg1->unk1A = 0;
+            objdata->unk1A -= gUpdateRate;
+            if (objdata->unk1A < 0) {
+                objdata->unk1A = 0;
             }
-            if (arg1->unk1A == 0) {
-                if ((arg1->unk21 != 0) 
-                        && (((DLL_210_Player*)sp64->dll)->vtbl->func66(sp64, 9) == 0) 
-                        && (((DLL_210_Player*)sp64->dll)->vtbl->func66(sp64, 1) != 0)) {
-                    sp60->unk1A4 = 3;
+            if (objdata->unk1A == 0) {
+                if ((objdata->unk21 != 0) 
+                        && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 9) == 0) 
+                        && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
+                    objdata2->unk1A4 = 3;
                 }
-                arg1->unk1A = 0x96;
-                return;
+                objdata->unk1A = 0x96;
             }
             break;
         }
     } else {
-        sp60->unk198 = -0.02f;
-        if (arg1->unk4 != -1) {
-            dll_437_func_39AC(arg0, arg1, arg2);
-            if (arg1->unk1D > 0) {
-                arg1->unk1D = arg1->unk1D - 1;
+        objdata2->unk154.unk44 = -0.02f;
+        if (objdata->unk4 != -1) {
+            dll_437_func_39AC(self, objdata, arg2);
+            if (objdata->unk1D > 0) {
+                objdata->unk1D = objdata->unk1D - 1;
             }
-            if ((arg1->unk1D == 0) && (arg1->unk14 < 3.0f)) {
-                arg1->unk78(arg1->unk74, arg0, 0, arg1->unk4);
-                arg1->unk1D = 0x78;
+            if ((objdata->unk1D == 0) && (objdata->unk14 < 3.0f)) {
+                objdata->unk78(objdata->unk74, self, 0, objdata->unk4);
+                objdata->unk1D = 0x78;
             }
         }
-        dll_437_func_1164(arg0, arg1);
-        if (arg1->unk1E == 2) {
-            dll_amSfx->Play(arg0, 0x112, 0x7F, NULL, NULL, 0, NULL);
-            if (sp60){} // @fake
-            sp60->unk198 = 0.02f;
-            sp60->unk1C4 = 0;
-            sp60->unk1A8 = 0.0f;
-            bcopy(&arg0->srt.transl, arg1->_unk4C, 0xC);
-            arg1->unk1F = 2;
-            arg1->unk20 = 0;
+        dll_437_func_1164(self, objdata);
+        if (objdata->unk1E == 2) {
+            dll_amSfx->Play(self, SOUND_112, MAX_VOLUME, NULL, NULL, 0, NULL);
+            if (objdata2){} // @fake
+            objdata2->unk154.unk44 = 0.02f;
+            objdata2->unk1C4 = 0;
+            objdata2->unk1A8.unk0 = 0.0f;
+            bcopy(&self->srt.transl, &objdata->unk4C, sizeof(objdata->unk4C));
+            objdata->unk1F = 2;
+            objdata->unk20 = 0;
         }
     }
 }
-#endif
 
 // offset: 0x1164 | func: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_1164.s")
+static void dll_437_func_1164(Object* self, EWTrobotpatrol_Data* objdata) {
+    Object* player;
+    Vec3f sp70;
+    Vec3f sp64;
+    f32 temp_fa1;
+    s32 temp_v0_3;
+    EWTrobotpatrol_Data* objdata2;
+    EWTrobotpatrol_Data_1A8* temp_v0_2;
+    SRT sp3C;
+    s32 _pad;
+
+    player = objGetPlayer();
+    objdata->unk7C = player;
+    if (objdata->unk1E == 2) {
+        return;
+    }
+    objdata2 = self->data;
+    temp_v0_2 = &objdata2->unk1A8;
+    sp70.f[0] = player->srt.transl.x - self->srt.transl.x;
+    sp70.f[1] = player->srt.transl.y - self->srt.transl.y;
+    sp70.f[2] = player->srt.transl.z - self->srt.transl.z;
+    if (sqrtf(SQ(sp70.f[0]) + SQ(sp70.f[1]) + SQ(sp70.f[2])) < 150.0f) {
+        if (objdata->unk21 != 0) {
+            sp64.x = player->srt.transl.x - temp_v0_2->unk4->srt.transl.x;
+            sp64.y = player->srt.transl.y - temp_v0_2->unk4->srt.transl.y;
+            sp64.z = player->srt.transl.z - temp_v0_2->unk4->srt.transl.z;
+            temp_fa1 = sqrtf(SQ(temp_v0_2->unk8.x) + SQ(temp_v0_2->unk8.z));
+            sp3C.yaw = -temp_v0_2->unk4->srt.yaw;
+            sp3C.pitch = -mathAtan2f(temp_v0_2->unk8.y, temp_fa1);
+            sp3C.roll = 0;
+            mathRotateYPR(&sp3C, &sp64);
+            if (sqrtf(SQ(sp64.x) + SQ(sp64.y)) <= 40.0f) {
+                objdata->unk1E = 2;
+            }
+        }
+        if (objdata->unk1E != 2) {
+            temp_v0_3 = (s32)((DLL_210_Player*)player->dll)->vtbl->func66(player, 2);
+            if ((temp_v0_3 != 3) && (temp_v0_3 != 4)) {
+                objdata->unk1E = 0;
+                return;
+            }
+            objdata->unk1E = 2;
+            objdata->unk7C = player;
+        }
+    }
+}
 
 // offset: 0x139C | func: 9
 void dll_437_func_139C(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatrol_Data_90* a2) {
@@ -390,36 +433,30 @@ void dll_437_func_139C(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
 }
 
 // offset: 0x1414 | func: 10
-#if 1
+#ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_1414.s")
 #else
 void dll_437_func_CC0(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2, void* arg3);
 
 void dll_437_func_1414(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2) {
     f32 temp_fa1;
-    f32 temp_ft4;
-    f32 temp_fv0;
-    f32 temp_fv0_2;
-    f32 temp_fv1;
-    f32 temp_fv1_2;
 
     arg2->unk74 = gUpdateRateF / 60.0f;
     arg2->unk24 = arg2->unk28 = arg2->unk2C = 0.0f;
-    temp_fv0 = arg2->unk44;
-    temp_fv1 = arg2->unk40;
     temp_fa1 = arg2->unk70 * 0.65f;
-    temp_ft4 = arg2->unk3C;
-    arg2->unk38 = SQ(temp_fv0);
-    arg2->unk30 = SQ(temp_ft4) * temp_fa1;
-    arg2->unk34 = SQ(temp_fv1) * temp_fa1;
+    arg2->unk30 = SQ(arg2->unk3C.x);
+    arg2->unk34 = SQ(arg2->unk3C.y);
+    arg2->unk38 = SQ(arg2->unk3C.z);
+    arg2->unk30 *= temp_fa1;
+    arg2->unk34 *= temp_fa1;
     arg2->unk38 *= temp_fa1;
-    if (temp_ft4 > 0.0f) {
+    if (arg2->unk3C.x > 0.0f) {
         arg2->unk30 = -arg2->unk30;
     }
-    if (arg2->unk40 > 0.0f) {
+    if (arg2->unk3C.y > 0.0f) {
         arg2->unk34 = -arg2->unk34;
     }
-    if (arg2->unk44 > 0.0f) {
+    if (arg2->unk3C.z > 0.0f) {
         arg2->unk38 = -arg2->unk38;
     }
     arg2->unk30 = 0.0f;
@@ -428,44 +465,142 @@ void dll_437_func_1414(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_D
     arg2->unk18 = arg2->unk24;
     arg2->unk1C = arg2->unk28;
     arg2->unk20 = arg2->unk2C;
-    dll_437_func_CC0(arg0, arg1, arg2, (u8*)arg1 + 0x80);
-    temp_fv0_2 = arg2->unk7C;
-    temp_fv1_2 = arg2->unk74;
+    dll_437_func_CC0(arg0, arg1, arg2, &arg1->_unk80);
     arg2->unk18 += arg2->unk0;
     arg2->unk1C += arg2->unk4;
     arg2->unk20 += arg2->unk8;
-    arg2->unk4C = arg2->unk1C * temp_fv0_2;
-    arg2->unk50 = arg2->unk20 * temp_fv0_2;
-    arg2->unk48 = arg2->unk18 * temp_fv0_2 * temp_fv1_2;
-    arg2->unk4C *= temp_fv1_2;
-    arg2->unk50 *= temp_fv1_2;
-    arg2->unk3C = arg2->unk48 + arg2->unk3C;
-    arg2->unk40 = arg2->unk4C + arg2->unk40;
-    arg2->unk44 = arg2->unk50 + arg2->unk44;
+    arg2->unk48.x = arg2->unk18 * arg2->unk7C;
+    arg2->unk48.y = arg2->unk1C * arg2->unk7C;
+    arg2->unk48.z = arg2->unk20 * arg2->unk7C;
+    arg2->unk48.x *= arg2->unk74;
+    arg2->unk48.y *= arg2->unk74;
+    arg2->unk48.z *= arg2->unk74;
+    arg2->unk3C.x = arg2->unk48.x + arg2->unk3C.x;
+    arg2->unk3C.y = arg2->unk48.y + arg2->unk3C.y;
+    arg2->unk3C.z = arg2->unk48.z + arg2->unk3C.z;
 }
 #endif
 
 // offset: 0x15F8 | func: 11
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_15F8.s")
-#else
-s32 dll_437_func_15F8(Object* arg0, EWTrobotpatrol_Data_90* arg1, EWTrobotpatrol_Data* arg2, s32 arg3) {
+static s32 dll_437_func_15F8(Object* arg0, EWTrobotpatrol_Data_90* arg1, EWTrobotpatrol_Data* arg2, s32 arg3) {
     switch (arg3) {
     case 0:
-        return dll_437_func_1674(arg0, arg1, (u8*)arg2 + 0x58); // TODO: 
+        return dll_437_func_1674(arg0, arg1, &arg2->unk58);
     case 1:
-        return dll_437_func_1920(arg0, arg1, (u8*)arg2 + 0x58);
+        return dll_437_func_1920(arg0, arg1, &arg2->unk58);
     default:
         return 0; 
     }
 }
-#endif
 
 // offset: 0x1674 | func: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_1674.s")
+static s32 dll_437_func_1674(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2) {
+    Vec3f sp34;
+    f32 temp_fa0;
+    f32 temp_fv0_3;
+    f32 var_fv1;
+    s32 temp_v0;
+
+    if ((arg1->unk3C.x > -0.01f) && (arg1->unk3C.x < 0.01f)) {
+        arg1->unk3C.x = 0.0f;
+    }
+    if ((arg1->unk3C.z > -0.01f) && (arg1->unk3C.z < 0.01f)) {
+        arg1->unk3C.z = 0.0f;
+    }
+    temp_fv0_3 = sqrtf(SQ(arg1->unk3C.f[0]) + SQ(arg1->unk3C.f[1]) + SQ(arg1->unk3C.f[2]));
+    if (temp_fv0_3 < 0.1f) {
+        bzero(&arg1->unk3C, sizeof(arg1->unk3C));
+        bzero(&arg1->unk48, sizeof(arg1->unk48));
+        arg1->unk0 = 0.0f;
+        arg1->unk8 = 0.0f;
+        return 1;
+    }
+    temp_fa0 = temp_fv0_3 / arg1->unk74;
+    sp34.x = arg2->x - arg0->srt.transl.x;
+    sp34.y = arg2->y - arg0->srt.transl.y;
+    sp34.z = arg2->z - arg0->srt.transl.z;
+    if (((sp34.f[0] * arg1->unk3C.f[0]) + (sp34.f[1] * arg1->unk3C.f[1]) + (sp34.f[2] * arg1->unk3C.f[2])) >= 0.0f) {
+        var_fv1 = -arg1->unk6C * temp_fa0;
+    } else {
+        var_fv1 = arg1->unk6C * temp_fa0;
+    }
+    if (var_fv1 > 30.0f) {
+        var_fv1 = 30.0f;
+    }
+    if (var_fv1 < -30.0f) {
+        var_fv1 = -30.0f;
+    }
+    if ((var_fv1 > -0.1f) && (var_fv1 < 0.1f)) {
+        var_fv1 = 0.0f;
+    }
+    temp_v0 = mathAtan2f(sp34.x, sp34.z);
+    arg1->unk0 = mathSinfInterp(temp_v0) * var_fv1;
+    arg1->unk8 = mathCosfInterp(temp_v0) * var_fv1;
+    return 0;
+}
 
 // offset: 0x1920 | func: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_1920.s")
+static s32 dll_437_func_1920(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2) {
+    Vec3f sp54;
+    f32 temp3;
+    f32 temp;
+    f32 temp2;
+    f32 sp44;
+    f32 sp48;
+    s32 _pad[2];
+    f32 var_fs0;
+    s32 sp30;
+    s32 sp2C;
+
+    var_fs0 = 0.0f;
+    sp54.x = arg2->x - arg0->srt.transl.x;
+    sp54.y = arg2->y - arg0->srt.transl.y;
+    sp54.z = arg2->z - arg0->srt.transl.z;
+    sp54.x /= 64;
+    sp54.y = 0.0f;
+    sp54.z /= 64;
+    temp2 = sqrtf(SQ(sp54.f[0]) + SQ(sp54.f[1]) + SQ(sp54.f[2]));
+    if (((sp54.f[0] * arg1->unk3C.f[0]) + (sp54.f[1] * arg1->unk3C.f[1]) + (sp54.f[2] * arg1->unk3C.f[2])) >= 0.0f) {
+        sp44 = -temp2;
+    } else {
+        sp44 = temp2;
+    }
+    sp48 = sqrtf(SQ(arg1->unk3C.f[0]) + SQ(arg1->unk3C.f[1]) + SQ(arg1->unk3C.f[2]));
+    temp3 = SQ(sp48);
+    temp = (arg1->unk7C * 30.0f);
+    if (temp2 > 0.05f) {
+        sp2C = 0;
+        if (temp2 < (temp3 / (2.0f * temp))) {
+            arg1->unk8E = 0;
+            var_fs0 = arg1->unk6C * (temp3 / (2.0f * sp44));
+        } else {
+            if (sp48 < 0.6f) {
+                arg1->unk8E = 1;
+            } else if (sp48 >= 1.15f) {
+                arg1->unk8E = 0;
+            }
+            if (arg1->unk8E != 0) {
+                var_fs0 = temp2 * 0.5f;
+                var_fs0 *= 30.0f;
+            }
+        }
+    } else {
+        sp2C = 1;
+    }
+    if (var_fs0 > 30.0f) {
+        var_fs0 = 30.0f;
+    }
+    if (var_fs0 < -30.0f) {
+        var_fs0 = -30.0f;
+    }
+    if ((var_fs0 > -0.1f) && (var_fs0 < 0.1f)) {
+        var_fs0 = 0.0f;
+    }
+    sp30 = mathAtan2f(sp54.x, sp54.z);
+    arg1->unk0 = mathSinfInterp(sp30) * var_fs0;
+    arg1->unk8 = mathCosfInterp(sp30) * var_fs0;
+    return sp2C;
+}
 
 // offset: 0x1BF0 | func: 14
 void dll_437_func_1BF0(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatrol_Data_120* a2) {
@@ -506,7 +641,7 @@ void dll_437_func_2060(Object* self, EWTrobotpatrol_Data* objdata, EWTrobotpatro
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_2ED4.s")
 
 // offset: 0x31E4 | func: 22
-void dll_437_func_31E4(EWTrobotpatrol_Data_154* arg0, s32 arg1, Object* arg2) {
+static void dll_437_func_31E4(EWTrobotpatrol_Data_154* arg0, s32 arg1, Object* arg2) {
     arg0->unk4F = arg1;
     arg0->unk0 = arg2;
 }
@@ -601,7 +736,27 @@ static void dll_437_func_380C(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotp
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_38C4.s")
 
 // offset: 0x39AC | func: 27
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_39AC.s")
+static void dll_437_func_39AC(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_90* arg2) {
+    f32 temp_fv0;
+    f32 temp_fv1;
+    CurveSetup* sp2C;
+    EWTrobotpatrol_Data* sp28;
+
+    sp28 = arg0->data;
+    sp2C = gDLL_26_Curves->vtbl->func_39C(arg1->unk4);
+    if (sp2C != NULL) {
+        arg1->unk58.x = sp2C->pos.x;
+        arg1->unk58.y = arg0->srt.transl.y;
+        arg1->unk58.z = sp2C->pos.z;
+        dll_437_func_15F8(arg0, arg2, arg1, 1);
+        temp_fv0 = sp2C->pos.x - arg0->srt.transl.x;
+        temp_fv1 = sp2C->pos.z - arg0->srt.transl.z;
+        sp28->unk1A8.unk18 = mathAtan2f(-temp_fv0, -temp_fv1);
+        temp_fv0 = arg0->srt.transl.x - sp2C->pos.x;
+        temp_fv1 = arg0->srt.transl.z - sp2C->pos.z;
+        arg1->unk14 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
+    }
+}
 
 // offset: 0x3AC8 | func: 28
 int dll_437_func_3AC8(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 a3) {

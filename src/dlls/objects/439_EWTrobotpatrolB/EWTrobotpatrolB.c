@@ -251,7 +251,7 @@ static s16 EWTrobotpatrolB_calcLinkPathDistance(s32 searchIdx, CurveSetup* currN
         }
         i++;
     }
-    // Return the shortest path dist of each found, as that's the only one we care about
+    // Return the shortest path dist, as that's the only one we care about
     shortestDist = linkPathDists[0];
     i = 1;
     while (i < 3) {
