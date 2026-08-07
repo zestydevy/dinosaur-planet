@@ -19,6 +19,7 @@ enum ParticleID {
     PARTICLE_5A = 0x5A,
     PARTICLE_5B = 0x5B,
     PARTICLE_69 = 0x69, //nothing?
+    PARTICLE_6B = 0x6B,
     PARTICLE_6D = 0x6D,
     PARTICLE_75 = 0x75, //Transporter - horizontal blue magic explosion
     PARTICLE_77 = 0x77,
@@ -128,6 +129,8 @@ enum ParticleID {
     PARTICLE_352 = 0x352,
     PARTICLE_353 = 0x353,
     PARTICLE_355 = 0x355,
+    PARTICLE_35B = 0x35B,
+    PARTICLE_35C = 0x35C,
     PARTICLE_383 = 0x383,
     /* --- DLL 41 END --- */
     /* --- DLL 34 START --- */
@@ -272,7 +275,9 @@ enum PartfxFlags {
     PARTFXFLAG_10 = 0x10,
     PARTFXFLAG_800 = 0x800,
     PARTFXFLAG_10000 = 0x10000,
-    PARTFXFLAG_200000 = 0x200000
+    PARTFXFLAG_200000 = 0x200000,
+    PARTFXFLAG_2000000 = 0x2000000,
+    PARTFXFLAG_4000000 = 0x4000000
 };
 
 // Interface for DLLs 34-52, which implement many of the particle routines that DLL 17 does not handle.
