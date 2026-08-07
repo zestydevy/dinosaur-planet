@@ -159,6 +159,7 @@ static s32 dll_437_func_1674(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* 
 static s32 dll_437_func_1920(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2);
 
 static void dll_437_func_2ED4(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_154* arg2);
+void dll_437_func_231C(Object*, ModelInstance*, Gfx**, Mtx**, Vertex**, Triangle**);
 
 // offset: 0x0 | ctor
 void dll_437_ctor(void *dll) { }
@@ -264,8 +265,127 @@ void dll_437_update(Object* self) {
 }
 
 // offset: 0x558 | func: 3 | export: 3
+#ifndef NON_MATCHING
 void dll_437_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_print.s")
+#else
+void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    EWTrobotpatrol_Data* spBC;
+    ModelInstance* temp_s2;
+    Object* temp_s0;
+    s32 var_a0;
+    MtxF* temp_v0;
+    s32 bone;
+    f32 temp_fv1_2;
+    MtxF sp64;
+    u8 sp63;
+    u8 sp62;
+    u8 sp61;
+    u8 sp5D;
+    u8 sp5C;
+    u8 sp5B;
+    s32 var_a1;
+    ObjectShadow* sp54;
+    Vec3f sp48;
+    s32 var_a2;
+    u8 sp43;
+    u8 sp42;
+    u8 sp41;
+    Vec3f* temp;
+
+    lightGetAmbient(&sp43, &sp42, &sp41);
+    spBC = self->data;
+    temp_s2 = self->modelInsts[self->modelInstIdx];
+    if (visibility != 0) {
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
+    } else if (!(temp_s2->unk34 & 8)) {
+        mod_func_8001943C(self, &sp64, 1.0f, 0.0f);
+        mod_func_80019730(temp_s2, temp_s2->model, self, &sp64);
+    }
+    temp_s0 = spBC->unk1A8.unk4;
+    temp = &spBC->unk1A8.unk8;
+    bone = self->def->pAttachPoints[0].bones[self->modelInstIdx];
+    temp_v0 = (MtxF*) &((f32*)temp_s2->matrices[temp_s2->unk34 & 1])[bone << 4];
+    temp_s0->srt.transl.x = temp_v0->m[3][0] + gWorldX;
+    temp_s0->srt.transl.y = temp_v0->m[3][1];
+    temp_s0->srt.transl.z = temp_v0->m[3][2] + gWorldZ;
+    camGetObjectChildPosition(temp_s0, &temp_s0->globalPosition.x, &temp_s0->globalPosition.y, &temp_s0->globalPosition.z);
+    if (trackObjVisCheck(temp_s0) != 0) {
+        sp54 = temp_s0->shadow;
+        var_a0 = 0xBA;
+        var_a1 = 0xFF;
+        var_a2 = 0xFF;  
+        sp63 = 0xBA;
+        sp62 = 0xFF;
+        sp61 = 0xFF;
+        switch (spBC->unk1E) {                        /* irregular */
+        case 0:
+            break;
+        case 1:
+            var_a0 = 0xD0;
+            var_a1 = 0;
+            var_a2 = 0;
+            break;
+        case 2:
+            var_a0 = 0xD0;
+            var_a1 = 0;
+            var_a2 = 0;
+            break;
+        }
+        sp63 += (spBC->unk1A8.unk0 * (f32) (var_a0 - sp63));
+        sp62 += (spBC->unk1A8.unk0 * (f32) (var_a1 - sp62));
+        if (0) { } // fake
+        sp61 += (spBC->unk1A8.unk0 * (f32) (var_a2 - sp61));
+        bone = self->def->pAttachPoints[3].bones[self->modelInstIdx];
+        temp_v0 = (MtxF*) &((f32*)temp_s2->matrices[temp_s2->unk34 & 1])[bone << 4];
+        sp48.f[0] = temp_v0->m[3][0] + gWorldX;
+        sp48.f[1] = temp_v0->m[3][1];
+        sp48.f[2] = temp_v0->m[3][2] + gWorldZ;
+        sp48.f[0] = temp_s0->srt.transl.x - sp48.f[0];
+        sp48.f[1] = temp_s0->srt.transl.y - sp48.f[1];
+        sp48.f[2] = temp_s0->srt.transl.z - sp48.f[2];
+        temp_fv1_2 = 1.0f / sqrtf(SQ(sp48.f[0]) + SQ(sp48.f[1]) + SQ(sp48.f[2]));
+        temp->x = (f32) (sp48.f[0] * temp_fv1_2);
+        temp->y = (f32) (sp48.f[1] * temp_fv1_2);
+        temp->z = (f32) (sp48.f[2] * temp_fv1_2);
+        sp54->dir.x = -temp->x;
+        sp54->dir.y = -temp->y;
+        sp54->dir.z = -temp->z;
+        sp54->tr.x = temp_s0->srt.transl.x;
+        sp54->tr.y = temp_s0->srt.transl.y;
+        sp54->tr.z = temp_s0->srt.transl.z;
+        sp54->flags |= 0x1000;
+        sp54->r = sp63;
+        sp54->g = sp62;
+        sp54->b = sp61;
+        if (0) { } // @fake
+        temp_s0->prevLocalPosition.x = temp_s0->srt.transl.x;
+        temp_s0->prevLocalPosition.y = temp_s0->srt.transl.y;
+        temp_s0->prevLocalPosition.z = temp_s0->srt.transl.z;
+        temp_s0->srt.yaw = spBC->unk1A8.unk16;
+        temp_s0->srt.pitch = 0;
+        temp_s0->srt.roll = 0;
+        temp_s0->srt.scale = 0.2f;
+        temp_s0->opacityWithFade = self->opacityWithFade;
+        if (temp_s0->opacityWithFade > 0xA0) {
+            temp_s0->opacityWithFade = 0xA0;
+        }
+        temp_s0->opacityWithFade = (u8) ((s32) (temp_s0->opacityWithFade * (temp_s0->opacity + 1)) >> 8);
+        sp5D = sp43;
+        sp5C = sp42;
+        sp5B = sp41;
+        sp43 = sp63;
+        sp42 = sp62;
+        sp41 = sp61;
+        objprintDrawModel(temp_s0, gdl, mtxs, vtxs, pols, 1.0f);
+        sp43 = sp5D;
+        sp42 = sp5C;
+        sp41 = sp5B;
+        temp_s0->modelInsts[temp_s0->modelInstIdx]->unk34 &= ~0x8;
+    }
+    dll_437_func_231C(self, temp_s2, gdl, mtxs, vtxs, pols);
+}
+#endif
 
 // offset: 0xBF4 | func: 4 | export: 4
 void dll_437_free(Object* self, s32 onlySelf) {
@@ -1042,7 +1162,7 @@ void dll_437_func_3AF8(Object* arg0, s32 arg1) {
     objdata->unk4 = arg1;
     objdata->unk1D = 0;
     objdata->unk14 = 1000.0f;
-    bzero((u8*)objdata + 0xCC, 0xC); // TODO: vec3?
+    bzero(&objdata->unk90.unk3C, sizeof(objdata->unk90.unk3C));
 }
 
 // offset: 0x3B60 | func: 31
