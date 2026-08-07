@@ -171,5 +171,6 @@ void func_80025E58(void);
 void func_8002B6EC(void);
 void func_800267C4(Object* obj);
 Object **func_80025DD4(s32 *arg0);
+s32 func_8002AD3C(Object* obj, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, f32* arg4);
 
 #endif

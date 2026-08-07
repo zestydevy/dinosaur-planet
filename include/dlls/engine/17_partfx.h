@@ -28,6 +28,7 @@ enum ParticleID {
     PARTICLE_7A = 0x7A, //Transporter - small sparkles (floating outward, then attracting inwards)
     PARTICLE_84 = 0x84, // implemented by DLL 40
     PARTICLE_85 = 0x85, // implemented by DLL 40
+    PARTICLE_86 = 0x86,
     /* --- DLL 40 START --- */
     PARTICLE_8A = 0x8A,
     PARTICLE_8C = 0x8C,

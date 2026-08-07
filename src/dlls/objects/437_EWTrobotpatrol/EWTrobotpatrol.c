@@ -1,10 +1,19 @@
-#include "common.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/437_EWTrobotpatrol.h"
 #include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "sys/camera.h"
+#include "sys/dll.h"
 #include "sys/gfx/texture.h"
+#include "sys/gfx/projgfx.h"
+#include "sys/gfx/animseq.h"
+#include "sys/joypad.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/lighting.h"
+#include "sys/voxmap.h"
+#include "dll.h"
 
 typedef struct {
     f32 unk0;
@@ -53,11 +62,14 @@ typedef struct {
 
 typedef struct {
     Object* unk0;
-    u8 _unk4[0x14 - 0x4];
+    u8 _unk4[0x8 - 0x4];
+    Vec3f unk8;
     f32 unk14;
     f32 unk18;
     f32 unk1C;
-    u8 _unk20[0x44 - 0x20];
+    Vec3f unk20;
+    Vec3f unk2C;
+    Vec3f unk38;
     f32 unk44;
     s16 unk48;
     s16 unk4A;
@@ -159,7 +171,8 @@ static s32 dll_437_func_1674(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* 
 static s32 dll_437_func_1920(Object* arg0, EWTrobotpatrol_Data_90* arg1, Vec3f* arg2);
 
 static void dll_437_func_2ED4(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_154* arg2);
-void dll_437_func_231C(Object*, ModelInstance*, Gfx**, Mtx**, Vertex**, Triangle**);
+void dll_437_func_231C(Object* arg0, ModelInstance* arg1, Gfx** arg2, Mtx** arg3, Vtx** arg4, DLTri** arg5);
+s32 dll_437_func_2C38(Vec3f* a0, Vec3f* a1, Vec3f* a2, Vec3f* a3, Object* a4);
 
 // offset: 0x0 | ctor
 void dll_437_ctor(void *dll) { }
@@ -269,25 +282,29 @@ void dll_437_update(Object* self) {
 void dll_437_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_print.s")
 #else
+// needs dll_437_func_231C to be static
+
 void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     EWTrobotpatrol_Data* spBC;
     ModelInstance* temp_s2;
     Object* temp_s0;
-    s32 var_a0;
     MtxF* temp_v0;
     s32 bone;
+    s32 _pad;
     f32 temp_fv1_2;
     MtxF sp64;
     u8 sp63;
     u8 sp62;
     u8 sp61;
+    u8 var_a0;
+    u8 var_a1;
+    u8 var_a2;
     u8 sp5D;
     u8 sp5C;
     u8 sp5B;
-    s32 var_a1;
     ObjectShadow* sp54;
     Vec3f sp48;
-    s32 var_a2;
+    s32 _pad2;
     u8 sp43;
     u8 sp42;
     u8 sp41;
@@ -312,15 +329,7 @@ void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     camGetObjectChildPosition(temp_s0, &temp_s0->globalPosition.x, &temp_s0->globalPosition.y, &temp_s0->globalPosition.z);
     if (trackObjVisCheck(temp_s0) != 0) {
         sp54 = temp_s0->shadow;
-        var_a0 = 0xBA;
-        var_a1 = 0xFF;
-        var_a2 = 0xFF;  
-        sp63 = 0xBA;
-        sp62 = 0xFF;
-        sp61 = 0xFF;
-        switch (spBC->unk1E) {                        /* irregular */
-        case 0:
-            break;
+        switch (spBC->unk1E) {
         case 1:
             var_a0 = 0xD0;
             var_a1 = 0;
@@ -331,10 +340,18 @@ void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
             var_a1 = 0;
             var_a2 = 0;
             break;
+        case 0:
+        default:
+            var_a0 = 0xBA;
+            var_a1 = 0xFF;
+            var_a2 = 0xFF;  
+            break;
         }
+        sp63 = 0xBA;
+        sp62 = 0xFF;
+        sp61 = 0xFF;
         sp63 += (spBC->unk1A8.unk0 * (f32) (var_a0 - sp63));
         sp62 += (spBC->unk1A8.unk0 * (f32) (var_a1 - sp62));
-        if (0) { } // fake
         sp61 += (spBC->unk1A8.unk0 * (f32) (var_a2 - sp61));
         bone = self->def->pAttachPoints[3].bones[self->modelInstIdx];
         temp_v0 = (MtxF*) &((f32*)temp_s2->matrices[temp_s2->unk34 & 1])[bone << 4];
@@ -358,7 +375,6 @@ void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         sp54->r = sp63;
         sp54->g = sp62;
         sp54->b = sp61;
-        if (0) { } // @fake
         temp_s0->prevLocalPosition.x = temp_s0->srt.transl.x;
         temp_s0->prevLocalPosition.y = temp_s0->srt.transl.y;
         temp_s0->prevLocalPosition.z = temp_s0->srt.transl.z;
@@ -383,7 +399,7 @@ void dll_437_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
         sp41 = sp5B;
         temp_s0->modelInsts[temp_s0->modelInstIdx]->unk34 &= ~0x8;
     }
-    dll_437_func_231C(self, temp_s2, gdl, mtxs, vtxs, pols);
+    dll_437_func_231C(self, temp_s2, gdl, mtxs, (Vtx**)vtxs, (DLTri**)pols);
 }
 #endif
 
@@ -741,10 +757,6 @@ static void dll_437_func_1BF0(Object* self, EWTrobotpatrol_Data* objdata, EWTrob
     bcopy(&sp20, a2->unk0, sizeof(sp20));
 }
 
-/*0x50*/ static u32 data_50[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
-};
-
 // offset: 0x1C74 | func: 15
 static void dll_437_func_1C74(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_120* arg2) {
     s32 i;
@@ -860,13 +872,291 @@ static void dll_437_func_208C(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotp
 }
 
 // offset: 0x2158 | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_2158.s")
+void dll_437_func_2158(Object* self, EWTrobotpatrol_Data_154* arg1) {
+    s32 angle;
+    SRT sp54;
+    SRT sp3C;
+    DLL_IProjgfx* laserProj;
+
+    angle = arg1->unk4C - (arg1->unk48 & 0xFFFF);
+    CIRCLE_WRAP(angle);
+    if ((angle >= -0x1000) && (angle <= 0x1000)) {
+        gDLL_6_AMSFX->vtbl->Play(self, SOUND_115_ScorpionRobot_LaserFire, MAX_VOLUME, NULL, NULL, 0, NULL);
+        sp3C.transl.x = arg1->unk20.x;
+        sp3C.transl.y = arg1->unk20.y;
+        sp3C.transl.z = arg1->unk20.z;
+        sp3C.scale = 1.0f;
+        sp3C.yaw = 0;
+        sp3C.roll = 0;
+        sp3C.pitch = 0;
+        sp54.transl.x = arg1->unk8.x;
+        sp54.transl.y = arg1->unk8.y;
+        sp54.transl.z = arg1->unk8.z;
+        sp54.scale = 1.0f;
+        sp54.yaw = 0;
+        sp54.roll = 0;
+        sp54.pitch = 0;
+        laserProj = dllLoad(DLL_ID_193, 1);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_86, &sp54, PARTFXFLAG_1, -1, NULL);
+        laserProj->vtbl->func0(objGetPlayer(), 0, &sp54, 1, -1, 7, &sp3C);
+        if (laserProj != NULL) {
+            dllFree(laserProj);
+        }
+    }
+}
 
 // offset: 0x231C | func: 19
+#ifndef NON_MATCHING
+/*0x50*/ static s16 data_50[] = {
+    0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000
+};
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_231C.s")
+#else
+void dll_437_func_231C(Object* arg0, ModelInstance* arg1, Gfx** arg2, Mtx** arg3, Vtx** arg4, DLTri** arg5) {
+    static s16 data_50 = 0;
+    Vec3f spE4;
+    SRT spCC;
+    Object* spC8;
+    MtxF* temp_a0;
+    f32 spC0;
+    Vtx* temp_s2;
+    f32 temp_fv0;
+    f32 var_fv1_2;
+    f32 ft2;
+    EWTrobotpatrol_Data_154* temp_s0;
+    s32 bone;
+    EWTrobotpatrol_Data* spA4;
+    f32 var_fa0;
+    f32 ft3;
+    f32 temp;
+    f32 temp2;
+
+    data_50 += 3;
+    if (data_50 >= 0x1F) {
+        data_50 = 0;
+    }
+    spA4 = arg0->data;
+    temp_s0 = &spA4->unk154;
+    if (spA4->unk154.unk4E == 0) {
+        return;
+    }
+    temp_s2 = *arg4;
+    spC8 = objGetPlayer();
+    bone = arg0->def->pAttachPoints[2].bones[arg0->modelInstIdx];
+    temp_a0 = (MtxF*) &((f32*)arg1->matrices[arg1->unk34 & 1])[bone << 4];
+    temp_s0->unk14 = temp_a0->m[3][0] + gWorldX;
+    temp_s0->unk18 = temp_a0->m[3][1];
+    temp_s0->unk1C = temp_a0->m[3][2] + gWorldZ;
+    bone = arg0->def->pAttachPoints[1].bones[arg0->modelInstIdx];
+    temp_a0 = (MtxF*) &((f32*)arg1->matrices[arg1->unk34 & 1])[bone << 4];
+    temp_s0->unk8.x = temp_a0->m[3][0] + gWorldX;
+    temp_s0->unk8.y = temp_a0->m[3][1];
+    temp_s0->unk8.z = temp_a0->m[3][2] + gWorldZ;
+    temp_s0->unk38.x = temp_s0->unk8.x - temp_s0->unk14;
+    temp_s0->unk38.y = temp_s0->unk8.y - temp_s0->unk18;
+    temp_s0->unk38.z = temp_s0->unk8.z - temp_s0->unk1C;
+    temp_fv0 = sqrtf(SQ(temp_s0->unk38.f[0]) + SQ(temp_s0->unk38.f[1]) + SQ(temp_s0->unk38.f[2]));
+    if (temp_fv0 != 0.0f) {
+        spC0 = 1.0f / temp_fv0;
+    } else {
+        spC0 = 0.0f;
+    }
+    temp_s0->unk38.x *= spC0;
+    temp_s0->unk38.y *= spC0;
+    temp_s0->unk38.z *= spC0;
+    spE4.x = temp_s0->unk38.x * 300.0f;
+    spE4.y = temp_s0->unk38.y * 300.0f;
+    spE4.z = temp_s0->unk38.z * 300.0f;
+    spE4.x += temp_s0->unk8.x;
+    spE4.y += temp_s0->unk8.y;
+    spE4.z += temp_s0->unk8.z;
+    dll_437_func_2C38(&temp_s0->unk8, &spE4, &temp_s0->unk20, &temp_s0->unk2C, spC8);
+    gDPLoadTextureBlockS((*arg2)++,
+        /*timg*/bss_4 + 1,
+        /*fmt*/G_IM_FMT_IA,
+        /*siz*/G_IM_SIZ_8b,
+        /*width*/bss_4->width,
+        /*height*/bss_4->height,
+        /*pal*/0,
+        /*cms*/G_TX_NOMIRROR | G_TX_WRAP,
+        /*cmt*/G_TX_NOMIRROR | G_TX_WRAP,
+        /*masks*/5,
+        /*maskt*/5,
+        /*shifts*/G_TX_NOLOD,
+        /*shiftt*/G_TX_NOLOD            
+    );
+    gDPTileSync((*arg2)++);
+    gDPLoadMultiBlockS((*arg2)++,
+        /*timg*/bss_0 + 1,
+        /*tmem*/bss_4->sizeBytes >> 3,
+        /*rtile*/1,
+        /*fmt*/G_IM_FMT_RGBA,
+        /*siz*/G_IM_SIZ_32b,
+        /*width*/bss_0->width,
+        /*height*/bss_0->height,
+        /*pal*/0,
+        /*cms*/G_TX_NOMIRROR | G_TX_WRAP,
+        /*cmt*/G_TX_NOMIRROR | G_TX_WRAP,
+        /*masks*/5,
+        /*maskt*/5,
+        /*shifts*/G_TX_NOLOD,
+        /*shiftt*/G_TX_NOLOD    
+    );
+    dlSetPrimColor(arg2, 0xFF, 0xFF, 0xFF, 0x55);
+    gDPSetCombineMode(*arg2, G_CC_DINO_PRIM_RGB_INTERFERENCE_A, G_CC_DINO_MODULATERGB_PRIMA2);
+    dlApplyCombine(arg2);
+    gDPSetOtherMode(*arg2, 
+        G_AD_PATTERN | G_CD_NOISE | G_CK_NONE | G_TC_FILT | G_TF_BILERP | G_TT_NONE | G_TL_TILE | G_TD_CLAMP | G_TP_PERSP | G_CYC_2CYCLE | G_PM_NPRIMITIVE, 
+        G_AC_NONE | G_ZS_PIXEL | G_RM_NOOP | G_RM_ZB_CLD_SURF2);
+    dlApplyOtherMode(arg2);
+    spC0 = sqrtf(SQ(temp_s0->unk38.x) + SQ(temp_s0->unk38.z));
+    spCC.yaw = mathAtan2f(temp_s0->unk38.x, temp_s0->unk38.z);
+    spCC.pitch = -mathAtan2f(temp_s0->unk38.y, spC0);
+    spCC.roll = 0;
+    spCC.transl.x = temp_s0->unk8.x;
+    spCC.transl.y = temp_s0->unk8.y;
+    spCC.transl.z = temp_s0->unk8.z;
+    spCC.scale = 0.1f;
+    camSetupObjectSRTMatrix(arg2, arg3, &spCC, 1.0f, 0.0f, NULL);
+    bcopy(data_0, *arg5, 0x20);
+    gSPVertex((*arg2)++, OS_PHYSICAL_TO_K0(*arg4), 4, 0);
+    dlTriangles(arg2, *arg5, 2);
+    spC0 = sqrtf(SQ(temp_s0->unk20.x - temp_s0->unk8.x) + SQ(temp_s0->unk20.z - temp_s0->unk8.z));
+    temp_fv0 = mathCosfInterp(spCC.pitch);
+    ft2 = 0.0f;
+    ft3 = 0.0f;
+    temp = 0.0f;
+    temp2 = 0.0f;
+    if (temp_fv0 != 0.0f) {
+        var_fv1_2 = spC0 / temp_fv0;
+    } else {
+        var_fv1_2 = 0.0f;
+    }
+    var_fv1_2 *= 10.0f;
+    temp_s2->v.ob[0] = (s32)temp/*f6*/;
+    temp_s2->v.ob[1] = (s32)ft2/*f8*/ + 14;
+    temp_s2->v.ob[2] = (s32)ft3/*f10*/;
+    temp_s2->v.cn[0] = 0xFF;
+    temp_s2->v.cn[1] = 0;
+    temp_s2->v.cn[2] = 0;
+    temp_s2->v.cn[3] = 0xCD;
+    temp_s2++;
+
+    temp_s2->v.ob[0] = (s32)ft3/*f10*/;
+    temp_s2->v.ob[2] = (s32)ft3/*f10*/;
+    temp_s2->v.ob[1] = (s32)temp2/*f10*/ - 14;
+    temp_s2->v.cn[0] = 0xFF;
+    temp_s2->v.cn[1] = 0;
+    temp_s2->v.cn[2] = 0;
+    temp_s2->v.cn[3] = 0xCD;
+    temp_s2++;
+
+    temp_s2->v.ob[0] = (s32)ft3/*f18*/;
+    temp_s2->v.ob[1] = (s32)ft2/*f8*/ + 14;
+    temp_s2->v.ob[2] = var_fv1_2;
+    temp_s2->v.cn[3] = 0x69;
+    temp_s2->v.cn[0] = 0xFF;
+    temp_s2->v.cn[1] = 0;
+    temp_s2->v.cn[2] = 0;
+    temp_s2++;
+
+    temp_s2->v.ob[0] = (s32)ft3/*f18*/;
+    temp_s2->v.ob[1] = (s32)temp2/*f10*/ - 14;
+    temp_s2->v.ob[2] = var_fv1_2;
+    temp_s2->v.cn[3] = 0x69;
+    temp_s2->v.cn[0] = 0xFF;
+    temp_s2->v.cn[1] = 0;
+    temp_s2->v.cn[2] = 0;
+    temp_s2++;
+    spCC.roll = 0x4000;
+    camSetupObjectSRTMatrix(arg2, arg3, &spCC, 1.0f, 0.0f, NULL);
+    gSPVertex((*arg2)++, OS_PHYSICAL_TO_K0(*arg4), 4, 0);
+    dlTriangles(arg2, *arg5, 2);
+    *arg4 = temp_s2;
+    *arg5 += 2;
+    if (temp_s0->unk50 > 0) {
+        dll_437_func_2158(arg0, temp_s0);
+        temp_s0->unk50 = 0;
+    }
+    texRenderReset();
+    lightAmbientDL(arg2);
+}
+#endif
 
 // offset: 0x2C38 | func: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/437_EWTrobotpatrol/dll_437_func_2C38.s")
+s32 dll_437_func_2C38(Vec3f* a0, Vec3f* a1, Vec3f* a2, Vec3f* a3, Object* a4) {
+    Vec3s16 sp90;
+    Vec3s16 sp88;
+    Vec3s16 sp80;
+    f32 var_fv1;
+    s32 _pad;
+    s32 _pad2;
+    Vec3f sp68;
+    Vec3f sp5C;
+    Vec3f sp50;
+    Vec3f sp44;
+    s8 _pad_sp43;
+    s8 sp42;
+    s32 _pad3;
+    f32 sp38;
+    s32 _pad4;
+
+    sp44.f[0] = a1->f[0] - a0->f[0];
+    sp44.f[1] = a1->f[1] - a0->f[1];
+    sp44.f[2] = a1->f[2] - a0->f[2];
+    var_fv1 = sqrtf(SQ(sp44.f[0]) + SQ(sp44.f[1]) + SQ(sp44.f[2]));
+    if (var_fv1 != 0.0f) {
+        var_fv1 = 1.0f / var_fv1;
+    }
+    sp44.f[0] *= var_fv1;
+    sp44.f[1] *= var_fv1;
+    sp44.f[2] *= var_fv1;
+    if (a3){} // @fake
+    vox_func_80007EE0(a0, &sp90);
+    vox_func_80007EE0(a1, &sp88);
+    sp5C.f[0] = a1->f[0];
+    sp5C.f[1] = a1->f[1];
+    sp5C.f[2] = a1->f[2];
+    sp38 = 1.0f;
+    if (a4 != NULL) {
+        sp42 = func_8002AD3C(a4, a0, a1, &sp5C, &sp38);
+    } else {
+        sp42 = 0;
+    }
+    a2->f[0] = a1->f[0];
+    a2->f[1] = a1->f[1];
+    a2->f[2] = a1->f[2];
+    a3->f[0] = a1->f[0];
+    a3->f[1] = a1->f[1];
+    a3->f[2] = a1->f[2];
+    if (vox_func_80008048(&sp90, &sp88, &sp80, NULL, 0) == 0) {
+        vox_func_80007E2C(&sp68, &sp80);
+        sp44.f[0] *= 20.0f;
+        sp44.f[1] *= 20.0f;
+        sp44.f[2] *= 20.0f;
+    }
+    // FAKE?
+    sp44.f[0] *= 1.0f;
+    sp44.f[1] *= 1.0f;
+    sp44.f[2] *= 1.0f;
+    // @bug: sp50 is uninitialized!!
+    a3->f[1] = sp50.f[1];
+    a3->f[2] = sp50.f[2];
+    if (sp42 != 0) {
+        if (sp38 < 1.0f) {
+            a2->f[0] = sp5C.f[0];
+            a2->f[1] = sp5C.f[1];
+            a2->f[2] = sp5C.f[2];
+            return 1;
+        } else {
+            a2->f[0] = sp50.f[0];
+            a2->f[1] = sp50.f[1];
+            a2->f[2] = sp50.f[2];
+            return 2;
+        }
+    }
+    return 0;
+}
 
 // offset: 0x2ED4 | func: 21
 static void dll_437_func_2ED4(Object* arg0, EWTrobotpatrol_Data* arg1, EWTrobotpatrol_Data_154* arg2) {
