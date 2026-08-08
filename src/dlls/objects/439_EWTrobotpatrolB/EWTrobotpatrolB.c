@@ -139,7 +139,7 @@ void EWTrobotpatrolB_spawnRobo(Object* self, CurveSetup* startNode) {
     roboSetup->z = startNode->pos.z;
     robo = objSetupObject(roboSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, self->parent);
     objdata->robos[i] = robo;
-    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AE4(robo, self, EWTrobotpatrolB_roboCallback);
+    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->SetBase(robo, self, EWTrobotpatrolB_roboCallback);
     EWTrobotpatrolB_pathRoboRandom(self, robo, startNode->uID);
 }
 
@@ -169,7 +169,7 @@ static void EWTrobotpatrolB_pathRoboRandom(Object* self, Object* robo, u32 currU
     while (node->links[max + 1] != -1 && max != 3) {
         max++;
     }
-    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AF8(robo, node->links[mathRnd(0, max)]);
+    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->MoveTo(robo, node->links[mathRnd(0, max)]);
 }
 
 // offset: 0x470 | func: 10
@@ -210,7 +210,7 @@ static void EWTrobotpatrolB_pathRoboToPlayer(Object* self, Object* robo, u32 cur
         }
         i += 1;
     }
-    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->Func_3AF8(robo, currNode->links[bestLinkIdx]);
+    ((DLL_437_EWTrobotpatrol*)robo->dll)->vtbl->MoveTo(robo, currNode->links[bestLinkIdx]);
 }
 
 // offset: 0x60C | func: 11

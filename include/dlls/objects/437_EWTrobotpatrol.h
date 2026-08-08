@@ -13,12 +13,12 @@ typedef struct {
     u8 unk1A;
 } EWTrobotpatrol_Setup;
 
-typedef void (*EWTrobotpatrolCallback)(Object* base, Object* robot, s32 arg2, u32 uID);
+typedef void (*EWTrobotpatrolCallback)(Object* base, Object* robot, s32 aggro, u32 uID);
 
 DLL_INTERFACE(DLL_437_EWTrobotpatrol) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*07*/ void (*Func_3AE4)(Object* self, Object* base, EWTrobotpatrolCallback callback);
-    /*08*/ void (*Func_3AF8)(Object* self, s32 arg1);
+    /*07*/ void (*SetBase)(Object* self, Object* base, EWTrobotpatrolCallback callback);
+    /*08*/ void (*MoveTo)(Object* self, s32 curveUID);
 };
 
 #endif //_DLLS_216_H

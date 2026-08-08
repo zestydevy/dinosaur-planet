@@ -15,5 +15,5 @@ _exports:
 /*4*/ .dword EWTrobotpatrol_obj_Free
 /*5*/ .dword EWTrobotpatrol_obj_GetModelFlags
 /*6*/ .dword EWTrobotpatrol_obj_GetDataSize
-/*7*/ .dword EWTrobotpatrol_Func_3AE4
-/*8*/ .dword EWTrobotpatrol_Func_3AF8
+/*7*/ .dword EWTrobotpatrol_SetBase
+/*8*/ .dword EWTrobotpatrol_MoveTo
