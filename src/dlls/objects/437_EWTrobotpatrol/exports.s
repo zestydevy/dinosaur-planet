@@ -4,16 +4,16 @@
 _exports:
 
 # ctor/dtor
-.dword dll_437_ctor
-.dword dll_437_dtor
+.dword EWTrobotpatrol_ctor
+.dword EWTrobotpatrol_dtor
 
 # export table
-/*0*/ .dword dll_437_setup
-/*1*/ .dword dll_437_control
-/*2*/ .dword dll_437_update
-/*3*/ .dword dll_437_print
-/*4*/ .dword dll_437_free
-/*5*/ .dword dll_437_get_model_flags
-/*6*/ .dword dll_437_get_data_size
-/*7*/ .dword dll_437_func_3AE4
-/*8*/ .dword dll_437_func_3AF8
+/*0*/ .dword EWTrobotpatrol_obj_Setup
+/*1*/ .dword EWTrobotpatrol_obj_Control
+/*2*/ .dword EWTrobotpatrol_obj_Update
+/*3*/ .dword EWTrobotpatrol_obj_Print
+/*4*/ .dword EWTrobotpatrol_obj_Free
+/*5*/ .dword EWTrobotpatrol_obj_GetModelFlags
+/*6*/ .dword EWTrobotpatrol_obj_GetDataSize
+/*7*/ .dword EWTrobotpatrol_SetBase
+/*8*/ .dword EWTrobotpatrol_MoveTo

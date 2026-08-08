@@ -1,0 +1,32 @@
+.text = 0x0:
+EWTrobotpatrolB_ctor = 0x0;
+EWTrobotpatrolB_dtor = 0xC;
+EWTrobotpatrolB_obj_Setup = 0x18;
+EWTrobotpatrolB_obj_Control = 0x2C;
+EWTrobotpatrolB_obj_Update = 0x38;
+EWTrobotpatrolB_obj_Print = 0xE0;
+EWTrobotpatrolB_obj_Free = 0x134;
+EWTrobotpatrolB_obj_GetModelFlags = 0x1AC;
+EWTrobotpatrolB_obj_GetDataSize = 0x1BC;
+EWTrobotpatrolB_spawnRobo = 0x1D0;
+EWTrobotpatrolB_roboCallback = 0x30C;
+EWTrobotpatrolB_pathRoboRandom = 0x3A4;
+EWTrobotpatrolB_pathRoboToPlayer = 0x470;
+EWTrobotpatrolB_calcLinkPathDistance = 0x60C;
+EWTrobotpatrolB_initCurveNetwork = 0x88C;
+EWTrobotpatrolB_initCurveNetworkSearchLink = 0xA60;
+EWTrobotpatrolB_findNodesClosestToPlayer = 0xBA0;
+EWTrobotpatrolB_objDist2Node = 0xD10;
+EWTrobotpatrolB_getPathNode = 0xD7C;
+
+.rodata = 0xE70:
+str_0 = 0x0; // absolute:0xE70
+
+.data = 0xEB0:
+data_0 = 0x0; // absolute:0xEB0
+data_8 = 0x8; // absolute:0xEB8
+
+.bss = 0xEC0:
+sPathfindVisited = 0x0; // absolute:0xEC0
+sPathfindGoal = 0x60; // absolute:0xF20
+sPathfindSelf = 0x64; // absolute:0xF24

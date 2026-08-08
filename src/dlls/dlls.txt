@@ -258,6 +258,7 @@
 435 = objects/435_KrazoaSpirit
 437 = objects/437_EWTrobotpatrol
 438 = objects/438_RobotBeam
+439 = objects/439_EWTrobotpatrolB
 441 = objects/441_MMP_levelcontrol
 447 = objects/447_CCguardgiving
 448 = objects/448_CCcage

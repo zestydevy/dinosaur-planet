@@ -11,6 +11,8 @@
 #include "dlls/objects/210_player.h"
 #include "dll.h"
 
+#include "prevent_bss_reordering.h"
+
 // size:0x14
 typedef struct {
 /*00*/ u8 fed;
