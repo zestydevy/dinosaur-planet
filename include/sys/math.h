@@ -36,6 +36,8 @@
 }
 #define CLAMP_EXPR(x, low, high) ((x) < (low) ? (low) : ((x) > (high) ? (high) : (x)))
 
+#define ABS(x) ((x) >= 0 ? (x) : -(x))
+
 /**
  * Allows an arbitrary range the number can wrap around.
  * Often used for angles, to keep them within s16 bounds while stored in an s32.
