@@ -129,7 +129,9 @@ enum ParticleID {
     /* --- DLL 41 START --- */
     PARTICLE_352 = 0x352,
     PARTICLE_353 = 0x353,
+    PARTICLE_354 = 0x354,
     PARTICLE_355 = 0x355,
+    PARTICLE_356 = 0x356,
     PARTICLE_35B = 0x35B,
     PARTICLE_35C = 0x35C,
     PARTICLE_383 = 0x383,
