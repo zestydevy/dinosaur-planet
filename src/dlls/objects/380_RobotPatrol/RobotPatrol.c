@@ -1073,7 +1073,7 @@ static s32 RobotPatrol_aimRaycast(Vec3f* barrelPos, Vec3f* aimPoint, Vec3f* fire
     f32 sp38;
     f32 var_fv1;
 
-    sp44.f[0] = aimPoint->x - barrelPos->x;
+    sp44.f[0] = aimPoint->f[0] - barrelPos->f[0];
     sp44.f[1] = aimPoint->f[1] - barrelPos->f[1];
     sp44.f[2] = aimPoint->f[2] - barrelPos->f[2];
     var_fv1 = sqrtf(SQ(sp44.f[0]) + SQ(sp44.f[1]) + SQ(sp44.f[2]));
