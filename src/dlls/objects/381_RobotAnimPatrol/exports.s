@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_381_ctor
-.dword dll_381_dtor
+.dword RobotAnimPatrol_ctor
+.dword RobotAnimPatrol_dtor
 
 # export table
-/*0*/ .dword dll_381_obj_Setup
-/*1*/ .dword dll_381_obj_Control
-/*2*/ .dword dll_381_obj_Update
-/*3*/ .dword dll_381_obj_Print
-/*4*/ .dword dll_381_obj_Free
-/*5*/ .dword dll_381_obj_GetModelFlags
-/*6*/ .dword dll_381_obj_GetDataSize
+/*0*/ .dword RobotAnimPatrol_obj_Setup
+/*1*/ .dword RobotAnimPatrol_obj_Control
+/*2*/ .dword RobotAnimPatrol_obj_Update
+/*3*/ .dword RobotAnimPatrol_obj_Print
+/*4*/ .dword RobotAnimPatrol_obj_Free
+/*5*/ .dword RobotAnimPatrol_obj_GetModelFlags
+/*6*/ .dword RobotAnimPatrol_obj_GetDataSize
