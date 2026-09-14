@@ -159,6 +159,8 @@ void joyGetStickMenuXYSign(int port, s8 *xSign, s8 *ySign);
  */
 void joyDisableButtons(int port, u16 buttons);
 
+void joyDisableStick(int _);
+
 /**
  * Sets the number of input frames that must pass before menu movement occurs due to the
  * joystick being held in a direction.

@@ -37,7 +37,7 @@ typedef struct {
 } LightAction; //LActions.bin structs used by NewLfx DLL
 
 /** Applies LightAction */
-s32 lfxAction(Object* arg0, Object* arg1, u16 actionIndex, s8, s32, s32);
-s32 lfxRestoreAction(Object*, Object*, u16, s8, s32, s32);
+s32 lfxAction(Object* arg0, Object* arg1, u16 actionIndex, s8, s32, SRT*);
+s32 lfxRestoreAction(Object*, Object*, u16, s8, s32, SRT*);
 
 #endif

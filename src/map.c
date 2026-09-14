@@ -696,7 +696,7 @@ void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** v
     } else {
         camSetupRSPMatrices(&gMainDL, &gWorldRSPMatrices);
     }
-    gDLL_11_Newlfx->vtbl->func2();
+    dll_newlfx->Tick();
     gDLL_57->vtbl->func3();
     gDLL_58->vtbl->func2();
     if (gTrackFlags & TRACKFLAG_SUN_GLARE) {
@@ -2807,7 +2807,7 @@ void map_func_8004773C(void) {
     D_800B4A54 = -1;
     gMapLayer = savedPlayerLocation->mapLayer;
     gDLL_24_Waterfx->vtbl->init();
-    gDLL_11_Newlfx->vtbl->func1();
+    dll_newlfx->Free();
     gDLL_57->vtbl->func0();
     gDLL_58->vtbl->func0();
     gDLL_15_Projgfx->vtbl->func0();
@@ -4946,7 +4946,7 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     u8 pad2;
     u8 pad;
     u8 sp120;
-    UnkSp8C* var_s0; // sp11C
+    NewLfxStruct* var_s0; // sp11C
     f32 sp110[3];
     s32 var_a2;
     UnkSp8C sp8C[4];
@@ -4965,20 +4965,20 @@ void blockComputeVertexColors(Block* arg0, s32 arg1, s32 arg2, s32 arg3) {
     sp160 = D_80092BC0;
     sp78 = 0;
     lightGetAmbient(&sp7B, &sp7A, &sp79);
-    if (!arg0->shapes[i].flags);
+    if (!arg0->shapes[i].flags){}
     sp77 = sp7B;
     sp76 = sp7A;
     sp75 = sp79;
     arg2 *= BLOCKS_GRID_UNIT;
     arg1 *= BLOCKS_GRID_UNIT;
-    var_s0 = gDLL_11_Newlfx->vtbl->func3(0, &sp78);
+    var_s0 = dll_newlfx->Func_828(0, &sp78);
     gDLL_57->vtbl->func2(&sp158[0], &sp150[0], &sp148[0], &sp158[1], &sp150[1], &sp148[1]);
     if (var_s0 != NULL) {
         for (i = 0; i < sp78; i++) {
             var_v0 = &sp8C[i];
-            var_v0->unk0 = var_s0->unk0;
-            var_v0->unk4 = var_s0->unk4;
-            var_v0->unk8 = var_s0->unk8;
+            var_v0->unk0 = var_s0->unk0.x;
+            var_v0->unk4 = var_s0->unk0.y;
+            var_v0->unk8 = var_s0->unk0.z;
             var_v0->unkC = var_s0->unkC;
             var_v0->unk10 = var_s0->unk10;
             var_v0->unk14 = var_s0->unk14;

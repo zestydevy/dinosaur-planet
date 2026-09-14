@@ -9,6 +9,7 @@
 8 = engine/8_newfog
 9 = engine/9_newclouds
 10 = engine/10_newstars
+11 = engine/11_newlfx
 12 = engine/12_minic
 13 = engine/13_expgfx
 14 = engine/14_modgfx

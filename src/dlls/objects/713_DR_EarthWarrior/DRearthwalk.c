@@ -384,7 +384,7 @@ static void DRearthwalk_func_B54(Object* self, s32 fsaUpdateRate, s32 arg2) {
         temp_fv0 = sp28->unk0.unk68.x - self->srt.transl.x;
         temp_fa1 = sp28->unk0.unk68.z - self->srt.transl.z;
         sqrtf(SQ(temp_fv0) + SQ(temp_fa1));
-        if ((objdata->unkA58 & 0x80) && ((gDLL_11_Newlfx->vtbl->func4.withTwoArgsF32Custom(&self->srt.transl, 128.0f) < 0.0f) || (temp_v1->stateFlags & 0x1000))) {
+        if ((objdata->unkA58 & 0x80) && ((dll_newlfx->FindClosestLight(&self->srt.transl, 128.0f) < 0.0f) || (temp_v1->stateFlags & 0x1000))) {
             sp4C = 0;
         }
         temp_fv0 = sp28->unk0.unk68.x - temp_v1->srt.transl.x;

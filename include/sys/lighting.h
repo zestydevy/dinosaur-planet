@@ -12,17 +12,18 @@ typedef struct {
     s16 x;
     s16 y;
     s16 z;
-    u8 pad6[0x10 - 0x6];
+    s8 unk6;
+    s8 unk7;
+    u8 unk8;
+    u8 unk9;
+    u8 unkA;
+    u8 unkB;
+    u8 unkC;
+    u8 unkD;
+    u8 unkE;
+    u8 unkF;
     Vec3f pos;
 } Unk800B1858;
-
-// size: 0x1C?
-typedef struct {
-    s16 yaw;
-    u8 pad6[0xC - 0x2];
-    Vec3f pos;
-    u32 pad1C;
-} Unk800B1860;
 
 extern u8 D_80090CA0;
 extern s32 D_80090CA8;
@@ -30,7 +31,7 @@ extern f32 D_80090CAC;
 extern u8 D_800B1845;
 extern u8 D_800B1847;
 extern Unk800B1858 *D_800B1858;
-extern Unk800B1860 *D_800B1860[30];
+extern Object *D_800B1860[30];
 
 void lightInit(void);
 void light_func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4);

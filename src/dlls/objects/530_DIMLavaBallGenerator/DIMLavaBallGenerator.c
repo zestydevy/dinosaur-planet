@@ -164,7 +164,7 @@ void DIMLavaBallGenerator_free(Object *self, s32 a1) {
 
     objdata = self->data;
     if ((objdata->index != 0) && (objdata->unk12 != 0)) {
-        gDLL_11_Newlfx->vtbl->func0(self, self, objdata->lfxStructs[1], 0, 0, 0);
+        dll_newlfx->DoAction(self, self, objdata->lfxStructs[1], 0, 0, 0);
         if (objdata->lfxStructs[0]) {
             mmFree(objdata->lfxStructs[0]);
         }
@@ -198,7 +198,7 @@ s32 DIMLavaBallGenerator_func_4FC(Object *self, Object *arg1) {
         return 0;
     }
     if (objdata->unk12 == 0) {
-        gDLL_11_Newlfx->vtbl->func0(arg1, arg1, objdata->lfxStructs[0], 0, 0, 0);
+        dll_newlfx->DoAction(arg1, arg1, objdata->lfxStructs[0], 0, 0, 0);
         objdata->unk12 = 1;
         return 1;
     }
@@ -211,7 +211,7 @@ void DIMLavaBallGenerator_func_59C(Object *self, Object *arg1) {
 
     objdata = self->data;
     if ((objdata->index != 0) && (objdata->unk12 != 0)) {
-        gDLL_11_Newlfx->vtbl->func0(arg1, arg1, objdata->lfxStructs[1], 0, 0, 0);
+        dll_newlfx->DoAction(arg1, arg1, objdata->lfxStructs[1], 0, 0, 0);
         objdata->unk12 = 0;
     }
 }

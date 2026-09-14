@@ -1586,7 +1586,7 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
         lAction.unk10 = obj->unkD6;
         lAction.unk1b = 0;
 
-        gDLL_11_Newlfx->vtbl->func0(obj, obj, &lAction, 0, 0, 0);
+        dll_newlfx->DoAction(obj, obj, &lAction, 0, 0, 0);
     }
 
     if (obj->shadow != NULL) {

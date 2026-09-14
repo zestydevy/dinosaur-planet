@@ -1,0 +1,33 @@
+.text = 0x0:
+newlfx_ctor = 0x0;
+newlfx_dtor = 0xC;
+newlfx_DoAction = 0x18;
+newlfx_Free = 0x384;
+newlfx_Tick = 0x488;
+newlfx_Func_828 = 0x828;
+newlfx_FindClosestLight = 0x874;
+newlfx_Func_9D8 = 0x9D8;
+newlfx_Func_BB8 = 0xBB8;
+newlfx_updateLights = 0xD44;
+newlfx_allocLight = 0x1890;
+newlfx_allocPalette = 0x1EB0;
+newlfx_findLight = 0x2184;
+newlfx_freeLight = 0x21FC;
+
+.rodata = 0x23C0:
+
+.data = 0x2490:
+data_0 = 0x0; // absolute:0x2490
+data_4 = 0x4; // absolute:0x2494
+data_8 = 0x8; // absolute:0x2498
+data_C = 0xC; // absolute:0x249C
+sNumLights = 0x10; // absolute:0x24A0
+data_18 = 0x18; // absolute:0x24A8
+
+.bss = 0x24B0:
+sLights = 0x0; // absolute:0x24B0
+bss_4 = 0x4; // absolute:0x24B4
+bss_8 = 0x8; // absolute:0x24B8
+sPalettes = 0x78; // absolute:0x2528
+bss_168 = 0x168; // absolute:0x2618
+bss_178 = 0x178; // absolute:0x2628

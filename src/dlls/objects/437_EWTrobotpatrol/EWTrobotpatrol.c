@@ -1297,7 +1297,7 @@ static void EWTrobotpatrol_initBeam(Object* self, EWTrobotpatrol_Data* objdata, 
     laction.unk1f = 0xF;
     laction.unk20 = 8;
     laction.unk0 = 0;
-    gDLL_11_Newlfx->vtbl->func0(self, self, &laction, 0, 0, 0);
+    dll_newlfx->DoAction(self, self, &laction, 0, 0, 0);
     beam->unk1A = self->unkD6;
     beam->yawTarget = 0;
     beam->yaw = 0;
@@ -1387,7 +1387,7 @@ static void EWTrobotpatrol_freeBeam(Object* self, EWTrobotpatrol_Data* objdata, 
     laction.unk1b = 0;
     laction.unk0 = 0;
     laction.unk10 = beam->unk1A;
-    gDLL_11_Newlfx->vtbl->func0(self, self, &laction, 0, 0, 0);
+    dll_newlfx->DoAction(self, self, &laction, 0, 0, 0);
     if (onlySelf == 0) {
         if (beam->obj != NULL) {
             objFreeObject(beam->obj);

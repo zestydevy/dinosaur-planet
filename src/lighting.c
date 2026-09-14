@@ -65,7 +65,7 @@ s16 gAmbientAdditiveR;
 s16 gAmbientAdditiveG;
 s16 gAmbientAdditiveB;
 Unk800B1858 *D_800B1858;
-Unk800B1860 *D_800B1860[30];
+Object *D_800B1860[30];
 // -------- .bss end 800b18e0 -------- //
 
 void light_func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
@@ -255,16 +255,16 @@ void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
     for (i = 0; i < D_800B1845; i++) {
         if (obj->parent != NULL) {
             if (D_800B1860[i] != 0) {
-                sp8C = D_800B1858[i].pos.x - D_800B1860[i]->pos.x;
-                sp90 = D_800B1858[i].pos.y - D_800B1860[i]->pos.y;
-                sp94 = D_800B1858[i].pos.z - D_800B1860[i]->pos.z;
+                sp8C = D_800B1858[i].pos.x - D_800B1860[i]->srt.transl.x;
+                sp90 = D_800B1858[i].pos.y - D_800B1860[i]->srt.transl.y;
+                sp94 = D_800B1858[i].pos.z - D_800B1860[i]->srt.transl.z;
                 sp68.transl.x = 0.0f;
                 sp68.transl.y = 0.0f;
                 sp68.transl.z = 0.0f;
                 sp68.roll = 0;
                 sp68.pitch = 0;
                 sp68.scale = 1.0f;
-                sp68.yaw = -D_800B1860[i]->yaw;
+                sp68.yaw = -D_800B1860[i]->srt.yaw;
                 mathRotateRPY(&sp68, &sp8C);
                 sp80.x = sp8C;
                 sp80.y = sp90;

@@ -770,7 +770,7 @@ void dll_565_func_1C84(Object* self, Baddie* baddie) {
             objData->unk8->srt.transl.z = objData->unk54.transl.z;
             lfxData = objData->unk8->data;
             if (lfxData->unk108 != NULL) {
-                gDLL_11_Newlfx->vtbl->func6(lfxData->unk108->unk10, 0, texAnim->frame >> 1);
+                dll_newlfx->Func_BB8(lfxData->unk108->unk10, 0, texAnim->frame >> 1);
             }
         }
         

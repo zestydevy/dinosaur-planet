@@ -771,9 +771,8 @@ s32 dll_14_func_4BA4(void) {
 
 // offset: 0x4C0C | func: 13
 static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
-    s32 _pad[6]; // really?
-    s32 sp5C;
     s32 i;
+    SRT sp5C;
 
     for (i = 0; i < ARRAYCOUNT_S(bss_0); i++) {
         if ((bss_0[i] != NULL) && ((arg0 == bss_0[i]->unk10C) || (arg1 != 0))) {
@@ -781,7 +780,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
                 bss_0[i]->unkA0->unk12 = 2;
                 bss_0[i]->unkA0->unke = 0;
                 bss_0[i]->unkA0->unk1b = 0;
-                gDLL_11_Newlfx->vtbl->func0(bss_0[i]->unk4, bss_0[i]->unk4, bss_0[i]->unkA0, 0, 0, (s32) &sp5C);
+                dll_newlfx->DoAction(bss_0[i]->unk4, bss_0[i]->unk4, bss_0[i]->unkA0, 0, 0, &sp5C);
                 mmFree(bss_0[i]->unkA0);
             }
             if (bss_0[i]->unk10E != -1) {

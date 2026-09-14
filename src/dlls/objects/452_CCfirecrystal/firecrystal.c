@@ -66,7 +66,7 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
         objData->lightAction = lightAction;
         assetRomLoadSection(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
         objData->lightAction->unk10 = ~1;
-        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
+        dll_newlfx->DoAction(self, self, objData->lightAction, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 64, 0, 24);
         objData->flameObjects[1] = CCfirecrystal_create_flame(self, 64, 64, 24);
         objData->flameObjects[2] = CCfirecrystal_create_flame(self, -56, 0, 24);
@@ -156,7 +156,7 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
         lfxStruct->unk12 = 2;
         objData->lightAction->unke = 0;
         objData->lightAction->unk1b = 0;
-        gDLL_11_Newlfx->vtbl->func0(self, self, objData->lightAction, 0, 0, 0);
+        dll_newlfx->DoAction(self, self, objData->lightAction, 0, 0, 0);
         mmFree(objData->lightAction);
         objData->lightAction = NULL;
     }

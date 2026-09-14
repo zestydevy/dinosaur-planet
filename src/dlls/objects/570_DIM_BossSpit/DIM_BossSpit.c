@@ -180,7 +180,7 @@ void DIM_BossSpit_func_53C(Object* self) {
         lfxEmitter = objdata->lfxEmitter;
         if (lfxEmitter) {
             lfxEmitterData = lfxEmitter->data;
-            gDLL_11_Newlfx->vtbl->func6(lfxEmitterData->unk108->unk10, 0, i);
+            dll_newlfx->Func_BB8(lfxEmitterData->unk108->unk10, 0, i);
         }
     } else {
         lfxEmitter = objdata->lfxEmitter;
