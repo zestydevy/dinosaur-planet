@@ -151,7 +151,7 @@ void PressureSwitch_obj_Control(Object* self) {
         sidekick = objGetSidekick();
         if (sidekick) {
             if (vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= SQ(setup->distanceGuardCommand)) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_3_Guard);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_3_Guard);
             }
         }
     }

@@ -1,4 +1,4 @@
-#include "dlls/objects/common/group48.h"
+#include "dlls/objects/common/weapon.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/camera.h"
@@ -455,7 +455,7 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
             if (arg8->parent != NULL) {
                 camLoadParentProjection(arg0);
             }
-            ((DLL_IGROUP_48 *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
+            ((DLL_IWeapon *)arg8->dll)->vtbl->func10(arg8, arg0, arg1, arg2, arg3);
             if (arg8->parent != NULL) {
                 camSetupRSPMatricesForObject(arg0, arg1, arg8->parent);
             }
@@ -472,7 +472,7 @@ void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelI
     s32 i;
     Vec3f sp7C;
     Vec3f sp70;
-    ObjGroup48_Data* objData;
+    Weapon_Data* objData;
 
     if (obj->def->numAttachPoints < 2 || obj->controlNo != OBJCONTROL_Weapon) {
         return;
@@ -520,7 +520,7 @@ void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelI
         sp7C.f[0] = objData->unk30[objData->unk8C];
         sp7C.f[1] = objData->unk38[objData->unk8C];
         sp7C.f[2] = objData->unk40[objData->unk8C];
-        ((DLL_IGROUP_48*)obj->dll)->vtbl->func9(obj, otherObj, &sp70);
+        ((DLL_IWeapon*)obj->dll)->vtbl->func9(obj, otherObj, &sp70);
         sp7C.f[0] -= sp70.f[0];
         sp7C.f[1] -= sp70.f[1];
         sp7C.f[2] -= sp70.f[2];

@@ -892,9 +892,9 @@ static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdat
     if ((objdata->state == THORNTAILSTATE_BlockingProgression) && (sidekick != NULL)) {
         if (vec3DistanceSquared(&player->globalPosition, &self->globalPosition) < SQ(70.0f)) {
             // Allow distract command
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_2_Distract);
         }
-        if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0) {
+        if (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick) != 0) {
             // Distract successfully used
             mainSetBits(objdata->progressionBlockerGamebit, 1);
         }

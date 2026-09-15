@@ -58,7 +58,7 @@ void SHvines_control(Object* self) {
     //Allow the Flame command when nearby
     if (sidekick != NULL) {
         if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objSetup->flameDistance)) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_4_Flame);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_4_Flame);
         }
     }
 

@@ -1994,9 +1994,9 @@ static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
     if (sidekick != NULL) {
         // @bug: sideCommandIndex is undefined if this sidekick func returns 0
 #ifndef AVOID_UB
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sideCommandIndex);
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->Func26(sidekick, &sideCommandIndex);
 #else
-        if (!((DLL_ISidekick*)sidekick->dll)->vtbl->func26(sidekick, &sideCommandIndex)) {
+        if (!((DLL_ISidekick*)sidekick->dll)->vtbl->Func26(sidekick, &sideCommandIndex)) {
             sideCommandIndex = sPrevSidekickCommandIndex;
         }
 #endif
@@ -2361,7 +2361,7 @@ static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu) {
 
         //Get a bitfield of the sidekick's available commands
         if (sidekick != NULL) {
-            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_available_commands(sidekick);
+            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->GetAvailableCommands(sidekick);
         } else {
             availableCommands = 0;
         }
@@ -2442,7 +2442,7 @@ static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekic
     } else {
         sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_available_commands(sidekick);
+            availableCommands = ((DLL_ISidekick*)sidekick->dll)->vtbl->GetAvailableCommands(sidekick);
         } else {
             availableCommands = 0;
         }
@@ -3308,8 +3308,8 @@ static void cmdmenu_update_stats(void) {
     stats.playerHealthMax = ((DLL_210_Player*)player->dll)->vtbl->get_health_max(player);
 
     if (sidekick != NULL) {
-        stats.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_blue_food_count(sidekick);
-        stats.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->get_red_food_count(sidekick);
+        stats.sidekickBlueFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->GetBlueFoodCount(sidekick);
+        stats.sidekickRedFood = ((DLL_ISidekick*)sidekick->dll)->vtbl->GetRedFoodCount(sidekick);
         stats.sidekickMaxFood = 8;
     } else {
         stats.sidekickBlueFood = 0;

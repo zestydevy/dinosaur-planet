@@ -1,17 +1,17 @@
 .text = 0x0:
 SCFlameGameFlame_ctor = 0x0;
 SCFlameGameFlame_dtor = 0xC;
-SCFlameGameFlame_setup = 0x18;
-SCFlameGameFlame_control = 0xE0;
-SCFlameGameFlame_update = 0x2A4;
-SCFlameGameFlame_print = 0x2B0;
-SCFlameGameFlame_free = 0x2F0;
-SCFlameGameFlame_get_model_flags = 0x330;
-SCFlameGameFlame_get_data_size = 0x340;
-SCFlameGameFlame_func_354 = 0x354;
-SCFlameGameFlame_func_3A4 = 0x3A4;
-SCFlameGameFlame_func_3BC = 0x3BC;
-SCFlameGameFlame_func_3D4 = 0x3D4;
+SCFlameGameFlame_obj_Setup = 0x18;
+SCFlameGameFlame_obj_Control = 0xE0;
+SCFlameGameFlame_obj_Update = 0x2A4;
+SCFlameGameFlame_obj_Print = 0x2B0;
+SCFlameGameFlame_obj_Free = 0x2F0;
+SCFlameGameFlame_obj_GetModelFlags = 0x330;
+SCFlameGameFlame_obj_GetDataSize = 0x340;
+SCFlameGameFlame_KyteTarget_Interact = 0x354;
+SCFlameGameFlame_KyteTarget_Func_3A4 = 0x3A4;
+SCFlameGameFlame_KyteTarget_Approach = 0x3BC;
+SCFlameGameFlame_KyteTarget_Func_3D4 = 0x3D4;
 
 .rodata = 0x448:
 

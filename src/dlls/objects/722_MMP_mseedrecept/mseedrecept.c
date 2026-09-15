@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/common/kyte_target.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -208,7 +209,7 @@ void MoonSeedReceptacle_obj_Control(Object* self) {
             //Show Flame command in the inventory when highlighted (can be used at any time of day)
             if (kyte && (self->unkAF & ARROW_FLAG_4_Highlighted)){
                 //Enable Flame command option
-                ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_4_Flame);
+                ((DLL_ISidekick*)kyte->dll)->vtbl->EnableCommand(kyte, Sidekick_Command_INDEX_4_Flame);
 
                 //Check if Flame command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){

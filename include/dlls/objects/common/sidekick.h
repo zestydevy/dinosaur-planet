@@ -17,7 +17,8 @@ typedef enum {
     Sidekick_Command_INDEX_2_Distract = 2,
     Sidekick_Command_INDEX_3_Guard    = 3, 
     Sidekick_Command_INDEX_4_Flame    = 4,
-    Sidekick_Command_INDEX_5_Play     = 5
+    Sidekick_Command_INDEX_5_Play     = 5,
+    Sidekick_Command_COUNT
 } SidekickCommandIndices;
 
 typedef enum {
@@ -32,26 +33,26 @@ typedef enum {
 
 DLL_INTERFACE(DLL_ISidekick) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-	/*7*/ s32 (*func7)(s32 arg0);
-	/*8*/ void (*func8)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
-	/*9*/ void (*func9)(Object* self, UNK_TYPE_32 arg1);
-	/*10*/ void (*func10)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
-	/*11*/ f32 (*func11)(Object* self);
-	/*12*/ DLL27_Data* (*func12)(s32 arg0);
-	/*13*/ s32 (*get_available_commands)(Object* self); //Returns a bitfield of the sidekick's available commands (see `SidekickCommands`)
-	/*14*/ void (*enable_command)(Object* self, s32 commandIndex); // Enables a sidekick command (e.g. allowing Flame when near vines).
-	/*15*/ u8 (*get_blue_food_count)(Object* self);
-	/*16*/ u8 (*get_red_food_count)(Object* self);
-	/*17*/ s32 (*get_blue_and_red_food_count)(Object* self);
-	/*18*/ void (*set_red_food_count)(Object* self, s32 amount);
-	/*19*/ s32 (*func19)(s32 arg0);
-	/*20*/ void (*func20)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
-	/*21*/ void (*func21)(Object* self, s32 arg1, Object* arg2);
-	/*22*/ void (*func22)(Object* self, Object* arg1);
-	/*23*/ void (*func23)(Object* self);
-	/*24*/ s32 (*func24)(Object* self);
-	/*25*/ s32 (*func25)(Object* self);
-	/*26*/ int (*func26)(Object* self, s32* arg1);
+	/*7*/ s32 (*Func7)(s32 arg0);
+	/*8*/ void (*Func8)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*9*/ void (*Func9)(Object* self, UNK_TYPE_32 arg1);
+	/*10*/ void (*Func10)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*11*/ f32 (*Func11)(Object* self);
+	/*12*/ DLL27_Data* (*Func12)(s32 arg0);
+	/*13*/ s32 (*GetAvailableCommands)(Object* self); //Returns a bitfield of the sidekick's available commands (see `SidekickCommands`)
+	/*14*/ void (*EnableCommand)(Object* self, s32 commandIndex); // Enables a sidekick command (e.g. allowing Flame when near vines).
+	/*15*/ u8 (*GetBlueFoodCount)(Object* self);
+	/*16*/ u8 (*GetRedFoodCount)(Object* self);
+	/*17*/ s32 (*GetBlueAndRedFoodCount)(Object* self);
+	/*18*/ void (*SetRedFoodCount)(Object* self, s32 amount);
+	/*19*/ s32 (*Func19)(Object* self);
+	/*20*/ void (*Func20)(Object* self, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2, UNK_TYPE_32 arg3);
+	/*21*/ void (*Func21)(Object* self, s32 arg1, Object* arg2);
+	/*22*/ void (*Func22)(Object* self, Object* arg1);
+	/*23*/ void (*Func23)(Object* self);
+	/*24*/ s32 (*Func24)(Object* self);
+	/*25*/ s32 (*Func25)(Object* self);
+	/*26*/ int (*Func26)(Object* self, s32* arg1);
 };
 
 #endif //_DLLS_COMMON_SIDEKICK_H

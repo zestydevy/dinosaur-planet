@@ -271,7 +271,7 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
         
         //Become distracted when Kyte uses her Distract Command
         } else {
-            if (((DLL_ISidekick*)objData->sidekick->dll)->vtbl->func24(objData->sidekick)) {
+            if (((DLL_ISidekick*)objData->sidekick->dll)->vtbl->Func24(objData->sidekick)) {
                 diPrintf("kyte dist %d interest range 50.0F\n", (s32) vec3DistanceXZ(&self->globalPosition, &objData->sidekick->globalPosition));
                 if (vec3DistanceXZSquared(&self->globalPosition, &objData->sidekick->globalPosition) < SQ(60)) {
                     CCsandwormBoss_enter_distracted_state(self, objData);
@@ -328,7 +328,7 @@ void CCsandwormBoss_tick_battle(Object *self, CCsandwormBoss_Data *objData) {
         
         //Follow Kyte if she's still nearby or using the Distract Command
         } else if (
-            (((DLL_ISidekick*)objData->sidekick->dll)->vtbl->func24(objData->sidekick)) || 
+            (((DLL_ISidekick*)objData->sidekick->dll)->vtbl->Func24(objData->sidekick)) ||
             (vec3DistanceXZSquared(&self->globalPosition, &objData->sidekick->globalPosition) < SQ(300))
         ) {
             objGetAnimChange(self, 1.5f, &objData->animSpeed);

@@ -1,12 +1,11 @@
-#ifndef _DLLS_COMMON_GROUP_48_H
-#define _DLLS_COMMON_GROUP_48_H
+#ifndef _DLLS_COMMON_WEAPON_H
+#define _DLLS_COMMON_WEAPON_H
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "PR/gbi.h"
 
-// TODO: rename IWeapon
 typedef struct {
     u8 pad0[0x18];
     f32 unk18[2];
@@ -18,9 +17,9 @@ typedef struct {
     u8 pad48[0x8A-0x48];
     s16 unk8A;
     s16 unk8C;
-} ObjGroup48_Data;
+} Weapon_Data;
 
-DLL_INTERFACE(DLL_IGROUP_48) {
+DLL_INTERFACE(DLL_IWeapon) {
 	/*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 	/*7*/ void (*func7)(Object *, f32);
 	/*8*/ void (*func8)(Object *);
@@ -36,4 +35,4 @@ DLL_INTERFACE(DLL_IGROUP_48) {
 	/*14*/ void (*func18)(Object *, f32, f32);
 };
 
-#endif //_DLLS_COMMON_GROUP_48_H
+#endif //_DLLS_COMMON_WEAPON_H
