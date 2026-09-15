@@ -37,7 +37,7 @@ void TrickyWarp_control(Object *self) {
         sidekick = objGetSidekick();
 
         if (sidekick && vec3DistanceSquared(&self->globalPosition, &player->globalPosition) <= SQ(setup->range)) {
-            ((DLL_ISidekick*)(sidekick->dll))->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
+            ((DLL_ISidekick*)(sidekick->dll))->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_1_Find);
         }
     }
 }

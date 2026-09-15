@@ -16,6 +16,6 @@ _exports:
 /*5*/ .dword KyteFireFlys_obj_GetModelFlags
 /*6*/ .dword KyteFireFlys_obj_GetDataSize
 /*7*/ .dword KyteFireFlys_KyteTarget_Interact
-/*8*/ .dword KyteFireFlys_KyteTarget_Func_49C
+/*8*/ .dword KyteFireFlys_KyteTarget_Func8
 /*9*/ .dword KyteFireFlys_KyteTarget_Approach
-/*10*/ .dword KyteFireFlys_KyteTarget_Func_4CC
+/*10*/ .dword KyteFireFlys_KyteTarget_Func10

@@ -607,7 +607,7 @@ int SharpClaw_animCallback(Object* self, Object* animObj, AnimObj_Data* animData
         case 1:
             sidekick = objGetSidekick();
             if (sidekick != NULL) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 1, self);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 1, self);
                 baddie->unk3B2 |= 4;
                 baddie->unk3B4 = 2;
                 baddie->fsa.logicState = SharpClaw_LSTATE_13;
@@ -844,7 +844,7 @@ void SharpClaw_func_14C0(Object* self, AnimObj_Data* animData, Baddie* baddie, O
             if (baddie->unk3B2 & 4) {
                 sidekick = objGetSidekick();
                 if (sidekick != NULL) {
-                    ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 1, self);
+                    ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 1, self);
                 }
                 fsa->logicState = SharpClaw_LSTATE_13;
             } else {
@@ -2099,7 +2099,7 @@ s32 SharpClaw_logicState13(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (self == playerData->unk0.target) {
         if (fsa->target != NULL) {
-            ((DLL_ISidekick*)fsa->target->dll)->vtbl->func21(fsa->target, 0, 0);
+            ((DLL_ISidekick*)fsa->target->dll)->vtbl->Func21(fsa->target, 0, 0);
         }
 
         fsa->target = player;

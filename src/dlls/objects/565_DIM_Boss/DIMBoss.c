@@ -564,9 +564,9 @@ void dll_565_func_119C(Object* self, AnimObj_Data* animData, Baddie* baddie, Obj
             if (objData->unk0 >= 0x320) {
                 baddie->unk3B2 &= ~4;
                 objData->unk0 = 0;
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, 0);
             }
-        } else if ((baddie->unk3B6 == 1) && (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick))) {
+        } else if ((baddie->unk3B6 == 1) && (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick))) {
             baddie->unk3B2 |= 4;
             objData->unk0 = 1;
             dll_565_func_2AE4(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
@@ -587,7 +587,7 @@ void dll_565_func_119C(Object* self, AnimObj_Data* animData, Baddie* baddie, Obj
         }
     }
     if (baddie->unk3B6 == 1) {
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_2_Distract);
         gDLL_33_BaddieControl->vtbl->func4(self, objGetPlayer(), 8, &sp4E, &sp4C, &sp4A);
         if ((sp4E == 3) || (sp4E == 4)) {
             self->unkD4 = 1;

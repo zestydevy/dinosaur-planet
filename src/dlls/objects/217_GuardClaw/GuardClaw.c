@@ -424,7 +424,7 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
     gDLL_33_BaddieControl->vtbl->func20(self, fsa, &baddie->unk34C, baddie->unk39E, &baddie->unk3B4, 0, 0, 0);
     sidekick = objGetSidekick();
     if (sidekick != NULL) {
-        sp4B = ((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick);
+        sp4B = ((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick);
     } else {
         sp4B = 0;
     }
@@ -516,7 +516,7 @@ static void GuardClaw_func_1128(Object* self, Baddie* baddie, ObjFSA_Data* fsa) 
     gDLL_18_objfsa->vtbl->tick(self, fsa, gUpdateRateF, gUpdateRateF, bss_0, bss_38);
     self->animObj = baddie->unk3AC;
     if (sidekick != NULL) {
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
 }
 

@@ -55,7 +55,7 @@ void CannonClaw_obj_Control(Object* self) {
             mainSetBits(cannonSetup->gamebitCannonClawDead, TRUE);
 
             //@bug: missing null check for the sidekick
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, NULL);
         }
         
         CannonClaw_die(self);

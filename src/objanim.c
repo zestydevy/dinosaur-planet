@@ -893,9 +893,9 @@ void objAnim_func_80025780(Object* arg0, f32 updateRate, UnkFunc_80024108Struct*
         sp84 = ((DLL_210_Player*)arg0->dll)->vtbl->func56(arg0);
         break;
     case OBJCONTROL_Sidekick:
-        ((DLL_ISidekick*)arg0->dll)->vtbl->func10(arg0, &sp80, &sp7E, &sp94);
-        sp78 = ((DLL_ISidekick*)arg0->dll)->vtbl->func12(arg0);
-        sp84 = ((DLL_ISidekick*)arg0->dll)->vtbl->func11(arg0);
+        ((DLL_ISidekick*)arg0->dll)->vtbl->Func10(arg0, &sp80, &sp7E, &sp94);
+        sp78 = ((DLL_ISidekick*)arg0->dll)->vtbl->Func12(arg0);
+        sp84 = ((DLL_ISidekick*)arg0->dll)->vtbl->Func11(arg0);
         break;
     default:
         return;

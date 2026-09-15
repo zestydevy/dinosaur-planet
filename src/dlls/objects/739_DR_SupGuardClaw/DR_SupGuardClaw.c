@@ -262,7 +262,7 @@ void DR_NPC_control(Object* self) {
     //Show Distract command option
     sidekick = objGetNearestTypeTo(OBJTYPE_Sidekick, self, &distance);
     if (sidekick != NULL) {
-        ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_2_Distract);
     }
 }
 
@@ -414,7 +414,7 @@ s32 DR_NPC_guardclaw_behaviour(Object* self) {
         objAnimSet(self, GuardClaw_MODANIM_9_Staff_Swing_Left, 0.0f, 0);
         objData->animSpeed = 0.006f;
         if (sidekick != NULL) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, 0);
         }
     }
 

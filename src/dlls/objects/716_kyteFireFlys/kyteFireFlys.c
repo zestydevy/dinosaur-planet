@@ -70,7 +70,7 @@ void KyteFireFlys_obj_Control(Object* self) {
         if (sidekick != NULL) {
             if (vec3DistanceSquared(&objGetPlayer()->globalPosition, &objData->curve->pos) <= SQ(objSetup->variance)) {
                 //Show Find command option
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_1_Find);
 
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                     STUBBED_PRINTF("should activate the command\n");
@@ -158,7 +158,7 @@ s32 KyteFireFlys_KyteTarget_Interact(Object* self, s32 arg1) {
 }
 
 // offset: 0x49C | func: 8 | export: 8
-s32 KyteFireFlys_KyteTarget_Func_49C(Object* self, s32 arg1, s32 arg2) {
+s32 KyteFireFlys_KyteTarget_Func8(Object* self, s32 arg1, s32 arg2) {
     return 0;
 }
 
@@ -168,7 +168,7 @@ s32 KyteFireFlys_KyteTarget_Approach(Object* self, s32 arg1, f32* deltaY) {
 }
 
 // offset: 0x4CC | func: 10 | export: 10
-s32 KyteFireFlys_KyteTarget_Func_4CC(Object* self) {
+s32 KyteFireFlys_KyteTarget_Func10(Object* self) {
     return KYTE_TARGET_FUNC10_FLAG_8;
 }
 

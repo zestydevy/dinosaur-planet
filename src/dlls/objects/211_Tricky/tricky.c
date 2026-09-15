@@ -649,7 +649,7 @@ s32 dll_211_func_1230(Object* self, s32* arg1) {
  * Enables a sidekick command (e.g. allowing Flame when near vines).
  */
 // offset: 0x1248 | func: 15 | export: 14
-void dll_211_enable_command(Object* self, s32 commandIndex) {
+void dll_211_EnableCommand(Object* self, s32 commandIndex) {
     DLL211_Data* objData = self->data;
     
     if (commandIndex < TOTAL_SIDEKICK_COMMANDS) {
@@ -658,7 +658,7 @@ void dll_211_enable_command(Object* self, s32 commandIndex) {
 }
 
 // offset: 0x1270 | func: 16 | export: 15
-u8 dll_211_get_blue_food_count(Object* self) {
+u8 dll_211_GetBlueFoodCount(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -666,7 +666,7 @@ u8 dll_211_get_blue_food_count(Object* self) {
 }
 
 // offset: 0x1284 | func: 17 | export: 16
-u8 dll_211_get_red_food_count(Object* self) {
+u8 dll_211_GetRedFoodCount(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -674,7 +674,7 @@ u8 dll_211_get_red_food_count(Object* self) {
 }
 
 // offset: 0x1298 | func: 18 | export: 17
-s32 dll_211_get_blue_and_red_food_count(Object* self) {
+s32 dll_211_GetBlueAndRedFoodCount(Object* self) {
     DLL211_Data* objData;
 
     objData = self->data;
@@ -682,7 +682,7 @@ s32 dll_211_get_blue_and_red_food_count(Object* self) {
 }
 
 // offset: 0x12B4 | func: 19 | export: 18
-void dll_211_set_red_food_count(Object* self, s32 count) {
+void dll_211_SetRedFoodCount(Object* self, s32 count) {
     DLL211_Data* objData = self->data;
     objData->unk4->redFood = count;
 }

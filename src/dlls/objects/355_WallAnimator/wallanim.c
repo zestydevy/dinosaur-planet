@@ -103,7 +103,7 @@ void WallAnimator_control(Object* self) {
         if (sidekick && ((pushblock == NULL) || (pushblock && (distance > 35.0f)))) {
             distance = vec3DistanceSquared(&self->globalPosition, &player->globalPosition);
             if (distance <= SQ(objSetup->findCommandRadius)) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_1_Find);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_1_Find);
             }
         }
     }

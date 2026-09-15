@@ -81,7 +81,7 @@ void SCTotemBond_control(Object* self) {
     
     if (objData->flags & SCTotemBond_FLAG_Minigame_Active) {
         if (sidekick != NULL) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->set_red_food_count(sidekick, objData->flameEnergyCount);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->SetRedFoodCount(sidekick, objData->flameEnergyCount);
         }
         
         ((DLL_210_Player*)player->dll)->vtbl->func71(player, &self->srt.transl, &self->srt, 0);
@@ -232,7 +232,7 @@ void SCTotemBond_init_minigame(Object* self, SCTotemBond_Data* objData) {
     //Make sure Kyte has at least 1 unit of Flame energy
     kyte = objGetSidekick();
     if (kyte != NULL) {
-        objData->flameEnergyCount = ((DLL_ISidekick*)kyte->dll)->vtbl->get_red_food_count(kyte);
+        objData->flameEnergyCount = ((DLL_ISidekick*)kyte->dll)->vtbl->GetRedFoodCount(kyte);
         if (objData->flameEnergyCount <= 0) {
             objData->flameEnergyCount = 1;
         }

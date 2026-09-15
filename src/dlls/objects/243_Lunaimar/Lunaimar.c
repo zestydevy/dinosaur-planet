@@ -312,7 +312,7 @@ static void dll_243_func_C44(Object *self, Baddie *baddie, ObjFSA_Data *fsa) {
     animator->frame = (s32) ((mathSinfInterp(objdata->unk12) + 1.0f) * 127.0f);
     VECTOR_SUBTRACT(sidekick->globalPosition, self->globalPosition, sp44);
     sp40 = VECTOR_MAGNITUDE(sp44);
-    if (((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
+    if (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick) != 0 && (sp40 < baddie->unk3E2)) {
         baddie->unk3B2 |= 4;
     } else {
         baddie->unk3B2 &= ~0x4;

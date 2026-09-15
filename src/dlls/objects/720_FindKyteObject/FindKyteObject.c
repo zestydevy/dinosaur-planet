@@ -87,7 +87,7 @@ void FindKyteObject_obj_Control(Object* self) {
 
             if (dist <= SQ(setup->findRange * 2)) {
                 //Enable Find command option
-                ((DLL_ISidekick*)kyte->dll)->vtbl->enable_command(kyte, Sidekick_Command_INDEX_1_Find);
+                ((DLL_ISidekick*)kyte->dll)->vtbl->EnableCommand(kyte, Sidekick_Command_INDEX_1_Find);
 
                 //Advance state if Find command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {

@@ -132,13 +132,13 @@ void DIMCannon_obj_Control(Object* self) {
 
     distracted = FALSE;
     if (sidekick != NULL) {
-        objData->distracted = ((DLL_ISidekick*)sidekick->dll)->vtbl->func24(sidekick);
+        objData->distracted = ((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick);
         if (objData->state != DIMCannon_STATE_6_Retreated_into_Silo) {
-            ((DLL_ISidekick*)sidekick->dll)->vtbl->enable_command(sidekick, Sidekick_Command_INDEX_2_Distract);
+            ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_2_Distract);
         } else {
             distracted = objData->distracted;
             if (distracted) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, NULL);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, NULL);
                 distracted = objData->distracted = FALSE;
             }
         }
@@ -230,7 +230,7 @@ void DIMCannon_obj_Control(Object* self) {
                 //If the target comes close while the CannonClaw isn't distracted, set a gamebit so the cannon can retreat into its silo
                 sidekick = objGetSidekick();
                 if (sidekick != NULL) {
-                    ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
+                    ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, 0);
                 }
 
                 mainSetBits(objSetup->gamebitSiloEnter, TRUE);
@@ -266,7 +266,7 @@ void DIMCannon_obj_Control(Object* self) {
         if ((objData->targetDistSq < SQ(objSetup->rangeSiloRetreat)) && (objData->distracted == FALSE)) {
             sidekick = objGetSidekick();
             if (sidekick != NULL) {
-                ((DLL_ISidekick*)sidekick->dll)->vtbl->func21(sidekick, 0, 0);
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->Func21(sidekick, 0, 0);
             }
 
             mainSetBits(objSetup->gamebitSiloEnter, TRUE);

@@ -70,7 +70,7 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
     if (!mainGetBits(BIT_4D4)) {
         tricky = objGetSidekick();
         if (tricky) {
-            ((DLL_ISidekick*)tricky->dll)->vtbl->func22(tricky, self);
+            ((DLL_ISidekick*)tricky->dll)->vtbl->Func22(tricky, self);
             mainSetBits(BIT_4D4, 1);
         }
     }
@@ -98,7 +98,7 @@ void NWtricky_control(Object *self) {
             mainSetBits(BIT_8, 1);
             mainSetBits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
             objdata->state = STATE_2_Learning_Sidekick_Commands;
-        } else if (((DLL_ISidekick*)tricky->dll)->vtbl->func24(tricky) != 0) {
+        } else if (((DLL_ISidekick*)tricky->dll)->vtbl->Func24(tricky) != 0) {
             objdata->state = STATE_1_Chased_by_SharpClaw;
             objdata->timer = 0.0f;
         }
@@ -106,7 +106,7 @@ void NWtricky_control(Object *self) {
 
     case STATE_1_Chased_by_SharpClaw:
         if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw)) {
-            ((DLL_ISidekick*)tricky->dll)->vtbl->func21(tricky, 0, 0);
+            ((DLL_ISidekick*)tricky->dll)->vtbl->Func21(tricky, 0, 0);
             dll_amSfx->StopObject(tricky);
             mainSetBits(BIT_4E3, 0);
             objdata->state = STATE_2_Learning_Sidekick_Commands;
@@ -194,12 +194,12 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
     if (!objdata->doneDemo) {
         tricky = objGetSidekick();
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_1_Find);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_2_Distract);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_3_Guard);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_4_Flame);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_5_Play);
-        ((DLL_ISidekick*)tricky->dll)->vtbl->enable_command(tricky, Sidekick_Command_INDEX_0_Heel);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_1_Find);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_2_Distract);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_3_Guard);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_4_Flame);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_5_Play);
+        ((DLL_ISidekick*)tricky->dll)->vtbl->EnableCommand(tricky, Sidekick_Command_INDEX_0_Heel);
 
         switch (objdata->demoState) {
         case NWtricky_DEMO_STATE_Initial:

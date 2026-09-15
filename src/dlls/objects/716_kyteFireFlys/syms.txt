@@ -9,9 +9,9 @@ KyteFireFlys_obj_Free = 0x290;
 KyteFireFlys_obj_GetModelFlags = 0x330;
 KyteFireFlys_obj_GetDataSize = 0x340;
 KyteFireFlys_KyteTarget_Interact = 0x354;
-KyteFireFlys_KyteTarget_Func_49C = 0x49C;
+KyteFireFlys_KyteTarget_Func8 = 0x49C;
 KyteFireFlys_KyteTarget_Approach = 0x4B4;
-KyteFireFlys_KyteTarget_Func_4CC = 0x4CC;
+KyteFireFlys_KyteTarget_Func10 = 0x4CC;
 KyteFireFlys_create_firefly = 0x4DC;
 
 .rodata = 0x670:
