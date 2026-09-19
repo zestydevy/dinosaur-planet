@@ -728,8 +728,15 @@ enum SoundID {
 
     SOUND_8DB_Eerie_Alarm_Loop = 0x8DB,         //DR_tube
     SOUND_8DC_Ominous_Thrumming_Loop = 0x8DC,   //DR_tube
-
+    SOUND_8DD_BoneHead_Grunt1 = 0x8DD,
+    SOUND_8DE_BoneHead_Grunt2 = 0x8DE,
+    SOUND_8DF_BoneHead_Grunt3 = 0x8DF,
+    SOUND_8E0_BoneHead_Grunt4 = 0x8E0,
+    SOUND_8E1_BoneHead_Grunt5 = 0x8E1,
     SOUND_8E2 = 0x8E2,
+
+    SOUND_8EA = 0x8EA,
+    SOUND_8EB = 0x8EB,
 
     SOUND_8ED = 0x8ED,
 

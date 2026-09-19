@@ -1,65 +1,50 @@
+#include "common.h"
 #include "dlls/engine/27.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/collectable.h"
-#include "game/gamebits.h"
-#include "game/objects/object_id.h"
-#include "sys/main.h"
-#include "sys/objects.h"
-#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/objmsg.h"
-#include "sys/print.h"
-#include "sys/joypad.h"
-#include "sys/rand.h"
-#include "dll.h"
-#include "macros.h"
 
 /** @file: official filename: cfguardian.c */
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 rotation;
+    ObjSetup base;
+    s8 rotation;
 } CFGuardian_Setup;
 
 typedef struct {
-/*000*/ MoveLibData movedata;
-/*4B8*/ HeadAnimation unk4B8;
-/*4DC*/ HeadAnimation unk4DC;
-/*500*/ u32 unk500; // unused sound handle
-/*504*/ u8 _unk504[0x50C - 0x504];
-/*50C*/ Object* dustObjs[6];
-/*524*/ Collectable_Setup* dustSetups[6];
-/*53C*/ UnkCurvesStruct unk53C;
-/*644*/ u8 _unk644[0x67C - 0x644];
-/*67C*/ f32 unk67C;
-/*680*/ DLL27_Data collider;
-/*8E0*/ SRT unk8E0;
-/*8F8*/ u8 state;
-/*8F9*/ u8 _unk8F9[0x908 - 0x8F9];
-/*908*/ s32 unk908;
-/*90C*/ s32 unk90C;
-/*910*/ u8 unk910;
-/*911*/ s8 unk911;
-/*912*/ u8 unk912;
+    MoveLibData movedata;
+    HeadAnimation unk4B8;
+    HeadAnimation unk4DC;
+    u32 unk500;
+    u8 _unk504[0x50C - 0x504];
+    Object* dustObjs[6];
+    Collectable_Setup* dustSetups[6];
+    UnkCurvesStruct unk53C;
+    u8 _unk644[0x67C - 0x644];
+    f32 unk67C;
+    DLL27_Data collider;
+    SRT unk8E0;
+    u8 state;
+    u8 _unk8F9[0x908 - 0x8F9];
+    s32 unk908;
+    s32 unk90C;
+    u8 unk910;
+    s8 unk911;
+    u8 unk912;
 } CFGuardian_Data;
 
 // size: 0xC
 typedef struct {
-/*0*/ s32 unk0;
-/*4*/ s32 unk4[2];
+    s32 unk0;
+    s32 unk4[2];
 } UnkCFGuardianStruct;
 
 /*0x0*/ static u16 data_0[] = {
-    SOUND_8DD_BoneHead_Grunt1, 
-    SOUND_8DE_BoneHead_Grunt2, 
-    SOUND_8EA
+    0x08dd, 0x08de, 0x08ea, 0x0000
 };
-/*0x8*/ static s16 data_8[][2] = {
-    {SOUND_8DD_BoneHead_Grunt1, 0x1000}, 
-    {SOUND_8DE_BoneHead_Grunt2, 0x1000}, 
-    {SOUND_8DF_BoneHead_Grunt3, 0x1000}, 
-    {SOUND_8E0_BoneHead_Grunt4, 0x1000}, 
-    {SOUND_8E1_BoneHead_Grunt5, 0x1000}
+/*0x8*/ static u32 data_8[] = {
+    0x08dd1000, 0x08de1000, 0x08df1000, 0x08e01000, 0x08e11000
 };
 /*0x1C*/ static Vec3f data_1C[] = {
     VEC3F(0.0f, 0.0f, 0.0f), 
@@ -74,67 +59,47 @@ typedef struct {
     16.0f
 };
 /*0x5C*/ static UnkCFGuardianStruct data_5C[] = {
-    {0,  {1, -1}}, 
-    {1,  {4, -1}}, 
-    {2,  {5, -1}}, 
-    {3,  {2, -1}}, 
-    {4,  {8, 12}}, 
-    {5,  {6, -1}}, 
-    {6,  {5, -1}}, 
-    {7,  {7, 6}}, 
-    {8,  {7, 6}}, 
-    {9,  {9, 6}}, 
-    {10, {5, -1}}, 
-    {12, {11, -1}}, 
-    {13, {10, -1}}, 
-    {0,  {8, 1}}, 
-    {8,  {2, 8}}, 
-    {3,  {10, 4}}, 
-    {10, {5, 10}}, 
-    {6,  {11, 7}}, 
-    {11, {8, 12}}, 
-    {9,  {12, 10}}, 
-    {-1, {12, -1}}, 
-    {13, {-1, 0}}
+    {0x00000000, {0x00000001, 0xffffffff}}, 
+    {0x00000001, {0x00000004, 0xffffffff}}, 
+    {0x00000002, {0x00000005, 0xffffffff}}, 
+    {0x00000003, {0x00000002, 0xffffffff}}, 
+    {0x00000004, {0x00000008, 0x0000000c}}, 
+    {0x00000005, {0x00000006, 0xffffffff}}, 
+    {0x00000006, {0x00000005, 0xffffffff}}, 
+    {0x00000007, {0x00000007, 0x00000006}}, 
+    {0x00000008, {0x00000007, 0x00000006}}, 
+    {0x00000009, {0x00000009, 0x00000006}}, 
+    {0x0000000a, {0x00000005, 0xffffffff}}, 
+    {0x0000000c, {0x0000000b, 0xffffffff}}, 
+    {0x0000000d, {0x0000000a, 0xffffffff}}, 
+    {0x00000000, {0x00000008, 0x00000001}}, 
+    {0x00000008, {0x00000002, 0x00000008}}, 
+    {0x00000003, {0x0000000a, 0x00000004}}, 
+    {0x0000000a, {0x00000005, 0x0000000a}}, 
+    {0x00000006, {0x0000000b, 0x00000007}}, 
+    {0x0000000b, {0x00000008, 0x0000000c}}, 
+    {0x00000009, {0x0000000c, 0x0000000a}}, 
+    {0xffffffff, {0x0000000c, 0xffffffff}}, 
+    {0x0000000d, {0xffffffff, 0x00000000}}
 };
 /*0x164*/ static u32 _data_unk164 = 0;
 /*0x168*/ static UnkCFGuardianStruct data_168[] = {
-    {0,  {18, -1}}, 
-    {14, {10, 12}}
+    {0x00000000, {0x00000012, 0xffffffff}}, 
+    {0x0000000e, {0x0000000a, 0x0000000c}}
 };
-/*0x180*/ static s32 data_180 = 13;
-/*0x184*/ static s32 data_184 = 2;
+/*0x180*/ static u32 data_180 = 0x0000000d;
+/*0x184*/ static u32 data_184 = 0x00000002;
 /*0x188*/ static s32 data_188[] = {
-    -1, 
-    0x0, 
-    0x1a, 
-    0x0, 
-    0x0, 
-    -1, 
-    -1, 
-    0x1a, 
-    0xe, 
-    0xe, 
-    0x1a, 
-    0x1a, 
-    0x0, 
-    0x0, 
-    -1, 
-    0xa, 
-    0xb, 
-    0xc, 
-    0xd, 
-    0xe, 
-    0x5
+    0xffffffff, 0x00000000, 0x0000001a, 0x00000000, 0x00000000, 0xffffffff, 0xffffffff, 0x0000001a, 
+    0x0000000e, 0x0000000e, 0x0000001a, 0x0000001a, 0x00000000, 0x00000000, 0xffffffff, 0x0000000a, 
+    0x0000000b, 0x0000000c, 0x0000000d, 0x0000000e, 0x00000005
 };
 
 #ifndef AVOID_UB
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8*/);
+int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8*/);
 #else
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
+int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
 #endif
-static s32 CFGuardian_func_678(Object* self);
-static void CFGuardian_func_1B8C(Object*, Object**, Collectable_Setup**);
 static s32 CFGuardian_func_1D84(Object*, Object**, s16, s16, s16, s32);
 static SRT* CFGuardian_func_1FF0(CurveSetup*, SRT*);
 static CurveSetup* CFGuardian_func_2020(Object*, s32, Vec3f*, s32);
@@ -144,6 +109,7 @@ static s32 CFGuardian_func_2700(UnkCFGuardianStruct*, s32, s32, s32);
 static s32 CFGuardian_func_2790(Object*, UnkFunc_80024108Struct*, u16*);
 static void CFGuardian_func_25AC(Object*, UnkCurvesStruct*, s32, s32, f32);
 static s32 CFGuardian_func_2638(Object*, UnkCurvesStruct*, f32);
+static void CFGuardian_func_1B8C(Object*, Object**, Collectable_Setup**);
 
 // offset: 0x0 | ctor
 void CFGuardian_ctor(void* dll) { }
@@ -152,6 +118,15 @@ void CFGuardian_ctor(void* dll) { }
 void CFGuardian_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
+#ifndef NON_MATCHING
+/*0x1DC*/ static u8 data_1DC[] = {0x00, 0x01, 0x06, 0x06};
+/*0x1E0*/ static u32 data_1E0[] = {
+    0x0005000f, 0x000f0000, 0x00000000
+};
+/*0x1EC*/ static u8 data_1EC[] = {1, 1, 1, 1};
+void CFGuardian_obj_Setup(Object* self, ObjSetup* setup, s32 reset);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_obj_Setup.s")
+#else
 void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
     CFGuardian_Data* objdata;
     s32 _pad;
@@ -165,8 +140,6 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         objInitMesgQueue(self, 4);
         objAddObjectType(self, OBJTYPE_24);
         objdata->state = mainGetBits(BIT_4B);
-        STUBBED_PRINTF(" Initalise Guardian State %i ", objdata->state);
-        STUBBED_PRINTF(" GUARDIAN POS : %f %f %f \n", &setup->base.x, &setup->base.y, &setup->base.z);
         self->srt.transl.x = setup->base.x;
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
@@ -199,11 +172,11 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, 0, sp3C, 3);
     }
 }
+#endif
 
 // offset: 0x2EC | func: 1 | export: 1
-void CFGuardian_obj_Control(Object* self) {
-    CFGuardian_func_678(self);
-}
+void CFGuardian_obj_Control(Object* self);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_obj_Control.s")
 
 // offset: 0x328 | func: 2 | export: 2
 void CFGuardian_obj_Update(Object* self) {
@@ -228,7 +201,7 @@ void CFGuardian_obj_Free(Object* self, s32 onlySelf) {
     s32 i;
 
     if (objdata->unk500 != 0) {
-        dll_amSfx->Stop(objdata->unk500);
+        gDLL_6_AMSFX->vtbl->Stop(objdata->unk500);
         objdata->unk500 = 0;
     }
     if (onlySelf == 0) {
@@ -238,7 +211,6 @@ void CFGuardian_obj_Free(Object* self, s32 onlySelf) {
             }
         }
     }
-    STUBBED_PRINTF(" FREEING GUARDIAN ");
     objFreeObjectType(self, OBJTYPE_24);
     mainRemoveTempDLL(DLL_ID_MOVELIB);
 }
@@ -253,6 +225,10 @@ u32 CFGuardian_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(CFGuardian_Data);
 }
 
+/*0x0*/ static const char str_0[] = " Initalise Guardian State %i ";
+/*0x20*/ static const char str_20[] = " GUARDIAN POS : %f %f %f \n";
+/*0x3C*/ static const char str_3C[] = " FREEING GUARDIAN ";
+
 typedef struct {
     s16 _unk0;
     s16 unk2;
@@ -261,11 +237,11 @@ typedef struct {
 
 // offset: 0x4D0 | func: 7
 #ifndef AVOID_UB
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8 arg3*/) {
+int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8 arg3*/) {
 #else
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
+int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
 #endif
-    CFGuardian_Data* objdata = actor->data;
+    CFGuardian_Data* temp_s2 = actor->data;
     Func4D0Struct sp3C[] = {
         {0, 7, 8},
         {0, 7, 8}
@@ -276,29 +252,29 @@ static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* ani
         mapSaveObject(actor->setup, actor->mapID, actor->srt.transl.x, actor->srt.transl.y, actor->srt.transl.z);
         return 0;
     }
-    if (objdata->state != 6) {
+    if (temp_s2->state != 6) {
         var_v1 = &sp3C[0];
     } else {
         var_v1 = &sp3C[1];
     }
     diPrintf(" TURN NECK ");
-    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &objdata->movedata, var_v1->unk2, var_v1->unk4) != 0) {
+    if (((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func4(actor, animObjData, &temp_s2->movedata, var_v1->unk2, var_v1->unk4) != 0) {
         return 1;
     }
     if (animObjData->lastMessage == 2) {
-        CFGuardian_func_1B8C(actor, objdata->dustObjs, objdata->dustSetups);
+        CFGuardian_func_1B8C(actor, temp_s2->dustObjs, temp_s2->dustSetups);
         animObjData->unk9D |= 8;
     }
     if (animObjData->lastMessage == 3) {
         animObjData->unk9D |= 4;
     }
-    CFGuardian_func_1D84(actor, objdata->dustObjs, 0x500, 0, 0, 6);
+    CFGuardian_func_1D84(actor, temp_s2->dustObjs, 0x500, 0, 0, 6);
     return 0;
 }
 
 // offset: 0x678 | func: 8
-static s32 CFGuardian_func_678(Object* self) {
-    CFGuardian_Data* objdata;
+s32 CFGuardian_func_678(Object* self) {
+    CFGuardian_Data* temp_s1;
     Object* sp90;
     Object* temp_v0_2;
     f32 sp88;
@@ -318,60 +294,60 @@ static s32 CFGuardian_func_678(Object* self) {
     sp6C = 1;
     sp88 = 1000.0f;
     sp84 = 1.0f;
-    objdata = self->data;
-    objdata->unk912 &= ~0x2;
+    temp_s1 = self->data;
+    temp_s1->unk912 &= ~0x2;
     diPrintf("Guardian ");
-    objdata->unk67C = 0.005f;
+    temp_s1->unk67C = 0.005f;
     sp90 = objGetPlayer();
-    switch (objdata->state) {
-    case 0:
-        if (objdata->unk910 == 2) {
-            objdata->state = 1;
-            objdata->unk910 = 1;
+    switch (temp_s1->state) {                              /* switch 1 */
+    case 0:                                         /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->state = 1;
+            temp_s1->unk910 = 1;
         }
         sp6C = 0;
         break;
-    case 1:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 1:                                         /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        if (mainGetBits(BIT_257) != 0) {
-            objdata->state = 2;
+        if (mainGetBits(0x257) != 0) {
+            temp_s1->state = 2;
             objAnimSet(self, 0x1A, 0, 0);
             self->unkDC = 0;
-            mainSetBits(BIT_CRF_BoneHead_Guardian_Freed, 1);
+            mainSetBits(0x48, 1);
         }
         sp6C = 0;
         break;
-    case 2:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 2:                                         /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.7f, 0, &objdata->unk67C) != 0) {
-            objdata->state = 3;
+        temp_s1->unk912 |= 2;
+        if (CFGuardian_func_2348(self, &temp_s1->unk53C, 0.7f, 0, &temp_s1->unk67C) != 0) {
+            temp_s1->state = 3;
         }
         break;
-    case 3:
-        if ((objdata->movedata.unk498 == 1) && (sp90 == objdata->movedata.prevLookat) && (vec3Distance(&self->globalPosition, &sp90->globalPosition) < 80.0f)) {
+    case 3:                                         /* switch 1 */
+        if ((temp_s1->movedata.unk498 == 1) && (sp90 == temp_s1->movedata.prevLookat) && (vec3Distance(&self->globalPosition, &sp90->globalPosition) < 80.0f)) {
             gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
-            mainSetBits(BIT_CRF_Power_Room_Key, 1);
-            objdata->state = 4;
+            mainSetBits(0x60, 1);
+            temp_s1->state = 4;
         }
         break;
-    case 4:
-        if (mainGetBits(BIT_57) != 0) {
-            objdata->state = 6;
-            objdata->unk911 = 0;
-        } else if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
-            objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+    case 4:                                         /* switch 1 */
+        if (mainGetBits(0x57) != 0) {
+            temp_s1->state = 6;
+            temp_s1->unk911 = 0;
+        } else if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
+            temp_s1->unk911 = (s8) ((s32) (temp_s1->unk911 + 1) % 2);
         }
         break;
-    case 6:
+    case 6:                                         /* switch 1 */
         diPrintf(" UpWind Lift ");
-        if (objdata->unk90C != 0) {
-            if (objdata->unk90C >= 2) {
+        if (temp_s1->unk90C != 0) {
+            if (temp_s1->unk90C >= 2) {
                 self->velocity.x = 0;
                 self->velocity.z = 0;
                 self->srt.transl.y += self->velocity.y * gUpdateRateF;
@@ -380,20 +356,20 @@ static s32 CFGuardian_func_678(Object* self) {
                 self->objhitInfo->unk58 &= ~0x400;
                 if (sp84 <= 1.0f) {
                     STUBBED_PRINTF(" LANDING ");
-                    objdata->unk90C = 2;
+                    temp_s1->unk90C = 2;
                     self->srt.transl.y -= sp84;
-                    objdata->unk910 = 0;
+                    temp_s1->unk910 = 0;
                     self->unkDC = 0;
                     objAnimSet(self, 0, 0, 0);
-                    CFGuardian_func_1FF0(CFGuardian_func_2020(self, 0, NULL, 2), &objdata->unk8E0);
-                    if (self->srt.transl.y <= objdata->unk8E0.transl.y) {
-                        var_fa0 = objdata->unk8E0.transl.y - self->srt.transl.y;
+                    CFGuardian_func_1FF0(CFGuardian_func_2020(self, 0, NULL, 2), &temp_s1->unk8E0);
+                    if (self->srt.transl.y <= temp_s1->unk8E0.transl.y) {
+                        var_fa0 = temp_s1->unk8E0.transl.y - self->srt.transl.y;
                     } else {
-                        var_fa0 = -(objdata->unk8E0.transl.y - self->srt.transl.y);
+                        var_fa0 = -(temp_s1->unk8E0.transl.y - self->srt.transl.y);
                     }
                     if (var_fa0 < 150.0f) {
                         objAddObjectType(self, 0x18);
-                        objdata->state = 7;
+                        temp_s1->state = 7;
                         objAnimSet(self, 0x1A, 0, 0);
                     }
                 }
@@ -401,8 +377,8 @@ static s32 CFGuardian_func_678(Object* self) {
             } else {
                 var_fa0 = ABS_EXPR(self->velocity.y * 400.0f);
                 self->srt.yaw += var_fa0;
-                objdata->unk67C = 0.04f;
-                if (mainGetBits(BIT_8E9) != 0) {
+                temp_s1->unk67C = 0.04f;
+                if (mainGetBits(0x8E9) != 0) {
                     STUBBED_PRINTF("Guardian Out of WindLIft Boyo !!! ");
                     objAnimSet(self, 0, 0, 0);
                     objAnim_func_80024D74(self, 0x32);
@@ -411,17 +387,17 @@ static s32 CFGuardian_func_678(Object* self) {
                     self->velocity.x = 0;
                     self->velocity.y = -0.001f;
                     self->velocity.z = 0;
-                    objdata->unk90C = 2;
-                    objdata->unk912 &= ~0x1;
+                    temp_s1->unk90C = 2;
+                    temp_s1->unk912 &= ~0x1;
                 }
             }
-            if (objdata->unk90C < 2) {
+            if (temp_s1->unk90C < 2) {
                 self->srt.transl.x += gUpdateRateF * self->velocity.x;
                 self->srt.transl.z += gUpdateRateF * self->velocity.z;
-                gDLL_27->vtbl->func_1E8(self, &objdata->collider, gUpdateRateF);
-                gDLL_27->vtbl->func_5A8(self, &objdata->collider);
-                gDLL_27->vtbl->func_624(self, &objdata->collider, gUpdateRateF);
-                if (objdata->collider.hitsTouchBits != 0) {
+                gDLL_27->vtbl->func_1E8(self, &temp_s1->collider, gUpdateRateF);
+                gDLL_27->vtbl->func_5A8(self, &temp_s1->collider);
+                gDLL_27->vtbl->func_624(self, &temp_s1->collider, gUpdateRateF);
+                if (temp_s1->collider.hitsTouchBits != 0) {
                     self->velocity.x = -self->velocity.x * 0.8f;
                     self->velocity.z = -self->velocity.z * 0.8f;
                 }
@@ -439,197 +415,197 @@ static s32 CFGuardian_func_678(Object* self) {
                 self->velocity.z *= 0.3f;
                 diPrintf(" Xvel %f Zvel %f \n", &self->velocity.x, &self->velocity.z);
             }
-        } else if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+        } else if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
         break;
-    case 7:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 7:                                         /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.3f, 1, &objdata->unk67C) != 0) {
-            objdata->state = 8;
+        temp_s1->unk912 |= 2;
+        if (CFGuardian_func_2348(self, &temp_s1->unk53C, 0.3f, 1, &temp_s1->unk67C) != 0) {
+            temp_s1->state = 8;
             objAnim_func_80024D74(self, 0x32);
         }
         break;
-    case 8:
+    case 8:                                         /* switch 1 */
         temp_v0_2 = objGetNearestTypeTo(4, self, &sp88);
         if ((temp_v0_2 != NULL) && (sp88 < 300.0f)) {
-            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, temp_v0_2);
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&temp_s1->movedata, temp_v0_2);
             self->unkAF |= 0x10;
         }
         if ((sp88 > 300.0f) && (vec3DistanceXZ(&sp90->globalPosition, &self->globalPosition) < 80.0f)) {
             self->unkAF &= ~0x10;
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0)) {
+            if (!(temp_s1->unk912 & 4) && (data_188[temp_s1->state] != 0)) {
                 STUBBED_PRINTF(" Stand ");
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &objdata->unk8E0);
-                objdata->unk912 |= 5;
-                data_188[objdata->state] = 0;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &temp_s1->unk8E0);
+                temp_s1->unk912 |= 5;
+                data_188[temp_s1->state] = 0;
             }
-            if (objdata->unk910 == 2) {
-                objdata->unk910 = 1;
-                objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+            if (temp_s1->unk910 == 2) {
+                temp_s1->unk910 = 1;
+                temp_s1->unk911 = (s8) ((s32) (temp_s1->unk911 + 1) % 2);
             }
         } else {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0xE)) {
+            if (!(temp_s1->unk912 & 4) && (data_188[temp_s1->state] != 0xE)) {
                 STUBBED_PRINTF(" Idle Tow ");
-                objdata->unk910 = 2;
-                objdata->unk912 |= 5;
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &objdata->unk8E0);
-                data_188[objdata->state] = 0xE;
+                temp_s1->unk910 = 2;
+                temp_s1->unk912 |= 5;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &temp_s1->unk8E0);
+                data_188[temp_s1->state] = 0xE;
             }
         }
-        if ((objdata->unk912 & 4) && (CFGuardian_func_2104(self, &objdata->unk8E0, 0.5f, &objdata->unk67C) != 0)) {
+        if ((temp_s1->unk912 & 4) && (CFGuardian_func_2104(self, &temp_s1->unk8E0, 0.5f, &temp_s1->unk67C) != 0)) {
             objAnimSet(self, 0x1A, 0, 0);
-            objdata->unk912 &= ~0x5;
+            temp_s1->unk912 &= ~0x5;
         }
-        if (mainGetBits(BIT_CF_Floor_Destroyed) != 0) {
-            objdata->state = 9;
-            objdata->unk911 = 0;
+        if (mainGetBits(0x43) != 0) {
+            temp_s1->state = 9;
+            temp_s1->unk911 = 0;
         }
         break;
-    case 9:
+    case 9:                                         /* switch 1 */
         temp_v0_2 = objGetNearestTypeTo(4, self, &sp88);
         if ((temp_v0_2 != NULL) && (sp88 < 300.0f)) {
-            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, temp_v0_2);
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&temp_s1->movedata, temp_v0_2);
         }
         if ((sp88 > 300.0f) && (vec3DistanceXZ(&sp90->globalPosition, &self->globalPosition) < 80.0f)) {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0)) {
+            if (!(temp_s1->unk912 & 4) && (data_188[temp_s1->state] != 0)) {
                 STUBBED_PRINTF(" Stand ");
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &objdata->unk8E0);
-                objdata->unk912 |= 5;
-                data_188[objdata->state] = 0;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &temp_s1->unk8E0);
+                temp_s1->unk912 |= 5;
+                data_188[temp_s1->state] = 0;
             }
-            if (objdata->unk910 == 2) {
-                objdata->unk910 = 1;
-                objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+            if (temp_s1->unk910 == 2) {
+                temp_s1->unk910 = 1;
+                temp_s1->unk911 = (s8) ((s32) (temp_s1->unk911 + 1) % 2);
             }
         } else {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0xE)) {
+            if (!(temp_s1->unk912 & 4) && (data_188[temp_s1->state] != 0xE)) {
                 STUBBED_PRINTF(" Idle Tow ");
-                objdata->unk910 = 2;
-                objdata->unk912 |= 5;
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &objdata->unk8E0);
-                data_188[objdata->state] = 0xE;
+                temp_s1->unk910 = 2;
+                temp_s1->unk912 |= 5;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &temp_s1->unk8E0);
+                data_188[temp_s1->state] = 0xE;
             }
         }
-        if ((objdata->unk912 & 4) && (CFGuardian_func_2104(self, &objdata->unk8E0, 0.5f, &objdata->unk67C) != 0)) {
+        if ((temp_s1->unk912 & 4) && (CFGuardian_func_2104(self, &temp_s1->unk8E0, 0.5f, &temp_s1->unk67C) != 0)) {
             objAnimSet(self, 0x1A, 0, 0);
-            objdata->unk912 &= ~0x5;
+            temp_s1->unk912 &= ~0x5;
         }
-        if (mainGetBits(BIT_4BE) != 0) {
-            objdata->state = 0xA;
+        if (mainGetBits(0x4BE) != 0) {
+            temp_s1->state = 0xA;
             objAnimSet(self, 0x1A, 0, 0);
             self->unkDC = 0;
         }
         break;
-    case 10:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 10:                                        /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.6f, 2, &objdata->unk67C) != 0) {
-            objdata->state = 0xB;
+        temp_s1->unk912 |= 2;
+        if (CFGuardian_func_2348(self, &temp_s1->unk53C, 0.6f, 2, &temp_s1->unk67C) != 0) {
+            temp_s1->state = 0xB;
         }
         break;
-    case 11:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 11:                                        /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
         self->opacity = 0;
         self->objhitInfo->unk58 &= ~0x1;
         objDisable(self);
-        self->srt.flags |= OBJSTATE_PRINT_DISABLED;
-        objdata->state = 0xF;
+        self->srt.flags |= 0x4000;
+        temp_s1->state = 0xF;
         break;
-    case 12:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 12:                                        /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        if (mainGetBits(BIT_4B7) != 0) {
+        if (mainGetBits(0x4B7) != 0) {
             gDLL_2_Camera->vtbl->set_target_object(self);
             gDLL_3_Animation->vtbl->start_obj_sequence(0xB, self, -1);
-            mainSetBits(BIT_4B7, 0);
+            mainSetBits(0x4B7, 0);
         }
-        if (mainGetBits(BIT_Play_Seq_02A9_CF_Race_End) != 0) {
-            objdata->state = 0xD;
+        if (mainGetBits(0x49A) != 0) {
+            temp_s1->state = 0xD;
         }
         break;
-    case 13:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case 13:                                        /* switch 1 */
+        if (temp_s1->unk910 == 2) {
+            temp_s1->unk910 = 1;
         }
-        if (mainGetBits(BIT_4B7) != 0) {
+        if (mainGetBits(0x4B7) != 0) {
             gDLL_2_Camera->vtbl->set_target_object(self);
             gDLL_3_Animation->vtbl->start_obj_sequence(0xA, self, -1);
-            mainSetBits(BIT_4B7, 0);
+            mainSetBits(0x4B7, 0);
         }
-        if (mainGetBits(BIT_4AA) != 0) {
-            objdata->state = 0xE;
+        if (mainGetBits(0x4AA) != 0) {
+            temp_s1->state = 0xE;
         }
         break;
     case 14:
         break;
     }
-    STUBBED_PRINTF("GD"); // unknown location
-    STUBBED_PRINTF(" Guardian In Elevatoe "); // unknown location
-    STUBBED_PRINTF("Guardian Out of WindLIft "); // unknown location
-    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
+    ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &temp_s1->movedata);
     while (objRecvMesg(self, &sp74, NULL, &sp70) != 0) {
-        switch (sp74) {
-        case 15:
-            objdata->state = 6;
+        switch (sp74) {                         /* switch 2; irregular */
+        case 15:                                /* switch 2 */
+            temp_s1->state = 6;
             objAnimSet(self, 9, 0, 0);
             objAnim_func_80024D74(self, 0xFA);
-            objdata->unk90C = 1;
+            temp_s1->unk90C = 1;
             self->velocity.z = 0.0f;
             self->velocity.y = 0.0f;
             self->velocity.x = 0.0f;
             self->objhitInfo->unk58 |= 0x400;
-            objdata->unk910 = 0;
-            objdata->unk912 |= 1;
+            temp_s1->unk910 = 0;
+            temp_s1->unk912 |= 1;
             break;
-        case 16:
+        case 16:                                /* switch 2 */
             objAnimSet(self, 0, 0, 0);
             objAnim_func_80024D74(self, 0x32);
             self->velocity.x = 0.0f;
             self->velocity.y = -0.001f;
             self->velocity.z = 0.0f;
-            objdata->unk90C = 2;
-            objdata->unk912 &= ~0x1;
+            temp_s1->unk90C = 2;
+            temp_s1->unk912 &= ~0x1;
             break;
         }
     }
     if (self->unkAF & 1) {
-        joyDisableButtons(0, A_BUTTON);
-        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF) != 0) {
-            mainSetBits(BIT_4AB, 1);
-        } else if (objdata->unk910 == 1) {
-            temp_v0_6 = CFGuardian_func_2700(data_5C, objdata->state, data_180, objdata->unk911);
+        joyDisableButtons(0, 0x8000);
+        if (gDLL_1_cmdmenu->vtbl->was_this_item_used(0x2E8) != 0) {
+            mainSetBits(0x4AB, 1);
+        } else if (temp_s1->unk910 == 1) {
+            temp_v0_6 = CFGuardian_func_2700(data_5C, temp_s1->state, data_180, temp_s1->unk911);
             if (temp_v0_6 != -1) {
-                objdata->unk910 = 2;
+                temp_s1->unk910 = 2;
                 gDLL_3_Animation->vtbl->start_obj_sequence(temp_v0_6, self, -1);
             }
         }
     }
-    if (mainGetBits(BIT_902) != 0) {
-        temp_v0_7 = CFGuardian_func_2700(data_5C, objdata->state, data_180, objdata->unk911);
+    if (mainGetBits(0x902) != 0) {
+        temp_v0_7 = CFGuardian_func_2700(data_5C, temp_s1->state, data_180, temp_s1->unk911);
         if (temp_v0_7 != -1) {
-            objdata->unk910 = 2;
+            temp_s1->unk910 = 2;
             gDLL_3_Animation->vtbl->start_obj_sequence(temp_v0_7, self, -1);
-            mainSetBits(BIT_902, 0);
+            mainSetBits(0x902, 0);
         }
     }
-    if ((data_188[objdata->state] != -1) && !(objdata->unk912 & 1) && (self->curModAnimId != data_188[objdata->state])) {
-        objAnimSet(self, data_188[objdata->state], 0, 0);
+    if ((data_188[temp_s1->state] != -1) && !(temp_s1->unk912 & 1) && (self->curModAnimId != data_188[temp_s1->state])) {
+        objAnimSet(self, data_188[temp_s1->state], 0, 0);
         objAnim_func_80024D74(self, 0x50);
+        STUBBED_PRINTF("GD"); // unknown location
+        STUBBED_PRINTF(" Guardian In Elevatoe "); // unknown location
+        STUBBED_PRINTF("Guardian Out of WindLIft "); // unknown location
         STUBBED_PRINTF(" Set Anim ");
     }
-    if (objAnimAdvance(self, objdata->unk67C, (f32) gUpdateRate, &sp50) != 0) {
-        if (objdata->unk912 & 1) {
+    if (objAnimAdvance(self, temp_s1->unk67C, (f32) gUpdateRate, &sp50) != 0) {
+        if (temp_s1->unk912 & 1) {
             if ((self->curModAnimId != 0x1A) && (self->curModAnimId != 9)) {
-                objdata->unk912 &= ~0x1;
+                temp_s1->unk912 &= ~0x1;
                 STUBBED_PRINTF(" OVeride Set ");
             }
         } else if ((mathRnd(0, 6) == 0) && (sp6C != 0)) {
@@ -637,23 +613,23 @@ static s32 CFGuardian_func_678(Object* self) {
             if (sp80 != -1) {
                 objAnim_func_80024D74(self, 0x28);
                 objAnimSet(self, sp80, 0, 0);
-                objdata->unk912 |= 1;
+                temp_s1->unk912 |= 1;
             } else {
-                objAnimSet(self, data_188[objdata->state], 0, 0);
+                objAnimSet(self, data_188[temp_s1->state], 0, 0);
             }
-            STUBBED_PRINTF(" animnum %i "); // unknown location
         }
     }
-    STUBBED_PRINTF(" Make Sound "); // guessed location
     CFGuardian_func_2790(self, &sp50, data_0);
-    if (mathRnd(0, 60) == 0) {
-        objExpr_func_80034B54(self, &objdata->unk4B8, data_8[mathRnd(0, 4)], 0);
+    if (mathRnd(0, 0x3C) == 0) {
+        objExpr_func_80034B54(self, &temp_s1->unk4B8, (s16* ) &data_8[mathRnd(0, 4)], 0);
     }
-    objExpr_func_80034BC0(self, &objdata->unk4B8);
-    objExprEyeIdle(self, &objdata->unk4DC);
-    CFGuardian_func_1D84(self, objdata->dustObjs, 0x500, 0, 0, 6);
-    if (mainGetBits(BIT_4B) != objdata->state) {
-        mainSetBits(BIT_4B, objdata->state);
+    objExpr_func_80034BC0(self, &temp_s1->unk4B8);
+    objExprEyeIdle(self, &temp_s1->unk4DC);
+    CFGuardian_func_1D84(self, temp_s1->dustObjs, 0x500, 0, 0, 6);
+    if (mainGetBits(0x4B) != temp_s1->state) {
+        mainSetBits(0x4B, temp_s1->state);
+        STUBBED_PRINTF(" animnum %i "); // unknown location
+        STUBBED_PRINTF(" Make Sound "); // unknown location
         STUBBED_PRINTF(" Set State %i ");
     }
     mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
@@ -661,7 +637,7 @@ static s32 CFGuardian_func_678(Object* self) {
 }
 
 // offset: 0x1B8C | func: 9
-static void CFGuardian_func_1B8C(Object* self, Object** dustObjs, Collectable_Setup** dustSetups) {
+static void CFGuardian_func_1B8C(Object* arg0, Object** arg1, Collectable_Setup** arg2) {
     Vec3f sp70[] = { // data_200
         VEC3F(45.0f, 50.0f, 0.0f), 
         VEC3F(0.0f, 50.0f, 20.0f), 
@@ -681,28 +657,28 @@ static void CFGuardian_func_1B8C(Object* self, Object** dustObjs, Collectable_Se
     s32 i;
 
     for (i = 0; i < 6; i++) {
-        dustSetups[i] = objAllocSetup(sizeof(Collectable_Setup), OBJ_BoneDust);
-        dustSetups[i]->objHitsValue = 2;
-        dustSetups[i]->gamebitCount = -1;
-        dustSetups[i]->gamebitCollected = -1;
-        dustSetups[i]->base.x = sp70[i].x + self->srt.transl.x;
-        dustSetups[i]->base.y = sp70[i].y + self->srt.transl.y;
-        dustSetups[i]->base.z = sp70[i].z + self->srt.transl.z;
-        dustSetups[i]->gamebitSecondary = -1;
-        dustSetups[i]->base.loadFlags = OBJSETUP_LOAD_MANUAL;
-        dustSetups[i]->base.fadeFlags = OBJSETUP_FADE_CAMERA;
-        dustSetups[i]->base.loadDistance = 255;
-        dustSetups[i]->base.fadeDistance = 255;
-        dustSetups[i]->applyColourMultiplier = 1;
-        dustSetups[i]->multiplyR = sp5C[i][0];
-        dustSetups[i]->multiplyG = sp5C[i][1];
-        dustSetups[i]->multiplyB = sp5C[i][2];
-        dustObjs[i] = objSetupObject(&dustSetups[i]->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
+        arg2[i] = objAllocSetup(sizeof(Collectable_Setup), OBJ_BoneDust);
+        arg2[i]->objHitsValue = 2;
+        arg2[i]->gamebitCount = -1;
+        arg2[i]->gamebitCollected = -1;
+        arg2[i]->base.x = sp70[i].x + arg0->srt.transl.x;
+        arg2[i]->base.y = sp70[i].y + arg0->srt.transl.y;
+        arg2[i]->base.z = sp70[i].z + arg0->srt.transl.z;
+        arg2[i]->gamebitSecondary = -1;
+        arg2[i]->base.loadFlags = 2;
+        arg2[i]->base.byte5 = 4;
+        arg2[i]->base.byte6 = 0xFF;
+        arg2[i]->base.fadeDistance = 0xFF;
+        arg2[i]->applyColourMultiplier = 1;
+        arg2[i]->multiplyR = sp5C[i][0];
+        arg2[i]->multiplyG = sp5C[i][1];
+        arg2[i]->multiplyB = sp5C[i][2];
+        arg1[i] = objSetupObject(&arg2[i]->base, 5, arg0->mapID, -1, NULL);
     }
 }
 
 // offset: 0x1D84 | func: 10
-static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3, s16 arg4, s32 arg5) {
+static s32 CFGuardian_func_1D84(Object* arg0, Object** arg1, s16 arg2, s16 arg3, s16 arg4, s32 arg5) {
     s16 spB0[3];
     Vec3f spA4;
     s32 var_s4;
@@ -722,31 +698,31 @@ static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3,
     s32 _pad2;
 
     objGetPlayer();
-    temp_fs0 = self->srt.transl.y + 3.0f;
+    temp_fs0 = arg0->srt.transl.y + 3.0f;
     for (var_s4 = 0; var_s4 < arg5; var_s4++) {
         if (arg1[var_s4] != NULL) {
             if (arg1[var_s4]->unkDC != 0) {
                 objFreeObject(arg1[var_s4]);
                 arg1[var_s4] = NULL;
             } else {
-                spA4.f[0] = arg1[var_s4]->srt.transl.x - self->srt.transl.x;
-                spA4.f[1] = arg1[var_s4]->srt.transl.y - self->srt.transl.y;
-                spA4.f[2] = arg1[var_s4]->srt.transl.z - self->srt.transl.z;
+                spA4.f[0] = arg1[var_s4]->srt.transl.x - arg0->srt.transl.x;
+                spA4.f[1] = arg1[var_s4]->srt.transl.y - arg0->srt.transl.y;
+                spA4.f[2] = arg1[var_s4]->srt.transl.z - arg0->srt.transl.z;
                 spB0[0] = arg2;
                 spB0[1] = arg3;
                 spB0[2] = arg4;
                 mathRotateRPY((SRT* ) &spB0, spA4.f);
-                arg1[var_s4]->srt.transl.x = spA4.f[0] + self->srt.transl.x;
-                arg1[var_s4]->srt.transl.y = spA4.f[1] + self->srt.transl.y;
+                arg1[var_s4]->srt.transl.x = spA4.f[0] + arg0->srt.transl.x;
+                arg1[var_s4]->srt.transl.y = spA4.f[1] + arg0->srt.transl.y;
                 temp_fv0 = arg1[var_s4]->srt.transl.y;
                 if (temp_fv0 < temp_fs0) {
                     arg1[var_s4]->srt.transl.y = (temp_fs0 - temp_fv0) + temp_fs0;
                 }
-                arg1[var_s4]->srt.transl.z = spA4.f[2] + self->srt.transl.z;
+                arg1[var_s4]->srt.transl.z = spA4.f[2] + arg0->srt.transl.z;
                 sp7C.roll = sp68[var_s4][0];
                 sp7C.pitch = sp68[var_s4][1];
                 sp7C.yaw = sp68[var_s4][2];
-                dll_partfx->spawn(arg1[var_s4], PARTICLE_357, &sp7C, 0, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(arg1[var_s4], 0x357, &sp7C, 0, -1, NULL);
                 sp9C = 1;
             }
         }
@@ -756,46 +732,46 @@ static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3,
 }
 
 // offset: 0x1FF0 | func: 11
-static SRT* CFGuardian_func_1FF0(CurveSetup* curve, SRT* srt) {
-    srt->transl.x = curve->pos.x;
-    srt->transl.y = curve->pos.y;
-    srt->transl.z = curve->pos.z;
-    srt->yaw = curve->unk2C << 8;
-    return srt;
+static SRT* CFGuardian_func_1FF0(CurveSetup* arg0, SRT* arg1) {
+    arg1->transl.x = arg0->pos.x;
+    arg1->transl.y = arg0->pos.y;
+    arg1->transl.z = arg0->pos.z;
+    arg1->yaw = arg0->unk2C << 8;
+    return arg1;
 }
 
 // offset: 0x2020 | func: 12
-static CurveSetup* CFGuardian_func_2020(Object* self, s32 curveTag, Vec3f* pos, s32 arg3) {
-    s32 curveUID;
-    s32 curveTypes[2];
-    CurveSetup* curveNode;
+static CurveSetup* CFGuardian_func_2020(Object* arg0, s32 arg1, Vec3f* arg2, s32 arg3) {
+    s32 temp_v0;
+    s32 sp2C[2];
+    CurveSetup* sp28;
 
-    curveNode = NULL;
+    sp28 = NULL;
     if (arg3 == 1) {
-        curveTypes[0] = 0;
-        curveTypes[1] = 0;
+        sp2C[0] = 0;
+        sp2C[1] = 0;
     } else {
-        curveTypes[0] = 0x19;
-        curveTypes[1] = 0x15;
+        sp2C[0] = 0x19;
+        sp2C[1] = 0x15;
     }
-    curveUID = gDLL_26_Curves->vtbl->func_1E4(
-        self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
-        curveTypes, ARRAYCOUNT(curveTypes), curveTag);
-    if (curveUID >= 0) {
-        curveNode = gDLL_26_Curves->vtbl->func_39C(curveUID);
-        if (pos != NULL) {
-            pos->x = curveNode->pos.x;
-            pos->y = curveNode->pos.y;
-            pos->z = curveNode->pos.z;
+    temp_v0 = gDLL_26_Curves->vtbl->func_1E4(
+        arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, 
+        sp2C, ARRAYCOUNT(sp2C), arg1);
+    if (temp_v0 >= 0) {
+        sp28 = gDLL_26_Curves->vtbl->func_39C(temp_v0);
+        if (arg2 != NULL) {
+            arg2->x = sp28->pos.x;
+            arg2->y = sp28->pos.y;
+            arg2->z = sp28->pos.z;
         }
     } else {
         STUBBED_PRINTF(" Error Could not find node ");
     }
-    return curveNode;
+    return sp28;
 }
 
 // offset: 0x2104 | func: 13
-static s32 CFGuardian_func_2104(Object* self, SRT* arg1, f32 arg2, f32* arg3) {
+static s32 CFGuardian_func_2104(Object* arg0, SRT* arg1, f32 arg2, f32* arg3) {
     f32 sp4C;
     f32 sp48;
     f32 sp44;
@@ -806,25 +782,25 @@ static s32 CFGuardian_func_2104(Object* self, SRT* arg1, f32 arg2, f32* arg3) {
     if (arg1 == NULL) {
         return 0;
     }
-    sp4C = arg1->transl.x - self->srt.transl.x;
-    sp48 = arg1->transl.y - self->srt.transl.y;
-    sp44 = arg1->transl.z - self->srt.transl.z;
+    sp4C = arg1->transl.x - arg0->srt.transl.x;
+    sp48 = arg1->transl.y - arg0->srt.transl.y;
+    sp44 = arg1->transl.z - arg0->srt.transl.z;
     sp40 = sqrtf(SQ(sp4C) + SQ(sp48) + SQ(sp44));
     if (sp40 < (arg2 * 5.0f)) {
         return 1;
     }
     guNormalize(&sp4C, &sp48, &sp44);
-    self->velocity.x = sp4C * arg2 * gUpdateRateF;
-    self->velocity.y = sp48 * arg2 * gUpdateRateF;
-    self->velocity.z = sp44 * arg2 * gUpdateRateF;
-    var_v0 = (arg1->yaw - (self->srt.yaw & 0xFFFF)) + 0x8000;
+    arg0->velocity.x = sp4C * arg2 * gUpdateRateF;
+    arg0->velocity.y = sp48 * arg2 * gUpdateRateF;
+    arg0->velocity.z = sp44 * arg2 * gUpdateRateF;
+    var_v0 = (arg1->yaw - (arg0->srt.yaw & 0xFFFF)) + 0x8000;
     CIRCLE_WRAP(var_v0);
-    self->srt.yaw += ((((f32) var_v0 + 0.5f) * (arg2 * gUpdateRateF)) / sp40);
-    objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
-    if (self->curModAnimId != 0x1A) {
-        objAnimSet(self, 0x1A, 0.0f, 0);
+    arg0->srt.yaw += ((((f32) var_v0 + 0.5f) * (arg2 * gUpdateRateF)) / sp40);
+    objMove(arg0, arg0->velocity.x, arg0->velocity.y, arg0->velocity.z);
+    if (arg0->curModAnimId != 0x1A) {
+        objAnimSet(arg0, 0x1A, 0.0f, 0);
     }
-    objGetAnimChange(self, arg2, arg3);
+    objGetAnimChange(arg0, arg2, arg3);
     return 0;
 }
 
@@ -833,11 +809,11 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
     s32 _pad;
     s16 angle;
     s32 sp54;
-    f32 height;
+    f32 sp50;
     SRT sp38;
 
     sp54 = 0;
-    height = 0.0f;
+    sp50 = 0.0f;
     if (self->unkDC == -1) {
         return 1;
     }
@@ -853,8 +829,8 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
         if (sp54 != 0) {
             self->unkDC = -1;
         }
-        if (trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &height, 0) == 0) {
-            self->srt.transl.y -= height;
+        if (trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp50, 0) == 0) {
+            self->srt.transl.y -= sp50;
         }
     }
     objGetAnimChange(self, arg2, arg4);
@@ -880,17 +856,17 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
 
 
 // offset: 0x25AC | func: 15
-static void CFGuardian_func_25AC(Object* self, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
-    s32 curveTypes[2];
+static void CFGuardian_func_25AC(Object* arg0, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
+    s32 sp28[2];
 
     if (arg2 == 1) {
-        curveTypes[0] = 0;
-        curveTypes[1] = 0;
+        sp28[0] = 0;
+        sp28[1] = 0;
     } else {
-        curveTypes[0] = 0x19;
-        curveTypes[1] = 0x15;
+        sp28[0] = 0x19;
+        sp28[1] = 0x15;
     }
-    gDLL_26_Curves->vtbl->func_4288(arg1, self, arg4, curveTypes, arg3);
+    gDLL_26_Curves->vtbl->func_4288(arg1, arg0, arg4, sp28, arg3);
     STUBBED_PRINTF(" PathId %i Loc id %i \n", arg3, arg1->unk9C->unk18);
 }
 
@@ -899,28 +875,24 @@ static const char str_2[] = " Tangent 2 %f %f %f \n";
 static const char str_3[] = "t value %f ";
 
 // offset: 0x2638 | func: 16
-static s32 CFGuardian_func_2638(Object* self, UnkCurvesStruct* curve, f32 arg2) {
+static s32 CFGuardian_func_2638(Object* arg0, UnkCurvesStruct* arg1, f32 arg2) {
     s32 sp24;
 
     sp24 = 0;
-    if ((curves_func_800053B0(&curve->unk0, arg2) != 0) || (curve->unk0.unk10 != 0)) {
-        sp24 = gDLL_26_Curves->vtbl->func_4704(curve);
+    if ((curves_func_800053B0(&arg1->unk0, arg2) != 0) || (arg1->unk0.unk10 != 0)) {
+        sp24 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
-    self->srt.transl.x = curve->unk0.unk68.x;
-    self->srt.transl.y = curve->unk0.unk68.y;
-    self->srt.transl.z = curve->unk0.unk68.z;
+    arg0->srt.transl.x = arg1->unk0.unk68.x;
+    arg0->srt.transl.y = arg1->unk0.unk68.y;
+    arg0->srt.transl.z = arg1->unk0.unk68.z;
     return sp24;
 }
 
 // offset: 0x26F0 | func: 17
-void CFGuardian_func_26F0(void) {
-
-}
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_func_26F0.s")
 
 // offset: 0x26F8 | func: 18
-void CFGuardian_func_26F8(void) {
-
-}
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_func_26F8.s")
 
 // offset: 0x2700 | func: 19
 static s32 CFGuardian_func_2700(UnkCFGuardianStruct* arg0, s32 arg1, s32 arg2, s32 arg3) {
@@ -937,53 +909,49 @@ static s32 CFGuardian_func_2700(UnkCFGuardianStruct* arg0, s32 arg1, s32 arg2, s
 }
 
 // offset: 0x2770 | func: 20
-void CFGuardian_func_2770(void) {
-
-}
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_func_2770.s")
 
 // offset: 0x2778 | func: 21 | export: 7
-s32 CFGuardian_Func_2778(Object* self) {
-    CFGuardian_Data* objdata = self->data;
-    return (objdata->unk912 & 2) == 0;
-}
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/369_CFGuardian/CFGuardian_Func_2778.s")
 
 // offset: 0x2790 | func: 22
-static s32 CFGuardian_func_2790(Object* self, UnkFunc_80024108Struct* arg1, u16* sounds) {
-    s32 ret;
+static s32 CFGuardian_func_2790(Object* arg0, UnkFunc_80024108Struct* arg1, u16* arg2) {
+    s32 var_s2;
+    u8 temp_t6;
     s32 i;
 
-    ret = 0;
+    var_s2 = 0;
     for (i = 0; i < arg1->unk1B; i++) {
         switch (arg1->unk13[i]) {
         case 0:
-            if (sounds != NULL) {
-                dll_amSfx->Play(self, sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);
+            if (arg2 != NULL) {
+                gDLL_6_AMSFX->vtbl->Play(arg0, arg2[0], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             continue;
         case 7:
-            if (sounds != NULL) {
-                dll_amSfx->Play(self, sounds[1], MAX_VOLUME, NULL, NULL, 0, NULL);
+            if (arg2 != NULL) {
+                gDLL_6_AMSFX->vtbl->Play(arg0, arg2[1], MAX_VOLUME, NULL, NULL, 0, NULL);
             }
             continue;
         case 1:
-            ret = 1;
+            var_s2 = 1;
             continue;
         case 2:
-            ret = 2;
+            var_s2 = 2;
             continue;
         case 3:
-            ret = 3;
+            var_s2 = 3;
             continue;
         case 4:
-            ret = 4;
+            var_s2 = 4;
             continue;
         case 9:
-            dll_amSfx->Play(self, SOUND_8EB, MAX_VOLUME, NULL, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->Play(arg0, 0x8EB, MAX_VOLUME, NULL, NULL, 0, NULL);
             continue;
         }
     }
-    if ((ret != 0) && (sounds != NULL)) {
-        dll_amSfx->Play(self, sounds[2], MAX_VOLUME, NULL, NULL, 0, NULL);
+    if ((var_s2 != 0) && (arg2 != NULL)) {
+        gDLL_6_AMSFX->vtbl->Play(arg0, arg2[2], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
-    return ret;
+    return var_s2;
 }
