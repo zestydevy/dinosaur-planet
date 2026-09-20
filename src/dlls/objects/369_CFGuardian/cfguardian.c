@@ -2,6 +2,7 @@
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
+#include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -18,75 +19,153 @@
 
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s8 rotation;
+/*18*/ s8 yaw8;
 } CFGuardian_Setup;
 
 typedef struct {
 /*000*/ MoveLibData movedata;
-/*4B8*/ HeadAnimation unk4B8;
-/*4DC*/ HeadAnimation unk4DC;
+/*4B8*/ HeadAnimation exprHeadAnim;
+/*4DC*/ HeadAnimation eyeIdleHeadAnim;
 /*500*/ u32 unk500; // unused sound handle
 /*504*/ u8 _unk504[0x50C - 0x504];
 /*50C*/ Object* dustObjs[6];
 /*524*/ Collectable_Setup* dustSetups[6];
 /*53C*/ UnkCurvesStruct unk53C;
 /*644*/ u8 _unk644[0x67C - 0x644];
-/*67C*/ f32 unk67C;
+/*67C*/ f32 animRate;
 /*680*/ DLL27_Data collider;
-/*8E0*/ SRT unk8E0;
+/*8E0*/ SRT walkTarget;
 /*8F8*/ u8 state;
 /*8F9*/ u8 _unk8F9[0x908 - 0x8F9];
 /*908*/ s32 unk908;
-/*90C*/ s32 unk90C;
-/*910*/ u8 unk910;
-/*911*/ s8 unk911;
-/*912*/ u8 unk912;
+/*90C*/ s32 windLiftState;
+/*910*/ u8 talkState;
+/*911*/ s8 talkSeqSelector;
+/*912*/ u8 flags;
 } CFGuardian_Data;
 
 // size: 0xC
 typedef struct {
-/*0*/ s32 unk0;
-/*4*/ s32 unk4[2];
-} UnkCFGuardianStruct;
+/*0*/ s32 key;
+/*4*/ s32 values[2];
+} CFGuardianMapStruct;
 
-/*0x0*/ static u16 data_0[] = {
+enum CFGuardianState {
+    CFGUARDIAN_STATE_InCell = 0,
+    CFGUARDIAN_STATE_WaitingToBeFreed = 1,
+    CFGUARDIAN_STATE_LeavingCell = 2, // walking through prison
+    CFGUARDIAN_STATE_WaitingAtWindLift = 3,
+    CFGUARDIAN_STATE_WaitingForWindLiftPower = 4,
+    CFGUARDIAN_STATE_5 = 5, // unused
+    CFGUARDIAN_STATE_InWindShaft = 6,
+    CFGUARDIAN_STATE_LeavingWindShaft = 7, // leaving top of wind shaft
+    CFGUARDIAN_STATE_Courtyard_WaitingForKyte = 8, // waiting for kyte to be freed
+    CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby = 9, // waiting for cloud baby rescue
+    CFGUARDIAN_STATE_WalkingToRaceArea = 10, // walk to drained water
+    CFGUARDIAN_STATE_Vanish = 11, // vanish (after reaching drained water)
+    CFGUARDIAN_STATE_WaitingForRaceCompletion = 12,
+    CFGUARDIAN_STATE_WaitingForSpellStone = 13,
+    CFGUARDIAN_STATE_NoOp_SpellStoneActivated = 14,
+    CFGUARDIAN_STATE_NoOp_Vanished = 15
+};
+
+enum CFGuardianModAnim {
+    CFGUARDIAN_MODANIM_Idle = 0,
+    CFGUARDIAN_MODANIM_1 = 1, // grunt? used when giving krystal the illusion spell?
+    CFGUARDIAN_MODANIM_WalkSlow = 2,
+    CFGUARDIAN_MODANIM_Run = 3,
+    CFGUARDIAN_MODANIM_4 = 4, // charge (running with head down)
+    CFGUARDIAN_MODANIM_5 = 5, // charge start?
+    CFGUARDIAN_MODANIM_6 = 6, // charge end?
+    CFGUARDIAN_MODANIM_7 = 7, // wobbly idle right
+    CFGUARDIAN_MODANIM_8 = 8, // wobbly idle left
+    CFGUARDIAN_MODANIM_Floating = 9,
+    CFGUARDIAN_MODANIM_10 = 10, // look right
+    CFGUARDIAN_MODANIM_11 = 11, // look right -> forward
+    CFGUARDIAN_MODANIM_12 = 12, // head down, point
+    CFGUARDIAN_MODANIM_13 = 13, // idle after giving something?
+    CFGUARDIAN_MODANIM_14 = 14, // idle, head down a little to be sneaky (used in courtyard)
+    CFGUARDIAN_MODANIM_SummoningStart = 15,
+    CFGUARDIAN_MODANIM_SummoningLoop = 16,
+    CFGUARDIAN_MODANIM_SummoningEnd = 17,
+    CFGUARDIAN_MODANIM_Stretch = 18, // big stretch, right leg
+    CFGUARDIAN_MODANIM_Jump = 19,
+    CFGUARDIAN_MODANIM_DrinkingStart = 20,
+    CFGUARDIAN_MODANIM_DrinkingLoop = 21,
+    CFGUARDIAN_MODANIM_DrinkingStop = 22,
+    CFGUARDIAN_MODANIM_23 = 23, // something with his hands
+    CFGUARDIAN_MODANIM_24 = 24, // giving something from his invisible "bag"
+    CFGUARDIAN_MODANIM_25 = 25, // grunt? other direction
+    CFGUARDIAN_MODANIM_Walk = 26
+};
+
+enum CFGuardianSeq {
+    CFGUARDIAN_SEQ_0 = 0,
+    CFGUARDIAN_SEQ_GiveIllusionSpell = 1,
+    CFGUARDIAN_SEQ_GivePowerRoomKey = 2,
+    CFGUARDIAN_SEQ_3 = 3, // walk through prison? unused?
+    CFGUARDIAN_SEQ_IllusionSpellHint = 4,
+    CFGUARDIAN_SEQ_LetsGetOutOfHere = 5,
+    CFGUARDIAN_SEQ_SummoningBoneDust = 6,
+    CFGUARDIAN_SEQ_KyteLocationHint = 7,
+    CFGUARDIAN_SEQ_WindShaftPowerHint = 8,
+    CFGUARDIAN_SEQ_BabyCloudRunnerReminder = 9,
+    CFGUARDIAN_SEQ_SpellStoneActivationReminder = 10,
+    CFGUARDIAN_SEQ_SpellStoneRaceReminder = 11,
+    CFGUARDIAN_SEQ_PowerCrystalsHint = 12
+};
+
+enum CFGuardianFlags {
+    CFGUARDIAN_FLAG_1 = 0x1,
+    CFGUARDIAN_FLAG_2 = 0x2,
+    CFGUARDIAN_FLAG_WalkToTarget = 0x4,
+};
+
+enum CFGuardianTalkState {
+    CFGUARDIAN_TALK_Disabled = 0,
+    CFGUARDIAN_TALK_Enabled = 1,
+    CFGUARDIAN_TALK_SpokenTo = 2
+};
+
+/*0x0*/ static u16 sModAnimSfx[] = {
     SOUND_8DD_BoneHead_Grunt1, 
     SOUND_8DE_BoneHead_Grunt2, 
     SOUND_8EA
 };
-/*0x8*/ static s16 data_8[][2] = {
+/*0x8*/ static s16 sExprSfx[][2] = {
     {SOUND_8DD_BoneHead_Grunt1, 0x1000}, 
     {SOUND_8DE_BoneHead_Grunt2, 0x1000}, 
     {SOUND_8DF_BoneHead_Grunt3, 0x1000}, 
     {SOUND_8E0_BoneHead_Grunt4, 0x1000}, 
     {SOUND_8E1_BoneHead_Grunt5, 0x1000}
 };
-/*0x1C*/ static Vec3f data_1C[] = {
+/*0x1C*/ static Vec3f sColliderTestPoints[] = {
     VEC3F(0.0f, 0.0f, 0.0f), 
     VEC3F(0.0f, 22.0f, 0.0f), 
     VEC3F(0.0f, 24.0f, 25.0f), 
     VEC3F(0.0f, 30.0f, -25.0f)
 };
-/*0x4C*/ static f32 data_4C[] = {
+/*0x4C*/ static f32 sColliderTestRadii[] = {
     0.0f, 
     23.0f, 
     20.0f, 
     16.0f
 };
-/*0x5C*/ static UnkCFGuardianStruct data_5C[] = {
-    {0,  {1, -1}}, 
-    {1,  {4, -1}}, 
-    {2,  {5, -1}}, 
-    {3,  {2, -1}}, 
-    {4,  {8, 12}}, 
-    {5,  {6, -1}}, 
-    {6,  {5, -1}}, 
-    {7,  {7, 6}}, 
-    {8,  {7, 6}}, 
-    {9,  {9, 6}}, 
-    {10, {5, -1}}, 
-    {12, {11, -1}}, 
-    {13, {10, -1}}, 
+/*0x5C*/ static CFGuardianMapStruct sTalkSeqStateMap[] = {
+    {CFGUARDIAN_STATE_InCell,                           {CFGUARDIAN_SEQ_GiveIllusionSpell,            -1}}, 
+    {CFGUARDIAN_STATE_WaitingToBeFreed,                 {CFGUARDIAN_SEQ_IllusionSpellHint,            -1}}, 
+    {CFGUARDIAN_STATE_LeavingCell,                      {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
+    {CFGUARDIAN_STATE_WaitingAtWindLift,                {CFGUARDIAN_SEQ_GivePowerRoomKey,             -1}}, 
+    {CFGUARDIAN_STATE_WaitingForWindLiftPower,          {CFGUARDIAN_SEQ_WindShaftPowerHint,           CFGUARDIAN_SEQ_PowerCrystalsHint}}, 
+    {CFGUARDIAN_STATE_5,                                {CFGUARDIAN_SEQ_SummoningBoneDust,            -1}}, 
+    {CFGUARDIAN_STATE_InWindShaft,                      {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
+    {CFGUARDIAN_STATE_LeavingWindShaft,                 {CFGUARDIAN_SEQ_KyteLocationHint,             CFGUARDIAN_SEQ_SummoningBoneDust}}, 
+    {CFGUARDIAN_STATE_Courtyard_WaitingForKyte,         {CFGUARDIAN_SEQ_KyteLocationHint,             CFGUARDIAN_SEQ_SummoningBoneDust}}, 
+    {CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby,    {CFGUARDIAN_SEQ_BabyCloudRunnerReminder,      CFGUARDIAN_SEQ_SummoningBoneDust}}, 
+    {CFGUARDIAN_STATE_WalkingToRaceArea,                {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
+    {CFGUARDIAN_STATE_WaitingForRaceCompletion,         {CFGUARDIAN_SEQ_SpellStoneRaceReminder,       -1}}, 
+    {CFGUARDIAN_STATE_WaitingForSpellStone,             {CFGUARDIAN_SEQ_SpellStoneActivationReminder, -1}}, 
+    // ? data for a different variable?
     {0,  {8, 1}}, 
     {8,  {2, 8}}, 
     {3,  {10, 4}}, 
@@ -97,35 +176,36 @@ typedef struct {
     {-1, {12, -1}}, 
     {13, {-1, 0}}
 };
-/*0x164*/ static u32 _data_unk164 = 0;
-/*0x168*/ static UnkCFGuardianStruct data_168[] = {
-    {0,  {18, -1}}, 
-    {14, {10, 12}}
+/*0x164*/ static u32 _data_unk164 = 0; // unused
+/*0x168*/ static CFGuardianMapStruct sAnimTransitionMap[] = {
+    {CFGUARDIAN_MODANIM_Idle,  {CFGUARDIAN_MODANIM_Stretch, -1}}, 
+    {CFGUARDIAN_MODANIM_14,    {CFGUARDIAN_MODANIM_10,      CFGUARDIAN_MODANIM_12}}
 };
-/*0x180*/ static s32 data_180 = 13;
-/*0x184*/ static s32 data_184 = 2;
-/*0x188*/ static s32 data_188[] = {
-    -1, 
-    0x0, 
-    0x1a, 
-    0x0, 
-    0x0, 
-    -1, 
-    -1, 
-    0x1a, 
-    0xe, 
-    0xe, 
-    0x1a, 
-    0x1a, 
-    0x0, 
-    0x0, 
-    -1, 
-    0xa, 
-    0xb, 
-    0xc, 
-    0xd, 
-    0xe, 
-    0x5
+/*0x180*/ static s32 sTalkSeqStateMapLength = 13;
+/*0x184*/ static s32 sAnimTransitionMapLength = 2;
+/*0x188*/ static s32 sStateAnimMap[] = {
+/*0*/ -1, 
+/*1*/ CFGUARDIAN_MODANIM_Idle, 
+/*2*/ CFGUARDIAN_MODANIM_Walk, 
+/*3*/ CFGUARDIAN_MODANIM_Idle, 
+/*4*/ CFGUARDIAN_MODANIM_Idle, 
+/*5*/ -1, 
+/*6*/ -1, 
+/*7*/ CFGUARDIAN_MODANIM_Walk, 
+/*8*/ CFGUARDIAN_MODANIM_14, 
+/*9*/ CFGUARDIAN_MODANIM_14, 
+/*10*/ CFGUARDIAN_MODANIM_Walk, 
+/*11*/ CFGUARDIAN_MODANIM_Walk, 
+/*12*/ CFGUARDIAN_MODANIM_Idle, 
+/*13*/ CFGUARDIAN_MODANIM_Idle, 
+/*14*/ -1, 
+/*15*/ CFGUARDIAN_MODANIM_10, // might not be a real state -> anim mapping
+    // ? data for a different variable?
+    CFGUARDIAN_MODANIM_11, 
+    CFGUARDIAN_MODANIM_12, 
+    CFGUARDIAN_MODANIM_13, 
+    CFGUARDIAN_MODANIM_14, 
+    CFGUARDIAN_MODANIM_5
 };
 
 #ifndef AVOID_UB
@@ -134,16 +214,16 @@ static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* ani
 static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
 #endif
 static s32 CFGuardian_func_678(Object* self);
-static void CFGuardian_func_1B8C(Object*, Object**, Collectable_Setup**);
-static s32 CFGuardian_func_1D84(Object*, Object**, s16, s16, s16, s32);
-static SRT* CFGuardian_func_1FF0(CurveSetup*, SRT*);
-static CurveSetup* CFGuardian_func_2020(Object*, s32, Vec3f*, s32);
-static s32 CFGuardian_func_2104(Object*, SRT*, f32, f32*);
-static s32 CFGuardian_func_2348(Object*, UnkCurvesStruct*, f32, u8, f32*);
-static s32 CFGuardian_func_2700(UnkCFGuardianStruct*, s32, s32, s32);
-static s32 CFGuardian_func_2790(Object*, UnkFunc_80024108Struct*, u16*);
-static void CFGuardian_func_25AC(Object*, UnkCurvesStruct*, s32, s32, f32);
-static s32 CFGuardian_func_2638(Object*, UnkCurvesStruct*, f32);
+static void CFGuardian_spawnBoneDust(Object* self, Object** dustObjs, Collectable_Setup** dustSetups);
+static s32 CFGuardian_updateBoneDust(Object* self, Object** dustObjs, s16 rotX, s16 rotY, s16 rotZ, s32 count);
+static SRT* CFGuardian_curveToWalkTarget(CurveSetup* curve, SRT* srt);
+static CurveSetup* CFGuardian_findCurveNode(Object* self, s32 curveTag, Vec3f* pos, s32 arg3);
+static s32 CFGuardian_walkTo(Object* self, SRT* target, f32 speed, f32* animChange);
+static s32 CFGuardian_followCurvePath(Object* self, UnkCurvesStruct* arg1, f32 speed, u8 curveTag, f32* animChange);
+static s32 CFGuardian_mapLookup(CFGuardianMapStruct* map, s32 key, s32 mapLength, s32 selector);
+static s32 CFGuardian_doModAnimSfx(Object* self, UnkFunc_80024108Struct* animState, u16* sounds);
+static void CFGuardian_func_25AC(Object* self, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4);
+static s32 CFGuardian_func_2638(Object* self, UnkCurvesStruct* curve, f32 arg2);
 
 // offset: 0x0 | ctor
 void CFGuardian_ctor(void* dll) { }
@@ -156,15 +236,15 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
     CFGuardian_Data* objdata;
     s32 _pad;
     s32 _pad2;
-    u8 sp48[] = {0x00, 0x01, 0x06, 0x06}; // data_1DC
-    s16 sp3C[] = {0x0005, 0x000f, 0x000f, 0x0000, 0x0000}; // data_1E0
-    u8 sp38[4] = {1, 1, 1, 1}; // data_1EC
+    u8 sp48[] = {0x00, 0x01, 0x06, 0x06};
+    s16 sp3C[] = {0x0005, 0x000f, 0x000f, 0x0000, 0x0000};
+    u8 sp38[4] = {1, 1, 1, 1};
 
     objdata = self->data;
     if (objdata != NULL) {
         objInitMesgQueue(self, 4);
         objAddObjectType(self, OBJTYPE_24);
-        objdata->state = mainGetBits(BIT_4B);
+        objdata->state = mainGetBits(BIT_CFGuardian_State);
         STUBBED_PRINTF(" Initalise Guardian State %i ", objdata->state);
         STUBBED_PRINTF(" GUARDIAN POS : %f %f %f \n", &setup->base.x, &setup->base.y, &setup->base.z);
         self->srt.transl.x = setup->base.x;
@@ -172,25 +252,25 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         self->srt.transl.z = setup->base.z;
         self->unkDC = 1;
         self->animCallback = (AnimationCallback)CFGuardian_func_4D0;
-        self->srt.yaw = setup->rotation << 8;
-        objdata->unk90C = 0;
+        self->srt.yaw = setup->yaw8 << 8;
+        objdata->windLiftState = 0;
         objdata->unk908 = 6;
-        objdata->unk912 = 0;
-        objdata->unk67C = 0.0f;
+        objdata->flags = 0;
+        objdata->animRate = 0.0f;
         gDLL_27->vtbl->init(&objdata->collider, 
             DLL27FLAG_2000000, 
             DLL27FLAG_40000 | DLL27FLAG_HAS_TERRAIN_COLLIDER | DLL27FLAG_80 | DLL27FLAG_2 | DLL27FLAG_1, 
             DLL27MODE_1);
-        gDLL_27->vtbl->setup_terrain_collider(&objdata->collider, 4, data_1C, data_4C, sp38);
-        gDLL_27->vtbl->setup_hits_collider(&objdata->collider, 4, data_1C, data_4C, 8);
+        gDLL_27->vtbl->setup_terrain_collider(&objdata->collider, 4, sColliderTestPoints, sColliderTestRadii, sp38);
+        gDLL_27->vtbl->setup_hits_collider(&objdata->collider, 4, sColliderTestPoints, sColliderTestRadii, 8);
         objdata->movedata.unk4A9 |= 0x28;
-        objdata->unk910 = 1;
-        objdata->unk911 = 0;
+        objdata->talkState = CFGUARDIAN_TALK_Enabled;
+        objdata->talkSeqSelector = 0;
         if (mainGetBits(BIT_57) != 0) {
-            objdata->state = 6;
+            objdata->state = CFGUARDIAN_STATE_InWindShaft;
         }
         if (mainGetBits(BIT_4C1) != 0) {
-            objdata->state = 12;
+            objdata->state = CFGUARDIAN_STATE_WaitingForRaceCompletion;
         }
         func_8002674C(self);
         mainCreateTempDLL(DLL_ID_MOVELIB);
@@ -276,7 +356,7 @@ static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* ani
         mapSaveObject(actor->setup, actor->mapID, actor->srt.transl.x, actor->srt.transl.y, actor->srt.transl.z);
         return 0;
     }
-    if (objdata->state != 6) {
+    if (objdata->state != CFGUARDIAN_STATE_InWindShaft) {
         var_v1 = &sp3C[0];
     } else {
         var_v1 = &sp3C[1];
@@ -286,136 +366,136 @@ static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* ani
         return 1;
     }
     if (animObjData->lastMessage == 2) {
-        CFGuardian_func_1B8C(actor, objdata->dustObjs, objdata->dustSetups);
+        CFGuardian_spawnBoneDust(actor, objdata->dustObjs, objdata->dustSetups);
         animObjData->unk9D |= 8;
     }
     if (animObjData->lastMessage == 3) {
         animObjData->unk9D |= 4;
     }
-    CFGuardian_func_1D84(actor, objdata->dustObjs, 0x500, 0, 0, 6);
+    CFGuardian_updateBoneDust(actor, objdata->dustObjs, 0x500, 0, 0, 6);
     return 0;
 }
 
 // offset: 0x678 | func: 8
 static s32 CFGuardian_func_678(Object* self) {
     CFGuardian_Data* objdata;
-    Object* sp90;
-    Object* temp_v0_2;
-    f32 sp88;
-    f32 sp84;
-    s32 sp80;
-    s32 temp_v0_7;
-    s32 temp_v0_6;
-    u32 sp74;
-    void* sp70;
+    Object* player;
+    Object* nearbyBaddie;
+    f32 baddieDist;
+    f32 trackHeight;
+    s32 modAnimId;
+    s32 seqno2;
+    s32 seqno;
+    u32 mesgID;
+    void* mesgArg;
     s32 sp6C;
-    UnkFunc_80024108Struct sp50;
+    UnkFunc_80024108Struct animState;
     Vec3f sp44;
     f32 var_fa0;
 
-    sp74 = 0;
-    sp70 = NULL;
+    mesgID = 0;
+    mesgArg = NULL;
     sp6C = 1;
-    sp88 = 1000.0f;
-    sp84 = 1.0f;
+    baddieDist = 1000.0f;
+    trackHeight = 1.0f;
     objdata = self->data;
-    objdata->unk912 &= ~0x2;
+    objdata->flags &= ~CFGUARDIAN_FLAG_2;
     diPrintf("Guardian ");
-    objdata->unk67C = 0.005f;
-    sp90 = objGetPlayer();
+    objdata->animRate = 0.005f;
+    player = objGetPlayer();
     switch (objdata->state) {
-    case 0:
-        if (objdata->unk910 == 2) {
-            objdata->state = 1;
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_InCell:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->state = CFGUARDIAN_STATE_WaitingToBeFreed;
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
         sp6C = 0;
         break;
-    case 1:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_WaitingToBeFreed:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
         if (mainGetBits(BIT_257) != 0) {
-            objdata->state = 2;
-            objAnimSet(self, 0x1A, 0, 0);
+            objdata->state = CFGUARDIAN_STATE_LeavingCell;
+            objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             self->unkDC = 0;
             mainSetBits(BIT_CRF_BoneHead_Guardian_Freed, 1);
         }
         sp6C = 0;
         break;
-    case 2:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_LeavingCell:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.7f, 0, &objdata->unk67C) != 0) {
-            objdata->state = 3;
+        objdata->flags |= CFGUARDIAN_FLAG_2;
+        if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.7f, 0, &objdata->animRate) != 0) {
+            objdata->state = CFGUARDIAN_STATE_WaitingAtWindLift;
         }
         break;
-    case 3:
-        if ((objdata->movedata.unk498 == 1) && (sp90 == objdata->movedata.prevLookat) && (vec3Distance(&self->globalPosition, &sp90->globalPosition) < 80.0f)) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(2, self, -1);
+    case CFGUARDIAN_STATE_WaitingAtWindLift:
+        if ((objdata->movedata.unk498 == 1) && (player == objdata->movedata.prevLookat) && (vec3Distance(&self->globalPosition, &player->globalPosition) < 80.0f)) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(CFGUARDIAN_SEQ_GivePowerRoomKey, self, -1);
             mainSetBits(BIT_CRF_Power_Room_Key, 1);
-            objdata->state = 4;
+            objdata->state = CFGUARDIAN_STATE_WaitingForWindLiftPower;
         }
         break;
-    case 4:
+    case CFGUARDIAN_STATE_WaitingForWindLiftPower:
         if (mainGetBits(BIT_57) != 0) {
-            objdata->state = 6;
-            objdata->unk911 = 0;
-        } else if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
-            objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+            objdata->state = CFGUARDIAN_STATE_InWindShaft;
+            objdata->talkSeqSelector = 0;
+        } else if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
+            objdata->talkSeqSelector = (objdata->talkSeqSelector + 1) % 2;
         }
         break;
-    case 6:
+    case CFGUARDIAN_STATE_InWindShaft:
         diPrintf(" UpWind Lift ");
-        if (objdata->unk90C != 0) {
-            if (objdata->unk90C >= 2) {
+        if (objdata->windLiftState != 0) {
+            if (objdata->windLiftState >= 2) {
                 self->velocity.x = 0;
                 self->velocity.z = 0;
                 self->srt.transl.y += self->velocity.y * gUpdateRateF;
-                trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp84, 0);
-                self->srt.yaw = (s16) ((s32) (0xC0 << (self->srt.yaw + 8)) >> 1);
+                trackGetHeightNearest(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &trackHeight, 0);
+                self->srt.yaw = (0xC0 << (self->srt.yaw + 8)) >> 1;
                 self->objhitInfo->unk58 &= ~0x400;
-                if (sp84 <= 1.0f) {
+                if (trackHeight <= 1.0f) {
                     STUBBED_PRINTF(" LANDING ");
-                    objdata->unk90C = 2;
-                    self->srt.transl.y -= sp84;
-                    objdata->unk910 = 0;
+                    objdata->windLiftState = 2;
+                    self->srt.transl.y -= trackHeight;
+                    objdata->talkState = CFGUARDIAN_TALK_Disabled;
                     self->unkDC = 0;
-                    objAnimSet(self, 0, 0, 0);
-                    CFGuardian_func_1FF0(CFGuardian_func_2020(self, 0, NULL, 2), &objdata->unk8E0);
-                    if (self->srt.transl.y <= objdata->unk8E0.transl.y) {
-                        var_fa0 = objdata->unk8E0.transl.y - self->srt.transl.y;
+                    objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);
+                    CFGuardian_curveToWalkTarget(CFGuardian_findCurveNode(self, 0, NULL, 2), &objdata->walkTarget);
+                    if (self->srt.transl.y <= objdata->walkTarget.transl.y) {
+                        var_fa0 = objdata->walkTarget.transl.y - self->srt.transl.y;
                     } else {
-                        var_fa0 = -(objdata->unk8E0.transl.y - self->srt.transl.y);
+                        var_fa0 = -(objdata->walkTarget.transl.y - self->srt.transl.y);
                     }
                     if (var_fa0 < 150.0f) {
-                        objAddObjectType(self, 0x18);
-                        objdata->state = 7;
-                        objAnimSet(self, 0x1A, 0, 0);
+                        objAddObjectType(self, OBJTYPE_24);
+                        objdata->state = CFGUARDIAN_STATE_LeavingWindShaft;
+                        objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
                     }
                 }
                 self->velocity.y -= 0.12f;
             } else {
                 var_fa0 = ABS_EXPR(self->velocity.y * 400.0f);
                 self->srt.yaw += var_fa0;
-                objdata->unk67C = 0.04f;
+                objdata->animRate = 0.04f;
                 if (mainGetBits(BIT_8E9) != 0) {
                     STUBBED_PRINTF("Guardian Out of WindLIft Boyo !!! ");
-                    objAnimSet(self, 0, 0, 0);
+                    objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);
                     objAnim_func_80024D74(self, 0x32);
                     self->velocity.y = 0;
-                    objFreeObjectType(self, 0x18);
+                    objFreeObjectType(self, OBJTYPE_24);
                     self->velocity.x = 0;
                     self->velocity.y = -0.001f;
                     self->velocity.z = 0;
-                    objdata->unk90C = 2;
-                    objdata->unk912 &= ~0x1;
+                    objdata->windLiftState = 2;
+                    objdata->flags &= ~CFGUARDIAN_FLAG_1;
                 }
             }
-            if (objdata->unk90C < 2) {
+            if (objdata->windLiftState < 2) {
                 self->srt.transl.x += gUpdateRateF * self->velocity.x;
                 self->srt.transl.z += gUpdateRateF * self->velocity.z;
                 gDLL_27->vtbl->func_1E8(self, &objdata->collider, gUpdateRateF);
@@ -439,221 +519,228 @@ static s32 CFGuardian_func_678(Object* self) {
                 self->velocity.z *= 0.3f;
                 diPrintf(" Xvel %f Zvel %f \n", &self->velocity.x, &self->velocity.z);
             }
-        } else if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+        } else if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
         break;
-    case 7:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_LeavingWindShaft:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.3f, 1, &objdata->unk67C) != 0) {
-            objdata->state = 8;
+        objdata->flags |= CFGUARDIAN_FLAG_2;
+        if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.3f, 1, &objdata->animRate) != 0) {
+            objdata->state = CFGUARDIAN_STATE_Courtyard_WaitingForKyte;
             objAnim_func_80024D74(self, 0x32);
         }
         break;
-    case 8:
-        temp_v0_2 = objGetNearestTypeTo(4, self, &sp88);
-        if ((temp_v0_2 != NULL) && (sp88 < 300.0f)) {
-            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, temp_v0_2);
-            self->unkAF |= 0x10;
+    case CFGUARDIAN_STATE_Courtyard_WaitingForKyte:
+        nearbyBaddie = objGetNearestTypeTo(OBJTYPE_Baddie, self, &baddieDist);
+        if ((nearbyBaddie != NULL) && (baddieDist < 300.0f)) {
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, nearbyBaddie);
+            self->unkAF |= ARROW_FLAG_10_Greyed_Out;
         }
-        if ((sp88 > 300.0f) && (vec3DistanceXZ(&sp90->globalPosition, &self->globalPosition) < 80.0f)) {
-            self->unkAF &= ~0x10;
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0)) {
+        if ((baddieDist > 300.0f) && (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 80.0f)) {
+            self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
+            if (!(objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (sStateAnimMap[objdata->state] != CFGUARDIAN_MODANIM_Idle)) {
                 STUBBED_PRINTF(" Stand ");
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &objdata->unk8E0);
-                objdata->unk912 |= 5;
-                data_188[objdata->state] = 0;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(15, &objdata->walkTarget);
+                objdata->flags |= (CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
+                sStateAnimMap[objdata->state] = CFGUARDIAN_MODANIM_Idle;
             }
-            if (objdata->unk910 == 2) {
-                objdata->unk910 = 1;
-                objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+            if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+                objdata->talkState = CFGUARDIAN_TALK_Enabled;
+                objdata->talkSeqSelector = (objdata->talkSeqSelector + 1) % 2;
             }
         } else {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0xE)) {
+            if (!(objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (sStateAnimMap[objdata->state] != CFGUARDIAN_MODANIM_14)) {
                 STUBBED_PRINTF(" Idle Tow ");
-                objdata->unk910 = 2;
-                objdata->unk912 |= 5;
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &objdata->unk8E0);
-                data_188[objdata->state] = 0xE;
+                objdata->talkState = CFGUARDIAN_TALK_SpokenTo;
+                objdata->flags |= (CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(14, &objdata->walkTarget);
+                sStateAnimMap[objdata->state] = CFGUARDIAN_MODANIM_14;
             }
         }
-        if ((objdata->unk912 & 4) && (CFGuardian_func_2104(self, &objdata->unk8E0, 0.5f, &objdata->unk67C) != 0)) {
-            objAnimSet(self, 0x1A, 0, 0);
-            objdata->unk912 &= ~0x5;
+        if ((objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (CFGuardian_walkTo(self, &objdata->walkTarget, 0.5f, &objdata->animRate) != 0)) {
+            objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
+            objdata->flags &= ~(CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
         }
         if (mainGetBits(BIT_CF_Floor_Destroyed) != 0) {
-            objdata->state = 9;
-            objdata->unk911 = 0;
+            objdata->state = CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby;
+            objdata->talkSeqSelector = 0;
         }
         break;
-    case 9:
-        temp_v0_2 = objGetNearestTypeTo(4, self, &sp88);
-        if ((temp_v0_2 != NULL) && (sp88 < 300.0f)) {
-            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, temp_v0_2);
+    case CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby:
+        nearbyBaddie = objGetNearestTypeTo(OBJTYPE_Baddie, self, &baddieDist);
+        if ((nearbyBaddie != NULL) && (baddieDist < 300.0f)) {
+            ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func1(&objdata->movedata, nearbyBaddie);
+            // @bug: if the target arrow was greyed out due to nearby baddies in the previous state,
+            //       the arrow will remain greyed out even if the baddies move away as this state
+            //       never clears the flag. this makes it impossible to initiate this state's talk seq
         }
-        if ((sp88 > 300.0f) && (vec3DistanceXZ(&sp90->globalPosition, &self->globalPosition) < 80.0f)) {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0)) {
+        if ((baddieDist > 300.0f) && (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 80.0f)) {
+            if (!(objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (sStateAnimMap[objdata->state] != CFGUARDIAN_MODANIM_Idle)) {
                 STUBBED_PRINTF(" Stand ");
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(0xF, &objdata->unk8E0);
-                objdata->unk912 |= 5;
-                data_188[objdata->state] = 0;
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func9(15, &objdata->walkTarget);
+                objdata->flags |= (CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
+                sStateAnimMap[objdata->state] = CFGUARDIAN_MODANIM_Idle;
             }
-            if (objdata->unk910 == 2) {
-                objdata->unk910 = 1;
-                objdata->unk911 = (s8) ((s32) (objdata->unk911 + 1) % 2);
+            if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+                objdata->talkState = CFGUARDIAN_TALK_Enabled;
+                objdata->talkSeqSelector = (objdata->talkSeqSelector + 1) % 2;
             }
         } else {
-            if (!(objdata->unk912 & 4) && (data_188[objdata->state] != 0xE)) {
+            if (!(objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (sStateAnimMap[objdata->state] != CFGUARDIAN_MODANIM_14)) {
                 STUBBED_PRINTF(" Idle Tow ");
-                objdata->unk910 = 2;
-                objdata->unk912 |= 5;
-                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(0xE, &objdata->unk8E0);
-                data_188[objdata->state] = 0xE;
+                objdata->talkState = CFGUARDIAN_TALK_SpokenTo;
+                objdata->flags |= (CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
+                ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func7(14, &objdata->walkTarget);
+                sStateAnimMap[objdata->state] = CFGUARDIAN_MODANIM_14;
             }
         }
-        if ((objdata->unk912 & 4) && (CFGuardian_func_2104(self, &objdata->unk8E0, 0.5f, &objdata->unk67C) != 0)) {
-            objAnimSet(self, 0x1A, 0, 0);
-            objdata->unk912 &= ~0x5;
+        if ((objdata->flags & CFGUARDIAN_FLAG_WalkToTarget) && (CFGuardian_walkTo(self, &objdata->walkTarget, 0.5f, &objdata->animRate) != 0)) {
+            objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
+            objdata->flags &= ~(CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
         }
         if (mainGetBits(BIT_4BE) != 0) {
-            objdata->state = 0xA;
-            objAnimSet(self, 0x1A, 0, 0);
+            objdata->state = CFGUARDIAN_STATE_WalkingToRaceArea;
+            objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             self->unkDC = 0;
         }
         break;
-    case 10:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_WalkingToRaceArea:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->unk912 |= 2;
-        if (CFGuardian_func_2348(self, &objdata->unk53C, 0.6f, 2, &objdata->unk67C) != 0) {
-            objdata->state = 0xB;
+        objdata->flags |= CFGUARDIAN_FLAG_2;
+        if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.6f, 2, &objdata->animRate) != 0) {
+            objdata->state = CFGUARDIAN_STATE_Vanish;
         }
         break;
-    case 11:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_Vanish:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
         self->opacity = 0;
         self->objhitInfo->unk58 &= ~0x1;
         objDisable(self);
         self->srt.flags |= OBJSTATE_PRINT_DISABLED;
-        objdata->state = 0xF;
+        objdata->state = CFGUARDIAN_STATE_NoOp_Vanished;
         break;
-    case 12:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_WaitingForRaceCompletion:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        if (mainGetBits(BIT_4B7) != 0) {
+        if (mainGetBits(BIT_CRF_Race_Guardian_Reminder) != 0) {
+            // player trying to leave!
             gDLL_2_Camera->vtbl->set_target_object(self);
-            gDLL_3_Animation->vtbl->start_obj_sequence(0xB, self, -1);
-            mainSetBits(BIT_4B7, 0);
+            gDLL_3_Animation->vtbl->start_obj_sequence(CFGUARDIAN_SEQ_SpellStoneRaceReminder, self, -1);
+            mainSetBits(BIT_CRF_Race_Guardian_Reminder, 0);
         }
         if (mainGetBits(BIT_Play_Seq_02A9_CF_Race_End) != 0) {
-            objdata->state = 0xD;
+            objdata->state = CFGUARDIAN_STATE_WaitingForSpellStone;
         }
         break;
-    case 13:
-        if (objdata->unk910 == 2) {
-            objdata->unk910 = 1;
+    case CFGUARDIAN_STATE_WaitingForSpellStone:
+        if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
+            objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        if (mainGetBits(BIT_4B7) != 0) {
+        if (mainGetBits(BIT_CRF_Race_Guardian_Reminder) != 0) {
+            // player trying to leave!
             gDLL_2_Camera->vtbl->set_target_object(self);
-            gDLL_3_Animation->vtbl->start_obj_sequence(0xA, self, -1);
-            mainSetBits(BIT_4B7, 0);
+            gDLL_3_Animation->vtbl->start_obj_sequence(CFGUARDIAN_SEQ_SpellStoneActivationReminder, self, -1);
+            mainSetBits(BIT_CRF_Race_Guardian_Reminder, 0);
         }
         if (mainGetBits(BIT_4AA) != 0) {
-            objdata->state = 0xE;
+            objdata->state = CFGUARDIAN_STATE_NoOp_SpellStoneActivated;
         }
         break;
-    case 14:
+    case CFGUARDIAN_STATE_NoOp_SpellStoneActivated:
         break;
     }
     STUBBED_PRINTF("GD"); // unknown location
-    STUBBED_PRINTF(" Guardian In Elevatoe "); // unknown location
-    STUBBED_PRINTF("Guardian Out of WindLIft "); // unknown location
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
-    while (objRecvMesg(self, &sp74, NULL, &sp70) != 0) {
-        switch (sp74) {
+    while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
+        switch (mesgID) {
         case 15:
-            objdata->state = 6;
-            objAnimSet(self, 9, 0, 0);
+            // enter windlift
+            STUBBED_PRINTF(" Guardian In Elevatoe "); // guessed location
+            objdata->state = CFGUARDIAN_STATE_InWindShaft;
+            objAnimSet(self, CFGUARDIAN_MODANIM_Floating, 0, 0);
             objAnim_func_80024D74(self, 0xFA);
-            objdata->unk90C = 1;
+            objdata->windLiftState = 1;
             self->velocity.z = 0.0f;
             self->velocity.y = 0.0f;
             self->velocity.x = 0.0f;
             self->objhitInfo->unk58 |= 0x400;
-            objdata->unk910 = 0;
-            objdata->unk912 |= 1;
+            objdata->talkState = CFGUARDIAN_TALK_Disabled;
+            objdata->flags |= CFGUARDIAN_FLAG_1;
             break;
         case 16:
-            objAnimSet(self, 0, 0, 0);
+            // exit windlift
+            STUBBED_PRINTF("Guardian Out of WindLIft "); // guessed location
+            objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);
             objAnim_func_80024D74(self, 0x32);
             self->velocity.x = 0.0f;
             self->velocity.y = -0.001f;
             self->velocity.z = 0.0f;
-            objdata->unk90C = 2;
-            objdata->unk912 &= ~0x1;
+            objdata->windLiftState = 2;
+            objdata->flags &= ~CFGUARDIAN_FLAG_1;
             break;
         }
     }
-    if (self->unkAF & 1) {
+    if (self->unkAF & ARROW_FLAG_1_Interacted) {
         joyDisableButtons(0, A_BUTTON);
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF) != 0) {
             mainSetBits(BIT_4AB, 1);
-        } else if (objdata->unk910 == 1) {
-            temp_v0_6 = CFGuardian_func_2700(data_5C, objdata->state, data_180, objdata->unk911);
-            if (temp_v0_6 != -1) {
-                objdata->unk910 = 2;
-                gDLL_3_Animation->vtbl->start_obj_sequence(temp_v0_6, self, -1);
+        } else if (objdata->talkState == CFGUARDIAN_TALK_Enabled) {
+            seqno = CFGuardian_mapLookup(sTalkSeqStateMap, objdata->state, sTalkSeqStateMapLength, objdata->talkSeqSelector);
+            if (seqno != -1) {
+                objdata->talkState = CFGUARDIAN_TALK_SpokenTo;
+                gDLL_3_Animation->vtbl->start_obj_sequence(seqno, self, -1);
             }
         }
     }
-    if (mainGetBits(BIT_902) != 0) {
-        temp_v0_7 = CFGuardian_func_2700(data_5C, objdata->state, data_180, objdata->unk911);
-        if (temp_v0_7 != -1) {
-            objdata->unk910 = 2;
-            gDLL_3_Animation->vtbl->start_obj_sequence(temp_v0_7, self, -1);
-            mainSetBits(BIT_902, 0);
+    if (mainGetBits(BIT_Force_CFGuardian_TalkSeq) != 0) {
+        seqno2 = CFGuardian_mapLookup(sTalkSeqStateMap, objdata->state, sTalkSeqStateMapLength, objdata->talkSeqSelector);
+        if (seqno2 != -1) {
+            objdata->talkState = CFGUARDIAN_TALK_SpokenTo;
+            gDLL_3_Animation->vtbl->start_obj_sequence(seqno2, self, -1);
+            mainSetBits(BIT_Force_CFGuardian_TalkSeq, 0);
         }
     }
-    if ((data_188[objdata->state] != -1) && !(objdata->unk912 & 1) && (self->curModAnimId != data_188[objdata->state])) {
-        objAnimSet(self, data_188[objdata->state], 0, 0);
+    if ((sStateAnimMap[objdata->state] != -1) && !(objdata->flags & CFGUARDIAN_FLAG_1) && (self->curModAnimId != sStateAnimMap[objdata->state])) {
+        objAnimSet(self, sStateAnimMap[objdata->state], 0, 0);
         objAnim_func_80024D74(self, 0x50);
         STUBBED_PRINTF(" Set Anim ");
     }
-    if (objAnimAdvance(self, objdata->unk67C, (f32) gUpdateRate, &sp50) != 0) {
-        if (objdata->unk912 & 1) {
-            if ((self->curModAnimId != 0x1A) && (self->curModAnimId != 9)) {
-                objdata->unk912 &= ~0x1;
+    if (objAnimAdvance(self, objdata->animRate, (f32) gUpdateRate, &animState) != 0) {
+        if (objdata->flags & CFGUARDIAN_FLAG_1) {
+            if ((self->curModAnimId != CFGUARDIAN_MODANIM_Walk) && (self->curModAnimId != CFGUARDIAN_MODANIM_Floating)) {
+                objdata->flags &= ~CFGUARDIAN_FLAG_1;
                 STUBBED_PRINTF(" OVeride Set ");
             }
         } else if ((mathRnd(0, 6) == 0) && (sp6C != 0)) {
-            sp80 = CFGuardian_func_2700(data_168, self->curModAnimId, data_184, mathRnd(0, 1));
-            if (sp80 != -1) {
+            modAnimId = CFGuardian_mapLookup(sAnimTransitionMap, self->curModAnimId, sAnimTransitionMapLength, mathRnd(0, 1));
+            if (modAnimId != -1) {
                 objAnim_func_80024D74(self, 0x28);
-                objAnimSet(self, sp80, 0, 0);
-                objdata->unk912 |= 1;
+                objAnimSet(self, modAnimId, 0, 0);
+                objdata->flags |= CFGUARDIAN_FLAG_1;
             } else {
-                objAnimSet(self, data_188[objdata->state], 0, 0);
+                objAnimSet(self, sStateAnimMap[objdata->state], 0, 0);
             }
             STUBBED_PRINTF(" animnum %i "); // unknown location
         }
     }
     STUBBED_PRINTF(" Make Sound "); // guessed location
-    CFGuardian_func_2790(self, &sp50, data_0);
+    CFGuardian_doModAnimSfx(self, &animState, sModAnimSfx);
     if (mathRnd(0, 60) == 0) {
-        objExpr_func_80034B54(self, &objdata->unk4B8, data_8[mathRnd(0, 4)], 0);
+        objExpr_func_80034B54(self, &objdata->exprHeadAnim, sExprSfx[mathRnd(0, 4)], 0);
     }
-    objExpr_func_80034BC0(self, &objdata->unk4B8);
-    objExprEyeIdle(self, &objdata->unk4DC);
-    CFGuardian_func_1D84(self, objdata->dustObjs, 0x500, 0, 0, 6);
-    if (mainGetBits(BIT_4B) != objdata->state) {
-        mainSetBits(BIT_4B, objdata->state);
+    objExpr_func_80034BC0(self, &objdata->exprHeadAnim);
+    objExprEyeIdle(self, &objdata->eyeIdleHeadAnim);
+    CFGuardian_updateBoneDust(self, objdata->dustObjs, 0x500, 0, 0, 6);
+    if (mainGetBits(BIT_CFGuardian_State) != objdata->state) {
+        mainSetBits(BIT_CFGuardian_State, objdata->state);
         STUBBED_PRINTF(" Set State %i ");
     }
     mapSaveObject(self->setup, self->mapID, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z);
@@ -661,8 +748,8 @@ static s32 CFGuardian_func_678(Object* self) {
 }
 
 // offset: 0x1B8C | func: 9
-static void CFGuardian_func_1B8C(Object* self, Object** dustObjs, Collectable_Setup** dustSetups) {
-    Vec3f sp70[] = { // data_200
+static void CFGuardian_spawnBoneDust(Object* self, Object** dustObjs, Collectable_Setup** dustSetups) {
+    Vec3f positions[] = {
         VEC3F(45.0f, 50.0f, 0.0f), 
         VEC3F(0.0f, 50.0f, 20.0f), 
         VEC3F(-20.0f, 50.0f, 0.0f), 
@@ -670,7 +757,7 @@ static void CFGuardian_func_1B8C(Object* self, Object** dustObjs, Collectable_Se
         VEC3F(18.0f, 50.0f, 18.0f), 
         VEC3F(-18.0f, 50.0f, -18.0f)
     };
-    u8 sp5C[][3] = { // data_248
+    u8 colors[][3] = {
         {0xff, 0x00, 0x00}, 
         {0x00, 0xff, 0x00}, 
         {0x00, 0x00, 0xff}, 
@@ -685,32 +772,32 @@ static void CFGuardian_func_1B8C(Object* self, Object** dustObjs, Collectable_Se
         dustSetups[i]->objHitsValue = 2;
         dustSetups[i]->gamebitCount = -1;
         dustSetups[i]->gamebitCollected = -1;
-        dustSetups[i]->base.x = sp70[i].x + self->srt.transl.x;
-        dustSetups[i]->base.y = sp70[i].y + self->srt.transl.y;
-        dustSetups[i]->base.z = sp70[i].z + self->srt.transl.z;
+        dustSetups[i]->base.x = positions[i].x + self->srt.transl.x;
+        dustSetups[i]->base.y = positions[i].y + self->srt.transl.y;
+        dustSetups[i]->base.z = positions[i].z + self->srt.transl.z;
         dustSetups[i]->gamebitSecondary = -1;
         dustSetups[i]->base.loadFlags = OBJSETUP_LOAD_MANUAL;
         dustSetups[i]->base.fadeFlags = OBJSETUP_FADE_CAMERA;
         dustSetups[i]->base.loadDistance = 255;
         dustSetups[i]->base.fadeDistance = 255;
         dustSetups[i]->applyColourMultiplier = 1;
-        dustSetups[i]->multiplyR = sp5C[i][0];
-        dustSetups[i]->multiplyG = sp5C[i][1];
-        dustSetups[i]->multiplyB = sp5C[i][2];
+        dustSetups[i]->multiplyR = colors[i][0];
+        dustSetups[i]->multiplyG = colors[i][1];
+        dustSetups[i]->multiplyB = colors[i][2];
         dustObjs[i] = objSetupObject(&dustSetups[i]->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 }
 
 // offset: 0x1D84 | func: 10
-static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3, s16 arg4, s32 arg5) {
+static s32 CFGuardian_updateBoneDust(Object* self, Object** dustObjs, s16 rotX, s16 rotY, s16 rotZ, s32 count) {
     s16 spB0[3];
     Vec3f spA4;
-    s32 var_s4;
+    s32 i;
     s32 sp9C = 0;
     f32 temp_fs0;
     f32 temp_fv0;
     SRT sp7C;
-    u8 sp68[][3] = { // data_25C
+    u8 sp68[][3] = {
         {0xff, 0x00, 0x00}, 
         {0x00, 0xff, 0x00}, 
         {0x00, 0x00, 0xff}, 
@@ -723,30 +810,30 @@ static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3,
 
     objGetPlayer();
     temp_fs0 = self->srt.transl.y + 3.0f;
-    for (var_s4 = 0; var_s4 < arg5; var_s4++) {
-        if (arg1[var_s4] != NULL) {
-            if (arg1[var_s4]->unkDC != 0) {
-                objFreeObject(arg1[var_s4]);
-                arg1[var_s4] = NULL;
+    for (i = 0; i < count; i++) {
+        if (dustObjs[i] != NULL) {
+            if (dustObjs[i]->unkDC != 0) {
+                objFreeObject(dustObjs[i]);
+                dustObjs[i] = NULL;
             } else {
-                spA4.f[0] = arg1[var_s4]->srt.transl.x - self->srt.transl.x;
-                spA4.f[1] = arg1[var_s4]->srt.transl.y - self->srt.transl.y;
-                spA4.f[2] = arg1[var_s4]->srt.transl.z - self->srt.transl.z;
-                spB0[0] = arg2;
-                spB0[1] = arg3;
-                spB0[2] = arg4;
+                spA4.f[0] = dustObjs[i]->srt.transl.x - self->srt.transl.x;
+                spA4.f[1] = dustObjs[i]->srt.transl.y - self->srt.transl.y;
+                spA4.f[2] = dustObjs[i]->srt.transl.z - self->srt.transl.z;
+                spB0[0] = rotX;
+                spB0[1] = rotY;
+                spB0[2] = rotZ;
                 mathRotateRPY((SRT* ) &spB0, spA4.f);
-                arg1[var_s4]->srt.transl.x = spA4.f[0] + self->srt.transl.x;
-                arg1[var_s4]->srt.transl.y = spA4.f[1] + self->srt.transl.y;
-                temp_fv0 = arg1[var_s4]->srt.transl.y;
+                dustObjs[i]->srt.transl.x = spA4.f[0] + self->srt.transl.x;
+                dustObjs[i]->srt.transl.y = spA4.f[1] + self->srt.transl.y;
+                temp_fv0 = dustObjs[i]->srt.transl.y;
                 if (temp_fv0 < temp_fs0) {
-                    arg1[var_s4]->srt.transl.y = (temp_fs0 - temp_fv0) + temp_fs0;
+                    dustObjs[i]->srt.transl.y = (temp_fs0 - temp_fv0) + temp_fs0;
                 }
-                arg1[var_s4]->srt.transl.z = spA4.f[2] + self->srt.transl.z;
-                sp7C.roll = sp68[var_s4][0];
-                sp7C.pitch = sp68[var_s4][1];
-                sp7C.yaw = sp68[var_s4][2];
-                dll_partfx->spawn(arg1[var_s4], PARTICLE_357, &sp7C, 0, -1, NULL);
+                dustObjs[i]->srt.transl.z = spA4.f[2] + self->srt.transl.z;
+                sp7C.roll = sp68[i][0];
+                sp7C.pitch = sp68[i][1];
+                sp7C.yaw = sp68[i][2];
+                dll_partfx->spawn(dustObjs[i], PARTICLE_357, &sp7C, 0, -1, NULL);
                 sp9C = 1;
             }
         }
@@ -756,7 +843,7 @@ static s32 CFGuardian_func_1D84(Object* self, Object** arg1, s16 arg2, s16 arg3,
 }
 
 // offset: 0x1FF0 | func: 11
-static SRT* CFGuardian_func_1FF0(CurveSetup* curve, SRT* srt) {
+static SRT* CFGuardian_curveToWalkTarget(CurveSetup* curve, SRT* srt) {
     srt->transl.x = curve->pos.x;
     srt->transl.y = curve->pos.y;
     srt->transl.z = curve->pos.z;
@@ -765,7 +852,7 @@ static SRT* CFGuardian_func_1FF0(CurveSetup* curve, SRT* srt) {
 }
 
 // offset: 0x2020 | func: 12
-static CurveSetup* CFGuardian_func_2020(Object* self, s32 curveTag, Vec3f* pos, s32 arg3) {
+static CurveSetup* CFGuardian_findCurveNode(Object* self, s32 curveTag, Vec3f* pos, s32 arg3) {
     s32 curveUID;
     s32 curveTypes[2];
     CurveSetup* curveNode;
@@ -795,46 +882,46 @@ static CurveSetup* CFGuardian_func_2020(Object* self, s32 curveTag, Vec3f* pos, 
 }
 
 // offset: 0x2104 | func: 13
-static s32 CFGuardian_func_2104(Object* self, SRT* arg1, f32 arg2, f32* arg3) {
-    f32 sp4C;
-    f32 sp48;
-    f32 sp44;
-    f32 sp40;
-    s16 var_v0;
+static s32 CFGuardian_walkTo(Object* self, SRT* target, f32 speed, f32* animChange) {
+    f32 dirX;
+    f32 dirY;
+    f32 dirZ;
+    f32 dist;
+    s16 angle;
     s32 _pad;
 
-    if (arg1 == NULL) {
+    if (target == NULL) {
         return 0;
     }
-    sp4C = arg1->transl.x - self->srt.transl.x;
-    sp48 = arg1->transl.y - self->srt.transl.y;
-    sp44 = arg1->transl.z - self->srt.transl.z;
-    sp40 = sqrtf(SQ(sp4C) + SQ(sp48) + SQ(sp44));
-    if (sp40 < (arg2 * 5.0f)) {
+    dirX = target->transl.x - self->srt.transl.x;
+    dirY = target->transl.y - self->srt.transl.y;
+    dirZ = target->transl.z - self->srt.transl.z;
+    dist = sqrtf(SQ(dirX) + SQ(dirY) + SQ(dirZ));
+    if (dist < (speed * 5.0f)) {
         return 1;
     }
-    guNormalize(&sp4C, &sp48, &sp44);
-    self->velocity.x = sp4C * arg2 * gUpdateRateF;
-    self->velocity.y = sp48 * arg2 * gUpdateRateF;
-    self->velocity.z = sp44 * arg2 * gUpdateRateF;
-    var_v0 = (arg1->yaw - (self->srt.yaw & 0xFFFF)) + 0x8000;
-    CIRCLE_WRAP(var_v0);
-    self->srt.yaw += ((((f32) var_v0 + 0.5f) * (arg2 * gUpdateRateF)) / sp40);
+    guNormalize(&dirX, &dirY, &dirZ);
+    self->velocity.x = dirX * speed * gUpdateRateF;
+    self->velocity.y = dirY * speed * gUpdateRateF;
+    self->velocity.z = dirZ * speed * gUpdateRateF;
+    angle = (target->yaw - (self->srt.yaw & 0xFFFF)) + 0x8000;
+    CIRCLE_WRAP(angle);
+    self->srt.yaw += ((((f32) angle + 0.5f) * (speed * gUpdateRateF)) / dist);
     objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
-    if (self->curModAnimId != 0x1A) {
-        objAnimSet(self, 0x1A, 0.0f, 0);
+    if (self->curModAnimId != CFGUARDIAN_MODANIM_Walk) {
+        objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0.0f, 0);
     }
-    objGetAnimChange(self, arg2, arg3);
+    objGetAnimChange(self, speed, animChange);
     return 0;
 }
 
 // offset: 0x2348 | func: 14
-static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u8 arg3, f32* arg4) {
+static s32 CFGuardian_followCurvePath(Object* self, UnkCurvesStruct* arg1, f32 speed, u8 curveTag, f32* animChange) {
     s32 _pad;
     s16 angle;
     s32 sp54;
     f32 height;
-    SRT sp38;
+    SRT walkTarget;
 
     sp54 = 0;
     height = 0.0f;
@@ -842,14 +929,14 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
         return 1;
     }
     if (self->unkDC == 0) {
-        CFGuardian_func_1FF0(CFGuardian_func_2020(self, arg3, NULL, 2), &sp38);
-        if (CFGuardian_func_2104(self, &sp38, arg2, arg4) != 0) {
+        CFGuardian_curveToWalkTarget(CFGuardian_findCurveNode(self, curveTag, NULL, 2), &walkTarget);
+        if (CFGuardian_walkTo(self, &walkTarget, speed, animChange) != 0) {
             STUBBED_PRINTF("Got Curve ");
-            CFGuardian_func_25AC(self, arg1, 2, arg3, 200.0f);
+            CFGuardian_func_25AC(self, arg1, 2, curveTag, 200.0f);
             self->unkDC = 1;
         }
     } else {
-        sp54 = CFGuardian_func_2638(self, arg1, arg2);
+        sp54 = CFGuardian_func_2638(self, arg1, speed);
         if (sp54 != 0) {
             self->unkDC = -1;
         }
@@ -857,7 +944,7 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
             self->srt.transl.y -= height;
         }
     }
-    objGetAnimChange(self, arg2, arg4);
+    objGetAnimChange(self, speed, animChange);
     /* default.dol
     if (self->srt.yaw == -1) {
         STUBBED_PRINTF(" Object Yaw Reset ");
@@ -872,8 +959,8 @@ static s32 CFGuardian_func_2348(Object* self, UnkCurvesStruct* arg1, f32 arg2, u
         self->srt.yaw += (angle >> 3);
         // STUBBED_PRINTF(" New Obj Yaw %i  \n", self->srt.yaw); // default.dol
     }
-    if (self->curModAnimId != 0x1A) {
-        objAnimSet(self, 0x1A, 0.0f, 0);
+    if (self->curModAnimId != CFGUARDIAN_MODANIM_Walk) {
+        objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0.0f, 0);
     }
     return sp54;
 }
@@ -923,15 +1010,15 @@ void CFGuardian_func_26F8(void) {
 }
 
 // offset: 0x2700 | func: 19
-static s32 CFGuardian_func_2700(UnkCFGuardianStruct* arg0, s32 arg1, s32 arg2, s32 arg3) {
+static s32 CFGuardian_mapLookup(CFGuardianMapStruct* map, s32 key, s32 mapLength, s32 selector) {
     s32 i;
 
     i = 0;
-    while ((i < arg2) && (arg1 != arg0[i].unk0)) {
+    while ((i < mapLength) && (key != map[i].key)) {
         i += 1;
     }
-    if (i != arg2) {
-        return arg0[i].unk4[arg3];
+    if (i != mapLength) {
+        return map[i].values[selector];
     }
     return -1;
 }
@@ -944,17 +1031,17 @@ void CFGuardian_func_2770(void) {
 // offset: 0x2778 | func: 21 | export: 7
 s32 CFGuardian_Func_2778(Object* self) {
     CFGuardian_Data* objdata = self->data;
-    return (objdata->unk912 & 2) == 0;
+    return (objdata->flags & CFGUARDIAN_FLAG_2) == FALSE;
 }
 
 // offset: 0x2790 | func: 22
-static s32 CFGuardian_func_2790(Object* self, UnkFunc_80024108Struct* arg1, u16* sounds) {
+static s32 CFGuardian_doModAnimSfx(Object* self, UnkFunc_80024108Struct* animState, u16* sounds) {
     s32 ret;
     s32 i;
 
     ret = 0;
-    for (i = 0; i < arg1->unk1B; i++) {
-        switch (arg1->unk13[i]) {
+    for (i = 0; i < animState->unk1B; i++) {
+        switch (animState->unk13[i]) {
         case 0:
             if (sounds != NULL) {
                 dll_amSfx->Play(self, sounds[0], MAX_VOLUME, NULL, NULL, 0, NULL);

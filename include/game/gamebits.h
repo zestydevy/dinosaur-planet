@@ -79,7 +79,7 @@ typedef enum {
     BIT_CRF_BoneHead_Guardian_Freed = 0x48, // len:1 group:1
     BIT_49 = 0x49, // len:1 group:0
     BIT_4A = 0x4A, // len:1 group:1
-    BIT_4B = 0x4B, // len:4 group:1
+    BIT_CFGuardian_State = 0x4B, // len:4 group:1
     BIT_4C = 0x4C, // len:1 group:1
     BIT_CRF_CloudRunner_Uncle_Freed = 0x4D, // len:1 group:1
     BIT_4E = 0x4E, // len:1 group:1
@@ -1211,7 +1211,7 @@ typedef enum {
     BIT_4B4 = 0x4B4, // len:1 group:1
     BIT_Play_Seq_02AC_CF_Sharpclaw_With_Spellstone = 0x4B5, // len:1 group:1
     BIT_Played_Seq_02AC_CF_Sharpclaw_With_Spellstone = 0x4B6, // len:1 group:1
-    BIT_4B7 = 0x4B7, // len:1 group:1
+    BIT_CRF_Race_Guardian_Reminder = 0x4B7, // len:1 group:1
     BIT_SpellStone_CRF_Activated = 0x4B8, // len:1 group:1
     BIT_4B9 = 0x4B9, // len:1 group:0
     BIT_CF_Killed_Sharpclaw_In_Treasure_Room = 0x4BA, // len:1 group:1
@@ -2309,7 +2309,7 @@ typedef enum {
     BIT_8FF = 0x8FF, // len:1 group:1
     BIT_900 = 0x900, // len:3 group:1
     BIT_901 = 0x901, // len:3 group:1
-    BIT_902 = 0x902, // len:1 group:1
+    BIT_Force_CFGuardian_TalkSeq = 0x902, // len:1 group:1
     BIT_903 = 0x903, // len:1 group:2
     BIT_904 = 0x904, // len:1 group:2
     BIT_WM_Seq_446_LookAt_Randorn_Hall_Door = 0x905, // len:1 group:2
