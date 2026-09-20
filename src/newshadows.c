@@ -320,8 +320,8 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     s32 j;
     Vec3f sp244[8];
     s32 pad3[3];
-    Vec3f sp22C; // obj -> globalPosition copy
-    Vec3f sp220; // obj -> srt -> transl copy
+    Vec3f savedGlobalPos; // obj -> globalPosition copy
+    Vec3f savedLocalPos; // obj -> srt -> transl copy
     Vec3f sp1C0[8];
     u8 pad[0x34];
     ObjectShadow* shadow;
@@ -412,8 +412,8 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
         D_800BB170 = 0;
     }
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
-        bcopy(&obj->srt.transl, &sp220, sizeof(Vec3f));
-        bcopy(&obj->globalPosition, &sp22C, sizeof(Vec3f));
+        bcopy(&obj->srt.transl, &savedLocalPos, sizeof(Vec3f));
+        bcopy(&obj->globalPosition, &savedGlobalPos, sizeof(Vec3f));
         if (obj->parent != NULL) {
             camTransformPointByObject(
                 shadow->tr.x,
@@ -473,8 +473,8 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             shadow->gdl = NULL;
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
-                bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-                bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
+                bcopy(&savedLocalPos, &obj->srt.transl, sizeof(Vec3f));
+                bcopy(&savedGlobalPos, &obj->globalPosition, sizeof(Vec3f));
             }
             return 0;
         }
@@ -484,8 +484,8 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
             shadow->gdl = NULL;
             D_80092C34 = 400;
             if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
-                bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-                bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
+                bcopy(&savedLocalPos, &obj->srt.transl, sizeof(Vec3f));
+                bcopy(&savedGlobalPos, &obj->globalPosition, sizeof(Vec3f));
             }
 
             return 0;
@@ -499,8 +499,8 @@ s32 shadowsUpdateObjGeom(Object* obj, s32 arg1, s32 arg2, s32 updateRate) {
     D_80092C2C = D_800BB140 - D_800B98A8[D_80092C04];
     D_80092C34 = D_800BB148 - D_800B98B0[D_80092C08];
     if (shadow->flags & OBJ_SHADOW_FLAG_CUSTOM_OBJ_POS) {
-        bcopy(&sp220, &obj->srt.transl, sizeof(Vec3f));
-        bcopy(&sp22C, &obj->globalPosition, sizeof(Vec3f));
+        bcopy(&savedLocalPos, &obj->srt.transl, sizeof(Vec3f));
+        bcopy(&savedGlobalPos, &obj->globalPosition, sizeof(Vec3f));
     }
     return 0;
 }
