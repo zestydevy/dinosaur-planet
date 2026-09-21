@@ -33,7 +33,7 @@ enum ObjType {
     OBJTYPE_DismountPoint = 21, // DIMDismountPoin, DR_CloudPerch
     OBJTYPE_Riverflow = 22, // DFriverflow (conditional)
     OBJTYPE_Dockpoint = 23, // DFdockpoint
-    OBJTYPE_24 = 24, // CFGuardian (conditional), RobotAnimPatrol (conditional), CFbarrel (conditional), DIM2Conveyor
+    OBJTYPE_WindLiftable = 24, // CFGuardian (conditional), RobotAnimPatrol (conditional), CFbarrel (conditional), DIM2Conveyor
     OBJTYPE_RopeNode = 25, // DFropenode
     OBJTYPE_Pulley = 26, // DFpulley, DR_pulley
     OBJTYPE_Barrel = 27, // CFbarrel, DFbarrel

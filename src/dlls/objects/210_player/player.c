@@ -790,7 +790,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             break;
         case 29:
             spCC = 500.0f;
-            tempObj = objGetNearestTypeTo(OBJTYPE_24, player, &spCC);
+            tempObj = objGetNearestTypeTo(OBJTYPE_WindLiftable, player, &spCC); // note: looking for DIM2conveyor, the objtype is confusing
             if (tempObj != NULL) {
                 ((DLL_Unknown *)tempObj->dll)->vtbl->func[7].withThreeArgsCustom(tempObj, player, 1.0f);
             }

@@ -73,7 +73,7 @@ void CFbarrel_setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     pickup->flags |= PICKUPFLAG_NoGravity;
     gDLL_54_pickup->vtbl->setup(self, pickup, 90);
     objAddObjectType(self, OBJTYPE_Barrel);
-    objAddObjectType(self, OBJTYPE_24);
+    objAddObjectType(self, OBJTYPE_WindLiftable);
     objInitMesgQueue(self, 4);
     self->srt.yaw = setup->unk18 << 8;
     self->unkE0 = 0;
@@ -147,7 +147,7 @@ void CFbarrel_control(Object* self) {
             } else {
                 if (gDLL_54_pickup->vtbl->control(self, &objdata->pickup) == 0) {
                     if (objdata->unk11 != 0) {
-                        objAddObjectType(self, OBJTYPE_24);
+                        objAddObjectType(self, OBJTYPE_WindLiftable);
                     }
                     objdata->unk11 = 0;
                     func_8002674C(self);
@@ -246,7 +246,7 @@ void CFbarrel_free(Object* self, s32 onlySelf) {
     CFbarrel_Data* objdata = self->data;
     gDLL_54_pickup->vtbl->free(self);
     objFreeObjectType(self, OBJTYPE_Barrel);
-    objFreeObjectType(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_WindLiftable);
     if (objdata->unk13 != 0) {
         gDLL_13_Expgfx->vtbl->func5(self);
     }
@@ -549,7 +549,7 @@ static void CFbarrel_func_1948(Object* self, u8 a1) {
         // Disable push
         hit->unk5B = self->def->unk91;
         hit->unk5C = self->def->unk92;
-        objFreeObjectType(self, OBJTYPE_24);
+        objFreeObjectType(self, OBJTYPE_WindLiftable);
         STUBBED_PRINTF("Out of ELEVATOR");
         objdata->unk3E_0 = 0;
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;

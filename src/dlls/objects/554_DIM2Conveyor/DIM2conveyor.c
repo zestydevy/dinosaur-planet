@@ -27,7 +27,7 @@ void DIM2Conveyor_obj_Setup(Object* self, DIM2Conveyor_Setup* objSetup, s32 rese
     objData->velocityX = mathSinfInterp(self->srt.yaw) * speed;
     objData->velocityZ = mathCosfInterp(self->srt.yaw) * speed;
     
-    objAddObjectType(self, OBJTYPE_24);
+    objAddObjectType(self, OBJTYPE_WindLiftable); // why this objtype??
     
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
@@ -55,7 +55,7 @@ void DIM2Conveyor_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
 void DIM2Conveyor_obj_Free(Object* self, s32 onlySelf) {
     DIM2Conveyor_Data* objData;
 
-    objFreeObjectType(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_WindLiftable);
 
     objData = self->data;
     if (objData->soundHandle) {

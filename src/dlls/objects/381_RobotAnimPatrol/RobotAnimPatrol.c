@@ -230,7 +230,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, RobotAnimPatrol_Setup* setup, s32 r
     objAnimSet(self, 0, 1.0f, 0);
     gDLL_27->vtbl->init(&objdata->collider, DLL27FLAG_NONE, DLL27FLAG_40000 | DLL27FLAG_80 | DLL27FLAG_2 | DLL27FLAG_1, DLL27MODE_1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->collider, 1, data_20, data_2C, &sp3B);
-    objAddObjectType(self, OBJTYPE_24);
+    objAddObjectType(self, OBJTYPE_WindLiftable);
     objAddObjectType(self, OBJTYPE_Baddie);
     RobotAnimPatrol_initStunState(&objdata->stunState);
     func_8002674C(self);
@@ -386,7 +386,7 @@ void RobotAnimPatrol_obj_Free(Object* self, s32 onlySelf) {
     if (objdata->unk44 != 0) {
         gDLL_6_AMSFX->vtbl->Stop(objdata->unk44);
     }
-    objFreeObjectType(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_WindLiftable);
     objFreeObjectType(self, OBJTYPE_Baddie);
 }
 
@@ -455,11 +455,11 @@ int RobotAnimPatrol_animCallback(Object* self, Object* animObj, AnimObj_Data* an
     for (var_s1 = 0; var_s1 < animObjData->messageCount; var_s1++) {
         switch (animObjData->messages[var_s1]) {
         case 1:
-            objFreeObjectType(self, OBJTYPE_24);
+            objFreeObjectType(self, OBJTYPE_WindLiftable);
             objdata->flags |= ROBOTANIMPATROL_FLAGS_Unk2;
             break;
         case 2:
-            objAddObjectType(self, OBJTYPE_24);
+            objAddObjectType(self, OBJTYPE_WindLiftable);
             objdata->flags &= ~ROBOTANIMPATROL_FLAGS_Unk2;
             break;
         case 3:
@@ -1003,7 +1003,7 @@ static void RobotAnimPatrol_crashControl(Object* self, RobotAnimPatrol_Data* obj
         objdata->unkB8 = objdata->unkAC * 0.2f;
         objdata->unkAC += self->srt.transl.x;
         objdata->unkB0 += self->srt.transl.z;
-        objFreeObjectType(self, OBJTYPE_24);
+        objFreeObjectType(self, OBJTYPE_WindLiftable);
         return;
     }
     if (objdata->crashTick++ > 180) {

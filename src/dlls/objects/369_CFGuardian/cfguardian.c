@@ -209,11 +209,11 @@ enum CFGuardianTalkState {
 };
 
 #ifndef AVOID_UB
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8*/);
+static int CFGuardian_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8*/);
 #else
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
+static int CFGuardian_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
 #endif
-static s32 CFGuardian_func_678(Object* self);
+static s32 CFGuardian_control(Object* self);
 static void CFGuardian_spawnBoneDust(Object* self, Object** dustObjs, Collectable_Setup** dustSetups);
 static s32 CFGuardian_updateBoneDust(Object* self, Object** dustObjs, s16 rotX, s16 rotY, s16 rotZ, s32 count);
 static SRT* CFGuardian_curveToWalkTarget(CurveSetup* curve, SRT* srt);
@@ -243,7 +243,7 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
     objdata = self->data;
     if (objdata != NULL) {
         objInitMesgQueue(self, 4);
-        objAddObjectType(self, OBJTYPE_24);
+        objAddObjectType(self, OBJTYPE_WindLiftable);
         objdata->state = mainGetBits(BIT_CFGuardian_State);
         STUBBED_PRINTF(" Initalise Guardian State %i ", objdata->state);
         STUBBED_PRINTF(" GUARDIAN POS : %f %f %f \n", &setup->base.x, &setup->base.y, &setup->base.z);
@@ -251,7 +251,7 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
         self->unkDC = 1;
-        self->animCallback = (AnimationCallback)CFGuardian_func_4D0;
+        self->animCallback = (AnimationCallback)CFGuardian_animCallback;
         self->srt.yaw = setup->yaw8 << 8;
         objdata->windLiftState = 0;
         objdata->unk908 = 6;
@@ -282,7 +282,7 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
 
 // offset: 0x2EC | func: 1 | export: 1
 void CFGuardian_obj_Control(Object* self) {
-    CFGuardian_func_678(self);
+    CFGuardian_control(self);
 }
 
 // offset: 0x328 | func: 2 | export: 2
@@ -319,7 +319,7 @@ void CFGuardian_obj_Free(Object* self, s32 onlySelf) {
         }
     }
     STUBBED_PRINTF(" FREEING GUARDIAN ");
-    objFreeObjectType(self, OBJTYPE_24);
+    objFreeObjectType(self, OBJTYPE_WindLiftable);
     mainRemoveTempDLL(DLL_ID_MOVELIB);
 }
 
@@ -341,9 +341,9 @@ typedef struct {
 
 // offset: 0x4D0 | func: 7
 #ifndef AVOID_UB
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8 arg3*/) {
+static int CFGuardian_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData/*, s8 arg3*/) {
 #else
-static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
+static int CFGuardian_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
 #endif
     CFGuardian_Data* objdata = actor->data;
     Func4D0Struct sp3C[] = {
@@ -377,7 +377,7 @@ static int CFGuardian_func_4D0(Object* actor, Object* animObj, AnimObj_Data* ani
 }
 
 // offset: 0x678 | func: 8
-static s32 CFGuardian_func_678(Object* self) {
+static s32 CFGuardian_control(Object* self) {
     CFGuardian_Data* objdata;
     Object* player;
     Object* nearbyBaddie;
@@ -472,7 +472,7 @@ static s32 CFGuardian_func_678(Object* self) {
                         var_fa0 = -(objdata->walkTarget.transl.y - self->srt.transl.y);
                     }
                     if (var_fa0 < 150.0f) {
-                        objAddObjectType(self, OBJTYPE_24);
+                        objAddObjectType(self, OBJTYPE_WindLiftable);
                         objdata->state = CFGUARDIAN_STATE_LeavingWindShaft;
                         objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
                     }
@@ -487,7 +487,7 @@ static s32 CFGuardian_func_678(Object* self) {
                     objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);
                     objAnim_func_80024D74(self, 0x32);
                     self->velocity.y = 0;
-                    objFreeObjectType(self, OBJTYPE_24);
+                    objFreeObjectType(self, OBJTYPE_WindLiftable);
                     self->velocity.x = 0;
                     self->velocity.y = -0.001f;
                     self->velocity.z = 0;

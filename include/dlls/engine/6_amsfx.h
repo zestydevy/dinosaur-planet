@@ -220,6 +220,7 @@ enum SoundID {
     SOUND_117_Brawl = 0x117,
     SOUND_118_Cartoon_Fling = 0x118,
 
+    SOUND_124 = 0x124,
     SOUND_125_Metal_Clunk = 0x125,
 
     SOUND_12C_Metal_Unclunk = 0x12C,

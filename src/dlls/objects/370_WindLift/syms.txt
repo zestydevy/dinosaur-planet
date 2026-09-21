@@ -1,0 +1,15 @@
+.text = 0x0:
+WindLift_ctor = 0x0;
+WindLift_dtor = 0xC;
+WindLift_obj_Setup = 0x18;
+WindLift_obj_Control = 0xF8;
+WindLift_obj_Update = 0x7A0;
+WindLift_obj_Print = 0x7AC;
+WindLift_obj_Free = 0x800;
+WindLift_obj_GetModelFlags = 0x85C;
+WindLift_obj_GetDataSize = 0x86C;
+WindLift_func_880 = 0x880;
+WindLift_func_F0C = 0xF0C;
+
+.rodata = 0xFE4:
+str_0 = 0x0; // absolute:0xFE4

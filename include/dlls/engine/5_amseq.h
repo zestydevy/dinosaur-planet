@@ -6,6 +6,10 @@
 #include "dll_def.h"
 #include "types.h"
 
+// For seq debug strings that we know from default.dol.
+// Should be given as the last parameter of AMSEQ->set
+#define AMSEQ_DEBUG_STR(str) 0
+
 typedef struct MusicAction {
 /*00*/ u8 unk0; // unused, always 0
 /*01*/ u8 unk1; // unused, always 0
