@@ -639,7 +639,7 @@ void objfsa_func_1824(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3, u32 ar
 }
 
 // offset: 0x1978 | func: 22 | export: 21
-void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 partfxID, s32 arg3, u32 arg4) {
+void objfsa_func_1978(Object *obj, ObjFSA_Data *data, s32 partfxID, s32 arg3, s32 arg4) {
     while ((arg3 != 0) && (obj != NULL)) {
         if (arg4 == 0) {
             gDLL_17_partfx->vtbl->spawn(obj, partfxID, NULL, PARTFXFLAG_2, -1, NULL);

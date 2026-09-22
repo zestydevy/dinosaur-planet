@@ -7,7 +7,7 @@
 // TODO: This might be the same interface for all modgfx DLLs
 DLL_INTERFACE(DLL_IModgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*func0)(Object*, s32, SRT*, s32, s32, void*);
+    /*0*/ s32 (*func0)(Object*, s32, SRT*, u32, s32, void*);
 };
 
 #endif

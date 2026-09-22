@@ -227,8 +227,11 @@
 365 = objects/365
 366 = objects/366_CloudPrisonControl
 367 = objects/367_CloudShipControl
+368 = objects/368
 369 = objects/369_CFGuardian
 370 = objects/370_WindLift
+371 = objects/371_CFPowerBase
+372 = objects/372_CFCrystal
 374 = objects/374_LaserBeam
 375 = objects/375_CFPrisonGuard
 376 = objects/376_CFPrisonUncle
