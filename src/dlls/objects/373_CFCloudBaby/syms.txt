@@ -1,0 +1,30 @@
+.text = 0x0:
+CFCloudBaby_ctor = 0x0;
+CFCloudBaby_dtor = 0xC;
+CFCloudBaby_obj_Setup = 0x18;
+CFCloudBaby_obj_Control = 0x1A0;
+CFCloudBaby_obj_Update = 0xDB8;
+CFCloudBaby_obj_Print = 0xDC4;
+CFCloudBaby_obj_Free = 0xE18;
+CFCloudBaby_obj_GetModelFlags = 0xE78;
+CFCloudBaby_obj_GetDataSize = 0xE88;
+CFCloudBaby_animCallback = 0xE9C;
+CFCloudBaby_Func_12A4 = 0x12A4;
+CFCloudBaby_Func_12BC = 0x12BC;
+CFCloudBaby_func_12EC = 0x12EC;
+CFCloudBaby_func_1464 = 0x1464;
+CFCloudBaby_func_14F0 = 0x14F0;
+CFCloudBaby_func_15A8 = 0x15A8;
+CFCloudBaby_func_1730 = 0x1730;
+CFCloudBaby_func_180C = 0x180C;
+CFCloudBaby_func_1B88 = 0x1B88;
+CFCloudBaby_func_1DB0 = 0x1DB0;
+CFCloudBaby_func_1FA0 = 0x1FA0;
+CFCloudBaby_func_2050 = 0x2050;
+
+.rodata = 0x2248:
+str_0 = 0x0; // absolute:0x2248
+rodata_30 = 0x30; // absolute:0x2278 type:char force_migration:True function_owner:CFCloudBaby_obj_Control
+
+.data = 0x23E8:
+data_0 = 0x0; // absolute:0x23E8

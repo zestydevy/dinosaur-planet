@@ -232,6 +232,7 @@
 370 = objects/370_WindLift
 371 = objects/371_CFPowerBase
 372 = objects/372_CFCrystal
+373 = objects/373_CFCloudBaby
 374 = objects/374_LaserBeam
 375 = objects/375_CFPrisonGuard
 376 = objects/376_CFPrisonUncle
