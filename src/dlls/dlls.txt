@@ -245,6 +245,7 @@
 385 = objects/385
 387 = objects/387_CFBigDoorSwitch
 388 = objects/388_CFbarrel
+389 = objects/389_BlastedObject
 393 = objects/393_CFMainSlideDoor
 394 = objects/394_CFTreasureDoor
 395 = objects/395_CFAttractor

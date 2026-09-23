@@ -1,0 +1,20 @@
+.text = 0x0:
+BlastedObject_ctor = 0x0;
+BlastedObject_dtor = 0xC;
+BlastedObject_obj_Setup = 0x18;
+BlastedObject_obj_Control = 0x138;
+BlastedObject_obj_Update = 0x3D8;
+BlastedObject_obj_Print = 0x3E4;
+BlastedObject_obj_Free = 0x45C;
+BlastedObject_obj_GetModelFlags = 0x46C;
+BlastedObject_obj_GetDataSize = 0x47C;
+BlastedObject_hideBlockShapes = 0x490;
+
+.rodata = 0x5B8:
+str_0 = 0x0; // absolute:0x5B8
+
+.data = 0x628:
+data_0 = 0x0; // absolute:0x628
+
+.bss = 0x638:
+sHitByList = 0x0; // absolute:0x638
