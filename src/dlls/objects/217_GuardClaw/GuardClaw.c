@@ -15,8 +15,8 @@
 #include "macros.h"
 
 typedef struct {
-/*00*/ GuardClawCallback unk0;
-/*04*/ s32 unk4;
+/*00*/ GuardClawItemPrintCallback itemPrintCallback;
+/*04*/ Object* item;
 /*08*/ f32 unk8;
 /*0C*/ s8 unkC;
 /*0D*/ u8 unkD;
@@ -172,7 +172,7 @@ void GuardClaw_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     } else {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     }
-    objdata->unk0 = NULL;
+    objdata->itemPrintCallback = NULL;
 }
 
 // offset: 0x2A0 | func: 2 | export: 1
@@ -247,8 +247,8 @@ void GuardClaw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangl
             }
             gDLL_32_modelfx->vtbl->func2(self, 0x32F, &objdata->unk10);
         }
-        if (objdata->unk0 != NULL) {
-            objdata->unk0(gdl, mtxs, vtxs, pols, objdata->unk4, self);
+        if (objdata->itemPrintCallback != NULL) {
+            objdata->itemPrintCallback(gdl, mtxs, vtxs, pols, objdata->item, self);
         }
     }
 }
@@ -276,13 +276,13 @@ u32 GuardClaw_get_data_size(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x7D0 | func: 8 | export: 7
-s16 GuardClaw_get_fsa_state(Object* self) {
+s16 GuardClaw_GetFSAState(Object* self) {
     Baddie* baddie = self->data;
     return baddie->fsa.animState;
 }
 
 // offset: 0x7E0 | func: 9 | export: 8
-void GuardClaw_send_message(Object* self, u8 arg1) {
+void GuardClaw_SendMessage(Object* self, u8 arg1) {
     Baddie* baddie = self->data;
     
     switch (arg1) {
@@ -303,7 +303,7 @@ void GuardClaw_send_message(Object* self, u8 arg1) {
 }
 
 // offset: 0x884 | func: 10 | export: 10
-void GuardClaw_func_884(Object* self, s32 arg1) {
+void GuardClaw_Func_884(Object* self, s32 arg1) {
     Baddie* baddie = self->data;
 
     if (arg1 != 0) {
@@ -428,9 +428,9 @@ static void GuardClaw_func_D80(Object* self, Baddie* baddie, ObjFSA_Data* fsa) {
         sp4B = 0;
     }
     if (sp4B && (objdata->unkD == 0)) {
-        GuardClaw_send_message(self, 0x80);
+        GuardClaw_SendMessage(self, 0x80);
     } else if (!sp4B && (objdata->unkD != 0)) {
-        GuardClaw_send_message(self, 0x81);
+        GuardClaw_SendMessage(self, 0x81);
     }
     objdata->unkD = sp4B;
     baddie->unk3B0 &= ~0x40;
@@ -911,12 +911,12 @@ static s32 GuardClaw_func_2C6C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2D74 | func: 33 | export: 9
-void GuardClaw_func_2D74(Object* self, s32 arg1, GuardClawCallback arg2) {
+void GuardClaw_SetItem(Object* self, Object* item, GuardClawItemPrintCallback callback) {
     Baddie* baddie = self->data;
     GuardClaw_Data* objdata = baddie->objdata;
 
-    objdata->unk4 = arg1;
-    objdata->unk0 = arg2;
+    objdata->item = item;
+    objdata->itemPrintCallback = callback;
 }
 
 // offset: 0x2D8C | func: 34 | ai state 3

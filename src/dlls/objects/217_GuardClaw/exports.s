@@ -15,7 +15,7 @@ _exports:
 /*4*/ .dword GuardClaw_free
 /*5*/ .dword GuardClaw_get_model_flags
 /*6*/ .dword GuardClaw_get_data_size
-/*7*/ .dword GuardClaw_get_fsa_state
-/*8*/ .dword GuardClaw_send_message
-/*9*/ .dword GuardClaw_func_2D74
-/*10*/ .dword GuardClaw_func_884
+/*7*/ .dword GuardClaw_GetFSAState
+/*8*/ .dword GuardClaw_SendMessage
+/*9*/ .dword GuardClaw_SetItem
+/*10*/ .dword GuardClaw_Func_884
