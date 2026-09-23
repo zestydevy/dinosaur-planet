@@ -30,8 +30,6 @@ typedef enum {
     CFSUPTREASURECH_16 = 16
 } CFSupTreasureCh_Flags;
 
-// /*0x0*/ static const char str_0[] = " Treasure Created  With the Baby";
-
 static int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 static void CFSupTreasureCh_func_9B8(Object *arg0, Object *arg1, s16 *arg2);
 static s32 CFSupTreasureCh_func_BD8(s32 arg0, SRT *arg1);
@@ -63,11 +61,10 @@ void CFSupTreasureCh_setup(Object *self, CFSupTreasureCh_Setup *setup, s32 arg2)
         objdata->objectSeqIndex = 0;
     }
     if (!mainGetBits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
+        STUBBED_PRINTF(" NO TREASURE FAIL ");
         objdata->flags |= CFSUPTREASURECH_PLAY_SEQ;
     }
 }
-
-/*0x24*/ static const char str_24[] = " NO TREASURE FAIL ";
 
 // offset: 0x124 | func: 1 | export: 1
 void CFSupTreasureCh_control(Object *self) {
@@ -131,14 +128,11 @@ void CFSupTreasureCh_free(Object *self, s32 a1) {
 
     setup = (CFSupTreasureCh_Setup*)self->setup;
     objFreeObjectType(self, OBJTYPE_CFSupTreasureChest);
-    STUBBED_PRINTF(" Treasure Freeded");
     if (setup->hasBaby) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 0);
     }
+    STUBBED_PRINTF(" Treasure Freeded");
 }
-
-// /*0x38*/ static const char str_38[] = " Treasure Freeded";
-// /*0x4C*/ static const char str_4C[] = " RET ";
 
 // offset: 0x400 | func: 5 | export: 5
 u32 CFSupTreasureCh_get_model_flags(Object *self) {
@@ -161,10 +155,10 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
     if (mainGetBits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away)) {
         self->opacity = OBJECT_OPACITY_MAX;
         self->srt.scale = self->def->scale;
+        STUBBED_PRINTF(" RET ");
         return 0;
     }
     if (objdata->objectSeqIndex == 2) {
-        STUBBED_PRINTF(" RET ");
         return 0;
     }
     animObjData->unk7A &= ~1;
@@ -241,7 +235,7 @@ void CFSupTreasureCh_func_718(Object *arg0, Object *arg1) {
 }
 
 // offset: 0x7B8 | func: 10 | export: 9
-void CFSupTreasureCh_func_7B8(Object *self, s32 arg1, f32 arg2) {
+void CFSupTreasureCh_func_7B8(Object *self, Object* arg1, f32 arg2) {
     CFSupTreasureCh_Data *objdata;
     f32 float2;
     SRT transform;
@@ -346,7 +340,3 @@ f32 CFSupTreasureCh_func_C80(Object *self, s32 arg1) {
     STUBBED_PRINTF("CURVEPOINT :Error Could not find node ");
     return -1.0f;
 }
-
-// /*0x54*/ static const char str_54[] = " FLY AWAY BADY ";
-// /*0x64*/ static const char str_64[] = " Error Could not find node ";
-// /*0x80*/ static const char str_80[] = "CURVEPOINT :Error Could not find node ";

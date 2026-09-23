@@ -2,6 +2,7 @@
 #include "dlls/engine/17_partfx.h"
 #include "dlls/engine/26_curves.h"
 #include "dlls/objects/217_GuardClaw.h"
+#include "dlls/objects/396_CFSupTreasureCh.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -196,7 +197,7 @@ void CFTreasRobo_obj_Control(Object* self) {
                 objdata->state = 9;
                 objdata->unk1A2++;
                 gDLL_1_cmdmenu->vtbl->energy_bar_set(objdata->unk1A6 - objdata->unk1A2);
-                ((DLL_Unknown*)objdata->chest->dll)->vtbl->func[9].withThreeArgsCustom(objdata->chest, self, objdata->unk14C);
+                ((DLL_396_CFSupTreasureCh*)objdata->chest->dll)->vtbl->Func9(objdata->chest, self, objdata->unk14C);
                 objdata->chest = NULL;
             }
             STUBBED_PRINTF(" Hello ");
@@ -268,7 +269,7 @@ void CFTreasRobo_obj_Control(Object* self) {
         }
     }
     if (objdata->chest != NULL) {
-        ((DLL_Unknown*)objdata->chest->dll)->vtbl->func[8].withTwoArgsCustom(objdata->chest, (s32)self);
+        ((DLL_396_CFSupTreasureCh*)objdata->chest->dll)->vtbl->Func8(objdata->chest, self);
     }
     var_fv1 = sqrtf(SQ(self->srt.transl.z - self->prevLocalPosition.z) + SQ(self->srt.transl.x - self->prevLocalPosition.x)) / 15.0f;
     var_fv1 = CLAMP_EXPR(var_fv1, -1.0f, 1.0f);;
