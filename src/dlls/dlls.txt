@@ -242,6 +242,7 @@
 381 = objects/381_RobotAnimPatrol
 382 = objects/382_CFIllusionClaw
 383 = objects/383_CFPerch
+384 = objects/384_CFCage
 385 = objects/385
 386 = objects/386_ToggleSwitch
 387 = objects/387_CFBigDoorSwitch

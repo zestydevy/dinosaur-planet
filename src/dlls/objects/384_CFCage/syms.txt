@@ -1,0 +1,13 @@
+.text = 0x0:
+CFCage_ctor = 0x0;
+CFCage_dtor = 0xC;
+CFCage_obj_Setup = 0x18;
+CFCage_obj_Control = 0x134;
+CFCage_obj_Update = 0x1C4;
+CFCage_obj_Print = 0x1D0;
+CFCage_obj_Free = 0x224;
+CFCage_obj_GetModelFlags = 0x234;
+CFCage_obj_GetDataSize = 0x258;
+CFCage_animCallback = 0x26C;
+
+.rodata = 0x48C:
