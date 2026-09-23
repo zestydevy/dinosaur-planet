@@ -1,3 +1,4 @@
+#include "dlls/objects/391_CFForceField.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "sys/intersect.h"
@@ -6,13 +7,6 @@
 #include "sys/objexpr.h"
 #include "sys/objprint.h"
 #include "sys/rand.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 _unk19[0x1C - 0x19];
-    f32 unk1C;
-} CFForceField_Setup;
 
 typedef struct {
     f32 unk0;

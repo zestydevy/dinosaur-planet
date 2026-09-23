@@ -1,0 +1,20 @@
+.text = 0x0:
+CFForceControl_ctor = 0x0;
+CFForceControl_dtor = 0xC;
+CFForceControl_obj_Setup = 0x18;
+CFForceControl_obj_Control = 0x16C;
+CFForceControl_obj_Update = 0x324;
+CFForceControl_obj_Print = 0x480;
+CFForceControl_obj_Free = 0x498;
+CFForceControl_obj_GetModelFlags = 0x520;
+CFForceControl_obj_GetDataSize = 0x530;
+CFForceControl_func_544 = 0x544;
+CFForceControl_func_628 = 0x628;
+CFForceControl_func_638 = 0x638;
+CFForceControl_func_7D4 = 0x7D4;
+CFForceControl_func_AF4 = 0xAF4;
+CFForceControl_func_B90 = 0xB90;
+CFForceControl_func_CF0 = 0xCF0;
+
+.rodata = 0xEB4:
+str_0 = 0x0; // absolute:0xEB4
