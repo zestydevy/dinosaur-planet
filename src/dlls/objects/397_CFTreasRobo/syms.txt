@@ -1,0 +1,31 @@
+.text = 0x0:
+CFTreasRobo_ctor = 0x0;
+CFTreasRobo_dtor = 0xC;
+CFTreasRobo_obj_Setup = 0x18;
+CFTreasRobo_obj_Control = 0x12C;
+CFTreasRobo_obj_Update = 0xBD4;
+CFTreasRobo_obj_Print = 0xD04;
+CFTreasRobo_func_FAC = 0xFAC;
+CFTreasRobo_obj_Free = 0x1068;
+CFTreasRobo_obj_GetModelFlags = 0x1144;
+CFTreasRobo_obj_GetDataSize = 0x1154;
+CFTreasRobo_func_1168 = 0x1168;
+CFTreasRobo_func_1214 = 0x1214;
+CFTreasRobo_func_13DC = 0x13DC;
+CFTreasRobo_func_14A4 = 0x14A4;
+CFTreasRobo_func_14AC = 0x14AC;
+CFTreasRobo_func_1544 = 0x1544;
+CFTreasRobo_func_15D0 = 0x15D0;
+CFTreasRobo_func_168C = 0x168C;
+CFTreasRobo_func_16A0 = 0x16A0;
+CFTreasRobo_func_16B0 = 0x16B0;
+CFTreasRobo_func_1844 = 0x1844;
+CFTreasRobo_func_1B50 = 0x1B50;
+CFTreasRobo_func_1BEC = 0x1BEC;
+
+.rodata = 0x1DB8:
+str_0 = 0x0; // absolute:0x1DB8
+
+.data = 0x1F58:
+data_0 = 0x0; // absolute:0x1F58
+data_10 = 0x10; // absolute:0x1F68

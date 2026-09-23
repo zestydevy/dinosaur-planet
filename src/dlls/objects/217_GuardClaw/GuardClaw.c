@@ -3,6 +3,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/217_GuardClaw.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
@@ -13,10 +14,8 @@
 #include "dll.h"
 #include "macros.h"
 
-typedef void (*SomeCallback)(Gfx**, Mtx**, Vertex**, Triangle**, s32, Object*);
-
 typedef struct {
-/*00*/ SomeCallback unk0;
+/*00*/ GuardClawCallback unk0;
 /*04*/ s32 unk4;
 /*08*/ f32 unk8;
 /*0C*/ s8 unkC;
@@ -912,7 +911,7 @@ static s32 GuardClaw_func_2C6C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0x2D74 | func: 33 | export: 9
-void GuardClaw_func_2D74(Object* self, s32 arg1, SomeCallback arg2) {
+void GuardClaw_func_2D74(Object* self, s32 arg1, GuardClawCallback arg2) {
     Baddie* baddie = self->data;
     GuardClaw_Data* objdata = baddie->objdata;
 

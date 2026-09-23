@@ -13,6 +13,7 @@
 #include "sys/rcp.h"
 #include "sys/objlib.h"
 #include "dll.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 /*00:0*/ u32 pad0_0 : 8;

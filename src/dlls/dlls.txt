@@ -254,6 +254,7 @@
 394 = objects/394_CFTreasureDoor
 395 = objects/395_CFAttractor
 396 = objects/396_CFSupTreasureCh
+397 = objects/397_CFTreasRobo
 398 = objects/398_CFMagicWall
 400 = objects/400_CFLevelControl
 405 = objects/405_CF_Lamp
