@@ -243,6 +243,7 @@
 382 = objects/382_CFIllusionClaw
 383 = objects/383_CFPerch
 385 = objects/385
+386 = objects/386_ToggleSwitch
 387 = objects/387_CFBigDoorSwitch
 388 = objects/388_CFbarrel
 389 = objects/389_BlastedObject

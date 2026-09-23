@@ -1,0 +1,14 @@
+.text = 0x0:
+ToggleSwitch_ctor = 0x0;
+ToggleSwitch_dtor = 0xC;
+ToggleSwitch_obj_Setup = 0x18;
+ToggleSwitch_obj_Control = 0xB4;
+ToggleSwitch_obj_Update = 0x2F8;
+ToggleSwitch_obj_Print = 0x304;
+ToggleSwitch_obj_Free = 0x358;
+ToggleSwitch_obj_GetModelFlags = 0x368;
+ToggleSwitch_obj_GetDataSize = 0x378;
+ToggleSwitch_animCallback = 0x38C;
+
+.rodata = 0x494:
+str_0 = 0x0; // absolute:0x494
