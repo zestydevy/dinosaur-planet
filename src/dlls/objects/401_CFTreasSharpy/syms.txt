@@ -1,0 +1,22 @@
+.text = 0x0:
+CFTreasSharpy_ctor = 0x0;
+CFTreasSharpy_dtor = 0xC;
+CFTreasSharpy_obj_Setup = 0x18;
+CFTreasSharpy_obj_Control = 0x12C;
+CFTreasSharpy_obj_Update = 0x4AC;
+CFTreasSharpy_obj_Print = 0x5BC;
+CFTreasSharpy_obj_Free = 0x7E8;
+CFTreasSharpy_obj_GetModelFlags = 0x7F8;
+CFTreasSharpy_obj_GetDataSize = 0x808;
+CFTreasSharpy_animCallback = 0x81C;
+CFTreasSharpy_func_8E4 = 0x8E4;
+CFTreasSharpy_func_9E8 = 0x9E8;
+CFTreasSharpy_func_1040 = 0x1040;
+CFTreasSharpy_func_10D4 = 0x10D4;
+CFTreasSharpy_func_118C = 0x118C;
+CFTreasSharpy_func_1338 = 0x1338;
+CFTreasSharpy_func_1460 = 0x1460;
+CFTreasSharpy_func_1530 = 0x1530;
+
+.rodata = 0x1734:
+str_0 = 0x0; // absolute:0x1734

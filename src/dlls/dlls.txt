@@ -258,6 +258,7 @@
 398 = objects/398_CFMagicWall
 399 = objects/399_CFTreasureChestKey
 400 = objects/400_CFLevelControl
+401 = objects/401_CFTreasSharpy
 405 = objects/405_CF_Lamp
 406 = objects/406_CFCheapGalleon
 408 = objects/408_IMIceMountain
