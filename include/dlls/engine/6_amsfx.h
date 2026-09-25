@@ -229,6 +229,10 @@ enum SoundID {
     SOUND_12A_SnowHorn_SnoreHorn = 0x12A,
     SOUND_12B_SnowHorn_Yawn_2 = 0x12B,
 
+    SOUND_12D = 0x12D,
+    SOUND_12E = 0x12E,
+    SOUND_12F = 0x12F,
+
     SOUND_130 = 0x130,
     SOUND_131 = 0x131, // RobotPatrol "yipee :)"
 
@@ -507,6 +511,10 @@ enum SoundID {
     SOUND_57C = 0x57C, //tesla.c
     SOUND_57D = 0x57D, //tesla.c
     SOUND_57E = 0x57E, //tesla.c
+
+    SOUND_5B7 = 0x5B7,
+    SOUND_5B8 = 0x5B8,
+    SOUND_5B9 = 0x5B9,
 
     SOUND_5BC_SharpClaw_Laughing = 0x5BC, //"Rahhh-hehehehehhh!"
 

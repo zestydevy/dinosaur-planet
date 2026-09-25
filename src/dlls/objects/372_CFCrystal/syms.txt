@@ -1,0 +1,23 @@
+.text = 0x0:
+CFCrystal_ctor = 0x0;
+CFCrystal_dtor = 0xC;
+CFCrystal_obj_Setup = 0x18;
+CFCrystal_obj_Control = 0xE8;
+CFCrystal_obj_Update = 0x160;
+CFCrystal_obj_Print = 0x16C;
+CFCrystal_obj_Free = 0x1C0;
+CFCrystal_obj_GetModelFlags = 0x264;
+CFCrystal_obj_GetDataSize = 0x274;
+CFCrystal_func_288 = 0x288;
+CFCrystal_func_11B8 = 0x11B8;
+
+.rodata = 0x1340:
+str_0 = 0x0; // absolute:0x1340
+
+.data = 0x1390:
+data_0 = 0x0; // absolute:0x1390
+data_C = 0xC; // absolute:0x139C
+data_10 = 0x10; // absolute:0x13A0
+
+.bss = 0x13B0:
+bss_0 = 0x0; // absolute:0x13B0

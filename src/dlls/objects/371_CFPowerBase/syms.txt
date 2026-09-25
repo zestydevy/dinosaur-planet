@@ -1,0 +1,13 @@
+.text = 0x0:
+CFPowerBase_ctor = 0x0;
+CFPowerBase_dtor = 0xC;
+CFPowerBase_obj_Setup = 0x18;
+CFPowerBase_obj_Control = 0x134;
+CFPowerBase_obj_Update = 0x2EC;
+CFPowerBase_obj_Print = 0x2F8;
+CFPowerBase_obj_Free = 0x34C;
+CFPowerBase_obj_GetModelFlags = 0x35C;
+CFPowerBase_obj_GetDataSize = 0x36C;
+CFPowerBase_animCallback = 0x380;
+
+.rodata = 0x5D0:

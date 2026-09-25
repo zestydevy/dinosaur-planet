@@ -48,6 +48,14 @@ typedef struct {
 // TODO: some of this depends on the curve type
 /*30*/ union {
     struct {
+        /*30*/ u8 _unk30; 
+        /*31*/ u8 unk31;
+    } type0; // CFtreasRobo
+    struct {
+        /*30*/ u8 _unk30; 
+        /*31*/ u8 unk31;
+    } type2; // CFTreasSharpy
+    struct {
         /*30*/ s32 pad30;
         /*34*/ s16 unk34;
         /*36*/ s16 unk36;

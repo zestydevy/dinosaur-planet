@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_368_ctor = 0x0;
+dll_368_dtor = 0xC;
+dll_368_obj_Setup = 0x18;
+dll_368_obj_Control = 0x6C;
+dll_368_obj_Update = 0x390;
+dll_368_obj_Print = 0x39C;
+dll_368_obj_Free = 0x3F0;
+dll_368_obj_GetModelFlags = 0x400;
+dll_368_obj_GetDataSize = 0x410;
+dll_368_animCallback = 0x424;
+
+.rodata = 0x6C8:

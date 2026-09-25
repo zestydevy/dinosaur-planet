@@ -1,0 +1,15 @@
+.text = 0x0:
+CFForceField_ctor = 0x0;
+CFForceField_dtor = 0xC;
+CFForceField_obj_Setup = 0x18;
+CFForceField_obj_Control = 0x168;
+CFForceField_obj_Update = 0x3E0;
+CFForceField_obj_Print = 0x3EC;
+CFForceField_obj_Free = 0x528;
+CFForceField_obj_GetModelFlags = 0x538;
+CFForceField_obj_GetDataSize = 0x548;
+CFForceField_func_55C = 0x55C;
+CFForceField_func_5A4 = 0x5A4;
+CFForceField_func_66C = 0x66C;
+
+.rodata = 0x7DC:

@@ -1,0 +1,14 @@
+.text = 0x0:
+CFTreasureChestKey_ctor = 0x0;
+CFTreasureChestKey_dtor = 0xC;
+CFTreasureChestKey_obj_Setup = 0x18;
+CFTreasureChestKey_obj_Control = 0x19C;
+CFTreasureChestKey_obj_Update = 0x3C0;
+CFTreasureChestKey_obj_Print = 0x3CC;
+CFTreasureChestKey_guardClawPrintCallback = 0x4E0;
+CFTreasureChestKey_obj_Free = 0x584;
+CFTreasureChestKey_obj_GetModelFlags = 0x5C4;
+CFTreasureChestKey_obj_GetDataSize = 0x5D4;
+
+.rodata = 0x650:
+str_0 = 0x0; // absolute:0x650

@@ -26,6 +26,12 @@ enum ParticleID {
     PARTICLE_78 = 0x78, //Transporter - large ripple
     PARTICLE_79 = 0x79, //Transporter - blue glow
     PARTICLE_7A = 0x7A, //Transporter - small sparkles (floating outward, then attracting inwards)
+    PARTICLE_7B = 0x7B,
+    PARTICLE_7E = 0x7E,
+    PARTICLE_7F = 0x7F,
+    PARTICLE_81 = 0x81,
+    PARTICLE_82 = 0x82,
+    PARTICLE_83 = 0x83,
     PARTICLE_84 = 0x84, // implemented by DLL 40
     PARTICLE_85 = 0x85, // implemented by DLL 40
     PARTICLE_86 = 0x86,
@@ -137,6 +143,7 @@ enum ParticleID {
     PARTICLE_357 = 0x357,
     PARTICLE_35B = 0x35B,
     PARTICLE_35C = 0x35C,
+    PARTICLE_35E = 0x35E,
     PARTICLE_383 = 0x383,
     /* --- DLL 41 END --- */
     /* --- DLL 34 START --- */
@@ -308,7 +315,7 @@ DLL_INTERFACE(DLL_17) {
 /*0*/ void (*func0)(void);
       // Spawn one instance of a particle.
       // The last argument varies in datatype depending on the type of particle being spawned.
-/*1*/ s32 (*spawn)(Object *obj, s32 id, SRT *transform, s32 flags, s8 arg4, void *data);
+/*1*/ s32 (*spawn)(Object *obj, s32 id, SRT *transform, u32 flags, s8 arg4, void *data);
 /*2*/ s32 (*func2)(s32 arg0);
 };
 
