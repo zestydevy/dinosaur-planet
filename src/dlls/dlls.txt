@@ -262,6 +262,7 @@
 399 = objects/399_CFTreasureChestKey
 400 = objects/400_CFLevelControl
 401 = objects/401_CFTreasSharpy
+404 = objects/404_CFExplodePieces
 405 = objects/405_CF_Lamp
 406 = objects/406_CFCheapGalleon
 408 = objects/408_IMIceMountain
@@ -315,6 +316,7 @@
 470 = objects/470_ECSH_Cup
 472 = objects/472_GPSH_Shrine
 473 = objects/473_GPSH_ObjCreator
+474 = objects/474_GPSH_Scene
 475 = objects/475_GPSH_flybaddie
 477 = objects/477_DBSH_Shrine
 478 = objects/478_DBSH_Symbol

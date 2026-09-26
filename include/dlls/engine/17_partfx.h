@@ -101,6 +101,7 @@ enum ParticleID {
     PARTICLE_279 = 0x279, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_27A = 0x27A, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_286 = 0x286,
+    PARTICLE_289 = 0x289,
     PARTICLE_28A = 0x28A,
     PARTICLE_28B = 0x28B,
     PARTICLE_2BB = 0x2BB,
