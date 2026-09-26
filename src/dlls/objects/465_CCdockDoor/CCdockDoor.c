@@ -60,4 +60,3 @@ u32 CCDockDoor_obj_GetModelFlags(Object* self) {
 u32 CCDockDoor_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(CCDockDoor_Data);
 }
-
