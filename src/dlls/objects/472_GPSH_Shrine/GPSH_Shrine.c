@@ -1,57 +1,57 @@
-#include "PR/ultratypes.h"
 #include "PR/gbi.h"
+#include "PR/ultratypes.h"
 #include "dll.h"
+#include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "sys/dll.h"
+#include "sys/envfx.h"
 #include "sys/gfx/animseq.h"
+#include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/gfx/texture.h"
 #include "sys/main.h"
-#include "game/gamebits.h"
-#include "sys/dll.h"
-#include "sys/objects.h"
-#include "sys/math.h"
 #include "sys/map_enums.h"
-#include "sys/gfx/model.h"
 #include "sys/map.h"
+#include "sys/math.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
-#include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "sys/gfx/modgfx.h"
+#include "sys/objtype.h"
 #include "sys/print.h"
-#include "sys/envfx.h"
 #include "types.h"
 
 typedef struct {
     ObjSetup base;
     s16 _unk18;
-    s16 unk1A;
+    s16 testStartRadius;
 } GPSH_Shrine_Setup;
 
 typedef struct {
-    s16 range;
+    s16 testStartRadius;
     s16 musicPlayTimer;
     s16 volumeA;
     s16 volumeASpeed;
     s16 volumeB;
     s16 volumeBSpeed;
-    s16 unkC;
+    s16 modGfxCircle;
     s32 time;
     u8 itemsPlaced;
     u8 state;
-    u8 unk16;
+    u8 seqValue;
     u8 _unk17;
-    u8 musicPlaying;
+    u8 musicStarted;
     u8 unk19;
 } GPSH_Shrine_Data;
 
 typedef enum {
-    GPSH_Shrine_STATE_0,
-    GPSH_Shrine_STATE_1,
-    GPSH_Shrine_STATE_2,
-    GPSH_Shrine_STATE_3,
-    GPSH_Shrine_STATE_4,
-    GPSH_Shrine_STATE_5,
-    GPSH_Shrine_STATE_6,
-    GPSH_Shrine_STATE_7
+    GPSH_Shrine_STATE_Waiting,
+    GPSH_Shrine_STATE_Test_Start,
+    GPSH_Shrine_STATE_Test_of_Knowledge,
+    GPSH_Shrine_STATE_3, //State never seems to get set to 3, but it is referenced?
+    GPSH_Shrine_STATE_Test_Successful,
+    GPSH_Shrine_STATE_Warp_Away,
+    GPSH_Shrine_STATE_Finished,
+    GPSH_Shrine_STATE_Test_Failure
 } GPSH_Shrine_States;
 
 /*0x0*/ static Texture* _data_0 = NULL;
@@ -77,27 +77,30 @@ void GPSH_Shrine_obj_Setup(Object* self, GPSH_Shrine_Setup* setup, s32 reset) {
     objdata = self->data;
     self->srt.yaw = 0;
 
-    objdata->range = 10;
-    if (setup->unk1A > 0) {
-        objdata->range = setup->unk1A >> 8;
+    objdata->testStartRadius = 10;
+    if (setup->testStartRadius > 0) {
+        objdata->testStartRadius = setup->testStartRadius >> 8;
     }
 
-    objdata->state = GPSH_Shrine_STATE_0;
-    objdata->unk16 = 0;
+    objdata->state = GPSH_Shrine_STATE_Waiting;
+    objdata->seqValue = 0;
     objdata->musicPlayTimer = 0;
     self->animCallback = GPSH_Shrine_animCallback;
     objInitMesgQueue(self, 4);
+
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
     mainSetBits(BIT_DB_Entered_Shrine_2, 1);
     mainSetBits(BIT_Test_of_Fear_Particles, 0);
+
     mainSetBits(BIT_GPSH_Placed_SW_Scene_Root, 0);
     mainSetBits(BIT_GPSH_Placed_CRF_Scene_Gem, 0);
     mainSetBits(BIT_GPSH_Placed_MMP_Scene_Barrel, 0);
     mainSetBits(BIT_GPSH_Placed_DIM_Scene_Horn, 0);
     mainSetBits(BIT_GPSH_Placed_SC_Scene_Nugget, 0);
     mainSetBits(BIT_GPSH_Placed_SB_Scene_Egg, 0);
+
     objdata->time = 0;
     objdata->volumeA = 0xC;
     objdata->volumeB = 0x1E;
@@ -105,12 +108,16 @@ void GPSH_Shrine_obj_Setup(Object* self, GPSH_Shrine_Setup* setup, s32 reset) {
     gDLL_5_AMSEQ->vtbl->play_ex(2, 0x2B, 0x50, 1, 0);
     objdata->volumeASpeed = 0;
     objdata->volumeBSpeed = 0;
-    objdata->musicPlaying = FALSE;
+    objdata->musicStarted = FALSE;
     objdata->unk19 = FALSE;
+
+    //Create glowing circle around test's startpoint
     modgfxDLL = dllLoad(DLL_ID_122, 1);
-    objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
+    objdata->modGfxCircle = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
     dllFree(modgfxDLL);
+
     _bss_8 = 0.00001f;
+
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
@@ -189,13 +196,13 @@ void GPSH_Shrine_obj_Control(Object* self) {
         objdata->musicPlayTimer -= gUpdateRate;
         if (objdata->musicPlayTimer <= 0) {
             objdata->musicPlayTimer = 0;
-            if (objdata->musicPlaying == FALSE) {
+            if (objdata->musicStarted == FALSE) {
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, objdata->volumeB, 0);
-                objdata->musicPlaying = TRUE;
+                objdata->musicStarted = TRUE;
             }
         }
 
-        if ((objdata->state == GPSH_Shrine_STATE_2) && (objdata->musicPlayTimer <= 40) && (objdata->unk19 == FALSE)) {
+        if ((objdata->state == GPSH_Shrine_STATE_Test_of_Knowledge) && (objdata->musicPlayTimer <= 40) && (objdata->unk19 == FALSE)) {
             objdata->unk19 = TRUE;
         }
     } else {
@@ -223,33 +230,37 @@ void GPSH_Shrine_obj_Control(Object* self) {
         }
 
         switch (objdata->state) {
-        case GPSH_Shrine_STATE_0:
-            if (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) objdata->range) {
-                objdata->state = GPSH_Shrine_STATE_1;
+        case GPSH_Shrine_STATE_Waiting:
+            if (vec3Distance(&self->globalPosition, &player->globalPosition) < objdata->testStartRadius) {
+                objdata->state = GPSH_Shrine_STATE_Test_Start;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
+
                 modgfxDLL = dllLoad(DLL_ID_147, 1);
                 modgfxDLL->vtbl->func0(self, 2, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
+
                 modgfxDLL = dllLoad(DLL_ID_148, 1);
                 modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
+
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-                gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
-                objdata->unkC = -1;
+                gDLL_14_Modgfx->vtbl->func7(&objdata->modGfxCircle);
+                objdata->modGfxCircle = -1;
+
                 mainSetBits(BIT_5AF, 0);
             }
             break;
-        case GPSH_Shrine_STATE_1:
-            if (objdata->unk16 == 1) {
+        case GPSH_Shrine_STATE_Test_Start:
+            if (objdata->seqValue == 1) {
                 mainSetBits(BIT_148, 1);
-                objdata->state = GPSH_Shrine_STATE_2;
-                objdata->musicPlayTimer = 0x50;
+                objdata->state = GPSH_Shrine_STATE_Test_of_Knowledge;
+                objdata->musicPlayTimer = 80;
                 objdata->time = 15000;
                 return;
             }
             break;
-        case GPSH_Shrine_STATE_2:
+        case GPSH_Shrine_STATE_Test_of_Knowledge:
             objdata->time -= gUpdateRate;
             diPrintf("\ntime %d\n", objdata->time);
             objdata->itemsPlaced = 0;
@@ -272,13 +283,13 @@ void GPSH_Shrine_obj_Control(Object* self) {
                 objdata->itemsPlaced++;
             }
             if (objdata->itemsPlaced == 6) {
-                objdata->state = GPSH_Shrine_STATE_4;
+                objdata->state = GPSH_Shrine_STATE_Test_Successful;
                 objdata->musicPlayTimer = 120;
                 return;
             }
 
             if (objdata->time <= 0) {
-                objdata->state = GPSH_Shrine_STATE_7;
+                objdata->state = GPSH_Shrine_STATE_Test_Failure;
                 pickupItems = objGetAllOfType(OBJTYPE_Pickup, &count);
                 while (count != 0) {
                     objFreeObject(pickupItems[count - 1]);
@@ -291,41 +302,41 @@ void GPSH_Shrine_obj_Control(Object* self) {
                 return;
             }
             break;
-        case GPSH_Shrine_STATE_4:
-            if (mainGetBits(BIT_SP_Map_MMP) != 0) {
+        case GPSH_Shrine_STATE_Test_Successful:
+            if (mainGetBits(BIT_SP_Map_MMP)) {
                 objdata->volumeB = 1;
                 gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->volumeB, 0);
                 objdata->volumeBSpeed = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 1);
-                objdata->state = GPSH_Shrine_STATE_6;
-                return;
+                objdata->state = GPSH_Shrine_STATE_Finished;
+            } else {
+                mainSetBits(BIT_DB_Entered_Shrine_1, 0);
+                gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->volumeB, 0);
+                objdata->volumeBSpeed = 1;
+                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
+                objdata->state = GPSH_Shrine_STATE_Warp_Away;
             }
-            mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-            gDLL_5_AMSEQ->vtbl->play_ex(3, 0x2C, 0x50, (u8) objdata->volumeB, 0);
-            objdata->volumeBSpeed = 1;
-            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-            objdata->state = GPSH_Shrine_STATE_5;
             return;
-        case GPSH_Shrine_STATE_5:
+        case GPSH_Shrine_STATE_Warp_Away:
             if (mainGetBits(BIT_Shrine_Do_Exit_Warp) == 0) {
                 mainSetBits(BIT_Shrine_Do_Exit_Warp, 1);
             }
             mainSetBits(BIT_MMP_GP_Shrine_Spirit_Light_Beams, 0);
             mainSetBits(BIT_DB_Entered_Shrine_2, 0);
-            objdata->state = GPSH_Shrine_STATE_6;
+            objdata->state = GPSH_Shrine_STATE_Finished;
             mainSetBits(BIT_DB_Entered_Shrine_1, 1);
             mainSetBits(BIT_SP_Map_MMP, 1);
             gDLL_29_Gplay->vtbl->set_act(MAP_WARLOCK_MOUNTAIN, 8);
             break;
-        case GPSH_Shrine_STATE_7:
-            objdata->state = GPSH_Shrine_STATE_0;
-            objdata->unk16 = 0;
+        case GPSH_Shrine_STATE_Test_Failure:
+            objdata->state = GPSH_Shrine_STATE_Waiting;
+            objdata->seqValue = 0;
             objdata->musicPlayTimer = 400;
             mainSetBits(BIT_DB_Entered_Shrine_3, 1);
             mainSetBits(BIT_DB_Entered_Shrine_1, 1);
             mainSetBits(BIT_DB_Entered_Shrine_2, 1);
             modgfxDLL = dllLoad(DLL_ID_122, 1);
-            objdata->unkC = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
+            objdata->modGfxCircle = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
             dllFree(modgfxDLL);
             mainSetBits(BIT_GPSH_Placed_SW_Scene_Root, 0);
             mainSetBits(BIT_GPSH_Placed_CRF_Scene_Gem, 0);
@@ -405,19 +416,19 @@ static int GPSH_Shrine_animCallback(Object* self, Object* animObj, AnimObj_Data*
                 }
                 break;
             case 3:
-                objdata->unk16 = 1;
+                objdata->seqValue = 1;
                 break;
             case 4:
-                objdata->state = GPSH_Shrine_STATE_4;
+                objdata->state = GPSH_Shrine_STATE_Test_Successful;
                 objdata->musicPlayTimer = 90;
                 break;
             case 5:
-                objdata->unk16 = 2;
+                objdata->seqValue = 2;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 6:
-                objdata->state = GPSH_Shrine_STATE_5;
-                objdata->unk16 = 3;
+                objdata->state = GPSH_Shrine_STATE_Warp_Away;
+                objdata->seqValue = 3;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 1);
                 break;
             case 7:
@@ -448,7 +459,7 @@ static int GPSH_Shrine_animCallback(Object* self, Object* animObj, AnimObj_Data*
         animData->messages[i] = 0;
     }
 
-    if ((objdata->state == GPSH_Shrine_STATE_3) && (objdata->range < vec3Distance(&self->globalPosition, &player->globalPosition))) {
+    if ((objdata->state == GPSH_Shrine_STATE_3) && (objdata->testStartRadius < vec3Distance(&self->globalPosition, &player->globalPosition))) {
         gDLL_3_Animation->vtbl->end_obj_sequence(animData->seqSlot);
     }
 
