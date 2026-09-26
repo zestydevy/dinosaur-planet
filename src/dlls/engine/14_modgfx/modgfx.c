@@ -2,6 +2,7 @@
 #include "sys/lfx.h"
 #include "sys/segment_13D0.h"
 #include "sys/lighting.h"
+#include "sys/newshadows.h"
 #include "macros.h"
 
 typedef struct {
@@ -36,8 +37,9 @@ typedef struct {
 typedef struct {
     s32 unk0;
     f32 unk4;
-    u8 _unk8[0x10 - 0x8];
-    s32 unk10;
+    f32 unk8;
+    f32 unkC;
+    s16 *unk10;
     s16 unk14;
     u8 unk16;
 } BSS0_9C;
@@ -51,13 +53,14 @@ typedef struct {
     s16 unk10;
     u8 _unk12[0x18 - 0x12];
     Vec3f unk18;
-    Vec3f unk24[5];
+    Vec3f unk24;
+    Vec3f unk30[4]; // size be bigger than 4, has to be multiple of 2
     f32 unk60;
     f32 unk64;
     f32 unk68;
     Vec3f unk6C;
     Vtx* unk78[2];
-    u8 _unk80[0x84 - 0x80];
+    Vtx* unk80;
     DLTri* unk84[2];
     u8 _unk8C[0x98 - 0x8C];
     Texture* unk98;
@@ -65,10 +68,7 @@ typedef struct {
     LightAction* unkA0;
     s32 unkA4;
     u8 _unkA8[0xAC - 0xA8];
-    f32 unkAC;
-    f32 unkB0;
-    f32 unkB4;
-    f32 unkB8;
+    f32 unkAC[4];// size be bigger than 4, has to be multiple of 2
     f32 unkBC;
     f32 unkC0;
     f32 unkC4;
@@ -79,10 +79,12 @@ typedef struct {
     u8 _unkD8[0xEA - 0xD8];
     s16 unkEA;
     s16 unkEC;
-    u8 _unkEE[0xFC - 0xEE];
+    s16 unkEE[7];
     s16 unkFC;
     s16 unkFE;
-    u8 _unk100[0x106 - 0x100];
+    s16 unk100;
+    s16 unk102;
+    s16 unk104;
     s16 unk106;
     s16 unk108;
     s16 unk10A;
@@ -134,6 +136,16 @@ typedef struct {
 
 static void dll_14_func_4C0C(s16 arg0, s32 arg1);
 static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
+/* static */ void dll_14_func_4E58(ModgfxInstance* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6100(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6068(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3);
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5E50(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5FFC(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
 
 // offset: 0x0 | ctor
 void dll_14_ctor(void* dll) {
@@ -812,7 +824,25 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
 }
 
 // offset: 0x4E58 | func: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4E58.s")
+/* static */ void dll_14_func_4E58(ModgfxInstance* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2) {
+    Vtx* var_v0;
+    Vtx* var_v1;
+    s32 i;
+
+    var_v0 = arg0->unk78[arg0->unk130];
+    var_v1 = arg0->unk80;
+    for (i = 0; i < arg0->unkEA; i++) {
+        var_v0->v.ob[0] = var_v1->v.ob[0];
+        var_v0->v.ob[1] = var_v1->v.ob[1];
+        var_v0->v.ob[2] = var_v1->v.ob[2];
+        var_v0->v.cn[0] = var_v1->v.cn[0];
+        var_v0->v.cn[1] = var_v1->v.cn[1];
+        var_v0->v.cn[2] = var_v1->v.cn[2];
+        var_v0->v.cn[3] = var_v1->v.cn[3];
+        var_v0++;
+        var_v1++;
+    }
+}
 
 // offset: 0x4EDC | func: 15
 void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
@@ -849,40 +879,462 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x4FF4 | func: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4FF4.s")
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    Vtx* temp_v0;
+    Vtx* temp_v1;
+    f32 temp_fa0;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 temp = arg3 * 2;
+
+    if (arg2 == 1) {
+        temp_fv0 = arg1->unk4;
+        temp_fv1 = arg1->unk8;
+        temp_fa0 = arg1->unkC;
+        if (arg0->unkFE != 0) {
+            arg0->unk30[temp + 1].x = (temp_fv0 - arg0->unk30[temp].x) / arg0->unkFE;
+            arg0->unk30[temp + 1].y = (temp_fv1 - arg0->unk30[temp].y) / arg0->unkFE;
+            arg0->unk30[temp + 1].z = (temp_fa0 - arg0->unk30[temp].z) / arg0->unkFE;
+        } else {
+            temp_v0 = arg0->unk78[arg0->unk130];
+            temp_v1 = arg0->unk80;
+            for (arg2 = 0; arg2 < arg1->unk14; arg2++) {
+                temp_v1[arg1->unk10[arg2]].v.ob[0] *= temp_fv0;
+                temp_v1[arg1->unk10[arg2]].v.ob[1] *= temp_fv1;
+                temp_v1[arg1->unk10[arg2]].v.ob[2] *= temp_fa0;
+                temp_v0[arg1->unk10[arg2]].v.ob[0] = temp_v1[arg1->unk10[arg2]].v.ob[0];
+                temp_v0[arg1->unk10[arg2]].v.ob[1] = temp_v1[arg1->unk10[arg2]].v.ob[1];
+                temp_v0[arg1->unk10[arg2]].v.ob[2] = temp_v1[arg1->unk10[arg2]].v.ob[2];
+            }
+            return;
+        }
+    }
+
+    arg0->unk30[temp].x += arg0->unk30[temp + 1].x * data_C;
+    arg0->unk30[temp].y += arg0->unk30[temp + 1].y * data_C;
+    arg0->unk30[temp].z += arg0->unk30[temp + 1].z * data_C;
+    temp_v1 = arg0->unk80;
+    temp_v0 = arg0->unk78[arg0->unk130];
+    for (arg2 = 0; arg2 < arg1->unk14; arg2++) {
+        if (arg0->unk30[temp].x != 1.0f) {
+            temp_v0[arg1->unk10[arg2]].v.ob[0] = temp_v1[arg1->unk10[arg2]].v.ob[0] * arg0->unk30[temp].x;
+        }
+        if (arg0->unk30[temp].y != 1.0f) {
+            temp_v0[arg1->unk10[arg2]].v.ob[1] = temp_v1[arg1->unk10[arg2]].v.ob[1] * arg0->unk30[temp].y;
+        }
+        if (arg0->unk30[temp].z != 1.0f) {
+            temp_v0[arg1->unk10[arg2]].v.ob[2] = temp_v1[arg1->unk10[arg2]].v.ob[2] * arg0->unk30[temp].z;
+        }
+    }
+}
 
 // offset: 0x538C | func: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_538C.s")
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    Vtx* temp_v0;
+    Vtx* temp_v1;
+    f32 temp_fv0;
+    s32 i;
+    s32 temp = arg3 * 2;
+
+    temp_v0 = arg0->unk78[arg0->unk130];
+    temp_v1 = arg0->unk80;
+    if (arg2 == 1) {
+        temp_fv0 = arg1->unk4;
+        if (arg0->unkFE != 0) {
+            arg0->unkAC[temp] = (temp_fv0 - temp_v1[arg1->unk10[0]].v.cn[3]) / arg0->unkFE;
+            arg0->unkAC[temp + 1] = temp_v1[arg1->unk10[0]].v.cn[3];
+        } else {
+            for (i = 0; i < arg1->unk14; i++) {
+                temp_v1[arg1->unk10[i]].v.cn[3] = temp_fv0;
+                temp_v0[arg1->unk10[i]].v.cn[3] = temp_v1[arg1->unk10[i]].v.cn[3];
+            }
+            return;
+        }
+    }
+
+    arg0->unkAC[temp + 1] += arg0->unkAC[temp] * data_C;
+    if (arg0->unkAC[temp + 1] < 0.0f) {
+        arg0->unkAC[temp + 1] = 0.0f;
+    } else if (arg0->unkAC[temp + 1] > 255.0f) {
+        arg0->unkAC[temp + 1] = 255.0f;
+    }
+
+    for (i = 0; i < arg1->unk14; i++) {
+        temp_v0[*(arg1->unk10 + i)].v.cn[3] = arg0->unkAC[temp + 1];
+        temp_v1[arg1->unk10[i]].v.cn[3] = temp_v0[arg1->unk10[i]].v.cn[3];
+    }
+}
 
 // offset: 0x56A0 | func: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_56A0.s")
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    if (arg2 == 1) {
+        if (arg0->unkFE != 0) {
+            arg0->unkBC = (arg1->unk4 - arg0->unk4->opacity) /  arg0->unkFE;
+            arg0->unkC0 = arg0->unk4->opacity;
+        } else {
+            arg0->unkBC = arg1->unk4 - arg0->unk4->opacity;
+            arg0->unkC0 = 0.0f;
+        }
+    }
+
+    arg0->unkC0 += arg0->unkBC;
+    if (arg0->unkC0 > 255.0f) {
+        arg0->unkC0 = 255.0f;
+    } else if (arg0->unkC0 < 0.0f) {
+        arg0->unkC0 = 0.0f;
+    }
+
+    arg0->unk4->opacity = arg0->unkC0;
+}
 
 // offset: 0x584C | func: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_584C.s")
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    s16 temp_ft1;
+    s16 temp_ft3;
+    s16 temp_ft5;
+
+    if (arg2 == 1) {
+        temp_ft1 = arg1->unk4;
+        temp_ft3 = arg1->unk8;
+        temp_ft5 = arg1->unkC;
+        if (arg0->unkFE != 0) {
+            arg0->unk100 = (temp_ft1 - arg0->unk106) / arg0->unkFE;
+            arg0->unk102 = (temp_ft3 - arg0->unk108) / arg0->unkFE;
+            arg0->unk104 = (temp_ft5 - arg0->unk10A) / arg0->unkFE;
+        } else {
+            arg0->unk106 = temp_ft1;
+            arg0->unk100 = 0;
+            arg0->unk108 = temp_ft3;
+            arg0->unk102 = 0;
+            arg0->unk10A = temp_ft5;
+            arg0->unk104 = 0;
+        }
+    }
+
+    arg0->unk106 += arg0->unk100;
+    arg0->unk108 += arg0->unk102;
+    arg0->unk10A += arg0->unk104;
+}
 
 // offset: 0x59B4 | func: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_59B4.s")
+static void dll_14_func_59B4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    f32 var_fa1;
+    Vec3f sp40;
+    SRT sp28;
+
+    if (arg2 == 1) {
+        arg0->unk120 = arg0->unkA0->unk4;
+        arg0->unk122 = arg0->unkA0->unk6;
+        arg0->unk124 = arg0->unkA0->unk8;
+        data_10 = 0.0f;
+        if (arg0->unkFE != 0) {
+            data_10 = 1.0f / arg0->unkFE;
+        }
+    }
+
+    if (arg0->unkEE[arg0->unkFC] == 0) {
+        var_fa1 = 1.0f;
+    } else {
+        var_fa1 = 1.0f - ((f32) arg0->unkFE / (f32) arg0->unkEE[arg0->unkFC]);
+    }
+
+    arg0->unkA0->unk4 = (((arg1->unk4 - arg0->unk120) * var_fa1) + arg0->unk120);
+    arg0->unkA0->unk6 = (((arg1->unk8 - arg0->unk122) * var_fa1) + arg0->unk122);
+    arg0->unkA0->unk8 = (((arg1->unkC - arg0->unk124) * var_fa1) + arg0->unk124);
+    if (D_80092C3C > 0.0f && D_80092C3C <= 1.0f) {
+        if (arg0->unkA4 & 4) {
+            sp40.x = arg0->unkA0->unk4;
+            sp40.y = arg0->unkA0->unk6;
+            sp40.z = arg0->unkA0->unk8;
+            sp28.transl.x = 0.0f;
+            sp28.transl.y = 0.0f;
+            sp28.transl.z = 0.0f;
+            sp28.roll = 0;
+            sp28.pitch = 0;
+            sp28.scale = 1.0f;
+            sp28.yaw = arg0->unk4->srt.yaw;
+            mathRotateRPY(&sp28, sp40.f);
+            arg0->unkA0->unk4 = sp40.x;
+            arg0->unkA0->unk6 = sp40.y;
+            arg0->unkA0->unk8 = sp40.z;
+        }
+        D_800BB198.x = arg0->unkA0->unk4 + arg0->unk4->globalPosition.x;
+        D_800BB198.y = arg0->unkA0->unk6 + arg0->unk4->globalPosition.y;
+        D_800BB198.z = arg0->unkA0->unk8 + arg0->unk4->globalPosition.z;
+        D_80092C3C = D_80092C3C - (data_10 * data_C);
+        return;
+    }
+
+    if (D_80092C3C == 2.0f) {
+        if (arg0->unkA4 & 4) {
+            sp40.x = arg0->unkA0->unk4;
+            sp40.y = arg0->unkA0->unk6;
+            sp40.z = arg0->unkA0->unk8;
+            sp28.transl.x = 0.0f;
+            sp28.transl.y = 0.0f;
+            sp28.transl.z = 0.0f;
+            sp28.roll = 0;
+            sp28.pitch = 0;
+            sp28.scale = 1.0f;
+            sp28.yaw = arg0->unk4->srt.yaw;
+            mathRotateRPY(&sp28, sp40.f);
+            arg0->unkA0->unk4 = sp40.x;
+            arg0->unkA0->unk6 = sp40.y;
+            arg0->unkA0->unk8 = sp40.z;
+        }
+        D_800BB198.x = arg0->unkA0->unk4 + arg0->unk4->globalPosition.x;
+        D_800BB198.y = arg0->unkA0->unk6 + arg0->unk4->globalPosition.y;
+        D_800BB198.z = arg0->unkA0->unk8 + arg0->unk4->globalPosition.z;
+    }
+}
 
 // offset: 0x5E50 | func: 21
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_5E50.s")
+void dll_14_func_5E50(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    SRT sp28;
+    f32 temp_fv0;
+    s32 temp_v0;
+
+    if (arg2 == 1) {
+        if (arg0->unkEE[arg0->unkFC] == 0) {
+            temp_v0 = arg0->unkA4;
+            if ((temp_v0 & 4) || (temp_v0 & 0x80000)) {
+                sp28.transl.x = 0.0f;
+                sp28.transl.y = 0.0f;
+                sp28.transl.z = 0.0f;
+                sp28.scale = 1.0f;
+                sp28.yaw = arg0->unk4->srt.yaw;
+                sp28.pitch = arg0->unk4->srt.yaw;
+                sp28.roll = arg0->unk4->srt.yaw;
+                mathRotateRPY(&sp28, &arg1->unk4);
+            }
+            arg0->unk24.x = arg1->unk4;
+            arg0->unk24.y = arg1->unk8;
+            arg0->unk24.z = arg1->unkC;
+        } else {
+            arg0->unk24.x = arg1->unk4 / arg0->unkFE;
+            arg0->unk24.y = arg1->unk8 / arg0->unkFE;
+            arg0->unk24.z = arg1->unkC / arg0->unkFE;
+        }
+        arg0->unk60 += arg0->unk24.x;
+        arg0->unk64 += arg0->unk24.y;
+        arg0->unk68 += arg0->unk24.z;
+    } else {
+        arg0->unk60 += arg0->unk24.x * data_C;
+        arg0->unk64 += arg0->unk24.y * data_C;
+        arg0->unk68 += arg0->unk24.z * data_C;
+    }
+}
 
 // offset: 0x5FFC | func: 22
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_5FFC.s")
+void dll_14_func_5FFC(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    arg0->unk24.x += arg1->unk4 * data_C;
+    arg0->unk24.y += arg1->unk8 * data_C;
+    arg0->unk24.z += arg1->unkC * data_C;
+}
 
 // offset: 0x6068 | func: 23
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6068.s")
+void dll_14_func_6068(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    arg0->unk106 += (s16) (arg1->unk4 * data_C);
+    arg0->unk108 += (s16) (arg1->unk8 * data_C);
+    arg0->unk10A += (s16) (arg1->unkC * data_C);
+}
 
 // offset: 0x6100 | func: 24
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6100.s")
+void dll_14_func_6100(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    Vtx* temp_v0;
+    f32 temp_fa0;
+    f32 temp_fa1;
+    f32 temp_fv0;
+    f32 temp_fv1;
+    s32 i;
+
+    temp_v0 = arg0->unk78[arg0->unk130];
+    if (arg2 == 1) {
+        temp_fv0 = arg1->unk4;
+        temp_fv1 = arg1->unk8;
+        temp_fa0 = arg1->unkC;
+        if (arg0->unkFE != 0) {
+            arg0->unkBC = temp_v0[arg1->unk10[0]].v.cn[0];
+            arg0->unkC0 = temp_v0[arg1->unk10[0]].v.cn[1];
+            arg0->unkC4 = temp_v0[arg1->unk10[0]].v.cn[2];
+            arg0->unkC8 = (temp_fv0 - temp_v0[arg1->unk10[0]].v.cn[0]) / arg0->unkFE;
+            arg0->unkCC = (temp_fv1 - temp_v0[arg1->unk10[0]].v.cn[1]) / arg0->unkFE;
+            arg0->unkD0 = (temp_fa0 - temp_v0[arg1->unk10[0]].v.cn[2]) / arg0->unkFE;
+        } else {
+            arg0->unkBC = temp_fv0;
+            arg0->unkC0 = temp_fv1;
+            arg0->unkC4 = temp_fa0;
+            arg0->unkC8 = 0.0f;
+            arg0->unkCC = 0.0f;
+            arg0->unkD0 = 0.0f;
+        }
+    }
+
+    arg0->unkBC += arg0->unkC8;
+    arg0->unkC0 += arg0->unkCC;
+    arg0->unkC4 += arg0->unkD0;
+
+    if (arg0->unkBC < 0.0f) {
+        arg0->unkBC = 0.0f;
+    } else if (arg0->unkBC > 255.0f) {
+        arg0->unkBC = 255.0f;
+    }
+
+    if (arg0->unkC0 < 0.0f) {
+        arg0->unkC0 = 0.0f;
+    } else if (arg0->unkC0 > 255.0f) {
+        arg0->unkC0 = 255.0f;
+    }
+
+    if (arg0->unkC4 < 0.0f) {
+        arg0->unkC4 = 0.0f;
+    } else if (arg0->unkC4 > 255.0f) {
+        arg0->unkC4 = 255.0f;
+    }
+
+    for (i = 0; i < arg1->unk14; i++) {
+        temp_v0[arg1->unk10[i]].v.cn[0] = (s16) arg0->unkBC;
+        temp_v0[arg1->unk10[i]].v.cn[1] = (s16) arg0->unkC0;
+        temp_v0[arg1->unk10[i]].v.cn[2] = (s16) arg0->unkC4;
+    }
+}
 
 // offset: 0x6424 | func: 25
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6424.s")
+void dll_14_func_6424(ModgfxInstance* arg0, u32 arg1) {
+    s32 i;
+    Vtx* var_v1;
+    Vtx* var_v0;
+
+    var_v0 = arg0->unk78[1-arg0->unk130];
+    var_v1 = arg0->unk80;
+    for (i = 0; i < arg0->unkEA; i++) {
+        var_v1->v.ob[0] = var_v0->v.ob[0];
+        var_v1->v.ob[1] = var_v0->v.ob[1];
+        var_v1->v.ob[2] = var_v0->v.ob[2];
+        var_v1->v.cn[0] = var_v0->v.cn[0];
+        var_v1->v.cn[1] = var_v0->v.cn[1];
+        var_v1->v.cn[2] = var_v0->v.cn[2];
+        var_v1->v.cn[3] = var_v0->v.cn[3];
+        var_v1++;
+        var_v0++;
+    }
+
+    arg0->unk30[0].x = 1.0f;
+    arg0->unk30[0].y = 1.0f;
+    arg0->unk30[0].z = 1.0f;
+
+    arg0->unk30[1].x = 0.0f;
+    arg0->unk30[1].y = 0.0f;
+    arg0->unk30[1].z = 0.0f;
+
+    arg0->unk30[2].x = 1.0f;
+    arg0->unk30[2].y = 1.0f;
+    arg0->unk30[2].z = 1.0f;
+
+    arg0->unk30[3].x = 0.0f;
+    arg0->unk30[3].y = 0.0f;
+    arg0->unk30[3].z = 0.0f;
+}
 
 // offset: 0x64F0 | func: 26
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_64F0.s")
 
 // offset: 0x6758 | func: 27
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6758.s")
+void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3) {
+    Object* temp_v0;
+    SRT sp34;
+
+    if (arg0->unk4 == NULL) {
+        return;
+    }
+
+    temp_v0 = arg0->unk4;
+    if ((arg2 == 1) && ((s32) arg3 != 0) && (arg1->unk0 & 0x8000)) {
+        arg0->unkA0 = NULL;
+        arg0->unkA0 = mmAlloc(sizeof(LightAction), 0x12, NULL);
+        if (arg0->unkA0 != NULL) {
+            if (arg1->unk0 & 0x02000000) {
+                arg0->unkA0->unk12 = 0x19;
+            } else {
+                arg0->unkA0->unk12 = 0x1D;
+            }
+            arg0->unkA0->unk13 = 0;
+            arg0->unkA0->unke = 0;
+            arg0->unkA0->unk15 = 0;
+            arg0->unkA0->unk16 = 0;
+            arg0->unkA0->unk17 = 0;
+            arg0->unkA0->unk18 = (s16) arg1->unk4;
+            arg0->unkA0->unk19 = (s16) arg1->unk8;
+            arg0->unkA0->unk1a = (s16) arg1->unkC;
+            if (temp_v0->unkD6 == 0) {
+                arg0->unkA0->unk10 = ~1;
+            } else {
+                arg0->unkA0->unk10 = temp_v0->unkD6;
+            }
+            arg0->unkA0->unk1b = 0;
+            arg0->unkA0->unk1c = 1;
+            arg0->unkA0->unk0 = 0;
+            arg0->unkA0->unk2 = 0;
+            arg0->unkA0->unk4 = 0;
+            arg0->unkA0->unk6 = 0;
+            arg0->unkA0->unk8 = 0;
+            arg0->unkA0->unka = 0x51;
+            arg0->unkA0->unkC = -0x15;
+            arg0->unkA0->unk1d = 0xFF;
+            arg0->unkA0->unk1e = 0x32;
+            arg0->unkA0->unk22 = 8;
+            arg0->unkA0->unk1f = 0xC;
+            arg0->unkA0->unk20 = 4;
+            arg0->unkA0->unk21 = 0;
+            gDLL_11_Newlfx->vtbl->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
+            temp_v0->unkD6 = arg0->unkA0->unk10;
+            if (arg1->unk0 & 0x02000000) {
+                D_80092C3C = 1.0f;
+            }
+        }
+    } else {
+        if (arg1->unk0 & 0x80000) {
+            // FAKE
+            if (1);
+            if (arg0->unkA0 != NULL) {
+                dll_14_func_59B4(arg0, arg1, arg3, 0U);
+                arg0->unkA0->unk1b = 0;
+                arg0->unkA0->unk12 = 1;
+                arg0->unkA0->unk13 = 8;
+                gDLL_11_Newlfx->vtbl->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
+                arg0->unkA0->unk13 ^= 8;
+                if (arg1->unk0 & 0x02000000) {
+                    D_80092C3C = 2.0f;
+                }
+            }
+        } else if (arg1->unk0 & 0x40000000) {
+            if (arg0->unkA0 != NULL) {
+                dll_14_func_59B4(arg0, arg1, arg3, 0U);
+                arg0->unkA0->unk1b = 0;
+                arg0->unkA0->unk12 = 1;
+                arg0->unkA0->unk13 = 8;
+                gDLL_11_Newlfx->vtbl->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
+                arg0->unkA0->unk13 ^= 8;
+            }
+        } else if ((arg2 == 0) && (arg3 != 0) && (arg1->unk0 & 0x8000)) {
+            // FAKE
+            if (1);
+            if (arg0->unkA0 != NULL) {
+                arg0->unkA0->unk12 = 2;
+                arg0->unkA0->unke = 0;
+                arg0->unkA0->unk1b = 0;
+                arg0->unkA0->unk10 = (u16) temp_v0->unkD6;
+                gDLL_11_Newlfx->vtbl->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
+                mmFree(arg0->unkA0);
+                arg0->unkA0 = NULL;
+                if (arg1->unk0 & 0x02000000) {
+                    D_80092C3C = 0.0f;
+                    D_800BB198.x = 0.0f;
+                }
+            }
+        }
+    }
+}
 
 // offset: 0x6BE8 | func: 28 | export: 12
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6BE8.s")
