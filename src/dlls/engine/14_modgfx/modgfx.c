@@ -5,10 +5,23 @@
 #include "sys/newshadows.h"
 #include "macros.h"
 
+// size: 0x18
 typedef struct {
-    void* unk0;
+    s32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    s32 unk10;
+    u16 unk14;
+    u8 unk16;
+    u8 pad17;
+} ModgfxStruct_0;
+
+// size: 0x60
+typedef struct {
+    ModgfxStruct_0* unk0;
     Object* unk4;
-    u8 _unk8[0x20 - 0x8];
+    u8 pad8[0x20 - 0x8];
     f32 unk20;
     f32 unk24;
     f32 unk28;
@@ -16,21 +29,17 @@ typedef struct {
     f32 unk38;
     s32 unk3C;
     s32 unk40;
-    s16 unk44;
-    s16 unk46;
-    s16 unk48;
-    s16 unk4A;
-    s16 unk4C;
-    s16 unk4E;
-    s16 unk50;
-    s16 unk52;
+    u16 unk44;
+    u16 unk46[7];
     s32 unk54;
-    u8 _unk58;
+    u8 unk58;
     u8 unk59;
     u8 unk5A;
     u8 unk5B;
-    u8 _unk5C;
+    u8 pad5C;
     u8 unk5D;
+    u8 pad5E;
+    u8 pad5F;
 } ModgfxStruct;
 
 // size: 0x18
@@ -116,45 +125,6 @@ typedef struct {
     u8 unk13F;
 } ModgfxInstance;
 
-// size: 0x18
-typedef struct {
-    s32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    s32 unk10;
-    u16 unk14;
-    u8 unk16;
-    u8 pad17;
-} Bss7C0;
-
-// size: 0x60
-typedef struct {
-    Bss7C0* unk0;
-    Object* unk4;
-    u8 pad8[0x20 - 0x8];
-    f32 unk20;
-    f32 unk24;
-    f32 unk28;
-    f32 unk2C;
-    f32 unk30;
-    f32 unk34;
-    f32 unk38;
-    s32 unk3C;
-    s32 unk40;
-    u16 unk44;
-    u16 unk46[7];
-    s32 unk54;
-    u8 unk58;
-    u8 unk59;
-    u8 unk5A;
-    u8 unk5B;
-    u8 pad5C;
-    u8 unk5D;
-    u8 pad5E;
-    u8 pad5F;
-} BssAD0;
-
 /*0x0*/ static u32 data_0 = 0x00000000;
 /*0x4*/ static u32 data_4 = 0x00000000;
 /*0x8*/ static u32 data_8 = 0x00000000;
@@ -162,11 +132,11 @@ typedef struct {
 /*0x10*/ static f32 data_10 = 0.0;
 
 /*0x0*/ static ModgfxInstance* bss_0[496];
-/*0x7C0*/ static Bss7C0 bss_7C0[32];
-/*0xAC0*/ static Bss7C0 *bss_AC0;
-/*0xAC4*/ static Bss7C0 *bss_AC4;
+/*0x7C0*/ static ModgfxStruct_0 bss_7C0[32];
+/*0xAC0*/ static ModgfxStruct_0 *bss_AC0;
+/*0xAC4*/ static ModgfxStruct_0 *bss_AC4;
 /*0xAC8*/ static s16 bss_AC8;
-/*0xAD0*/ static BssAD0 bss_AD0;
+/*0xAD0*/ static ModgfxStruct bss_AD0;
 
 /*0x0*/ static const char str_0[] = "warning in modgfx dll no spare memory available\n";
 
@@ -208,7 +178,7 @@ void dll_14_func_88(void) {
 }
 
 // offset: 0xF4 | func: 1 | export: 1
-s16 dll_14_func_F4(BssAD0*, s32, s32, s32, s32, s32, s32, s32);
+s16 dll_14_func_F4(ModgfxStruct*, s32, s32, s32, s32, s32, s32, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_F4.s")
 
 // offset: 0xC90 | func: 2 | export: 2
@@ -1447,9 +1417,9 @@ void dll_14_func_6BE8(s32 arg0, u8 arg1, u8 arg2, s32 arg3, s32 arg4) {
     bss_AD0.unk5B = 0;
     bss_AD0.unk58 = arg1;
     bss_AD0.unk44 = arg1;
-    bss_AD0.unk2C = 0.0f;
-    bss_AD0.unk30 = 0.0f;
-    bss_AD0.unk34 = 0.0f;
+    bss_AD0.unk2C.x = 0.0f;
+    bss_AD0.unk2C.y = 0.0f;
+    bss_AD0.unk2C.z = 0.0f;
     bss_AD0.unk20 = 0.0f;
     bss_AD0.unk24 = 0.0f;
     bss_AD0.unk28 = 0.0f;
@@ -1512,13 +1482,13 @@ void dll_14_func_6E24(Object* arg0, s32 arg1, s32 arg3, s32 arg4, s32 arg5, s32 
 
     if (bss_AD0.unk54 & 1) {
         if (bss_AD0.unk4 != NULL) {
-            bss_AD0.unk2C += bss_AD0.unk4->globalPosition.x;
-            bss_AD0.unk30 += bss_AD0.unk4->globalPosition.y;
-            bss_AD0.unk34 += bss_AD0.unk4->globalPosition.z;
+            bss_AD0.unk2C.x += bss_AD0.unk4->globalPosition.x;
+            bss_AD0.unk2C.y += bss_AD0.unk4->globalPosition.y;
+            bss_AD0.unk2C.z += bss_AD0.unk4->globalPosition.z;
         } else {
-            bss_AD0.unk2C += arg0->srt.transl.x;
-            bss_AD0.unk30 += arg0->srt.transl.y;
-            bss_AD0.unk34 += arg0->srt.transl.z;
+            bss_AD0.unk2C.x += arg0->srt.transl.x;
+            bss_AD0.unk2C.y += arg0->srt.transl.y;
+            bss_AD0.unk2C.z += arg0->srt.transl.z;
         }
     }
 
