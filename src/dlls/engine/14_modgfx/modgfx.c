@@ -3,6 +3,7 @@
 #include "sys/segment_13D0.h"
 #include "sys/lighting.h"
 #include "sys/newshadows.h"
+#include "sys/objects.h"
 #include "macros.h"
 
 // size: 0x18
@@ -126,11 +127,11 @@ typedef struct {
     u8 unk13F;
 } ModgfxInstance;
 
-/*0x0*/ static u32 data_0 = 0x00000000;
-/*0x4*/ static u32 data_4 = 0x00000000;
-/*0x8*/ static u32 data_8 = 0x00000000;
-/*0xC*/ static f32 data_C = 0.0;
-/*0x10*/ static f32 data_10 = 0.0;
+/*0x0*/ static u32 data_0 = 0;
+/*0x4*/ static u32 data_4 = 0;
+/*0x8*/ static u8 data_8 = 0;
+/*0xC*/ static f32 data_C = 0.0f;
+/*0x10*/ static f32 data_10 = 0.0f;
 
 /*0x0*/ static ModgfxInstance* bss_0[496];
 /*0x7C0*/ static ModgfxStruct_0 bss_7C0[32];
@@ -156,10 +157,8 @@ static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
 
 // offset: 0x0 | ctor
 void dll_14_ctor(void* dll) {
-    s32 i = 0;
-    while (i < ARRAYCOUNT_S(bss_0)) {
-        bss_0[i++] = 0;
-    }
+    s32 i;
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) { bss_0[i] = 0; }
 }
 
 // offset: 0x40 | dtor
@@ -172,10 +171,7 @@ void dll_14_func_88(void) {
     s32 i;
 
     dll_14_func_4C0C(0, 1);
-    i = 0;
-    while (i < ARRAYCOUNT_S(bss_0)) {
-        bss_0[i++] = 0;
-    }
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) { bss_0[i] = 0; }
 }
 
 // offset: 0xF4 | func: 1 | export: 1
@@ -302,7 +298,7 @@ s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj)
         return 1;
     }
     camera = camGet();
-    for (i = 0; i < ARRAYCOUNT_S(bss_0); i++) {
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
         if (bss_0[i] == NULL) {
             continue;
         }
@@ -824,19 +820,73 @@ static s32 data_28 = 0; // unused?
 static s16 data_2C = 0;
 
 // offset: 0x4854 | func: 7 | export: 7
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4854.s")
+void dll_14_func_4854(s16* arg0) {
+    s32 i;
+
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        if (bss_0[i] != NULL && bss_0[i]->unk10C == *arg0) {
+            bss_0[i]->unk13A = 1;
+        }
+    }
+
+    *arg0 = -1;
+}
 
 // offset: 0x4910 | func: 8 | export: 8
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4910.s")
+void dll_14_func_4910(void) {
+    data_8++;
+}
 
 // offset: 0x4938 | func: 9 | export: 9
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4938.s")
+void dll_14_func_4938(Object* arg0, u8 arg1) {
+    s32 i;
+
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        if (bss_0[i] != NULL && arg0 == bss_0[i]->unk4) {
+            bss_0[i]->unk13B = arg1;
+        }
+    }
+}
 
 // offset: 0x49E4 | func: 10 | export: 10
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_49E4.s")
+void dll_14_func_49E4(Object* arg0) {
+    s32 i;
+
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        if (bss_0[i] != NULL && arg0 == bss_0[i]->unk4) {
+            bss_0[i]->unk13A = 1;
+        }
+    }
+}
 
 // offset: 0x4A88 | func: 11 | export: 11
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_4A88.s")
+void dll_14_func_4A88(s8* arg0) {
+    s32 i;
+    s32 newI;
+    s32 objectCount;
+    s32 j;
+    s32 stop;
+
+    objectCount = objGetNumObjects();
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        newI = i;
+        if (bss_0[newI] != NULL && bss_0[newI]->unk4 != NULL) {
+            j = 0;
+            stop = TRUE;
+            while (j < objectCount && stop != FALSE) {
+                if (objGetObject(j) == bss_0[newI]->unk4) {
+                    stop = FALSE;
+                }
+                j++;
+            }
+
+            j--;
+            if (stop == FALSE && arg0[j] != 0) {
+                bss_0[newI]->unk13E = 1;
+            }
+        }
+    }
+}
 
 // offset: 0x4BA4 | func: 12
 s32 dll_14_func_4BA4(void) {
@@ -844,15 +894,15 @@ s32 dll_14_func_4BA4(void) {
     s32 var_v1;
 
     var_v1 = 0;
-    var_v0 = 0;
-    while (var_v1 < ARRAYCOUNT_S(bss_0) && var_v0 == 0) {
+    var_v0 = FALSE;
+    while (var_v1 < ARRAYCOUNT_S(bss_0) && var_v0 == FALSE) {
         if (bss_0[var_v1] == NULL) {
-            var_v0 = 1;
+            var_v0 = TRUE;
         }
-        var_v1 += 1;
+        var_v1++;
     }
     var_v1--;
-    if (var_v0 == 0) {
+    if (var_v0 == FALSE) {
         return -1;
     }
     return var_v1;
@@ -863,7 +913,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
     s32 i;
     SRT sp5C;
 
-    for (i = 0; i < ARRAYCOUNT_S(bss_0); i++) {
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
         if ((bss_0[i] != NULL) && ((arg0 == bss_0[i]->unk10C) || (arg1 != 0))) {
             if (bss_0[i]->unkA0 != NULL) {
                 bss_0[i]->unkA0->unk12 = 2;

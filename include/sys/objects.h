@@ -17,6 +17,8 @@ void objFreeAll(void);
 s32 objVisibilitySortObjects(s32 *numObjs);
 void objDepthSortObjects(s32 param1, s32 param2);
 
+s32 objGetNumObjects(void);
+Object *objGetObject(s32 idx);
 Object **objGetObjects(s32 *param1, s32 *numObjs);
 
 Object *objSetupObject(ObjSetup *setup, u32 initFlags, s32 mapID, s32 param4, Object *parent);
