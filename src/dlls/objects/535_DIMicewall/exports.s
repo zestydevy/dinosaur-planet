@@ -4,15 +4,15 @@
 _exports:
 
 # ctor/dtor
-.dword dll_535_ctor
-.dword dll_535_dtor
+.dword DIMIceWall_ctor
+.dword DIMIceWall_dtor
 
 # export table
-/*0*/ .dword dll_535_setup
-/*1*/ .dword dll_535_control
-/*2*/ .dword dll_535_update
-/*3*/ .dword dll_535_print
-/*4*/ .dword dll_535_free
-/*5*/ .dword dll_535_get_model_flags
-/*6*/ .dword dll_535_get_data_size
-/*7*/ .dword dll_535_func_278
+/*0*/ .dword DIMIceWall_obj_Setup
+/*1*/ .dword DIMIceWall_obj_Control
+/*2*/ .dword DIMIceWall_obj_Update
+/*3*/ .dword DIMIceWall_obj_Print
+/*4*/ .dword DIMIceWall_obj_Free
+/*5*/ .dword DIMIceWall_obj_GetModelFlags
+/*6*/ .dword DIMIceWall_obj_GetDataSize
+/*7*/ .dword DIMIceWall_TickFlame
