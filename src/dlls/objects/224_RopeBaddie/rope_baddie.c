@@ -24,7 +24,7 @@ typedef struct {
     u8 unk46;                 //Set to 0, but otherwise unused
     f32 ropePosition;         //Measures the Baddie's current position along the rope (a value from ~0.3 to 6.7)
     f32 initialRopePosition;  //Measures the Baddie's initial position along the rope (a value from ~0.3 to 6.7)
-    f32 glowTimer;            //The Baddie's joints glow when this is greater than zero, similar to SharpClaws' frozen effect. Seems to be unused!
+    f32 freezeTimer;          //The Baddie's joints glow when this is greater than zero, similar to SharpClaws' frozen effect. Seems to be unused!
     f32 goalPosition;         //The position the Baddie will try to move towards along the rope
     s16 ropeYaw;              //The angle between the rope's ends (viewed from above)
 } RopeBaddie_DataActual;
@@ -245,20 +245,20 @@ void RopeBaddie_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tr
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
         //Unused? Creates a glowing effect, very similar to when SharpClaws are frozen with Ice Blast!
-        if (objData->glowTimer > 0.0f) {
-            gDLL_32_modelfx->vtbl->func2(self, 0x52A, NULL);
+        if (objData->freezeTimer > 0.0f) {
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_52A, NULL);
         }
 
         if (baddie->unk3B2 & (0x40 | 0x20)) {
             if (baddie->unk3B2 & 0x20) {
-                gDLL_32_modelfx->vtbl->func2(self, 0x330, &baddie->unk3E8);
-                gDLL_32_modelfx->vtbl->func2(self, 0x330, &baddie->unk3E8);
+                gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
+                gDLL_32_modelfx->vtbl->func2(self, PARTICLE_330, &baddie->unk3E8);
             }
-            gDLL_32_modelfx->vtbl->func2(self, 0x32F, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_32F, &baddie->unk3E8);
         }
         if (baddie->unk3B2 & 0x100) {
-            gDLL_32_modelfx->vtbl->func2(self, 0x333, &baddie->unk3E8);
-            gDLL_32_modelfx->vtbl->func2(self, 0x334, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_333, &baddie->unk3E8);
+            gDLL_32_modelfx->vtbl->func2(self, PARTICLE_334, &baddie->unk3E8);
             baddie->unk3B2 &= ~0x100;
         }
     }
