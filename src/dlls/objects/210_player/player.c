@@ -3,6 +3,7 @@
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/85_attentioncam.h"
+#include "dlls/objects/255_projball.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/420_DFropenode.h"
 #include "game/objects/object.h"
@@ -3513,128 +3514,120 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
 }
 
 // offset: 0x90A0 | func: 48
-#ifndef NON_MATCHING
-void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_90A0.s")
-#else
-// https://decomp.me/scratch/noRyf
-void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    f32 pad;
-    f32 temp2;
-    f32 temp3;
-    f32 temp4;
-    Camera* mainCam;
-    ObjSetup* objsetup;
-    Object* temp_a0;
-    Object* temp_v0_2;
-    Object* temp_v1;
-    Object* var_s3;
-    f32 temp_fs0;
-    f32 temp_fs2;
-    Vec3f sp104;
-    f32 temp_fs1;
-    MtxF spC0;
-    f32 temp_fv0;
-    f32 temp_fv0_2;
-    f32 temp_fv1;
-    f32 temp;
-    s32 var_s4;
-    Player_Data* temp_fp;
-    SRT sp90;
-
-    var_s3 = NULL;
-    var_s4 = 1;
-    temp_fp = player->data;
-    mainCam = camGetMain();
-    dll_amSfx->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
-    while (var_s4) {
-        objsetup = objAllocSetup(0x24, OBJ_projball);
-        objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
-        objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
-        objsetup->loadDistance = 0xFF;
-        objsetup->fadeDistance = 0xFF;
+void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
+    f32 ratio;
+    f32 fovAngle;
+    f32 factorX;
+    f32 factorY;
+    Camera* cam;
+    ProjBall_Setup *objsetup;
+    Object *weapon;
+    Object *projectile;
+    Object *target;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    Vec3f velocity;
+    MtxF* viewMtx;
+    MtxF projMtx;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 divisor;
+    s32 count;
+    Player_Data *objData;
+    SRT projSRT;
+    
+    target = NULL;
+    count = 1;
+    objData = player->data;
+    cam = camGetMain();
+    gDLL_6_AMSFX->vtbl->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
+    
+    while (count) {
+        objsetup = (ProjBall_Setup*) objAllocSetup(sizeof(ProjBall_Setup), OBJ_projball);
+        objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+        objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
+        objsetup->base.loadDistance = 0xFF;
+        objsetup->base.fadeDistance = 0xFF;
         if (fsa->target != NULL) {
-            objsetup->x = player->linkedObject->srt.transl.x;
-            objsetup->y = player->linkedObject->srt.transl.y;
-            objsetup->z = player->linkedObject->srt.transl.z;
+            objsetup->base.x = player->linkedObject->srt.transl.x;
+            objsetup->base.y = player->linkedObject->srt.transl.y;
+            objsetup->base.z = player->linkedObject->srt.transl.z;
         } else {
-            objsetup->x = mainCam->srt.transl.x;
-            objsetup->y = mainCam->srt.transl.y;
-            objsetup->z = mainCam->srt.transl.z;
+            objsetup->base.x = cam->srt.transl.x;
+            objsetup->base.y = cam->srt.transl.y;
+            objsetup->base.z = cam->srt.transl.z;
         }
-        temp_a0 = player->linkedObject;
-        ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-        temp_v0_2 = objSetupObject(objsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
-        if (temp_v0_2 != NULL) {
-            temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
-            temp_v1 = fsa->target;
-            if (temp_v1 != NULL) {
-                temp_a0 = player->linkedObject;
-                temp2 = temp_v1->srt.transl.x - temp_a0->srt.transl.x;
-                temp_fs0 = temp_v1->srt.transl.y - temp_a0->srt.transl.y;
-                temp_fv1 = temp_v1->srt.transl.z - temp_a0->srt.transl.z;
-                sp90.transl.x = 0.0f;
-                sp90.transl.y = 0.0f;
-                sp90.transl.z = 0.0f;
-                sp90.scale = 1.0f;
-                // @fake
-                if (var_s3) {}
-                sp90.yaw = player->srt.yaw;
-                var_s3 = temp_v1;
-                sp90.pitch = mathAtan2f(temp_fs0, sqrtf(SQ(temp2) + SQ(temp_fv1)));
-                sp90.roll = 0;
+        
+        weapon = player->linkedObject;
+        objsetup->unk19 = ((DLL_IWeapon*) weapon->dll)->vtbl->func16(weapon);
+        
+        projectile = objSetupObject(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        if (projectile != NULL) {
+            projectile->srt.flags |= OBJFLAG_OWNS_SETUP;
+            if (fsa->target != NULL) {
+                target = fsa->target;
+                weapon = player->linkedObject;
+                dx = target->srt.transl.x - weapon->srt.transl.x;
+                dy = target->srt.transl.y - weapon->srt.transl.y;
+                dz = target->srt.transl.z - weapon->srt.transl.z;
+                projSRT.transl.x = 0.0f;
+                projSRT.transl.y = 0.0f;
+                projSRT.transl.z = 0.0f;
+                projSRT.scale = 1.0f;
+                projSRT.yaw = player->srt.yaw;
+                projSRT.pitch = mathAtan2f(dy, sqrtf(SQ(dx) + SQ(dz)));
+                projSRT.roll = 0;
                 if (player->parent != NULL) {
-                    sp90.yaw += player->parent->srt.yaw;
+                    projSRT.yaw += player->parent->srt.yaw;
                 }
-                mathYprXyzMtx(&spC0, &sp90);
-                mathMtxXFMF(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
-                temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
-                temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
-                temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
-                temp_v0_2->srt.yaw = player->srt.yaw;
-                temp_v0_2->srt.pitch = 0;
+                mathYprXyzMtx(&projMtx, &projSRT);
+                mathMtxXFMF(&projMtx, 0.0f, 0.0f, -5.0f, &projectile->velocity.x, &projectile->velocity.y, &projectile->velocity.z);
+                projectile->globalPosition.x = projectile->srt.transl.x;
+                projectile->globalPosition.y = projectile->srt.transl.y;
+                projectile->globalPosition.z = projectile->srt.transl.z;
+                projectile->srt.yaw = player->srt.yaw;
+                projectile->srt.pitch = 0;
             } else {
-                temp_v0_2->srt.yaw = mainCam->srt.yaw;
-                temp_fs1 = camGetFOV() * 91.022f;
-                temp_fv0 = mathSinfInterp(temp_fs1);
-                temp_fv0 /= mathCosfInterp(temp_fs1);
-                temp_fs1 = (100.0f * temp_fv0);
-                temp3 = -(((temp_fp->aimX - 0xA0) / 160.0f) * 1.333333f);
-                temp_fs1 *= temp3;
-                temp_fs2 = (100.0f * temp_fv0);
-                temp_fs2 *= ((temp_fp->aimY - 0x78) / 120.0f);
-                temp = 100.0f;
-                temp_fv0 = sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp));
-                sp104.x = temp_fs1 / temp_fv0;
-                sp104.y = temp_fs2 / temp_fv0;
-                sp104.z = temp / temp_fv0;
-                mathMtxFastXFMF(camGetViewMtx2(), &sp104, &sp104);
-                temp_v0_2->velocity.x = sp104.x * -5.0f;
-                temp_v0_2->velocity.y = sp104.y * -5.0f;
-                temp_v0_2->velocity.z = sp104.z * -5.0f;
-
-                temp_fv0_2 = mainCam->srt.transl.x;
-                temp_v0_2->globalPosition.x = temp_fv0_2;
-                temp_v0_2->srt.transl.x = temp_fv0_2;
-
-                temp_fv0_2 = mainCam->srt.transl.y;
-                temp_v0_2->globalPosition.y = temp_fv0_2;
-                temp_v0_2->srt.transl.y = temp_fv0_2;
-
-                temp_fv0_2 = mainCam->srt.transl.z;
-                temp_v0_2->globalPosition.z = temp_fv0_2;
-                temp_v0_2->srt.transl.z = temp_fv0_2;
-
-                temp_v0_2->srt.pitch = 0;
+                projectile->srt.yaw = cam->srt.yaw;
+                fovAngle = camGetFOV() * 91.022f;
+                ratio = mathSinfInterp(fovAngle);
+                ratio /= mathCosfInterp(fovAngle);
+                
+                factorX = ((objData->aimX - 160) / 160.0f) * (1.333333f);
+                factorY = (objData->aimY - 120) / 120.0f;
+                
+                x = (100.0f * ratio) * -factorX;
+                y = (100.0f * ratio) * factorY;
+                z = 100.0f;
+                
+                divisor = sqrtf(SQ(x) + SQ(y) + SQ(z));
+                
+                velocity.x = x / divisor;
+                velocity.y = y / divisor;
+                velocity.z = z / divisor;
+                
+                viewMtx = camGetViewMtx2();
+                mathMtxFastXFMF(viewMtx, &velocity, &velocity);
+                
+                projectile->velocity.x = velocity.x * -5.0f;
+                projectile->velocity.y = velocity.y * -5.0f;
+                projectile->velocity.z = velocity.z * -5.0f;
+                
+                projectile->srt.transl.x = projectile->globalPosition.x = cam->srt.transl.x;
+                projectile->srt.transl.y = projectile->globalPosition.y = cam->srt.transl.y;
+                projectile->srt.transl.z = projectile->globalPosition.z = cam->srt.transl.z;
+                
+                projectile->srt.pitch = 0;
             }
-            temp_v0_2->unkDC = 0xBE;
-            temp_v0_2->unkE0 = (s32) var_s3;
+            projectile->unkDC = 190;
+            projectile->unkE0 = (s32) target;
         }
-        var_s4--;
+        
+        count--;
     }
 }
-
-#endif
 
 // offset: 0x955C | func: 49
 void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {

@@ -30,7 +30,7 @@ DLL_INTERFACE(DLL_IWeapon) {
 	/*13*/ void (*func13)(Object *, u8); // second arg might be a different type
 	/*14*/ UnknownDLLFunc func14;
 	/*15*/ UnknownDLLFunc func15;
-	/*16*/ UnknownDLLFunc func16;
+	/*16*/ s32 (*func16)(Object *);
 	/*17*/ UnknownDLLFunc func17;
 	/*18*/ void (*func18)(Object *, f32, f32);
 	/*19*/ s32 (*func19)(Object* self);
