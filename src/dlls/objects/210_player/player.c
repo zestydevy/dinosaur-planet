@@ -90,7 +90,7 @@ static void dll_210_func_1DAB0(Object *player);
 /* static */ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
 /* static */ void dll_210_func_1DB6C(Object* player, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* player, f32 updateRate);
-/* static */ void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2);
+/* static */ void dll_210_func_60A8(Object* player, Object* animObj, AnimObj_Data* animData);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *player);
 /* static */ void dll_210_func_1DE50(Object *player, UNK_TYPE_32 *arg1, s32 arg2);
 /* static */ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2);
@@ -2324,17 +2324,16 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
 #endif
 
 // offset: 0x60A8 | func: 28
-void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2) {
-    Player_Data* sp24;
+void dll_210_func_60A8(Object* player, Object* animObj, AnimObj_Data* animData) {
+    Player_Data* objData = player->data;
 
-    sp24 = player->data;
     player->stateFlags &= ~OBJSTATE_IN_SEQ;
     func_8002674C(player);
     player->velocity.y = 0.0f;
-    dll_210_func_7260(player, sp24);
-    sp24->unk8B7 = 2;
-    sp24->unk834 = 0.0f;
-    gDLL_22_Subtitles->vtbl->func_2248(0U);
+    dll_210_func_7260(player, objData);
+    objData->unk8B7 = 2;
+    objData->unk834 = 0.0f;
+    gDLL_22_Subtitles->vtbl->func_2248(0);
     if (player->modelInstIdx == 1) {
         objSetModel(player, 0);
     }
