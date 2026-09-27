@@ -1,5 +1,5 @@
 .text = 0x0:
-RopeBaddie_func_0 = 0x0;
+RopeBaddie_initFSACallbacks = 0x0;
 RopeBaddie_ctor = 0xE4;
 RopeBaddie_dtor = 0x124;
 RopeBaddie_obj_Setup = 0x130;

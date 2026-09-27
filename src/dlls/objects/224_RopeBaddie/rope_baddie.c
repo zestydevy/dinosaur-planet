@@ -140,7 +140,7 @@ static s32 RopeBaddie_logicState4Dying(Object* self, ObjFSA_Data* fsa, f32 updat
 static s32 RopeBaddie_logicState5Dead(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-static void RopeBaddie_func_0(void) {
+static void RopeBaddie_initFSACallbacks(void) {
     sAnimStateCallbacks[RopeBaddie_ASTATE_0_Walking]     = RopeBaddie_animState0Walking;
     sAnimStateCallbacks[RopeBaddie_ASTATE_1_Running]     = RopeBaddie_animState1Running;
     sAnimStateCallbacks[RopeBaddie_ASTATE_2_Turning]     = RopeBaddie_animState2Turning;
@@ -162,7 +162,7 @@ static void RopeBaddie_func_0(void) {
 
 // offset: 0xE4 | ctor
 void RopeBaddie_ctor(void* dll) {
-    RopeBaddie_func_0();
+    RopeBaddie_initFSACallbacks();
 }
 
 // offset: 0x124 | dtor
