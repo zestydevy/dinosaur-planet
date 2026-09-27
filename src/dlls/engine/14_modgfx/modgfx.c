@@ -57,10 +57,11 @@ typedef struct {
     Object* unk0;
     Object* unk4;
     void* unk8;
-    s16 unkC;
+    s16 unkC; // this looks like an SRT when accessed (unkC - unk18)
     s16 unkE;
     s16 unk10;
-    u8 _unk12[0x18 - 0x12];
+    u16 pad12;
+    f32 unk14;
     Vec3f unk18;
     Vec3f unk24;
     Vec3f unk30[4]; // size be bigger than 4, has to be multiple of 2
@@ -190,10 +191,79 @@ void dll_14_func_21F0(void) {
 }
 
 // offset: 0x2234 | func: 4 | export: 4
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_2234.s")
+void dll_14_func_2234(Object* arg0) {
+    s32 i;
+    SRT sp5C;
+
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        if (bss_0[i] != NULL && arg0 == bss_0[i]->unk4) {
+            if (bss_0[i]->unkA0 != NULL) {
+                bss_0[i]->unkA0->unk12 = 2;
+                bss_0[i]->unkA0->unke = 0;
+                bss_0[i]->unkA0->unk1b = 0;
+                bss_0[i]->unkA0->unk10 = bss_0[i]->unk4->unkD6;
+                gDLL_11_Newlfx->vtbl->DoAction(bss_0[i]->unk4, bss_0[i]->unk4, bss_0[i]->unkA0, 0, 0, &sp5C);
+                mmFree(bss_0[i]->unkA0);
+            }
+            if (bss_0[i]->unk10E != -1) {
+                lfxAction(bss_0[i]->unk4, NULL, bss_0[i]->unk10E, 0, 0, NULL);
+            }
+            if (bss_0[i]->unk0 != NULL) {
+                objFreeObject(bss_0[i]->unk0);
+            }
+            mmFree(bss_0[i]->unk12C);
+            bss_0[i]->unk12C = NULL;
+            if (bss_0[i]->unk13F == 0) {
+                if (bss_0[i]->unk98 != NULL) {
+                    texFreeTexture(bss_0[i]->unk98);
+                }
+            }
+            if (bss_0[i]->unk13F == 0) {
+                bss_0[i]->unk98 = NULL;
+            }
+            if (bss_0[i]->unk8 != NULL) {
+                mmFree(bss_0[i]->unk8);
+            }
+            if (bss_0[i]->unk9C != NULL) {
+                mmFree(bss_0[i]->unk9C);
+            }
+            mmFree(bss_0[i]);
+            bss_0[i] = NULL;
+        }
+    }
+}
 
 // offset: 0x2474 | func: 5 | export: 5
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_2474.s")
+void dll_14_func_2474(Object* arg0) {
+    s32 i;
+    s32 newI;
+
+    for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
+        newI = i;
+        if (bss_0[newI] != NULL && arg0 == bss_0[newI]->unk4) {
+            if (bss_0[newI]->unkA4 & 0x10000) {
+                dll_14_func_4C0C(bss_0[newI]->unk10C, 0);
+            } else {
+                bss_0[newI]->unk18.x = bss_0[newI]->unk4->globalPosition.x;
+                bss_0[newI]->unk18.y = bss_0[newI]->unk4->globalPosition.y;
+                bss_0[newI]->unk18.z = bss_0[newI]->unk4->globalPosition.z;
+                bss_0[newI]->unk14 = bss_0[newI]->unk4->srt.scale;
+                bss_0[newI]->unk10 = bss_0[newI]->unk4->srt.roll;
+                bss_0[newI]->unkE = bss_0[newI]->unk4->srt.pitch;
+                bss_0[newI]->unkC = bss_0[newI]->unk4->srt.yaw;
+                if (bss_0[newI]->unkA4 & 2) {
+                    bss_0[newI]->unk6C.x += bss_0[newI]->unk4->velocity.x;
+                    bss_0[newI]->unk6C.y += bss_0[newI]->unk4->velocity.y;
+                    bss_0[newI]->unk6C.z += bss_0[newI]->unk4->velocity.z;
+                }
+                if (!(bss_0[newI]->unkA4 & 0x200000)) {
+                    bss_0[newI]->unkA4 |= 0x200000;
+                }
+                bss_0[newI]->unk4 = NULL;
+            }
+        }
+    }
+}
 
 // offset: 0x2618 | func: 6 | export: 6
 s32 dll_14_func_2618(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj) {
