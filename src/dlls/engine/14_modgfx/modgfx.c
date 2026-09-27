@@ -1237,7 +1237,74 @@ void dll_14_func_6424(ModgfxInstance* arg0, u32 arg1) {
 }
 
 // offset: 0x64F0 | func: 26
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_64F0.s")
+void dll_14_func_64F0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+    Vtx* var_v0;
+    s32 temp_ft1;
+    s32 temp_ft2;
+    s32 temp_t6;
+    s32 temp_t7;
+    s32 pad;
+    s32 i;
+    u8 var_t0;
+    u8 var_t1;
+    Vtx* var_a2;
+    f32 var_fa0;
+    f32 var_ft4;
+
+    var_t0 = 0;
+    temp_ft1 = arg1->unk4 * data_C;
+    var_fa0 = (arg1->unk4 - temp_ft1) * 32.0f;
+    temp_ft2 = arg1->unk8 * data_C;
+    var_ft4 = (arg1->unk8 - temp_ft2) * 32.0f;
+
+    var_v0 = arg0->unk78[arg0->unk130];
+    var_a2 = arg0->unk78[1 - arg0->unk130];
+    temp_t6 = arg0->unk98->width << 6;
+    temp_t7 = arg0->unk98->height << 6;
+    var_t1 = 0;
+
+    for (i = 0; i < arg0->unkEA; i++) {
+        var_v0->v.tc[0] = var_a2->v.tc[0];
+        var_v0->v.tc[1] = var_a2->v.tc[1];
+
+        var_v0->v.tc[0] += (temp_ft1 << 5) + (s32)var_fa0;
+        if (temp_t6 < var_v0->v.tc[0]) {
+            var_t0++;
+        }
+        if (var_v0->v.tc[0] < -temp_t6) {
+            var_t0++;
+        }
+
+        var_v0->v.tc[1] += (temp_ft2 << 5) + (s32)var_ft4;
+        if (temp_t7 < var_v0->v.tc[1]) {
+            var_t1++;
+        }
+        if (var_v0->v.tc[1] < -temp_t7) {
+            var_t1++;
+        }
+        var_v0 += 1;
+        var_a2 += 1;
+    }
+
+    var_v0 = arg0->unk78[arg0->unk130];
+    for (i = 0; i < arg0->unkEA; i++) {
+        if (var_t0 == arg0->unkEA) {
+            if (temp_t6 < var_v0->v.tc[0]) {
+                var_v0->v.tc[0] -= temp_t6;
+            } else {
+                var_v0->v.tc[0] += temp_t6;
+            }
+        }
+        if (var_t1 == arg0->unkEA) {
+            if (temp_t7 < var_v0->v.tc[1]) {
+                var_v0->v.tc[1] -= temp_t7;
+            } else {
+                var_v0->v.tc[1] += temp_t7;
+            }
+        }
+        var_v0 += 1;
+    }
+}
 
 // offset: 0x6758 | func: 27
 void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3) {
