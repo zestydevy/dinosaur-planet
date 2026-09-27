@@ -9,11 +9,9 @@
 // size: 0x18
 typedef struct {
     s32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    s32 unk10;
-    u16 unk14;
+    f32 unk4[3];
+    s16* unk10;
+    s16 unk14;
     u8 unk16;
     u8 pad17;
 } ModgfxStruct_0;
@@ -30,34 +28,23 @@ typedef struct {
     f32 unk38;
     s32 unk3C;
     s32 unk40;
-    u16 unk44;
-    u16 unk46[7];
+    s16 unk44;
+    s16 unk46[7];
     s32 unk54;
     u8 unk58;
     u8 unk59;
     u8 unk5A;
     u8 unk5B;
-    u8 pad5C;
-    u8 unk5D;
+    s8 unk5C;
+    s8 unk5D;
     u8 pad5E;
     u8 pad5F;
 } ModgfxStruct;
 
-// size: 0x18
-typedef struct {
-    s32 unk0;
-    f32 unk4;
-    f32 unk8;
-    f32 unkC;
-    s16 *unk10;
-    s16 unk14;
-    u8 unk16;
-} ModgfxInstance_9C;
-
 typedef struct {
     Object* unk0;
     Object* unk4;
-    void* unk8;
+    s16* unk8;
     s16 unkC; // this looks like an SRT when accessed (unkC - unk18)
     s16 unkE;
     s16 unk10;
@@ -70,15 +57,15 @@ typedef struct {
     f32 unk64;
     f32 unk68;
     Vec3f unk6C;
-    Vtx* unk78[2];
-    Vtx* unk80;
-    DLTri* unk84[2];
-    u8 _unk8C[0x98 - 0x8C];
+    Vtx* unk78[3];
+    DLTri* unk84[3];
+    DLTri* unk90;
+    DLTri* unk94;
     Texture* unk98;
-    ModgfxInstance_9C* unk9C;
+    ModgfxStruct_0* unk9C;
     LightAction* unkA0;
     s32 unkA4;
-    u8 _unkA8[0xAC - 0xA8];
+    s32 unkA8;
     f32 unkAC[4];// size be bigger than 4, has to be multiple of 2
     f32 unkBC;
     f32 unkC0;
@@ -87,7 +74,9 @@ typedef struct {
     f32 unkCC;
     f32 unkD0;
     f32 unkD4;
-    u8 _unkD8[0xEA - 0xD8];
+    u8 _unkD8[0xE6 - 0xD8];
+    s16 unkE6;
+    u8 padE8;
     s16 unkEA;
     s16 unkEC;
     s16 unkEE[7];
@@ -102,14 +91,17 @@ typedef struct {
     s16 unk10C;
     s16 unk10E;
     s16 unk110;
-    u8 _unk112[0x120 - 0x112];
+    u16 pad112;
+    s32 unk114;
+    s32 unk118;
+    s32 unk11C;
     s16 unk120;
     s16 unk122;
     s16 unk124;
     u8 unk126;
     u8 _unk127[0x12C - 0x127];
-    void* unk12C;
-    u8 unk130;
+    DLTri* unk12C;
+    u8 unk130; // 0 or 1, indexes unk78
     u8 unk131;
     u8 unk132;
     u8 unk133;
@@ -118,7 +110,7 @@ typedef struct {
     u8 unk136;
     u8 unk137;
     u8 unk138;
-    s8 unk139;
+    s8 unk139; // keeps track of count for unk9C
     u8 unk13A;
     u8 unk13B;
     u8 unk13C;
@@ -128,7 +120,7 @@ typedef struct {
 } ModgfxInstance;
 
 /*0x0*/ static u32 data_0 = 0;
-/*0x4*/ static u32 data_4 = 0;
+/*0x4*/ static s16 data_4 = 0;
 /*0x8*/ static u8 data_8 = 0;
 /*0xC*/ static f32 data_C = 0.0f;
 /*0x10*/ static f32 data_10 = 0.0f;
@@ -144,16 +136,17 @@ typedef struct {
 
 static void dll_14_func_4C0C(s16 arg0, s32 arg1);
 static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
+/* static */ s32 dll_14_func_4BA4(void);
 /* static */ void dll_14_func_4E58(ModgfxInstance* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
-/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6100(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6068(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6758(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, s32 arg3);
-/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6100(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6068(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6758(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, s32 arg3);
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3);
 
 // offset: 0x0 | ctor
 void dll_14_ctor(void* dll) {
@@ -175,8 +168,245 @@ void dll_14_func_88(void) {
 }
 
 // offset: 0xF4 | func: 1 | export: 1
-s16 dll_14_func_F4(ModgfxStruct*, s32, s32, s32, s32, s32, s32, s32);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_F4.s")
+s16 dll_14_func_F4(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7);
+// #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_F4.s")
+// need dll_14_func_4BA4 static
+
+
+s16 dll_14_func_F4(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7) {
+    s32 sp54;
+    s32 sp50;
+    DLTri* var_v1;
+    DLTri* var_v1_2;
+    s32 temp_v0;
+    s32 var_a0;
+    s32 var_a1;
+    s32 var_a2;
+    s32 var_a3;
+    s32 var_t0;
+    s32 var_t1;
+    s16* var_t1_3;
+    s32 sp28;
+    Vtx* var_v0_3;
+
+    sp28 = 0;
+    temp_v0 = dll_14_func_4BA4();
+    if (temp_v0 == -1) {
+        return 0;
+    }
+    sp54 = 0;
+    if (!(arg0->unk54 & 0x800)) {
+        sp54 += arg4 * 3 * sizeof(DLTri);
+        sp54 += arg2 * 3 * sizeof(DLTri);
+    }
+    bss_0[temp_v0] = NULL;
+    sp54 += sizeof(DLTri) * 16;
+    bss_0[temp_v0] = mmAlloc(sizeof(ModgfxInstance), 0x15, NULL);
+    var_v1 = mmAlloc(sp54, 0x15, NULL);
+    if (var_v1 == NULL || bss_0[temp_v0] == NULL) {
+        dll_14_func_4C0C(0, 0);
+        return -1;
+    }
+    bss_0[temp_v0]->unk12C = var_v1;
+    if (!(arg0->unk54 & 0x800)) {
+        bss_0[temp_v0]->unk84[0] = var_v1;
+        var_v1 += arg4;
+        bss_0[temp_v0]->unk84[1] = var_v1;
+        var_v1 += arg4;
+        bss_0[temp_v0]->unk84[2] = var_v1;
+        var_v1 += arg4;
+        bss_0[temp_v0]->unk78[0] = (Vtx*) var_v1;
+        var_v1 += arg2;
+        bss_0[temp_v0]->unk78[1] = (Vtx*) var_v1;
+        var_v1 += arg2;
+        bss_0[temp_v0]->unk78[2] = (Vtx*) var_v1;
+        var_v1 += arg2;
+    }
+    bss_0[temp_v0]->unk90 = var_v1;
+    var_v1 += 8;
+    bss_0[temp_v0]->unk94 = var_v1;
+    if (arg0->unk40 != 0) {
+        var_a3 = arg4 / arg0->unk40;
+    } else {
+        var_a3 = arg4;
+    }
+    if (!(arg0->unk54 & 0x800)) {
+        for (var_t1 = 0; var_t1 < 3; var_t1++) {
+            var_t0 = 0;
+            var_a0 = 0;
+            var_v1_2 = bss_0[temp_v0]->unk84[var_t1];
+            for (var_a1 = 0; var_a1 < arg4; var_a1++, var_t0 += 3, var_v1_2++) {
+                if ((arg0->unk54 & 0x8000000) && var_a1 == var_a3) {
+                    var_a0 = arg0->unk3C;
+                }
+                var_v1_2->v0 = arg5[var_t0 + 0] - var_a0;
+                var_v1_2->v1 = arg5[var_t0 + 1] - var_a0;
+                var_v1_2->v2 = arg5[var_t0 + 2] - var_a0;
+            }
+        }
+    }
+    if (!(arg0->unk54 & 0x800)) {
+        for (var_t1 = 0; var_t1 < 3; var_t1++) {
+            var_v0_3 = bss_0[temp_v0]->unk78[var_t1];
+            var_a2 = 0;
+            for (var_a1 = 0; var_a1 < arg2; var_a1++, var_a2 += 5) {
+                var_v0_3->v.ob[0] = arg3[var_a2 + 0];
+                var_v0_3->v.ob[1] = arg3[var_a2 + 1];
+                var_v0_3->v.ob[2] = arg3[var_a2 + 2];
+                var_v0_3->v.tc[0] = arg3[var_a2 + 3] << 5;
+                var_v0_3->v.tc[1] = arg3[var_a2 + 4] << 5;
+                var_v0_3->v.cn[0] = 0xFF;
+                var_v0_3->v.cn[1] = 0xFF;
+                var_v0_3->v.cn[2] = 0xFF;
+                var_v0_3->v.cn[3] = 0xFF;
+                var_v0_3++;
+            }
+        }
+    }
+    bss_0[temp_v0]->unk139 = arg0->unk5D;
+    bss_0[temp_v0]->unk114 = 0;
+    bss_0[temp_v0]->unk118 = 0;
+    bss_0[temp_v0]->unk11C = 0;
+    bss_0[temp_v0]->unkA0 = NULL;
+    bss_0[temp_v0]->unk13A = 0;
+    bss_0[temp_v0]->unk13D = 0;
+    bss_0[temp_v0]->unk110 = 0;
+    bss_0[temp_v0]->unk10E = -1;
+    bss_0[temp_v0]->unk13C = 0;
+    for (var_t1 = 0; var_t1 < 7; var_t1++) {
+         bss_0[temp_v0]->unkEE[var_t1] = arg0->unk46[var_t1];
+    }
+    bss_0[temp_v0]->unk9C = NULL;
+    bss_0[temp_v0]->unk9C = mmAlloc(bss_0[temp_v0]->unk139 * sizeof(ModgfxStruct_0), 0x15, NULL);
+    if (bss_0[temp_v0]->unk9C == NULL) {
+        dll_14_func_4C0C(0, 0);
+        return -1;
+    }
+    bss_0[temp_v0]->unk8 = NULL;
+    for (var_t1 = 0; var_t1 < bss_0[temp_v0]->unk139; var_t1++) {
+        if (!(arg0->unk0[var_t1].unk0 & 0xF7FFF180)) { // ~0x8000E7F
+            if (arg0->unk0[var_t1].unk14 != 0) {
+                sp28 += arg0->unk0[var_t1].unk14;
+            }
+        }
+    }
+    if (sp28 != 0) {
+        sp50 = 0;
+        bss_0[temp_v0]->unk8 = mmAlloc(sp28 * sizeof(s16), 0x15, NULL);
+    }
+    var_t1_3 = bss_0[temp_v0]->unk8;
+    for (var_t1 = 0; var_t1 < bss_0[temp_v0]->unk139; var_t1++) {
+        bss_0[temp_v0]->unk9C[var_t1].unk16 = arg0->unk0[var_t1].unk16;
+        bss_0[temp_v0]->unk9C[var_t1].unk14 = arg0->unk0[var_t1].unk14;
+        bss_0[temp_v0]->unk9C[var_t1].unk10 = 0;
+        bss_0[temp_v0]->unk9C[var_t1].unk0 = arg0->unk0[var_t1].unk0;
+        if (!(bss_0[temp_v0]->unk9C[var_t1].unk0 & 0xF7FFF180) && (bss_0[temp_v0]->unk9C[var_t1].unk14 != 0)) {
+            bss_0[temp_v0]->unk9C[var_t1].unk10 = 0;
+            bss_0[temp_v0]->unk9C[var_t1].unk10 = var_t1_3;
+            var_t1_3 += bss_0[temp_v0]->unk9C[var_t1].unk14;
+            if (bss_0[temp_v0]->unk9C[var_t1].unk10 == 0) {
+                dll_14_func_4C0C(0, 0);
+                return -1;
+            }
+            for (var_a1 = 0; var_a1 < bss_0[temp_v0]->unk9C[var_t1].unk14; var_a1++) {
+                bss_0[temp_v0]->unk9C[var_t1].unk10[var_a1] = arg0->unk0[var_t1].unk10[var_a1];
+            }
+        }
+        for (var_a1 = 0; var_a1 < 3; var_a1++) {
+            bss_0[temp_v0]->unk9C[var_t1].unk4[var_a1] = arg0->unk0[var_t1].unk4[var_a1];
+        }
+    }
+    bss_0[temp_v0]->unkFC = -1;
+    bss_0[temp_v0]->unkFE = bss_0[temp_v0]->unkEE[bss_0[temp_v0]->unkFC];
+    bss_0[temp_v0]->unkA4 = arg0->unk54;
+    bss_0[temp_v0]->unk60 = arg0->unk2C.x;
+    bss_0[temp_v0]->unk64 = arg0->unk2C.y;
+    bss_0[temp_v0]->unk68 = arg0->unk2C.z;
+    bss_0[temp_v0]->unkD4 = arg0->unk38;
+    if (bss_0[temp_v0]->unkA4 & 1) {
+        bss_0[temp_v0]->unk18.x = arg0->unk2C.x;
+        bss_0[temp_v0]->unk18.y = arg0->unk2C.y;
+        bss_0[temp_v0]->unk18.z = arg0->unk2C.z;
+    }
+    bss_0[temp_v0]->unk24.x = 0.0f;
+    bss_0[temp_v0]->unk24.y = 0.0f;
+    bss_0[temp_v0]->unk24.z = 0.0f;
+    bss_0[temp_v0]->unk30[0].x = 1.0f;
+    bss_0[temp_v0]->unk30[0].y = 1.0f;
+    bss_0[temp_v0]->unk30[0].z = 1.0f;
+    bss_0[temp_v0]->unk30[1].y = 0.0f;
+    bss_0[temp_v0]->unk30[1].z = 0.0f;
+    bss_0[temp_v0]->unk30[1].x = 0.0f;
+    bss_0[temp_v0]->unk30[2].z = 1.0f;
+    bss_0[temp_v0]->unk30[2].x = 1.0f;
+    bss_0[temp_v0]->unk30[2].y = 1.0f;
+    bss_0[temp_v0]->unk30[3].z = 0.0f;
+    bss_0[temp_v0]->unk30[3].x = 0.0f;
+    bss_0[temp_v0]->unk30[3].y = 0.0f;
+    bss_0[temp_v0]->unk106 = 0;
+    bss_0[temp_v0]->unk108 = 0;
+    bss_0[temp_v0]->unk10A = 0;
+    bss_0[temp_v0]->unk120 = 0;
+    bss_0[temp_v0]->unk122 = 0;
+    bss_0[temp_v0]->unk124 = 0;
+    bss_0[temp_v0]->unkAC[0] = 0.0f;
+    bss_0[temp_v0]->unkAC[1] = 0.0f;
+    bss_0[temp_v0]->unkAC[2] = 0.0f;
+    bss_0[temp_v0]->unkAC[3] = 0.0f;
+    bss_0[temp_v0]->unkBC = 0.0f;
+    bss_0[temp_v0]->unkC0 = 0.0f;
+    bss_0[temp_v0]->unkC4 = 0.0f;
+    bss_0[temp_v0]->unkC8 = 0.0f;
+    bss_0[temp_v0]->unkCC = 0.0f;
+    bss_0[temp_v0]->unkD0 = 0.0f;
+    bss_0[temp_v0]->unk6C.x = arg0->unk20;
+    bss_0[temp_v0]->unk6C.y = arg0->unk24;
+    bss_0[temp_v0]->unk6C.z = arg0->unk28;
+    data_4++;
+    if (data_4 > 20000) {
+        data_4 = 0;
+    }
+    bss_0[temp_v0]->unk10C = data_4;
+    bss_0[temp_v0]->unk126 = data_8;
+    bss_0[temp_v0]->unkEA = arg2;
+    bss_0[temp_v0]->unkEC = arg4;
+    bss_0[temp_v0]->unk4 = arg0->unk4;
+    bss_0[temp_v0]->unk0 = NULL;
+    bss_0[temp_v0]->unk135 = arg0->unk5C;
+    bss_0[temp_v0]->unk136 = arg0->unk40;
+    bss_0[temp_v0]->unk137 = arg0->unk3C;
+    bss_0[temp_v0]->unk138 = arg0->unk59;
+    bss_0[temp_v0]->unkE6 = 0;
+    bss_0[temp_v0]->unk130 = 0;
+    bss_0[temp_v0]->unk13B = 0;
+    bss_0[temp_v0]->unk13E = 0;
+    bss_0[temp_v0]->unk98 = NULL;
+    bss_0[temp_v0]->unk13F = 0;
+    if (arg7 != NULL) {
+        bss_0[temp_v0]->unk98 = arg7;
+        bss_0[temp_v0]->unk13F = 1;
+    } else if (arg6 != 0) {
+        bss_0[temp_v0]->unk98 = texLoadTexture(arg6);
+        bss_0[temp_v0]->unk13F = 0;
+    }
+    if (arg0->unk54 & 0x40000) {
+        dll_14_func_4EDC(bss_0[temp_v0], 1U);
+    }
+    bss_0[temp_v0]->unk132 = arg0->unk5B;
+    if (bss_0[temp_v0]->unk132 != 0) {
+        bss_0[temp_v0]->unk133 = (0x3C / bss_0[temp_v0]->unk132);
+    } else {
+        bss_0[temp_v0]->unk133 = 0;
+    }
+    if (bss_0[temp_v0]->unk133 != 0) {
+        bss_0[temp_v0]->unk134 = (0xFF / bss_0[temp_v0]->unk133);
+    } else {
+        bss_0[temp_v0]->unk134 = 0;
+    }
+    bss_0[temp_v0]->unk131 = 0;
+    bss_0[temp_v0]->unkA8 = arg0->unk44;
+    return bss_0[temp_v0]->unk10C;
+}
 
 // offset: 0xC90 | func: 2 | export: 2
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_C90.s")
@@ -889,23 +1119,23 @@ void dll_14_func_4A88(s8* arg0) {
 }
 
 // offset: 0x4BA4 | func: 12
-s32 dll_14_func_4BA4(void) {
-    s32 var_v0;
-    s32 var_v1;
+/* static */ s32 dll_14_func_4BA4(void) {
+    s32 isFree;
+    s32 freeIdx;
 
-    var_v1 = 0;
-    var_v0 = FALSE;
-    while (var_v1 < ARRAYCOUNT_S(bss_0) && var_v0 == FALSE) {
-        if (bss_0[var_v1] == NULL) {
-            var_v0 = TRUE;
+    freeIdx = 0;
+    isFree = FALSE;
+    while (freeIdx < ARRAYCOUNT_S(bss_0) && isFree == FALSE) {
+        if (bss_0[freeIdx] == NULL) {
+            isFree = TRUE;
         }
-        var_v1++;
+        freeIdx++;
     }
-    var_v1--;
-    if (var_v0 == FALSE) {
+    freeIdx--;
+    if (isFree == FALSE) {
         return -1;
     }
-    return var_v1;
+    return freeIdx;
 }
 
 // offset: 0x4C0C | func: 13
@@ -929,7 +1159,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
                 objFreeObject(bss_0[i]->unk0);
             }
             mmFree(bss_0[i]->unk12C);
-            bss_0[i]->unk12C = 0;
+            bss_0[i]->unk12C = NULL;
             if (bss_0[i]->unk13F == 0) {
                 if (bss_0[i]->unk98 != NULL) {
                     texFreeTexture(bss_0[i]->unk98);
@@ -957,7 +1187,7 @@ static void dll_14_func_4C0C(s16 arg0, s32 arg1) {
     s32 i;
 
     var_v0 = arg0->unk78[arg0->unk130];
-    var_v1 = arg0->unk80;
+    var_v1 = arg0->unk78[2];
     for (i = 0; i < arg0->unkEA; i++) {
         var_v0->v.ob[0] = var_v1->v.ob[0];
         var_v0->v.ob[1] = var_v1->v.ob[1];
@@ -1006,7 +1236,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x4FF4 | func: 16
-/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     Vtx* temp_v1;
     f32 temp_fa0;
@@ -1015,16 +1245,16 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
     s32 temp = arg3 * 2;
 
     if (arg2 == 1) {
-        temp_fv0 = arg1->unk4;
-        temp_fv1 = arg1->unk8;
-        temp_fa0 = arg1->unkC;
+        temp_fv0 = arg1->unk4[0];
+        temp_fv1 = arg1->unk4[1];
+        temp_fa0 = arg1->unk4[2];
         if (arg0->unkFE != 0) {
             arg0->unk30[temp + 1].x = (temp_fv0 - arg0->unk30[temp].x) / arg0->unkFE;
             arg0->unk30[temp + 1].y = (temp_fv1 - arg0->unk30[temp].y) / arg0->unkFE;
             arg0->unk30[temp + 1].z = (temp_fa0 - arg0->unk30[temp].z) / arg0->unkFE;
         } else {
             temp_v0 = arg0->unk78[arg0->unk130];
-            temp_v1 = arg0->unk80;
+            temp_v1 = arg0->unk78[2];
             for (arg2 = 0; arg2 < arg1->unk14; arg2++) {
                 temp_v1[arg1->unk10[arg2]].v.ob[0] *= temp_fv0;
                 temp_v1[arg1->unk10[arg2]].v.ob[1] *= temp_fv1;
@@ -1040,7 +1270,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
     arg0->unk30[temp].x += arg0->unk30[temp + 1].x * data_C;
     arg0->unk30[temp].y += arg0->unk30[temp + 1].y * data_C;
     arg0->unk30[temp].z += arg0->unk30[temp + 1].z * data_C;
-    temp_v1 = arg0->unk80;
+    temp_v1 = arg0->unk78[2];
     temp_v0 = arg0->unk78[arg0->unk130];
     for (arg2 = 0; arg2 < arg1->unk14; arg2++) {
         if (arg0->unk30[temp].x != 1.0f) {
@@ -1056,7 +1286,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x538C | func: 17
-/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     Vtx* temp_v1;
     f32 temp_fv0;
@@ -1064,9 +1294,9 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
     s32 temp = arg3 * 2;
 
     temp_v0 = arg0->unk78[arg0->unk130];
-    temp_v1 = arg0->unk80;
+    temp_v1 = arg0->unk78[2];
     if (arg2 == 1) {
-        temp_fv0 = arg1->unk4;
+        temp_fv0 = arg1->unk4[0];
         if (arg0->unkFE != 0) {
             arg0->unkAC[temp] = (temp_fv0 - temp_v1[arg1->unk10[0]].v.cn[3]) / arg0->unkFE;
             arg0->unkAC[temp + 1] = temp_v1[arg1->unk10[0]].v.cn[3];
@@ -1093,13 +1323,13 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x56A0 | func: 18
-/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     if (arg2 == 1) {
         if (arg0->unkFE != 0) {
-            arg0->unkBC = (arg1->unk4 - arg0->unk4->opacity) /  arg0->unkFE;
+            arg0->unkBC = (arg1->unk4[0] - arg0->unk4->opacity) /  arg0->unkFE;
             arg0->unkC0 = arg0->unk4->opacity;
         } else {
-            arg0->unkBC = arg1->unk4 - arg0->unk4->opacity;
+            arg0->unkBC = arg1->unk4[0] - arg0->unk4->opacity;
             arg0->unkC0 = 0.0f;
         }
     }
@@ -1115,15 +1345,15 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x584C | func: 19
-/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     s16 temp_ft1;
     s16 temp_ft3;
     s16 temp_ft5;
 
     if (arg2 == 1) {
-        temp_ft1 = arg1->unk4;
-        temp_ft3 = arg1->unk8;
-        temp_ft5 = arg1->unkC;
+        temp_ft1 = arg1->unk4[0];
+        temp_ft3 = arg1->unk4[1];
+        temp_ft5 = arg1->unk4[2];
         if (arg0->unkFE != 0) {
             arg0->unk100 = (temp_ft1 - arg0->unk106) / arg0->unkFE;
             arg0->unk102 = (temp_ft3 - arg0->unk108) / arg0->unkFE;
@@ -1144,7 +1374,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x59B4 | func: 20
-static void dll_14_func_59B4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+static void dll_14_func_59B4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     f32 var_fa1;
     Vec3f sp40;
     SRT sp28;
@@ -1165,9 +1395,9 @@ static void dll_14_func_59B4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 
         var_fa1 = 1.0f - ((f32) arg0->unkFE / (f32) arg0->unkEE[arg0->unkFC]);
     }
 
-    arg0->unkA0->unk4 = (((arg1->unk4 - arg0->unk120) * var_fa1) + arg0->unk120);
-    arg0->unkA0->unk6 = (((arg1->unk8 - arg0->unk122) * var_fa1) + arg0->unk122);
-    arg0->unkA0->unk8 = (((arg1->unkC - arg0->unk124) * var_fa1) + arg0->unk124);
+    arg0->unkA0->unk4 = (((arg1->unk4[0] - arg0->unk120) * var_fa1) + arg0->unk120);
+    arg0->unkA0->unk6 = (((arg1->unk4[1] - arg0->unk122) * var_fa1) + arg0->unk122);
+    arg0->unkA0->unk8 = (((arg1->unk4[2] - arg0->unk124) * var_fa1) + arg0->unk124);
     if (D_80092C3C > 0.0f && D_80092C3C <= 1.0f) {
         if (arg0->unkA4 & 4) {
             sp40.x = arg0->unkA0->unk4;
@@ -1216,7 +1446,7 @@ static void dll_14_func_59B4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 
 }
 
 // offset: 0x5E50 | func: 21
-void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     SRT sp28;
     f32 temp_fv0;
     s32 temp_v0;
@@ -1234,13 +1464,13 @@ void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u
                 sp28.roll = arg0->unk4->srt.yaw;
                 mathRotateRPY(&sp28, &arg1->unk4);
             }
-            arg0->unk24.x = arg1->unk4;
-            arg0->unk24.y = arg1->unk8;
-            arg0->unk24.z = arg1->unkC;
+            arg0->unk24.x = arg1->unk4[0];
+            arg0->unk24.y = arg1->unk4[1];
+            arg0->unk24.z = arg1->unk4[2];
         } else {
-            arg0->unk24.x = arg1->unk4 / arg0->unkFE;
-            arg0->unk24.y = arg1->unk8 / arg0->unkFE;
-            arg0->unk24.z = arg1->unkC / arg0->unkFE;
+            arg0->unk24.x = arg1->unk4[0] / arg0->unkFE;
+            arg0->unk24.y = arg1->unk4[1] / arg0->unkFE;
+            arg0->unk24.z = arg1->unk4[2] / arg0->unkFE;
         }
         arg0->unk60 += arg0->unk24.x;
         arg0->unk64 += arg0->unk24.y;
@@ -1253,21 +1483,21 @@ void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u
 }
 
 // offset: 0x5FFC | func: 22
-void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
-    arg0->unk24.x += arg1->unk4 * data_C;
-    arg0->unk24.y += arg1->unk8 * data_C;
-    arg0->unk24.z += arg1->unkC * data_C;
+void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
+    arg0->unk24.x += arg1->unk4[0] * data_C;
+    arg0->unk24.y += arg1->unk4[1] * data_C;
+    arg0->unk24.z += arg1->unk4[2] * data_C;
 }
 
 // offset: 0x6068 | func: 23
-void dll_14_func_6068(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
-    arg0->unk106 += (s16) (arg1->unk4 * data_C);
-    arg0->unk108 += (s16) (arg1->unk8 * data_C);
-    arg0->unk10A += (s16) (arg1->unkC * data_C);
+void dll_14_func_6068(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
+    arg0->unk106 += (s16) (arg1->unk4[0] * data_C);
+    arg0->unk108 += (s16) (arg1->unk4[1] * data_C);
+    arg0->unk10A += (s16) (arg1->unk4[2] * data_C);
 }
 
 // offset: 0x6100 | func: 24
-void dll_14_func_6100(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_6100(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     f32 temp_fa0;
     f32 temp_fa1;
@@ -1277,9 +1507,9 @@ void dll_14_func_6100(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u
 
     temp_v0 = arg0->unk78[arg0->unk130];
     if (arg2 == 1) {
-        temp_fv0 = arg1->unk4;
-        temp_fv1 = arg1->unk8;
-        temp_fa0 = arg1->unkC;
+        temp_fv0 = arg1->unk4[0];
+        temp_fv1 = arg1->unk4[1];
+        temp_fa0 = arg1->unk4[2];
         if (arg0->unkFE != 0) {
             arg0->unkBC = temp_v0[arg1->unk10[0]].v.cn[0];
             arg0->unkC0 = temp_v0[arg1->unk10[0]].v.cn[1];
@@ -1333,7 +1563,7 @@ void dll_14_func_6424(ModgfxInstance* arg0, u32 arg1) {
     Vtx* var_v0;
 
     var_v0 = arg0->unk78[1-arg0->unk130];
-    var_v1 = arg0->unk80;
+    var_v1 = arg0->unk78[2];
     for (i = 0; i < arg0->unkEA; i++) {
         var_v1->v.ob[0] = var_v0->v.ob[0];
         var_v1->v.ob[1] = var_v0->v.ob[1];
@@ -1364,7 +1594,7 @@ void dll_14_func_6424(ModgfxInstance* arg0, u32 arg1) {
 }
 
 // offset: 0x64F0 | func: 26
-void dll_14_func_64F0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_64F0(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, u8 arg3) {
     Vtx* var_v0;
     s32 temp_ft1;
     s32 temp_ft2;
@@ -1379,10 +1609,10 @@ void dll_14_func_64F0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u
     f32 var_ft4;
 
     var_t0 = 0;
-    temp_ft1 = arg1->unk4 * data_C;
-    var_fa0 = (arg1->unk4 - temp_ft1) * 32.0f;
-    temp_ft2 = arg1->unk8 * data_C;
-    var_ft4 = (arg1->unk8 - temp_ft2) * 32.0f;
+    temp_ft1 = arg1->unk4[0] * data_C;
+    var_fa0 = (arg1->unk4[0] - temp_ft1) * 32.0f;
+    temp_ft2 = arg1->unk4[1] * data_C;
+    var_ft4 = (arg1->unk4[1] - temp_ft2) * 32.0f;
 
     var_v0 = arg0->unk78[arg0->unk130];
     var_a2 = arg0->unk78[1 - arg0->unk130];
@@ -1434,7 +1664,7 @@ void dll_14_func_64F0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u
 }
 
 // offset: 0x6758 | func: 27
-void dll_14_func_6758(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, s32 arg3) {
+void dll_14_func_6758(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg2, s32 arg3) {
     Object* temp_v0;
     SRT sp34;
 
@@ -1457,9 +1687,9 @@ void dll_14_func_6758(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, s
             arg0->unkA0->unk15 = 0;
             arg0->unkA0->unk16 = 0;
             arg0->unkA0->unk17 = 0;
-            arg0->unkA0->unk18 = (s16) arg1->unk4;
-            arg0->unkA0->unk19 = (s16) arg1->unk8;
-            arg0->unkA0->unk1a = (s16) arg1->unkC;
+            arg0->unkA0->unk18 = (s16) arg1->unk4[0];
+            arg0->unkA0->unk19 = (s16) arg1->unk4[1];
+            arg0->unkA0->unk1a = (s16) arg1->unk4[2];
             if (temp_v0->unkD6 == 0) {
                 arg0->unkA0->unk10 = ~1;
             } else {
@@ -1562,9 +1792,9 @@ void dll_14_func_6CD8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s32 arg5
     bss_AC4->unk14 = arg4;
     bss_AC4->unk10 = arg5;
     bss_AC4->unk0 = arg0;
-    bss_AC4->unk4 = arg1;
-    bss_AC4->unk8 = arg2;
-    bss_AC4->unkC = arg3;
+    bss_AC4->unk4[0] = arg1;
+    bss_AC4->unk4[1] = arg2;
+    bss_AC4->unk4[2] = arg3;
     bss_AC4++;
 }
 
