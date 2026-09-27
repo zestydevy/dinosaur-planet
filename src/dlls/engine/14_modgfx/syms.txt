@@ -59,4 +59,3 @@ bss_AC0 = 0xAC0; // absolute:0x7CD8
 bss_AC4 = 0xAC4; // absolute:0x7CDC
 bss_AC8 = 0xAC8; // absolute:0x7CE0
 bss_AD0 = 0xAD0; // absolute:0x7CE8
-bss_B16 = 0xB16; // absolute:0x7D2E

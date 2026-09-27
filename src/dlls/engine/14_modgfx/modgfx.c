@@ -42,7 +42,7 @@ typedef struct {
     s16 *unk10;
     s16 unk14;
     u8 unk16;
-} BSS0_9C;
+} ModgfxInstance_9C;
 
 typedef struct {
     Object* unk0;
@@ -64,7 +64,7 @@ typedef struct {
     DLTri* unk84[2];
     u8 _unk8C[0x98 - 0x8C];
     Texture* unk98;
-    BSS0_9C* unk9C;
+    ModgfxInstance_9C* unk9C;
     LightAction* unkA0;
     s32 unkA4;
     u8 _unkA8[0xAC - 0xA8];
@@ -116,6 +116,45 @@ typedef struct {
     u8 unk13F;
 } ModgfxInstance;
 
+// size: 0x18
+typedef struct {
+    s32 unk0;
+    f32 unk4;
+    f32 unk8;
+    f32 unkC;
+    s32 unk10;
+    u16 unk14;
+    u8 unk16;
+    u8 pad17;
+} Bss7C0;
+
+// size: 0x60
+typedef struct {
+    Bss7C0* unk0;
+    Object* unk4;
+    u8 pad8[0x20 - 0x8];
+    f32 unk20;
+    f32 unk24;
+    f32 unk28;
+    f32 unk2C;
+    f32 unk30;
+    f32 unk34;
+    f32 unk38;
+    s32 unk3C;
+    s32 unk40;
+    u16 unk44;
+    u16 unk46[7];
+    s32 unk54;
+    u8 unk58;
+    u8 unk59;
+    u8 unk5A;
+    u8 unk5B;
+    u8 pad5C;
+    u8 unk5D;
+    u8 pad5E;
+    u8 pad5F;
+} BssAD0;
+
 /*0x0*/ static u32 data_0 = 0x00000000;
 /*0x4*/ static u32 data_4 = 0x00000000;
 /*0x8*/ static u32 data_8 = 0x00000000;
@@ -123,29 +162,26 @@ typedef struct {
 /*0x10*/ static f32 data_10 = 0.0;
 
 /*0x0*/ static ModgfxInstance* bss_0[496];
-/*0x7C0*/ static u8 bss_7C0[0x300];
-/*0xAC0*/ static u8 bss_AC0[0x4];
-/*0xAC4*/ static u8 bss_AC4[0x4];
-/*0xAC8*/ static u8 bss_AC8[0x8];
-/*0xAD0*/ static u8 bss_AD0[0x46];
-/*0xB16*/ static u8 bss_B16[0x2];
-/*0xB18*/ static u8 _bss_B18[0x8];
-/*0xB20*/ static u8 _bss_B20[0x10];
+/*0x7C0*/ static Bss7C0 bss_7C0[32];
+/*0xAC0*/ static Bss7C0 *bss_AC0;
+/*0xAC4*/ static Bss7C0 *bss_AC4;
+/*0xAC8*/ static s16 bss_AC8;
+/*0xAD0*/ static BssAD0 bss_AD0;
 
 /*0x0*/ static const char str_0[] = "warning in modgfx dll no spare memory available\n";
 
 static void dll_14_func_4C0C(s16 arg0, s32 arg1);
 static void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1);
 /* static */ void dll_14_func_4E58(ModgfxInstance* arg0, UNK_TYPE_32 arg1, UNK_TYPE_32 arg2);
-/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_538C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6100(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6068(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_584C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3);
-/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_5E50(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
-/* static */ void dll_14_func_5FFC(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6100(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6068(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_6758(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, s32 arg3);
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
+/* static */ void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3);
 
 // offset: 0x0 | ctor
 void dll_14_ctor(void* dll) {
@@ -172,6 +208,7 @@ void dll_14_func_88(void) {
 }
 
 // offset: 0xF4 | func: 1 | export: 1
+s16 dll_14_func_F4(BssAD0*, s32, s32, s32, s32, s32, s32, s32);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_F4.s")
 
 // offset: 0xC90 | func: 2 | export: 2
@@ -879,7 +916,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x4FF4 | func: 16
-/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_4FF4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     Vtx* temp_v1;
     f32 temp_fa0;
@@ -929,7 +966,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x538C | func: 17
-/* static */ void dll_14_func_538C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_538C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     Vtx* temp_v1;
     f32 temp_fv0;
@@ -966,7 +1003,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x56A0 | func: 18
-/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_56A0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     if (arg2 == 1) {
         if (arg0->unkFE != 0) {
             arg0->unkBC = (arg1->unk4 - arg0->unk4->opacity) /  arg0->unkFE;
@@ -988,7 +1025,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x584C | func: 19
-/* static */ void dll_14_func_584C(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+/* static */ void dll_14_func_584C(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     s16 temp_ft1;
     s16 temp_ft3;
     s16 temp_ft5;
@@ -1017,7 +1054,7 @@ void dll_14_func_4EDC(ModgfxInstance* arg0, u8 arg1) {
 }
 
 // offset: 0x59B4 | func: 20
-static void dll_14_func_59B4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+static void dll_14_func_59B4(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     f32 var_fa1;
     Vec3f sp40;
     SRT sp28;
@@ -1089,7 +1126,7 @@ static void dll_14_func_59B4(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 a
 }
 
 // offset: 0x5E50 | func: 21
-void dll_14_func_5E50(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_5E50(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     SRT sp28;
     f32 temp_fv0;
     s32 temp_v0;
@@ -1126,21 +1163,21 @@ void dll_14_func_5E50(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
 }
 
 // offset: 0x5FFC | func: 22
-void dll_14_func_5FFC(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_5FFC(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     arg0->unk24.x += arg1->unk4 * data_C;
     arg0->unk24.y += arg1->unk8 * data_C;
     arg0->unk24.z += arg1->unkC * data_C;
 }
 
 // offset: 0x6068 | func: 23
-void dll_14_func_6068(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_6068(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     arg0->unk106 += (s16) (arg1->unk4 * data_C);
     arg0->unk108 += (s16) (arg1->unk8 * data_C);
     arg0->unk10A += (s16) (arg1->unkC * data_C);
 }
 
 // offset: 0x6100 | func: 24
-void dll_14_func_6100(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_6100(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     Vtx* temp_v0;
     f32 temp_fa0;
     f32 temp_fa1;
@@ -1237,7 +1274,7 @@ void dll_14_func_6424(ModgfxInstance* arg0, u32 arg1) {
 }
 
 // offset: 0x64F0 | func: 26
-void dll_14_func_64F0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
+void dll_14_func_64F0(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, u8 arg3) {
     Vtx* var_v0;
     s32 temp_ft1;
     s32 temp_ft2;
@@ -1307,7 +1344,7 @@ void dll_14_func_64F0(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, u8 arg3) {
 }
 
 // offset: 0x6758 | func: 27
-void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3) {
+void dll_14_func_6758(ModgfxInstance* arg0, ModgfxInstance_9C* arg1, s32 arg2, s32 arg3) {
     Object* temp_v0;
     SRT sp34;
 
@@ -1404,31 +1441,94 @@ void dll_14_func_6758(ModgfxInstance* arg0, BSS0_9C* arg1, s32 arg2, s32 arg3) {
 }
 
 // offset: 0x6BE8 | func: 28 | export: 12
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6BE8.s")
+void dll_14_func_6BE8(s32 arg0, u8 arg1, u8 arg2, s32 arg3, s32 arg4) {
+    bzero(&bss_AD0, sizeof(bss_AD0));
+    bss_AD0.unk5A = 0;
+    bss_AD0.unk5B = 0;
+    bss_AD0.unk58 = arg1;
+    bss_AD0.unk44 = arg1;
+    bss_AD0.unk2C = 0.0f;
+    bss_AD0.unk30 = 0.0f;
+    bss_AD0.unk34 = 0.0f;
+    bss_AD0.unk20 = 0.0f;
+    bss_AD0.unk24 = 0.0f;
+    bss_AD0.unk28 = 0.0f;
+    bss_AD0.unk4 = arg0;
+    bss_AD0.unk38 = 1.0f;
+    bss_AD0.unk40 = arg3;
+    bss_AD0.unk3C = arg4;
+    bss_AD0.unk59 = arg2;
+}
 
 // offset: 0x6CA0 | func: 29 | export: 13
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6CA0.s")
+void dll_14_func_6CA0(void) {
+    bss_AC4 = bss_AC0 = bss_7C0;
+    bss_AC8 = 0;
+}
 
 // offset: 0x6CD8 | func: 30 | export: 14
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6CD8.s")
+void dll_14_func_6CD8(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s32 arg5) {
+    bss_AC4->unk16 = bss_AC8;
+    bss_AC4->unk14 = arg4;
+    bss_AC4->unk10 = arg5;
+    bss_AC4->unk0 = arg0;
+    bss_AC4->unk4 = arg1;
+    bss_AC4->unk8 = arg2;
+    bss_AC4->unkC = arg3;
+    bss_AC4++;
+}
 
 // offset: 0x6D58 | func: 31 | export: 15
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6D58.s")
+void dll_14_func_6D58(void) {
+    bss_AC8++;
+}
 
 // offset: 0x6D80 | func: 32 | export: 16
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6D80.s")
+void dll_14_func_6D80(s16 arg0) {
+    bss_AC8 = arg0;
+}
 
 // offset: 0x6DA8 | func: 33 | export: 17
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6DA8.s")
+void dll_14_func_6DA8(s16 arg0) {
+    bss_AD0.unk46[bss_AC8] = arg0;
+}
 
 // offset: 0x6DE4 | func: 34 | export: 18
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6DE4.s")
+// probably takes in a ModgfxInstance pointer
+void dll_14_func_6DE4(UNK_PTR* arg0) {
+    bcopy(arg0, &bss_AD0.unk46, sizeof(bss_AD0.unk46));
+}
 
 // offset: 0x6E24 | func: 35 | export: 19
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6E24.s")
+// arg0 could also just be a SRT
+void dll_14_func_6E24(Object* arg0, s32 arg1, s32 arg3, s32 arg4, s32 arg5, s32 arg6, s32 arg7) {
+    bss_AD0.unk0 = bss_7C0;
+    bss_AD0.unk5D =  bss_AC4 - bss_AC0;
+    if (arg7 == 0 && arg6 == 0) {
+        bss_AD0.unk54 |= 0x2000000;
+    } else {
+        bss_AD0.unk54 |= 0x4000000;
+    }
+
+    if (bss_AD0.unk54 & 1) {
+        if (bss_AD0.unk4 != NULL) {
+            bss_AD0.unk2C += bss_AD0.unk4->globalPosition.x;
+            bss_AD0.unk30 += bss_AD0.unk4->globalPosition.y;
+            bss_AD0.unk34 += bss_AD0.unk4->globalPosition.z;
+        } else {
+            bss_AD0.unk2C += arg0->srt.transl.x;
+            bss_AD0.unk30 += arg0->srt.transl.y;
+            bss_AD0.unk34 += arg0->srt.transl.z;
+        }
+    }
+
+    data_2C = dll_14_func_F4(&bss_AD0, 0, arg3, arg1, arg5, arg4, arg6, arg7);
+}
 
 // offset: 0x6F88 | func: 36 | export: 20
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/14_modgfx/dll_14_func_6F88.s")
+void dll_14_func_6F88(s32 arg0) {
+    bss_AD0.unk54 |= arg0;
+}
 
 // offset: 0x6FB0 | func: 37 | export: 21
 s16 dll_14_func_6FB0(void) {
