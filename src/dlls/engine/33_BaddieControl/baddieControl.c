@@ -627,20 +627,21 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
 }
 
 // offset: 0x18E4 | func: 15 | export: 19
-s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, 
-        s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT) {
+s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024* arg2, s32 arg3, 
+        s32* hitAnimStateMap, s8* hitDamageMap, s16 hitLogicState, u32* soundHandle, SRT* hitSRT) {
     Baddie* baddie;
     Object* player;
     s32 hitType;
-    s32 sp58;
+    s32 hitSphereID;
     s32 damage;
-    Object* sp50;
+    Object* hitBy;
     f32 hitX;
     f32 hitY;
     f32 hitZ;
 
     baddie = (Baddie*)obj->data;
     player = objGetPlayer();
+
     if (baddie->unk3E8 > 0.0f) {
         baddie->unk3E8 += (gUpdateRateF * baddie->unk3EC);
         if (baddie->unk3B2 & 0x20) {
@@ -669,27 +670,30 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             }
         }
     }
+
     if (fsa->hitpoints == 0) {
         return 0;
     }
-    hitType = func_8002601C(obj, &sp50, &sp58, &damage, &hitX, &hitY, &hitZ);
-    baddie->unk3F0 = (s8) sp58;
-    if ((obj != NULL) && (hitType != 0) && (sp50 != NULL)) {
+
+    hitType = func_8002601C(obj, &hitBy, &hitSphereID, &damage, &hitX, &hitY, &hitZ);
+    baddie->unk3F0 = hitSphereID;
+
+    if ((obj != NULL) && (hitType != 0) && (hitBy != NULL)) {
         switch (obj->id) {
         case OBJ_ScorpionRobot:
-            if ((sp50->id != OBJ_sword) && (sp50->id != OBJ_staff) && (sp50->id != OBJ_projball)) {
+            if ((hitBy->id != OBJ_sword) && (hitBy->id != OBJ_staff) && (hitBy->id != OBJ_projball)) {
                 return 0;
             }
             break;
         case OBJ_WG_PollenCannon:
-            if (sp50->id == OBJ_Pollen) {
-                if (((Pollen_Data*)sp50->data)->unk12 == 0) {
-                    sp50->opacity = 0;
+            if (hitBy->id == OBJ_Pollen) {
+                if (((Pollen_Data*)hitBy->data)->unk12 == 0) {
+                    hitBy->opacity = 0;
                 }
                 return 0;
             }
-            if (sp50->id == OBJ_PollenFragment) {
-                sp50->opacity = 0;
+            if (hitBy->id == OBJ_PollenFragment) {
+                hitBy->opacity = 0;
                 return 0;
             }
             break;
@@ -705,12 +709,14 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
         }
         if (hitDamageMap != NULL) {
             if (hitDamageMap[hitType - 2] != -1) {
-                damage = (s32) hitDamageMap[hitType - 2];
+                damage = hitDamageMap[hitType - 2];
             }
         } else {
             damage = 0;
         }
+
         // STUBBED_PRINTF("%s hit by type %d for %d points\n", obj->def->name, hitType, damage); (default.dol)
+
         fsa->hitpoints -= damage;
         if (fsa->hitpoints <= 0) {
             baddie->unk3B2 |= 0x20;
@@ -719,7 +725,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
             fsa->logicState = hitLogicState;
             fsa->hitpoints = 0;
         } else if (damage != 0) {
-            if ((fsa->target == NULL) && (((DLL_210_Player*)player->dll)->vtbl->func66(player, 1) != 0)) {
+            if ((fsa->target == NULL) && dll_player(player)->func66(player, 1)) {
                 fsa->target = player;
                 fsa->unk33D = 0;
             }
@@ -731,14 +737,17 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s3
                     fsa->logicState = hitLogicState;
                 }
             }
-            fsa->lastHitType = (s8) hitType;
+            fsa->lastHitType = hitType;
         }
-        if (*arg7 != 0) {
-            dll_amSfx->Stop(*arg7);
-            *arg7 = 0;
+
+        if (*soundHandle != 0) {
+            dll_amSfx->Stop(*soundHandle);
+            *soundHandle = 0;
         }
-        objSendMesg(sp50, 0xE0001, obj, NULL);
+
+        objSendMesg(hitBy, 0xE0001, obj, NULL);
     }
+
     return hitType;
 }
 
