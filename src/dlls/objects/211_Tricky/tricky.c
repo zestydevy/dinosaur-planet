@@ -139,7 +139,7 @@ static void dll_211_func_726C(Object* self);
 static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, Triangle** pols);
 static void dll_211_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg3);
 static CurveSetup* dll_211_func_7A7C(DLL211_Data* objData, CurveSetup* arg1, s32 arg2, u8 arg3);
-static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, s32 arg3);
+static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, void* arg3);
 static CurveSetup* dll_211_func_7DB8(DLL211_Data* objData, CurveSetup* arg1, void* arg2);
 static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* dll_211_func_8114(CurveSetup* setup);
@@ -194,7 +194,7 @@ static s32 dll_211_func_9668(DLL27_Data* objData);
     VEC3F(0.0f, 17.0f, 0.0f)
 };
 /*0x8C*/ static f32 _data_8C[] = { 0.0f, 8.5f };
-/*0x94*/ static Vec3f _data_94[] = VEC3F(0.0f, 0.0f, 0.0f);
+/*0x94*/ static Vec3f _data_94[] = { VEC3F(0.0f, 0.0f, 0.0f) };
 /*0xA0*/ static f32 _data_A0 = 8.0f;
 /*0xA4*/ static f32 _data_A4[] = {
     0.0f, 0.33f, 0.99f, 1.98f, 3.3f, 4.95f,
@@ -546,7 +546,7 @@ void dll_211_free(Object* self, s32 a1) {
     routeFree(&temp_s0->unk59C);
     objFreeObjectType(self, 1);
     gDLL_13_Expgfx->vtbl->func4(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
     if (a1 == 0) {
         dll_211_func_940C(self, temp_s0);
     }
@@ -2341,7 +2341,7 @@ static s32 dll_211_func_53E4(Object* self, f32 arg1, DLL211_Data* objData) {
             objGetAnimChange(self, objData->unk20 * 0.25f, &sp44.unk10);
             self->srt.transl.x += objData->unk30[0] * (objData->unk20 * 0.25f) * gUpdateRateF;
             // FAKE
-            if (var_v1);
+            if (var_v1) {}
             self->srt.transl.z += objData->unk30[1] * (objData->unk20 * 0.25f) * gUpdateRateF;
         }
         if (objAnimAdvance(self, sp44.unk10, gUpdateRateF, NULL) != 0) {
@@ -2667,7 +2667,7 @@ static void dll_211_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, 
     sp48.scale = 0.05f;
     camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp6C), 8, 0);
-    dlTriangles(arg1, _rodata_778, 12);
+    dlTriangles(arg1, (DLTri*)_rodata_778, 12);
     *arg3 = var_s0;
 }
 
@@ -2764,7 +2764,7 @@ static CurveSetup* dll_211_func_7A7C(DLL211_Data* objData, CurveSetup* arg1, s32
 }
 
 // offset: 0x7BAC | func: 60
-static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, s32 arg3) {
+static s8 dll_211_func_7BAC(DLL211_Data* objData, CurveSetup** arg1, u8 *arg2, void* arg3) {
     s8 sp5C[4];
     s8 sp5B;
     s8 temp_v0;

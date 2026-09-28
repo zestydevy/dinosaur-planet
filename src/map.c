@@ -833,8 +833,8 @@ void trackDrawMain(void) {
     diRcpTrace(gMainDL, 0, "track/track.c", 1458);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 2);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1);
-    gDLL_14_Modgfx->vtbl->func11(objVisibilities);
-    gDLL_14_Modgfx->vtbl->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0);
+    dll_modgfx->Func11(objVisibilities);
+    dll_modgfx->Func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0, 0);
     gDLL_24_Waterfx->vtbl->print(&gMainDL, &gWorldRSPMatrices);
     gDLL_15_Projgfx->vtbl->func5(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 0);
     gDLL_2_Camera->vtbl->lock_icon_print(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, &D_800B51D8);
@@ -1071,7 +1071,7 @@ void trackDrawObject(Object* obj, s32 visibility) {
     if (someBool != FALSE) {
         sp37 = gDLL_13_Expgfx->vtbl->func10(obj);
     }
-    gDLL_14_Modgfx->vtbl->func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, obj);
+    dll_modgfx->Func6(&gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, obj);
     if (sp37 >= 2) {
         if ((obj->id != OBJ_IMSnowBike) && (obj->id != OBJ_CRSnowBike)) {
             gDLL_13_Expgfx->vtbl->func6(obj, &gMainDL, &gWorldRSPMatrices, &D_800B51D4, 1, 0, 0);
@@ -2811,7 +2811,7 @@ void map_func_8004773C(void) {
     gDLL_57->vtbl->func0();
     gDLL_58->vtbl->func0();
     gDLL_15_Projgfx->vtbl->func0();
-    gDLL_14_Modgfx->vtbl->func0();
+    dll_modgfx->Func0();
     gDLL_13_Expgfx->vtbl->func0();
     gDLL_17_partfx->vtbl->func0();
     gDLL_12_Minic->vtbl->func4();

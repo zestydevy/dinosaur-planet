@@ -154,7 +154,7 @@ void SCbeacon_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tria
 
 // offset: 0x550 | func: 4 | export: 4
 void SCbeacon_obj_Free(Object* self, s32 arg1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     objFreeObjectType(self, OBJTYPE_KyteTarget);
 }
@@ -256,7 +256,7 @@ void SCbeacon_attempt_to_light(Object* self) {
         dll_amSfx->Play(self, SOUND_50b_Fire_Burning_High_Loop, MAX_VOLUME, NULL, NULL, 0, NULL);
         
         //Create fire model
-        gDLL_14_Modgfx->vtbl->func10(self);
+        dll_modgfx->Func10(self);
         modGfxDLL = dllLoad(DLL_ID_114, 1);
         modGfxDLL->vtbl->func0(self, 2, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);

@@ -58,7 +58,7 @@ void FirePole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 
 // offset: 0x1A4 | func: 4 | export: 4
 void FirePole_free(Object* self, s32 onlySelf) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     objFreeObjectType(self, OBJTYPE_Torch);
 }

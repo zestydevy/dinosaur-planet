@@ -13,6 +13,7 @@
 #include "macros.h"
 #include "sys/rcp.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 #define NAME_ENTRY_PICMENU_ITEM(textX, textY, itemX, itemY, flags, upLink, downLink, leftLink, rightLink) \
     NEW_PICMENU_ITEM(textX, textY, 0x3C, itemX, itemY, 0x316, 0x34, flags, FONT_DINO_MEDIUM_FONT_OUT, FONT_DINO_MEDIUM_FONT_IN, upLink, downLink, leftLink, rightLink, -1)

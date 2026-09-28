@@ -61,7 +61,7 @@ void DLL792_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 // offset: 0x2BC | func: 4 | export: 4
 void DLL792_obj_Free(Object* self, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
     dllFree(dModGfxDLL);
 }
 

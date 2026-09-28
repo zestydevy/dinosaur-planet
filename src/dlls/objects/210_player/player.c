@@ -1444,7 +1444,7 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
     static SRT _bss_40;
     s32 i;
 
-    gDLL_14_Modgfx->vtbl->func6(arg2, arg3, arg4, 1, player->linkedObject);
+    dll_modgfx->Func6(arg2, arg3, arg4, 1, player->linkedObject);
     if (arg1->unk87C == 0x40) {
         *_data_0 += gUpdateRate;
         if ((*_data_0 >= 0x65) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {

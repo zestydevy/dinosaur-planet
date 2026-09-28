@@ -104,7 +104,7 @@ void campfire_control(Object* self) {
     
     //Create fire mesh
     if (self->unkE0 == FALSE) {
-        gDLL_14_Modgfx->vtbl->func10(self);
+        dll_modgfx->Func10(self);
         
         modGfxDLL = dllLoad(DLL_ID_116, 1);
         
@@ -184,7 +184,7 @@ void campfire_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 
 // offset: 0x5E0 | func: 4 | export: 4
 void campfire_free(Object* self, s32 onlySelf) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

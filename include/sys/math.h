@@ -4,6 +4,7 @@
 #define _SYS_MATH_H
 
 #include "PR/gbi.h"
+#include "macros.h"
 
 #define M_PI_F          3.141592741f
 #define M_INFINITY_F    3.4028235e38f   //largest positive number that can be represented by a float
@@ -67,7 +68,10 @@
     x = __angle; \
 }
 #else
-#define CIRCLE_WRAP(x) WRAP(x, -0x8000, 0x8000)
+#define CIRCLE_WRAP(x) \
+PRAGMA_IGNORE_PUSH("-Wtype-limits") \
+WRAP(x, -0x8000, 0x8000) \
+PRAGMA_IGNORE_POP()
 #endif
 
 #define DOT_PRODUCT(vA, vB) ((vA.f[0] * vB.f[0]) + (vA.f[1] * vB.f[1]) + (vA.f[2] * vB.f[2]))
