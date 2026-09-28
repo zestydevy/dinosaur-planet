@@ -201,7 +201,7 @@ void DBSHshrine_control(Object* self) {
             dllFree(modGfxDLL);
             
             mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-            gDLL_14_Modgfx->vtbl->func7(&objData->unkC);
+            dll_modgfx->Func7(&objData->unkC);
         }
         break;
     case 1:
@@ -292,7 +292,7 @@ void DBSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triang
 void DBSHshrine_free(Object* self, s32 arg1) {
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
 }
 
 // offset: 0xCF8 | func: 5 | export: 5

@@ -194,7 +194,7 @@ void FXEmit_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 // offset: 0x62C | func: 4 | export: 4
 void FXEmit_free(Object *self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
 }
 
 // offset: 0x69C | func: 5 | export: 5

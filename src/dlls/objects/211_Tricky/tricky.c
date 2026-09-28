@@ -546,7 +546,7 @@ void dll_211_free(Object* self, s32 a1) {
     routeFree(&temp_s0->unk59C);
     objFreeObjectType(self, 1);
     gDLL_13_Expgfx->vtbl->func4(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
     if (a1 == 0) {
         dll_211_func_940C(self, temp_s0);
     }

@@ -177,7 +177,7 @@ void WL_WallTorch_obj_Control(Object* self) {
                 objData->soundHandle = 0;
             }
             
-            gDLL_14_Modgfx->vtbl->func5(self);
+            dll_modgfx->Func5(self);
             gDLL_13_Expgfx->vtbl->func4(self);
             
             if ((objData->gamebit != NO_GAMEBIT) && (mainGetBits(objData->gamebit))) {
@@ -268,7 +268,7 @@ void WL_WallTorch_obj_Free(Object* self, s32 onlySelf) {
     }
     
     if (objData->mode == WLWallTorch_MODE_0_Always_Lit) {
-        gDLL_14_Modgfx->vtbl->func5(self);
+        dll_modgfx->Func5(self);
     }
     
     gDLL_13_Expgfx->vtbl->func5(self);

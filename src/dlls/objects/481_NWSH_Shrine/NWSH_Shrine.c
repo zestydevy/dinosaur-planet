@@ -183,7 +183,7 @@ void dll_481_control(Object *self) {
                 objdata->unk12 = 1;
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 objdata->unk13 = 1;
-                gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
+                dll_modgfx->Func7(&objdata->unkC);
             }
         default:
             return;
@@ -258,7 +258,7 @@ void dll_481_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0xB5C | func: 4 | export: 4
 void dll_481_free(Object* self, s32 a1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }

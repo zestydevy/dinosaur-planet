@@ -217,7 +217,7 @@ void GPSH_Shrine_control(Object* self) {
                 modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-                gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
+                dll_modgfx->Func7(&objdata->unkC);
                 objdata->unkC = -1;
                 mainSetBits(BIT_5AF, 0);
             }
@@ -334,7 +334,7 @@ void GPSH_Shrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0xF70 | func: 4 | export: 4
 void GPSH_Shrine_free(Object *self, s32 a1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }

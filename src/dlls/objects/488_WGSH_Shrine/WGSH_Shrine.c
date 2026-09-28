@@ -168,7 +168,7 @@ void dll_488_control(Object *self) {
                 sp44->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(sp44);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-                gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
+                dll_modgfx->Func7(&objdata->unkC);
             }
         default:
             return;
@@ -260,7 +260,7 @@ void dll_488_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 
 // offset: 0xC24 | func: 4 | export: 4
 void dll_488_free(Object *self, s32 a1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
 }
 
 // offset: 0xC6C | func: 5 | export: 5

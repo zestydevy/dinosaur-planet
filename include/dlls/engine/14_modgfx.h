@@ -43,28 +43,30 @@ typedef struct {
 
 DLL_INTERFACE(DLL_14_modgfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
-/*0*/ void (*func0)(void);
-/*1*/ s16 (*func1)(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7);
-/*2*/ void (*func2)(s32 arg0, s32 arg1, s32 arg2);
-/*3*/ void (*func3)(void);
-/*4*/ void (*func4)(Object* arg0);
-/*5*/ void (*func5)(Object* arg0);
-/*6*/ s32 (*func6)(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj);
-/*7*/ void (*func7)(s16* arg0);
-/*8*/ void (*func8)(void);
-/*9*/ void (*func9)(Object* arg0, u8 arg1);
-/*10*/ void (*func10)(Object* arg0);
-/*11*/ void (*func11)(s8* arg0);
-/*12*/ void (*func12)(Object* arg0, u8 arg1, u8 arg2, s32 arg3, s32 arg4);
-/*13*/ void (*func13)(void);
-/*14*/ void (*func14)(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s16* arg5);
-/*15*/ void (*func15)(void);
-/*16*/ void (*func16)(s16 arg0);
-/*17*/ void (*func17)(s16 arg0);
-/*18*/ void (*func18)(s16* arg0);
-/*19*/ void (*func19)(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7);
-/*20*/ void (*func20)(s32 arg0);
-/*21*/ s16 (*func21)(void);
+/*0*/ void (*Func0)(void);
+/*1*/ s16 (*Func1)(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7);
+/*2*/ void (*Func2)(s32 arg0, s32 arg1, s32 arg2);
+/*3*/ void (*Func3)(void);
+/*4*/ void (*Func4)(Object* arg0);
+/*5*/ void (*Func5)(Object* arg0);
+/*6*/ s32 (*Func6)(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj);
+/*7*/ void (*Func7)(s16* arg0);
+/*8*/ void (*Func8)(void);
+/*9*/ void (*Func9)(Object* arg0, u8 arg1);
+/*10*/ void (*Func10)(Object* arg0);
+/*11*/ void (*Func11)(s8* arg0);
+/*12*/ void (*Func12)(Object* arg0, u8 arg1, u8 arg2, s32 arg3, s32 arg4);
+/*13*/ void (*Func13)(void);
+/*14*/ void (*Func14)(s32 arg0, f32 arg1, f32 arg2, f32 arg3, s16 arg4, s16* arg5);
+/*15*/ void (*Func15)(void);
+/*16*/ void (*Func16)(s16 arg0);
+/*17*/ void (*Func17)(s16 arg0);
+/*18*/ void (*Func18)(s16* arg0);
+/*19*/ void (*Func19)(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7);
+/*20*/ void (*Func20)(s32 arg0);
+/*21*/ s16 (*Func21)(void);
 };
+
+#define dll_modgfx (gDLL_14_Modgfx->vtbl)
 
 #endif // _DLL_14_H

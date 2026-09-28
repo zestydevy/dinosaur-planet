@@ -683,7 +683,7 @@ void DIMCannon_tickCannonBall(Object* self) {
 
 // offset: 0x1640 | func: 12
 void DIMCannon_freeCannonBall(Object* self) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

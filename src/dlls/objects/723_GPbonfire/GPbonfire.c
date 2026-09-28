@@ -127,7 +127,7 @@ void GPbonfire_obj_Control(Object* self) {
 
     if (objdata->updateFireEffect) {
         self->srt.scale = bonfireScaleData[objdata->weedsDeposited];
-        gDLL_14_Modgfx->vtbl->func10(self);
+        dll_modgfx->Func10(self);
         dll = dllLoad(0x104B, 1);
         ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, modgfxScaleData[objdata->weedsDeposited], 0, 0x10004, -1, 0);
         dllFree(dll);
@@ -192,7 +192,7 @@ void GPbonfire_obj_Control(Object* self) {
                         //Deposit tumbleweed into bonfire
                         if (objdata->weedsDeposited < 4) {
                             objdata->weedsDeposited++;
-                            gDLL_14_Modgfx->vtbl->func5(self);
+                            dll_modgfx->Func5(self);
                             gDLL_13_Expgfx->vtbl->func5(self);
                             objdata->updateFireEffect = TRUE;
 
@@ -215,7 +215,7 @@ void GPbonfire_obj_Control(Object* self) {
             objdata->timer -= gUpdateRate;
             if (objdata->timer < 0) {
                 objdata->weedsDeposited--;
-                gDLL_14_Modgfx->vtbl->func5(self);
+                dll_modgfx->Func5(self);
                 gDLL_13_Expgfx->vtbl->func5(self);
 
                 if (objdata->weedsDeposited >= 0) {
@@ -253,7 +253,7 @@ void GPbonfire_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Trian
 
 // offset: 0x864 | func: 4 | export: 4
 void GPbonfire_obj_Free(Object* self, s32 arg1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     objFreeObjectType(self, OBJTYPE_KyteTarget);
     //@bug? doesn't stop soundHandles like other object DLLs do
@@ -331,7 +331,7 @@ static void GPbonfire_func_A44(Object* self) {
     objdata->soundHandles[1] = dll_amSfx->Play(self, SOUND_50b_Fire_Burning_High_Loop, 0x7F, NULL, 0, 0, 0);
 
     //Create fire effect
-    gDLL_14_Modgfx->vtbl->func10(self);
+    dll_modgfx->Func10(self);
     dll = dllLoad(0x104B, 1); //modgfx #75?
     ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, objdata->weedsDeposited, 0, 0x10004, -1, 0);
     dllFree(dll);

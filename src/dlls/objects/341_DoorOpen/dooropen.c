@@ -73,7 +73,7 @@ void DoorOpen_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 // offset: 0x228 | func: 4 | export: 4
 void DoorOpen_free(Object* self, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     dllFree(dModGfxDLL);
 }
 

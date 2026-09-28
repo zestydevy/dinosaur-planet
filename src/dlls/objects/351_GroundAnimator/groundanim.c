@@ -259,7 +259,7 @@ void GroundAnimator_obj_Free(Object* self, s32 onlySelf) {
     }
     
     objFreeObjectType(self, OBJTYPE_TrickyTarget);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
 }
 
 // offset: 0xA04 | func: 5 | export: 5

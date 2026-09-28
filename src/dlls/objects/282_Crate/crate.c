@@ -216,7 +216,7 @@ void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **
 
 // offset: 0x728 | func: 4 | export: 4
 void crate_free(Object* self, s32 arg1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     dllFree(dModGfxDLLDestroyed);
     dllFree(dModGfxDLLDamaged);
     objFreeObjectType(self, OBJTYPE_63);

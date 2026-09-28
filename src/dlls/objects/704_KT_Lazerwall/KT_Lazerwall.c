@@ -137,7 +137,7 @@ void dll_704_free(Object* self, s32 a1) {
     if (objdata->unk8 != 0) {
         dll_amSfx->Stop(objdata->unk8);
     }
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     dllFree(_data_0);
 }
 
