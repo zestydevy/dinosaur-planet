@@ -305,7 +305,7 @@ static s32 SharpClaw_logicState12Attack(Object* self, ObjFSA_Data* fsa, f32 upda
 static s32 SharpClaw_logicState13(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-static void SharpClaw_func_0(void) {
+static void SharpClaw_initFSACallbacks(void) {
     sAnimStateCallbacks[SharpClaw_ASTATE_0_Idle]                    = SharpClaw_animState0Idle;
     sAnimStateCallbacks[SharpClaw_ASTATE_1_Walk]                    = SharpClaw_animState1Walk;
     sAnimStateCallbacks[SharpClaw_ASTATE_2]                         = SharpClaw_animState2;
@@ -350,7 +350,7 @@ static void SharpClaw_func_0(void) {
 
 // offset: 0x1F8 | ctor
 void SharpClaw_ctor(void* dll) {
-    SharpClaw_func_0();
+    SharpClaw_initFSACallbacks();
 }
 
 // offset: 0x238 | dtor
