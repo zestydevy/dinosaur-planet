@@ -213,6 +213,10 @@ class DLLSplitter:
         "GetDataSize"
     ]
 
+    MODGFX_INTERFACE = [
+        "Func0",
+    ]
+
     def __default_symbol_names(self, dll: AnalyzedDLL, prefix: str):
         # Defaults to cover static functions
         for sym in dll.context.globalSegment.symbols.values():
@@ -248,6 +252,10 @@ class DLLSplitter:
             if dll.number >= 210 and i < len(self.OBJECT_INTERFACE):
                 # Object DLL
                 func_name = f"obj_{self.OBJECT_INTERFACE[i]}"
+
+            if dll.number >= 104 and i < len(self.MODGFX_INTERFACE):
+                # modgfx DLL
+                func_name = f"modgfx_{self.MODGFX_INTERFACE[i]}"
             
             sym.name = f"{prefix}_{func_name}"
 
@@ -590,6 +598,7 @@ class DLLSplitter:
                         c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.getName()}.s")\n')
 
     EMPTY_CTOR_DTOR = [0xAFA40000, 0x03E00008, 0x00000000]
+    DEFAULT_MODGFX_SETUP = [0xAFA40000, 0xAFA50004, 0xAFA60008, 0xAFA7000C, 0x00001025, 0x03E00008, 0x00000000, 0x00000000, 0x00000000, 0x00000000]
     DEFAULT_OBJ_SETUP = [0xAFA40000, 0xAFA50004,  0xAFA60008, 0x03E00008, 0x000000]
     DEFAULT_OBJ_CONTROL = [0xAFA40000, 0x03E00008, 0x00000000]
     DEFAULT_OBJ_UPDATE = [0xAFA40000, 0x03E00008, 0x00000000]
@@ -620,6 +629,15 @@ class DLLSplitter:
                 c_file.write(f'void {func.getName()}(void* dll);\n')
             return False
         
+        if dll.number >= 104:
+            # Object DLL, check for function defaults
+            if export_idx == 0:
+                if self.__instructions_equal(func, self.DEFAULT_MODGFX_SETUP):
+                    c_file.write(f's32 {func.getName()}(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {{\n    return 0;\n}}\n')
+                    return True
+                else:
+                    c_file.write(f's32 {func.getName()}(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);\n')
+
         if dll.number >= 210:
             # Object DLL, check for function defaults
             if export_idx == 0:

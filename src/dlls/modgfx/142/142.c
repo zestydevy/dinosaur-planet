@@ -1,0 +1,34 @@
+#include "common.h"
+
+/*0x0*/ static u32 data_0[] = {
+    0x00000000, 0xfe0c001f, 0x00000000, 0x0000fe0c, 0x001f0000, 0x00000000, 0xfe0c001f, 0x0000006b, 
+    0x00640197, 0x004e0008, 0x02c30064, 0x02c3003f, 0x001f02e2, 0x0064017f, 0x002e001f, 0x02a80064, 
+    0x0000001f, 0x001f0177, 0x0064fe82, 0x000f001f, 0x008d0064, 0xfe690000, 0x001f0000
+};
+/*0x5C*/ static u32 data_5C[] = {
+    0x00000004, 0x00030001, 0x00050004, 0x00010006, 0x00050001, 0x00070006, 0x00020008, 0x00070000, 
+    0x00000000
+};
+/*0x80*/ static u32 data_80[] = {
+    0x00000001, 0x00020000, 0x00000002, 0x00030000, 0x00040005, 0x00060000
+};
+/*0x98*/ static u32 data_98[] = {
+    0x00000001, 0x00020003, 0x00040005, 0x00060007, 0x00080000
+};
+/*0xAC*/ static u32 data_AC[] = {
+    0x00030004, 0x00050006, 0x00070008, 0x00010004, 0x00050006, 0x00000002
+};
+/*0xC4*/ static u32 data_C4 = 0x0000000a;
+/*0xC8*/ static u32 data_C8[] = {
+    0x00280000, 0x00000000, 0x00000000, 0x00000000, 0x00000000, 0x00000000
+};
+
+// offset: 0x0 | ctor
+void dll_142_ctor(void* dll) { }
+
+// offset: 0xC | dtor
+void dll_142_dtor(void* dll) { }
+
+// offset: 0x18 | func: 0 | export: 0
+s32 dll_142_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);
+#pragma GLOBAL_ASM("asm/nonmatchings/dlls/modgfx/142/dll_142_modgfx_Func0.s")

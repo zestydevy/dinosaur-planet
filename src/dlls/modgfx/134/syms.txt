@@ -1,0 +1,11 @@
+.text = 0x0:
+dll_134_ctor = 0x0;
+dll_134_dtor = 0xC;
+dll_134_modgfx_Func0 = 0x18;
+
+.rodata = 0x2E4:
+
+.data = 0x2F4:
+data_0 = 0x0; // absolute:0x2F4
+data_2 = 0x2; // absolute:0x2F6
+data_4 = 0x4; // absolute:0x2F8
