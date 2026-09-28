@@ -1,28 +1,22 @@
 #include "common.h"
+#include "sys/gfx/modgfx.h"
 
-/*0x0*/ static u32 data_0[] = {
-    0x001e0000, 0x00000000, 0x001fffe2, 0x00000000, 0x000f001f, 0x00000000, 0x03e80008, 0x00000000
+/*0x0*/ static s16 data_0[] = {
+    30, 0, 0, 0, 31,
+    -30, 0, 0, 15, 31,
+    0, 0, 1000, 8, 0
 };
-/*0x20*/ static u32 data_20[] = {
-    0x000f0000, 0x00000000, 0x001ffff1, 0x00000000, 0x000f001f, 0x000f0000, 0x07d00008, 0x0000fff1, 
-    0x000007d0, 0x00080000
+/*0x20*/ static s16 data_20[] = {
+    15, 0, 0, 0, 31,
+    -15, 0, 0, 15, 31,
+    15, 0, 2000, 8, 0,
+    -15, 0, 2000, 8, 0
 };
-/*0x48*/ static u32 data_48[] = {
-    0x00000001, 0x00020000
-};
-/*0x50*/ static u32 data_50[] = {
-    0x00000001, 0x00020001, 0x00030002
-};
-/*0x5C*/ static u32 data_5C[] = {
-    0x00000001, 0x00020000
-};
-/*0x64*/ static u32 data_64[] = {
-    0x00000001, 0x00020003
-};
-/*0x6C*/ static u32 data_6C = 0x00000050;
-/*0x70*/ static u32 data_70[] = {
-    0x00000000, 0x00000000, 0x00000000, 0x00000000
-};
+/*0x48*/ static s16 data_48[] = { 0, 1, 2, 0 };
+/*0x50*/ static s16 data_50[] = { 0, 1, 2, 1, 3, 2 };
+/*0x5C*/ static s16 data_5C[] = { 0, 1, 2, 0 };
+/*0x64*/ static s16 data_64[] = { 0, 1, 2, 3 };
+/*0x6C*/ static s16 data_6C[] = { 0, 80, 0, 0, 0, 0, 0, 0, 0, 0 };
 
 // offset: 0x0 | ctor
 void dll_106_ctor(void* dll) { }
@@ -31,5 +25,190 @@ void dll_106_ctor(void* dll) { }
 void dll_106_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/modgfx/106/dll_106_modgfx_Func0.s")
+
+s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, ModgfxArg5* arg5) {
+    ModgfxStruct sp3C8;
+    ModgfxStruct_0 spC8[32];
+    ModgfxStruct_0* temp_s0;
+    f32 temp_fs0;
+    f32 temp_fv1;
+    s16 var_s5;
+    s16 var_s6;
+    s16 var_s7;
+    s16 var_v1;
+    s32 spB0;
+    s32 var_a2;
+    s32 i;
+    s32 var_v1_2;
+    SRT sp8C;
+    s16* var_a3;
+    s16* var_v0_2;
+    s32 j;
+
+    var_v1 = 0;
+    var_s5 = 0xFF;
+    var_s6 = 0xFF;
+    var_s7 = 0xFF;
+    spB0 = 1;
+    if (arg5 != NULL) {
+        spB0 = arg5->unk0;
+        var_s5 = arg5->unk6;
+        var_s6 = arg5->unkA;
+        var_s7 = arg5->unkE;
+    }
+
+    for (i = 0; i < spB0; i++) {
+        if (arg1 == 0) {
+            var_s5 += mathRnd(-27, 27);
+            if (var_s5 > 0xFF) {
+                var_s5 = 0xFF;
+            } else if (var_s5 < 0) {
+                var_s5 = 0;
+            }
+            var_s6 += mathRnd(-27, 27);
+            if (var_s6 > 0xFF) {
+                var_s6 = 0xFF;
+            } else if (var_s6 < 0) {
+                var_s6 = 0;
+            }
+            var_s7 += mathRnd(-27, 27);
+            if (var_s7 > 0xFF) {
+                var_s7 = 0xFF;
+            } else if (var_s7 < 0) {
+                var_s7 = 0;
+            }
+        }
+
+        temp_s0 = spC8;
+        temp_s0->unk16 = 0;
+        if (arg1 != 0) {
+            temp_s0->unk14 = 4;
+        } else {
+            temp_s0->unk14 = 3;
+        }
+
+        if (arg1 != 0) {
+            temp_s0->unk10 = data_64;
+        } else {
+            temp_s0->unk10 = data_5C;
+        }
+
+        temp_s0->unk0 = 8;
+        temp_s0->unk4.f[0] = var_s5;
+        temp_s0->unk4.f[1] = var_s6;
+        temp_s0->unk4.f[2] = var_s7;
+        temp_s0++;
+        temp_fs0 = mathRnd(0, 0xFFFE);
+        temp_fv1 = mathRnd(-3000, -12000);
+        temp_s0->unk16 = 0;
+        temp_s0->unk14 = 0;
+        temp_s0->unk10 = NULL;
+        temp_s0->unk0 = 0x80;
+        temp_s0->unk4.x = 0.0f;
+        temp_s0->unk4.f[1] = temp_fv1;
+        temp_s0->unk4.f[2] = temp_fs0;
+        temp_s0++;
+        temp_s0->unk16 = 0;
+        if (arg1 != 0) {
+            temp_s0->unk14 = 4;
+        } else {
+            temp_s0->unk14 = 3;
+        }
+
+        if (arg1 != 0) {
+            temp_s0->unk10 = data_64;
+        } else {
+            temp_s0->unk10 = data_5C;
+        }
+
+        temp_s0->unk0 = 2;
+        temp_s0->unk4.x = 1.0f;
+        temp_s0->unk4.f[1] = 0.5f;
+        temp_s0->unk4.f[2] = 1.5f;
+        temp_s0++;
+
+        temp_s0->unk16 = 1;
+        temp_s0->unk14 = 0;
+        temp_s0->unk10 = 0;
+        temp_s0->unk0 = 0x400000;
+        temp_s0->unk4.f[0] = 0.0f;
+        temp_s0->unk4.f[1] = 0.0f;
+        temp_s0->unk4.f[2] = 400.0f;
+
+        sp8C.transl.f[0] = 0.0f;
+        sp8C.transl.f[1] = 0.0f;
+        sp8C.transl.f[2] = 0.0f;
+        sp8C.scale = 1.0f;
+        sp8C.roll = 0;
+        sp8C.pitch = (s16) temp_fv1;
+        sp8C.yaw = (s16) temp_fs0;
+        mathRotateRPY(&sp8C, temp_s0->unk4.f);
+        sp3C8.unk58 = 0;
+        sp3C8.unk44 = arg1;
+        sp3C8.unk2C.f[0] = 0.0f;
+        sp3C8.unk2C.f[1] = 0.0f;
+        sp3C8.unk2C.f[2] = 0.0f;
+        sp3C8.unk20 = 0.0f;
+        sp3C8.unk24 = 0.0f;
+        sp3C8.unk28 = 0.0f;
+        sp3C8.unk38 = 1.0f;
+        sp3C8.unk4 = arg0;
+        sp3C8.unk3C = 0; sp3C8.unk40 = 1;
+        if (arg1 != 0) {
+            sp3C8.unk59 = 4;
+        } else {
+            sp3C8.unk59 = 3;
+        }
+
+        sp3C8.unk5A = 0;
+        sp3C8.unk5B = 0x10;
+        sp3C8.unk5D = 4;
+        for (j = 0; j < 7; j++) { sp3C8.unk46[j] = data_6C[j]; }
+        sp3C8.unk0 = spC8;
+        sp3C8.unk54 = arg3 | 0x02000490;
+
+        if (sp3C8.unk54 & 1) {
+            if ((sp3C8.unk4 != NULL) && (arg2 != NULL)) {
+                sp3C8.unk2C.f[0] += sp3C8.unk4->globalPosition.x + arg2->transl.x;
+                sp3C8.unk2C.f[1] += sp3C8.unk4->globalPosition.f[1] + arg2->transl.f[1];
+                sp3C8.unk2C.f[2] += sp3C8.unk4->globalPosition.f[2] + arg2->transl.f[2];
+            } else if (sp3C8.unk4 != NULL) {
+                sp3C8.unk2C.f[0] += sp3C8.unk4->globalPosition.x;
+                sp3C8.unk2C.f[1] += sp3C8.unk4->globalPosition.f[1];
+                sp3C8.unk2C.f[2] += sp3C8.unk4->globalPosition.f[2];
+            } else if (arg2 != NULL) {
+                sp3C8.unk2C.f[0] += arg2->transl.x;
+                sp3C8.unk2C.f[1] += arg2->transl.f[1];
+                sp3C8.unk2C.f[2] += arg2->transl.f[2];
+            }
+        }
+
+        if (arg1 != 0) {
+            var_a2 = 4;
+        } else {
+            var_a2 = 3;
+        }
+
+        if (arg1 != 0) {
+            var_a3 = data_20;
+        } else {
+            var_a3 = data_0;
+        }
+
+        if (arg1 != 0) {
+            var_v1_2 = 2;
+        } else {
+            var_v1_2 = 1;
+        }
+
+        if (arg1 != 0) {
+            var_v0_2 = data_50;
+        } else {
+            var_v0_2 = data_48;
+        }
+
+        var_v1 = dll_modgfx->Func1(&sp3C8, 0, var_a2, var_a3, var_v1_2, var_v0_2, 0, NULL);
+    }
+
+    return var_v1;
+}

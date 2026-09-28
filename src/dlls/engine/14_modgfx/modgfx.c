@@ -2097,7 +2097,7 @@ void modgfx_Func18(s16* arg0) {
 // offset: 0x6E24 | func: 35 | export: 19
 void modgfx_Func19(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7) {
     bss_AD0.unk0 = bss_7C0;
-    bss_AD0.unk5D =  bss_AC4 - bss_AC0;
+    bss_AD0.unk5D = bss_AC4 - bss_AC0;
     if (arg7 == 0 && arg6 == 0) {
         bss_AD0.unk54 |= 0x2000000;
     } else {
