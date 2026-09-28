@@ -542,7 +542,39 @@ void dll_32_dtor(void *dll);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2D0.s")
 
 // offset: 0x2DC | func: 2 | export: 2
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_2DC.s")
+void dll_32_func_2DC(Object* obj, s32 particleID, void* partFxConfig) {
+    MtxF* jointMtx;
+    SRT fxTransform;
+    s32 i;
+    ModelInstance* modelInstance;
+
+    modelInstance = obj->modelInsts[obj->modelInstIdx];
+    fxTransform.scale = 1.0f;
+    fxTransform.yaw = 0;
+    fxTransform.roll = 0;
+    fxTransform.pitch = 0;
+
+    for (i = 0; i < modelInstance->model->jointCount; i++) {
+        fxTransform.transl.x = 1.0f;
+        fxTransform.transl.y = 0.0f;
+        fxTransform.transl.z = 0.0f;
+        fxTransform.scale = 1.0f;
+        fxTransform.roll = 0;
+        fxTransform.pitch = 0;
+        fxTransform.yaw = 0;
+
+        jointMtx = (MtxF *) ((f32**)(modelInstance->matrices)[(modelInstance->unk34 & 1)] + (i << 4));
+        mathMtxXFMF(jointMtx, 1.0f, 0.0f, 0.0f, &fxTransform.transl.x, &fxTransform.transl.y, &fxTransform.transl.z);
+        
+        fxTransform.transl.x -= obj->srt.transl.x;
+        fxTransform.transl.y -= obj->srt.transl.y;
+        fxTransform.transl.z -= obj->srt.transl.z;
+        fxTransform.transl.x += gWorldX;
+        fxTransform.transl.z += gWorldZ;
+        
+        gDLL_17_partfx->vtbl->spawn(obj, particleID, &fxTransform, 0, -1, partFxConfig);
+    }
+}
 
 // offset: 0x4B0 | func: 3 | export: 3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_4B0.s")
