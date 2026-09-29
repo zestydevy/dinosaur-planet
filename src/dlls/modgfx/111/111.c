@@ -1,30 +1,28 @@
 #include "common.h"
 
-/*0x0*/ static u32 data_0[] = {
-    0x00000000, 0x03e80000, 0x00000362, 0x000001f4, 0x001f0000, 0x03620000, 0xfe0c003f, 0x00000000, 
-    0x0000fc18, 0x005f0000, 0xfc9e0000, 0xfe0c007f, 0x0000fc9e, 0x000001f4, 0x009f0000, 0x00000000, 
-    0x03e800bf, 0x00000000, 0x177003e8, 0x0000003f, 0x03621770, 0x01f4001f, 0x003f0362, 0x1770fe0c, 
-    0x003f003f, 0x00001770, 0xfc18005f, 0x003ffc9e, 0x1770fe0c, 0x007f003f, 0xfc9e1770, 0x01f4009f, 
-    0x003f0000, 0x177003e8, 0x00bf003f
+/*0x0*/ static s16 data_0[] = {
+    0x0000, 0x0000, 0x03e8, 0x0000, 0x0000, 0x0362, 0x0000, 0x01f4, 0x001f, 0x0000, 0x0362, 0x0000, 0xfe0c, 0x003f, 0x0000, 0x0000,
+    0x0000, 0xfc18, 0x005f, 0x0000, 0xfc9e, 0x0000, 0xfe0c, 0x007f, 0x0000, 0xfc9e, 0x0000, 0x01f4, 0x009f, 0x0000, 0x0000, 0x0000,
+    0x03e8, 0x00bf, 0x0000, 0x0000, 0x1770, 0x03e8, 0x0000, 0x003f, 0x0362, 0x1770, 0x01f4, 0x001f, 0x003f, 0x0362, 0x1770, 0xfe0c,
+    0x003f, 0x003f, 0x0000, 0x1770, 0xfc18, 0x005f, 0x003f, 0xfc9e, 0x1770, 0xfe0c, 0x007f, 0x003f, 0xfc9e, 0x1770, 0x01f4, 0x009f,
+    0x003f, 0x0000, 0x1770, 0x03e8, 0x00bf, 0x003f
 };
-/*0x8C*/ static u32 data_8C[] = {
-    0x00000001, 0x00080000, 0x00080007, 0x00010002, 0x00090001, 0x00090008, 0x00020003, 0x000a0002, 
-    0x000a0009, 0x00030004, 0x000b0003, 0x000b000a, 0x00040005, 0x000c0004, 0x000c000b, 0x00050006, 
-    0x000d0005, 0x000d000c
+/*0x8C*/ static s16 data_8C[] = {
+    0x0000, 0x0001, 0x0008, 0x0000, 0x0008, 0x0007, 0x0001, 0x0002, 0x0009, 0x0001, 0x0009, 0x0008, 0x0002, 0x0003, 0x000a, 0x0002,
+    0x000a, 0x0009, 0x0003, 0x0004, 0x000b, 0x0003, 0x000b, 0x000a, 0x0004, 0x0005, 0x000c, 0x0004, 0x000c, 0x000b, 0x0005, 0x0006,
+    0x000d, 0x0005, 0x000d, 0x000c
 };
-/*0xD4*/ static u32 data_D4[] = {
-    0x00000001, 0x00020003, 0x00040005, 0x00060007, 0x00080009, 0x000a000b, 0x000c000d
+/*0xD4*/ static s16 data_D4[] = {
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d
 };
-/*0xF0*/ static u32 data_F0[] = {
-    0x00000001, 0x00020003, 0x00040005, 0x00060000
+/*0xF0*/ static s16 data_F0[] = {
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0000
 };
-/*0x100*/ static u32 data_100[] = {
-    0x00070008, 0x0009000a, 0x000b000c, 0x000d0000
+/*0x100*/ static s16 data_100[] = {
+    0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x0000
 };
-/*0x110*/ static u32 data_110 = 0x00000014;
-/*0x114*/ static u32 data_114[] = {
-    0x00aa0000, 0x00000000, 0x00000000
-};
+/*0x110*/ static s16 data_110[] = { 0x0000, 0x0014, 0x00aa, 0x0000, 0x0000, 0x0000, 0x0000, 0x0000 };
+
 
 // offset: 0x0 | ctor
 void dll_111_ctor(void* dll) { }
@@ -33,5 +31,161 @@ void dll_111_ctor(void* dll) { }
 void dll_111_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_111_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/modgfx/111/dll_111_modgfx_Func0.s")
+void dll_111_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
+    ModgfxStruct sp348;
+    ModgfxStruct_0 sp48[32];
+    ModgfxStruct_0 *temp;
+    s32 pad[2];
+    s32 i;
+
+    temp = sp48;
+    temp->unk16 = 0;
+    temp->unk14 = 0x32;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x800000;
+    temp->unk4.f[0] = 1.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 0x9B;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x10000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_100;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_F0;
+    temp->unk0 = 2;
+    temp->unk4.f[0] = 0.7f;
+    temp->unk4.f[1] = 1.0f;
+    temp->unk4.f[2] = 0.7f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_100;
+    temp->unk0 = 2;
+    temp->unk4.f[0] = 1.2f;
+    temp->unk4.f[1] = -1.0f;
+    temp->unk4.f[2] = 1.2f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_F0;
+    temp->unk0 = 8;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 160.0f;
+    temp->unk4.f[2] = 115.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_100;
+    temp->unk0 = 8;
+    temp->unk4.f[0] = 255.0f;
+    temp->unk4.f[1] = 255.0f;
+    temp->unk4.f[2] = 115.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 1;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x8000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 255.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 1;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x80000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = -130.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 1;
+    temp->unk14 = 1;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x80000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 2;
+    temp->unk14 = 14;
+    temp->unk10 = data_D4;
+    temp->unk0 = 0x4000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = -4.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 2;
+    temp->unk14 = 7;
+    temp->unk10 = data_F0;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 2;
+    temp->unk14 = 1;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x80000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 90.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    sp348.unk5D = temp - sp48;
+    sp348.unk40 = 1;
+    sp348.unk59 = 0xE;
+    sp348.unk5B = 0x10;
+    sp348.unk58 = 0;
+    sp348.unk2C.f[0] = 0.0f;
+    sp348.unk2C.f[1] = 0.0f;
+    sp348.unk2C.f[2] = 0.0f;
+    sp348.unk20 = 0.0f;
+    sp348.unk24 = 0.0f;
+    sp348.unk28 = 0.0f;
+    sp348.unk38 = 1.0f;
+    sp348.unk3C = 0;
+    sp348.unk5A = 0;
+    sp348.unk5D = 0;
+    sp348.unk44 = arg1;
+    sp348.unk4 = arg0;
+    for (i = 0; i < 7; i++) { sp348.unk46[i] = data_110[i]; }
+    sp348.unk0 = sp48;
+    sp348.unk54 = arg3 | 0x04000002;
+    if (sp348.unk54 & 1) {
+        if (sp348.unk4 != NULL) {
+            sp348.unk2C.f[0] += sp348.unk4->globalPosition.f[0];
+            sp348.unk2C.f[1] += sp348.unk4->globalPosition.f[1];
+            sp348.unk2C.f[2] += sp348.unk4->globalPosition.f[2];
+        } else {
+            sp348.unk2C.f[0] += arg2->transl.f[0];
+            sp348.unk2C.f[1] += arg2->transl.f[1];
+            sp348.unk2C.f[2] += arg2->transl.f[2];
+        }
+    }
+    gDLL_14_Modgfx->vtbl->Func1(&sp348, 0, 14, data_0, 12, data_8C, 72, NULL);
+}
