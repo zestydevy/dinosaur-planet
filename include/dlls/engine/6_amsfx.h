@@ -620,6 +620,8 @@ enum SoundID {
     SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
     SOUND_6BD_Creature_Death_Cry = 0x6BD, // Scarab
 
+    SOUND_6C3 = 0x6C3, // ProjBall
+
     SOUND_6CA_Chime = 0x6CA, // Duster
 
     SOUND_6E2 = 0x6E2, // used by KT_RexFloorSwitch
@@ -901,6 +903,7 @@ enum SoundID {
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B62 = 0xB62, // ProjBall
     SOUND_B63 = 0xB63,
     SOUND_B64 = 0xB64,
 
