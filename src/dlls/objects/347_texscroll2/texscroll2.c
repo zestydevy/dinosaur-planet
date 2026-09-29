@@ -143,7 +143,7 @@ void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
     widthA = texture->width << 6;
     heightA = texture->height << 6;
     objData->materialIndex = materialIndex;
-    objData->blendMaterialIndex = -1U;
+    objData->blendMaterialIndex = -1;
     widthB = widthA;
     heightB = heightA;
 
@@ -187,9 +187,8 @@ void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
 
 // offset: 0x468 | func: 8 | export: 7
 void TexScroll2_changeScrollSpeed(Object* self, s8 vSpeedA) {
-    TexScroll2_Data* objData;
-
-    objData = self->data;
+    TexScroll2_Data* objData = self->data;
+    
     if (vSpeedA != objData->vSpeedA) {
         objData->vSpeedA = vSpeedA;
         objData->scrollSetupNeeded = TRUE;
