@@ -31,7 +31,7 @@ void dll_111_ctor(void* dll) { }
 void dll_111_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_111_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
+s32 dll_111_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
     ModgfxStruct sp348;
     ModgfxStruct_0 sp48[32];
     ModgfxStruct_0 *temp;
@@ -187,5 +187,6 @@ void dll_111_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4,
             sp348.unk2C.f[2] += arg2->transl.f[2];
         }
     }
-    gDLL_14_Modgfx->vtbl->Func1(&sp348, 0, 14, data_0, 12, data_8C, 72, NULL);
+
+    return dll_modgfx->Func1(&sp348, 0, 14, data_0, 12, data_8C, 72, NULL);
 }
