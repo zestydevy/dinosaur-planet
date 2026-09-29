@@ -8,10 +8,10 @@ _exports:
 .dword Transporter_dtor
 
 # export table
-/*0*/ .dword Transporter_setup
-/*1*/ .dword Transporter_control
-/*2*/ .dword Transporter_update
-/*3*/ .dword Transporter_print
-/*4*/ .dword Transporter_free
-/*5*/ .dword Transporter_get_model_flags
-/*6*/ .dword Transporter_get_data_size
+/*0*/ .dword Transporter_obj_Setup
+/*1*/ .dword Transporter_obj_Control
+/*2*/ .dword Transporter_obj_Update
+/*3*/ .dword Transporter_obj_Print
+/*4*/ .dword Transporter_obj_Free
+/*5*/ .dword Transporter_obj_GetModelFlags
+/*6*/ .dword Transporter_obj_GetDataSize
