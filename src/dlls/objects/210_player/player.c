@@ -3,7 +3,7 @@
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/85_attentioncam.h"
-#include "dlls/objects/255_projball.h"
+#include "dlls/objects/255_ProjBall.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/420_DFropenode.h"
 #include "game/objects/object.h"
