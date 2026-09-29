@@ -93,7 +93,7 @@ void SB_MiniFire_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 // offset: 0x484 | func: 4 | export: 4
 void SB_MiniFire_free(Object *self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
 }
 
 // offset: 0x4F4 | func: 5 | export: 5

@@ -89,7 +89,7 @@ void WMvein_control(Object* self) {
             self->srt.roll += objdata->rollSpeed * gUpdateRate;
         }
     } else if ((distance > objdata->fxRadius) && (objdata->effectCreated == 1)) {
-        gDLL_14_Modgfx->vtbl->func7(&objdata->modgfxReturnVal);
+        dll_modgfx->Func7(&objdata->modgfxReturnVal);
         objdata->effectCreated = FALSE;
     }
 }
@@ -103,7 +103,7 @@ void WMvein_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle *
 // offset: 0x2C8 | func: 4 | export: 4
 void WMvein_free(Object* self, s32 arg1) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
 }
 
 // offset: 0x338 | func: 5 | export: 5

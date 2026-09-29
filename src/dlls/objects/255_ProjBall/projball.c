@@ -201,7 +201,7 @@ void ProjBall_obj_Free(Object* self, s32 onlySelf) {
         objData->unk3E |= 2;
     }
     
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

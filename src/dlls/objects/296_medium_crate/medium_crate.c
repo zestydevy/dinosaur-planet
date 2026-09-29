@@ -291,7 +291,7 @@ void medium_crate_free(Object *self, s32 param2) {
 
     objdata = (MediumCrate_Data*)self->data;
 
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
 
     dllFree(_data_0);
     dllFree(_data_4);

@@ -216,7 +216,7 @@ void DFShrine_obj_Control(Object* self) {
             dllFree(modgfx);
 
             mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-            gDLL_14_Modgfx->vtbl->func7(&objdata->modGfxRing);
+            dll_modgfx->Func7(&objdata->modGfxRing);
         }
     default:
         break;
@@ -354,7 +354,7 @@ void DFShrine_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tria
 
 // offset: 0xE64 | func: 4 | export: 4
 void DFShrine_obj_Free(Object* self, s32 onlySelf) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }

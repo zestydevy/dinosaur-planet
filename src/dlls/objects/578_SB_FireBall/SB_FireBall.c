@@ -93,7 +93,7 @@ void SB_FireBall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 
 // offset: 0x374 | func: 4 | export: 4
 void SB_FireBall_free(Object *self, s32 a1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 

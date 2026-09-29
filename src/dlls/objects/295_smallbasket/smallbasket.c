@@ -399,7 +399,7 @@ void smallbasket_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 void smallbasket_free(Object* self, s32 arg1) {
     SmallBasket_Data* objdata = self->data;
 
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     dllFree(dModGfxDLL);
 
     if (objdata->soundHandle) {

@@ -127,7 +127,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                     objData->soundHandle = 0;
                 }
                 
-                gDLL_14_Modgfx->vtbl->func5(self);
+                dll_modgfx->Func5(self);
                 dll_amSfx->Play(self, SOUND_2BB_Laser_Stop_Hiss, MAX_VOLUME, NULL, NULL, 0, NULL);
             } else {
                 //Firing
@@ -301,7 +301,7 @@ void WCSunTempleLaser_obj_Free(Object* self, s32 onlySelf) {
         dll_amSfx->Stop(objData->soundHandle);
     }
     
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     
     dllFree(dModGfxDLL);
 

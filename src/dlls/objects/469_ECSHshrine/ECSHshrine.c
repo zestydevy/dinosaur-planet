@@ -206,7 +206,7 @@ void ECSHshrine_obj_Control(Object* self) {
             dllFree(modGfxDLL);
 
             mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-            gDLL_14_Modgfx->vtbl->func7(&objdata->modGfxCircle);
+            dll_modgfx->Func7(&objdata->modGfxCircle);
         }
         break;
     case ECShrine_STATE_Test_Start:
@@ -477,7 +477,7 @@ void ECSHshrine_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tr
 // offset: 0x1380 | func: 4 | export: 4
 void ECSHshrine_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_13);
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }

@@ -78,7 +78,7 @@ void VFP_lavastar_free(Object* self, s32 arg1) {
 
     objdata = (VFP_lavastar_Data*)self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
     dllFree(sDLL_182);
     dll_amSfx->Stop(objdata->soundHandle);
     objdata->soundHandle = 0;

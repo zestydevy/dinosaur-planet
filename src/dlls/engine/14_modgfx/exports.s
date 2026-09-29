@@ -4,29 +4,29 @@
 _exports:
 
 # ctor/dtor
-.dword dll_14_ctor
-.dword dll_14_dtor
+.dword modgfx_ctor
+.dword modgfx_dtor
 
 # export table
-/*0*/ .dword dll_14_func_88
-/*1*/ .dword dll_14_func_F4
-/*2*/ .dword dll_14_func_C90
-/*3*/ .dword dll_14_func_21F0
-/*4*/ .dword dll_14_func_2234
-/*5*/ .dword dll_14_func_2474
-/*6*/ .dword dll_14_func_2618
-/*7*/ .dword dll_14_func_4854
-/*8*/ .dword dll_14_func_4910
-/*9*/ .dword dll_14_func_4938
-/*10*/ .dword dll_14_func_49E4
-/*11*/ .dword dll_14_func_4A88
-/*12*/ .dword dll_14_func_6BE8
-/*13*/ .dword dll_14_func_6CA0
-/*14*/ .dword dll_14_func_6CD8
-/*15*/ .dword dll_14_func_6D58
-/*16*/ .dword dll_14_func_6D80
-/*17*/ .dword dll_14_func_6DA8
-/*18*/ .dword dll_14_func_6DE4
-/*19*/ .dword dll_14_func_6E24
-/*20*/ .dword dll_14_func_6F88
-/*21*/ .dword dll_14_func_6FB0
+/*0*/ .dword modgfx_Func0
+/*1*/ .dword modgfx_Func1
+/*2*/ .dword modgfx_Func2
+/*3*/ .dword modgfx_Func3
+/*4*/ .dword modgfx_Func4
+/*5*/ .dword modgfx_Func5
+/*6*/ .dword modgfx_Func6
+/*7*/ .dword modgfx_Func7
+/*8*/ .dword modgfx_Func8
+/*9*/ .dword modgfx_Func9
+/*10*/ .dword modgfx_Func10
+/*11*/ .dword modgfx_Func11
+/*12*/ .dword modgfx_Func12
+/*13*/ .dword modgfx_Func13
+/*14*/ .dword modgfx_Func14
+/*15*/ .dword modgfx_Func15
+/*16*/ .dword modgfx_Func16
+/*17*/ .dword modgfx_Func17
+/*18*/ .dword modgfx_Func18
+/*19*/ .dword modgfx_Func19
+/*20*/ .dword modgfx_Func20
+/*21*/ .dword modgfx_Func21

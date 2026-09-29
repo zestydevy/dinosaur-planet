@@ -105,7 +105,7 @@ void DFIceFire_obj_Control(Object* self) {
         fxTransform.scale = objSetup->scale;
         fxTransform.roll = 0;
         fxTransform.yaw = 0;
-        gDLL_14_Modgfx->vtbl->func10(self);
+        dll_modgfx->Func10(self);
         
         modGfxDLL = dllLoad(DLL_ID_116, 1);
         modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
@@ -218,7 +218,7 @@ void DFIceFire_obj_Update(Object* self) {
         mainSetBits(objSetup->gamebitFrozen, TRUE);
         objData->state = DFIceFire_STATE_2_Freezing;
         objSetModel(self, 1);
-        gDLL_14_Modgfx->vtbl->func10(self);
+        dll_modgfx->Func10(self);
         objData->timer = 180;
         func_800267A4(self);
         func_80026160(self);
@@ -247,7 +247,7 @@ void DFIceFire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
 // offset: 0xA94 | func: 4 | export: 4
 void DFIceFire_obj_Free(Object* self, s32 onlySelf) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 
     //@bug: soundHandles not freed here just in case?

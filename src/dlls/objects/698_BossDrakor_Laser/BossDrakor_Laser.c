@@ -58,7 +58,7 @@ void dll_698_control(Object *self) {
             objdata->unk4 -= (s16) gUpdateRateF;
             if (objdata->unk4 <= 0) {
                 objdata->unk4 = 0;
-                gDLL_14_Modgfx->vtbl->func10(self);
+                dll_modgfx->Func10(self);
                 dll_amSfx->Stop(objdata->unk8);
                 dll_amSfx->Stop(objdata->unkC);
                 objdata->unk8 = 0;
@@ -71,7 +71,7 @@ void dll_698_control(Object *self) {
             if (objdata->unk2 <= 0) {
                 objdata->unk2 = 0;
                 objdata->unk4 = objdata->unk0;
-                gDLL_14_Modgfx->vtbl->func10(self);
+                dll_modgfx->Func10(self);
             }
         }
         if ((objdata->unk8 != 0) || (objdata->unkC != 0)) {
@@ -117,7 +117,7 @@ void dll_698_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle 
 // offset: 0x4D0 | func: 4 | export: 4
 void dll_698_free(Object *self, s32 a1) {
     gDLL_13_Expgfx->vtbl->func5(self);
-    gDLL_14_Modgfx->vtbl->func4(self);
+    dll_modgfx->Func4(self);
 }
 
 // offset: 0x540 | func: 5 | export: 5

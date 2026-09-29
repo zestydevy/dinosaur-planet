@@ -182,7 +182,7 @@ void MMshrine_control(Object *self) {
                 temp_v0_5->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(temp_v0_5);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
-                gDLL_14_Modgfx->vtbl->func7(&objdata->unkC);
+                dll_modgfx->Func7(&objdata->unkC);
             }
             break;
         case 1:
@@ -260,7 +260,7 @@ void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle
 
 // offset: 0xB9C | func: 4 | export: 4
 void MMshrine_free(Object *self, s32 arg1) {
-    gDLL_14_Modgfx->vtbl->func5(self);
+    dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
     gDLL_5_AMSEQ->vtbl->set_volume(2, 0);
 }

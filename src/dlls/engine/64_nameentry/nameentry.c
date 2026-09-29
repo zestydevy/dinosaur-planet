@@ -13,6 +13,7 @@
 #include "macros.h"
 #include "sys/rcp.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 #include "prevent_bss_reordering.h"
 
