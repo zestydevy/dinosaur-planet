@@ -8,10 +8,10 @@ _exports:
 .dword NWtricky_dtor
 
 # export table
-/*0*/ .dword NWtricky_setup
-/*1*/ .dword NWtricky_control
-/*2*/ .dword NWtricky_update
-/*3*/ .dword NWtricky_print
-/*4*/ .dword NWtricky_free
-/*5*/ .dword NWtricky_get_model_flags
-/*6*/ .dword NWtricky_get_data_size
+/*0*/ .dword NWtricky_obj_Setup
+/*1*/ .dword NWtricky_obj_Control
+/*2*/ .dword NWtricky_obj_Update
+/*3*/ .dword NWtricky_obj_Print
+/*4*/ .dword NWtricky_obj_Free
+/*5*/ .dword NWtricky_obj_GetModelFlags
+/*6*/ .dword NWtricky_obj_GetDataSize

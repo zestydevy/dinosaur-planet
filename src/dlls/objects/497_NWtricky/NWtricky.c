@@ -1,28 +1,23 @@
-#include "macros.h"
+#include "dll.h"
+#include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/common/sidekick.h"
+#include "dlls/objects/351_GroundAnimator.h"
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "game/objects/object.h"
+#include "macros.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "dll.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/common/sidekick.h"
 
 typedef struct {
     u8 state;
     u8 doneDemo;
     u8 demoState;
     f32 timer;
-    SidekickStats *sidekickStats;
+    SidekickStats* sidekickStats;
 } NWtricky_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18[0x23 - 0x18];
-    u8 unk23; //Find command range?
-} GroundAnimator_Setup;
 
 typedef enum {
     STATE_0_Initial,
@@ -42,18 +37,18 @@ typedef enum {
 // Time for Tricky to offer hint
 #define NWTRICKY_INVERVAL_OFFER_HINT 2000.0f
 
-static int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
+static int NWtricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
-void NWtricky_ctor(void *dll) { }
+void NWtricky_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void NWtricky_dtor(void *dll) { }
+void NWtricky_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    NWtricky_Data *objdata;
-    Object *tricky;
+void NWtricky_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
+    NWtricky_Data* objdata;
+    Object* tricky;
 
     objdata = self->data;
     objdata->sidekickStats = gDLL_29_Gplay->vtbl->get_sidekick_stats();
@@ -75,16 +70,16 @@ void NWtricky_setup(Object *self, ObjSetup *setup, s32 arg2) {
         }
     }
 
-    self->animCallback = NWtricky_anim_callback;
+    self->animCallback = NWtricky_animCallback;
 }
 
 // offset: 0x134 | func: 1 | export: 1
-void NWtricky_control(Object *self) {
-    NWtricky_Data *objdata;
-    Object *tricky;
-    Object *player;
-    Object *trickyballGroundAnimator;
-    GroundAnimator_Setup *gaSetup;
+void NWtricky_obj_Control(Object* self) {
+    NWtricky_Data* objdata;
+    Object* tricky;
+    Object* player;
+    Object* trickyballGroundAnimator;
+    GroundAnimator_Setup* gaSetup;
 
     objdata = self->data;
     tricky = objGetSidekick();
@@ -131,7 +126,7 @@ void NWtricky_control(Object *self) {
                     player = objGetPlayer();
 
                     //Get GroundAnimator object for the hole containing Tricky's ball
-                    trickyballGroundAnimator = objGetObjectByUID(0x1785); //search by uID
+                    trickyballGroundAnimator = objGetObjectByUID(0x1785);
 
                     //@bug: missing null check
                     gaSetup = (GroundAnimator_Setup*)trickyballGroundAnimator->setup;
@@ -139,10 +134,10 @@ void NWtricky_control(Object *self) {
                     //Offer a hint if Tricky and the player stay at the toy's dig spot for a while
                     if ((vec3DistanceSquared(
                             &trickyballGroundAnimator->globalPosition,
-                            &player->globalPosition) <= SQ(gaSetup->unk23)) && 
+                            &player->globalPosition) <= SQ(gaSetup->findCommandRadius)) && 
                         (vec3DistanceSquared(
                             &player->globalPosition, 
-                            &tricky->globalPosition) <= 10000.0f)
+                            &tricky->globalPosition) <= SQ(100))
                     ) {
                         dll_amSfx->Play(tricky, SOUND_4BC_Tricky_Dig_EMPTY, MAX_VOLUME, NULL, NULL, 0, NULL);
                         gDLL_22_Subtitles->vtbl->func_368(GAMETEXT_0BE_SW_Tricky_Tutorial_Hint);
@@ -159,13 +154,13 @@ void NWtricky_control(Object *self) {
 }
 
 // offset: 0x538 | func: 2 | export: 2
-void NWtricky_update(Object *self) { }
+void NWtricky_obj_Update(Object* self) { }
 
 // offset: 0x544 | func: 3 | export: 3
-void NWtricky_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void NWtricky_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
 
 // offset: 0x55C | func: 4 | export: 4
-void NWtricky_free(Object *self, s32 a1) {
+void NWtricky_obj_Free(Object* self, s32 onlySelf) {
     if (mainGetBits(BIT_SnowHorn_Tutorial_Defeated_SharpClaw) && !mainGetBits(BIT_4E3)) {
         mainSetBits(BIT_4E3, 0xFF);
         mainSetBits(BIT_Tricky_Unlocked_Sidekick_Commands, 1);
@@ -173,19 +168,19 @@ void NWtricky_free(Object *self, s32 a1) {
 }
 
 // offset: 0x5EC | func: 5 | export: 5
-u32 NWtricky_get_model_flags(Object *self) {
+u32 NWtricky_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x5FC | func: 6 | export: 6
-u32 NWtricky_get_data_size(Object *self, u32 a1) {
+u32 NWtricky_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(NWtricky_Data);
 }
 
 // offset: 0x610 | func: 7
-int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
-    NWtricky_Data *objdata;
-    Object *tricky;
+int NWtricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    NWtricky_Data* objdata;
+    Object* tricky;
     s32 i;
     s32 buttonMask;
 
@@ -204,19 +199,19 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
         switch (objdata->demoState) {
         case NWtricky_DEMO_STATE_Initial:
             STUBBED_PRINTF("menu start\n");
-            for (i = 0; i < animObjData->messageCount; i++) {
-                if (animObjData->messages[i] == 3)
+            for (i = 0; i < animData->messageCount; i++) {
+                if (animData->messages[i] == 3)
                     objdata->demoState = NWtricky_DEMO_STATE_Show_Inventory;
             }
             break;
 
         case NWtricky_DEMO_STATE_Show_Inventory:
             STUBBED_PRINTF("menu cbuttons %d\n", joyGetPressedRaw(0));
-            for (i = 0; i < animObjData->messageCount; i++) {
-                if (animObjData->messages[i] == 4) {
+            for (i = 0; i < animData->messageCount; i++) {
+                if (animData->messages[i] == 4) {
                     objdata->demoState = NWtricky_DEMO_STATE_Close_Inventory;
                     break;
-                } else if (animObjData->messages[i] == 1)
+                } else if (animData->messages[i] == 1)
                     buttonMask = D_CBUTTONS; // simulate C-Down press
             }
 
@@ -226,8 +221,8 @@ int NWtricky_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjD
 
         case NWtricky_DEMO_STATE_Close_Inventory:
             STUBBED_PRINTF("menu a button\n");
-            for (i = 0; i < animObjData->messageCount; i++) {
-                if (animObjData->messages[i] == 2)
+            for (i = 0; i < animData->messageCount; i++) {
+                if (animData->messages[i] == 2)
                     buttonMask = A_BUTTON; // simulate A press
             }
 
