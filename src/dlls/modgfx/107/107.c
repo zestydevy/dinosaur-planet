@@ -230,7 +230,7 @@ s32 dll_107_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
             sp3B8.unk54 |= 0x04000000;
         }
         sp3B8.unk54 |= flags;
-        spAE = gDLL_14_Modgfx->vtbl->Func1(&sp3B8, 0, 4, data_0, 4, data_28, 0, sp9C);
+        spAE = dll_modgfx->Func1(&sp3B8, 0, 4, data_0, 4, data_28, 0, sp9C);
         var_s1--;
     }
 

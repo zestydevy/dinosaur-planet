@@ -1072,7 +1072,7 @@ void SharpClaw_func_2044(Object* self, SRT* fxTransform, s32 useModGfx) {
         fxTransform->roll = 0;
         fxTransform->scale = 1.0f;
 
-        modGfxDLL->vtbl->func0(self, 0, fxTransform, 1, -1, data_1B0);
+        modGfxDLL->vtbl->Func0(self, 0, fxTransform, 1, -1, data_1B0);
         if (modGfxDLL != NULL) {
             dllFree(modGfxDLL);
         }

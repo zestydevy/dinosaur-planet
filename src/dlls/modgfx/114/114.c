@@ -221,5 +221,5 @@ s32 dll_114_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         }
     }
 
-    return gDLL_14_Modgfx->vtbl->Func1(&sp350, 0, 0x15, data_0, 0x18, data_D4, 0x8E, NULL);
+    return dll_modgfx->Func1(&sp350, 0, 0x15, data_0, 0x18, data_D4, 0x8E, NULL);
 }
