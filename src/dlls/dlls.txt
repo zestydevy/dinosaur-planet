@@ -389,6 +389,7 @@
 576 = objects/576_SB_ShipMast
 577 = objects/577_SB_ShipGun
 578 = objects/578_SB_FireBall
+580 = objects/580_SB_CloudBall
 581 = objects/581_SB_KyteCage
 582 = objects/582_SB_SeqDoor
 583 = objects/583_SB_CageKyte
@@ -405,6 +406,7 @@
 596 = objects/596_WL_PressureSwitch
 597 = objects/597_WL_Column
 598 = objects/598_WM_Wizard
+599 = objects/599_WL_colrise
 602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 604 = objects/604_WL_WallTorch
@@ -423,6 +425,7 @@
 618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
 622 = objects/622_VFP_Statue
+629 = objects/629_doorswitch
 632 = objects/632_VFP_coreplat
 633 = objects/633_VFP_PodiumPoint
 634 = objects/634_VFP_flamepoint

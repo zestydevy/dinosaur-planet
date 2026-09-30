@@ -1,0 +1,13 @@
+.text = 0x0:
+dll_580_ctor = 0x0;
+dll_580_dtor = 0xC;
+dll_580_obj_Setup = 0x18;
+dll_580_obj_Control = 0x40;
+dll_580_obj_Update = 0x4C0;
+dll_580_obj_Print = 0x644;
+dll_580_obj_Free = 0x65C;
+dll_580_obj_GetModelFlags = 0x704;
+dll_580_obj_GetDataSize = 0x714;
+
+.rodata = 0x784:
+_oob_rodata_0 = 0x0; // absolute:0x784

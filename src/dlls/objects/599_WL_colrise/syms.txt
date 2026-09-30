@@ -1,0 +1,16 @@
+.text = 0x0:
+dll_599_ctor = 0x0;
+dll_599_dtor = 0xC;
+dll_599_obj_Setup = 0x18;
+dll_599_obj_Control = 0x98;
+dll_599_obj_Update = 0x384;
+dll_599_obj_Print = 0x390;
+dll_599_obj_Free = 0x3E4;
+dll_599_obj_GetModelFlags = 0x468;
+dll_599_obj_GetDataSize = 0x478;
+dll_599_func_48C = 0x48C;
+
+.rodata = 0x4F8:
+
+.data = 0x4F8:
+data_0 = 0x0; // absolute:0x4F8
