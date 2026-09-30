@@ -3,7 +3,7 @@
 #include "sys/dll.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
-#include "dlls/modgfx/133.h"
+#include "sys/gfx/modgfx.h"
 
 typedef struct {
 /*00*/ u8 unk0[2];
@@ -30,7 +30,7 @@ void SB_MiniFire_setup(Object *self, ObjSetup *setup, s32 arg2) {
     self->velocity.z = -0.3f;
     self->srt.scale *= 0.8f;
     dll133 = dllLoad(DLL_ID_133, 1);
-    ((DLL_IModgfx*)dll133)->vtbl->func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
+    dll133->vtbl->Func0(self, _data_0[0], NULL, 0x10000 | 0x2, -1, NULL);
     _data_0[0]++;
     if (_data_0[0] > 3) {
         _data_0[0] = 1;

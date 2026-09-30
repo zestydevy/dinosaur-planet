@@ -37,7 +37,7 @@ void FirePole_setup(Object* self, FirePole_Setup* setup, s32 reset) {
         fxTransform.transl.y = 2.0f;
 
         modGfxDLL = dllLoad(DLL_ID_121, 1);
-        modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 0x10004, -1, 0);
         dllFree(modGfxDLL);
     }
 }

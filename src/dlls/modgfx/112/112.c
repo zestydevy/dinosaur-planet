@@ -29,7 +29,7 @@ void dll_112_ctor(void* dll) { }
 void dll_112_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
+s32 dll_112_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     ModgfxStruct sp350;
     ModgfxStruct_0 sp50[32];
     ModgfxStruct_0 *temp;
@@ -37,7 +37,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     s32 randResult;
     s32 i;
 
-    // 0
     temp = sp50;
     temp->unk16 = 0;
     temp->unk14 = 14;
@@ -48,7 +47,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 1
     temp->unk16 = 0;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -58,7 +56,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk0 = 2;
     temp++;
 
-    // 2
     temp->unk16 = 0;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -68,7 +65,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = mathRnd(0, 0x69) + 150.0f;
     temp++;
 
-    // 3
     temp->unk16 = 0;
     temp->unk14 = 472;
     temp->unk10 = NULL;
@@ -78,7 +74,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 4
     randResult = mathRnd(0, 0xFFFE);
     temp->unk16 = 0;
     temp->unk14 = 0;
@@ -89,7 +84,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = randResult;
     temp++;
 
-    // 5
     temp->unk16 = 1;
     temp->unk14 = 10;
     temp->unk10 = data_118;
@@ -99,7 +93,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 6
     temp->unk16 = 1;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -109,7 +102,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 5.0f;
     temp++;
 
-    // 7
     temp->unk16 = 2;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -119,7 +111,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 8
     temp->unk16 = 2;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -129,7 +120,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 9
     temp->unk16 = 2;
     temp->unk14 = 83;
     temp->unk10 = NULL;
@@ -139,7 +129,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 10
     temp->unk16 = 2;
     temp->unk14 = 84;
     temp->unk10 = NULL;
@@ -149,7 +138,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 8.0f;
     temp++;
 
-    // 11
     temp->unk16 = 2;
     temp->unk14 = 10;
     temp->unk10 = data_118;
@@ -159,7 +147,6 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 0.0f;
     temp++;
 
-    // 12
     temp->unk16 = 2;
     temp->unk14 = 14;
     temp->unk10 = data_F4;
@@ -169,8 +156,8 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     temp->unk4.f[2] = 5.0f;
     temp++;
 
-    sp350.unk4 = arg0;
-    sp350.unk44 = arg1;
+    sp350.unk4 = obj;
+    sp350.unk44 = type;
     sp350.unk40 = 1;
     sp350.unk59 = 14;
     sp350.unk5B = 16;
@@ -187,16 +174,16 @@ s32 dll_112_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     sp350.unk5D = temp - sp50;
     for (i = 0; i < 7; i++) { sp350.unk46[i] = data_12C[i]; }
     sp350.unk0 = sp50;
-    sp350.unk54 = arg3 | 0x01000000;
+    sp350.unk54 = flags | 0x01000000;
     if (sp350.unk54 & 1) {
         if (sp350.unk4 != NULL) {
             sp350.unk2C.f[0] += sp350.unk4->globalPosition.f[0];
             sp350.unk2C.f[1] += sp350.unk4->globalPosition.f[1];
             sp350.unk2C.f[2] += sp350.unk4->globalPosition.f[2];
         } else {
-            sp350.unk2C.f[0] += arg2->transl.f[0];
-            sp350.unk2C.f[1] += arg2->transl.f[1];
-            sp350.unk2C.f[2] += arg2->transl.f[2];
+            sp350.unk2C.f[0] += transform->transl.f[0];
+            sp350.unk2C.f[1] += transform->transl.f[1];
+            sp350.unk2C.f[2] += transform->transl.f[2];
         }
     }
 

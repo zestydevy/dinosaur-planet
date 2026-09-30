@@ -88,8 +88,8 @@ void GroundAnimator_obj_Control(Object* self) {
         //Create a modGfx glow around the dig spot
         if ((objData->flags & GroundAnimator_FLAG_20_Glow_Required) && !(objData->flags & GroundAnimator_FLAG_10_Glow_Created)) {
             modGfxDLL = dllLoad(DLL_ID_184, 1);
-            modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, 0);
-            modGfxDLL->vtbl->func0(self, 0, 0, 0, -1, &shapeID);
+            modGfxDLL->vtbl->Func0(self, 0, 0, 0, -1, 0);
+            modGfxDLL->vtbl->Func0(self, 0, 0, 0, -1, &shapeID);
             dllFree(modGfxDLL);
             
             objData->flags |= GroundAnimator_FLAG_10_Glow_Created;

@@ -108,15 +108,15 @@ void DFIceFire_obj_Control(Object* self) {
         dll_modgfx->Func10(self);
         
         modGfxDLL = dllLoad(DLL_ID_116, 1);
-        modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_115, 1);
-        modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_114, 1);
-        modGfxDLL->vtbl->func0(self, 0, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         self->unkE0 = TRUE;

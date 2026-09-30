@@ -1,38 +1,36 @@
 #include "common.h"
+#include "dlls/objects/common/campfire.h"
 
-/*0x0*/ static u32 data_0[] = {
-    0x00000000, 0x03e80000, 0x00000362, 0x000001f4, 0x000b0000, 0x03620000, 0xfe0c0016, 0x00000000, 
-    0x0000fc18, 0x00200000, 0xfc9e0000, 0xfe0c002a, 0x0000fc9e, 0x000001f4, 0x00340000, 0x00000000, 
-    0x03e8003f, 0x00000000, 0x064003e8, 0x0000000f, 0x03620640, 0x01f4000b, 0x000f0362, 0x0640fe0c, 
-    0x0016000f, 0x00000640, 0xfc180020, 0x000ffc9e, 0x0640fe0c, 0x002a000f, 0xfc9e0640, 0x01f40034, 
-    0x000f0000, 0x064003e8, 0x003f000f, 0x00001770, 0x03e80000, 0x001f0362, 0x177001f4, 0x000b001f, 
-    0x03621770, 0xfe0c0016, 0x001f0000, 0x1770fc18, 0x0020001f, 0xfc9e1770, 0xfe0c002a, 0x001ffc9e, 
-    0x177001f4, 0x0034001f, 0x00001770, 0x03e8003f, 0x001f0000
+/*0x0*/ static s16 data_0[] = {
+    0x0000, 0x0000, 0x03e8, 0x0000, 0x0000, 0x0362, 0x0000, 0x01f4, 0x000b, 0x0000, 0x0362, 0x0000, 0xfe0c, 0x0016, 0x0000, 0x0000,
+    0x0000, 0xfc18, 0x0020, 0x0000, 0xfc9e, 0x0000, 0xfe0c, 0x002a, 0x0000, 0xfc9e, 0x0000, 0x01f4, 0x0034, 0x0000, 0x0000, 0x0000,
+    0x03e8, 0x003f, 0x0000, 0x0000, 0x0640, 0x03e8, 0x0000, 0x000f, 0x0362, 0x0640, 0x01f4, 0x000b, 0x000f, 0x0362, 0x0640, 0xfe0c,
+    0x0016, 0x000f, 0x0000, 0x0640, 0xfc18, 0x0020, 0x000f, 0xfc9e, 0x0640, 0xfe0c, 0x002a, 0x000f, 0xfc9e, 0x0640, 0x01f4, 0x0034,
+    0x000f, 0x0000, 0x0640, 0x03e8, 0x003f, 0x000f, 0x0000, 0x1770, 0x03e8, 0x0000, 0x001f, 0x0362, 0x1770, 0x01f4, 0x000b, 0x001f,
+    0x0362, 0x1770, 0xfe0c, 0x0016, 0x001f, 0x0000, 0x1770, 0xfc18, 0x0020, 0x001f, 0xfc9e, 0x1770, 0xfe0c, 0x002a, 0x001f, 0xfc9e,
+    0x1770, 0x01f4, 0x0034, 0x001f, 0x0000, 0x1770, 0x03e8, 0x003f, 0x001f, 0x0000
 };
-/*0xD4*/ static u32 data_D4[] = {
-    0x00000001, 0x00080000, 0x00080007, 0x00010002, 0x00090001, 0x00090008, 0x00020003, 0x000a0002, 
-    0x000a0009, 0x00030004, 0x000b0003, 0x000b000a, 0x00040005, 0x000c0004, 0x000c000b, 0x00050006, 
-    0x000d0005, 0x000d000c, 0x00070008, 0x000f0007, 0x000f000e, 0x00080009, 0x00100008, 0x0010000f, 
-    0x0009000a, 0x00110009, 0x00110010, 0x000a000b, 0x0012000a, 0x00120011, 0x000b000c, 0x0013000b, 
-    0x00130012, 0x000c000d, 0x0014000c, 0x00140013, 0x00000001, 0x00020003, 0x00040005, 0x00060000
+/*0xD4*/ static s16 data_D4[] = {
+    0x0000, 0x0001, 0x0008, 0x0000, 0x0008, 0x0007, 0x0001, 0x0002, 0x0009, 0x0001, 0x0009, 0x0008, 0x0002, 0x0003, 0x000a, 0x0002,
+    0x000a, 0x0009, 0x0003, 0x0004, 0x000b, 0x0003, 0x000b, 0x000a, 0x0004, 0x0005, 0x000c, 0x0004, 0x000c, 0x000b, 0x0005, 0x0006,
+    0x000d, 0x0005, 0x000d, 0x000c, 0x0007, 0x0008, 0x000f, 0x0007, 0x000f, 0x000e, 0x0008, 0x0009, 0x0010, 0x0008, 0x0010, 0x000f,
+    0x0009, 0x000a, 0x0011, 0x0009, 0x0011, 0x0010, 0x000a, 0x000b, 0x0012, 0x000a, 0x0012, 0x0011, 0x000b, 0x000c, 0x0013, 0x000b,
+    0x0013, 0x0012, 0x000c, 0x000d, 0x0014, 0x000c, 0x0014, 0x0013, 0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0000
 };
-/*0x174*/ static u32 data_174[] = {
-    0x00070008, 0x0009000a, 0x000b000c, 0x000d0000
+/*0x174*/ static s16 data_174[] = {
+    0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x0000
 };
-/*0x184*/ static u32 data_184[] = {
-    0x000e000f, 0x00100011, 0x00120013, 0x00140000
+/*0x184*/ static s16 data_184[] = {
+    0x000e, 0x000f, 0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0000
 };
-/*0x194*/ static u32 data_194[] = {
-    0x00000001, 0x00020003, 0x00040005, 0x0006000e, 0x000f0010, 0x00110012, 0x00130014
+/*0x194*/ static s16 data_194[] = {
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x000e, 0x000f, 0x0010, 0x0011, 0x0012, 0x0013, 0x0014
 };
-/*0x1B0*/ static u32 data_1B0[] = {
-    0x00000001, 0x00020003, 0x00040005, 0x00060007, 0x00080009, 0x000a000b, 0x000c000d, 0x000e000f, 
-    0x00100011, 0x00120013, 0x00140000
+/*0x1B0*/ static s16 data_1B0[] = {
+    0x0000, 0x0001, 0x0002, 0x0003, 0x0004, 0x0005, 0x0006, 0x0007, 0x0008, 0x0009, 0x000a, 0x000b, 0x000c, 0x000d, 0x000e, 0x000f,
+    0x0010, 0x0011, 0x0012, 0x0013, 0x0014, 0x0000
 };
-/*0x1DC*/ static u32 data_1DC = 0x00000104;
-/*0x1E0*/ static u32 data_1E0[] = {
-    0x003c003c, 0x00010104, 0x00000000, 0x00000000
-};
+/*0x1DC*/ static s16 data_1DC[] = { 0x0000, 0x0104, 0x003c, 0x003c, 0x0001, 0x0104, 0x0000, 0x0000, 0x0000, 0x0000 };
 
 // offset: 0x0 | ctor
 void dll_114_ctor(void* dll) { }
@@ -41,5 +39,187 @@ void dll_114_ctor(void* dll) { }
 void dll_114_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_114_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/modgfx/114/dll_114_modgfx_Func0.s")
+s32 dll_114_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+    ModgfxStruct sp350;
+    ModgfxStruct_0 sp50[32];
+    ModgfxStruct_0 *temp;
+    CampFire_Setup* setup;
+    f32 var_fa1;
+    u8 var_t0;
+    s32 pad[1];
+    s32 i;
+
+    var_fa1 = 1.0f;
+    setup = obj->setup;
+    var_t0 = setup->scale;
+    if (type == 1) {
+        var_fa1 = 4.0f;
+        data_1DC[1] = 0;
+    } else if (type == 2) {
+        var_fa1 = 0.0f;
+        var_t0 = 6;
+    }
+    temp = sp50;
+    temp->unk16 = 0;
+    temp->unk14 = 0x15;
+    temp->unk10 = data_1B0;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 0xE;
+    temp->unk10 = data_194;
+    temp->unk0 = 2;
+    temp->unk4.f[0] = 0.95f;
+    temp->unk4.f[1] = 0.4f;
+    temp->unk4.f[2] = 0.95f;
+    temp++;
+
+    temp->unk16 = 0;
+    temp->unk14 = 7;
+    temp->unk10 = data_174;
+    temp->unk0 = 2;
+    temp->unk4.f[0] = 0.95f;
+    temp->unk4.f[1] = 0.4f;
+    temp->unk4.f[2] = 0.95f;
+    temp++;
+
+    temp->unk16 = 1;
+    temp->unk14 = 7;
+    temp->unk10 = data_174;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 255.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 1;
+    temp->unk14 = 7;
+    temp->unk10 = data_184;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 255.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 1;
+    temp->unk14 = 0x15;
+    temp->unk10 = data_1B0;
+    temp->unk0 = 0x100;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 10.0f;
+    temp++;
+
+    temp->unk16 = 2;
+    temp->unk14 = 0x3A;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x01800000;
+    temp->unk4.f[0] = var_fa1;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 5.0f;
+    temp++;
+
+    temp->unk16 = 2;
+    temp->unk14 = 0x15;
+    temp->unk10 = data_1B0;
+    temp->unk0 = 0x100;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 10.0f;
+    temp++;
+
+    temp->unk16 = 3;
+    temp->unk14 = 0x3A;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x01800000;
+    temp->unk4.f[0] = var_fa1;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 5.0f;
+    temp++;
+
+    temp->unk16 = 3;
+    temp->unk14 = 0x15;
+    temp->unk10 = data_1B0;
+    temp->unk0 = 0x100;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 10.0f;
+    temp++;
+
+    temp->unk16 = 4;
+    temp->unk14 = 2;
+    temp->unk10 = NULL;
+    temp->unk0 = 0x2000;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 5;
+    temp->unk14 = 7;
+    temp->unk10 = data_174;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 5;
+    temp->unk14 = 7;
+    temp->unk10 = data_184;
+    temp->unk0 = 4;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 0.0f;
+    temp++;
+
+    temp->unk16 = 5;
+    temp->unk14 = 0x15;
+    temp->unk10 = data_1B0;
+    temp->unk0 = 0x100;
+    temp->unk4.f[0] = 0.0f;
+    temp->unk4.f[1] = 0.0f;
+    temp->unk4.f[2] = 10.0f;
+    temp++;
+
+    sp350.unk58 = 0;
+    sp350.unk4 = obj;
+    sp350.unk44 = type;
+    sp350.unk2C.f[0] = 0.0f;
+    sp350.unk2C.f[1] = 0.0f;
+    sp350.unk2C.f[2] = 0.0f;
+    sp350.unk20 = 0.0f;
+    sp350.unk24 = 0.0f;
+    sp350.unk28 = 0.0f;
+    if (var_t0 != 0) {
+        sp350.unk38 = var_t0 * 0.1f;
+    } else {
+        sp350.unk38 = 1.0f;
+    }
+    sp350.unk40 = 2;
+    sp350.unk3C = 7;
+    sp350.unk59 = 0xE;
+    sp350.unk5B = 0x1E;
+    sp350.unk5A = 0;
+    sp350.unk5D = temp - sp50;
+    for (i = 0; i < 7; i++) { sp350.unk46[i] = data_1DC[i]; }
+    sp350.unk0 = sp50;
+    sp350.unk54 = flags | 0x0C0000C0;
+    if (sp350.unk54 & 1) {
+        if (sp350.unk4 != NULL) {
+            sp350.unk2C.f[0] += sp350.unk4->globalPosition.f[0];
+            sp350.unk2C.f[1] += sp350.unk4->globalPosition.f[1];
+            sp350.unk2C.f[2] += sp350.unk4->globalPosition.f[2];
+        } else {
+            sp350.unk2C.f[0] += transform->transl.f[0];
+            sp350.unk2C.f[1] += transform->transl.f[1];
+            sp350.unk2C.f[2] += transform->transl.f[2];
+        }
+    }
+
+    return gDLL_14_Modgfx->vtbl->Func1(&sp350, 0, 0x15, data_0, 0x18, data_D4, 0x8E, NULL);
+}

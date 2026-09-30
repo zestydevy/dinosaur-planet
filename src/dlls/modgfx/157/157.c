@@ -25,5 +25,5 @@ void dll_157_ctor(void* dll) { }
 void dll_157_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_157_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);
+s32 dll_157_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/modgfx/157/dll_157_modgfx_Func0.s")

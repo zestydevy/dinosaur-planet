@@ -1,5 +1,14 @@
 #include "common.h"
-#include "sys/gfx/modgfx.h"
+
+typedef struct {
+    s32 unk0;
+    u16 pad4;
+    s16 unk6;
+    u16 pad8;
+    s16 unkA;
+    u16 padC;
+    s16 unkE;
+} DLL106_Data;
 
 /*0x0*/ static s16 data_0[] = {
     30, 0, 0, 0, 31,
@@ -25,8 +34,7 @@ void dll_106_ctor(void* dll) { }
 void dll_106_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-
-s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, ModgfxArg5* arg5) {
+s32 dll_106_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, DLL106_Data* data) {
     ModgfxStruct sp3C8;
     ModgfxStruct_0 spC8[32];
     ModgfxStruct_0* temp_s0;
@@ -50,15 +58,15 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     var_s6 = 0xFF;
     var_s7 = 0xFF;
     spB0 = 1;
-    if (arg5 != NULL) {
-        spB0 = arg5->unk0;
-        var_s5 = arg5->unk6;
-        var_s6 = arg5->unkA;
-        var_s7 = arg5->unkE;
+    if (data != NULL) {
+        spB0 = data->unk0;
+        var_s5 = data->unk6;
+        var_s6 = data->unkA;
+        var_s7 = data->unkE;
     }
 
     for (i = 0; i < spB0; i++) {
-        if (arg1 == 0) {
+        if (type == 0) {
             var_s5 += mathRnd(-27, 27);
             if (var_s5 > 0xFF) {
                 var_s5 = 0xFF;
@@ -81,13 +89,13 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
 
         temp_s0 = spC8;
         temp_s0->unk16 = 0;
-        if (arg1 != 0) {
+        if (type != 0) {
             temp_s0->unk14 = 4;
         } else {
             temp_s0->unk14 = 3;
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             temp_s0->unk10 = data_64;
         } else {
             temp_s0->unk10 = data_5C;
@@ -109,13 +117,13 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
         temp_s0->unk4.f[2] = temp_fs0;
         temp_s0++;
         temp_s0->unk16 = 0;
-        if (arg1 != 0) {
+        if (type != 0) {
             temp_s0->unk14 = 4;
         } else {
             temp_s0->unk14 = 3;
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             temp_s0->unk10 = data_64;
         } else {
             temp_s0->unk10 = data_5C;
@@ -144,7 +152,7 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
         sp8C.yaw = (s16) temp_fs0;
         mathRotateRPY(&sp8C, temp_s0->unk4.f);
         sp3C8.unk58 = 0;
-        sp3C8.unk44 = arg1;
+        sp3C8.unk44 = type;
         sp3C8.unk2C.f[0] = 0.0f;
         sp3C8.unk2C.f[1] = 0.0f;
         sp3C8.unk2C.f[2] = 0.0f;
@@ -152,9 +160,9 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
         sp3C8.unk24 = 0.0f;
         sp3C8.unk28 = 0.0f;
         sp3C8.unk38 = 1.0f;
-        sp3C8.unk4 = arg0;
+        sp3C8.unk4 = obj;
         sp3C8.unk3C = 0; sp3C8.unk40 = 1;
-        if (arg1 != 0) {
+        if (type != 0) {
             sp3C8.unk59 = 4;
         } else {
             sp3C8.unk59 = 3;
@@ -165,43 +173,43 @@ s32 dll_106_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
         sp3C8.unk5D = 4;
         for (j = 0; j < 7; j++) { sp3C8.unk46[j] = data_6C[j]; }
         sp3C8.unk0 = spC8;
-        sp3C8.unk54 = arg3 | 0x02000490;
+        sp3C8.unk54 = flags | 0x02000490;
 
         if (sp3C8.unk54 & 1) {
-            if ((sp3C8.unk4 != NULL) && (arg2 != NULL)) {
-                sp3C8.unk2C.f[0] += sp3C8.unk4->globalPosition.x + arg2->transl.x;
-                sp3C8.unk2C.f[1] += sp3C8.unk4->globalPosition.f[1] + arg2->transl.f[1];
-                sp3C8.unk2C.f[2] += sp3C8.unk4->globalPosition.f[2] + arg2->transl.f[2];
+            if ((sp3C8.unk4 != NULL) && (transform != NULL)) {
+                sp3C8.unk2C.f[0] += sp3C8.unk4->globalPosition.x + transform->transl.x;
+                sp3C8.unk2C.f[1] += sp3C8.unk4->globalPosition.f[1] + transform->transl.f[1];
+                sp3C8.unk2C.f[2] += sp3C8.unk4->globalPosition.f[2] + transform->transl.f[2];
             } else if (sp3C8.unk4 != NULL) {
                 sp3C8.unk2C.f[0] += sp3C8.unk4->globalPosition.x;
                 sp3C8.unk2C.f[1] += sp3C8.unk4->globalPosition.f[1];
                 sp3C8.unk2C.f[2] += sp3C8.unk4->globalPosition.f[2];
-            } else if (arg2 != NULL) {
-                sp3C8.unk2C.f[0] += arg2->transl.x;
-                sp3C8.unk2C.f[1] += arg2->transl.f[1];
-                sp3C8.unk2C.f[2] += arg2->transl.f[2];
+            } else if (transform != NULL) {
+                sp3C8.unk2C.f[0] += transform->transl.x;
+                sp3C8.unk2C.f[1] += transform->transl.f[1];
+                sp3C8.unk2C.f[2] += transform->transl.f[2];
             }
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             var_a2 = 4;
         } else {
             var_a2 = 3;
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             var_a3 = data_20;
         } else {
             var_a3 = data_0;
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             var_v1_2 = 2;
         } else {
             var_v1_2 = 1;
         }
 
-        if (arg1 != 0) {
+        if (type != 0) {
             var_v0_2 = data_50;
         } else {
             var_v0_2 = data_48;

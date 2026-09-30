@@ -33,7 +33,7 @@ void dll_109_ctor(void* dll) { }
 void dll_109_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_109_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
+s32 dll_109_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     ModgfxStruct sp348;
     ModgfxStruct_0 sp48[32];
     ModgfxStruct_0 *temp;
@@ -142,8 +142,8 @@ s32 dll_109_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
 
     sp348.unk40 = 2;
     sp348.unk3C = 7;
-    sp348.unk44 = arg1;
-    sp348.unk4 = arg0;
+    sp348.unk44 = type;
+    sp348.unk4 = obj;
     sp348.unk59 = 0xE;
     sp348.unk5B = 0x1E;
     sp348.unk58 = 0;
@@ -158,16 +158,16 @@ s32 dll_109_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     sp348.unk5D = temp - sp48;
     for (i = 0; i < 7; i++) { sp348.unk46[i] = data_1DC[i]; }
     sp348.unk0 = sp48;
-    sp348.unk54 = arg3 | 0x0C000040;
+    sp348.unk54 = flags | 0x0C000040;
     if (sp348.unk54 & 1) {
         if (sp348.unk4 != NULL) {
             sp348.unk2C.f[0] += sp348.unk4->globalPosition.f[0];
             sp348.unk2C.f[1] += sp348.unk4->globalPosition.f[1];
             sp348.unk2C.f[2] += sp348.unk4->globalPosition.f[2];
         } else {
-            sp348.unk2C.f[0] += arg2->transl.f[0];
-            sp348.unk2C.f[1] += arg2->transl.f[1];
-            sp348.unk2C.f[2] += arg2->transl.f[2];
+            sp348.unk2C.f[0] += transform->transl.f[0];
+            sp348.unk2C.f[1] += transform->transl.f[1];
+            sp348.unk2C.f[2] += transform->transl.f[2];
         }
     }
 

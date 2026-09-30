@@ -124,7 +124,7 @@ void DIMTent_obj_Control(Object* self) {
             } else if (objData->maskY < MASK_MIN) {
                 objData->maskY = MASK_MIN;
                 objData->maskSpeed = MASK_SPEED;
-                dModGfxDLL->vtbl->func0(self, 0, 0, 4, -1, 0);
+                dModGfxDLL->vtbl->Func0(self, 0, 0, 4, -1, 0);
             }
         }
     }

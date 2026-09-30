@@ -1,10 +1,10 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/modgfx/182.h"
 #include "game/objects/object.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "dll.h"
@@ -24,7 +24,7 @@ typedef struct {
     u32 soundHandle;
 } VFP_lavastar_Data;
 
-/*0x0*/ static DLL_182 *sDLL_182 = NULL;
+/*0x0*/ static DLL_IModgfx *sDLL_182 = NULL;
 
 // offset: 0x0 | ctor
 void VFP_lavastar_ctor(void *dll) { }
@@ -59,7 +59,7 @@ void VFP_lavastar_control(Object* self) {
         self->srt.transl.y = setup->base.y;
     }
     if (mathRnd(0, 3) == 0) {
-        sDLL_182->vtbl->func0(self, 0, NULL, 4, -1, NULL);
+        sDLL_182->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
     }
     if (objdata->soundHandle == 0) {
         dll_amSfx->Play(self, SOUND_AAE, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);

@@ -1,10 +1,9 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll.h"
-#include "dlls/modgfx/149.h"
-#include "dlls/modgfx/155.h"
 #include "game/objects/object.h"
 #include "sys/gfx/animseq.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "game/gamebits.h"
@@ -15,8 +14,8 @@
 #include "types.h"
 #include "sys/gfx/model.h"
 
-/*0x0*/ static DLL_155 *_data_0 = NULL;
-/*0x4*/ static DLL_149 *_data_4 = NULL;
+/*0x0*/ static DLL_IModgfx* _data_0 = NULL;
+/*0x4*/ static DLL_IModgfx* _data_4 = NULL;
 
 typedef struct {
 /*00*/ s32 unk0;
@@ -75,12 +74,12 @@ void WL_spiritplace_control(Object *self) {
     if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
         if (objdata->effectTimer <= 0) {
             if (objdata->unk6 == 0) {
-                _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Func0(self, 4, NULL, 4, -1, &objdata->unk10);
             } else if (objdata->unk6 == 4) {
-                _data_0->vtbl->base.func0(self, 0, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->base.func0(self, 1, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->base.func0(self, 2, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->base.func0(self, 3, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Func0(self, 0, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Func0(self, 1, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Func0(self, 2, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Func0(self, 3, NULL, 4, -1, &objdata->unk10);
             }
             objdata->unk6++;
             if (objdata->unk6 >= 9) {
@@ -91,7 +90,7 @@ void WL_spiritplace_control(Object *self) {
         objdata->effectTimer -= gUpdateRate;
     } else if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
-            _data_0->vtbl->base.func0(self, 4, NULL, 4, -1, &objdata->unk10);
+            _data_0->vtbl->Func0(self, 4, NULL, 4, -1, &objdata->unk10);
             objdata->effectTimer = 195 + mathRnd(0, 35);
         }
         objdata->effectTimer -= gUpdateRate;
@@ -100,7 +99,7 @@ void WL_spiritplace_control(Object *self) {
         objdata->mode == 0 &&
         mathRnd(1, 2) == 2 &&
         vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition) < 90.0f) {
-            _data_4->vtbl->base.func0(self, 4, NULL, 1, -1, NULL);
+            _data_4->vtbl->Func0(self, 4, NULL, 1, -1, NULL);
     }
     if (mainGetBits(objdata->bit2) && objdata->unk0 == 0) {
         self->srt.roll += 200;

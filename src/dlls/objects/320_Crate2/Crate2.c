@@ -104,7 +104,7 @@ void dll_320_control(Object* self) {
             temp_v0_2->srt.transl.f[2] = temp_fv0;
             temp_v0_2->srt.yaw = self->srt.yaw;
         }
-        (_data_0)->vtbl->func0(self, 1, 0, 2, -1, 0);
+        (_data_0)->vtbl->Func0(self, 1, 0, 2, -1, 0);
     }
 }
 

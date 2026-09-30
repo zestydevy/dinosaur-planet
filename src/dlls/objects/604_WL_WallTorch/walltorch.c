@@ -75,7 +75,7 @@ void WL_WallTorch_obj_Setup(Object* self, WLWallTorch_Setup* objSetup, s32 reset
             effectIdx = 0;
         }
         
-        modGfxDLL->vtbl->func0(self, effectIdx, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, effectIdx, &fxTransform, 0x10004, -1, 0);
         dllFree(modGfxDLL);
     }
     
@@ -147,7 +147,7 @@ void WL_WallTorch_obj_Control(Object* self) {
         
         if (objData->isLit) {
             modGfxDLL = dllLoad(DLL_ID_121, 1);
-            modGfxDLL->vtbl->func0(self, 1, &fxTransform, 0x10004, -1, 0);
+            modGfxDLL->vtbl->Func0(self, 1, &fxTransform, 0x10004, -1, 0);
             dllFree(modGfxDLL);
             
             for (i = 0; i < 100; i++) {

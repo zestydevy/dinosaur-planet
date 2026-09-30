@@ -152,7 +152,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                         //Create modGfx
                         if (dModGfxDLL != NULL) {
                             effectIdx = (objSetup->mode == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 15;
-                            dModGfxDLL->vtbl->func0(self, effectIdx, NULL, 0x10004, -1, NULL);
+                            dModGfxDLL->vtbl->Func0(self, effectIdx, NULL, 0x10004, -1, NULL);
                         }
                     }
                     
@@ -161,7 +161,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                             objData->state = WCSunTempleLaser_STATE_2_Stopping;
                             if (dModGfxDLL != NULL) {
                                 effectIdx = (objSetup->mode == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 16;
-                                dModGfxDLL->vtbl->func0(self, effectIdx, NULL, 0x10004, -1, NULL);
+                                dModGfxDLL->vtbl->Func0(self, effectIdx, NULL, 0x10004, -1, NULL);
                             }
                         }
                     } else if (objData->whirVolume <= 1.0f) {

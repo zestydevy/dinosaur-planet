@@ -9,9 +9,6 @@
 #include "sys/gfx/modgfx.h"
 #include "game/gamebits.h"
 #include "dlls/engine/17_partfx.h"
-#include "dlls/modgfx/129.h"
-#include "dlls/modgfx/130.h"
-#include "dlls/modgfx/140.h"
 
 typedef struct {
 /*00*/ DLL_IModgfx *dll129;           //DLL 129
@@ -150,7 +147,7 @@ void Transporter_control(Object *self) {
         //Emanate a beam of light from a randomly-selected point on the Krazoa symbol (2.5% chance) 
         if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
             (mathRnd(0, 40) == 0)) {
-            objdata->mGfxKrazoaPoints->vtbl->func0(self, mathRnd(0, 5), NULL, 1, -1, NULL);
+            objdata->mGfxKrazoaPoints->vtbl->Func0(self, mathRnd(0, 5), NULL, 1, -1, NULL);
         }
     }
 
@@ -162,12 +159,12 @@ void Transporter_control(Object *self) {
             objdata->timerDLL130 -= gUpdateRate;
 
             if (objdata->timerDLL129 <= 0) {
-                objdata->dll129->vtbl->func0(self, 0, NULL, 1, -1, NULL);
+                objdata->dll129->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
                 objdata->timerDLL129 = objdata->intervalDLL129;
             }
 
             if (objdata->isOutbound && (objdata->timerDLL130 <= 0)) {
-                objdata->dll130->vtbl->func0(self, 0, NULL, 1, -1, NULL);
+                objdata->dll130->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
                 objdata->timerDLL130 = objdata->intervalDLL130;
             }
         }

@@ -131,7 +131,7 @@ void dll_257_control(Object* self) {
             objdata->unk9 += gUpdateRateF;
             if ((60.0f * temp_fa0) <= objdata->unk9) {
                 objdata->unk9 = 0U;
-                objdata->unk4->vtbl->func0(self, 0, NULL, 0x10001, -1, NULL);
+                objdata->unk4->vtbl->Func0(self, 0, NULL, 0x10001, -1, NULL);
             }
         }
         if (sp68 < setup->unk1A) {

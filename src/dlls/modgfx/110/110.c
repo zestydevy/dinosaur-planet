@@ -54,11 +54,11 @@ void dll_110_ctor(void* dll) { }
 void dll_110_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_110_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {
-    dll_modgfx->Func12(arg0, (u8) arg1, 0x12U, 3, 9);
-    arg3 |= 0x04004484;
+s32 dll_110_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+    dll_modgfx->Func12(obj, type, 0x12U, 3, 9);
+    flags |= 0x04004484;
     dll_modgfx->Func18(data_2CC);
-    dll_modgfx->Func20(arg3);
+    dll_modgfx->Func20(flags);
     dll_modgfx->Func13();
     dll_modgfx->Func14(2, 0.01f, 0.02f, 0.01f, 9, data_1C8);
     dll_modgfx->Func14(2, 0.015f, 0.02f, 0.014f, 9, data_1DC);
@@ -83,6 +83,6 @@ s32 dll_110_modgfx_Func0(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, 
     dll_modgfx->Func14(0x4000, 0/*.0f*/, -4.0f, 0.0f, 0x24, data_260);
     dll_modgfx->Func14(0x100, 0/*.0f*/, 0/*.0f*/, 1800.0f, 0, NULL);
     dll_modgfx->Func14(4, 0.0f, 0.0f, 0.0f, 0x24, data_260);
-    dll_modgfx->Func19(arg2, data_0, 0x24, data_168, 0x10, 0x120, NULL);
+    dll_modgfx->Func19(transform, data_0, 0x24, data_168, 0x10, 0x120, NULL);
     return dll_modgfx->Func21();
 }

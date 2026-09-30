@@ -205,7 +205,7 @@ void IMIcicle_obj_Control(Object* self) {
 
         //Play shattering sound and create modGfx fragments
         dll_amSfx->Play(self, SOUND_510_Ice_Shatter, MAX_VOLUME, &objData->soundHandle, NULL, 0, NULL);
-        sModGfxDLL->vtbl->func0(self, 0xE, 0, 0x10000002, -1, 0);
+        sModGfxDLL->vtbl->Func0(self, 0xE, 0, 0x10000002, -1, 0);
     }
     
     self->velocity.x = 0.0f;

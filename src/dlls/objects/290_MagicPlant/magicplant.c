@@ -297,7 +297,7 @@ void MagicPlant_handleStateIdle(Object *self, MagicPlant_Setup* objSetup, MagicP
         transform.yaw = 0;
         transform.scale = 1.0f;
         dll = dllLoadActual(DLL_ID_106, 1, FALSE);
-        ((DLL_IModgfx*)dll)->vtbl->func0(NULL, 1, &transform, 0x401, -1, dModGfxParams);
+        dll->vtbl->Func0(NULL, 1, &transform, 0x401, -1, dModGfxParams);
         if (dll) {
             dllFree(dll);
         }

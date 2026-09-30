@@ -5,16 +5,7 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitID;          //Checked during setup, but does nothing (maybe for tracking lighting fire/putting it out?)
-    u8 scale;               //Scale multiplier (100 = 1.0)
-    u8 unk1B;               //Unknown - stored in setup but otherwise unused
-    u8 alwaysIlluminates;   //When nonzero, fire emits light even when the player isn't nearby
-    u8 modGfxArg;           //Boolean affecting the fire mesh modGfx calls, unknown purpose
-    u16 lfxUnk1E;           //Param for the light emitter
-} CampFire_Setup;
+#include "dlls/objects/common/campfire.h"
 
 typedef struct {
     Object* light;          //LFXEmitter
@@ -114,15 +105,15 @@ void campfire_control(Object* self) {
             modGfxArg = 0;
         }
         
-        modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_115, 1);
-        modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_114, 1);
-        modGfxDLL->vtbl->func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         self->unkE0 = TRUE;

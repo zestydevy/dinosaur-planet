@@ -1252,7 +1252,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         sp48.roll = 0;
         sp48.scale = 1.0f;
         if ((s32)&sp70) {} // @fake
-        sp70->vtbl->func0(self, 0, &sp48, 1, -1, &sp60);
+        sp70->vtbl->Func0(self, 0, &sp48, 1, -1, &sp60);
         if (sp70 != NULL) {
             dllFree(sp70);
         }
@@ -4580,7 +4580,7 @@ static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 /*0x7BC*/ static s8 _data_7BC = 0;
-/*0x7C0*/ static DLL_Unknown *_data_7C0 = NULL;
+/*0x7C0*/ static DLL_IModgfx *_data_7C0 = NULL;
 /*0x7C4*/ static s16 _data_7C4[2] = { 0, 0 };
 /*0x7C8*/ static u8 _data_7C8[] = { 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0x40, 0xFF, 0x00, 0x00, 0x00 };
 /*0x7D4*/ static u8 _data_7D4[] = { 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x03, 0x08, 0x00, 0x00, 0x00 };
@@ -8535,7 +8535,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     static f32 _bss_2C;
     static f32 _bss_30;
     static s8 _bss_34;
-    static DLL_Unknown *_data_7C0 = 0;
+    static DLL_IModgfx *_data_7C0 = NULL;
     s32 sp9C;
     s32 magic;
     Object* weapon;
@@ -8778,11 +8778,11 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     }
                     _bss_24 -= arg2;
                     if (_bss_24 <= 0.0f) {
-                        if (_data_7C0 == 0) {
-                            _data_7C0 = dllLoad(0x1048U, 1U);
+                        if (_data_7C0 == NULL) {
+                            _data_7C0 = dllLoad(DLL_ID_176, 1U);
                         }
-                        if (_data_7C0 != 0) {
-                            ((DLL_IModgfx*)_data_7C0)->vtbl->func0(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
+                        if (_data_7C0 != NULL) {
+                            _data_7C0->vtbl->Func0(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
                         }
                         _bss_24 = 35.0f;
                     }

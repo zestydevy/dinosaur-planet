@@ -13,7 +13,7 @@
 #include "sys/main.h"
 #include "sys/map_enums.h"
 #include "sys/dll.h"
-#include "dlls/modgfx/139.h"
+#include "sys/gfx/modgfx.h"
 #include "dlls/objects/573_SB_Cloudrunner.h"
 #include "sys/joypad.h"
 #include "sys/rand.h"
@@ -302,7 +302,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     s32 i;
     Object **objects;
     SB_Galleon_Data *objdata;
-    DLL_139 *tempDll;
+    DLL_IModgfx *tempDll;
     s32 objIndex;
     s32 objCount;
 
@@ -335,7 +335,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 }
             }
             if (objdata->shiphead) {
-                tempDll->vtbl->base.func0(objdata->shiphead, 1, 0, 0x10000 | 0x2, -1, NULL);
+                tempDll->vtbl->Func0(objdata->shiphead, 1, 0, 0x10000 | 0x2, -1, NULL);
             }
             objdata->unk82 = 0;
             break;
@@ -387,8 +387,8 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
     if (objdata->unk82 <= 0 && objdata->dll) {
         objdata->unk82 = 50;
         if (objdata->shiphead) {
-            tempDll = (DLL_139*)objdata->dll;
-            tempDll->vtbl->base.func0(objdata->shiphead, 0, 0, 0x10000 | 0x2, -1, NULL);
+            tempDll = objdata->dll;
+            tempDll->vtbl->Func0(objdata->shiphead, 0, 0, 0x10000 | 0x2, -1, NULL);
         }
     }
     return 0;

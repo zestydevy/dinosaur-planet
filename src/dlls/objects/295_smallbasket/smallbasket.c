@@ -301,7 +301,7 @@ void smallbasket_control(Object* self) {
 
             if ((self->objhitInfo->unk9D) && (objData->throwFlags == Basket_THROWN)) {
                 //Destroy thrown basket upon collision, creating items
-                dModGfxDLL->vtbl->func0(self, 1, NULL, 2, -1, NULL);
+                dModGfxDLL->vtbl->Func0(self, 1, NULL, 2, -1, NULL);
                 dll_amSfx->Play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objData->unk10 = 50;
                 objData->throwFlags = Basket_NOT_THROWN;
@@ -828,7 +828,7 @@ void smallbasket_handle_attack_collisions(Object* self, Object* player, SmallBas
             objData->soundHandle = 0;
         } 
 
-        dModGfxDLL->vtbl->func0(self, 1, NULL, 2, -1, NULL);
+        dModGfxDLL->vtbl->Func0(self, 1, NULL, 2, -1, NULL);
         dll_amSfx->Play(self, objData->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
         objData->unk10 = 50;
         objData->throwFlags = 0;
