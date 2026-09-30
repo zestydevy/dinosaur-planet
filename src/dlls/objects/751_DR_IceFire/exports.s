@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword DFIceFire_ctor
-.dword DFIceFire_dtor
+.dword DRIceFire_ctor
+.dword DRIceFire_dtor
 
 # export table
-/*0*/ .dword DFIceFire_obj_Setup
-/*1*/ .dword DFIceFire_obj_Control
-/*2*/ .dword DFIceFire_obj_Update
-/*3*/ .dword DFIceFire_obj_Print
-/*4*/ .dword DFIceFire_obj_Free
-/*5*/ .dword DFIceFire_obj_GetModelFlags
-/*6*/ .dword DFIceFire_obj_GetDataSize
+/*0*/ .dword DRIceFire_obj_Setup
+/*1*/ .dword DRIceFire_obj_Control
+/*2*/ .dword DRIceFire_obj_Update
+/*3*/ .dword DRIceFire_obj_Print
+/*4*/ .dword DRIceFire_obj_Free
+/*5*/ .dword DRIceFire_obj_GetModelFlags
+/*6*/ .dword DRIceFire_obj_GetDataSize

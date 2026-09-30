@@ -1,12 +1,12 @@
 .text = 0x0:
-DFIceFire_ctor = 0x0;
-DFIceFire_dtor = 0xC;
-DFIceFire_obj_Setup = 0x18;
-DFIceFire_obj_Control = 0x238;
-DFIceFire_obj_Update = 0x7D4;
-DFIceFire_obj_Print = 0xA40;
-DFIceFire_obj_Free = 0xA94;
-DFIceFire_obj_GetModelFlags = 0xB04;
-DFIceFire_obj_GetDataSize = 0xB14;
+DRIceFire_ctor = 0x0;
+DRIceFire_dtor = 0xC;
+DRIceFire_obj_Setup = 0x18;
+DRIceFire_obj_Control = 0x238;
+DRIceFire_obj_Update = 0x7D4;
+DRIceFire_obj_Print = 0xA40;
+DRIceFire_obj_Free = 0xA94;
+DRIceFire_obj_GetModelFlags = 0xB04;
+DRIceFire_obj_GetDataSize = 0xB14;
 
 .rodata = 0xBB4:
