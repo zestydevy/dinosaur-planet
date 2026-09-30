@@ -1,5 +1,6 @@
 #include "PR/os.h"
 #include "dlls/engine/27.h"
+#include "dlls/objects/common/weapon.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/419_DFdockpoint.h"
@@ -443,9 +444,9 @@ static void DFlog_func_E8C(Object* self) {
     f32 var_fa0;
     f32 var_fa1;
     SRT fxTransform;
-    f32 spDC;
-    f32 spD8;
-    f32 spD4;
+    f32 dz;
+    f32 dy;
+    f32 dx;
     f32 spD0;
     f32 spC8[2];
     f32 spC4;
@@ -457,7 +458,7 @@ static void DFlog_func_E8C(Object* self) {
     f32 sp9C;
     f32 sp98;
     s32 sp90[2];
-    u8 temp_s1_5;
+    u8 soundFlags;
     u8 temp_s2;
     u8 volume;
     s32 i;
@@ -535,28 +536,28 @@ static void DFlog_func_E8C(Object* self) {
 
     spC4 = mathSinfInterp(self->srt.yaw) * objdata->unk284;
     sp98 = mathCosfInterp(self->srt.yaw) * objdata->unk284;
-    objdata->velocity[0].x = objdata->velocity[0].x + spC4;
-    objdata->velocity[0].z = objdata->velocity[0].z + sp98;
-    objdata->velocity[1].x = objdata->velocity[1].x + spC4;
-    objdata->velocity[1].z = objdata->velocity[1].z + sp98;
-    spC4 = mathSinfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
-    sp98 = mathCosfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
-    objdata->velocity[0].x = objdata->velocity[0].x + (spC4 * 0.05f);
-    objdata->velocity[0].z = objdata->velocity[0].z + (sp98 * 0.05f);
-    objdata->velocity[1].x = objdata->velocity[1].x - (spC4 * 0.025f);
-    objdata->velocity[1].z = objdata->velocity[1].z - (sp98 * 0.025f);
+    objdata->velocity[0].x += spC4;
+    objdata->velocity[0].z += sp98;
+    objdata->velocity[1].x += spC4;
+    objdata->velocity[1].z += sp98;
+    spC4 = mathSinfInterp(self->srt.yaw + M_90_DEGREES) * objdata->unk280;
+    sp98 = mathCosfInterp(self->srt.yaw + M_90_DEGREES) * objdata->unk280;
+    objdata->velocity[0].x += spC4 * 0.05f;
+    objdata->velocity[0].z += sp98 * 0.05f;
+    objdata->velocity[1].x -= spC4 * 0.025f;
+    objdata->velocity[1].z -= sp98 * 0.025f;
     spD0 = DFlog_func_1E9C(self, self->srt.transl.y, self->srt.transl.x, self->srt.transl.z);
     
     for (i = 0; i < 2; i++) {
-        objdata->velocity[i].x -= (objdata->flowX[i] * 0.05f);
-        objdata->velocity[i].z -= (objdata->flowZ[i] * 0.050f);
+        objdata->velocity[i].x -= objdata->flowX[i] * 0.05f;
+        objdata->velocity[i].z -= objdata->flowZ[i] * 0.050f;
         objdata->velocity[i].x *= 0.99f;
         objdata->velocity[i].z *= 0.99f;
         distance = sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
         if (distance > 0.95f) {
             distance = 0.95f / distance;
-            objdata->velocity[i].x = (f32) (objdata->velocity[i].x * distance);
-            objdata->velocity[i].z = (f32) (objdata->velocity[i].z * distance);
+            objdata->velocity[i].x *= distance;
+            objdata->velocity[i].z *= distance;
         }
         spC8[i] = DFlog_func_1E9C(self, objdata->endPoints[i].y, objdata->endPoints[i].x, objdata->endPoints[i].z);
         if (((spC8[i] - objdata->endPoints[i].y) > -2.0f) && ((spC8[i] - objdata->endPoints[i].y) < 2.0f)) {
@@ -566,9 +567,9 @@ static void DFlog_func_E8C(Object* self) {
                 objdata->velocity[i].y *= 0.95f;
                 sp90[i] = 1;
                 if (objdata->unk4F0[i] > 0) {
-                    sp90[i] = (s32) objdata->unk4F0[i];
+                    sp90[i] = objdata->unk4F0[i];
                 }
-                objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                objdata->unk4F0[i] >>= 1;
             }
         } else {
             if ((spC8[i] - objdata->endPoints[i].y) > 2.0f) {
@@ -581,21 +582,21 @@ static void DFlog_func_E8C(Object* self) {
                 objdata->velocity[i].y += (spC8[i] - objdata->endPoints[i].y) * 0.01f;
                 sp90[i] = 1;
                 if (objdata->unk4F0[i] > 0) {
-                    sp90[i] = (s32) objdata->unk4F0[i];
+                    sp90[i] = objdata->unk4F0[i];
                 }
-                objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                objdata->unk4F0[i] >>= 1;
             } else {
                 if ((spC8[i] - objdata->endPoints[i].y) < -2.0f) {
-                    objdata->velocity[i].y = (f32) (objdata->velocity[i].y * 0.95f);
-                    objdata->velocity[i].y = (f32) (objdata->velocity[i].y - 0.18f);
-                    objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] + gUpdateRate);
+                    objdata->velocity[i].y *= 0.95f;
+                    objdata->velocity[i].y -= 0.18f;
+                    objdata->unk4F0[i] += gUpdateRate;
                 } else {
                     objdata->endPoints[i].y = spC8[i];
                     sp90[i] = 1;
                     if (objdata->unk4F0[i] > 0) {
-                        sp90[i] = (s32) objdata->unk4F0[i];
+                        sp90[i] = objdata->unk4F0[i];
                     }
-                    objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                    objdata->unk4F0[i] >>= 1;
                 }
             }
         }
@@ -607,22 +608,22 @@ static void DFlog_func_E8C(Object* self) {
     self->srt.transl.x = (objdata->endPoints[0].x + objdata->endPoints[1].x) * 0.5f;
     self->srt.transl.y = (objdata->endPoints[0].y + objdata->endPoints[1].y) * 0.5f;
     self->srt.transl.z = (objdata->endPoints[0].z + objdata->endPoints[1].z) * 0.5f;
-    spD4 = objdata->endPoints[1].x - objdata->endPoints[0].x;
-    spD8 = objdata->endPoints[1].y - objdata->endPoints[0].y;
-    spDC = objdata->endPoints[1].z - objdata->endPoints[0].z;
-    distance = sqrtf((spD4 * spD4) + (spDC * spDC));
-    self->srt.pitch = -mathAtan2f(spD8, distance);
-    self->srt.yaw = mathAtan2f(spD4, spDC);
+    dx = objdata->endPoints[1].x - objdata->endPoints[0].x;
+    dy = objdata->endPoints[1].y - objdata->endPoints[0].y;
+    dz = objdata->endPoints[1].z - objdata->endPoints[0].z;
+    distance = sqrtf(SQ(dx) + SQ(dz));
+    self->srt.pitch = -mathAtan2f(dy, distance);
+    self->srt.yaw = mathAtan2f(dx, dz);
     gDLL_27->vtbl->func_1E8(self, &objdata->unk28C, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->unk28C);
     gDLL_27->vtbl->func_624(self, &objdata->unk28C, gUpdateRateF);
 
     temp_s2 = (objdata->unk28C.hitsTouchBits | objdata->unk28C.unk25C) & 3;
-    temp_s1_5 = temp_s2 & (temp_s2 ^ objdata->unk4EE);
-    if (temp_s1_5 & 1) {
-        volume = ((sqrtf(SQ(objdata->velocity[0].x) + SQ(objdata->velocity[0].z)) * 127.0f) / 0.95f);
+    soundFlags = temp_s2 & (temp_s2 ^ objdata->unk4EE);
+    if (soundFlags & 1) {
+        volume = (sqrtf(SQ(objdata->velocity[0].x) + SQ(objdata->velocity[0].z)) * 127.0f) / 0.95f;
     }
-    if (temp_s1_5 & 2) {
+    if (soundFlags & 2) {
         sp9C = sqrtf(SQ(objdata->velocity[1].x) + SQ(objdata->velocity[1].z));
         if (((sp9C * 127.0f) / 0.95f) < volume) {
             volume = (f32) volume;
@@ -638,7 +639,7 @@ static void DFlog_func_E8C(Object* self) {
     if ((objdata->mountState == VEHICLE_Mounted) && (sp90[0] != 0) && (sp90[1] != 0)) {
         weapon = objGetPlayer()->linkedObject;
         if (weapon != NULL) {
-            ((DLL_Unknown*)weapon->dll)->vtbl->func[17].withThreeArgs((s32)weapon, (s32)&spAC, (s32)&spA0);
+            ((DLL_IWeapon*)weapon->dll)->vtbl->func17(weapon, &spAC, &spA0);
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);
             if ((sp9C >= 0.0f) && (sp9C <= 1.0f)) {
                 if (objdata->paddleSoundCooldown == 0) {
@@ -704,81 +705,90 @@ static void DFlog_func_E8C(Object* self) {
 }
 
 // offset: 0x1E9C | func: 24
-static f32 DFlog_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
-    TrackHeightResult** sp74;
-    TrackHeightResult* temp_v0_4;
-    f32 temp_fv0;
-    f32 sp68;
-    f32 temp_fv0_9;
-    f32 var_fa1;
-    f32 var_ft4;
-    f32 var_fv0_2;
-    f32 var_fv1;
-    s32 temp_v0;
-    s32 var_a1;
-    s32 var_a3;
-    s32 var_v1;
+static f32 DFlog_func_1E9C(Object* self, f32 y, f32 x, f32 z) {
+    TrackHeightResult** trackResults;
+    TrackHeightResult* closestResult;
+    f32 trackHeightDefaultY;
+    f32 waterY;
+    f32 yDiff;
+    f32 minYDist;
+    f32 minYDistWater;
+    f32 yDistance;
+    f32 yDist;
+    s32 count;
+    s32 minYDistWaterIdx;
+    s32 minYDistIdx;
+    s32 i;
 
-    temp_fv0 = 2.0f * arg1;
-    if (temp_fv0 >= 0.0f) {
-        sp68 = -temp_fv0;
+    trackHeightDefaultY = 2.0f * y;
+    if (trackHeightDefaultY >= 0.0f) {
+        waterY = -trackHeightDefaultY;
     } else {
-        sp68 = -(-temp_fv0);
+        waterY = -(-trackHeightDefaultY);
     }
-    temp_v0 = trackGetHeight(arg0, arg2, arg0->srt.transl.y, arg3, &sp74, 0, 0);
-    if (temp_v0 != 0) {
-        var_a3 = 0;
-        var_ft4 = 0.0f;
-        var_a1 = -1;
-        if (sp74[0]->y <= arg1) {
-            var_fa1 = arg1 - sp74[0]->y;
+
+    count = trackGetHeight(self, x, self->srt.transl.y, z, &trackResults, 0, 0);
+    if (count != 0) {
+        minYDistIdx = 0;
+        minYDistWater = 0.0f;
+        minYDistWaterIdx = -1;
+        if (y >= trackResults[0]->y) {
+            minYDist = y - trackResults[0]->y;
         } else {
-            var_fa1 = -(arg1 - sp74[0]->y);
+            minYDist = -(y - trackResults[0]->y);
         }
 
-        for (var_v1 = 0; var_v1 < temp_v0; var_v1++) {
-            if (sp74[var_v1]->unk14 == 0xE) {
-                if (sp74[var_v1]->y <= arg1) {
-                    var_fv1 = arg1 - sp74[var_v1]->y;
+        for (i = 0; i < count; i++) {
+            //Check closest water
+            if (trackResults[i]->unk14 == 14) { //water
+                if (trackResults[i]->y <= y) {
+                    yDist = y - trackResults[i]->y;
                 } else {
-                    var_fv1 = -(arg1 - sp74[var_v1]->y);
+                    yDist = -(y - trackResults[i]->y);
                 }
-                if ((var_fv1 < var_ft4) || (var_a1 == -1)) {
-                    var_ft4 = var_fv1;
-                    var_a1 = var_v1;
+                if (minYDistWater > yDist || minYDistWaterIdx == -1) {
+                    minYDistWater = yDist;
+                    minYDistWaterIdx = i;
                 }
             }
-            var_fv1 = arg1 - sp74[var_v1]->y;
-            if (sp74[var_v1]->y <= arg1) {
-                var_fv0_2 = var_fv1;
+
+            //Check closest terrain in general
+            yDist = y - trackResults[i]->y;
+            if (trackResults[i]->y <= y) {
+                yDistance = yDist;
             } else {
-                var_fv0_2 = -var_fv1;
+                yDistance = -yDist;
             }
-            if (var_fv0_2 < var_fa1) {
-                var_fa1 = var_fv0_2;
-                var_a3 = var_v1;
+            if (minYDist > yDistance) {
+                minYDist = yDistance;
+                minYDistIdx = i;
             }
         }
         
-        if (var_a1 != -1) {
-            sp68 = sp74[var_a1]->y;
+        if (minYDistWaterIdx != -1) {
+            waterY = trackResults[minYDistWaterIdx]->y;
         }
-        temp_v0_4 = sp74[var_a3];
-        temp_fv0_9 = arg1 - temp_v0_4->y;
-        if (sp68 < temp_v0_4->y) {
-            if (temp_fv0_9 >= 0.0f) {
-                var_fv1 = temp_fv0_9;
+
+        closestResult = trackResults[minYDistIdx];
+        yDiff = y - closestResult->y;
+
+        //Check if the closest water is under another surface
+        if (waterY < closestResult->y) {
+            if (yDiff >= 0.0f) {
+                yDist = yDiff;
             } else {
-                var_fv1 = -temp_fv0_9;
+                yDist = -yDiff;
             }
-            if ((var_fv1 < 10.0f) && (temp_v0_4->unk14 != 0xE)) {
-                sp68 = temp_v0_4->y + 4.0f;
+
+            if ((yDist < 10.0f) && (closestResult->unk14 != 0xE)) {
+                waterY = closestResult->y + 4.0f;
             }
         }
     } else {
-        sp68 = arg1;
+        waterY = y;
     }
-    return sp68;
+
+    return waterY;
 }
 
 // offset: 0x21E4 | func: 25 | export: 20
