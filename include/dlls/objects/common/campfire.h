@@ -15,4 +15,4 @@ typedef struct {
     u16 lfxUnk1E;           //Param for the light emitter
 } CampFire_Setup;
 
-#endif
+#endif // _DLLS_COMMON_CAMPFIRE_H

@@ -630,13 +630,13 @@ class DLLSplitter:
             return False
         
         if dll.number >= 104:
-            # Object DLL, check for function defaults
+            # Modgfx DLL, check for function defaults
             if export_idx == 0:
                 if self.__instructions_equal(func, self.DEFAULT_MODGFX_SETUP):
-                    c_file.write(f's32 {func.getName()}(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5) {{\n    return 0;\n}}\n')
+                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {{\n    return 0;\n}}\n')
                     return True
                 else:
-                    c_file.write(f's32 {func.getName()}(Object* arg0, s32 arg1, SRT* arg2, u32 arg3, s32 arg4, void* arg5);\n')
+                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);\n')
 
         if dll.number >= 210:
             # Object DLL, check for function defaults
