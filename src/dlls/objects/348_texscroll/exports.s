@@ -8,10 +8,10 @@ _exports:
 .dword TexScroll_dtor
 
 # export table
-/*0*/ .dword TexScroll_setup
-/*1*/ .dword TexScroll_control
-/*2*/ .dword TexScroll_update
-/*3*/ .dword TexScroll_print
-/*4*/ .dword TexScroll_free
-/*5*/ .dword TexScroll_get_model_flags
-/*6*/ .dword TexScroll_get_data_size
+/*0*/ .dword TexScroll_obj_Setup
+/*1*/ .dword TexScroll_obj_Control
+/*2*/ .dword TexScroll_obj_Update
+/*3*/ .dword TexScroll_obj_Print
+/*4*/ .dword TexScroll_obj_Free
+/*5*/ .dword TexScroll_obj_GetModelFlags
+/*6*/ .dword TexScroll_obj_GetDataSize

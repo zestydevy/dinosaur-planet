@@ -4,28 +4,28 @@
 _exports:
 
 # ctor/dtor
-.dword dll_417_ctor
-.dword dll_417_dtor
+.dword DFlog_ctor
+.dword DFlog_dtor
 
 # export table
-/*0*/ .dword dll_417_setup
-/*1*/ .dword dll_417_control
-/*2*/ .dword dll_417_update
-/*3*/ .dword dll_417_print
-/*4*/ .dword dll_417_free
-/*5*/ .dword dll_417_get_model_flags
-/*6*/ .dword dll_417_get_data_size
-/*7*/ .dword dll_417_func_400
-/*8*/ .dword dll_417_func_490
-/*9*/ .dword dll_417_func_5D8
-/*10*/ .dword dll_417_func_5F8
-/*11*/ .dword dll_417_func_75C
-/*12*/ .dword dll_417_func_76C
-/*13*/ .dword dll_417_func_85C
-/*14*/ .dword dll_417_func_86C
-/*15*/ .dword dll_417_func_944
-/*16*/ .dword dll_417_func_9D8
-/*17*/ .dword dll_417_func_A64
-/*18*/ .dword dll_417_func_A74
-/*19*/ .dword dll_417_func_A80
-/*20*/ .dword dll_417_func_21E4
+/*0*/ .dword DFlog_obj_Setup
+/*1*/ .dword DFlog_obj_Control
+/*2*/ .dword DFlog_obj_Update
+/*3*/ .dword DFlog_obj_Print
+/*4*/ .dword DFlog_obj_Free
+/*5*/ .dword DFlog_obj_GetModelFlags
+/*6*/ .dword DFlog_obj_GetDataSize
+/*7*/ .dword DFlog_vehicle_CanMount
+/*8*/ .dword DFlog_vehicle_GetMountSide
+/*9*/ .dword DFlog_vehicle_GetRiderPosition
+/*10*/ .dword DFlog_vehicle_CanDismount
+/*11*/ .dword DFlog_vehicle_GetDismountSide
+/*12*/ .dword DFlog_vehicle_GetCameraPosition
+/*13*/ .dword DFlog_vehicle_GetMountState
+/*14*/ .dword DFlog_vehicle_SetMountState
+/*15*/ .dword DFlog_vehicle_GetPlayerAnim
+/*16*/ .dword DFlog_vehicle_Func16
+/*17*/ .dword DFlog_vehicle_GetRacePosition
+/*18*/ .dword DFlog_vehicle_Func18
+/*19*/ .dword DFlog_vehicle_HandleRiderScale
+/*20*/ .dword DFlog_vehicle_Func20

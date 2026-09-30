@@ -119,7 +119,7 @@ void CamControl_init_data(Object* player, f32 initialX, f32 initialY, f32 initia
 }
 
 // offset: 0x1A4 | func: 1 | export: 1
-void CamControl_tick(void) { //TO-DO: does this really not take updateRate as an argument?
+void CamControl_tick(void) {
     Object* player;
     f32 tSpeed;
     u8 onTitleScreen;
@@ -333,13 +333,13 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
     
     switch (cameraMode) {
     case Camera_MODE_1_Static:
-        staticCam.unk0 = params & 0x7F; //extract lower bits
-        staticCam.unk4 = params & 0x80; //store uppermost bit
+        staticCam.cameraID = params & 0x7F; //extract lower bits
+        staticCam.previousCameraEasesIn = params & 0x80; //store uppermost bit
         CamControl_change_camera_module(DLL_ID_CAMSTATIC, TRUE, 0, sizeof(staticCam), &staticCam, 120, 0xFF);
         break;
     case Camera_MODE_2_Path:
-        pathCam.unk0 = params & 0x7F; //extract lower bits
-        pathCam.unk4 = params & 0x80; //store uppermost bit
+        pathCam.pathID = params & 0x7F; //extract lower bits
+        pathCam.previousCameraEasesIn = params & 0x80; //store uppermost bit
         CamControl_change_camera_module(DLL_ID_CAMPATH, TRUE, 0, sizeof(pathCam), &pathCam, 120, 0xFF);
         break;
     case Camera_MODE_3_Normal:
@@ -361,7 +361,6 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
                 if ((camAction->unk0 == 0) || (camAction->unk0 != 1)) {
                     CamControl_change_camera_module(DLL_ID_CAMNORMAL, FALSE, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 } else {
-                    //If camAction->unk0 == 1 (1st-person mode locked out?)
                     CamControl_change_camera_module(DLL_ID_CAMCLIMB, TRUE, 2, sizeof(CameraAction), camAction, 0, 0xFF);
                 }
             }
@@ -395,6 +394,13 @@ void CamControl_move_camera_by_delta(f32 dx, f32 dy, f32 dz) {
 }
 
 // offset: 0xBD4 | func: 14 | export: 12
+/* CamControl_ConfigureEaseSpline?
+    xNumerator is the distance to travel, 
+    vec4 is the spline, 
+    xDivisor is the ease duration, 
+    xMin is the min interpolation speed 
+    y/w are tangents maybe?
+*/
 void CamControl_func_BD4(f32 xNumerator, Vec4f* vec4, f32 xDivisor, f32 xMin, f32 y, f32 w) {
     f32 x;
 

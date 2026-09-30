@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_465_ctor
-.dword dll_465_dtor
+.dword CCDockDoor_ctor
+.dword CCDockDoor_dtor
 
 # export table
-/*0*/ .dword dll_465_setup
-/*1*/ .dword dll_465_control
-/*2*/ .dword dll_465_update
-/*3*/ .dword dll_465_print
-/*4*/ .dword dll_465_free
-/*5*/ .dword dll_465_get_model_flags
-/*6*/ .dword dll_465_get_data_size
+/*0*/ .dword CCDockDoor_obj_Setup
+/*1*/ .dword CCDockDoor_obj_Control
+/*2*/ .dword CCDockDoor_obj_Update
+/*3*/ .dword CCDockDoor_obj_Print
+/*4*/ .dword CCDockDoor_obj_Free
+/*5*/ .dword CCDockDoor_obj_GetModelFlags
+/*6*/ .dword CCDockDoor_obj_GetDataSize

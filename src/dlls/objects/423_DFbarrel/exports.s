@@ -8,10 +8,10 @@ _exports:
 .dword DFbarrel_dtor
 
 # export table
-/*0*/ .dword DFbarrel_setup
-/*1*/ .dword DFbarrel_control
-/*2*/ .dword DFbarrel_update
-/*3*/ .dword DFbarrel_print
-/*4*/ .dword DFbarrel_free
-/*5*/ .dword DFbarrel_get_model_flags
-/*6*/ .dword DFbarrel_get_data_size
+/*0*/ .dword DFbarrel_obj_Setup
+/*1*/ .dword DFbarrel_obj_Control
+/*2*/ .dword DFbarrel_obj_Update
+/*3*/ .dword DFbarrel_obj_Print
+/*4*/ .dword DFbarrel_obj_Free
+/*5*/ .dword DFbarrel_obj_GetModelFlags
+/*6*/ .dword DFbarrel_obj_GetDataSize

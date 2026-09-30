@@ -6,11 +6,11 @@
 
 typedef struct {
     s8 unk0;
-    s8 unk1;
-    s8 unk2;
-    s8 unk3;
-    s8 unk4;
-    s8 unk5;
+    s8 easeDuration;
+    s8 distance;
+    s8 pitchOffset;
+    s8 maxY;
+    s8 minY;
 } CamClimb_Params;
 
 #endif

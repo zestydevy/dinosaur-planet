@@ -1,0 +1,13 @@
+.text = 0x0:
+sfxPlayer_ctor = 0x0;
+sfxPlayer_dtor = 0xC;
+sfxPlayer_obj_Setup = 0x18;
+sfxPlayer_obj_Control = 0xFC;
+sfxPlayer_obj_Update = 0x458;
+sfxPlayer_obj_Print = 0x464;
+sfxPlayer_obj_Free = 0x4C0;
+sfxPlayer_obj_GetModelFlags = 0x51C;
+sfxPlayer_obj_GetDataSize = 0x52C;
+
+.rodata = 0x584:
+_oob_rodata_0 = 0x0; // absolute:0x584

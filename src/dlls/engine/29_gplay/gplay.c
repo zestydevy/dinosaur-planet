@@ -1,6 +1,7 @@
 #include "PR/os.h"
 #include "PR/ultratypes.h"
 
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/28_screen_fade.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/31_flash.h"
@@ -416,9 +417,9 @@ u32 gplay_load_game_options(void) {
         // "gplayLoadOptions error: saveoptions failed to load.\n" (default.dol)
         bzero(sGameOptions, sizeof(GplayOptions));
         ret = 0;
-        sGameOptions->volumeMusic = 0x7f;
-        sGameOptions->volumeAudio = 0x7f;
-        sGameOptions->unkA = 0x7f;
+        sGameOptions->volumeMusic = MAX_VOLUME;
+        sGameOptions->volumeAudio = MAX_VOLUME;
+        sGameOptions->unkA = MAX_VOLUME;
     }
 
     sGameOptions->languageID = 0;

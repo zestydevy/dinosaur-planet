@@ -8,10 +8,10 @@ _exports:
 .dword ExplodeAnimator_dtor
 
 # export table
-/*0*/ .dword ExplodeAnimator_setup
-/*1*/ .dword ExplodeAnimator_control
-/*2*/ .dword ExplodeAnimator_update
-/*3*/ .dword ExplodeAnimator_print
-/*4*/ .dword ExplodeAnimator_free
-/*5*/ .dword ExplodeAnimator_get_model_flags
-/*6*/ .dword ExplodeAnimator_get_data_size
+/*0*/ .dword ExplodeAnimator_obj_Setup
+/*1*/ .dword ExplodeAnimator_obj_Control
+/*2*/ .dword ExplodeAnimator_obj_Update
+/*3*/ .dword ExplodeAnimator_obj_Print
+/*4*/ .dword ExplodeAnimator_obj_Free
+/*5*/ .dword ExplodeAnimator_obj_GetModelFlags
+/*6*/ .dword ExplodeAnimator_obj_GetDataSize

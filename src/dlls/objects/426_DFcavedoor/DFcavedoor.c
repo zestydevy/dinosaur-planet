@@ -22,7 +22,7 @@ void DFcavedoor_setup(Object* self, DFcavedoor_Setup* setup, s32 reset) {
 
 // offset: 0x48 | func: 1 | export: 1
 void DFcavedoor_control(Object* self) {
-    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (mainGetBits(BIT_DF_Cave_Door_Hidden))) {
+    if (!(self->srt.flags & OBJFLAG_INVISIBLE) && (mainGetBits(BIT_DF_Mole_Cave_Destroy_Door))) {
         self->srt.flags |= OBJFLAG_INVISIBLE;
     }
 }

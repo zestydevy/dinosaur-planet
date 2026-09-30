@@ -204,7 +204,7 @@ typedef struct {
 /*0014*/    ModelInstance_0x14 *unk14;
 /*0018*/    Gfx *displayList;
 /*001C*/    void *unk1C[2];
-/*0024*/    Vec4f *unk24; // Could be a MtxF
+/*0024*/    Vec4f *unk24; // Could be a MtxF (HitSphere matrices?)
 /*0028*/    AnimState *animState0; //base
 /*002C*/    AnimState *animState1; //layered (e.g. the weapon stowing animation, which can be applied over walk anims)
 /*0030*/    ModelInstanceBlendshape *blendshapes;

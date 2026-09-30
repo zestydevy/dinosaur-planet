@@ -30,13 +30,13 @@ typedef struct {
 } ECSHCup_Data;
 
 // offset: 0x0 | ctor
-void ECSHCup_ctor(void *dll) { }
+void ECSHCup_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void ECSHCup_dtor(void *dll) { }
+void ECSHCup_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
+void ECSHCup_obj_Setup(Object* self, ECSHCup_Setup* objSetup, s32 reset) {
     ECSHCup_Data* objData;
     f32 objectDistance;
 
@@ -69,14 +69,14 @@ void ECSHCup_setup(Object* self, ECSHCup_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x13C | func: 1 | export: 1
-void ECSHCup_control(Object* self) {
-    ECSHCup_Data *objData = self->data;
+void ECSHCup_obj_Control(Object* self) {
+    ECSHCup_Data* objData = self->data;
     s32 state = Cup_STATE_Unknown;
     Vec3f goal = VEC3F(0, 0, 0);
     u8 cupWithSpirit = 0;
     s16 opacity;
     f32 objectDistance = 500.0f;
-    Object *player;
+    Object* player;
     
     player = objGetPlayer();
     
@@ -88,7 +88,7 @@ void ECSHCup_control(Object* self) {
     }
     
     //Get cup minigame state, and the index of the cup holding the Spirit
-    ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->get_minigame_state(&state, &cupWithSpirit);
+    dll_ECSHshrine(dShrine)->GetMinigameState(&state, &cupWithSpirit);
 
     //Spin
     self->srt.yaw += objData->rotateSpeed; //@bug: framerate dependent
@@ -180,7 +180,7 @@ void ECSHCup_control(Object* self) {
         }
         objData->prevState = state;
     } else if ((state == Cup_STATE_Moving) && (state != objData->prevState)) {
-        ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->get_cup_coords(objData->cupIndex, &goal.x, &goal.z);
+        dll_ECSHshrine(dShrine)->GetCupCoords(objData->cupIndex, &goal.x, &goal.z);
         objData->speedX = (goal.x - self->srt.transl.x) / 12.0f;
         objData->speedZ = (goal.z - self->srt.transl.z) / 12.0f;
         objData->home.x = self->srt.transl.x;
@@ -193,17 +193,17 @@ void ECSHCup_control(Object* self) {
     } else if ((state == Cup_STATE_Shuffle) && (state != objData->prevState)) {
         objData->speedX = 0.0f;
         objData->speedZ = 0.0f;
-        ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->set_cup_coords(objData->cupIndex, self->srt.transl.x, self->srt.transl.z);
+        dll_ECSHshrine(dShrine)->SetCupCoords(objData->cupIndex, self->srt.transl.x, self->srt.transl.z);
         objData->prevState = state;
     } else if ((state == Cup_STATE_Underground) && (state != objData->prevState)) {
         objData->prevState = state;
     } else if ((state == Cup_STATE_Move_Finished) && (state != objData->prevState)) {
-        ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->get_cup_coords(objData->cupIndex, &goal.x, &goal.z);
+        dll_ECSHshrine(dShrine)->GetCupCoords(objData->cupIndex, &goal.x, &goal.z);
         self->srt.transl.x = goal.x;
         self->srt.transl.z = goal.z;
         objData->prevState = state;
     } else if ((state == Cup_STATE_Await_Choice) && player && vec3Distance(&self->globalPosition, &player->globalPosition) < 30.0f) {
-        ((DLL_469_ECSHshrine*)dShrine->dll)->vtbl->choose_cup(objData->cupIndex);
+        dll_ECSHshrine(dShrine)->ChooseCup(objData->cupIndex);
         if (objData->cupIndex == cupWithSpirit) {
             gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
         }
@@ -211,26 +211,26 @@ void ECSHCup_control(Object* self) {
 }
 
 // offset: 0x8E8 | func: 2 | export: 2
-void ECSHCup_update(Object *self) { }
+void ECSHCup_obj_Update(Object* self) { }
 
 // offset: 0x8F4 | func: 3 | export: 3
-void ECSHCup_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void ECSHCup_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x948 | func: 4 | export: 4
-void ECSHCup_free(Object* arg0, s32 arg1) {
-    gDLL_13_Expgfx->vtbl->func5(arg0);
+void ECSHCup_free(Object* self, s32 onlySelf) {
+    gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x990 | func: 5 | export: 5
-u32 ECSHCup_get_model_flags(Object *self) {
+u32 ECSHCup_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x9A0 | func: 6 | export: 6
-u32 ECSHCup_get_data_size(Object *self, u32 a1){
+u32 ECSHCup_obj_GetDataSize(Object* self, u32 offsetAddr){
     return sizeof(ECSHCup_Data);
 }

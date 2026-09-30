@@ -199,7 +199,7 @@ typedef struct {
 /*07*/ u8 audioMode; //0) stereo, 1) surround, 2) mono, 3) headphones
 /*08*/ u8 volumeMusic; //max 255
 /*09*/ u8 volumeAudio; //max 127 (@bug: doesn't affect MP3s)
-/*0A*/ u8 unkA; 
+/*0A*/ u8 unkA; //unused volume (possibly related to Audio Options menu's unused "Speech" string?)
 /*0B*/ s8 screenOffsetX;
 /*0C*/ s8 screenOffsetY;
 /*0D*/ s8 unkD;

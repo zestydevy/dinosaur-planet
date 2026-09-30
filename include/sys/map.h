@@ -270,8 +270,8 @@ typedef struct {
 /*0c*/  u32 *blockIDs_ptr;
 /*10*/  s8 *end_ptr;
 /*14*/  s8 *grid_A1_ptr;
-/*18*/  s8 unk18;
-/*19*/  s8 unk19; //matrixIdx maybe?
+/*18*/  s8 unk18; //isLoaded
+/*19*/  s8 unk19;
 /*1a*/  s8 unk1a;
 /*1b*/  s8 unk1b;
 /*1c*/  s16 objectInstanceCount; //malloc-related
@@ -313,6 +313,16 @@ typedef struct {
 /*0a*/  s8 unkA;
 /*0b*/  s8 unkB;
 } GlobalMapCell; //size 0xC
+
+typedef union {
+    struct {
+        s32 xMin;
+        s32 xMax;
+        s32 zMin;
+        s32 zMax;
+    };
+    s32 s[4];
+} VisGridRange;
 
 // size: 0xA
 typedef struct Struct_D_800B9768_unk4 {

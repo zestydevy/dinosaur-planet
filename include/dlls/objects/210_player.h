@@ -337,9 +337,9 @@ typedef enum {
     PLAYER_ASTATE_Block_Pushing = 41,
     PLAYER_ASTATE_42 = 42, //crash?
     PLAYER_ASTATE_Collecting = 43, //crashes if there's no object (e.g. Blue Mushrooms)
-    PLAYER_ASTATE_Rope_Grab_From_Jump = 44,
+    PLAYER_ASTATE_Rope_Climb_Start = 44,
     PLAYER_ASTATE_Rope_Climb = 45,
-    PLAYER_ASTATE_46 = 46,
+    PLAYER_ASTATE_Rope_Climb_End = 46,
     PLAYER_ASTATE_47 = 47,
     PLAYER_ASTATE_Hurt_Tumbling = 48,
     PLAYER_ASTATE_Hurt_Stunned = 49, //when hurt by Red Mushrooms' spores or pollen cannons
@@ -417,7 +417,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*42*/ u8 (*func42)(Object* player);
     /*43*/ int (*func43)(Object* player);
     /*44*/ s32 (*func44)(Object* player); //is player currently blinking
-    /*45*/ Object *(*func45)(Object* player);
+    /*45*/ Object *(*func45)(Object* player); //get player's DFropenode Object?
     /*46*/ u8 (*func46)(Object* player);
     /*47*/ u8 (*func47)(Object* player, Object *arg1, u8* arg2);
     /*48*/ s16 (*func48)(Object* player); //returns objectID of player's held object (returns 0 if none held, or when player's objData->flags 0x10000 is set)

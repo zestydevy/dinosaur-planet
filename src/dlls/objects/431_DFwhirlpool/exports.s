@@ -8,10 +8,10 @@ _exports:
 .dword DFwhirlpool_dtor
 
 # export table
-/*0*/ .dword DFwhirlpool_setup
-/*1*/ .dword DFwhirlpool_control
-/*2*/ .dword DFwhirlpool_update
-/*3*/ .dword DFwhirlpool_print
-/*4*/ .dword DFwhirlpool_free
-/*5*/ .dword DFwhirlpool_get_model_flags
-/*6*/ .dword DFwhirlpool_get_data_size
+/*0*/ .dword DFwhirlpool_obj_Setup
+/*1*/ .dword DFwhirlpool_obj_Control
+/*2*/ .dword DFwhirlpool_obj_Update
+/*3*/ .dword DFwhirlpool_obj_Print
+/*4*/ .dword DFwhirlpool_obj_Free
+/*5*/ .dword DFwhirlpool_obj_GetModelFlags
+/*6*/ .dword DFwhirlpool_obj_GetDataSize

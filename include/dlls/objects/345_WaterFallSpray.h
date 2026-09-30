@@ -14,8 +14,8 @@ typedef struct {
 /*1E*/ u8 amplitudeZ;
 /*1F*/ u8 amplitudeY;
 /*20*/ u8 distance;
-/*21*/ u8 unk21;
-/*22*/ u8 unk22;
+/*21*/ u8 lowSfxRange;  //Stored divided by 16, range for low waterfall sounds
+/*22*/ u8 highSfxRange; //Stored divided by 16, range for high waterfall sounds
 /*23*/ u8 flags;
 /*24*/ u8 iterations;
 } WaterFallSpray_Setup;

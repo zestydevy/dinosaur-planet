@@ -125,9 +125,9 @@ void VisAnimator_animateBlockShapes(Block* block, Object* self, VisAnimator_Data
             (objSetup->animatorID3 && objSetup->animatorID3 == shapes[shapeIndex].animatorID)
         ){
             if (objData->visibility) {
-                shapes[shapeIndex].flags &= ~0x200000;
+                shapes[shapeIndex].flags &= ~RENDER_SHAPE_HIDE;
             } else {
-                shapes[shapeIndex].flags |= 0x200000;
+                shapes[shapeIndex].flags |= RENDER_SHAPE_HIDE;
             }
         }
         shapeIndex++;

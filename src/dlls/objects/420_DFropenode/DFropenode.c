@@ -1,21 +1,7 @@
 #include "common.h"
+#include "dlls/objects/420_DFropenode.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
-
-//TODO: move to header
-DLL_INTERFACE(DLL_420_DFRopeNode) {
-    /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*07*/ void (*func7)(Object* self, f32* arg1); //arg1 might be Vec4f*
-    /*08*/ void (*func8)(Object* self, f32 arg1, f32* ox, f32* oy, f32* oz);
-    /*09*/ void (*func9)(Object* self, f32* arg1, f32 arg2);
-    /*10*/ s16 (*func10)(Object* self, f32 arg1, f32 arg2);
-    /*11*/ UnknownDLLFunc func11;
-    /*12*/ s16 (*func12)(Object* self);
-    /*13*/ void (*func13)(Object* self, u32 arg1); //Set connection state?
-    /*14*/ s16 (*func14)(Object* self); //Check if disconnected?
-    /*15*/ void (*func15)(Object* self, f32 arg1);
-    /*16*/ void (*func16)(Object* self); //clear pointer to other DFropenode object
-};
 
 typedef struct {
     ObjSetup base;
@@ -76,7 +62,7 @@ typedef struct DLL420_Data {
     s32 unk10;
     f32 unk14; 
     s16 unk18; 
-    f32 unk1C[4];
+    Vec4f unk1C; //Rope spline (Vec4f)
     DLL420_Child* unk2C; //allocated by dll_420_func_152C, size `(count * 0x58) + 0x20` (count always seems to be 8)
     u32 unk30 : 1;
 } DLL420_Data; //0x34
@@ -176,13 +162,13 @@ u32 dll_420_get_data_size(Object* self, u32 offsetAddr) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_func_AD8.s")
 
 // offset: 0xDFC | func: 8 | export: 7
-void dll_420_func_DFC(Object* self, f32* arg1) {
+void dll_420_func_DFC(Object* self, Vec4f* spline) {
     DLL420_Data* objData = self->data;
     
-    arg1[0] = objData->unk1C[0];
-    arg1[1] = objData->unk1C[1];
-    arg1[2] = objData->unk1C[2];
-    arg1[3] = objData->unk1C[3];
+    spline->x = objData->unk1C.x;
+    spline->y = objData->unk1C.y;
+    spline->z = objData->unk1C.z;
+    spline->w = objData->unk1C.w;
 }
 
 // offset: 0xE28 | func: 9 | export: 8

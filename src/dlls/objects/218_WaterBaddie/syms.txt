@@ -1,0 +1,45 @@
+.text = 0x0:
+WaterBaddie_initFSACallbacks = 0x0;
+WaterBaddie_ctor = 0x84;
+WaterBaddie_dtor = 0xC4;
+WaterBaddie_obj_Setup = 0xD0;
+WaterBaddie_obj_Control = 0x3C4;
+WaterBaddie_obj_Update = 0x648;
+WaterBaddie_obj_Print = 0x698;
+WaterBaddie_obj_Free = 0x8E8;
+WaterBaddie_obj_GetModelFlags = 0x98C;
+WaterBaddie_obj_GetDataSize = 0x99C;
+WaterBaddie_GetAnimState = 0x9B0;
+WaterBaddie_ReceiveMessage = 0x9C0;
+WaterBaddie_animCallback = 0x9D0;
+WaterBaddie_tick = 0xC6C;
+WaterBaddie_engageTarget = 0x1088;
+WaterBaddie_searchForTarget = 0x1238;
+WaterBaddie_handleRotating = 0x13DC;
+WaterBaddie_handleEffects = 0x16FC;
+WaterBaddie_animState0TurnToTarget = 0x1C48;
+WaterBaddie_animState1Swimming = 0x1CA4;
+WaterBaddie_animState2Hit = 0x1D04;
+WaterBaddie_logicState0Hit = 0x1D8C;
+WaterBaddie_logicState1Dying = 0x1E50;
+WaterBaddie_logicState2Dead = 0x1F70;
+WaterBaddie_logicState3Swimming = 0x203C;
+WaterBaddie_logicState4Top = 0x247C;
+
+.rodata = 0x2574:
+
+.data = 0x25B4:
+dCurveTypes = 0x0; // absolute:0x25B4
+dWaterSounds = 0x8; // absolute:0x25BC
+dBaddieSounds = 0xC; // absolute:0x25C0
+dHitAnimStateMap = 0x18; // absolute:0x25CC
+dHitDamageMap = 0x88; // absolute:0x263C
+dFXScales1 = 0xA4; // absolute:0x2658
+dFXScales2 = 0xAC; // absolute:0x2660
+
+.bss = 0x2674:
+sAnimStateCallbacks = 0x0; // absolute:0x2674
+sLogicStateCallbacks = 0x10; // absolute:0x2684
+sFXTransform = 0x28; // absolute:0x269C
+sStunnedTimer = 0x40; // absolute:0x26B4
+sCurveValue = 0x44; // absolute:0x26B8

@@ -194,7 +194,7 @@ Object *objGetNearestTypeToExcludingSelf(s32 type, Object *object, float *distan
 }
 
 Object* objGetNearestType(s32 type, Vec3f* location, f32* distance) {
-    Object *result;
+    Object* result;
     f32 minDistSquared;
     f32 distSquared;
     Vec3f d;
@@ -202,7 +202,7 @@ Object* objGetNearestType(s32 type, Vec3f* location, f32* distance) {
     s32 iend;
 
     result = NULL;
-    minDistSquared = (*distance) * (*distance);
+    minDistSquared = SQ(*distance);
     
     if (type < 0 || type >= OBJECT_MAX_TYPES) {
         return NULL;

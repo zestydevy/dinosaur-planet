@@ -94,7 +94,7 @@ enum DREWSeq {
     SOUND_855, 
     SOUND_856, 
     SOUND_857, 
-    SOUND_858
+    SOUND_858_Explosion
 };
 /*0x30*/ static Vec3f _data_30[] = {
     VEC3F(-9.0f, 0.0f, -12.0f), 

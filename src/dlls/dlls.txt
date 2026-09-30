@@ -116,10 +116,12 @@
 215 = objects/215_SharpClaw
 216 = objects/216_SnowWorm
 217 = objects/217_GuardClaw
+218 = objects/218_WaterBaddie
 220 = objects/220_Chuka
 221 = objects/221_ChukaChuck
 222 = objects/222_SnowWormSmall
 223 = objects/223_CannonClaw
+224 = objects/224_RopeBaddie
 225 = objects/225_SabreBaddie
 226 = objects/226_tumbleweedbush
 227 = objects/227_tumbleweed
@@ -138,13 +140,14 @@
 252 = objects/252_Cannon
 253 = objects/253_CannonBall
 254 = objects/254_PineCone
+255 = objects/255_ProjBall
 257 = objects/257_tesla
 258 = objects/258_Caictua_Thorn
 260 = objects/260_Pollen
 261 = objects/261_PollenFragment
 264 = objects/264_kamerian_flame
 265 = objects/265_SHvines
-266 = objects/266_sfxplayer
+266 = objects/266_sfxPlayer
 267 = objects/267_checkpoint4
 268 = objects/268_setuppoint
 269 = objects/269_sideload
@@ -248,6 +251,7 @@
 387 = objects/387_CFBigDoorSwitch
 388 = objects/388_CFbarrel
 389 = objects/389_BlastedObject
+390 = objects/390_CFExplodeWall
 391 = objects/391_CFForceField
 392 = objects/392_CFForceFieldControl
 393 = objects/393_CFMainSlideDoor
@@ -259,6 +263,7 @@
 399 = objects/399_CFTreasureChestKey
 400 = objects/400_CFLevelControl
 401 = objects/401_CFTreasSharpy
+404 = objects/404_CFExplodePieces
 405 = objects/405_CF_Lamp
 406 = objects/406_CFCheapGalleon
 408 = objects/408_IMIceMountain
@@ -312,6 +317,7 @@
 470 = objects/470_ECSH_Cup
 472 = objects/472_GPSH_Shrine
 473 = objects/473_GPSH_ObjCreator
+474 = objects/474_GPSH_Scene
 475 = objects/475_GPSH_flybaddie
 477 = objects/477_DBSH_Shrine
 478 = objects/478_DBSH_Symbol

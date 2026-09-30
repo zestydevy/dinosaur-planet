@@ -1,15 +1,15 @@
 .text = 0x0:
 GPSH_Shrine_ctor = 0x0;
 GPSH_Shrine_dtor = 0xC;
-GPSH_Shrine_setup = 0x18;
-GPSH_Shrine_control = 0x290;
-GPSH_Shrine_update = 0xF10;
-GPSH_Shrine_print = 0xF1C;
-GPSH_Shrine_free = 0xF70;
-GPSH_Shrine_get_model_flags = 0x1000;
-GPSH_Shrine_get_data_size = 0x1010;
-GPSH_Shrine_func_1024 = 0x1024;
-GPSH_Shrine_func_13E0 = 0x13E0;
+GPSH_Shrine_obj_Setup = 0x18;
+GPSH_Shrine_obj_Control = 0x290;
+GPSH_Shrine_obj_Update = 0xF10;
+GPSH_Shrine_obj_Print = 0xF1C;
+GPSH_Shrine_obj_Free = 0xF70;
+GPSH_Shrine_obj_GetModelFlags = 0x1000;
+GPSH_Shrine_obj_GetDataSize = 0x1010;
+GPSH_Shrine_animCallback = 0x1024;
+GPSH_Shrine_handleMessages = 0x13E0;
 
 .rodata = 0x1578:
 

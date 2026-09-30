@@ -1,45 +1,21 @@
 #include "common.h"
+#include "dlls/objects/429_DFSH_Door1Special.h"
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebitOpened;
-/*1A*/ s16 gamebitB;
-/*1C*/ s16 seqPreemptTime;
-/*1E*/ s8 seqIndex;
-/*1F*/ u8 yaw;
-/*20*/ u8 enabledActors;
-/*21*/ u8 scale;
-/*22*/ s16 gamebitLit;
-} DFSH_DoorSpecial_Setup;
-
-typedef struct {
-    u16 phase;
-    u8 state;
-    u8 glowState;
-    u8 runControl;
-} DFSH_DoorSpecial_Data;
-
-typedef enum {
-    DFSH_DoorSpecial_GLOW_0_Unlit,
-    DFSH_DoorSpecial_GLOW_1_Fade_In,
-    DFSH_DoorSpecial_GLOW_2_Pulse
-} DFSH_DoorSpecial_GlowStates;
-
-static int DFSH_Door2Special_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3);
+static int DFSH_Door2Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
-void DFSH_Door2Special_ctor(void *dll) { }
+void DFSH_Door2Special_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DFSH_Door2Special_dtor(void *dll) { }
+void DFSH_Door2Special_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFSH_Door2Special_setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32 reset) {
+void DFSH_Door2Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32 reset) {
     DFSH_DoorSpecial_Data* objData;
     TextureAnimator* texAnim;
 
     objData = self->data;
-    self->animCallback = DFSH_Door2Special_anim_callback;
+    self->animCallback = DFSH_Door2Special_animCallback;
 
     //Restore texture glow state
     {
@@ -63,33 +39,33 @@ void DFSH_Door2Special_setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32
 }
 
 // offset: 0xD4 | func: 1 | export: 1
-void DFSH_Door2Special_control(Object *self) { }
+void DFSH_Door2Special_obj_Control(Object* self) { }
 
 // offset: 0xE0 | func: 2 | export: 2
-void DFSH_Door2Special_update(Object *self) { }
+void DFSH_Door2Special_obj_Update(Object* self) { }
 
 // offset: 0xEC | func: 3 | export: 3
-void DFSH_Door2Special_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFSH_Door2Special_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x140 | func: 4 | export: 4
-void DFSH_Door2Special_free(Object *self, s32 onlySelf) { }
+void DFSH_Door2Special_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x150 | func: 5 | export: 5
-u32 DFSH_Door2Special_get_model_flags(Object *self) {
+u32 DFSH_Door2Special_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x160 | func: 6 | export: 6
-u32 DFSH_Door2Special_get_data_size(Object *self, u32 offsetAddr) {
+u32 DFSH_Door2Special_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DFSH_DoorSpecial_Data);
 }
 
 // offset: 0x174 | func: 7
-int DFSH_Door2Special_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 arg3) {
+int DFSH_Door2Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     TextureAnimator* texAnim;
     DFSH_DoorSpecial_Setup* objSetup;
     DFSH_DoorSpecial_Data* objData;

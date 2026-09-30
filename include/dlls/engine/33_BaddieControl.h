@@ -49,7 +49,7 @@ typedef struct {
 /*3E4*/ f32 unk3E4;
 /*3E8*/ f32 unk3E8; //timer related to damage effects? (flashing red etc.)
 /*3EC*/ f32 unk3EC;
-/*3F0*/ s8 unk3F0; //hit react index (for an array of modAnimIds)?
+/*3F0*/ s8 unk3F0; //last hitSphereID hit (sometimes used as an index for an array of hit react modAnimIds)
 /*3F1*/ u8 _unk3F1[0x3F4 - 0x3F1];
 /*3F4*/ void *objdata; // pointer to remaining object data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;
@@ -58,12 +58,12 @@ typedef struct {
 // size:0x38
 typedef struct {
 /*00*/ ObjSetup base;
-/*18*/ s16 unk18;
+/*18*/ s16 unk18; //gamebit set when defeated
 /*1A*/ s16 unk1A;
 /*1C*/ s16 unk1C;
 /*1E*/ s16 unk1E;
 /*20*/ s16 unk20;
-/*22*/ s16 unk22;
+/*22*/ s16 unk22; //droppedItemIdx
 /*24*/ s16 unk24; //objSeqID
 /*26*/ u8 _unk26[0x27 - 0x26];
 /*27*/ s8 initialWeaponID;
@@ -123,7 +123,7 @@ DLL_INTERFACE(DLL_33_BaddieControl) {
 /*18*/ Object *(*drop_collectable)(Object* obj, BaddieDrop_IDs droppedItemIdx, s32 gamebitID, u8 arg3);
 /*19*/ s32 (*check_hit)(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s32 arg3, s32 *hitAnimStateMap, s8 *hitDamageMap, s16 hitLogicState, u32* arg7, SRT* hitSRT); // Returns hit type
 /*20*/ s32 (*func20)(Object* arg0, ObjFSA_Data* fsa, Unk80009024 *arg2, s16 arg3, u8 *arg4, s16 arg5, s16 arg6, s16 arg7);
-/*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 arg3, s32 arg4, s32 arg5, u8 arg6, f32 arg7);
+/*21*/ void (*setup)(Object* obj, Baddie_Setup* setup, Baddie* baddie, s32 totalAnimStates, s32 totalLogicStates, s32 arg5, u8 arg6, f32 arg7);
 /*22*/ void (*change_weapon)(Object* obj, Baddie* baddie);
 /*23*/ f32 (*get_health_ratio)(Object* obj); // Gets current health on a scale from 0-1
 };

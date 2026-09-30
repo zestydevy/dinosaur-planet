@@ -5,6 +5,8 @@
 #include "sys/objects.h"
 #include "dll.h"
 
+#include "prevent_bss_reordering.h"
+
 // This appears to be an alternative (older?) firstperson camera
 
 typedef struct {

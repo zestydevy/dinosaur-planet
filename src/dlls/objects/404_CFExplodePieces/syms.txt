@@ -1,0 +1,18 @@
+.text = 0x0:
+CFExplodePieces_ctor = 0x0;
+CFExplodePieces_dtor = 0xC;
+CFExplodePieces_obj_Setup = 0x18;
+CFExplodePieces_obj_Control = 0xC4;
+CFExplodePieces_fadeOut = 0x16C;
+CFExplodePieces_move = 0x1E0;
+CFExplodePieces_obj_Update = 0x4B8;
+CFExplodePieces_obj_Print = 0x4C4;
+CFExplodePieces_obj_Free = 0x518;
+CFExplodePieces_obj_GetModelFlags = 0x528;
+CFExplodePieces_obj_GetDataSize = 0x540;
+CFExplodePieces_GetState = 0x554;
+CFExplodePieces_setupPhysics = 0x564;
+CFExplodePieces_setupModelAndPhysics = 0x804;
+
+.rodata = 0xA7C:
+str_0 = 0x0; // absolute:0xA7C

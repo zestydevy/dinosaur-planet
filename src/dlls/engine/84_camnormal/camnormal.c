@@ -7,6 +7,7 @@
 #include "game/objects/object.h"
 #include "sys/curves.h"
 #include "sys/joypad.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/voxmap.h"
 #include "dll.h"
@@ -77,7 +78,7 @@ typedef struct {
 void camnormal_func_ED4(Cam* cam, Object* arg1);
 void camnormal_func_11F0(Cam* cam, f32 arg1, f32 arg2);
 void camnormal_func_12E8(Cam* cam, Object* arg1, f32 arg2, f32 arg3);
-void camnormal_func_1A58(Cam* cam, s32 arg1, s32 arg2, f32* arg3, f32* arg4);
+void camnormal_func_1A58(Cam* cam, u32 flags, s32 arg2, f32* nearestFloorY, f32* nearestCeilingY);
 static void camnormal_func_1DEC(Cam* cam);
 static void camnormal_func_1FFC(Cam* cam, Object* arg1);
 static void camnormal_func_22D0(Cam* cam, f32 arg1, f32 arg2);
@@ -529,55 +530,61 @@ void camnormal_func_19E8(f32* arg0, f32* arg1, f32* arg2, f32* arg3, f32* arg4) 
 }
 
 // offset: 0x1A58 | func: 8 | export: 8
-void camnormal_func_1A58(Cam* cam, s32 arg1, s32 arg2, f32* arg3, f32* arg4) {
-    f32 var_ft4;
-    f32 var_ft5;
-    f32 var_fv0;
-    s32 temp_v0;
-    s32 var_a1;
-    TrackHeightResult** sp80;
-    AABBs32 sp68;
-    Object* sp64;
+void camnormal_func_1A58(Cam* cam, u32 flags, s32 arg2, f32* nearestFloorY, f32* nearestCeilingY) {
+    f32 minCeilingDist;
+    f32 minFloorDistance;
+    f32 dy;
+    s32 count;
+    s32 i;
+    TrackHeightResult** track;
+    AABBs32 aabb;
+    Object* player;
 
-    sp64 = cam->player;
-    if (arg1 & 1) {
+    player = cam->player;
+
+    if (flags & 1) {
         cam->unk34.unk50[0] = -1;
         cam->unk34.unk40[0] = 4.5f;
         cam->unk34.unk54[0] = arg2;
-        trackIntersectBuildAABB(&sp68, &cam->positionMirror, &cam->srt.transl, cam->unk34.unk40, 1);
-        trackIntersectBroadphase(sp64, &sp68, 1);
-        trackGetIntersect(sp64, &cam->positionMirror.x, &cam->srt.transl.x, 1, &cam->unk34, 0);
+        trackIntersectBuildAABB(&aabb, &cam->positionMirror, &cam->srt.transl, cam->unk34.unk40, 1);
+        trackIntersectBroadphase(player, &aabb, 1);
+        trackGetIntersect(player, &cam->positionMirror.x, &cam->srt.transl.x, 1, &cam->unk34, 0);
     }
-    if (arg1 & 2) {
-        temp_v0 = trackGetHeight(sp64, cam->srt.transl.x, cam->srt.transl.y, cam->srt.transl.z, &sp80, 0, 0);
-        *arg3 = -100000.0f;
-        *arg4 = 100000.0f;
-        var_ft5 = 100000.0f;
-        var_ft4 = 100000.0f;
-        for (var_a1 = 0; var_a1 < temp_v0; var_a1++) {
-            if (sp80[var_a1]->norm[1] < -0.707f) {
-                if ((cam->srt.transl.y - 10.0f) < sp80[var_a1]->y) {
-                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->y;
-                    if (var_fv0 < 0.0f) {
-                        var_fv0 = -var_fv0;
+
+    if (flags & 2) {
+        count = trackGetHeight(player, cam->srt.transl.x, cam->srt.transl.y, cam->srt.transl.z, &track, 0, 0);
+        *nearestFloorY = -100000.0f;
+        *nearestCeilingY = 100000.0f;
+        minFloorDistance = 100000.0f;
+        minCeilingDist = 100000.0f;
+
+        //Ceiling
+        for (i = 0; i < count; i++) {
+            if (track[i]->norm[1] < -0.707f) { //normal pointing mostly downwards
+                if ((cam->srt.transl.y - 10.0f) < track[i]->y) {
+                    dy = cam->srt.transl.y - track[i]->y;
+                    if (dy < 0.0f) {
+                        dy = -dy;
                     }
-                    if (var_fv0 < var_ft4) {
-                        *arg4 = sp80[var_a1]->y;
-                        var_ft4 = var_fv0;
+                    if (minCeilingDist > dy) {
+                        *nearestCeilingY = track[i]->y;
+                        minCeilingDist = dy;
                     }
                 }
             }
         }
-        for (var_a1 = 0; var_a1 < temp_v0; var_a1++) {
-            if (sp80[var_a1]->norm[1] > 0.707f) {
-                if (sp80[var_a1]->y < (cam->srt.transl.y + 10.0f)) {
-                    var_fv0 = cam->srt.transl.y - sp80[var_a1]->y;
-                    if (var_fv0 < 0.0f) {
-                        var_fv0 = -var_fv0;
+
+        //Floor
+        for (i = 0; i < count; i++) {
+            if (track[i]->norm[1] > 0.707f) { //normal pointing mostly upwards
+                if (track[i]->y < (cam->srt.transl.y + 10.0f)) {
+                    dy = cam->srt.transl.y - track[i]->y;
+                    if (dy < 0.0f) {
+                        dy = -dy;
                     }
-                    if (var_fv0 < var_ft5) {
-                        *arg3 = sp80[var_a1]->y;
-                        var_ft5 = var_fv0;
+                    if (minFloorDistance > dy) {
+                        *nearestFloorY = track[i]->y;
+                        minFloorDistance = dy;
                     }
                 }
             }

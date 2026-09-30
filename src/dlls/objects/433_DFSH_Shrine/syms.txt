@@ -1,15 +1,15 @@
 .text = 0x0:
 DFShrine_ctor = 0x0;
 DFShrine_dtor = 0xC;
-DFShrine_setup = 0x18;
-DFShrine_control = 0x1A8;
-DFShrine_update = 0xE04;
-DFShrine_print = 0xE10;
-DFShrine_free = 0xE64;
-DFShrine_get_model_flags = 0xEF4;
-DFShrine_get_data_size = 0xF04;
-DFShrine_anim_callback = 0xF18;
-DFShrine_process_obj_messages = 0x12AC;
+DFShrine_obj_Setup = 0x18;
+DFShrine_obj_Control = 0x1A8;
+DFShrine_obj_Update = 0xE04;
+DFShrine_obj_Print = 0xE10;
+DFShrine_obj_Free = 0xE64;
+DFShrine_obj_GetModelFlags = 0xEF4;
+DFShrine_obj_GetDataSize = 0xF04;
+DFShrine_animCallback = 0xF18;
+DFShrine_processObjMessages = 0x12AC;
 
 .rodata = 0x1438:
 

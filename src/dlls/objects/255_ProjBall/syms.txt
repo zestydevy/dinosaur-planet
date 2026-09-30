@@ -1,0 +1,16 @@
+.text = 0x0:
+ProjBall_ctor = 0x0;
+ProjBall_dtor = 0xC;
+ProjBall_obj_Setup = 0x18;
+ProjBall_obj_Control = 0x188;
+ProjBall_obj_Update = 0x7DC;
+ProjBall_obj_Print = 0x8F8;
+ProjBall_obj_Free = 0x910;
+ProjBall_obj_GetModelFlags = 0x9CC;
+ProjBall_obj_GetDataSize = 0x9DC;
+ProjBall_func_9F0 = 0x9F0;
+
+.rodata = 0xD98:
+
+.data = 0xD98:
+data_0 = 0x0; // absolute:0xD98

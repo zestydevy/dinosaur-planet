@@ -101,6 +101,7 @@ enum ParticleID {
     PARTICLE_279 = 0x279, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_27A = 0x27A, //glowing pink magic flares (DBSH_Symbol)
     PARTICLE_286 = 0x286,
+    PARTICLE_289 = 0x289,
     PARTICLE_28A = 0x28A,
     PARTICLE_28B = 0x28B,
     PARTICLE_2BB = 0x2BB,
@@ -114,6 +115,8 @@ enum ParticleID {
     PARTICLE_328 = 0x328,
     /* --- DLL 43 START --- */
     PARTICLE_32A = 0x32A,
+    PARTICLE_32B = 0x32B,
+    PARTICLE_32C = 0x32C,
     PARTICLE_32D = 0x32D,
     PARTICLE_32E = 0x32E,
     PARTICLE_32F = 0x32F,
@@ -209,6 +212,11 @@ enum ParticleID {
     PARTICLE_4C8 = 0x4C8,
     PARTICLE_4E1 = 0x4E1,
     /* --- DLL 47 END --- */
+    PARTICLE_514 = 0x514,
+    PARTICLE_515 = 0x515,
+    PARTICLE_516 = 0x516,
+    PARTICLE_517 = 0x517,
+    PARTICLE_518 = 0x518,
     PARTICLE_51A = 0x51A,
     PARTICLE_51D = 0x51D,
     PARTICLE_51E = 0x51E,
@@ -297,7 +305,7 @@ enum PartfxFlags {
     PARTFXFLAG_10 = 0x10,
     PARTFXFLAG_800 = 0x800,
     PARTFXFLAG_10000 = 0x10000,
-    PARTFXFLAG_200000 = 0x200000,
+    PARTFXFLAG_200000 = 0x200000, //Use fxTransform SRT (arg2 of spawn func) as the particle origin, instead of the caller Object's own SRT
     PARTFXFLAG_2000000 = 0x2000000,
     PARTFXFLAG_4000000 = 0x4000000
 };

@@ -470,6 +470,12 @@ enum SoundID {
     SOUND_43D_Transporter_Fire = 0x43D,
     SOUND_43E_Stone_Block_Moving = 0x43e,
 
+    SOUND_482_RopeBaddie_Squawk = 0x482, //RopeBaddie
+    SOUND_483_RopeBaddie_Squeak = 0x483, //RopeBaddie
+    SOUND_484_RopeBaddie_Roar = 0x484,   //RopeBaddie
+    SOUND_485_RopeBaddie_Babble = 0x485, //RopeBaddie
+    SOUND_486_RopeBaddie_Cry = 0x486,    //RopeBaddie
+
     SOUND_WM_Sun_Whoosh = 0x487, //used by WMsun
 
     SOUND_491 = 0x491,
@@ -504,13 +510,23 @@ enum SoundID {
     SOUND_53B_Spore_Spray_Loop = 0x53B, //used by SHkillermushroom
     SOUND_53C_Mushroom_Bounce = 0x53C, //used by SHbluemushroom
 
+    SOUND_53E_Crunch = 0x53E, //WaterBaddie
+    SOUND_53F_Water_Paddle = 0x53F, //WaterBaddie
+    SOUND_540_Water_Paddle = 0x540, //WaterBaddie
+    SOUND_541_WaterBaddie_Squeak = 0x541, //WaterBaddie
+    SOUND_542_WaterBaddie_Squeak = 0x542, //WaterBaddie
+    SOUND_543_WaterBaddie_Cry = 0x543, //WaterBaddie
     SOUND_544_Wood_Struck = 0x544, //Tumbleweedbush, when struck
+ 
+    SOUND_547_Light_Bump = 0x547, //WaterBaddie
 
     SOUND_57A = 0x57A, //tesla.c
 
     SOUND_57C = 0x57C, //tesla.c
     SOUND_57D = 0x57D, //tesla.c
     SOUND_57E = 0x57E, //tesla.c
+    
+    SOUND_5B5_Explosion_Debris_Crash = 0x5B5,
 
     SOUND_5B7 = 0x5B7,
     SOUND_5B8 = 0x5B8,
@@ -603,6 +619,8 @@ enum SoundID {
     SOUND_6BB_Creature_Cry = 0x6BB, // Scarab
     SOUND_6BC_Creature_Cry = 0x6BC, // Duster, Scarab
     SOUND_6BD_Creature_Death_Cry = 0x6BD, // Scarab
+
+    SOUND_6C3 = 0x6C3, // ProjBall
 
     SOUND_6CA_Chime = 0x6CA, // Duster
 
@@ -713,7 +731,7 @@ enum SoundID {
     SOUND_855 = 0x855,
     SOUND_856 = 0x856,
     SOUND_857 = 0x857,
-    SOUND_858 = 0x858,
+    SOUND_858_Explosion = 0x858, //CFExplodeFloor/CFExplodeWall/DRSmallExplodeW/DRExplodeWall
 
     SOUND_860_Explosion_Mid = 0x860, //DRexplodeDoor
     
@@ -885,6 +903,7 @@ enum SoundID {
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
+    SOUND_B62 = 0xB62, // ProjBall
     SOUND_B63 = 0xB63,
     SOUND_B64 = 0xB64,
 

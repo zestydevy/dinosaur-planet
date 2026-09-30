@@ -143,6 +143,7 @@ void BWlog_obj_Control(Object* self) {
         } else {
             damp = 0.5f;
         }
+        
         if (distance < dockpointSetup->range) {
             for (i = 0; i < 2; i++) {
                 objdata->velocity[i].x *= damp;
@@ -708,7 +709,7 @@ static void BWlog_findRiverflows(Object* self, BWlog_Data* objdata) {
         flowInfluences[i] = 0;
     }
 
-    // Grabs DFriverflow instances (and possibly more)
+    // Get DFriverflow objects
     objList = objGetAllOfType(OBJTYPE_Riverflow, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
@@ -721,8 +722,8 @@ static void BWlog_findRiverflows(Object* self, BWlog_Data* objdata) {
                 dx = sqrtf(SQ(dx) + SQ(dz));
                 pushRadius = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
                 if (dx < pushRadius) {
-                    dx = ((pushRadius - dx) / pushRadius);
-                    dx *= (obj->srt.scale * 10.0f);
+                    dx = (pushRadius - dx) / pushRadius;
+                    dx *= obj->srt.scale * 10.0f;
                     objdata->flowX[k] += mathSinfInterp(obj->srt.yaw) * dx;
                     objdata->flowZ[k] += mathCosfInterp(obj->srt.yaw) * dx;
                     flowInfluences[k]++;

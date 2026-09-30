@@ -5,12 +5,12 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 
-enum VehicleMountState {
+typedef enum  {
 	VEHICLE_NoRider = 0,
 	VEHICLE_Mounting = 1,
 	VEHICLE_Mounted = 2,
 	VEHICLE_Dismounting = 3
-};
+} VehicleMountState;
 
 typedef enum {
 	VEHICLE_SIDE_Left = 1,

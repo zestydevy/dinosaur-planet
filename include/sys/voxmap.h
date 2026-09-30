@@ -59,8 +59,8 @@ typedef struct {
 } Unk80008E40;
 
 typedef struct {
-    Vec3f unk0;
-    Vec3f unkC;
+    Vec3f unk0; //viewer coords?
+    Vec3f unkC; //target coords?
     Vec3f unk18;
     u8 unk24;
     u8 unk25;
