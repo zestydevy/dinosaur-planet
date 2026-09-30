@@ -447,6 +447,7 @@
 661 = objects/661_DBPlaceHolder
 662 = objects/662_DBEgg
 663 = objects/663_DBlevelControl
+664 = objects/664_DBFire
 667 = objects/667_DBMagicBridge
 668 = objects/668_DBdiamond
 670 = objects/670_DBExpbit

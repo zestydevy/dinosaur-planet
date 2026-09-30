@@ -1,0 +1,12 @@
+.text = 0x0:
+dll_664_ctor = 0x0;
+dll_664_dtor = 0xC;
+dll_664_obj_Setup = 0x18;
+dll_664_obj_Control = 0xD0;
+dll_664_obj_Update = 0x49C;
+dll_664_obj_Print = 0x4A8;
+dll_664_obj_Free = 0x4C0;
+dll_664_obj_GetModelFlags = 0x530;
+dll_664_obj_GetDataSize = 0x540;
+
+.rodata = 0x5A8:
