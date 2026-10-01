@@ -60,11 +60,13 @@ typedef enum {
 
 DLL_INTERFACE(DLL_469_ECSHshrine) {
 /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-/*7*/ void (*func7)(s16 *arg0);
-/*8*/ void (*get_cup_coords)(u8 cupIndex, f32* x, f32* z); //Exports the x and z coords of a particular cup index.
-/*9*/ void (*get_minigame_state)(s32* cupSubstate, u8* cupWithSpirit); //Exports the cup minigame's substate value, and the index of the cup currently holding the Krazoa Spirit.
-/*10*/ void (*set_cup_coords)(u8 cupIndex, f32 x, f32 z); //Sets the x and z coords of a particular cup.
-/*11*/ void (*choose_cup)(u8 chosenCupIndex); //Used when player touches a cup.
+/*7*/ void (*Func7)(s16* oValue);
+/*8*/ void (*GetCupCoords)(u8 cupIndex, f32* x, f32* z); //Exports the x and z coords of a particular cup index.
+/*9*/ void (*GetMinigameState)(s32* cupSubstate, u8* cupWithSpirit); //Exports the cup minigame's substate value, and the index of the cup currently holding the Krazoa Spirit.
+/*10*/ void (*SetCupCoords)(u8 cupIndex, f32 x, f32 z); //Sets the x and z coords of a particular cup.
+/*11*/ void (*ChooseCup)(u8 chosenCupIndex); //Used when player touches a cup.
 };
+
+#define dll_ECSHshrine(obj) (((DLL_469_ECSHshrine*)obj->dll)->vtbl)
 
 #endif // _DLLS_469_H

@@ -734,6 +734,8 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
             break;
         case TRG_CMD_SAVE_POINT:
             // "Trigger [%d], Save Point\n" (default.dol)
+
+            //@bug: yaw is converted from angle16 to angle8 here, but Gplay's savepoint function expects an angle16 yaw argument
             gDLL_29_Gplay->vtbl->savepoint(&self->srt.transl, (self->srt.yaw >> 8), cmd->param2, mapGetLayer());
             break;
         case TRG_CMD_MAP_LAYER:
@@ -898,9 +900,9 @@ static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
         sPointModelRefCount += 1;
     }
 
-    objdata = (Trigger_Data*)self->data;
+    objdata = self->data;
     radius = setup->sizeX << 1;
-    objdata->radiusSquared = radius * radius;
+    objdata->radiusSquared = SQ(radius);
 
     self->srt.roll = 0;
     self->srt.pitch = 0;
@@ -909,10 +911,10 @@ static void trigger_point_setup(Object *self, Trigger_Setup *setup) {
     modelInstance = sPointModel;
     model = modelInstance->model;
     vertex = &model->vertices[1];
-    x = (f32)vertex->v.ob[0];
-    y = (f32)vertex->v.ob[1];
-    z = (f32)vertex->v.ob[2];
-    modelRadius = sqrtf((x * x) + (y * y) + (z * z));
+    x = vertex->v.ob[0];
+    y = vertex->v.ob[1];
+    z = vertex->v.ob[2];
+    modelRadius = sqrtf(SQ(x) + SQ(y) + SQ(z));
     
     self->srt.scale = radius / modelRadius;
 }
@@ -933,7 +935,7 @@ static void trigger_point_update(Object *self, Object *activator) {
     diffX = objdata->activatorPrevPos.x - self->globalPosition.x;
     diffY = objdata->activatorPrevPos.y - self->globalPosition.y;
     diffZ = objdata->activatorPrevPos.z - self->globalPosition.z;
-    prevDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
+    prevDist = SQ(diffX) + SQ(diffY) + SQ(diffZ);
 
     if (setup->localID > 0) {
         currDist = gDLL_26_Curves->vtbl->func_14F4(7, setup->localID,
@@ -953,7 +955,7 @@ static void trigger_point_update(Object *self, Object *activator) {
         diffX = objdata->activatorCurrPos.x - self->globalPosition.x;
         diffY = objdata->activatorCurrPos.y - self->globalPosition.y;
         diffZ = objdata->activatorCurrPos.z - self->globalPosition.z;
-        currDist = diffX * diffX + diffY * diffY + diffZ * diffZ;
+        currDist = SQ(diffX) + SQ(diffY) + SQ(diffZ);
     }
 
     if (currDist < objdata->radiusSquared) {
@@ -986,49 +988,60 @@ static void trigger_cylinder_setup(Object *self, Trigger_Setup *setup) {
 static void trigger_cylinder_update(Object* self, Object* activator) {
     Trigger_Data* objdata;
     Trigger_Setup *setup;
-    f32 lengthSquared;
-    f32 lengthSquared2;
+    f32 prevRadialDistSq;
+    f32 radialDistSq;
     f32 diffX;
-    f32 diffY2;
     f32 diffY;
+    f32 prevDiffY;
     f32 diffZ;
-    f32 unk3BTimes2;
+    f32 halfHeight;
     s8 dir;
 
     objdata = self->data;
     setup = (Trigger_Setup*)self->setup;
-    unk3BTimes2 = setup->sizeY << 1;
+    halfHeight = setup->sizeY << 1;
     
+    //Get previous lateral distance
     diffX = objdata->activatorPrevPos.x - self->globalPosition.x;
-    diffY = objdata->activatorPrevPos.y - self->globalPosition.y;
+    prevDiffY = objdata->activatorPrevPos.y - self->globalPosition.y;
     diffZ = objdata->activatorPrevPos.z - self->globalPosition.z;
-    
-    lengthSquared = (diffX * diffX) + (diffZ * diffZ);
+    prevRadialDistSq = SQ(diffX) + SQ(diffZ);
 
+    //Get current lateral distance
     diffX = objdata->activatorCurrPos.x - self->globalPosition.x;
-    diffY2 = objdata->activatorCurrPos.y - self->globalPosition.y;
+    diffY = objdata->activatorCurrPos.y - self->globalPosition.y;
     diffZ = objdata->activatorCurrPos.z - self->globalPosition.z;
+    radialDistSq = SQ(diffX) + SQ(diffZ);
     
-    lengthSquared2 = (diffX * diffX) + (diffZ * diffZ);
-    
-    if (lengthSquared2 == lengthSquared) {
-        if (((diffY == diffY2) && (!objdata)) && (!objdata)) {} // partial fakematch
+    //Check if the player hasn't moved any closer to the cylinder
+    if ((radialDistSq == prevRadialDistSq) && (prevDiffY == diffY)) {
+        if (!objdata && !objdata) {} // partial fakematch
     }
 
-    if (lengthSquared2 < objdata->radiusSquared && (diffY2 < 0.0f ? -diffY2 : diffY2) < unk3BTimes2) {
-        if (lengthSquared < objdata->radiusSquared && (diffY < 0.0f ? -diffY : diffY) < unk3BTimes2) {
-            dir = 2;
+    //Check whether the player is inside or outside of the cylinder, and compare with previous position
+    if (radialDistSq < objdata->radiusSquared && //radial check
+        (diffY < 0.0f ? -diffY : diffY) < halfHeight //vertical check
+    ) {
+        //Inside
+        if (prevRadialDistSq < objdata->radiusSquared &&  //radial check
+            (prevDiffY < 0.0f ? -prevDiffY : prevDiffY) < halfHeight //vertical check
+        ) {
+            dir = 2;  // in
         } else {
-            dir = 1;
+            dir = 1; // entered
         }
     } else {
-        if (lengthSquared < objdata->radiusSquared && (diffY < 0.0f ? -diffY : diffY) < unk3BTimes2) {
-            dir = -1;
+        //Outside
+        if (prevRadialDistSq < objdata->radiusSquared && //radial check
+            (prevDiffY < 0.0f ? -prevDiffY : prevDiffY) < halfHeight //vertical check
+        ) {
+            dir = -1; // exited
         } else {
-            dir = -2;
+            dir = -2; // out
         }
     }
-    trigger_process_commands(self, activator, dir, lengthSquared2);
+
+    trigger_process_commands(self, activator, dir, radialDistSq);
 }
 
 static void trigger_plane_setup(Object *self, Trigger_Setup *setup) {

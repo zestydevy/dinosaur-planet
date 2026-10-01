@@ -28,6 +28,8 @@
 #include "dll.h"
 #include "dongle.h"
 
+#include "prevent_bss_reordering.h"
+
 // official filename: game/anim.c (default.dol)
 
 // Maximum number of active object sequences
@@ -35,7 +37,6 @@
 // Maximum number of actors in an object sequence
 #define MAX_ACTORS 16
 #define MAX_ACTIVATES 16
-#define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
 
 // Some names inferred from default.dol
 enum AnimEventType {
@@ -530,7 +531,7 @@ s32 anim_tick_obj(Object* animObj, s32 updateRate) {
         if (st->state == ANIMOBJ_STATE_Completed) {
             return 1;
         }
-        st->unk9D |= 0x80;
+        st->unk9D |= AnimData_FLAG_80_Skipped;
         actor = animObj;
         if (st->actor != NULL) {
             actor = st->actor;
@@ -1416,22 +1417,22 @@ static Object* anim_toggle_override(Object* animObj, AnimObj_Data* st, AnimObj_S
 
 // offset: 0x3170 | func: 12
 static void anim_func_3170(Object* animObj, Object* actor, AnimObj_Data* st) {
-    if (st->unk9D & 1) {
+    if (st->unk9D & AnimData_FLAG_1) {
         _bss_108[st->seqSlot] = 1;
     }
-    if (st->unk9D & 2) {
+    if (st->unk9D & AnimData_FLAG_2) {
         _bss_108[st->seqSlot] = 0;
     }
-    if (st->unk9D & 4) {
+    if (st->unk9D & AnimData_FLAG_4) {
         sEventFlags[st->seqSlot] = 1;
     }
-    if (st->unk9D & 8) {
+    if (st->unk9D & AnimData_FLAG_8) {
         sEventFlags[st->seqSlot] = 0;
     }
-    if (st->unk9D & 0x10) {
+    if (st->unk9D & AnimData_FLAG_10) {
         _bss_198[st->seqSlot] = 1;
     }
-    if (st->unk9D & 0x20) {
+    if (st->unk9D & AnimData_FLAG_20) {
         _bss_198[st->seqSlot] = 0;
     }
 }
@@ -1441,9 +1442,9 @@ static s32 anim_func_3268(Object* animObj, Object* actor, AnimObj_Data* st) {
     s32 returnVal;
 
     returnVal = 0;
-    if (st->unk9D & 0x40) {
+    if (st->unk9D & AnimData_FLAG_40) {
         returnVal = 1;
-        st->unk9D &= ~0x40;
+        st->unk9D &= ~AnimData_FLAG_40;
         st->time = st->unk80;
         st->prevTime = st->time;
     }
@@ -2901,25 +2902,26 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
     if (count <= 0) {
         return 0.0f;
     }
-    // Find keyframe that we are currently interpolating into
-    i = 0;
-    while ((i < count && keyframes[i].timeOffset < time)) {
-        i++;
-    }
+
+    // Find the keyframe that we are currently interpolating into
+    for (i = 0; i < count && keyframes[i].timeOffset < time; i++);
 
     if (i == count) {
         // End of channel, repeat last value
         value = keyframes[count - 1].value;
     } else if (i == 0) {
         // Start of channel, take initial value
-        value = keyframes->value;
+        value = keyframes[0].value;
     } else {
         if (time == keyframes[i].timeOffset) {
-            // Exactly at start of keyframe, no need to interpolate curve
+            // Exactly at current keyframe's time, no need to interpolate curve
             value = keyframes[i].value;
-            if (((keyframes[i].interpolation & 3) >= KF_INTERP_Stepped) && (i < (count - 1))) {
+            
+            // If the current keyframe is a stepped key, use the next key's value (if this isn't the final key)
+            if (((keyframes[i].interpolation & 3) >= KF_INTERP_Stepped) && (i < count - 1)) {
                 value = keyframes[i + 1].value;
             }
+
             return value;
         }
 
@@ -2972,7 +2974,7 @@ static f32 anim_calc_channel_value_at_time(AnimCurvesKeyframe* keyframes, s32 co
                     nextDeltaOut = prevDeltaOut;
                 }
 
-                //Ignore the value delta' sign
+                //Ignore the value delta's sign
                 if (nextDeltaOut < 0.0f) {
                     nextDeltaOut = -nextDeltaOut;
                 }
@@ -3112,15 +3114,15 @@ void anim_update_camera(void) {
     } else if (_bss_8B != 0) {
         switch (sCameraModule) {
         case DLL_ID_CAMPATH:
-            campathData.unk0 = sCamParam1;
-            campathData.unk4 = sCamParam2;
+            campathData.pathID = sCamParam1;
+            campathData.previousCameraEasesIn = sCamParam2;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMPATH, TRUE, 3, sizeof(campathData), &campathData, sCamEaseDuration, Cam_Ease_All);
             dummy_label_1: ; // @fake
             break;
         case DLL_ID_CAMSTATIC:
-            camstaticData.unk0 = sCamParam1;
+            camstaticData.cameraID = sCamParam1;
             if (sCamEaseDuration == 0) {
-                camstaticData.unk4 = 1;
+                camstaticData.previousCameraEasesIn = TRUE;
             }
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMSTATIC, TRUE, 3, sizeof(camstaticData), &camstaticData, sCamEaseDuration, Cam_Ease_All);
             dummy_label_2: ; // @fake
@@ -3658,7 +3660,7 @@ s32 anim_start_obj_sequence(s32 seqno, Object* object, s32 enabledActors) {
                 actorSetup->unk20 = 1;
                 actorSetup->unk21 = 1;
             }
-            actorSetup->sequenceIdBitfield = ((seqno & 0x7FF) * 0x10) | 0x8000 | (i & 0xF);
+            actorSetup->sequenceIdBitfield = (ANIMCURVES_IS_OBJSEQ2CURVE_INDEX | (seqno & 0x7FF) * 0x10) | (i & 0xF);
             actorSetup->unk1A = -1;
             if (i != 0) {
                 if ((_bss_5AC != 0) && (actorSetup->base.objId == OBJ_AnimCamera)) {
@@ -3843,7 +3845,7 @@ static s32 anim_get_preempt_time(Object* obj) {
 // offset: 0x9440 | func: 56 | export: 21
 void anim_func_9440(AnimObj_Data* st, s32 arg1) {
     st->unk80 = arg1;
-    st->unk9D |= 0x40;
+    st->unk9D |= AnimData_FLAG_40;
 }
 
 // offset: 0x9458 | func: 57 | export: 22

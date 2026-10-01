@@ -8,10 +8,10 @@ _exports:
 .dword DFSH_Door2Special_dtor
 
 # export table
-/*0*/ .dword DFSH_Door2Special_setup
-/*1*/ .dword DFSH_Door2Special_control
-/*2*/ .dword DFSH_Door2Special_update
-/*3*/ .dword DFSH_Door2Special_print
-/*4*/ .dword DFSH_Door2Special_free
-/*5*/ .dword DFSH_Door2Special_get_model_flags
-/*6*/ .dword DFSH_Door2Special_get_data_size
+/*0*/ .dword DFSH_Door2Special_obj_Setup
+/*1*/ .dword DFSH_Door2Special_obj_Control
+/*2*/ .dword DFSH_Door2Special_obj_Update
+/*3*/ .dword DFSH_Door2Special_obj_Print
+/*4*/ .dword DFSH_Door2Special_obj_Free
+/*5*/ .dword DFSH_Door2Special_obj_GetModelFlags
+/*6*/ .dword DFSH_Door2Special_obj_GetDataSize

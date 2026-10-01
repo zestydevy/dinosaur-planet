@@ -8,10 +8,10 @@ _exports:
 .dword capy_dtor
 
 # export table
-/*0*/ .dword capy_setup
-/*1*/ .dword capy_control
-/*2*/ .dword capy_update
-/*3*/ .dword capy_print
-/*4*/ .dword capy_free
-/*5*/ .dword capy_get_model_flags
-/*6*/ .dword capy_get_data_size
+/*0*/ .dword capy_obj_Setup
+/*1*/ .dword capy_obj_Control
+/*2*/ .dword capy_obj_Update
+/*3*/ .dword capy_obj_Print
+/*4*/ .dword capy_obj_Free
+/*5*/ .dword capy_obj_GetModelFlags
+/*6*/ .dword capy_obj_GetDataSize

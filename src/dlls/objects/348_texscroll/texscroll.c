@@ -27,16 +27,16 @@ typedef struct {
     u8 searchForMaterial;
 } TexScroll_Data;
 
-static void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objData);
+static void TexScroll_findScrollMaterialIndex(Object* self, TexScroll_Data* objData);
 
 // offset: 0x0 | ctor
-void TexScroll_ctor(void *dll) { }
+void TexScroll_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void TexScroll_dtor(void *dll) { }
+void TexScroll_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void TexScroll_setup(Object* self, TexScroll_Setup* objSetup, s32 arg2) {
+void TexScroll_obj_Setup(Object* self, TexScroll_Setup* objSetup, s32 reset) {
     TexScroll_Data* objData;
 
     objData = self->data;
@@ -50,17 +50,17 @@ void TexScroll_setup(Object* self, TexScroll_Setup* objSetup, s32 arg2) {
     objData->scrollProgress = 0;
     objData->unused18 = 0;
     objData->gamebitActivate = objSetup->gamebitActivate;
-    if (arg2 == 0) {
+    if (reset == FALSE) {
         objData->prevDeltaU = 0;
         objData->prevDeltaV = 0;
     }
-    TexScroll_find_animated_material_index(self, objData);
+    TexScroll_findScrollMaterialIndex(self, objData);
     objData->adjustDeltaTime = FALSE;
 
 }
 
 // offset: 0xA4 | func: 1 | export: 1
-void TexScroll_control(Object* self) {
+void TexScroll_obj_Control(Object* self) {
     Block* block;
     TexScroll_Data* objData;
     BlockShape* shapes;
@@ -104,7 +104,7 @@ void TexScroll_control(Object* self) {
 
     //Get index of Block material being animated
     if (objData->searchForMaterial != FALSE) {
-        TexScroll_find_animated_material_index(self, objData);
+        TexScroll_findScrollMaterialIndex(self, objData);
         objData->searchForMaterial = FALSE;
     }
 
@@ -210,25 +210,25 @@ void TexScroll_control(Object* self) {
 }
 
 // offset: 0x4F4 | func: 2 | export: 2
-void TexScroll_update(Object *self) { }
+void TexScroll_obj_Update(Object* self) { }
 
 // offset: 0x500 | func: 3 | export: 3
-void TexScroll_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void TexScroll_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x554 | func: 4 | export: 4
-void TexScroll_free(Object *self, s32 a1) { }
+void TexScroll_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x564 | func: 5 | export: 5
-u32 TexScroll_get_model_flags(Object *self) {
+u32 TexScroll_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x574 | func: 6 | export: 6
-u32 TexScroll_get_data_size(Object *self, u32 a1) {
+u32 TexScroll_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(TexScroll_Data);
 }
 
@@ -237,7 +237,7 @@ u32 TexScroll_get_data_size(Object *self, u32 a1) {
   * Searches through the local Block model's materials until finding the material that will be scrolled.
   * The relevant Block material's index is then stored in TexScroll_Data->materialIndex
 */
-void TexScroll_find_animated_material_index(Object* self, TexScroll_Data* objData) {
+void TexScroll_findScrollMaterialIndex(Object* self, TexScroll_Data* objData) {
     Block* block;
     s32 _pad;
     Texture* texture;

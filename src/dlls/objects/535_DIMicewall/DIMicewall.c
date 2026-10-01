@@ -3,94 +3,96 @@
 #include "dlls/objects/common/sidekick.h"
 
 typedef struct {
-    u16 unk0;
-    s8 unk2;
-    s8 unk3;
-    s8 unk4;
-} DLL535_Data;
+    s16 gamebitMelted;
+    s8 health;
+    s8 melted;
+    s8 flameRange;
+} DIMIceWall_Data;
 
 typedef struct {
     ObjSetup base;
     u8 _unk18;
-    s16 unk1A ;
-    s16 unk1C ;
-    s16 unk1E ;   
-} DLL535_Setup;
+    s16 health;
+    s16 flameRange;
+    s16 gamebitMelted;   
+} DIMIceWall_Setup;
 
 // offset: 0x0 | ctor
-void dll_535_ctor(void *dll) { }
+void DIMIceWall_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_535_dtor(void *dll) { }
+void DIMIceWall_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_535_setup(Object* self, DLL535_Setup* setup, s32 arg2) {
-    DLL535_Data* DLL535data;
+void DIMIceWall_obj_Setup(Object* self, DIMIceWall_Setup* setup, s32 reset) {
+    DIMIceWall_Data* objData = self->data;
 
-    DLL535data = self->data;
-    DLL535data->unk2 = (s8) setup->unk1A;
-    DLL535data->unk4 = (s8) setup->unk1C;
-    DLL535data->unk0 = (s16) setup->unk1E;
+    objData->health = setup->health;
+    objData->flameRange = setup->flameRange;
+    objData->gamebitMelted = setup->gamebitMelted;
+
     objAddObjectType(self, OBJTYPE_DIMIceWall);
     objAddObjectType(self, OBJTYPE_TrickyTarget);
+
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
 }
 
 // offset: 0xA4 | func: 1 | export: 1
-void dll_535_control(Object* self) {
-    DLL535_Data* DLL535data;
-    Object* sp20;
-    s16 temp_a0;
+void DIMIceWall_obj_Control(Object* self) {
+    DIMIceWall_Data* objData;
+    Object* sidekick;
 
-    DLL535data = self->data;
-    if (DLL535data->unk3 == 0) {
-        if ((DLL535data->unk2 <= 0) && (DLL535data->unk3 == 0)) {
-            temp_a0 = DLL535data->unk0;
-            if (temp_a0 != -1) {
-                mainSetBits((s32) temp_a0, 1U);
-                DLL535data->unk3 = 1;
-            }
-        } else {
-            sp20 = objGetSidekick();
-            if (sp20 != NULL) {
-                if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= (f32) (DLL535data->unk4 * DLL535data->unk4)) {
-                    ((DLL_ISidekick*)sp20->dll)->vtbl->EnableCommand(sp20, Sidekick_Command_INDEX_4_Flame);
-                }
+    objData = self->data;
+
+    if (objData->melted) {
+        return;
+    }
+
+    if ((objData->health <= 0) && (objData->melted == FALSE)) {
+        if (objData->gamebitMelted != NO_GAMEBIT) {
+            mainSetBits(objData->gamebitMelted, TRUE);
+            objData->melted = TRUE;
+        }
+    } else {
+        sidekick = objGetSidekick();
+        if (sidekick != NULL) {
+            if (vec3DistanceSquared(&self->globalPosition, &objGetPlayer()->globalPosition) <= SQ(objData->flameRange)) {
+                ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_4_Flame);
             }
         }
     }
 }
 
 // offset: 0x1D0 | func: 2 | export: 2
-void dll_535_update(Object *self) { }
+void DIMIceWall_obj_Update(Object* self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void dll_535_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void DIMIceWall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
 
 // offset: 0x1F4 | func: 4 | export: 4
-void dll_535_free(Object* self, s32 a1) {
+void DIMIceWall_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_DIMIceWall);
     objFreeObjectType(self, OBJTYPE_TrickyTarget);
 }
 
 // offset: 0x254 | func: 5 | export: 5
-u32 dll_535_get_model_flags(Object *self) {
+u32 DIMIceWall_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x264 | func: 6 | export: 6
-u32 dll_535_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL535_Data);
+u32 DIMIceWall_obj_GetDataSize(Object* self, u32 offsetAddr) {
+    return sizeof(DIMIceWall_Data);
 }
 
 // offset: 0x278 | func: 7 | export: 7
-s32 dll_535_func_278(Object* self, s32 arg1) {
-    DLL535_Data* DLL535data;
+s32 DIMIceWall_TickFlame(Object* self, s32 damage) {
+    DIMIceWall_Data* objData = self->data;
 
-    DLL535data = self->data;
-    DLL535data->unk2 = (s8) (DLL535data->unk2 - arg1);
-    if (DLL535data->unk2 <= 0) {
-        return 1;
+    objData->health -= damage;
+    if (objData->health <= 0) {
+        return TRUE;
+    } else {
+        return FALSE;
     }
-    return 0;
 }

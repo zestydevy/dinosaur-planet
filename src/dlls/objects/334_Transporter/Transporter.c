@@ -11,9 +11,9 @@
 #include "dlls/engine/17_partfx.h"
 
 typedef struct {
-/*00*/ DLL_IModgfx *dll129;           //DLL 129
-/*04*/ DLL_IModgfx *dll130;           //DLL 130
-/*08*/ DLL_IModgfx *mGfxKrazoaPoints; //DLL 140, handles cylindrical glows randomly emanating from Krazoa symbol's 6 points
+/*00*/ DLL_IModgfx* dll129;           //DLL 129
+/*04*/ DLL_IModgfx* dll130;           //DLL 130
+/*08*/ DLL_IModgfx* mGfxKrazoaPoints; //DLL 140, handles cylindrical glows randomly emanating from Krazoa symbol's 6 points
 /*0C*/ f32 unkC;
 /*10*/ s16 intervalDLL129;      //Waiting period between each time DLL 129 fires
 /*12*/ s16 intervalDLL130;      //Waiting period between each time DLL 130 fires
@@ -39,17 +39,17 @@ typedef struct {
 /*20*/ s16 gamebitEnabled;    //When specified, the Transporter will only be powered on when this gamebit is set
 } Transporter_Setup;
 
-static int Transporter_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
+static int Transporter_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
-void Transporter_ctor(void *dll) { }
+void Transporter_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void Transporter_dtor(void *dll) { }
+void Transporter_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Transporter_setup(Object *self, Transporter_Setup *setup, s32 reset) {
-    Transporter_Data *objdata;
+void Transporter_obj_Setup(Object* self, Transporter_Setup* setup, s32 reset) {
+    Transporter_Data* objdata;
 
     objdata = self->data;
     self->srt.yaw = 0;
@@ -69,20 +69,20 @@ void Transporter_setup(Object *self, Transporter_Setup *setup, s32 reset) {
     self->srt.yaw = (f32)(setup->yaw << 8); // ?
     self->unkDC = 0;
     self->unkE0 = 150;
-    self->animCallback = Transporter_anim_callback;
+    self->animCallback = Transporter_animCallback;
 }
 
 // offset: 0xBC | func: 1 | export: 1
-void Transporter_control(Object *self) {
-    Camera *camera;
+void Transporter_obj_Control(Object* self) {
+    Camera* camera;
     s16 i;
-    Object *player;
+    Object* player;
     Vec3f delta;
     f32 distToPlayer;
     f32 mag1;
     SRT transform;
-    Transporter_Setup *setup;
-    Transporter_Data *objdata;
+    Transporter_Setup* setup;
+    Transporter_Data* objdata;
 
     objdata = self->data;
     setup = (Transporter_Setup*)self->setup;
@@ -315,8 +315,8 @@ void Transporter_control(Object *self) {
 }
 
 // offset: 0xC00 | func: 2 | export: 2
-void Transporter_update(Object *self) {
-    Transporter_Setup *setup;
+void Transporter_obj_Update(Object* self) {
+    Transporter_Setup* setup;
 
     setup = (Transporter_Setup*)self->setup;
     if ((setup->gamebitEnabled != NO_GAMEBIT) && (mainGetBits(setup->gamebitEnabled) == FALSE)) {
@@ -331,11 +331,11 @@ void Transporter_update(Object *self) {
 }
 
 // offset: 0xCA0 | func: 3 | export: 3
-void Transporter_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void Transporter_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
 
 // offset: 0xCB8 | func: 4 | export: 4
-void Transporter_free(Object *self, s32 a1) {
-    Transporter_Data *objdata;
+void Transporter_obj_Free(Object* self, s32 onlySelf) {
+    Transporter_Data* objdata;
 
     objdata = self->data;
     gDLL_13_Expgfx->vtbl->func5(self);
@@ -351,16 +351,16 @@ void Transporter_free(Object *self, s32 a1) {
 }
 
 // offset: 0xD68 | func: 5 | export: 5
-u32 Transporter_get_model_flags(Object *self) {
+u32 Transporter_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0xD78 | func: 6 | export: 6
-u32 Transporter_get_data_size(Object *self, u32 a1) {
+u32 Transporter_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(Transporter_Data);
 }
 
 // offset: 0xD8C | func: 7
-int Transporter_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
+int Transporter_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     return 0;
 }

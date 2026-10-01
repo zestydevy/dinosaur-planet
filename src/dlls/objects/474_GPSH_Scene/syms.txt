@@ -1,0 +1,13 @@
+.text = 0x0:
+GPSH_Scene_ctor = 0x0;
+GPSH_Scene_dtor = 0xC;
+GPSH_Scene_obj_Setup = 0x18;
+GPSH_Scene_obj_Control = 0x7C;
+GPSH_Scene_obj_Update = 0x240;
+GPSH_Scene_obj_Print = 0x24C;
+GPSH_Scene_obj_Free = 0x264;
+GPSH_Scene_obj_GetModelFlags = 0x274;
+GPSH_Scene_obj_GetDataSize = 0x284;
+
+.rodata = 0x2DC:
+str_0 = 0x0; // absolute:0x2DC

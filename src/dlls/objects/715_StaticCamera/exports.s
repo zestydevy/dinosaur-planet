@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_715_ctor
-.dword dll_715_dtor
+.dword StaticCamera_ctor
+.dword StaticCamera_dtor
 
 # export table
-/*0*/ .dword dll_715_setup
-/*1*/ .dword dll_715_control
-/*2*/ .dword dll_715_update
-/*3*/ .dword dll_715_print
-/*4*/ .dword dll_715_free
-/*5*/ .dword dll_715_get_model_flags
-/*6*/ .dword dll_715_get_data_size
+/*0*/ .dword StaticCamera_obj_Setup
+/*1*/ .dword StaticCamera_obj_Control
+/*2*/ .dword StaticCamera_obj_Update
+/*3*/ .dword StaticCamera_obj_Print
+/*4*/ .dword StaticCamera_obj_Free
+/*5*/ .dword StaticCamera_obj_GetModelFlags
+/*6*/ .dword StaticCamera_obj_GetDataSize

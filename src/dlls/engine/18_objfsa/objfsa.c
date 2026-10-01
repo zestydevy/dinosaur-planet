@@ -41,7 +41,7 @@ void objfsa_ctor(void *dll) { }
 void objfsa_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
+void objfsa_func_18(Object* obj, ObjFSA_Data* data, s32 totalAnimStates, s32 totalLogicStates) {
     u32 i;
     s8* var_v1;
 
@@ -52,12 +52,12 @@ void objfsa_func_18(Object *obj, ObjFSA_Data *data, s32 arg2, s32 arg3) {
         var_v1[i] = 0;
         i++;
     }
-    data->unk264 = arg2; //total states?
-    data->unk266 = arg3; //initial state?
+    data->unk264 = totalAnimStates;
+    data->unk266 = totalLogicStates;
     data->logicState = 0;
     data->animState = 0;
-    data->enteredAnimState = 1;
-    data->enteredLogicState = 1;
+    data->enteredAnimState = TRUE;
+    data->enteredLogicState = TRUE;
     data->unk330 = -1;
     data->unk334 = -1;
     data->unk2B0 = 10.0f;

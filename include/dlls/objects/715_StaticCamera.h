@@ -6,13 +6,13 @@
 
 typedef struct {
     ObjSetup base;
-    u8 unk18;
+    u8 cameraID; //An identifier for selecting a specific camera (Trigger Objects' CameraAction params need to match this)
     u8 unk19;
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-} DLL715_Setup;
+    u8 fov;
+    u8 flags;   //1: aim yaw at player, 2: aim pitch at player, 4: use player roll 
+    s16 yaw;
+    s16 pitch;
+    s16 roll;
+} StaticCamera_Setup;
 
 #endif

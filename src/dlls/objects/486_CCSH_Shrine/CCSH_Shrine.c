@@ -64,7 +64,7 @@ void CCSH_Shrine_setup(Object* self, CCSH_Shrine_Setup* setup, s32 reset) {
     mainSetBits(BIT_DB_Entered_Shrine_1, 1);
     mainSetBits(BIT_DB_Entered_Shrine_2, 1);
     mainSetBits(BIT_1CD, 0);
-    mainSetBits(BIT_1E7, 0);
+    mainSetBits(BIT_DF_Shrine_SharpClaw_Defeated, FALSE);
     objdata->unk4 = 0xC;
     objdata->unk8 = 0x1E;
     objdata->unk2 = 0xC8;

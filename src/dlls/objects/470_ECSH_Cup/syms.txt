@@ -1,13 +1,13 @@
 .text = 0x0:
 ECSHCup_ctor = 0x0;
 ECSHCup_dtor = 0xC;
-ECSHCup_setup = 0x18;
-ECSHCup_control = 0x13C;
-ECSHCup_update = 0x8E8;
-ECSHCup_print = 0x8F4;
+ECSHCup_obj_Setup = 0x18;
+ECSHCup_obj_Control = 0x13C;
+ECSHCup_obj_Update = 0x8E8;
+ECSHCup_obj_Print = 0x8F4;
 ECSHCup_free = 0x948;
-ECSHCup_get_model_flags = 0x990;
-ECSHCup_get_data_size = 0x9A0;
+ECSHCup_obj_GetModelFlags = 0x990;
+ECSHCup_obj_GetDataSize = 0x9A0;
 
 .rodata = 0xA18:
 

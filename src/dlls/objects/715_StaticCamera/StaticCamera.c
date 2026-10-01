@@ -5,57 +5,56 @@
 typedef struct {
     u8 unk0;
     u8 unk1;
-    f32 unk4;
-} DLL715_Data;
+    f32 fov;
+} StaticCamera_Data;
 
 // offset: 0x0 | ctor
-void dll_715_ctor(void *dll) { }
+void StaticCamera_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_715_dtor(void *dll) { }
+void StaticCamera_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_715_setup(Object* self, DLL715_Setup* setup, s32 arg2) {
-    f32 var_ft1;
-    u8 temp_t3;
-    DLL715_Data* objdata;
+void StaticCamera_obj_Setup(Object* self, StaticCamera_Setup* setup, s32 reset) {
+    StaticCamera_Data* objdata = self->data;
 
-    objdata = self->data;
-    self->srt.yaw = -setup->unk1C;
-    self->srt.pitch = -setup->unk1E;
-    self->srt.roll = -setup->unk20;
+    self->srt.yaw = -setup->yaw;
+    self->srt.pitch = -setup->pitch;
+    self->srt.roll = -setup->roll;
+
     objdata->unk0 = setup->unk19;
-    objdata->unk4 = setup->unk1A;
+    objdata->fov = setup->fov;
     objdata->unk1 = 0;
-    if (arg2 == 0) {
+
+    if (reset == FALSE) {
         objAddObjectType(self, OBJTYPE_StaticCamera);
     }
 }
 
 // offset: 0xB0 | func: 1 | export: 1
-void dll_715_control(Object *self) { }
+void StaticCamera_obj_Control(Object* self) { }
 
 // offset: 0xBC | func: 2 | export: 2
-void dll_715_update(Object *self) { }
+void StaticCamera_obj_Update(Object* self) { }
 
 // offset: 0xC8 | func: 3 | export: 3
-void dll_715_print(Object* arg0, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
-    if (arg5 != 0) {
-        objprintDrawModel(arg0, arg1, arg2, arg3, arg4, 1.0f);
+void StaticCamera_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    if (visibility) {
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x11C | func: 4 | export: 4
-void dll_715_free(Object* self, s32 a1) {
+void StaticCamera_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_StaticCamera);
 }
 
 // offset: 0x15C | func: 5 | export: 5
-u32 dll_715_get_model_flags(Object *self) {
+u32 StaticCamera_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x16C | func: 6 | export: 6
-u32 dll_715_get_data_size(Object *self, u32 a1) {
-    return sizeof(DLL715_Data);
+u32 StaticCamera_obj_GetDataSize(Object* self, u32 offsetAddr) {
+    return sizeof(StaticCamera_Data);
 }

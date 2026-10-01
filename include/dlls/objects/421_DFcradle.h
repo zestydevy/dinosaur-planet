@@ -4,8 +4,8 @@
 #include "dll.h"
 
 typedef struct {
-    /* 0000 */ f32 unk0;
-    /* 0004 */ f32 unk4; // curveProgress? (lerp t-value from 0 to 100?)
+    /* 0000 */ f32 unk0; // lerp t-value from 0 to 1
+    /* 0004 */ f32 unk4;
     /* 0008 */ f32 unk8;
     /* 000C */ f32 unkC;
     /* 0010 */ s32 unk10;
@@ -31,16 +31,16 @@ typedef struct {
 
 typedef struct {
     UnkCurvesStruct_Split curves;
-    f32 unk9C;          //Spline tValue?
+    f32 speed;          //The cradle's current absolute movement speed along its path
     f32* splineX;
     f32* splineY;
     f32* splineZ;
-    f32 pulleyValLower; //Related to the rotating middle pulley closer to SwapStone Circle entrance
-    f32 pulleyValUpper; //Related to the rotating middle pulley closer to the shrine entrance
+    f32 pulleyValLower; //An approximate rope path position value for the pulley closer to the Lower Falls (used for object station calcs)
+    f32 pulleyValUpper; //An approximate rope path position value for the pulley closer to the Upper Falls (used for object station calcs)
     s8 enabled;         //Cradle has been powered (Kyte activated turbine lever)
-    s8 direction;       //1 or -1
-    u8 unkB6;
-    u8 prevCradleVal;
+    s8 direction;       //1 (towards Upper Falls) or -1 (towards Lower Falls)
+    u8 pauseTimer;      //A short delay before the next move, after arriving at a pulley
+    u8 prevCradleStation;   //The cradle's "station" value from the previous tick (see `DFCradle_getStationNumber`)
     s8 soundTimer; //Randomised interval between rope straining sounds
 } DFCradle_Data;
 

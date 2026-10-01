@@ -8,10 +8,10 @@ _exports:
 .dword DFSH_ObjCreator_dtor
 
 # export table
-/*0*/ .dword DFSH_ObjCreator_setup
-/*1*/ .dword DFSH_ObjCreator_control
-/*2*/ .dword DFSH_ObjCreator_update
-/*3*/ .dword DFSH_ObjCreator_print
-/*4*/ .dword DFSH_ObjCreator_free
-/*5*/ .dword DFSH_ObjCreator_get_model_flags
-/*6*/ .dword DFSH_ObjCreator_get_data_size
+/*0*/ .dword DFSH_ObjCreator_obj_Setup
+/*1*/ .dword DFSH_ObjCreator_obj_Control
+/*2*/ .dword DFSH_ObjCreator_obj_Update
+/*3*/ .dword DFSH_ObjCreator_obj_Print
+/*4*/ .dword DFSH_ObjCreator_obj_Free
+/*5*/ .dword DFSH_ObjCreator_obj_GetModelFlags
+/*6*/ .dword DFSH_ObjCreator_obj_GetDataSize

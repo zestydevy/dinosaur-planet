@@ -8,10 +8,10 @@ _exports:
 .dword DFCradle_dtor
 
 # export table
-/*0*/ .dword DFCradle_setup
-/*1*/ .dword DFCradle_control
-/*2*/ .dword DFCradle_update
-/*3*/ .dword DFCradle_print
-/*4*/ .dword DFCradle_free
-/*5*/ .dword DFCradle_get_model_flags
-/*6*/ .dword DFCradle_get_data_size
+/*0*/ .dword DFCradle_obj_Setup
+/*1*/ .dword DFCradle_obj_Control
+/*2*/ .dword DFCradle_obj_Update
+/*3*/ .dword DFCradle_obj_Print
+/*4*/ .dword DFCradle_obj_Free
+/*5*/ .dword DFCradle_obj_GetModelFlags
+/*6*/ .dword DFCradle_obj_GetDataSize

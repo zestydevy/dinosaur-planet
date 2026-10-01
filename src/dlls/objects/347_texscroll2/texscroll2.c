@@ -23,30 +23,31 @@ typedef struct {
     s8 vSpeedB;             //V scroll speed for secondary blend material
 } TexScroll2_Data;
 
-static void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData);
+static void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData);
 
 // offset: 0x0 | ctor
-void TexScroll2_ctor(void *dll) { }
+void TexScroll2_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void TexScroll2_dtor(void *dll) { }
+void TexScroll2_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void TexScroll2_setup(Object* self, TexScroll2_Setup* objSetup, s32 arg2) {
-    TexScroll2_Data* objData;
+void TexScroll2_obj_Setup(Object* self, TexScroll2_Setup* objSetup, s32 reset) {
+    TexScroll2_Data* objData = self->data;
 
-    objData = self->data;
     objData->uSpeedA = objSetup->uSpeedA;
     objData->vSpeedA = objSetup->vSpeedA;
+    
     objData->uSpeedB = objSetup->uSpeedB;
     objData->vSpeedB = objSetup->vSpeedB;
-    if (arg2 == 0) {
-        TexScroll2_setup_texture_scrolling(self, objData);
+
+    if (reset == FALSE) {
+        TexScroll2_setupTextureScrolling(self, objData);
     }
 }
 
 // offset: 0x80 | func: 1 | export: 1
-void TexScroll2_control(Object* self) {
+void TexScroll2_obj_Control(Object* self) {
     TexScroll2_Data* objData;
 
     objData = self->data;
@@ -59,36 +60,36 @@ void TexScroll2_control(Object* self) {
 
     //Set up texture scrolling handler
     if (objData->scrollSetupNeeded) {
-        TexScroll2_setup_texture_scrolling(self, objData);
+        TexScroll2_setupTextureScrolling(self, objData);
         objData->scrollSetupNeeded = FALSE;
     }
 }
 
 // offset: 0x128 | func: 2 | export: 2
-void TexScroll2_update(Object *self) { }
+void TexScroll2_obj_Update(Object* self) { }
 
 // offset: 0x134 | func: 3 | export: 3
-void TexScroll2_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void TexScroll2_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x188 | func: 4 | export: 4
-void TexScroll2_free(Object *self, s32 a1) { }
+void TexScroll2_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x198 | func: 5 | export: 5
-u32 TexScroll2_get_model_flags(Object *self) {
+u32 TexScroll2_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x1A8 | func: 6 | export: 6
-u32 TexScroll2_get_data_size(Object *self, u32 a1) {
+u32 TexScroll2_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(TexScroll2_Data);
 }
 
 // offset: 0x1BC | func: 7
-void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) {
+void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
     Block* block;
     TexScroll2_Setup* objSetup;
     Texture* texture;
@@ -128,7 +129,7 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
         return;
     }
 
-    //Iterate over Block's materials until finding one that uses the texture
+    //Loop over Block's materials until finding one that uses the texture
     for (materialIndex = 0; materialIndex < block->materialCount; materialIndex++){
         if (texture == block->materials[materialIndex].texture){
             break;
@@ -142,11 +143,11 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
     widthA = texture->width << 6;
     heightA = texture->height << 6;
     objData->materialIndex = materialIndex;
-    objData->blendMaterialIndex = -1U;
+    objData->blendMaterialIndex = -1;
     widthB = widthA;
     heightB = heightA;
 
-    //Iterate over Block's materials until finding one that uses the blended texture (if it's in use)
+    //Loop over Block's materials until finding one that uses the blended texture (if it's in use)
     if (objSetup->blendTextureIndex != -1) {
         textureBlended = texGetCached(-scrollTable[objSetup->blendTextureIndex]);
         if (textureBlended != NULL) {
@@ -164,12 +165,15 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
         }
     }
 
-    //Iterate over Block's shapes and enable UV scrolling on any that use the relevant materials
+    //Loop over Block's shapes and enable UV scrolling on any that use the relevant materials
     for (shapeIndex = 0; shapeIndex < block->shapeCount; shapeIndex++){
         if (block->shapes[shapeIndex].materialIndex == objData->materialIndex) {
             //If blend material is specified, only apply scrolling if the shape uses it as its secondary multitexture material
             if (objData->blendMaterialIndex == -1 || 
                 objData->blendMaterialIndex == block->shapes[shapeIndex].blendMaterialIndex) {
+
+                //@bug: it seems like this can sometimes target the wrong texScroller when using TexScroll2_changeScrollSpeed
+                //The texScroll2 objects for Discovery Falls' cradle ropes can start to target nearby waterfalls instead, for example
                 if (block->shapes[shapeIndex].texScrollerID != 0xFF) {
                     blockTexscrollSet(block->shapes[shapeIndex].texScrollerID, 
                         objData->uSpeedA, objData->vSpeedA, widthA, heightA, 
@@ -185,10 +189,9 @@ void TexScroll2_setup_texture_scrolling(Object* self, TexScroll2_Data* objData) 
 }
 
 // offset: 0x468 | func: 8 | export: 7
-void TexScroll2_change_scroll_speed(Object* self, s8 vSpeedA) {
-    TexScroll2_Data* objData;
+void TexScroll2_changeScrollSpeed(Object* self, s8 vSpeedA) {
+    TexScroll2_Data* objData = self->data;
 
-    objData = self->data;
     if (vSpeedA != objData->vSpeedA) {
         objData->vSpeedA = vSpeedA;
         objData->scrollSetupNeeded = TRUE;

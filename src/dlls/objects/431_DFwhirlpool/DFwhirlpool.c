@@ -24,17 +24,17 @@ typedef enum {
 #define WHIRLPOOL_SPEED_STATE_THRESHOLD (WHIRLPOOL_SPEED_MAX - 20)
 
 // offset: 0x0 | ctor
-void DFwhirlpool_ctor(void *dll) { }
+void DFwhirlpool_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DFwhirlpool_dtor(void *dll) { }
+void DFwhirlpool_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFwhirlpool_setup(Object* self, DFwhirlpool_Setup* objSetup, s32 arg2) {
+void DFwhirlpool_obj_Setup(Object* self, DFwhirlpool_Setup* objSetup, s32 reset) {
     DFwhirlpool_Data* objData = self->data;
     
     //Check if already lowered
-    if (mainGetBits(BIT_106)) {
+    if (mainGetBits(BIT_DF_Whirlpool_Cave_Wall_Demolition_Finished)) {
         objData->state = DFwhirlpool_STATE_Water_Lowered;
         self->srt.transl.y -= WHIRLPOOL_LOWERED_HEIGHT;
         return;
@@ -44,7 +44,7 @@ void DFwhirlpool_setup(Object* self, DFwhirlpool_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0xD4 | func: 1 | export: 1
-void DFwhirlpool_control(Object* self) {
+void DFwhirlpool_obj_Control(Object* self) {
     DFwhirlpool_Data* objData;
 
     objData = self->data;
@@ -91,24 +91,24 @@ void DFwhirlpool_control(Object* self) {
 }
 
 // offset: 0x2D4 | func: 2 | export: 2
-void DFwhirlpool_update(Object *self) { }
+void DFwhirlpool_obj_Update(Object* self) { }
 
 // offset: 0x2E0 | func: 3 | export: 3
-void DFwhirlpool_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFwhirlpool_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x334 | func: 4 | export: 4
-void DFwhirlpool_free(Object *self, s32 a1) { }
+void DFwhirlpool_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x344 | func: 5 | export: 5
-u32 DFwhirlpool_get_model_flags(Object *self) {
+u32 DFwhirlpool_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x354 | func: 6 | export: 6
-u32 DFwhirlpool_get_data_size(Object *self, u32 a1){
+u32 DFwhirlpool_obj_GetDataSize(Object* self, u32 offsetAddr){
     return sizeof(DFwhirlpool_Data);
 }

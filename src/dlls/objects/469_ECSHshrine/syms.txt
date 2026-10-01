@@ -1,20 +1,20 @@
 .text = 0x0:
 ECSHshrine_ctor = 0x0;
 ECSHshrine_dtor = 0xC;
-ECSHshrine_setup = 0x18;
-ECSHshrine_control = 0x208;
-ECSHshrine_update = 0x1320;
-ECSHshrine_print = 0x132C;
-ECSHshrine_free = 0x1380;
-ECSHshrine_get_model_flags = 0x1430;
-ECSHshrine_get_data_size = 0x1440;
-ECSHshrine_func_1454 = 0x1454;
-ECSHshrine_get_cup_coords = 0x1484;
-ECSHshrine_get_minigame_state = 0x14F4;
-ECSHshrine_set_cup_coords = 0x152C;
-ECSHshrine_choose_cup = 0x1590;
-ECSHshrine_anim_callback = 0x15E0;
-ECSHshrine_handle_messages = 0x193C;
+ECSHshrine_obj_Setup = 0x18;
+ECSHshrine_obj_Control = 0x208;
+ECSHshrine_obj_Update = 0x1320;
+ECSHshrine_obj_Print = 0x132C;
+ECSHshrine_obj_Free = 0x1380;
+ECSHshrine_obj_GetModelFlags = 0x1430;
+ECSHshrine_obj_GetDataSize = 0x1440;
+ECSHshrine_Func_1454 = 0x1454;
+ECSHshrine_GetCupCoords = 0x1484;
+ECSHshrine_GetMinigameState = 0x14F4;
+ECSHshrine_SetCupCoords = 0x152C;
+ECSHshrine_ChooseCup = 0x1590;
+ECSHshrine_animCallback = 0x15E0;
+ECSHshrine_handleMessages = 0x193C;
 
 .rodata = 0x1AE0:
 

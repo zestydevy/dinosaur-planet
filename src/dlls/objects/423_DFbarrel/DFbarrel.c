@@ -21,17 +21,17 @@ typedef struct {
     f32 velocityZ;              //Copy of barrel's velocity, for flow/bouyancy calcs
 } DFBarrel_Data;
 
-static void DFbarrel_handle_movement(Object* self);
-static void DFbarrel_handle_damage(Object* self);
+static void DFbarrel_handleMovement(Object* self);
+static void DFbarrel_handleDamage(Object* self);
 
 // offset: 0x0 | ctor
-void DFbarrel_ctor(void *dll) { }
+void DFbarrel_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DFbarrel_dtor(void *dll) { }
+void DFbarrel_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFbarrel_setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
+void DFbarrel_obj_Setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -39,10 +39,10 @@ void DFbarrel_setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0xA4 | func: 1 | export: 1
-void DFbarrel_control(Object* self) {
+void DFbarrel_obj_Control(Object* self) {
     DFBarrel_Data* objData = self->data;
     
-    //Do nothing if not on a map?
+    //Do nothing if not on a map
     if (mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z) == -1) {
         return;
     }
@@ -50,8 +50,8 @@ void DFbarrel_control(Object* self) {
     switch (objData->framesSinceDetonation) {
     case 0:
         if (gDLL_54_pickup->vtbl->control(self, &objData->pickup) == 0) {
-            DFbarrel_handle_movement(self);
-            DFbarrel_handle_damage(self);
+            DFbarrel_handleMovement(self);
+            DFbarrel_handleDamage(self);
         }
         break;
     case 1:
@@ -69,10 +69,10 @@ void DFbarrel_control(Object* self) {
 }
 
 // offset: 0x1D0 | func: 2 | export: 2
-void DFbarrel_update(Object *self) { }
+void DFbarrel_obj_Update(Object* self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFbarrel_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DFBarrel_Data* objData = self->data;
     
     if ((objData->framesSinceDetonation == 0) && gDLL_54_pickup->vtbl->should_print(self, visibility)) {
@@ -81,23 +81,23 @@ void DFbarrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
 }
 
 // offset: 0x278 | func: 4 | export: 4
-void DFbarrel_free(Object* self, s32 onlySelf) {
+void DFbarrel_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_Barrel);
     gDLL_54_pickup->vtbl->free(self);
 }
 
 // offset: 0x2E0 | func: 5 | export: 5
-u32 DFbarrel_get_model_flags(Object *self) {
+u32 DFbarrel_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x2F0 | func: 6 | export: 6
-u32 DFbarrel_get_data_size(Object *self, u32 offsetAddr) {
+u32 DFbarrel_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DFBarrel_Data);
 }
 
 // offset: 0x304 | func: 7
-void DFbarrel_handle_movement(Object* self) {
+void DFbarrel_handleMovement(Object* self) {
     DFBarrel_Data* objData;
     Object* riverFlow;
     Object** objects;
@@ -206,7 +206,7 @@ void DFbarrel_handle_movement(Object* self) {
 }
 
 // offset: 0x960 | func: 8
-void DFbarrel_handle_damage(Object* self) {
+void DFbarrel_handleDamage(Object* self) {
     DFBarrel_Data* objData;
     DIMExplosion_Setup* explosion;
     s32 hitDamage;
@@ -254,7 +254,7 @@ void DFbarrel_handle_damage(Object* self) {
         if ((obj = objGetNearestTypeTo(OBJTYPE_ExplodeObj, self, &distance))) {
             debrisSetup = (Debris_Setup*)obj->setup;
             if (debrisSetup->unk40 != NO_GAMEBIT) {
-                mainSetBits(debrisSetup->unk40, 1);
+                mainSetBits(debrisSetup->unk40, TRUE);
             }
         }
 
@@ -262,7 +262,7 @@ void DFbarrel_handle_damage(Object* self) {
         if ((obj = objGetNearestTypeTo(OBJTYPE_ExplodeAnimator, self, &distance))) {
             explodeAnimSetup = (ExplodeAnimator_Setup*)obj->setup;
             if (explodeAnimSetup->gamebitExplodeTrigger != NO_GAMEBIT) {
-                mainSetBits(explodeAnimSetup->gamebitExplodeTrigger, 1);
+                mainSetBits(explodeAnimSetup->gamebitExplodeTrigger, TRUE);
             }
         }
     }

@@ -125,7 +125,8 @@ void LevelName_obj_Control(Object* self) {
             if ((u32)objdata->timer > objdata->displayDuration) {
                 objdata->state = LevelName_STATE_3_FADING_OUT;
             }    
-            objdata->opacity = (s32) (mathSinfInterp(objdata->timer * 0x500) * 30.0f) + 0xDC;
+            //Opacity pulses sinusoidally (51.2 frames for a full cycle)
+            objdata->opacity = (s32) (mathSinfInterp(objdata->timer * 0x500) * 30.0f) + 220;
             break;
         case LevelName_STATE_3_FADING_OUT:
             objdata->opacity -= gUpdateRate * 4;

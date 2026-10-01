@@ -74,6 +74,12 @@ typedef struct {
     u8 camEaseDuration;
 } AnimObj_Setup;
 
+#define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
+
+//For reading different values from `sequenceIdBitfield`
+#define ANIMOBJ_SEQID(idBitfield) ((idBitfield & 0x7FF0) >> 4)
+#define ANIMOBJ_ACTORIDX(idBitfield) (idBitfield & 0xF)
+
 typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);
 typedef s32 (*AnimObj_DecisionCallback)(Object *actor, Object *override, s32 arg2);
 
@@ -83,6 +89,17 @@ typedef struct {
     f32 unk8[8];
     f32 unk28;
 } UnkAnimStruct;
+
+typedef enum {
+    AnimData_FLAG_1 = 1,
+    AnimData_FLAG_2 = 2,
+    AnimData_FLAG_4 = 4,
+    AnimData_FLAG_8 = 8,
+    AnimData_FLAG_10 = 0x10, //Something to do with movemode?
+    AnimData_FLAG_20 = 0x20,
+    AnimData_FLAG_40 = 0x40,
+    AnimData_FLAG_80_Skipped = 0x80 //A skippable cutscene was skipped with the L button or a warp 
+} AnimData_Flags;
 
 typedef struct AnimObj_Data {
 /*000*/ Object* actor; // the target of the anim obj (e.g. the target of an Override object)

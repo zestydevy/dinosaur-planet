@@ -8,10 +8,10 @@ _exports:
 .dword DFShrine_dtor
 
 # export table
-/*0*/ .dword DFShrine_setup
-/*1*/ .dword DFShrine_control
-/*2*/ .dword DFShrine_update
-/*3*/ .dword DFShrine_print
-/*4*/ .dword DFShrine_free
-/*5*/ .dword DFShrine_get_model_flags
-/*6*/ .dword DFShrine_get_data_size
+/*0*/ .dword DFShrine_obj_Setup
+/*1*/ .dword DFShrine_obj_Control
+/*2*/ .dword DFShrine_obj_Update
+/*3*/ .dword DFShrine_obj_Print
+/*4*/ .dword DFShrine_obj_Free
+/*5*/ .dword DFShrine_obj_GetModelFlags
+/*6*/ .dword DFShrine_obj_GetDataSize

@@ -8,7 +8,7 @@ _exports:
 .dword camclimb_dtor
 
 # export table
-/*0*/ .dword camclimb_func_18
-/*1*/ .dword camclimb_func_340
-/*2*/ .dword camclimb_func_5E8
+/*0*/ .dword camclimb_setup
+/*1*/ .dword camclimb_control
+/*2*/ .dword camclimb_free
 /*3*/ .dword camclimb_func_62C

@@ -1,8 +1,10 @@
 #include "PR/os.h"
 #include "dlls/engine/27.h"
+#include "dlls/objects/common/weapon.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/419_DFdockpoint.h"
+#include "dlls/objects/common/vehicle.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"
@@ -16,27 +18,27 @@
 
 typedef struct {
     ObjSetup base;
-    s8 unk18;
+    s8 yaw;
 } DFlog_Setup;
 
 typedef struct {
     u8 _unk0[0x240 - 0x0];
-    Vec3f unk240[2];
-    Vec3f unk258[2];
-    f32 unk270[2];
-    f32 unk278[2];
+    Vec3f endPoints[2];
+    Vec3f velocity[2];
+    f32 flowX[2];
+    f32 flowZ[2];
     f32 unk280;
     f32 unk284;
     f32 unk288;
     DLL27_Data unk28C;
-    u8 unk4EC;
-    u8 unk4ED;
+    u8 mountState;
+    u8 paddleSoundCooldown;
     u8 unk4EE;
     s16 unk4F0[2];
-    Object *dockpoint; // dockpoint
+    Object* dockpoint; // dockpoint
 } DFlog_Data;
 
-/*0x0*/ static DLL_IModgfx *_data_0 = NULL;
+/*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 /*0x4*/ static u32 _data_4[] = {
     0x00000000, 
     0x40000102, 0x00000000, 0x00000000, 
@@ -68,28 +70,31 @@ typedef struct {
 };
 /*0x104*/ static f32 _data_104[] = {8.0f, 8.0f};
 
-static int dll_417_func_3B8(Object *self, Object *a1, AnimObj_Data *a2, s8 a3);
-static void dll_417_func_A90(Object *self);
-static void dll_417_func_BC8(Object* self);
-static void dll_417_func_E8C(Object* self);
-static f32 dll_417_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3);
+static int DFlog_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void DFlog_func_A90(Object* self);
+static void DFlog_findRiverflows(Object* self);
+static void DFlog_func_E8C(Object* self);
+static f32 DFlog_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3);
 
 // offset: 0x0 | ctor
-void dll_417_ctor(void *dll) { }
+void DFlog_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_417_dtor(void *dll) { }
+void DFlog_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_417_setup(Object* self, DFlog_Setup* setup, s32 arg2) {
+void DFlog_obj_Setup(Object* self, DFlog_Setup* setup, s32 reset) {
     DFlog_Data* objdata;
     s32 i;
 
-    objdata = (DFlog_Data*)self->data;
-    _data_0 = (DLL_IModgfx*)dllLoad(DLL_ID_136, 1);
+    objdata = self->data;
+    dModGfxDLL = dllLoad(DLL_ID_136, 1);
+
     objAddObjectType(self, OBJTYPE_Vehicle);
-    self->animCallback = dll_417_func_3B8;
-    self->srt.yaw = (setup->unk18 & 0xFFFF) << 8;
+
+    self->animCallback = DFlog_animCallback;
+    self->srt.yaw = (setup->yaw & 0xFFFF) << 8;
+    
     gDLL_27->vtbl->init(&objdata->unk28C, 
         DLL27FLAG_NONE, 
         DLL27FLAG_40000 | DLL27FLAG_2, 
@@ -97,96 +102,102 @@ void dll_417_setup(Object* self, DFlog_Setup* setup, s32 arg2) {
     gDLL_27->vtbl->setup_hits_collider(&objdata->unk28C, 2, _data_EC, _data_104, 8);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk28C, 2, _data_C8, _data_E0, _data_E8);
     gDLL_27->vtbl->reset(self, &objdata->unk28C);
+
     self->objhitInfo->unk58 |= 1;
     self->objhitInfo->unk58 |= 4;
-    objdata->unk4EC = 0;
-    objdata->unk4ED = 0;
+
+    objdata->mountState = VEHICLE_NoRider;
+    objdata->paddleSoundCooldown = 0;
     objdata->unk4EE = 0;
+
     for (i = 0; i < 2; i++) {
-        objdata->unk240[i].x = self->srt.transl.x;
-        objdata->unk240[i].y = self->srt.transl.y;
-        objdata->unk240[i].z = self->srt.transl.z;
+        objdata->endPoints[i].x = self->srt.transl.x;
+        objdata->endPoints[i].y = self->srt.transl.y;
+        objdata->endPoints[i].z = self->srt.transl.z;
     }
-    dll_417_func_A90(self);
+
+    DFlog_func_A90(self);
+
     objdata->unk4F0[1] = 0;
     objdata->unk4F0[0] = 0;
     objdata->unk288 = 0.0f;
 }
 
 // offset: 0x208 | func: 1 | export: 1
-void dll_417_control(Object* self) {
+void DFlog_obj_Control(Object* self) {
     DFlog_Data* objdata;
     Vec3f sp2C[2];
 
     objdata = self->data;
     func_8002674C(self);
-    dll_417_func_A90(self);
-    dll_417_func_BC8(self);
-    dll_417_func_E8C(self);
+    DFlog_func_A90(self);
+    DFlog_findRiverflows(self);
+    DFlog_func_E8C(self);
     // below is nonsense (and probably not whatever the original was)
-    sp2C[1].x = objdata->unk240[0].x;
-    sp2C[1].y = objdata->unk240[0].y;
-    sp2C[1].z = objdata->unk240[0].z;
-    sp2C[0].x = -objdata->unk258[0].z * 10.0f;
+    sp2C[1].x = objdata->endPoints[0].x;
+    sp2C[1].y = objdata->endPoints[0].y;
+    sp2C[1].z = objdata->endPoints[0].z;
+    sp2C[0].x = -objdata->velocity[0].z * 10.0f;
     sp2C[0].y = 0.0f;
-    sp2C[0].y = -objdata->unk258[0].y * 10.0f;
+    sp2C[0].y = -objdata->velocity[0].y * 10.0f;
 }
 
 // offset: 0x2D8 | func: 2 | export: 2
-void dll_417_update(Object *self) { }
+void DFlog_obj_Update(Object* self) { }
 
 // offset: 0x2E4 | func: 3 | export: 3
-void dll_417_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0) {
+void DFlog_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x338 | func: 4 | export: 4
-void dll_417_free(Object *self, s32 a1) {
-    dllFree(_data_0);
+void DFlog_obj_Free(Object* self, s32 onlySelf) {
+    dllFree(dModGfxDLL);
     objFreeObjectType(self, OBJTYPE_Vehicle);
 }
 
 // offset: 0x394 | func: 5 | export: 5
-u32 dll_417_get_model_flags(Object *self) {
+u32 DFlog_obj_GetModelFlags(Object* self) {
     return MODFLAGS_1;
 }
 
 // offset: 0x3A4 | func: 6 | export: 6
-u32 dll_417_get_data_size(Object *self, u32 a1) {
+u32 DFlog_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DFlog_Data);
 }
 
 // offset: 0x3B8 | func: 7
-static int dll_417_func_3B8(Object *self, Object *a1, AnimObj_Data *a2, s8 a3) {
+static int DFlog_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     func_800267A4(self);
     return 0;
 }
 
 // offset: 0x400 | func: 8 | export: 7
-s32 dll_417_func_400(Object *self, Object *a1) {
-    DFlog_Data *objdata = (DFlog_Data*)self->data;
-    if ((objdata->unk4EC == 0) && (objdata->dockpoint != NULL)) {
-        return vec3Distance(&a1->globalPosition, &self->globalPosition) < 50.0f;
+s32 DFlog_vehicle_CanMount(Object* self, Object* player) {
+    DFlog_Data* objdata = self->data;
+    if ((objdata->mountState == VEHICLE_NoRider) && (objdata->dockpoint != NULL)) {
+        return vec3Distance(&player->globalPosition, &self->globalPosition) < 50.0f;
     }
     return 0;
 }
 
 // offset: 0x490 | func: 9 | export: 8
-s32 dll_417_func_490(Object *self) {
+VehicleMountSide DFlog_vehicle_GetMountSide(Object* self) {
     SRT srt;
     MtxF mtx;
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
-    f32 temp;
-    f32 temp2;
-    Object *player;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 sign;
+    f32 minusOrigin;
+    Object* player;
 
     player = objGetPlayer();
     if (player != NULL) {
-        srt.yaw = self->srt.yaw + M_90_DEGREES;
+        //Get the log's directional unit vector
+        srt.yaw = self->srt.yaw + M_90_DEGREES; //Plus 90, so pointing out its side
         srt.pitch = self->srt.pitch;
         srt.roll = self->srt.roll;
         srt.transl.x = 0.0f;
@@ -194,55 +205,61 @@ s32 dll_417_func_490(Object *self) {
         srt.transl.z = 0.0f;
         srt.scale = 1.0f;
         mathYprXyzMtx(&mtx, &srt);
-        mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &sp44, &sp40, &sp3C);
-        temp2 = -((self->srt.transl.x * sp44) + (sp40 * self->srt.transl.y) + (sp3C * self->srt.transl.z));
-        temp = (player->srt.transl.x * sp44) + (sp40 * player->srt.transl.y) + (sp3C * player->srt.transl.z) + temp2;
-        if (temp < 0) {
-            return 1;
+        mathMtxXFMF(&mtx, 0.0f, 0.0f, 1.0f, &x, &y, &z);
+
+        //Check the player's position along the sideways axis, and get the side from the sign
+        minusOrigin = -((self->srt.transl.x * x) + (y * self->srt.transl.y) + (z * self->srt.transl.z));
+        sign = (player->srt.transl.x * x) + (y * player->srt.transl.y) + (z * player->srt.transl.z) + minusOrigin;
+        if (sign < 0) {
+            return VEHICLE_SIDE_Left;
         }
     }
-    return 2;
+    return VEHICLE_SIDE_Right;
 }
 
 // offset: 0x5D8 | func: 10 | export: 9
-void dll_417_func_5D8(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+void DFlog_vehicle_GetRiderPosition(Object* self, f32* ox, f32* oy, f32* oz) {
     *ox = self->srt.transl.x;
     *oy = self->srt.transl.y;
     *oz = self->srt.transl.z;
 }
 
 // offset: 0x5F8 | func: 11 | export: 10
-s32 dll_417_func_5F8(Object* self, Object* player) {
+s32 DFlog_vehicle_CanDismount(Object* self, Object* player) {
     DFlog_Data* objdata;
-    f32 var_fs0;
+    f32 endpointSpeeds;
     s32 camDLLID;
     s32 i;
 
-    objdata = (DFlog_Data*)self->data;
+    objdata = self->data;
 
-    if ((objdata->dockpoint != NULL) && (objdata->unk4EC == 2)) {
+    if ((objdata->dockpoint != NULL) && (objdata->mountState == VEHICLE_Mounted)) {
         camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
-        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAM1STPERSON2) && (gDLL_1_cmdmenu->vtbl->was_any_item_used() == 0) && (joyGetPressed(0) & B_BUTTON)) {
-            var_fs0 = 0.0f;
+        if ((camDLLID != DLL_ID_CAM1STPERSON) && (camDLLID != DLL_ID_CAM1STPERSON2) && 
+            (gDLL_1_cmdmenu->vtbl->was_any_item_used() == FALSE) && 
+            (joyGetPressed(0) & B_BUTTON)
+        ) {
+            endpointSpeeds = 0.0f;
             for (i = 0; i < 2; i++) {
-                var_fs0 += sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
+                endpointSpeeds += sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
             }
             
-            return var_fs0 < 2.0f;
+            return endpointSpeeds < 2.0f;
         }
     }
 
-    ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
-    return 0;
+    dll_player(player)->func28(player, 1);
+
+    return FALSE;
 }
 
 // offset: 0x75C | func: 12 | export: 11
-UNK_TYPE_32 dll_417_func_75C(Object *self) {
+VehicleMountSide DFlog_vehicle_GetDismountSide(Object* self) {
     return 0;
 }
 
 // offset: 0x76C | func: 13 | export: 12
-void dll_417_func_76C(Object *self, f32 *ox, f32 *oy, f32 *oz) {
+void DFlog_vehicle_GetCameraPosition(Object* self, f32* ox, f32* oy, f32* oz) {
     MtxF mtx;
     SRT srt;
 
@@ -261,82 +278,86 @@ void dll_417_func_76C(Object *self, f32 *ox, f32 *oy, f32 *oz) {
 }
 
 // offset: 0x85C | func: 14 | export: 13
-UNK_TYPE_8 dll_417_func_85C(Object *self) {
-    DFlog_Data *objdata = (DFlog_Data*)self->data;
-    return objdata->unk4EC;
+VehicleMountState DFlog_vehicle_GetMountState(Object* self) {
+    DFlog_Data* objdata = self->data;
+    return objdata->mountState;
 }
 
 // offset: 0x86C | func: 15 | export: 14
-void dll_417_func_86C(Object *self, s32 a1) {
-    DFlog_Data *objdata = (DFlog_Data*)self->data;
-    Object *player;
+void DFlog_vehicle_SetMountState(Object* self, s32 mountState) {
+    DFlog_Data* objdata = self->data;
+    Object* player;
 
     player = objGetPlayer();
-    objdata->unk4EC = a1;
-    if (a1 != 0) {
-        ((DLL_210_Player*)player->dll)->vtbl->func28(player, 1);
+    objdata->mountState = mountState;
+
+    if (mountState != VEHICLE_NoRider) {
+        dll_player(player)->func28(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 0x2B);
     } else {
-        ((DLL_210_Player*)player->dll)->vtbl->func29(player, 1);
+        dll_player(player)->func29(player, 1);
         gDLL_2_Camera->vtbl->change_mode(0, 1);
     }
 }
 
 // offset: 0x944 | func: 16 | export: 15
-void dll_417_func_944(Object *self, f32 *a1, u32 *a2) {
-    f32 temp_fv0;
+void DFlog_vehicle_GetPlayerAnim(Object* self, f32* tValue, u32* animIndex) {
+    f32 tilt = mathSinfInterp(self->srt.pitch);
 
-    temp_fv0 = mathSinfInterp(self->srt.pitch);
     if (self->srt.pitch > 0) {
-        *a2 = 0;
+        *animIndex = 0;
     } else {
-        *a2 = 1;
+        *animIndex = 1;
     }
-    if (temp_fv0 >= 0.0f) {
-        *a1 = temp_fv0;
-        return;
+
+    if (tilt >= 0.0f) {
+        *tValue = tilt;
+    } else {
+        *tValue = -tilt;
     }
-    *a1 = -temp_fv0;
 }
 
 // offset: 0x9D8 | func: 17 | export: 16
-f32 dll_417_func_9D8(Object *self, f32 *a1) {
-    DFlog_Data *objdata = (DFlog_Data*)self->data;
+f32 DFlog_vehicle_Func16(Object* self, f32* a1) {
+    DFlog_Data* objdata = self->data;
     f32 var_fa0;
     f32 var_fv1;
 
     var_fv1 = objdata->unk288 * 1.2f;
+
     if (objdata->unk288 >= 0.0f) {
         var_fa0 = objdata->unk288;
     } else {
         var_fa0 = -objdata->unk288;
     }
     *a1 = var_fa0 * 0.02f;
+
     if (var_fv1 < -1.0f) {
         var_fv1 = -1.0f;
     }
     if (var_fv1 > 1.0f) {
         var_fv1 = 1.0f;
     }
+
     return var_fv1;
 }
 
 
 // offset: 0xA64 | func: 18 | export: 17
-s32 dll_417_func_A64(UNK_TYPE_32 a0) {
+s32 DFlog_vehicle_GetRacePosition(Object* self) {
     return 0;
 }
 
 // offset: 0xA74 | func: 19 | export: 18
-void dll_417_func_A74(UNK_TYPE_32 a0) { }
+void DFlog_vehicle_Func18(Object* self) { }
 
 // offset: 0xA80 | func: 20 | export: 19
-void dll_417_func_A80(UNK_TYPE_32 a0, UNK_TYPE_32 a1) { }
+void DFlog_vehicle_HandleRiderScale(Object* self, f32 scale) { }
 
 // offset: 0xA90 | func: 21
-static void dll_417_func_A90(Object *self) {
-    DFlog_Data *objdata;
-    DLL27_Data *d27data;
+static void DFlog_func_A90(Object* self) {
+    DFlog_Data* objdata;
+    DLL27_Data* d27data;
     SRT srt;
     MtxF mtx;
     s32 i;
@@ -358,50 +379,52 @@ static void dll_417_func_A90(Object *self) {
     for (i = 0, j = 0; i < (d27data->numTestPoints & 0xF); i++, j++) {
         mathMtxXFMF(&mtx, 
             _data_EC[j].x, _data_EC[j].y, _data_EC[j].z, 
-            &objdata->unk240[i].x, &objdata->unk240[i].y, &objdata->unk240[i].z);
+            &objdata->endPoints[i].x, &objdata->endPoints[i].y, &objdata->endPoints[i].z);
     }
 }
 
 // offset: 0xBC8 | func: 22
-static void dll_417_func_BC8(Object* self) {
+static void DFlog_findRiverflows(Object* self) {
     DFlog_Data* objdata;
     s32 i;
     s32 k;
-    s32 sp9C[2];
+    s32 flowInfluences[2];
     s32 objListLength;
     Object* obj;
     Object** objList;
     f32 dx;
-    f32 temp_fv0;
+    f32 dy;
     f32 dz;
-    f32 temp_fv1;
+    f32 pushRadius;
 
     objdata = (DFlog_Data*)self->data;
 
     for (i = 0; i < 2; i++) {
-        objdata->unk270[i] = 0.0f;
-        objdata->unk278[i] = 0.0f;
-        sp9C[i] = 0;
+        objdata->flowX[i] = 0.0f;
+        objdata->flowZ[i] = 0.0f;
+        flowInfluences[i] = 0;
     }
 
+    // Get DFriverflow objects
     objList = objGetAllOfType(OBJTYPE_Riverflow, &objListLength);
 
     for (i = 0; i < objListLength; i++) {
         obj = objList[i];
+        //Check that the riverflow is intended to affect logs (NOTE: BWlog doesn't check this)
         if (((DFriverflow_Setup*)obj->setup)->flags & 1) {
             for (k = 0; k < 2; k++) {
-                temp_fv0 = obj->srt.transl.y - objdata->unk240[k].y;
-                if ((temp_fv0 <= 200.0f) && (temp_fv0 >= -200.0f)) {
-                    dx = obj->srt.transl.x - objdata->unk240[k].x;
-                    dz = obj->srt.transl.z - objdata->unk240[k].z;
+                dy = obj->srt.transl.y - objdata->endPoints[k].y;
+                if ((dy <= 200.0f) && (dy >= -200.0f)) {
+                    dx = obj->srt.transl.x - objdata->endPoints[k].x;
+                    dz = obj->srt.transl.z - objdata->endPoints[k].z;
                     dx = sqrtf(SQ(dx) + SQ(dz));
-                    temp_fv1 = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
-                    if (dx < temp_fv1) {
-                        dx = ((temp_fv1 - dx) / temp_fv1);
-                        dx *= (obj->srt.scale * 10.0f);
-                        objdata->unk270[k] += (mathSinfInterp(obj->srt.yaw) * dx);
-                        objdata->unk278[k] += (mathCosfInterp(obj->srt.yaw) * dx);
-                        sp9C[k] += 1;
+                    pushRadius = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
+                    if (dx < pushRadius) {
+                        dx = (pushRadius - dx) / pushRadius;
+                        dx *= obj->srt.scale * 10.0f;
+                        objdata->flowX[k] += mathSinfInterp(obj->srt.yaw) * dx;
+                        objdata->flowZ[k] += mathCosfInterp(obj->srt.yaw) * dx;
+                        flowInfluences[k]++;
                     }
                 }
             }
@@ -409,80 +432,85 @@ static void dll_417_func_BC8(Object* self) {
     }
 
     for (i = 0; i < 2; i++) {
-        if (sp9C[i] != 0) {
-            objdata->unk270[i] /= sp9C[i];
-            objdata->unk278[i] /= sp9C[i];
+        if (flowInfluences[i] != 0) {
+            objdata->flowX[i] /= flowInfluences[i];
+            objdata->flowZ[i] /= flowInfluences[i];
         }
     }
 }
 
 // offset: 0xE8C | func: 23
-static void dll_417_func_E8C(Object* self) {
+static void DFlog_func_E8C(Object* self) {
     f32 var_fa0;
     f32 var_fa1;
-    SRT spE0;
-    f32 spDC;
-    f32 spD8;
-    f32 spD4;
+    SRT fxTransform;
+    f32 dz;
+    f32 dy;
+    f32 dx;
     f32 spD0;
     f32 spC8[2];
     f32 spC4;
     DFdockpoint_Setup* dockpointSetup;
     f32 distance;
-    Object* temp_a0;
+    Object* weapon;
     Vec3f spAC;
     Vec3f spA0;
     f32 sp9C;
-    f32 var_fv1;
+    f32 sp98;
     s32 sp90[2];
-    u8 temp_s1_5;
+    u8 soundFlags;
     u8 temp_s2;
-    u8 sp8D;
+    u8 volume;
     s32 i;
     DFlog_Data* objdata;
-    f32 pad;
+    f32 damp;
 
     objdata = (DFlog_Data*)self->data;
-    sp8D = 0;
+    volume = 0;
+
     distance = 10000.0f;
     objdata->dockpoint = objGetNearestTypeTo(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
         dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
         distance = vec3Distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
-        if (objdata->unk4EC == 2) {
-            var_fv1 = 0.95f;
+        // Reduce velocity while near a dockpoint
+        if (objdata->mountState == VEHICLE_Mounted) {
+            damp = 0.95f;
         } else {
-            var_fv1 = 0.5f;
+            damp = 0.5f;
         }
 
-        if (distance < (f32) dockpointSetup->range) {
+        if (distance < dockpointSetup->range) {
             for (i = 0; i < 2; i++) {
-                objdata->unk258[i].x *= var_fv1;
-                objdata->unk258[i].z *= var_fv1;
+                objdata->velocity[i].x *= damp;
+                objdata->velocity[i].z *= damp;
             }
         } else {
             objdata->dockpoint = NULL;
         }
     }
 
-    if ((objdata->unk4EC == 2) && (gDLL_2_Camera->vtbl->get_dll_ID() != 0x60)) {
-        objdata->unk280 = (f32) ((f32) joyGetStickX(0) * 0.01f);
+    if ((objdata->mountState == VEHICLE_Mounted) && (gDLL_2_Camera->vtbl->get_dll_ID() != DLL_ID_CAM1STPERSON2)) {
+        objdata->unk280 = joyGetStickX(0) * 0.01f;
         if (joyGetPressed(0) & A_BUTTON) {
             var_fa0 = ((1.3f - objdata->unk288) / 1.3f) * 0.8f;
         } else {
             var_fa0 = -0.05f;
         }
-        objdata->unk288 = (f32) (objdata->unk288 + var_fa0);
+        objdata->unk288 += var_fa0;
+
         if (joyGetPressed(0) & A_BUTTON) {
-            objdata->unk258[0].y = (f32) (objdata->unk258[0].y + 0.08f);
-            objdata->unk258[1].y = (f32) (objdata->unk258[1].y - 0.06f);
+            objdata->velocity[0].y = objdata->velocity[0].y + 0.08f;
+            objdata->velocity[1].y = objdata->velocity[1].y - 0.06f;
         }
+
         if (joyGetPressed(0) & A_BUTTON) {
             var_fa0 = 0.08f;
         } else {
             var_fa0 = -0.02f;
         }
-        objdata->unk284 = (f32) (objdata->unk284 - var_fa0);
+        objdata->unk284 -= var_fa0;
+
         if (objdata->unk288 < 0.0f) {
             objdata->unk288 = 0.0f;
         } else {
@@ -493,6 +521,7 @@ static void dll_417_func_E8C(Object* self) {
             }
             objdata->unk288 = var_fa0;
         }
+
         if (objdata->unk284 < -0.1f) {
             objdata->unk284 = -0.1f;
         } else {
@@ -504,147 +533,150 @@ static void dll_417_func_E8C(Object* self) {
             objdata->unk284 = var_fa0;
         }
     }
+
     spC4 = mathSinfInterp(self->srt.yaw) * objdata->unk284;
-    var_fv1 = mathCosfInterp(self->srt.yaw) * objdata->unk284;
-    objdata->unk258[0].x = (f32) (objdata->unk258[0].x + spC4);
-    objdata->unk258[0].z = (f32) (objdata->unk258[0].z + var_fv1);
-    objdata->unk258[1].x = (f32) (objdata->unk258[1].x + spC4);
-    objdata->unk258[1].z = (f32) (objdata->unk258[1].z + var_fv1);
-    spC4 = mathSinfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
-    var_fv1 = mathCosfInterp((s16) (self->srt.yaw + 0x4000)) * objdata->unk280;
-    objdata->unk258[0].x = (f32) (objdata->unk258[0].x + (spC4 * 0.05f));
-    objdata->unk258[0].z = (f32) (objdata->unk258[0].z + (var_fv1 * 0.05f));
-    objdata->unk258[1].x = (f32) (objdata->unk258[1].x - (spC4 * 0.025f));
-    objdata->unk258[1].z = (f32) (objdata->unk258[1].z - (var_fv1 * 0.025f));
-    spD0 = dll_417_func_1E9C(self, self->srt.transl.y, self->srt.transl.x, self->srt.transl.z);
+    sp98 = mathCosfInterp(self->srt.yaw) * objdata->unk284;
+    objdata->velocity[0].x += spC4;
+    objdata->velocity[0].z += sp98;
+    objdata->velocity[1].x += spC4;
+    objdata->velocity[1].z += sp98;
+    spC4 = mathSinfInterp(self->srt.yaw + M_90_DEGREES) * objdata->unk280;
+    sp98 = mathCosfInterp(self->srt.yaw + M_90_DEGREES) * objdata->unk280;
+    objdata->velocity[0].x += spC4 * 0.05f;
+    objdata->velocity[0].z += sp98 * 0.05f;
+    objdata->velocity[1].x -= spC4 * 0.025f;
+    objdata->velocity[1].z -= sp98 * 0.025f;
+    spD0 = DFlog_func_1E9C(self, self->srt.transl.y, self->srt.transl.x, self->srt.transl.z);
+    
     for (i = 0; i < 2; i++) {
-        objdata->unk258[i].x -= (objdata->unk270[i] * 0.05f);
-        objdata->unk258[i].z -= (objdata->unk278[i] * 0.050f);
-        objdata->unk258[i].x *= 0.99f;
-        objdata->unk258[i].z *= 0.99f;
-        distance = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
+        objdata->velocity[i].x -= objdata->flowX[i] * 0.05f;
+        objdata->velocity[i].z -= objdata->flowZ[i] * 0.050f;
+        objdata->velocity[i].x *= 0.99f;
+        objdata->velocity[i].z *= 0.99f;
+        distance = sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
         if (distance > 0.95f) {
             distance = 0.95f / distance;
-            objdata->unk258[i].x = (f32) (objdata->unk258[i].x * distance);
-            objdata->unk258[i].z = (f32) (objdata->unk258[i].z * distance);
+            objdata->velocity[i].x *= distance;
+            objdata->velocity[i].z *= distance;
         }
-        spC8[i] = dll_417_func_1E9C(self, objdata->unk240[i].y, objdata->unk240[i].x, objdata->unk240[i].z);
-        if (((spC8[i] - objdata->unk240[i].y) > -2.0f) && ((spC8[i] - objdata->unk240[i].y) < 2.0f)) {
+        spC8[i] = DFlog_func_1E9C(self, objdata->endPoints[i].y, objdata->endPoints[i].x, objdata->endPoints[i].z);
+        if (((spC8[i] - objdata->endPoints[i].y) > -2.0f) && ((spC8[i] - objdata->endPoints[i].y) < 2.0f)) {
             var_fa0 = spD0 - self->srt.transl.y;
             if ((var_fa0 > -2.0f) && (var_fa0 < 2.0f)) {
-                objdata->unk258[i].y += ((spC8[i] - objdata->unk240[i].y) * 0.02f);
-                objdata->unk258[i].y *= 0.95f;
+                objdata->velocity[i].y += ((spC8[i] - objdata->endPoints[i].y) * 0.02f);
+                objdata->velocity[i].y *= 0.95f;
                 sp90[i] = 1;
                 if (objdata->unk4F0[i] > 0) {
-                    sp90[i] = (s32) objdata->unk4F0[i];
+                    sp90[i] = objdata->unk4F0[i];
                 }
-                objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                objdata->unk4F0[i] >>= 1;
             }
         } else {
-            if ((spC8[i] - objdata->unk240[i].y) > 2.0f) {
-                if (objdata->unk258[i].y > 0.0f) {
-                    var_fa0 = objdata->unk258[i].y;
+            if ((spC8[i] - objdata->endPoints[i].y) > 2.0f) {
+                if (objdata->velocity[i].y > 0.0f) {
+                    var_fa0 = objdata->velocity[i].y;
                 } else {
-                    var_fa0 = -objdata->unk258[i].y;
+                    var_fa0 = -objdata->velocity[i].y;
                 }
-                objdata->unk258[i].y -= objdata->unk258[i].y * var_fa0 * 0.1f;
-                objdata->unk258[i].y += (spC8[i] - objdata->unk240[i].y) * 0.01f;
+                objdata->velocity[i].y -= objdata->velocity[i].y * var_fa0 * 0.1f;
+                objdata->velocity[i].y += (spC8[i] - objdata->endPoints[i].y) * 0.01f;
                 sp90[i] = 1;
                 if (objdata->unk4F0[i] > 0) {
-                    sp90[i] = (s32) objdata->unk4F0[i];
+                    sp90[i] = objdata->unk4F0[i];
                 }
-                objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                objdata->unk4F0[i] >>= 1;
             } else {
-                if ((spC8[i] - objdata->unk240[i].y) < -2.0f) {
-                    objdata->unk258[i].y = (f32) (objdata->unk258[i].y * 0.95f);
-                    objdata->unk258[i].y = (f32) (objdata->unk258[i].y - 0.18f);
-                    objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] + gUpdateRate);
+                if ((spC8[i] - objdata->endPoints[i].y) < -2.0f) {
+                    objdata->velocity[i].y *= 0.95f;
+                    objdata->velocity[i].y -= 0.18f;
+                    objdata->unk4F0[i] += gUpdateRate;
                 } else {
-                    objdata->unk240[i].y = spC8[i];
+                    objdata->endPoints[i].y = spC8[i];
                     sp90[i] = 1;
                     if (objdata->unk4F0[i] > 0) {
-                        sp90[i] = (s32) objdata->unk4F0[i];
+                        sp90[i] = objdata->unk4F0[i];
                     }
-                    objdata->unk4F0[i] = (s16) (objdata->unk4F0[i] >> 1);
+                    objdata->unk4F0[i] >>= 1;
                 }
             }
         }
-        objdata->unk240[i].x += objdata->unk258[i].x * gUpdateRateF;
-        objdata->unk240[i].y += objdata->unk258[i].y * gUpdateRateF;
-        objdata->unk240[i].z += objdata->unk258[i].z * gUpdateRateF;
+        objdata->endPoints[i].x += objdata->velocity[i].x * gUpdateRateF;
+        objdata->endPoints[i].y += objdata->velocity[i].y * gUpdateRateF;
+        objdata->endPoints[i].z += objdata->velocity[i].z * gUpdateRateF;
     }
-    self->srt.transl.x = (objdata->unk240[0].x + objdata->unk240[1].x) * 0.5f;
-    self->srt.transl.y = (objdata->unk240[0].y + objdata->unk240[1].y) * 0.5f;
-    self->srt.transl.z = (objdata->unk240[0].z + objdata->unk240[1].z) * 0.5f;
-    spD4 = objdata->unk240[1].x - objdata->unk240[0].x;
-    spD8 = objdata->unk240[1].y - objdata->unk240[0].y;
-    spDC = objdata->unk240[1].z - objdata->unk240[0].z;
-    distance = sqrtf((spD4 * spD4) + (spDC * spDC));
-    self->srt.pitch = -mathAtan2f(spD8, distance);
-    self->srt.yaw = mathAtan2f(spD4, spDC);
+
+    self->srt.transl.x = (objdata->endPoints[0].x + objdata->endPoints[1].x) * 0.5f;
+    self->srt.transl.y = (objdata->endPoints[0].y + objdata->endPoints[1].y) * 0.5f;
+    self->srt.transl.z = (objdata->endPoints[0].z + objdata->endPoints[1].z) * 0.5f;
+    dx = objdata->endPoints[1].x - objdata->endPoints[0].x;
+    dy = objdata->endPoints[1].y - objdata->endPoints[0].y;
+    dz = objdata->endPoints[1].z - objdata->endPoints[0].z;
+    distance = sqrtf(SQ(dx) + SQ(dz));
+    self->srt.pitch = -mathAtan2f(dy, distance);
+    self->srt.yaw = mathAtan2f(dx, dz);
     gDLL_27->vtbl->func_1E8(self, &objdata->unk28C, gUpdateRateF);
     gDLL_27->vtbl->func_5A8(self, &objdata->unk28C);
     gDLL_27->vtbl->func_624(self, &objdata->unk28C, gUpdateRateF);
+
     temp_s2 = (objdata->unk28C.hitsTouchBits | objdata->unk28C.unk25C) & 3;
-    temp_s1_5 = temp_s2 & (temp_s2 ^ objdata->unk4EE);
-    if (temp_s1_5 & 1) {
-        sp8D = (u8) (u32) ((sqrtf(SQ(objdata->unk258[0].x) + SQ(objdata->unk258[0].z)) * 127.0f) / 0.95f);
+    soundFlags = temp_s2 & (temp_s2 ^ objdata->unk4EE);
+    if (soundFlags & 1) {
+        volume = (sqrtf(SQ(objdata->velocity[0].x) + SQ(objdata->velocity[0].z)) * 127.0f) / 0.95f;
     }
-    if (temp_s1_5 & 2) {
-        sp9C = sqrtf(SQ(objdata->unk258[1].x) + SQ(objdata->unk258[1].z));
-        if (((sp9C * 127.0f) / 0.95f) < (f32) sp8D) {
-            sp8D = (u8) (f32) sp8D;
+    if (soundFlags & 2) {
+        sp9C = sqrtf(SQ(objdata->velocity[1].x) + SQ(objdata->velocity[1].z));
+        if (((sp9C * 127.0f) / 0.95f) < volume) {
+            volume = (f32) volume;
         } else {
-            sp8D = (u8) ((sqrtf(SQ(objdata->unk258[1].x) + SQ(objdata->unk258[1].z)) * 127.0f) / 0.95f);
+            volume = ((sqrtf(SQ(objdata->velocity[1].x) + SQ(objdata->velocity[1].z)) * 127.0f) / 0.95f);
         }
     }
-    if ((s32) sp8D >= 0xB) {
-        dll_amSfx->Play(self, SOUND_76D_Log_Bump, sp8D, NULL, NULL, 0, NULL);
+    if (volume > 10) {
+        dll_amSfx->Play(self, SOUND_76D_Log_Bump, volume, NULL, NULL, 0, NULL);
     }
     objdata->unk4EE = temp_s2;
-    if ((objdata->unk4EC == 2) && (sp90[0] != 0) && (sp90[1] != 0)) {
-        temp_a0 = objGetPlayer()->linkedObject;
-        if (temp_a0 != NULL) {
-            ((DLL_Unknown*)temp_a0->dll)->vtbl->func[17].withThreeArgs((s32)temp_a0, (s32)&spAC, (s32)&spA0);
+
+    if ((objdata->mountState == VEHICLE_Mounted) && (sp90[0] != 0) && (sp90[1] != 0)) {
+        weapon = objGetPlayer()->linkedObject;
+        if (weapon != NULL) {
+            ((DLL_IWeapon*)weapon->dll)->vtbl->func17(weapon, &spAC, &spA0);
             sp9C = (spAC.y - spD0) / (spAC.y - spA0.y);
             if ((sp9C >= 0.0f) && (sp9C <= 1.0f)) {
-                if (objdata->unk4ED == 0) {
-                    dll_amSfx->Play(self, SOUND_8F_Water_Paddle, 0x7F, NULL, NULL, 0, NULL);
-                    objdata->unk4ED = 2;
+                if (objdata->paddleSoundCooldown == 0) {
+                    dll_amSfx->Play(self, SOUND_8F_Water_Paddle, MAX_VOLUME, NULL, NULL, 0, NULL);
+                    objdata->paddleSoundCooldown = 2;
                 }
-                spE0.transl.x = ((spA0.x - spAC.x) * sp9C) + spAC.x;
-                spE0.transl.y = spC8[0];
-                spE0.transl.z = ((spA0.z - spAC.z) * sp9C) + spAC.z;
-                var_fv1 = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z)) * 5.0f;
-                if (var_fv1 < 0.0f) {
-                    spE0.scale = 0.0f;
+                fxTransform.transl.x = ((spA0.x - spAC.x) * sp9C) + spAC.x;
+                fxTransform.transl.y = spC8[0];
+                fxTransform.transl.z = ((spA0.z - spAC.z) * sp9C) + spAC.z;
+                sp98 = sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z)) * 5.0f;
+                if (sp98 < 0.0f) {
+                    fxTransform.scale = 0.0f;
                 } else {
-                    if (var_fv1 > 1.0f) {
+                    if (sp98 > 1.0f) {
                         var_fa0 = 1.0f;
                     } else {
-                        var_fa0 = var_fv1;
+                        var_fa0 = sp98;
                     }
-                    spE0.scale = var_fa0;
+                    fxTransform.scale = var_fa0;
                 }
-                spE0.yaw = (mathAtan2f(objdata->unk240[0].x - objdata->unk240[1].x, objdata->unk240[0].z - objdata->unk240[1].z) + 0x8000) & 0xFFFF & 0xFFFF;
-                spE0.transl.x -= self->srt.transl.x;
-                spE0.transl.y -= self->srt.transl.y;
-                spE0.transl.z -= self->srt.transl.z;
-                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
-                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C5, &spE0, PARTFXFLAG_NONE, -1, NULL);
-            } else {
-                if (objdata->unk4ED != 0) {
-                    objdata->unk4ED >>= 1;
-                }
+                fxTransform.yaw = (mathAtan2f(objdata->endPoints[0].x - objdata->endPoints[1].x, objdata->endPoints[0].z - objdata->endPoints[1].z) + M_180_DEGREES) & 0xFFFF & 0xFFFF;
+                fxTransform.transl.x -= self->srt.transl.x;
+                fxTransform.transl.y -= self->srt.transl.y;
+                fxTransform.transl.z -= self->srt.transl.z;
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &fxTransform, PARTFXFLAG_NONE, -1, NULL);
+                gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C5, &fxTransform, PARTFXFLAG_NONE, -1, NULL);
+            } else if (objdata->paddleSoundCooldown) {
+                objdata->paddleSoundCooldown >>= 1;
             }
         }
     }
     
     for (i = 0; i < 2; i++) {
         if (sp90[i] != 0) {
-            if (sp90[i] >= 0xB) {
-                if (self->srt.transl.y != objdata->unk240[i].y) {
-                    sp9C = (objdata->unk240[i].y - spC8[i]) / (objdata->unk240[i].y - self->srt.transl.y);
+            if (sp90[i] > 10) {
+                if (self->srt.transl.y != objdata->endPoints[i].y) {
+                    sp9C = (objdata->endPoints[i].y - spC8[i]) / (objdata->endPoints[i].y - self->srt.transl.y);
                 } else {
                     sp9C = 1.0f;
                 }
@@ -656,16 +688,16 @@ static void dll_417_func_E8C(Object* self) {
                 }
             }
             if (mathRnd(0, 5) == 0) {
-                spE0.transl.x = objdata->unk240[i].x;
-                spE0.scale = sqrtf(SQ(objdata->unk258[i].x) + SQ(objdata->unk258[i].z));
-                if (spE0.scale > 0.1f) {
-                    spE0.transl.y = self->srt.transl.y;
-                    spE0.transl.z = objdata->unk240[i].z;
-                    spE0.yaw = (mathAtan2f(objdata->unk258[i].x, objdata->unk258[i].z) + 0x8000) & 0xFFFF & 0xFFFF;
-                    spE0.transl.x -= self->srt.transl.x;
-                    spE0.transl.y -= self->srt.transl.y;
-                    spE0.transl.z -= self->srt.transl.z;
-                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &spE0, PARTFXFLAG_NONE, -1, NULL);
+                fxTransform.transl.x = objdata->endPoints[i].x;
+                fxTransform.scale = sqrtf(SQ(objdata->velocity[i].x) + SQ(objdata->velocity[i].z));
+                if (fxTransform.scale > 0.1f) {
+                    fxTransform.transl.y = self->srt.transl.y;
+                    fxTransform.transl.z = objdata->endPoints[i].z;
+                    fxTransform.yaw = (mathAtan2f(objdata->velocity[i].x, objdata->velocity[i].z) + M_180_DEGREES) & 0xFFFF & 0xFFFF;
+                    fxTransform.transl.x -= self->srt.transl.x;
+                    fxTransform.transl.y -= self->srt.transl.y;
+                    fxTransform.transl.z -= self->srt.transl.z;
+                    gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3C4, &fxTransform, PARTFXFLAG_NONE, -1, NULL);
                 }
             }
         }
@@ -673,82 +705,91 @@ static void dll_417_func_E8C(Object* self) {
 }
 
 // offset: 0x1E9C | func: 24
-static f32 dll_417_func_1E9C(Object* arg0, f32 arg1, f32 arg2, f32 arg3) {
-    TrackHeightResult** sp74;
-    TrackHeightResult* temp_v0_4;
-    f32 temp_fv0;
-    f32 sp68;
-    f32 temp_fv0_9;
-    f32 var_fa1;
-    f32 var_ft4;
-    f32 var_fv0_2;
-    f32 var_fv1;
-    s32 temp_v0;
-    s32 var_a1;
-    s32 var_a3;
-    s32 var_v1;
+static f32 DFlog_func_1E9C(Object* self, f32 y, f32 x, f32 z) {
+    TrackHeightResult** trackResults;
+    TrackHeightResult* closestResult;
+    f32 trackHeightDefaultY;
+    f32 waterY;
+    f32 yDiff;
+    f32 minYDist;
+    f32 minYDistWater;
+    f32 yDistance;
+    f32 yDist;
+    s32 count;
+    s32 minYDistWaterIdx;
+    s32 minYDistIdx;
+    s32 i;
 
-    temp_fv0 = 2.0f * arg1;
-    if (temp_fv0 >= 0.0f) {
-        sp68 = -temp_fv0;
+    trackHeightDefaultY = 2.0f * y;
+    if (trackHeightDefaultY >= 0.0f) {
+        waterY = -trackHeightDefaultY;
     } else {
-        sp68 = -(-temp_fv0);
+        waterY = -(-trackHeightDefaultY);
     }
-    temp_v0 = trackGetHeight(arg0, arg2, arg0->srt.transl.y, arg3, &sp74, 0, 0);
-    if (temp_v0 != 0) {
-        var_a3 = 0;
-        var_ft4 = 0.0f;
-        var_a1 = -1;
-        if (sp74[0]->y <= arg1) {
-            var_fa1 = arg1 - sp74[0]->y;
+
+    count = trackGetHeight(self, x, self->srt.transl.y, z, &trackResults, 0, 0);
+    if (count != 0) {
+        minYDistIdx = 0;
+        minYDistWater = 0.0f;
+        minYDistWaterIdx = -1;
+        if (y >= trackResults[0]->y) {
+            minYDist = y - trackResults[0]->y;
         } else {
-            var_fa1 = -(arg1 - sp74[0]->y);
+            minYDist = -(y - trackResults[0]->y);
         }
 
-        for (var_v1 = 0; var_v1 < temp_v0; var_v1++) {
-            if (sp74[var_v1]->unk14 == 0xE) {
-                if (sp74[var_v1]->y <= arg1) {
-                    var_fv1 = arg1 - sp74[var_v1]->y;
+        for (i = 0; i < count; i++) {
+            //Check closest water
+            if (trackResults[i]->unk14 == 14) { //water
+                if (trackResults[i]->y <= y) {
+                    yDist = y - trackResults[i]->y;
                 } else {
-                    var_fv1 = -(arg1 - sp74[var_v1]->y);
+                    yDist = -(y - trackResults[i]->y);
                 }
-                if ((var_fv1 < var_ft4) || (var_a1 == -1)) {
-                    var_ft4 = var_fv1;
-                    var_a1 = var_v1;
+                if (minYDistWater > yDist || minYDistWaterIdx == -1) {
+                    minYDistWater = yDist;
+                    minYDistWaterIdx = i;
                 }
             }
-            var_fv1 = arg1 - sp74[var_v1]->y;
-            if (sp74[var_v1]->y <= arg1) {
-                var_fv0_2 = var_fv1;
+
+            //Check closest terrain in general
+            yDist = y - trackResults[i]->y;
+            if (trackResults[i]->y <= y) {
+                yDistance = yDist;
             } else {
-                var_fv0_2 = -var_fv1;
+                yDistance = -yDist;
             }
-            if (var_fv0_2 < var_fa1) {
-                var_fa1 = var_fv0_2;
-                var_a3 = var_v1;
+            if (minYDist > yDistance) {
+                minYDist = yDistance;
+                minYDistIdx = i;
             }
         }
         
-        if (var_a1 != -1) {
-            sp68 = sp74[var_a1]->y;
+        if (minYDistWaterIdx != -1) {
+            waterY = trackResults[minYDistWaterIdx]->y;
         }
-        temp_v0_4 = sp74[var_a3];
-        temp_fv0_9 = arg1 - temp_v0_4->y;
-        if (sp68 < temp_v0_4->y) {
-            if (temp_fv0_9 >= 0.0f) {
-                var_fv1 = temp_fv0_9;
+
+        closestResult = trackResults[minYDistIdx];
+        yDiff = y - closestResult->y;
+
+        //Check if the closest water is under another surface
+        if (waterY < closestResult->y) {
+            if (yDiff >= 0.0f) {
+                yDist = yDiff;
             } else {
-                var_fv1 = -temp_fv0_9;
+                yDist = -yDiff;
             }
-            if ((var_fv1 < 10.0f) && (temp_v0_4->unk14 != 0xE)) {
-                sp68 = temp_v0_4->y + 4.0f;
+
+            if ((yDist < 10.0f) && (closestResult->unk14 != 0xE)) {
+                waterY = closestResult->y + 4.0f;
             }
         }
     } else {
-        sp68 = arg1;
+        waterY = y;
     }
-    return sp68;
+
+    return waterY;
 }
 
 // offset: 0x21E4 | func: 25 | export: 20
-void dll_417_func_21E4(UNK_TYPE_32 a0, UNK_TYPE_32 a1, UNK_TYPE_32 a2) { }
+void DFlog_vehicle_Func20(Object* self, s32 a1, s32 a2) { }

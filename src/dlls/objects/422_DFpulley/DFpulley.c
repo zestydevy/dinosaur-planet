@@ -96,7 +96,7 @@ void DFPulley_control(Object* self) {
                 
                 //Adjust pitch and volume
                 if (objData->soundHandle) {
-                    pitch = (cradleData->unk9C / 2.0f * 0.5f) + 0.5f;
+                    pitch = (cradleData->speed / 2.0f * 0.5f) + 0.5f;
 
                     if (pitch > 1.0f) {
                         audioValue = 1.0f;
@@ -105,7 +105,7 @@ void DFPulley_control(Object* self) {
                     }
                     dll_amSfx->SetPitch(objData->soundHandle, audioValue);
                     
-                    if (cradleData->unkB6 != 0) {
+                    if (cradleData->pauseTimer != 0) {
                         audioValue = 0.0f;
                     }
                     dll_amSfx->SetVol(objData->soundHandle, (((SOUND_RANGE - distance) / SOUND_RANGE) * MAX_VOLUME * audioValue));

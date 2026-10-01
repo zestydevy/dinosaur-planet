@@ -18,7 +18,7 @@ typedef struct {
 
 typedef enum {
     HitAnimator_Mode_Invert = 1,  //Remove the target when gamebit set (instead of enabling it when gamebit set)
-    HitAnimator_Mode_No_Fade = 2, //When targetting BLOCKS Shapes: show/hide immediately
+    HitAnimator_Mode_Update_Visibility = 2, //When targetting BLOCKS Shapes: show/hide the shapes as well as removing their collision
     HitAnimator_Mode_BLOCKS = 4,  //Targetting BLOCKS Shapes
     HitAnimator_Mode_HITS = 8     //Targetting HITS Lines
 } HitAnimator_Modes;
@@ -158,15 +158,15 @@ void HitAnimator_animateBlockShapes(Block* block, Object* self, HitAnimator_Data
     while (shapeIndex < block->shapeCount){
         shape = &shapes[shapeIndex];
         if (shape->animatorID == objSetup->blocksAnimatorID) {
-            //Show/hide (or fade in/out) Shapes
+            //Update collision, and optionally show/hide shapes
             if (objData->active) {
                 shape->flags &= ~RENDER_UNK800;
-                if (objSetup->mode & HitAnimator_Mode_No_Fade) {
+                if (objSetup->mode & HitAnimator_Mode_Update_Visibility) {
                     shape->flags &= ~RENDER_SHAPE_HIDE;
                 }
             } else {
                 shape->flags |= RENDER_UNK800;
-                if (objSetup->mode & HitAnimator_Mode_No_Fade) {
+                if (objSetup->mode & HitAnimator_Mode_Update_Visibility) {
                     shape->flags |= RENDER_SHAPE_HIDE;
                 }
             }

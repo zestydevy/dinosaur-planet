@@ -39,27 +39,27 @@
 
 /** 6 slots for the cups: stores the index of the cup at each slot. */
 /*0x30*/ static s16 dCupSlots[] = {0, 1, 2, 3, 4, 5};
-/*0x3C*/ static Texture *dTexture = NULL;
-/*0x40*/ static Object *dShrine = NULL;
+/*0x3C*/ static Texture* dTexture = NULL;
+/*0x40*/ static Object* dShrine = NULL;
 
 typedef enum {
     Shrine_MUSICTRACK_Whispering = 2,
     Shrine_MUSICTRACK_Corridor = 3
 } ECSHshrine_MusicTracks;
 
-static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data *aData, s8 a3);
-static void ECSHshrine_handle_messages(Object *self);
+static int ECSHshrine_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
+static void ECSHshrine_handleMessages(Object* self);
 
 // offset: 0x0 | ctor
-void ECSHshrine_ctor(void *dll) { }
+void ECSHshrine_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void ECSHshrine_dtor(void *dll) { }
+void ECSHshrine_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
-    ECSHshrine_Data *objdata;
-    DLL_IModgfx *modGfxDLL;
+void ECSHshrine_obj_Setup(Object* self, ECSHshrine_Setup* setup, s32 reset) {
+    ECSHshrine_Data* objdata;
+    DLL_IModgfx* modGfxDLL;
 
     objdata = self->data;
     self->srt.yaw = 0;
@@ -76,7 +76,7 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
     objdata->substate = Cup_STATE_Stopped;
     objdata->choiceWasCorrect = NO_CHOICE_YET;
     objdata->spiritCup = 0;
-    self->animCallback = ECSHshrine_anim_callback;
+    self->animCallback = ECSHshrine_animCallback;
     objInitMesgQueue(self, 4);
     mainSetBits(BIT_DB_Entered_Shrine_3, 1);
     mainSetBits(BIT_143, 0);
@@ -101,7 +101,7 @@ void ECSHshrine_setup(Object *self, ECSHshrine_Setup *setup, s32 arg2) {
 }
 
 // offset: 0x208 | func: 1 | export: 1
-void ECSHshrine_control(Object* self) {
+void ECSHshrine_obj_Control(Object* self) {
     ECSHshrine_Data* objdata = self->data;
     Object* player = objGetPlayer();
     f32 dz;
@@ -116,7 +116,7 @@ void ECSHshrine_control(Object* self) {
     s32 i;
 
     objectDistance = 1000.0f;
-    ECSHshrine_handle_messages(self);
+    ECSHshrine_handleMessages(self);
     mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
     //Update music volume (whispers)
@@ -465,17 +465,17 @@ void ECSHshrine_control(Object* self) {
 }
 
 // offset: 0x1320 | func: 2 | export: 2
-void ECSHshrine_update(Object *self) { }
+void ECSHshrine_obj_Update(Object* self) { }
 
 // offset: 0x132C | func: 3 | export: 3
-void ECSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
-    if (visibility != 0) {
+void ECSHshrine_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+    if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x1380 | func: 4 | export: 4
-void ECSHshrine_free(Object *self, s32 a1) {
+void ECSHshrine_obj_Free(Object* self, s32 onlySelf) {
     objFreeObjectType(self, OBJTYPE_13);
     dll_modgfx->Func5(self);
     gDLL_5_AMSEQ->vtbl->set_volume(3, 0);
@@ -483,24 +483,24 @@ void ECSHshrine_free(Object *self, s32 a1) {
 }
 
 // offset: 0x1430 | func: 5 | export: 5
-u32 ECSHshrine_get_model_flags(Object *self) {
+u32 ECSHshrine_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x1440 | func: 6 | export: 6
-u32 ECSHshrine_get_data_size(Object *self, u32 a1) {
+u32 ECSHshrine_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(ECSHshrine_Data);
 }
 
 // offset: 0x1454 | func: 7 | export: 7
-void ECSHshrine_func_1454(s16* arg0) {
+void ECSHshrine_Func_1454(s16* oValue) {
     ECSHshrine_Data* objdata;
-    Object *object;
+    Object* object;
 
     object = dShrine;
     if (object != NULL) {
         objdata = dShrine->data;
-        *arg0 = objdata->unk10;
+        *oValue = objdata->unk10;
     }
 }
 
@@ -508,7 +508,7 @@ void ECSHshrine_func_1454(s16* arg0) {
 /** 
   * Exports the x and z coords of a particular cup index.
   */
-void ECSHshrine_get_cup_coords(u8 cupIndex, f32* x, f32* z) {
+void ECSHshrine_GetCupCoords(u8 cupIndex, f32* x, f32* z) {
     f32* xzComponents = (f32*)dCupCoords;
     if (dShrine != NULL) {
         *x = xzComponents[(dCupSlots[cupIndex] * 2)];
@@ -520,8 +520,8 @@ void ECSHshrine_get_cup_coords(u8 cupIndex, f32* x, f32* z) {
 /** 
   * Exports the cup minigame's substate value, and the index of the cup currently holding the Krazoa Spirit.
   */
-void ECSHshrine_get_minigame_state(s32* cupSubstate, u8* cupWithSpirit) {
-    Object *object;
+void ECSHshrine_GetMinigameState(s32* cupSubstate, u8* cupWithSpirit) {
+    Object* object;
     ECSHshrine_Data* objdata;
 
     object = dShrine;
@@ -536,7 +536,7 @@ void ECSHshrine_get_minigame_state(s32* cupSubstate, u8* cupWithSpirit) {
 /** 
   * Sets the x and z coords of a particular cup.
   */
-void ECSHshrine_set_cup_coords(u8 cupIndex, f32 x, f32 z) {
+void ECSHshrine_SetCupCoords(u8 cupIndex, f32 x, f32 z) {
     f32* xzComponents;
     
     if (dShrine != NULL) {
@@ -550,9 +550,9 @@ void ECSHshrine_set_cup_coords(u8 cupIndex, f32 x, f32 z) {
 /*
  * Used when player touches a cup.
  */
-void ECSHshrine_choose_cup(u8 chosenCupIndex) {
-    Object *self;
-    ECSHshrine_Data *objdata;
+void ECSHshrine_ChooseCup(u8 chosenCupIndex) {
+    Object* self;
+    ECSHshrine_Data* objdata;
 
     self = dShrine;
     if (self != NULL) {
@@ -563,13 +563,13 @@ void ECSHshrine_choose_cup(u8 chosenCupIndex) {
 }
 
 // offset: 0x15E0 | func: 12
-static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data *aData, s8 a3) {
-    ECSHshrine_Data *objdata;
+static int ECSHshrine_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
+    ECSHshrine_Data* objdata;
     s32 i;
 
     objdata = self->data;
-    aData->unk7A = -1;
-    aData->unk62 = 0;
+    animData->unk7A = -1;
+    animData->unk62 = 0;
     if (objdata->musCorridorVolSpeed != 0) {
         objdata->musCorridorVol += objdata->musCorridorVolSpeed;
         if ((objdata->musCorridorVol <= 1) && (objdata->musCorridorVolSpeed <= 0)) {
@@ -582,9 +582,9 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
         gDLL_5_AMSEQ->vtbl->set_volume(3, objdata->musCorridorVol);
     }
 
-    for (i = 0; i < aData->messageCount; i++) {
-        if (aData->messages[i] != 0) {
-            switch (aData->messages[i]) {
+    for (i = 0; i < animData->messageCount; i++) {
+        if (animData->messages[i] != 0) {
+            switch (animData->messages[i]) {
             case 1:
                 envfxAction(self, self, 0xCB, 0);
                 break;
@@ -633,17 +633,17 @@ static int ECSHshrine_anim_callback(Object *self, Object *override, AnimObj_Data
                 break;
             }
         }
-        aData->messages[i] = 0;
+        animData->messages[i] = 0;
     }
     return 0;
 }
 
 // offset: 0x193C | func: 13
-static void ECSHshrine_handle_messages(Object *self) {
-    Object *sender;
+static void ECSHshrine_handleMessages(Object* self) {
+    Object* sender;
     u32 mesgID;
     void* mesgArg;
-    ECSHshrine_Data *objdata;
+    ECSHshrine_Data* objdata;
 
     objdata = self->data;
     mesgArg = NULL;

@@ -11,7 +11,7 @@ typedef struct {
     u8 unk1B;
     u8 lfxIgnorePlayerDistance;
     u16 lfxIdx;
-} DFIceFire_Setup;
+} DRIceFire_Setup;
 
 typedef struct {
     Object* lfxEmitter;
@@ -22,23 +22,23 @@ typedef struct {
     s16 timer;
     s8 flameHealth;
     s8 unk15;
-} DFIceFire_Data;
+} DRIceFire_Data;
 
 typedef enum {
-    DFIceFire_STATE_0_Burning,
-    DFIceFire_STATE_1_Frozen,
-    DFIceFire_STATE_2_Freezing
-} DFIceFire_States;
+    DRIceFire_STATE_0_Burning,
+    DRIceFire_STATE_1_Frozen,
+    DRIceFire_STATE_2_Freezing
+} DRIceFire_States;
 
 // offset: 0x0 | ctor
-void DFIceFire_ctor(void* dll) { }
+void DRIceFire_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DFIceFire_dtor(void* dll) { }
+void DRIceFire_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFIceFire_obj_Setup(Object* self, DFIceFire_Setup* objSetup, s32 reset) {
-    DFIceFire_Data* objData;
+void DRIceFire_obj_Setup(Object* self, DRIceFire_Setup* objSetup, s32 reset) {
+    DRIceFire_Data* objData;
     f32 scale;
 
     objData = self->data;
@@ -77,28 +77,28 @@ void DFIceFire_obj_Setup(Object* self, DFIceFire_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x238 | func: 1 | export: 1
-void DFIceFire_obj_Control(Object* self) {
+void DRIceFire_obj_Control(Object* self) {
     ObjSetup* setup;
     DLL_IModgfx* modGfxDLL;
     Object* player;
     SRT fxTransform;
     LFXEmitter_Setup* lfxSetup;
     s32 createLight;
-    DFIceFire_Setup* objSetup;
+    DRIceFire_Setup* objSetup;
     f32 playerDistance;
-    DFIceFire_Data* objData;
+    DRIceFire_Data* objData;
 
     objData = self->data;
     player = objGetPlayer();
-    objSetup = (DFIceFire_Setup*)self->setup;
+    objSetup = (DRIceFire_Setup*)self->setup;
 
     //Do nothing after being frozen over with the Ice Blast Spell
-    if (objData->state == DFIceFire_STATE_1_Frozen) {
+    if (objData->state == DRIceFire_STATE_1_Frozen) {
         return;
     }
     
     //Create firey modgfx
-    if ((objData->state == DFIceFire_STATE_0_Burning) && (self->unkE0 == FALSE)) {
+    if ((objData->state == DRIceFire_STATE_0_Burning) && (self->unkE0 == FALSE)) {
         fxTransform.transl.x = 0.0f;
         fxTransform.transl.y = 0.0f;
         fxTransform.transl.z = 0.0f;
@@ -127,7 +127,7 @@ void DFIceFire_obj_Control(Object* self) {
     playerDistance = vec3Distance(&player->globalPosition, &self->globalPosition);
     
     //Handle freezing state
-    if (objData->state == DFIceFire_STATE_2_Freezing) {
+    if (objData->state == DRIceFire_STATE_2_Freezing) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5A, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_5B, NULL, 0, -1, NULL);
         
@@ -139,7 +139,7 @@ void DFIceFire_obj_Control(Object* self) {
         //Become fully frozen after three seconds
         objData->timer -= gUpdateRate;
         if (objData->timer < 0) {
-            objData->state = DFIceFire_STATE_1_Frozen;
+            objData->state = DRIceFire_STATE_1_Frozen;
             dll_amSfx->Play(self, SOUND_80B_Crackling_Freezing, MAX_VOLUME, NULL, NULL, 0, NULL);
             
             //Free roaring flames sound loop
@@ -202,12 +202,12 @@ void DFIceFire_obj_Control(Object* self) {
 }
 
 // offset: 0x7D4 | func: 2 | export: 2
-void DFIceFire_obj_Update(Object* self) {
-    DFIceFire_Data* objData;
-    DFIceFire_Setup* objSetup;
+void DRIceFire_obj_Update(Object* self) {
+    DRIceFire_Data* objData;
+    DRIceFire_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DFIceFire_Setup*)self->setup;
+    objSetup = (DRIceFire_Setup*)self->setup;
     
     //Check for Ice Blast Spell damage
     if (func_80025F40(self, NULL, NULL, NULL) != Damage_Type_Ice_Blast) {
@@ -216,7 +216,7 @@ void DFIceFire_obj_Update(Object* self) {
 
     if (objData->flameHealth-- < 0) {
         mainSetBits(objSetup->gamebitFrozen, TRUE);
-        objData->state = DFIceFire_STATE_2_Freezing;
+        objData->state = DRIceFire_STATE_2_Freezing;
         objSetModel(self, 1);
         dll_modgfx->Func10(self);
         objData->timer = 180;
@@ -239,14 +239,14 @@ void DFIceFire_obj_Update(Object* self) {
 }
 
 // offset: 0xA40 | func: 3 | export: 3
-void DFIceFire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DRIceFire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0xA94 | func: 4 | export: 4
-void DFIceFire_obj_Free(Object* self, s32 onlySelf) {
+void DRIceFire_obj_Free(Object* self, s32 onlySelf) {
     dll_modgfx->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 
@@ -254,11 +254,11 @@ void DFIceFire_obj_Free(Object* self, s32 onlySelf) {
 }
 
 // offset: 0xB04 | func: 5 | export: 5
-u32 DFIceFire_obj_GetModelFlags(Object* self) {
+u32 DRIceFire_obj_GetModelFlags(Object* self) {
     return MODFLAGS_1;
 }
 
 // offset: 0xB14 | func: 6 | export: 6
-u32 DFIceFire_obj_GetDataSize(Object* self, u32 offsetAddr) {
-    return sizeof(DFIceFire_Data);
+u32 DRIceFire_obj_GetDataSize(Object* self, u32 offsetAddr) {
+    return sizeof(DRIceFire_Data);
 }

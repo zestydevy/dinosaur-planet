@@ -1,13 +1,14 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "sys/curves.h"
 #include "sys/main.h"
+#include "sys/math.h"
 #include "sys/memory.h"
 
 // TODO: figure out what this camera is/when it's used
 
 typedef struct {
     u8 _unk0[0x4 - 0x0];
-    f32 unk4;
+    f32 tValue;
 } UnkCam;
 
 /*0x0*/ static UnkCam* sState;
@@ -21,43 +22,48 @@ void camunk_dtor(void* dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void camunk_func_18(Cam* cam, s32 arg1, void* data) {
     sState = mmAlloc(sizeof(UnkCam), ALLOC_TAG_CAM_COL, NULL);
-    sState->unk4 = 0.0f;
+    sState->tValue = 0.0f;
 }
 
 // offset: 0x74 | func: 1 | export: 1
 void camunk_func_74(Cam* cam) {
-    Object* sp4C;
-    f32 sp48;
+    Object* player;
+    f32 cos;
     f32 pad_sp44;
     s32 pad_sp40;
-    f32 var_fv0;
-    f32 sp38;
-    f32 sp28[4];
-    s16 sp26;
+    f32 sin;
+    f32 easeVal;
+    f32 spline[4];
+    s16 angle;
 
-    sp28[0] = 0.0f;
-    sp28[2] = 0.0f;
-    sp28[3] = 0.0f;
-    sp28[1] = 1.0f;
-    sp38 = curvesHermite(sp28, sState->unk4, NULL);
-    sp4C = cam->player;
-    sp26 = (0x8000 - sp4C->srt.yaw);
-    sp26 += (s32) (14560.0f * sp38);
-    sp48 = mathCosfInterp(sp26);
-    var_fv0 = mathSinfInterp(sp26);
-    cam->srt.transl.x = sp4C->srt.transl.x + ((20.0f * sp48) - (-10.0f * var_fv0));
-    cam->srt.transl.z = sp4C->srt.transl.z + ((20.0f * var_fv0) + (-10.0f * sp48));
-    cam->srt.transl.y = (sp4C->srt.transl.y + 35.0f) - (sp38 * 15.0f);
-    cam->srt.pitch = 0x11C6 - (s32) (sp38 * 182.0f * 35.0f);
+    spline[0] = 0.0f;
+    spline[2] = 0.0f;
+    spline[3] = 0.0f;
+    spline[1] = 1.0f;
+    easeVal = curvesHermite(spline, sState->tValue, NULL);
+
+    player = cam->player;
+    angle = (M_180_DEGREES - player->srt.yaw);
+    angle += (s32) ((M_20_DEGREES * 4) * easeVal);
+    cos = mathCosfInterp(angle);
+    sin = mathSinfInterp(angle);
+
+    cam->srt.transl.x = player->srt.transl.x + ((20.0f * cos) - (-10.0f * sin));
+    cam->srt.transl.z = player->srt.transl.z + ((20.0f * sin) + (-10.0f * cos));
+    cam->srt.transl.y = (player->srt.transl.y + 35.0f) - (easeVal * 15.0f);
+    cam->srt.pitch = (5 * M_5_DEGREES) - (s32) (easeVal * 182.0f * 35.0f);
+
     // FAKE
     if (1){}
-    cam->srt.yaw = sp26 + 0x1FFE;
+
+    cam->srt.yaw = angle + (M_45_DEGREES - 2);
     cam->srt.roll = 0;
     cam->letterboxGoal = 0;
     cam->fov = 60.0f;
-    sState->unk4 += 0.005f * gUpdateRateF;
-    if (sState->unk4 > 1.0f) {
-        sState->unk4 = 1.0f;
+    
+    sState->tValue += 0.005f * gUpdateRateF;
+    if (sState->tValue > 1.0f) {
+        sState->tValue = 1.0f;
     }
 }
 

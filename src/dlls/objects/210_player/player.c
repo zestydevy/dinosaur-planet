@@ -3,7 +3,9 @@
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/85_attentioncam.h"
+#include "dlls/objects/255_ProjBall.h"
 #include "dlls/objects/418_DFriverflow.h"
+#include "dlls/objects/420_DFropenode.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
@@ -89,7 +91,7 @@ static void dll_210_func_1DAB0(Object *player);
 /* static */ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
 /* static */ void dll_210_func_1DB6C(Object* player, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* player, f32 updateRate);
-/* static */ void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2);
+/* static */ void dll_210_func_60A8(Object* player, Object* animObj, AnimObj_Data* animData);
 /* static */ void dll_210_func_1DE64(UNK_TYPE_32 *player);
 /* static */ void dll_210_func_1DE50(Object *player, UNK_TYPE_32 *arg1, s32 arg2);
 /* static */ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2);
@@ -358,8 +360,8 @@ void dll_210_add_magic(Object* player, s32 amount);
 /*0x1DC*/ static f32 _bss_1DC;
 /*0x1E0*/ static u8 _bss_1E0[0x18];
 /*0x1F8*/ static f32 _bss_1F8[2];
-/*0x200*/ static s16 _bss_200;
-/*0x202*/ static s16 _bss_202;
+/*0x200*/ static s16 _bss_200; //animIdx
+/*0x202*/ static s16 _bss_202; //prevAnimIdx?
 /*0x204*/ static f32 _bss_204;
 /*0x208*/ static f32 _bss_208;
 /*0x20C*/ static Camera *_bss_20C;
@@ -408,24 +410,24 @@ void dll_210_func_0(void) {
     _bss_58[26] = dll_210_func_10898;
     _bss_58[27] = dll_210_func_10A0C;
     _bss_58[28] = dll_210_func_10E94;
-    _bss_58[29] = dll_210_func_11C60;
-    _bss_58[30] = dll_210_func_1209C;
+    _bss_58[PLAYER_ASTATE_Wall_Clambering_Climb_Over] = dll_210_func_11C60;
+    _bss_58[PLAYER_ASTATE_Wall_Clambering_Drop_Down] = dll_210_func_1209C;
     _bss_58[31] = dll_210_func_125BC;
     _bss_58[32] = dll_210_func_12BF0;
     _bss_58[33] = dll_210_func_13524;
-    _bss_58[34] = dll_210_func_13D08;
+    _bss_58[PLAYER_ASTATE_Vehicle_Getting_On] = dll_210_func_13D08;
     _bss_58[35] = dll_210_func_1426C;
     _bss_58[36] = dll_210_func_142C4;
-    _bss_58[37] = dll_210_func_146D8;
+    _bss_58[PLAYER_ASTATE_Log_Riding] = dll_210_func_146D8;
     _bss_58[38] = dll_210_func_14BE8;
     _bss_58[39] = dll_210_func_151A0;
     _bss_58[40] = dll_210_func_15744;
     _bss_58[41] = dll_210_func_158E0;
     _bss_58[42] = dll_210_func_16220;
     _bss_58[43] = dll_210_func_164DC;
-    _bss_58[44] = dll_210_func_16648;
-    _bss_58[45] = dll_210_func_16EB4;
-    _bss_58[46] = dll_210_func_178A0;
+    _bss_58[PLAYER_ASTATE_Rope_Climb_Start] = dll_210_func_16648;
+    _bss_58[PLAYER_ASTATE_Rope_Climb] = dll_210_func_16EB4;
+    _bss_58[PLAYER_ASTATE_Rope_Climb_End] = dll_210_func_178A0;
     _bss_58[47] = dll_210_func_178EC;
     _bss_58[48] = dll_210_func_17A88;
     _bss_58[49] = dll_210_func_17B5C;
@@ -806,7 +808,7 @@ void dll_210_func_11A0(Object* player, Player_Data* arg1, f32 arg2) {
             func_8002635C(player, NULL, Damage_Type_1, 0, 0);
             break;
         case 28:
-            if ((mainGetBits(BIT_21) == 0) && (arg1->unk87C != 0x1D7)) {
+            if ((mainGetBits(BIT_DF_Toxic_Cave_Destroyed_Gas_Vent) == FALSE) && (arg1->unk87C != BIT_Spell_Forcefield)) {
                 arg1->unk88E = arg1->unk88E + arg2;
                 if (arg1->unk88E >= 0x79) {
                     arg1->unk88E -= 0x78;
@@ -1114,11 +1116,11 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     s32 hitDamage;
     s32 aState;
     Object *hitBy;
-    DLL_IModgfx* sp70 = NULL;
-    s32 sp60[4] = { 0x06, 0x69, 0x69, 0xff };
-    SRT sp48;
-    ModelInstance *new_var3;
-    MtxF *temp;
+    DLL_IModgfx* modGfxDLL = NULL;
+    s32 fxColour[4] = { 0x06, 0x69, 0x69, 0xff };
+    SRT fxTransform;
+    ModelInstance *modelInstance;
+    MtxF *mtx;
 
     hitType = func_80025F40(self, &hitBy, &hitSphereID, &hitDamage);
     if (func_80026724(self) == 0) {
@@ -1150,13 +1152,14 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     fsa->lastHitType = hitType;
     self->curModAnimIdLayered = -1;
     aState = -1;
+
     switch (hitType) {
     // these cases might be incorrect
     case Damage_Type_2:
-    case Damage_Type_Fishing_Net: // 0x40
-    case Damage_Type_13: // 0x48
-    case Damage_Type_16: // 0x54
-    case Damage_Type_Flame_Command: // 0x64
+    case Damage_Type_Fishing_Net:
+    case Damage_Type_13:
+    case Damage_Type_16:
+    case Damage_Type_Flame_Command:
         break;
     case Damage_Type_7:
     case Damage_Type_8:
@@ -1219,14 +1222,14 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
                 break;
         }
         break;
-    case Damage_Type_3: // 0x8
-    case Damage_Type_6: // 0x14
-    case Damage_Type_D: // 0x30
-    case Damage_Type_E: // 0x34
-    case Damage_Type_Projectile: // 0x38
-    case Damage_Type_10: // 0x3C
-    case Damage_Type_Bullet: // 0x44
-    case Damage_Type_Ice_Blast: // 0x60
+    case Damage_Type_3:
+    case Damage_Type_6:
+    case Damage_Type_D:
+    case Damage_Type_E:
+    case Damage_Type_Projectile:
+    case Damage_Type_10:
+    case Damage_Type_Bullet:
+    case Damage_Type_Ice_Blast:
     default:
         aState = PLAYER_ASTATE_Hurt_Stagger;
         break;
@@ -1234,27 +1237,31 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
     
     if (objData->flags & 0x800) {
         hitDamage = 0;
+
         dll_amSfx->Play(self, SOUND_25B_Magic_Attack_Deflected, MAX_VOLUME, NULL, NULL, 0, NULL);
-        new_var3 = self->modelInsts[self->modelInstIdx];
-        temp = (MtxF *)new_var3->unk24;
-        sp48.transl.x = temp->m[hitSphereID][1] + gWorldX;
-        sp48.transl.y = temp->m[hitSphereID][2];
-        sp48.transl.z = temp->m[hitSphereID][3] + gWorldZ;
-        gDLL_17_partfx->vtbl->spawn(self, 0x328, &sp48, 0x200001, -1, NULL);
-        sp48.transl.x -= self->globalPosition.x;
-        sp48.transl.y -= self->globalPosition.y;
-        sp48.transl.z -= self->globalPosition.z;
-        sp70 = dllLoad(0x1002U, 1U);
-        sp60[1] += mathRnd(0, 0x9B);
-        sp60[2] += mathRnd(0, 0x9B);
-        sp48.yaw = 0;
-        sp48.pitch = 0;
-        sp48.roll = 0;
-        sp48.scale = 1.0f;
-        if ((s32)&sp70) {} // @fake
-        sp70->vtbl->Func0(self, 0, &sp48, 1, -1, &sp60);
-        if (sp70 != NULL) {
-            dllFree(sp70);
+
+        modelInstance = self->modelInsts[self->modelInstIdx];
+        mtx = (MtxF *)modelInstance->unk24;
+        fxTransform.transl.x = mtx->m[hitSphereID][1] + gWorldX;
+        fxTransform.transl.y = mtx->m[hitSphereID][2];
+        fxTransform.transl.z = mtx->m[hitSphereID][3] + gWorldZ;
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_328, &fxTransform, PARTFXFLAG_200000 | PARTFXFLAG_1, -1, NULL);
+
+        fxTransform.transl.x -= self->globalPosition.x;
+        fxTransform.transl.y -= self->globalPosition.y;
+        fxTransform.transl.z -= self->globalPosition.z;
+        modGfxDLL = dllLoad(DLL_ID_106, 1);
+        fxColour[1] += mathRnd(0, 155);
+        fxColour[2] += mathRnd(0, 155);
+        fxTransform.yaw = 0;
+        fxTransform.pitch = 0;
+        fxTransform.roll = 0;
+        fxTransform.scale = 1.0f;
+        if ((s32)&modGfxDLL) {} // @fake
+        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 1, -1, &fxColour);
+
+        if (modGfxDLL != NULL) {
+            dllFree(modGfxDLL);
         }
     } else if (hitDamage != 0) {
         dll_amSfx->Play(self, objData->unk3B8[mathRnd(19, 21)], MAX_VOLUME, NULL, NULL, 0, NULL);
@@ -1267,7 +1274,9 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
             gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, aState);
         }
     }
+
     dll_210_add_health(self, -hitDamage);
+    
     if (objData->stats->health <= 0) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, PLAYER_ASTATE_Dead);
     }
@@ -2316,17 +2325,16 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
 #endif
 
 // offset: 0x60A8 | func: 28
-void dll_210_func_60A8(Object* player, s32 arg1, s32 arg2) {
-    Player_Data* sp24;
+void dll_210_func_60A8(Object* player, Object* animObj, AnimObj_Data* animData) {
+    Player_Data* objData = player->data;
 
-    sp24 = player->data;
     player->stateFlags &= ~OBJSTATE_IN_SEQ;
     func_8002674C(player);
     player->velocity.y = 0.0f;
-    dll_210_func_7260(player, sp24);
-    sp24->unk8B7 = 2;
-    sp24->unk834 = 0.0f;
-    gDLL_22_Subtitles->vtbl->func_2248(0U);
+    dll_210_func_7260(player, objData);
+    objData->unk8B7 = 2;
+    objData->unk834 = 0.0f;
+    gDLL_22_Subtitles->vtbl->func_2248(0);
     if (player->modelInstIdx == 1) {
         objSetModel(player, 0);
     }
@@ -3506,128 +3514,120 @@ static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle
 }
 
 // offset: 0x90A0 | func: 48
-#ifndef NON_MATCHING
-void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2);
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_90A0.s")
-#else
-// https://decomp.me/scratch/noRyf
-void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    f32 pad;
-    f32 temp2;
-    f32 temp3;
-    f32 temp4;
-    Camera* mainCam;
-    ObjSetup* objsetup;
-    Object* temp_a0;
-    Object* temp_v0_2;
-    Object* temp_v1;
-    Object* var_s3;
-    f32 temp_fs0;
-    f32 temp_fs2;
-    Vec3f sp104;
-    f32 temp_fs1;
-    MtxF spC0;
-    f32 temp_fv0;
-    f32 temp_fv0_2;
-    f32 temp_fv1;
-    f32 temp;
-    s32 var_s4;
-    Player_Data* temp_fp;
-    SRT sp90;
-
-    var_s3 = NULL;
-    var_s4 = 1;
-    temp_fp = player->data;
-    mainCam = camGetMain();
-    dll_amSfx->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
-    while (var_s4) {
-        objsetup = objAllocSetup(0x24, OBJ_projball);
-        objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
-        objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;
-        objsetup->loadDistance = 0xFF;
-        objsetup->fadeDistance = 0xFF;
+void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
+    f32 ratio;
+    f32 fovAngle;
+    f32 factorX;
+    f32 factorY;
+    Camera* cam;
+    ProjBall_Setup *objsetup;
+    Object *weapon;
+    Object *projectile;
+    Object *target;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    Vec3f velocity;
+    MtxF* viewMtx;
+    MtxF projMtx;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 divisor;
+    s32 count;
+    Player_Data *objData;
+    SRT projSRT;
+    
+    target = NULL;
+    count = 1;
+    objData = player->data;
+    cam = camGetMain();
+    gDLL_6_AMSFX->vtbl->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
+    
+    while (count) {
+        objsetup = (ProjBall_Setup*) objAllocSetup(sizeof(ProjBall_Setup), OBJ_projball);
+        objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+        objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
+        objsetup->base.loadDistance = 0xFF;
+        objsetup->base.fadeDistance = 0xFF;
         if (fsa->target != NULL) {
-            objsetup->x = player->linkedObject->srt.transl.x;
-            objsetup->y = player->linkedObject->srt.transl.y;
-            objsetup->z = player->linkedObject->srt.transl.z;
+            objsetup->base.x = player->linkedObject->srt.transl.x;
+            objsetup->base.y = player->linkedObject->srt.transl.y;
+            objsetup->base.z = player->linkedObject->srt.transl.z;
         } else {
-            objsetup->x = mainCam->srt.transl.x;
-            objsetup->y = mainCam->srt.transl.y;
-            objsetup->z = mainCam->srt.transl.z;
+            objsetup->base.x = cam->srt.transl.x;
+            objsetup->base.y = cam->srt.transl.y;
+            objsetup->base.z = cam->srt.transl.z;
         }
-        temp_a0 = player->linkedObject;
-        ((s8*)objsetup)[0x19] = ((DLL_Unknown*)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-        temp_v0_2 = objSetupObject(objsetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
-        if (temp_v0_2 != NULL) {
-            temp_v0_2->srt.flags |= OBJFLAG_OWNS_SETUP;
-            temp_v1 = fsa->target;
-            if (temp_v1 != NULL) {
-                temp_a0 = player->linkedObject;
-                temp2 = temp_v1->srt.transl.x - temp_a0->srt.transl.x;
-                temp_fs0 = temp_v1->srt.transl.y - temp_a0->srt.transl.y;
-                temp_fv1 = temp_v1->srt.transl.z - temp_a0->srt.transl.z;
-                sp90.transl.x = 0.0f;
-                sp90.transl.y = 0.0f;
-                sp90.transl.z = 0.0f;
-                sp90.scale = 1.0f;
-                // @fake
-                if (var_s3) {}
-                sp90.yaw = player->srt.yaw;
-                var_s3 = temp_v1;
-                sp90.pitch = mathAtan2f(temp_fs0, sqrtf(SQ(temp2) + SQ(temp_fv1)));
-                sp90.roll = 0;
+        
+        weapon = player->linkedObject;
+        objsetup->unk19 = ((DLL_IWeapon*) weapon->dll)->vtbl->func16(weapon);
+        
+        projectile = objSetupObject(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+        if (projectile != NULL) {
+            projectile->srt.flags |= OBJFLAG_OWNS_SETUP;
+            if (fsa->target != NULL) {
+                target = fsa->target;
+                weapon = player->linkedObject;
+                dx = target->srt.transl.x - weapon->srt.transl.x;
+                dy = target->srt.transl.y - weapon->srt.transl.y;
+                dz = target->srt.transl.z - weapon->srt.transl.z;
+                projSRT.transl.x = 0.0f;
+                projSRT.transl.y = 0.0f;
+                projSRT.transl.z = 0.0f;
+                projSRT.scale = 1.0f;
+                projSRT.yaw = player->srt.yaw;
+                projSRT.pitch = mathAtan2f(dy, sqrtf(SQ(dx) + SQ(dz)));
+                projSRT.roll = 0;
                 if (player->parent != NULL) {
-                    sp90.yaw += player->parent->srt.yaw;
+                    projSRT.yaw += player->parent->srt.yaw;
                 }
-                mathYprXyzMtx(&spC0, &sp90);
-                mathMtxXFMF(&spC0, 0.0f, 0.0f, -5.0f, &temp_v0_2->velocity.x, &temp_v0_2->velocity.y, &temp_v0_2->velocity.z);
-                temp_v0_2->globalPosition.x = temp_v0_2->srt.transl.x;
-                temp_v0_2->globalPosition.y = temp_v0_2->srt.transl.y;
-                temp_v0_2->globalPosition.z = temp_v0_2->srt.transl.z;
-                temp_v0_2->srt.yaw = player->srt.yaw;
-                temp_v0_2->srt.pitch = 0;
+                mathYprXyzMtx(&projMtx, &projSRT);
+                mathMtxXFMF(&projMtx, 0.0f, 0.0f, -5.0f, &projectile->velocity.x, &projectile->velocity.y, &projectile->velocity.z);
+                projectile->globalPosition.x = projectile->srt.transl.x;
+                projectile->globalPosition.y = projectile->srt.transl.y;
+                projectile->globalPosition.z = projectile->srt.transl.z;
+                projectile->srt.yaw = player->srt.yaw;
+                projectile->srt.pitch = 0;
             } else {
-                temp_v0_2->srt.yaw = mainCam->srt.yaw;
-                temp_fs1 = camGetFOV() * 91.022f;
-                temp_fv0 = mathSinfInterp(temp_fs1);
-                temp_fv0 /= mathCosfInterp(temp_fs1);
-                temp_fs1 = (100.0f * temp_fv0);
-                temp3 = -(((temp_fp->aimX - 0xA0) / 160.0f) * 1.333333f);
-                temp_fs1 *= temp3;
-                temp_fs2 = (100.0f * temp_fv0);
-                temp_fs2 *= ((temp_fp->aimY - 0x78) / 120.0f);
-                temp = 100.0f;
-                temp_fv0 = sqrtf(SQ(temp_fs1) + SQ(temp_fs2) + SQ(temp));
-                sp104.x = temp_fs1 / temp_fv0;
-                sp104.y = temp_fs2 / temp_fv0;
-                sp104.z = temp / temp_fv0;
-                mathMtxFastXFMF(camGetViewMtx2(), &sp104, &sp104);
-                temp_v0_2->velocity.x = sp104.x * -5.0f;
-                temp_v0_2->velocity.y = sp104.y * -5.0f;
-                temp_v0_2->velocity.z = sp104.z * -5.0f;
-
-                temp_fv0_2 = mainCam->srt.transl.x;
-                temp_v0_2->globalPosition.x = temp_fv0_2;
-                temp_v0_2->srt.transl.x = temp_fv0_2;
-
-                temp_fv0_2 = mainCam->srt.transl.y;
-                temp_v0_2->globalPosition.y = temp_fv0_2;
-                temp_v0_2->srt.transl.y = temp_fv0_2;
-
-                temp_fv0_2 = mainCam->srt.transl.z;
-                temp_v0_2->globalPosition.z = temp_fv0_2;
-                temp_v0_2->srt.transl.z = temp_fv0_2;
-
-                temp_v0_2->srt.pitch = 0;
+                projectile->srt.yaw = cam->srt.yaw;
+                fovAngle = camGetFOV() * 91.022f;
+                ratio = mathSinfInterp(fovAngle);
+                ratio /= mathCosfInterp(fovAngle);
+                
+                factorX = ((objData->aimX - 160) / 160.0f) * (1.333333f);
+                factorY = (objData->aimY - 120) / 120.0f;
+                
+                x = (100.0f * ratio) * -factorX;
+                y = (100.0f * ratio) * factorY;
+                z = 100.0f;
+                
+                divisor = sqrtf(SQ(x) + SQ(y) + SQ(z));
+                
+                velocity.x = x / divisor;
+                velocity.y = y / divisor;
+                velocity.z = z / divisor;
+                
+                viewMtx = camGetViewMtx2();
+                mathMtxFastXFMF(viewMtx, &velocity, &velocity);
+                
+                projectile->velocity.x = velocity.x * -5.0f;
+                projectile->velocity.y = velocity.y * -5.0f;
+                projectile->velocity.z = velocity.z * -5.0f;
+                
+                projectile->srt.transl.x = projectile->globalPosition.x = cam->srt.transl.x;
+                projectile->srt.transl.y = projectile->globalPosition.y = cam->srt.transl.y;
+                projectile->srt.transl.z = projectile->globalPosition.z = cam->srt.transl.z;
+                
+                projectile->srt.pitch = 0;
             }
-            temp_v0_2->unkDC = 0xBE;
-            temp_v0_2->unkE0 = (s32) var_s3;
+            projectile->unkDC = 190;
+            projectile->unkE0 = (s32) target;
         }
-        var_s4--;
+        
+        count--;
     }
 }
-
-#endif
 
 // offset: 0x955C | func: 49
 void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
@@ -3879,7 +3879,7 @@ void dll_210_func_A058(Object* player) {
     objAnimSet(player, _data_564[3], 0.0f, 0U);
     mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[2] = sp78.y;
-    *_bss_1F8 = sp78.z;
+    _bss_1F8[0] = sp78.z;
     objAnimSet(player, _data_564[9], 0.0f, 0U);
     mod_func_8001A3FC(temp_s4, 0U, 0, 0.0f, player->srt.scale, &sp78, &sp70);
     _bss_1B0[3] = sp78.y;
@@ -5244,9 +5244,9 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                 player->velocity.f[1] = 0.0f;
             }
 
-            sp48.f[0] = *_bss_1F8 * objdata->unk490.unk1C.x;
-            sp48.f[1] = *_bss_1F8 * objdata->unk490.unk1C.y;
-            sp48.f[2] = *_bss_1F8 * objdata->unk490.unk1C.z;
+            sp48.f[0] = _bss_1F8[0] * objdata->unk490.unk1C.x;
+            sp48.f[1] = _bss_1F8[0] * objdata->unk490.unk1C.y;
+            sp48.f[2] = _bss_1F8[0] * objdata->unk490.unk1C.z;
             sp70.f[0] = sp48.f[0] + objdata->unk490.unk2C.f[0];
             sp70.f[1] = sp48.f[1] + objdata->unk490.unk2C.f[1];
             sp70.f[2] = sp48.f[2] + objdata->unk490.unk2C.f[2];
@@ -5306,7 +5306,7 @@ s32 dll_210_func_E14C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
             _bss_200 = 5;
             sp6C = 0.014f;
             dll_amSfx->Play(player, objdata->unk3B8[mathRnd(10, 11)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        } else if ((fsa->yAnalogInput < -5.0f) && (objdata->unk490.unk46 != 0x11)) {
+        } else if ((fsa->yAnalogInput < -5.0f) && (objdata->unk490.unk46 != 17)) {
             return 0x15;
         }
         gDLL_2_Camera->vtbl->reposition_player(objdata->unk490.unkC, objdata->unk490.unk10, objdata->unk490.unk14);
@@ -6429,115 +6429,131 @@ s32 dll_210_func_10E94(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x11C60 | func: 88
-s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    Player_Data* temp_s1;
-    Vec3f sp60;
-    f32 sp5C;
-    f32 sp58;
-    f32 sp54;
-    f32 sp50;
-    s32 temp_v0;
-    s16 pad_sp4E;
+s32 dll_210_func_11C60(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
+    Player_Data* objData;
+    Vec3f jointCoords;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 tempY;
+    s32 nextState;
+    s16 pad;
     s16 sp48;
-    u32 sp44;
+    u32 soundHandle;
 
-    temp_s1 = player->data;
+    objData = player->data;
+
     if (fsa->unk308 & 0x80) {
-        sp44 = dll_amSfx->Play(player, _data_4D8[temp_s1->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-        dll_amSfx->SetPitch(sp44, ((f32) mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
+        soundHandle = dll_amSfx->Play(player, _data_4D8[objData->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(soundHandle, (mathRnd(-100, 100) * 0.001f) + 1.0f);
     }
-    if (fsa->enteredAnimState != 0) {
+
+    if (fsa->enteredAnimState) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
-        dll_amSfx->Play(player, temp_s1->unk3B8[mathRnd(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
-        objAnimSet(player, _data_5DC[1], 0.0f, 1U);
+        dll_amSfx->Play(player, objData->unk3B8[mathRnd(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        objAnimSet(player, _data_5DC[1], 0.0f, 1);
         objAnimSetBlend(player, _data_5E0[0], 0);
         fsa->animTickDelta = 0.012f;
-        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
-        temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
-        temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
-        player->srt.transl.y = temp_s1->unk430.unk4;
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0, 0, 1.0f, player->srt.scale, &jointCoords, &sp48);
+        objData->unk430.unk18.y = jointCoords.f[2] * objData->unk430.unk24.x;
+        objData->unk430.unk18.z = jointCoords.f[2] * objData->unk430.unk24.z;
+        player->srt.transl.y = objData->unk430.unk4;
         fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Climb_Over;
         fsa->animExitAction = dll_210_func_12514;
     }
+
     {
-        s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
-        if (temp_v0) { return temp_v0; }
+        s32 nextState = dll_210_func_EFB4(player, fsa, updateRate);
+        if (nextState) { return nextState; }
     }
+
     player->velocity.y = 0.0f;
-    objAnim_func_80024DD0(player, 0, 1, temp_s1->unk430.unk5C);
+
+    objAnim_func_80024DD0(player, 0, 1, objData->unk430.unk5C);
     if (player->animProgress > 0.99f) {
-        player->globalPosition.x = temp_s1->unk7EC.x;
-        player->globalPosition.z = temp_s1->unk7EC.z;
-        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
-        dll_210_func_7260(player, temp_s1);
-        objAnimSet(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
-        return -1;
+        player->globalPosition.x = objData->unk7EC.x;
+        player->globalPosition.z = objData->unk7EC.z;
+        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, &player->srt.transl.x, &tempY, &player->srt.transl.z, player->parent);
+        dll_210_func_7260(player, objData);
+        objAnimSet(player, objData->modAnims[0], 0.0f, 1);
+        return FSA_NEXTSTATE_ASYNC(PLAYER_ASTATE_Standing);
     }
-    sp5C = player->srt.transl.x + (temp_s1->unk430.unk18.y * player->animProgress);
-    sp58 = player->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - player->animProgress));
-    sp54 = player->srt.transl.z + (temp_s1->unk430.unk18.z * player->animProgress);
-    gDLL_2_Camera->vtbl->reposition_player(sp5C, sp58, sp54);
-    shadowsSetCustomObjPos(player, sp5C, sp58, sp54);
-    dll_210_func_7260(player, temp_s1);
+
+    x = player->srt.transl.x + (objData->unk430.unk18.y * player->animProgress);
+    y = player->srt.transl.y - (objData->unk430.unk18.x * (1.0f - player->animProgress));
+    z = player->srt.transl.z + (objData->unk430.unk18.z * player->animProgress);
+    gDLL_2_Camera->vtbl->reposition_player(x, y, z);
+    shadowsSetCustomObjPos(player, x, y, z);
+    dll_210_func_7260(player, objData);
+
     return 0;
 }
 
 // offset: 0x1209C | func: 89
-s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    f32 temp_fv0;
-    Vec3f sp60;
-    f32 sp5C;
-    f32 sp58;
-    f32 sp54;
-    f32 sp50;
-    Player_Data* temp_s1;
-    s16 pad_sp4A;
+s32 dll_210_func_1209C(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
+    Player_Data* objData;
+    Vec3f jointCoords;
+    f32 x;
+    f32 y;
+    f32 z;
+    f32 tempY;
+    s32 nextState;
+    s16 pad;
     s16 sp48;
-    u32 sp44;
+    u32 soundHandle;
 
-    temp_s1 = player->data;
+    objData = player->data;
+
     if (!(fsa->unk4.unk25C & 0x10) && (fsa->unk4.underwaterDist > 5.0f)) {
-        return 0x20;
+        return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_31);
     }
+
     if (fsa->unk308 & 1) {
-        dll_amSfx->Play(player, temp_s1->unk3B8[mathRnd(0xA, 0xE)], MAX_VOLUME, NULL, NULL, 0, NULL);
+        dll_amSfx->Play(player, objData->unk3B8[mathRnd(10, 14)], MAX_VOLUME, NULL, NULL, 0, NULL);
     }
+
     if (fsa->unk308 & 0x80) {
-        sp44 = dll_amSfx->Play(player, _data_4D8[temp_s1->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
-        dll_amSfx->SetPitch(sp44, ((f32) mathRnd(-0x64, 0x64) * 0.001f) + 1.0f);
+        soundHandle = dll_amSfx->Play(player, _data_4D8[objData->unk430.unk2], mathRnd(0x5A, MAX_VOLUME), NULL, NULL, 0, NULL);
+        dll_amSfx->SetPitch(soundHandle, (mathRnd(-100, 100) * 0.001f) + 1.0f);
     }
-    if (fsa->enteredAnimState != 0) {
+
+    if (fsa->enteredAnimState) {
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAMNORMAL, FALSE, 1, 0, NULL, 60, Cam_Ease_All);
-        objAnimSet(player, _data_5E0[1], 0.0f, 1U);
+        objAnimSet(player, _data_5E0[1], 0.0f, 1);
         objAnimSetBlend(player, _data_5E4[0], 0);
         fsa->animTickDelta = 0.015f;
-        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0U, 0, 1.0f, player->srt.scale, &sp60, &sp48);
-        temp_s1->unk430.unk18.y = sp60.f[2] * temp_s1->unk430.unk24.x;
-        temp_s1->unk430.unk18.z = sp60.f[2] * temp_s1->unk430.unk24.z;
-        player->srt.transl.y = temp_s1->unk430.unk8;
+        mod_func_8001A3FC(player->modelInsts[player->modelInstIdx], 0, 0, 1.0f, player->srt.scale, &jointCoords, &sp48);
+        objData->unk430.unk18.y = jointCoords.f[2] * objData->unk430.unk24.x;
+        objData->unk430.unk18.z = jointCoords.f[2] * objData->unk430.unk24.z;
+        player->srt.transl.y = objData->unk430.unk8;
         fsa->unk270 = PLAYER_ASTATE_Wall_Clambering_Drop_Down;
         fsa->animExitAction = dll_210_func_12514;
     }
+
     {
-        s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
-        if (temp_v0 != 0) { return temp_v0; }
+        s32 nextState = dll_210_func_EFB4(player, fsa, updateRate);
+        if (nextState != 0) { return nextState; }
     }
+
     player->velocity.y = 0.0f;
-    objAnim_func_80024DD0(player, 0, 1, temp_s1->unk430.unk5C);
+
+    objAnim_func_80024DD0(player, 0, 1, objData->unk430.unk5C);
     if (player->animProgress > 0.99f) {
-        player->globalPosition.x = temp_s1->unk7EC.x;
-        player->globalPosition.z = temp_s1->unk7EC.z;
-        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, player->srt.transl.f, &sp50, &player->srt.transl.z, player->parent);
-        dll_210_func_7260(player, temp_s1);
-        objAnimSet(player, (s32) *temp_s1->modAnims, 0.0f, 1U);
-        return -1;
+        player->globalPosition.x = objData->unk7EC.x;
+        player->globalPosition.z = objData->unk7EC.z;
+        camInverseTransformPointByObject(player->globalPosition.x, 0.0f, player->globalPosition.z, &player->srt.transl.x, &tempY, &player->srt.transl.z, player->parent);
+        dll_210_func_7260(player, objData);
+        objAnimSet(player, objData->modAnims[0], 0.0f, 1);
+        return FSA_NEXTSTATE_ASYNC(PLAYER_ASTATE_Standing);
     }
-    sp5C = player->srt.transl.x + (temp_s1->unk430.unk18.y * player->animProgress);
-    sp58 = player->srt.transl.y - (temp_s1->unk430.unk18.x * (1.0f - player->animProgress));
-    sp54 = player->srt.transl.z + (temp_s1->unk430.unk18.z * player->animProgress);
-    gDLL_2_Camera->vtbl->reposition_player(sp5C, sp58, sp54);
-    shadowsSetCustomObjPos(player, sp5C, sp58, sp54);
-    dll_210_func_7260(player, temp_s1);
+
+    x = player->srt.transl.x + (objData->unk430.unk18.y * player->animProgress);
+    y = player->srt.transl.y - (objData->unk430.unk18.x * (1.0f - player->animProgress));
+    z = player->srt.transl.z + (objData->unk430.unk18.z * player->animProgress);
+    gDLL_2_Camera->vtbl->reposition_player(x, y, z);
+    shadowsSetCustomObjPos(player, x, y, z);
+    dll_210_func_7260(player, objData);
+
     return 0;
 }
 
@@ -6914,37 +6930,46 @@ s32 dll_210_func_13524(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x13D08 | func: 95
-s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+/**
+  * PLAYER_ASTATE_Vehicle_Getting_On
+  */
+s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     s32 pad;
     s32 mountSide;
-    ObjectShadow* temp_v0_3;
+    ObjectShadow* shadow;
     Object* vehicle;
     Vec3f sp74;
     Vec3f sp68;
-    f32 sp64;
-    f32 sp60;
-    f32 sp5C;
-    Vec3f sp50;
+    f32 goalZ;
+    f32 goalY;
+    f32 goalX;
+    Vec3f pos;
     Player_Data* objdata;
-    s8 v0;
+    s8 animIdx;
     s16 sp48;
-    ModelInstance* sp44;
+    ModelInstance* modelInstance;
 
     objdata = player->data;
     vehicle = objdata->vehicle;
+
     {
-        s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
-        if (temp_v0 != 0) { return temp_v0; }
+        s32 nextState = dll_210_func_EFB4(player, fsa, updateRate);
+        if (nextState != 0) { return nextState; }
     }
+
     // @fake
     if (((!fsa) && (!fsa)) && (!fsa)) {}
+
     if (fsa->enteredAnimState != 0) {
         fsa->unk270 = PLAYER_ASTATE_Vehicle_Getting_On;
     }
+
     func_800267A4(player);
-    player->velocity.f[1] = 0.0f;
+    player->velocity.y = 0.0f;
+
     if (fsa->enteredAnimState != 0) {
         objdata->unk8A9 = 1;
+
         switch (vehicle->id) {
         case OBJ_IMSnowBike:
         case OBJ_CRSnowBike:
@@ -6959,65 +6984,73 @@ s32 dll_210_func_13D08(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         case OBJ_BWLog:
             objdata->unk76C = _data_188;
             objdata->unk770 = 3;
-            gDLL_2_Camera->vtbl->change_mode(0, 0x29);
+            gDLL_2_Camera->vtbl->change_mode(0, 41);
             break;
         case OBJ_DR_EarthWarrior:
             objdata->unk76C = _data_170;
             objdata->unk770 = 4;
-            gDLL_2_Camera->vtbl->change_mode(0, 0x69);
+            gDLL_2_Camera->vtbl->change_mode(0, 105);
             break;
         default:
             objdata->unk76C = _data_170;
             objdata->unk770 = 4;
-            gDLL_2_Camera->vtbl->change_mode(0, 0x1D);
+            gDLL_2_Camera->vtbl->change_mode(0, 29);
             break;
         }
+
         mountSide = dll_vehicle(vehicle)->GetMountSide(vehicle);
         dll_vehicle(vehicle)->SetMountState(vehicle, VEHICLE_Mounting);
         switch (mountSide) {
             case 1:
-                v0 = 6;
+                animIdx = 6;
                 break;
             case 2:
             default:
-                v0 = 7;
+                animIdx = 7;
                 break;
         }
+
         player->srt.yaw = vehicle->srt.yaw;
-        objAnimSet(player, objdata->unk76C[v0], 0.0f, 4U);
-        sp44 = player->modelInsts[player->modelInstIdx];
-        mod_func_8001A3FC(sp44, 0U, 0, 0.0f, player->srt.scale, &sp74, &sp48);
-        mod_func_8001A3FC(sp44, 0U, 0, 1.0f, player->srt.scale, &sp68, &sp48);
-        dll_vehicle(vehicle)->GetRiderPosition(vehicle, &sp5C, &sp60, &sp64);
-        sp5C -= player->srt.transl.f[0];
-        sp60 -= player->srt.transl.f[1];
-        sp64 -= player->srt.transl.f[2];
+        objAnimSet(player, objdata->unk76C[animIdx], 0.0f, 4U);
+        modelInstance = player->modelInsts[player->modelInstIdx];
+        mod_func_8001A3FC(modelInstance, 0, 0, 0.0f, player->srt.scale, &sp74, &sp48);
+        mod_func_8001A3FC(modelInstance, 0, 0, 1.0f, player->srt.scale, &sp68, &sp48);
+        dll_vehicle(vehicle)->GetRiderPosition(vehicle, &goalX, &goalY, &goalZ);
+        goalX -= player->srt.transl.f[0];
+        goalY -= player->srt.transl.f[1];
+        goalZ -= player->srt.transl.f[2];
         objdata->unk738.f[0] = player->srt.transl.f[0];
         objdata->unk738.f[1] = player->srt.transl.f[1];
         objdata->unk738.f[2] = player->srt.transl.f[2];
-        objdata->unk744.f[0] = sp5C;
-        objdata->unk744.f[1] = sp60 - sp68.f[1];
-        objdata->unk744.f[2] = sp64;
+        objdata->unk744.f[0] = goalX;
+        objdata->unk744.f[1] = goalY - sp68.f[1];
+        objdata->unk744.f[2] = goalZ;
         player->srt.flags |= OBJFLAG_MANUAL_PREV_POSITIONS;
         player->shadow->flags |= OBJ_SHADOW_FLAG_FADE_OUT;
         fsa->animTickDelta = 0.022f;
     }
+
     player->srt.transl.f[0] = objdata->unk738.f[0] + (player->animProgress * objdata->unk744.x);
     player->srt.transl.f[1] = objdata->unk738.f[1] + (player->animProgress * objdata->unk744.y);
     player->srt.transl.f[2] = objdata->unk738.f[2] + (player->animProgress * objdata->unk744.z);
-    dll_vehicle(vehicle)->GetCameraPosition(vehicle, &sp5C, &sp60, &sp64);
-    sp50.z = ((sp5C - objdata->unk738.x) * player->animProgress) + objdata->unk738.x;
-    sp50.y = ((sp60 - objdata->unk738.y) * player->animProgress) + objdata->unk738.y;
-    sp50.x = ((sp64 - objdata->unk738.z) * player->animProgress) + objdata->unk738.z;
-    gDLL_2_Camera->vtbl->reposition_player(sp50.z, sp50.y, sp50.x);
-    if ((fsa->enteredAnimState == 0) && (fsa->unk33A != 0)) {
-        objAnimSet(player, *objdata->unk76C, 0.0f, 1);
+    dll_vehicle(vehicle)->GetCameraPosition(vehicle, &goalX, &goalY, &goalZ);
+
+    //Linear interpolate the player's position onto the vehicle as the animation progresses
+    pos.z = ((goalX - objdata->unk738.x) * player->animProgress) + objdata->unk738.x;
+    pos.y = ((goalY - objdata->unk738.y) * player->animProgress) + objdata->unk738.y;
+    pos.x = ((goalZ - objdata->unk738.z) * player->animProgress) + objdata->unk738.z;
+    gDLL_2_Camera->vtbl->reposition_player(pos.z, pos.y, pos.x);
+
+    if ((fsa->enteredAnimState == FALSE) && fsa->unk33A) {
+        objAnimSet(player, objdata->unk76C[0], 0.0f, 1);
         dll_vehicle(vehicle)->SetMountState(vehicle, VEHICLE_Mounted);
-        if (vehicle->id == 0x22) {
-            return 0x26;
+        if (vehicle->id == OBJ_BWLog) {
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Log_Riding);
+        } else {
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Vehicle_Riding);
         }
-        return 0x25;
     }
+
     return 0;
 }
 
@@ -7105,101 +7138,110 @@ s32 dll_210_func_142C4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 }
 
 // offset: 0x146D8 | func: 98
-s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+/**
+  * PLAYER_ASTATE_Log_Riding
+  */
+s32 dll_210_func_146D8(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     Player_Data* objdata;
-    Object* sp60;
-    s32 var_a0;
-    s32 var_a1;
+    Object* log;
+    s32 roll;
+    s32 pitch;
     SeqJoint* seqJoint;
-    s32 sp50;
-    s32 sp4C;
-    f32 sp48;
-    s32 v1;
-    s32 sp40;
+    s32 animIdx;
+    s32 curModAnimId;
+    f32 animProgress;
+    s32 angle;
+    s32 soundHandle;
 
     gDLL_2_Camera->vtbl->apply_highlight_flags(2);
     objdata = player->data;
     fsa->unk4.mode = 0;
     fsa->animExitAction = dll_210_func_14B70;
     func_800267A4(player);
-    sp60 = objdata->vehicle;
-    if (sp60 == NULL) {
+
+    log = objdata->vehicle;
+    if (log == NULL) {
         player->curModAnimIdLayered = -1;
         return 0;
     }
-    sp60 = objdata->vehicle;
-    if (dll_vehicle(sp60)->CanDismount(sp60, player) != 0) {
+
+    log = objdata->vehicle;
+    if (dll_vehicle(log)->CanDismount(log, player)) {
         seqJoint = objExpr_func_80034804(player, 9);
         if (seqJoint != NULL) {
             seqJoint->roll = 0;
             seqJoint->pitch = 0;
         }
-        return 0x27;
+        return FSA_NEXTSTATE_SYNC(38);
     }
+
     seqJoint = objExpr_func_80034804(player, 9);
     if (seqJoint != NULL) {
-        var_a0 = sp60->srt.roll;
-        if (sp60->srt.roll < -0x1555) {
-            var_a0 = -0x1555;
+        roll = log->srt.roll;
+        if (log->srt.roll < -M_30_DEGREES) {
+            roll = -M_30_DEGREES;
         } else {
-            if (var_a0 > 0x1555) {
-                v1 = 0x1555;
+            if (roll > M_30_DEGREES) {
+                angle = M_30_DEGREES;
             } else {
-                v1 = var_a0;
+                angle = roll;
             }
-            var_a0 = v1;
+            roll = angle;
         }
-        seqJoint->roll = -var_a0;
-        var_a1 = sp60->srt.pitch;
-        if (sp60->srt.pitch < -0x1555) {
-            var_a1 = -0x1555;
+        seqJoint->roll = -roll;
+
+        pitch = log->srt.pitch;
+        if (log->srt.pitch < -M_30_DEGREES) {
+            pitch = -M_30_DEGREES;
         } else {
-            if (var_a1 > 0x1555) {
-                v1 = 0x1555;
+            if (pitch > M_30_DEGREES) {
+                angle = M_30_DEGREES;
             } else {
-                v1 = var_a1;
+                angle = pitch;
             }
-            var_a1 = v1;
+            pitch = angle;
         }
-        seqJoint->pitch = -var_a1;
+        seqJoint->pitch = -pitch;
     }
-    dll_vehicle(sp60)->GetPlayerAnim(sp60, &sp48, &sp50);
-    sp4C = player->curModAnimId;
+
+    dll_vehicle(log)->GetPlayerAnim(log, &animProgress, &animIdx);
+    curModAnimId = player->curModAnimId;    
     switch (player->curModAnimId) {
     case 0x1B:
         fsa->animTickDelta = 0.007f;
-        sp4C = objdata->unk76C[sp50];
-        if (sp4C == 0x1D) {
+        curModAnimId = objdata->unk76C[animIdx];
+        if (curModAnimId == 0x1D) {
         }
         break;
     case 0x453:
     case 0x454:
-        objAnimSetProgress(player, sp48);
-        if (sp48 == 1.0f) {
-            sp4C = objdata->unk76C[0];
+        objAnimSetProgress(player, animProgress);
+        if (animProgress == 1.0f) {
+            curModAnimId = objdata->unk76C[0];
         }
         break;
     default:
         if (fsa->unk308 & 1) {
-            sp40 = dll_amSfx->Play(player, SOUND_A78_Water_Paddle, mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
-            dll_amSfx->SetPitch(sp40, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
+            soundHandle = dll_amSfx->Play(player, SOUND_A78_Water_Paddle, mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
+            dll_amSfx->SetPitch(soundHandle, (mathRnd(-15, 15) / 100.0f) + 1.0f);
         }
         if ((fsa->unk308 & 0x80) && (mathRnd(0, 0x64) >= 0x47)) {
-            sp40 = dll_amSfx->Play(player, objdata->unk3B8[mathRnd(0xA, 0xE)], mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
-            dll_amSfx->SetPitch(sp40, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
+            soundHandle = dll_amSfx->Play(player, objdata->unk3B8[mathRnd(10, 14)], mathRnd(0x50, MAX_VOLUME), NULL, NULL, 0, NULL);
+            dll_amSfx->SetPitch(soundHandle, (mathRnd(-15, 15) / 100.0f) + 1.0f);
         }
         fsa->animTickDelta = 0.01f;
         if (fsa->unk33A != 0) {
-            sp4C = objdata->unk76C[0];
+            curModAnimId = objdata->unk76C[0];
         }
         break;
     }
-    if (sp4C != player->curModAnimId) {
-        objAnimSet(player, sp4C, 0.0f, 0U);
+
+    if (curModAnimId != player->curModAnimId) {
+        objAnimSet(player, curModAnimId, 0.0f, 0);
     }
+
     return 0;
 }
-
 
 // offset: 0x14B70 | func: 99
 static void dll_210_func_14B70(Object* player, ObjFSA_Data *fsa) {
@@ -7758,219 +7800,229 @@ static void dll_210_func_1660C(Object* player, ObjFSA_Data* fsa) {
 }
 
 // offset: 0x16648 | func: 108
-s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+s32 dll_210_func_16648(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     Player_Data* objdata = player->data;
     s32 pad;
     Vec3f sp7C;
     Vec3f sp70;
-    f32 sp6C;
+    f32 animTickDelta;
     f32 temp_fa1;
     f32 var_fv0;
     s16 pad_sp62;
     s16 sp60;
-    ModelInstance* sp5C = player->modelInsts[player->modelInstIdx];
+    ModelInstance* modelInstance = player->modelInsts[player->modelInstIdx];
     s32 pad2;
     Vec3f sp4C;
-    u8 sp4B;
+    u8 animArg;
 
     {
-        s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
-        if (temp_v0) { return temp_v0; }
+        s32 nextState = dll_210_func_EFB4(player, fsa, updateRate);
+        if (nextState) { return nextState; }
     }
+
     // @fake
     if ((_bss_200 && _bss_200) && _bss_200) {}
     _bss_202 = _bss_200;
-    sp4B = 0;
+    animArg = 0;
+
     switch (_bss_200) {
     case 0:
         if (fsa->unk33A != 0) {
-            player->globalPosition.f[0] = objdata->unk7EC.x;
-            player->globalPosition.f[1] = objdata->unk7EC.y;
-            player->globalPosition.f[2] = objdata->unk7EC.z;
-            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
-            objAnimSet(player, _data_69C[1], 0.0f, 1U);
+            player->globalPosition.x = objdata->unk7EC.x;
+            player->globalPosition.y = objdata->unk7EC.y;
+            player->globalPosition.z = objdata->unk7EC.z;
+            camInverseTransformPointByObject(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, player->parent);
+            objAnimSet(player, _data_69C[1], 0.0f, 1);
             fsa->animTickDelta = 0.01f;
             _bss_202 = _bss_200 = 1;
-            mod_func_8001A3FC(sp5C, 0U, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
-            player->srt.transl.f[1] -= sp7C.f[1];
+            mod_func_8001A3FC(modelInstance, 0, 0, 0.0f, player->srt.scale, &sp7C, &sp60);
+            player->srt.transl.y -= sp7C.f[1];
             temp_fa1 = (_bss_1B0[2] + (objdata->unk6B0.unk0.y - objdata->unk7EC.y));
-            player->velocity.f[1] = sqrtf(-temp_fa1 * -5.6f);
-            player->velocity.f[1] = sqrtf(-temp_fa1 * -0.34f);
-            sp4C.f[0] = *_bss_1F8 * objdata->unk6B0.unkC.x;
-            sp4C.f[1] = *_bss_1F8 * objdata->unk6B0.unkC.y;
-            sp4C.f[2] = *_bss_1F8 * objdata->unk6B0.unkC.z;
+            player->velocity.y = sqrtf(-temp_fa1 * -5.6f);
+            player->velocity.y = sqrtf(-temp_fa1 * -0.34f);
+            sp4C.f[0] = _bss_1F8[0] * objdata->unk6B0.unkC.x;
+            sp4C.f[1] = _bss_1F8[0] * objdata->unk6B0.unkC.y;
+            sp4C.f[2] = _bss_1F8[0] * objdata->unk6B0.unkC.z;
             sp70.f[0] = objdata->unk6B0.unk1C.x + sp4C.x;
             sp70.f[1] = objdata->unk6B0.unk1C.y + sp4C.y;
             sp70.f[2] = objdata->unk6B0.unk1C.z + sp4C.z;
-            fsa->unk2EC.f[0] = sp70.f[0] - player->srt.transl.f[0];
+            fsa->unk2EC.f[0] = sp70.f[0] - player->srt.transl.x;
             fsa->unk2EC.f[1] = 0.0f;
-            fsa->unk2EC.f[2] = sp70.f[2] - player->srt.transl.f[2];
-            _bss_204 = player->srt.transl.f[0];
-            _bss_208 = player->srt.transl.f[2];
+            fsa->unk2EC.f[2] = sp70.f[2] - player->srt.transl.z;
+            _bss_204 = player->srt.transl.x;
+            _bss_208 = player->srt.transl.z;
         } else {
-            player->velocity.f[1] = 0.0f;
-            gDLL_18_objfsa->vtbl->func10(player, fsa, arg2, 0.1f);
+            player->velocity.y = 0.0f;
+            gDLL_18_objfsa->vtbl->func10(player, fsa, updateRate, 0.1f);
         }
         break;
     case 1:
         temp_fa1 = _bss_1B0[2] + objdata->unk6B0.unk0.y;
-        player->velocity.f[1] += -0.17f * arg2;
+        player->velocity.y += -0.17f * updateRate;
         var_fv0 = (objdata->unk7EC.y - objdata->unk6B0.unk0.z) / (temp_fa1 - objdata->unk6B0.unk0.z);
         if (var_fv0 < 0.0f) {
             var_fv0 = 0.0f;
         } else if (var_fv0 > 1.0f) {
             var_fv0 = 1.0f;
         }
-        player->srt.transl.f[0] = (fsa->unk2EC.f[0] * var_fv0) + _bss_204;
-        player->srt.transl.f[2] = (fsa->unk2EC.f[2] * var_fv0) + _bss_208;
+        player->srt.transl.x = (fsa->unk2EC.f[0] * var_fv0) + _bss_204;
+        player->srt.transl.z = (fsa->unk2EC.f[2] * var_fv0) + _bss_208;
         if ((temp_fa1 - 1.0f) <= objdata->unk7EC.y) {
             if (objdata->unk848 == 0) {
                 objdata->unk848 = dll_amSfx->Play(player, SOUND_768_Rope_Climb, MAX_VOLUME, NULL, NULL, 0, NULL);
-                dll_amSfx->SetPitch(objdata->unk848, ((f32) mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
+                dll_amSfx->SetPitch(objdata->unk848, (mathRnd(-15, 15) / 100.0f) + 1.0f);
             }
             _bss_200 = 7;
-            sp4B = 1;
-            sp6C = 0.035f;
-            objAnimSet(player, 0x10, 0.0f, 1U);
+            animArg = 1;
+            animTickDelta = 0.035f;
+            objAnimSet(player, 16, 0.0f, 1);
             fsa->animTickDelta = 0.035f;
-            player->srt.transl.f[0] = objdata->unk6B0.unk1C.x;
-            player->srt.transl.f[1] = objdata->unk6B0.unk1C.y;
-            player->srt.transl.f[2] = objdata->unk6B0.unk1C.z;
-            player->velocity.f[1] = 0.0f;
+            player->srt.transl.x = objdata->unk6B0.unk1C.x;
+            player->srt.transl.y = objdata->unk6B0.unk1C.y;
+            player->srt.transl.z = objdata->unk6B0.unk1C.z;
+            player->velocity.y = 0.0f;
         }
         break;
     case 7:
     case 8:
         if (fsa->unk33A != 0) {
-            player->globalPosition.f[0] = objdata->unk7EC.x;
-            player->globalPosition.f[1] = objdata->unk7EC.y;
-            player->globalPosition.f[2] = objdata->unk7EC.z;
-            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.x = objdata->unk7EC.x;
+            player->globalPosition.y = objdata->unk7EC.y;
+            player->globalPosition.z = objdata->unk7EC.z;
+            camInverseTransformPointByObject(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, objdata);
-            objAnimSet(player, _data_6C0[0], 0.0f, 1U);
-            return 0x2E;
+            objAnimSet(player, _data_6C0[0], 0.0f, 1);
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb);
         }
         break;
     case 2:
         if (fsa->unk33A != 0) {
             if (fsa->yAnalogInput > 5.0f) {
-                player->globalPosition.f[0] = objdata->unk7EC.x;
-                player->globalPosition.f[1] = objdata->unk7EC.y;
-                player->globalPosition.f[2] = objdata->unk7EC.z;
-                camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+                player->globalPosition.x = objdata->unk7EC.x;
+                player->globalPosition.y = objdata->unk7EC.y;
+                player->globalPosition.z = objdata->unk7EC.z;
+                camInverseTransformPointByObject(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, player->parent);
                 dll_210_func_7260(player, objdata);
-                objAnimSet(player, _data_6C0[0], 0.0f, 1U);
-                return 0x2E;
+                objAnimSet(player, _data_6C0[0], 0.0f, 1);
+                return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb);
             }
             if (fsa->yAnalogInput < -5.0f) {
-                return 0x2F;
+                return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb_End);
             }
             _bss_200 = 3;
-            sp6C = 0.008f;
+            animTickDelta = 0.008f;
         }
         break;
     case 3:
         if (fsa->yAnalogInput > 5.0f) {
-            player->globalPosition.f[0] = objdata->unk7EC.x;
-            player->globalPosition.f[1] = objdata->unk7EC.y;
-            player->globalPosition.f[2] = objdata->unk7EC.z;
-            camInverseTransformPointByObject(player->globalPosition.f[0], player->globalPosition.f[1], player->globalPosition.f[2], player->srt.transl.f, &player->srt.transl.f[1], &player->srt.transl.f[2], player->parent);
+            player->globalPosition.x = objdata->unk7EC.x;
+            player->globalPosition.y = objdata->unk7EC.y;
+            player->globalPosition.z = objdata->unk7EC.z;
+            camInverseTransformPointByObject(player->globalPosition.x, player->globalPosition.y, player->globalPosition.z, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z, player->parent);
             dll_210_func_7260(player, objdata);
-            objAnimSet(player, _data_6C0[0], 0.0f, 1U);
-            return 0x2E;
+            objAnimSet(player, _data_6C0[0], 0.0f, 1);
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb);
         }
         if (fsa->yAnalogInput < -5.0f) {
-            return 0x2F;
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb_End);
         }
         break;
     default:
         _bss_200 = 0;
-        sp6C = 0.029f;
+        animTickDelta = 0.029f;
         fsa->unk2F8 = objdata->unk6B0.unk54 - player->srt.yaw;
         if (objdata->unk6B0.unk45 == 0) {
-            fsa->unk2F8 += 32768.0f;
+            fsa->unk2F8 += M_180_DEGREES;
         }
-        if (fsa->unk2F8 > 32768.0f) {
-            fsa->unk2F8 += -65535.0f;
+        if (fsa->unk2F8 > M_180_DEGREES) {
+            fsa->unk2F8 += -(M_360_DEGREES - 1);
         }
-        if (fsa->unk2F8 < -32768.0f) {
-            fsa->unk2F8 += 65535.0f;
+        if (fsa->unk2F8 < -M_180_DEGREES) {
+            fsa->unk2F8 += (M_360_DEGREES - 1);
         }
         fsa->unk2A0 = 0.0f;
         break;
     }
 
     if (_bss_202 != _bss_200) {
-        objAnimSet(player, _data_69C[_bss_200], 0.0f, sp4B);
-        fsa->animTickDelta = sp6C;
+        objAnimSet(player, _data_69C[_bss_200], 0.0f, animArg);
+        fsa->animTickDelta = animTickDelta;
     }
+
     dll_210_func_7260(player, objdata);
+
     return 0;
 }
 
-
 // offset: 0x16EB4 | func: 109
-s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
-    f32 sp94;
-    f32 sp90;
-    f32 sp8C;
+s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
+    f32 stickY;
+    f32 animProgress;
+    f32 animTickDelta;
     Vec3f sp80;
     Vec3f sp74;
-    ModelInstance* sp70;
-    Player_Data* temp_s0;
+    ModelInstance* modelInstance;
+    Player_Data* objData;
     s16 pad_sp6A;
     s16 sp68;
-    f32 sp64;
-    f32 sp60;
-    f32 sp5C;
-    Object* temp_a0;
+    f32 x;
+    f32 y;
+    f32 z;
+    Object* rope;
     s32 pad;
 
-    temp_s0 = player->data;
-    if (fsa->enteredAnimState != 0) {
-        if ((player->curModAnimId == *_data_6C0) || (player->curModAnimId == *_data_6C8)) {
+    objData = player->data;
+
+    if (fsa->enteredAnimState) {
+        if ((player->curModAnimId == _data_6C0[0]) || (player->curModAnimId == _data_6C8[0])) {
             _bss_200 = 8;
         } else {
             _bss_200 = 9;
         }
+
         // @fake
         if ((s32)&player->srt.transl.x) {}
         if ((s32)&player->srt.transl.y) {}
         if ((s32)&player->srt.transl.z) {}
     }
+
     {
-        s32 temp_v0 = dll_210_func_EFB4(player, fsa, arg2);
-        if (temp_v0) { return temp_v0; }
+        s32 nextState = dll_210_func_EFB4(player, fsa, updateRate);
+        if (nextState) { return nextState; }
     }
-    sp64 = player->srt.transl.x;
-    sp60 = player->srt.transl.y;
-    sp5C = player->srt.transl.z;
-    player->velocity.f[1] = 0.0f;
-    sp94 = fsa->yAnalogInput / 60.0f;
-    if (sp94 < 0.0f) {
-        sp94 = -sp94;
+
+    x = player->srt.transl.x;
+    y = player->srt.transl.y;
+    z = player->srt.transl.z;
+    player->velocity.y = 0.0f;
+
+    stickY = fsa->yAnalogInput / 60.0f;
+    if (stickY < 0.0f) {
+        stickY = -stickY;
     }
-    if (sp94 < 0.1f) {
-        sp94 = 0.1f;
+    if (stickY < 0.1f) {
+        stickY = 0.1f;
     }
     // @fake
-    if (!temp_s0) {}
-    if (sp94 > 0.8f) {
-        sp94 = 0.8f;
+    if (!objData) {}
+    if (stickY > 0.8f) {
+        stickY = 0.8f;
     }
-    sp70 = player->modelInsts[player->modelInstIdx];
-    sp90 = 0.0f;
-    sp8C = fsa->animTickDelta;
+
+    modelInstance = player->modelInsts[player->modelInstIdx];
+    animProgress = 0.0f;
+    animTickDelta = fsa->animTickDelta;
     _bss_202 = _bss_200;
+
     switch (_bss_200) {
     case 8:
     case 9:
     case 12:
     case 13:
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, temp_s0->unk6B0.unk48, &player->srt.transl.f[0], &player->srt.transl.f[1], &player->srt.transl.f[2]);
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func8(rope, objData->unk6B0.unk48, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
         player->curModAnimIdLayered = -1;
-        sp8C = 0.0f;
+        animTickDelta = 0.0f;
         if (_bss_200 & 1) {
             _bss_200 = 1;
         } else {
@@ -7981,35 +8033,36 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     case 7:
     case 10:
     case 11:
-        return 0x2F;
+        return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb_End);
     case 4:
     case 5:
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, temp_s0->unk6B0.unk48, &player->srt.transl.f[0], &player->srt.transl.f[1], &player->srt.transl.f[2]);
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func8(rope, objData->unk6B0.unk48, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
         if (fsa->yAnalogInput > 5.0f) {
             objAnimSetProgress(player, 0.0f);
         } else if (fsa->yAnalogInput < -5.0f) {
             objAnimSetProgress(player, 0.0f);
-        } else if ((fsa->unk310 & 0x8000) && (mainGetBits(0x1F6) == 0)) {
-            objAnimSet(player, 0x12, 0.0f, 1);
+        } else if ((fsa->unk310 & A_BUTTON) && (mainGetBits(BIT_Player_Rope_Controls_No_Letting_Go) == FALSE)) {
+            objAnimSet(player, 18, 0.0f, 1);
             fsa->animTickDelta = 0.2f;
             fsa->unk278 = 0.0f;
-            player->velocity.f[1] = 0.0f;
-            return 0x2F;
+            player->velocity.y = 0.0f;
+            return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb_End);
         } else {
             break;
         }
     default:
         if (player->animProgress == 0.0f) {
             if (fsa->yAnalogInput > 5.0f) {
-                if (((temp_s0->unk6B0.unk48 < 0.3f) && (temp_s0->unk6B0.unk45 == 1)) || ((temp_s0->unk6B0.unk48 > 6.7f) && (temp_s0->unk6B0.unk45 == 0))) {
-                    objAnimSet(player, 0x12, 0.0f, 1U);
+                if (((objData->unk6B0.unk48 < 0.3f) && (objData->unk6B0.unk45 == 1)) || ((objData->unk6B0.unk48 > 6.7f) && (objData->unk6B0.unk45 == 0))) {
+                    objAnimSet(player, 18, 0.0f, 1);
                     fsa->animTickDelta = 0.2f;
                     fsa->unk278 = 0.0f;
-                    player->velocity.f[1] = 0.0f;
-                    return 0x2F;
+                    player->velocity.y = 0.0f;
+                    return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Rope_Climb_End);
                 }
-                sp8C = (sp94 * 0.033999998f) + 0.015f;
+
+                animTickDelta = (stickY * 0.033999998f) + 0.015f;
                 if (_bss_200 >= 2) {
                     if (_bss_200 & 1) {
                         _bss_200 = 1;
@@ -8018,95 +8071,102 @@ s32 dll_210_func_16EB4(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                     }
                 }
             } else if (fsa->yAnalogInput < -5.0f) {
-                pad_sp6A = temp_s0->unk6B0.unk45;
-                temp_s0->unk6B0.unk45 = pad_sp6A == 0;
-                temp_s0->unk6B0.unk50 = -temp_s0->unk6B0.unk50;
-                player->srt.yaw += 0x8000;
-                sp90 = 0.99f;
-                sp8C = -((sp94 * 0.013000001f) + 0.015f);
+                pad_sp6A = objData->unk6B0.unk45;
+                objData->unk6B0.unk45 = pad_sp6A == 0;
+                objData->unk6B0.unk50 = -objData->unk6B0.unk50;
+                player->srt.yaw += M_180_DEGREES;
+                animProgress = 0.99f;
+                animTickDelta = -((stickY * 0.013000001f) + 0.015f);
                 if (_bss_200 & 1) {
                     _bss_200 = 2;
                 } else {
                     _bss_200 = 3;
                 }
             } else if (objAnim_func_80024E2C(player) == 0) {
-                sp8C = 0.01f;
-                if (((_bss_200 & 1) != 0) && (_bss_200 != 5)) {
+                animTickDelta = 0.01f;
+                if (((_bss_200 & 1) != FALSE) && (_bss_200 != 5)) {
                     _bss_200 = 5;
-                } else if (((_bss_200 & 1) == 0) && (_bss_200 != 4)) {
+                } else if (((_bss_200 & 1) == FALSE) && (_bss_200 != 4)) {
                     _bss_200 = 4;
                 }
                 break;
             }
         }
+
         if (player->animProgress == 1.0f) {
             if (fsa->yAnalogInput < -5.0f) {
-                pad_sp6A = temp_s0->unk6B0.unk45;
-                temp_s0->unk6B0.unk45 = pad_sp6A == 0;
-                temp_s0->unk6B0.unk50 = -temp_s0->unk6B0.unk50;
-                player->srt.yaw += 0x8000;
-                sp8C = -((sp94 * 0.01f) + 0.025f);
+                pad_sp6A = objData->unk6B0.unk45;
+                objData->unk6B0.unk45 = pad_sp6A == 0;
+                objData->unk6B0.unk50 = -objData->unk6B0.unk50;
+                player->srt.yaw += M_180_DEGREES;
+                animTickDelta = -((stickY * 0.01f) + 0.025f);
                 if (_bss_200 < 2) {
                     _bss_200 += 2;
-                    sp90 = 0.99f;
+                    animProgress = 0.99f;
                 }
             } else {
-                sp8C = 0.0f;
+                animTickDelta = 0.0f;
                 if (_bss_200 < 2) {
                     _bss_200 ^= 1;
-                    sp90 = 0.0f;
+                    animProgress = 0.0f;
                 }
-                temp_a0 = temp_s0->unk6B0.unk38;
-                ((DLL_Unknown *)temp_a0->dll)->vtbl->func[9].withThreeArgsCustom(temp_a0, &temp_s0->unk6B0.unk4C, temp_s0->unk6B0.unk50);
-                temp_s0->unk6B0.unk48 = temp_s0->unk6B0.unk4C;
+                rope = objData->unk6B0.unk38;
+                dll_DFropenode(rope)->func9(rope, &objData->unk6B0.unk4C, objData->unk6B0.unk50);
+                objData->unk6B0.unk48 = objData->unk6B0.unk4C;
                 player->animProgress = 0.0f;
             }
         }
+
         if (fsa->unk308 & 1) {
-            temp_s0->unk848 = dll_amSfx->Play(player, SOUND_768_Rope_Climb, mathRnd(0x32, MAX_VOLUME), NULL, NULL, 0, NULL);
-            dll_amSfx->SetPitch(temp_s0->unk848, (mathRnd(-0xF, 0xF) / 100.0f) + 1.0f);
+            objData->unk848 = dll_amSfx->Play(player, SOUND_768_Rope_Climb, mathRnd(0x32, MAX_VOLUME), NULL, NULL, 0, NULL);
+            dll_amSfx->SetPitch(objData->unk848, (mathRnd(-15, 15) / 100.0f) + 1.0f);
         }
-        if (sp8C < 0.0f) {
-            sp8C = -((sp94 * 0.013000001f) + 0.015f);
-        } else if (sp8C > 0.0f) {
-            sp8C = (sp94 * 0.033999998f) + 0.015f;
+
+        if (animTickDelta < 0.0f) {
+            animTickDelta = -((stickY * 0.013000001f) + 0.015f);
+        } else if (animTickDelta > 0.0f) {
+            animTickDelta = (stickY * 0.033999998f) + 0.015f;
         }
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, temp_s0->unk6B0.unk48, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
-        sp94 = temp_s0->unk6B0.unk4C;
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[9].withThreeArgsCustom(temp_a0, &sp94, temp_s0->unk6B0.unk50 * player->animProgress);
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[8].withFiveArgsCustom(temp_a0, sp94, &sp64, &sp60, &sp5C);
-        temp_a0 = temp_s0->unk6B0.unk38;
-        ((DLL_Unknown *)temp_a0->dll)->vtbl->func[10].withThreeArgsCustom2(temp_a0, sp94, 1.0f);
+
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func8(rope, objData->unk6B0.unk48, &player->srt.transl.x, &player->srt.transl.y, &player->srt.transl.z);
+        stickY = objData->unk6B0.unk4C;
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func9(rope, &stickY, objData->unk6B0.unk50 * player->animProgress);
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func8(rope, stickY, &x, &y, &z);
+        rope = objData->unk6B0.unk38;
+        dll_DFropenode(rope)->func10(rope, stickY, 1.0f);
         break;
     }
 
-    gDLL_2_Camera->vtbl->reposition_player(sp64, sp60, sp5C);
-    fsa->animTickDelta = sp8C;
+    gDLL_2_Camera->vtbl->reposition_player(x, y, z);
+    fsa->animTickDelta = animTickDelta;
+
     if (_bss_202 != _bss_200) {
-        objAnimSet(player, _data_6B0[_bss_200], sp90, 1U);
-        if ((_bss_200 < 2) && (temp_s0->unk6B0.unk46 == 0)) {
-            mod_func_8001A3FC(sp70, 0U, 0, 0.0f, player->srt.scale, &sp80, &sp68);
-            mod_func_8001A3FC(sp70, 0U, 0, 1.0f, player->srt.scale, &sp74, &sp68);
-            temp_s0->unk6B0.unk28.x = sp74.f[0] - sp80.f[0];
-            temp_s0->unk6B0.unk28.z = sp74.f[2] - sp80.f[2];
-            temp_s0->unk6B0.unk50 = sqrtf(SQ(temp_s0->unk6B0.unk28.x) + SQ(temp_s0->unk6B0.unk28.z));
-            if (temp_s0->unk6B0.unk45 == 1) {
-                temp_s0->unk6B0.unk50 = -temp_s0->unk6B0.unk50;
+        objAnimSet(player, _data_6B0[_bss_200], animProgress, 1);
+        if ((_bss_200 < 2) && (objData->unk6B0.unk46 == 0)) {
+            mod_func_8001A3FC(modelInstance, 0, 0, 0.0f, player->srt.scale, &sp80, &sp68);
+            mod_func_8001A3FC(modelInstance, 0, 0, 1.0f, player->srt.scale, &sp74, &sp68);
+            objData->unk6B0.unk28.x = sp74.f[0] - sp80.f[0];
+            objData->unk6B0.unk28.z = sp74.f[2] - sp80.f[2];
+            objData->unk6B0.unk50 = sqrtf(SQ(objData->unk6B0.unk28.x) + SQ(objData->unk6B0.unk28.z));
+            if (objData->unk6B0.unk45 == 1) {
+                objData->unk6B0.unk50 = -objData->unk6B0.unk50;
             }
-            temp_s0->unk6B0.unk46 = 1;
+            objData->unk6B0.unk46 = 1;
         }
     }
+
     dll_210_func_7260(player, player->data);
+
     return 0;
 }
 
 // offset: 0x178A0 | func: 110
-s32 dll_210_func_178A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
+s32 dll_210_func_178A0(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     dll_210_func_7260(player, player->data);
-    return 0xE;
+    return FSA_NEXTSTATE_SYNC(PLAYER_ASTATE_Falling);
 }
 
 // offset: 0x178EC | func: 111

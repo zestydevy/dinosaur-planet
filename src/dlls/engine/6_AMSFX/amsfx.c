@@ -50,8 +50,8 @@ typedef struct SoundSlot {
 
 typedef struct WaterFallSpray {
     Vec3f pos;
-    u16 unkC;
-    u16 unkE;
+    u16 lowSfxRange;
+    u16 highSfxRange;
 } WaterFallSpray;
 
 #define MAX_WATER_FALL_SPRAY 16
@@ -311,22 +311,22 @@ void amSfx_SetVol(u32 soundHandle, u8 volume) {
 
 // offset: 0x954 | func: 5 | export: 5
 void amSfx_SetPitch(u32 soundHandle, f32 pitch) {
-    sndstate *temp_a0;
+    sndstate *sound;
 
     if ((u32) sSndSlotsLen < soundHandle) {
         STUBBED_PRINTF("amSfxSetPitch: Warning,sound handle '%d' out of range.\n", soundHandle);
         return;
     }
 
-    temp_a0 = sSndSlots[soundHandle].sndpHandle;
-    if (temp_a0 == NULL) {
+    sound = sSndSlots[soundHandle].sndpHandle;
+    if (sound == NULL) {
         STUBBED_PRINTF("amSfxSetPitch: Warning,invalid handle '%d'.\n", soundHandle);
         return;
     }
 
     pitch *= sSndSlots[soundHandle].def.pitch / 100.0f;
-    if ((temp_a0 != (sndstate *)-2) && (temp_a0 != (sndstate *)-1)) {
-        audioPostEvent(temp_a0, AL_SNDP_PITCH_EVT, ((void **)&pitch)[0]);
+    if ((sound != (sndstate *)-2) && (sound != (sndstate *)-1)) {
+        audioPostEvent(sound, AL_SNDP_PITCH_EVT, ((void **)&pitch)[0]);
     }
 }
 
@@ -375,18 +375,19 @@ s32 amSfx_IsPlaying(u32 soundHandle) {
 }
 
 // offset: 0xBBC | func: 9 | export: 9
-s32 amSfx_FindEmittersInRange(Object* listener, s32 distance, s32 minVolume, Object **foundObjs, s32 foundObjsMax) {
-    Object* soundSource;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    s32 i;
-    f32 sp74;
-    f32 sp70;
-    f32 sp6C;
-    f32 sp68;
-    f32 sp64;
-    f32 sp60;
+s32 amSfx_FindEmittersInRange(Object* listener, s32 distance, s32 minVolume, Object** foundObjs, s32 foundObjsMax) {
     s32 outCount;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 listenerX;
+    f32 listenerY;
+    f32 listenerZ;
+    f32 sourceX;
+    f32 sourceY;
+    f32 sourceZ;
+    s32 i;
+    Object* soundSource;
 
     if (distance != -1) {
         distance *= distance;
@@ -405,11 +406,12 @@ s32 amSfx_FindEmittersInRange(Object* listener, s32 distance, s32 minVolume, Obj
             continue;
         }
         if (distance != -1) {
-            camGetObjectChildPosition(listener, &sp74, &sp70, &sp6C);
-            camGetObjectChildPosition(soundSource, &sp68, &sp64, &sp60);
-            temp_fv1 = sp74 - sp68;
-            temp_fv0 = sp70 - sp64;
-            if (distance < (SQ(temp_fv1) + SQ(temp_fv0) + ((sp6C - sp60) * temp_fv0))) {
+            camGetObjectChildPosition(listener, &listenerX, &listenerY, &listenerZ);
+            camGetObjectChildPosition(soundSource, &sourceX, &sourceY, &sourceZ);
+            dx = listenerX - sourceX;
+            dy = listenerY - sourceY;
+            dz = listenerZ - sourceZ;
+            if (distance < (SQ(dx) + SQ(dy) + (dz * dy))) { //@bug? Shouldn't this be SQ(dz) at the end?
                 continue;
             }
         }
@@ -431,7 +433,7 @@ s32 amSfx_FuncDCC(s32 arg0, UNK_TYPE_32 arg1, s32* arg2, s32* arg3) {
 
 // offset: 0xDE8 | func: 11 | export: 11
 s32 amSfx_GetDefault(u16 soundID, SoundDef* soundDef) {
-    void* temp_v0;
+    void* cache;
 
     if (soundID <= 0 || (s32)_bss_10 < soundID) {
         STUBBED_PRINTF("amSfxGetDefault: Warning,sound effect value '%d' out of range.\n", soundID);
@@ -440,9 +442,9 @@ s32 amSfx_GetDefault(u16 soundID, SoundDef* soundDef) {
     }
 
     soundID--;
-    temp_v0 = acacheGet(sSoundDefCache, soundID);
-    if (temp_v0 != NULL) {
-        bcopy(temp_v0, soundDef, sizeof(SoundDef));
+    cache = acacheGet(sSoundDefCache, soundID);
+    if (cache != NULL) {
+        bcopy(cache, soundDef, sizeof(SoundDef));
     } else {
         return 0;
     }
@@ -467,7 +469,7 @@ s32 amSfx_FlushCache(s32 arg0, UNK_TYPE_32 arg1) {
 }
 
 // offset: 0xF2C | func: 13 | export: 13
-void amSfx_SndPlayEx(Object* obj, u16 soundID, u32* soundHandle, char *filename, s32 lineNo) {
+void amSfx_SndPlayEx(Object* obj, u16 soundID, u32* soundHandle, char* filename, s32 lineNo) {
     u32 handle;
 
     if (!soundID || _bss_0->bankArray[0]->instArray[0]->soundCount < soundID) {
@@ -667,13 +669,14 @@ void amSfx_WaterFallsControl(void) {
     lowVolume = 0;
     for (i = 0; i < sWaterFallSprayCount; i++) {
         distance = vec3Distance(camera + 1, &sWaterFallSprays[i].pos);
-        if (distance < sWaterFallSprays[i].unkC) {
-            lowVolume += MAX_VOLUME - (u8)((u32)((distance / sWaterFallSprays[i].unkC) * MAX_VOLUME_F));
+        if (distance < sWaterFallSprays[i].lowSfxRange) {
+            lowVolume += MAX_VOLUME - (u8)((distance / sWaterFallSprays[i].lowSfxRange) * MAX_VOLUME_F);
         }
-        if (distance < sWaterFallSprays[i].unkE) {
-            highVolume += MAX_VOLUME - (u8)((u32)((distance / sWaterFallSprays[i].unkE) * MAX_VOLUME_F));
+        if (distance < sWaterFallSprays[i].highSfxRange) {
+            highVolume += MAX_VOLUME - (u8)((distance / sWaterFallSprays[i].highSfxRange) * MAX_VOLUME_F);
         }
     }
+
     if (sWaterfallFlags & AMSFX_WATERFALLS_LOWER_HIGH) {
         highVolume >>= 1;
     }
@@ -686,12 +689,14 @@ void amSfx_WaterFallsControl(void) {
     if (sWaterfallFlags & AMSFX_WATERFALLS_LOWER_LOW2) {
         lowVolume >>= 1;
     }
+
     if (highVolume > MAX_VOLUME) {
         highVolume = MAX_VOLUME;
     }
     if (lowVolume > MAX_VOLUME) {
         lowVolume = MAX_VOLUME;
     }
+
     if ((lowVolume == 0) && (sWaterfallLowHandle != 0)) {
         amSfx_Stop(sWaterfallLowHandle);
         sWaterfallLowHandle = 0;
@@ -701,12 +706,13 @@ void amSfx_WaterFallsControl(void) {
             amSfx_Play(NULL, SOUND_986_Waterfall_Low_Loop, sWaterfallLowVolume, &sWaterfallLowHandle, "game/amsfx.c", 1016, "");
         }
         if (lowVolume < sWaterfallLowVolume) {
-            sWaterfallLowVolume -= 1;
+            sWaterfallLowVolume -= 1; //@framerate-dependent
         } else {
-            sWaterfallLowVolume += 1;
+            sWaterfallLowVolume += 1; //@framerate-dependent
         }
         amSfx_SetVol(sWaterfallLowHandle, sWaterfallLowVolume);
     }
+
     if ((highVolume == 0) && (sWaterfallHighHandle != 0)) {
         amSfx_Stop(sWaterfallHighHandle);
         sWaterfallHighHandle = 0;
@@ -718,9 +724,9 @@ void amSfx_WaterFallsControl(void) {
             amSfx_Play(NULL, SOUND_987_Waterfall_High_Loop, sWaterfallHighVolume, &sWaterfallHighHandle, "game/amsfx.c", 1036, "");
         }
         if (highVolume < sWaterfallHighVolume) {
-            sWaterfallHighVolume -= 1;
+            sWaterfallHighVolume -= 1; //@framerate-dependent
         } else {
-            sWaterfallHighVolume += 1;
+            sWaterfallHighVolume += 1; //@framerate-dependent
         }
         amSfx_SetVol(sWaterfallHighHandle, sWaterfallHighVolume);
     }
@@ -759,8 +765,8 @@ static s32 amSfx_waterFallsFindSprays(void) {
             sWaterFallSprays[sWaterFallSprayCount].pos.x = setup->x;
             sWaterFallSprays[sWaterFallSprayCount].pos.y = setup->y;
             sWaterFallSprays[sWaterFallSprayCount].pos.z = setup->z;
-            sWaterFallSprays[sWaterFallSprayCount].unkC = ((WaterFallSpray_Setup*)setup)->unk21 * 16;
-            sWaterFallSprays[sWaterFallSprayCount].unkE = ((WaterFallSpray_Setup*)setup)->unk22 * 16;
+            sWaterFallSprays[sWaterFallSprayCount].lowSfxRange = ((WaterFallSpray_Setup*)setup)->lowSfxRange * 16;
+            sWaterFallSprays[sWaterFallSprayCount].highSfxRange = ((WaterFallSpray_Setup*)setup)->highSfxRange * 16;
             sWaterFallSprayCount++;
         }
         offset += setup->quarterSize << 2;

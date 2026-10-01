@@ -24,7 +24,6 @@
 #include "dll.h"
 #include "macros.h"
 #include "gbi_extra.h"
-#include "prevent_bss_reordering.h"
 
 #define READ_MAPS_TAB(mapID, fileID) ((gFile_MAPS_TAB + (mapID * 7))[fileID])
 
@@ -206,7 +205,7 @@ MapHeader *mapLoadStreamMap(s32, s32);
 void mapReadLayout(Struct_D_800B9768_unk4 *arg0, u8 *arg1, s16 arg2, s16 arg3, s32 maptabindex);
 void mapUpdateObjectsStreaming(s32);
 s32 map_func_800485FC(s32, s32, s32, s32, s32);
-void mapCheckBlockGrid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx);
+void mapCheckBlockGrid(s32 gridX, s32 gridZ, VisGridRange* range0, VisGridRange* range1, VisGridRange* range2, VisGridRange* range3, s32 layer, s32 checkVis, s32 streamMapIdx);
 void blockFree(s32 blockIndex);
 s32 blockTexanimAdd(Texture* tex, u32 renderFlags, s32 animatorID);
 s32 mapShouldObjUnload(Object*);
@@ -727,10 +726,10 @@ void trackDrawMain(void) {
     s32 gridIdx;
     s8 *blockIdxMap;
     s32 blockIdx;
-    s32 sp274[4];
-    s32 sp264[4];
-    s32 sp254[4];
-    s32 sp244[4];
+    VisGridRange range0;
+    VisGridRange range1;
+    VisGridRange range2;
+    VisGridRange range3;
     s32 layer;
     s32 z;
     s32 zIdx;
@@ -761,26 +760,26 @@ void trackDrawMain(void) {
         sp230 = gBlockIndices[layer];
         D_800B9714 = D_800B9700[layer];
         mapCheckBlockGrid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 
-            sp274, sp264, sp254, sp244, layer, /*checkVis*/TRUE, D_800B4A54);
+            &range0, &range1, &range2, &range3, layer, /*checkVis*/TRUE, D_800B4A54);
         for (gridIdx = 0; gridIdx < ARRAYCOUNT_S(blockVisibilities); gridIdx++) { blockVisibilities[gridIdx] = 0; }
         
-        for (z = sp274[2]; sp274[3] >= z; z++) {
-            for (x = sp274[0]; sp274[1] >= x; x++) {
+        for (z = range0.s[2]; range0.s[3] >= z; z++) {
+            for (x = range0.s[0]; range0.s[1] >= x; x++) {
                 blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (z = sp264[2]; sp264[3] >= z; z++) {
-            for (x = sp264[0]; sp264[1] >= x; x++) {
+        for (z = range1.s[2]; range1.s[3] >= z; z++) {
+            for (x = range1.s[0]; range1.s[1] >= x; x++) {
                 blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (z = sp254[2]; sp254[3] >= z; z++) {
-            for (x = sp254[0]; sp254[1] >= x; x++) {
+        for (z = range2.s[2]; range2.s[3] >= z; z++) {
+            for (x = range2.s[0]; range2.s[1] >= x; x++) {
                 blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
-        for (z = sp244[2]; sp244[3] >= z; z++) {
-            for (x = sp244[0]; sp244[1] >= x; x++) {
+        for (z = range3.s[2]; range3.s[3] >= z; z++) {
+            for (x = range3.s[0]; range3.s[1] >= x; x++) {
                 blockVisibilities[(x + 7) + ((z + 7) << 4)] = 1;
             }
         }
@@ -2057,7 +2056,7 @@ s32 mapFindStreamMapIndex(s32 mapID_to_find) {
     return -1;
 }
 
-s32 map_func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
+s32 map_func_80045DC0(s32 worldGridX, s32 worldGridZ, s32 layer) {
     Struct_D_800B9768_unk4* var_v0;
     s32 temp_a2;
     s32 temp_t3;
@@ -2066,12 +2065,12 @@ s32 map_func_80045DC0(s32 arg0, s32 arg1, s32 arg2) {
 
     var_v0 = &D_800B9768.unk4[0];
     var_v1 = &D_800B9768.unk10[0];
-    arg2 = D_80092A9C[arg2] + gMapLayer;
-    for (j = 0; j < 64; j += 1) {
-        if (arg2 == D_800B9768.unkC[j]) {
-            if (arg0 >= var_v0->xMin && var_v0->xMax >= arg0) {
-                if ((arg1 >= var_v0->zMin) && (var_v0->zMax >= arg1)) {
-                    temp_t3 = (arg0 - var_v0->xMin) + ((arg1 - var_v0->zMin) * ((var_v0->xMax - var_v0->xMin) + 1));
+    layer = D_80092A9C[layer] + gMapLayer;
+    for (j = 0; j < 64; j++) {
+        if (layer == D_800B9768.unkC[j]) {
+            if (var_v0->xMin <= worldGridX && worldGridX <= var_v0->xMax) {
+                if (var_v0->zMin <= worldGridZ && worldGridZ <= var_v0->zMax) {
+                    temp_t3 = (worldGridX - var_v0->xMin) + ((worldGridZ - var_v0->zMin) * ((var_v0->xMax - var_v0->xMin) + 1));
                     if (((temp_t3 >> 3) + var_v1->unk0)[0] & (1 << (temp_t3 & 7))) {
                         return j;
                     }
@@ -2226,27 +2225,27 @@ void mapLoadMobileMap(s32 id, Object *obj) {
     D_800B4A50 = sp24;
 }
 
-void map_func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 arg3) {
+void map_func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 layer) {
     Struct_D_800B9768_unk4 *temp;
-    s32 sp30;
+    s32 mapID;
     s32 temp_v1_2;
     s32 mapIndex;
     MapHeader* sp24;
     s8 sp20[2];
     s16 *temp2;
 
-    sp30 = map_func_80045DC0(worldGridX, worldGridZ, arg3);
-    if (sp30 != -1) {
-        mapIndex = mapFindStreamMapIndex(sp30);
+    mapID = map_func_80045DC0(worldGridX, worldGridZ, layer);
+    if (mapID != -1) {
+        mapIndex = mapFindStreamMapIndex(mapID);
         if (mapIndex == -1) {
-            mapIndex = mapLoadStreamMapAddToTable(sp30);
+            mapIndex = mapLoadStreamMapAddToTable(mapID);
         }
         gMapStreamMapTable[mapIndex].unk06 = 1;
         sp24 = gMapStreamMapTable[mapIndex].header;
-        temp2 = (s16*)(((u8*)D_800B9768.unk8) + (sp30 << 1 << 1));
+        temp2 = (s16*)(((u8*)D_800B9768.unk8) + (mapID << 1 << 1));
         sp20[0] = temp2[0];
         sp20[1] = temp2[1];
-        cell->mapIDs[0] = sp30;
+        cell->mapIDs[0] = mapID;
         cell->mapIDs[1] = sp20[0];
         cell->mapIDs[2] = sp20[1];
         if (sp20[0] != -1) {
@@ -2264,7 +2263,7 @@ void map_func_80046428(s32 worldGridX, s32 worldGridZ, GlobalMapCell* cell, s32 
             ((s8 *)&gMapStreamMapTable[mapIndex])[6] = 1;
         }
 
-        temp = &D_800B9768.unk4[sp30];
+        temp = &D_800B9768.unk4[mapID];
         worldGridX -= temp->xMin;
         worldGridZ -= temp->zMin;
         temp_v1_2 = ((s32*) &((s8 *)sp24->blockIDs_ptr)[worldGridX * 4 + ((worldGridZ *  sp24->gridSizeX) * 4)])[0];
@@ -2464,21 +2463,21 @@ void mapUpdateStreaming(void) {
     s32 sp2F4;
     s32 sp2F0;
     s32 var_s1;
-    s32 var_s7;
-    s32 var_s3;
+    s32 layer;
+    s32 cellIdx;
     s32 var_s5;
-    s8* temp_a3;
+    s8* visGrid;
     f32 f2;
-    s32 sp2C8[4];
-    s32 sp2B8[4];
-    s32 sp2A8[4];
-    s32 sp298[4];
+    VisGridRange range0;
+    VisGridRange range1;
+    VisGridRange range2;
+    VisGridRange range3;
     s32 sp294;
-    s32 var_fp;
-    s32 var_s0;
-    s32 var_s2;
-    s32 sp284;
-    UnkStruct sp84[64]; // Unknown size, although 64 sounds reasonable
+    s32 unloadedCount;
+    s32 x;
+    s32 z;
+    s32 mapIdx;
+    UnkStruct unloaded[64]; // Unknown size, although 64 sounds reasonable
     f32 f0;
     s32 xTemp;
     s32 zTemp;
@@ -2499,29 +2498,29 @@ void mapUpdateStreaming(void) {
     if ((sp2F4 != 7) || (sp2F0 != 7) || (sp294 != 0) || (gTrackFlags & TRACKFLAG_LAYER_CHANGED)) {
         shadows_func_8004D974(1);
         assetQueueClearMesgType(1, 0);
-        var_fp = 0;
-        for (var_s7 = 0; var_s7 < 5; var_s7++) {
-            var_v1 = gDecodedGlobalMap[var_s7];
-            temp_a3 = gBlockIndices[var_s7];
-            D_800B9714 = D_800B9700[var_s7];
-            var_s3 = 0;
-            for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
-                for (var_s0 = 0; var_s0 < BLOCKS_GRID_SPAN; var_s0++) {
-                    if (temp_a3[var_s3] >= 0) {
-                        sp84[var_fp].unk6 = var_s7;
-                        sp84[var_fp].unk0 = gMapCurrentStreamCoordsX + var_s0;
-                        sp84[var_fp].unk2 = gMapCurrentStreamCoordsZ + var_s2;
-                        sp84[var_fp].unk4 = temp_a3[var_s3];
-                        var_fp++;
+        unloadedCount = 0;
+        for (layer = 0; layer < 5; layer++) {
+            var_v1 = gDecodedGlobalMap[layer];
+            visGrid = gBlockIndices[layer];
+            D_800B9714 = D_800B9700[layer];
+            cellIdx = 0;
+            for (z = 0; z < BLOCKS_GRID_SPAN; z++) {
+                for (x = 0; x < BLOCKS_GRID_SPAN; x++) {
+                    if (visGrid[cellIdx] >= 0) {
+                        unloaded[unloadedCount].unk6 = layer;
+                        unloaded[unloadedCount].unk0 = gMapCurrentStreamCoordsX + x;
+                        unloaded[unloadedCount].unk2 = gMapCurrentStreamCoordsZ + z;
+                        unloaded[unloadedCount].unk4 = visGrid[cellIdx];
+                        unloadedCount++;
                     }
-                    temp_a3[var_s3] = -2;
-                    D_800B9714[var_s3] = -1;
+                    visGrid[cellIdx] = -2;
+                    D_800B9714[cellIdx] = -1;
                     var_v1->blockID = -3;
                     var_v1->mapIDs[0] = -1;
                     var_v1->mapIDs[1] = -1;
                     var_v1->mapIDs[2] = -1;
                     var_v1++;
-                    var_s3++;
+                    cellIdx++;
                 }
             }
         }
@@ -2534,87 +2533,88 @@ void mapUpdateStreaming(void) {
         D_80092A60 = gWorldX;
         D_80092A64 = gWorldZ;
         func_800307C4(tempX - gWorldX, tempZ - gWorldZ);
-        for (var_s3 = 0; var_s3 < gMapNumStreamMaps; var_s3++) {
-            gMapStreamMapTable[var_s3].unk06 = 0;
+        for (cellIdx = 0; cellIdx < gMapNumStreamMaps; cellIdx++) {
+            gMapStreamMapTable[cellIdx].unk06 = 0;
         }
         D_800B4A50 = map_func_80045DC0(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 0);
         D_800B4A54 = -1;
         if (D_800B4A50 != -1) {
-            sp284 = mapFindStreamMapIndex(D_800B4A50);
-            if (sp284 == -1) {
-                sp284 = mapLoadStreamMapAddToTable(D_800B4A50);
+            mapIdx = mapFindStreamMapIndex(D_800B4A50);
+            if (mapIdx == -1) {
+                mapIdx = mapLoadStreamMapAddToTable(D_800B4A50);
             }
-            gMapStreamMapTable[sp284].unk06 = 1;
-            D_800B4A54 = sp284;
-            for (var_s7 = 0; var_s7 < ARRAYCOUNT_S(gBlockIndices); var_s7++) {
-                mapCheckBlockGrid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, sp2C8, sp2B8, sp2A8, sp298, var_s7, 0, sp284);
-                temp_a3 = gBlockIndices[var_s7];
-                D_800B9714 = D_800B9700[var_s7];
-                for (var_s2 = sp2C8[2]; sp2C8[3] >= var_s2; var_s2++) {
-                    for (var_s0 = sp2C8[0]; sp2C8[1] >= var_s0; var_s0++) {
-                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
+            gMapStreamMapTable[mapIdx].unk06 = 1;
+            D_800B4A54 = mapIdx;
+            for (layer = 0; layer < ARRAYCOUNT_S(gBlockIndices); layer++) {
+                mapCheckBlockGrid(gMapCurrentStreamCoordsX + 7, gMapCurrentStreamCoordsZ + 7, 
+                    &range0, &range1, &range2, &range3, layer, FALSE, mapIdx);
+                visGrid = gBlockIndices[layer];
+                D_800B9714 = D_800B9700[layer];
+                for (z = range0.s[2]; range0.s[3] >= z; z++) {
+                    for (x = range0.s[0]; range0.s[1] >= x; x++) {
+                        visGrid[x + (((z + 7) << 4)) + 7] = -3;
                     }
                 }
 
-                for (var_s2 = sp2B8[2]; sp2B8[3] >= var_s2; var_s2++) {
-                    for (var_s0 = sp2B8[0]; sp2B8[1] >= var_s0; var_s0++) {
-                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
+                for (z = range1.s[2]; range1.s[3] >= z; z++) {
+                    for (x = range1.s[0]; range1.s[1] >= x; x++) {
+                        visGrid[x + (((z + 7) << 4)) + 7] = -3;
                     }
                 }
 
-                for (var_s2 = sp2A8[2]; sp2A8[3] >= var_s2; var_s2++) {
-                    for (var_s0 = sp2A8[0]; sp2A8[1] >= var_s0; var_s0++) {
-                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
+                for (z = range2.s[2]; range2.s[3] >= z; z++) {
+                    for (x = range2.s[0]; range2.s[1] >= x; x++) {
+                        visGrid[x + (((z + 7) << 4)) + 7] = -3;
                     }
                 }
 
-                for (var_s2 = sp298[2]; sp298[3] >= var_s2; var_s2++) {
-                    for (var_s0 = sp298[0]; sp298[1] >= var_s0; var_s0++) {
-                if (var_s2) {}
-                        temp_a3[var_s0 + (((var_s2 + 7) << 4)) + 7] = -3;
+                for (z = range3.s[2]; range3.s[3] >= z; z++) {
+                    for (x = range3.s[0]; range3.s[1] >= x; x++) {
+                if (z) {}
+                        visGrid[x + (((z + 7) << 4)) + 7] = -3;
                     }
                 }
 
-                var_s3 = 0;
+                cellIdx = 0;
                 var_s5 = 0;
-                for (var_s2 = 0; var_s2 < BLOCKS_GRID_SPAN; var_s2++) {
-                    for (var_s0 = 0; var_s0 < BLOCKS_GRID_SPAN; var_s0++) {
-                        xTemp = gMapCurrentStreamCoordsX + var_s0;
-                        zTemp = gMapCurrentStreamCoordsZ + var_s2;
-                        if (temp_a3[var_s3] == -3) {
-                            if (map_func_800485FC(var_s0, var_s2, xTemp, zTemp, var_s7) == 0) {
-                                temp_a3[var_s3] = -2;
+                for (z = 0; z < BLOCKS_GRID_SPAN; z++) {
+                    for (x = 0; x < BLOCKS_GRID_SPAN; x++) {
+                        xTemp = gMapCurrentStreamCoordsX + x;
+                        zTemp = gMapCurrentStreamCoordsZ + z;
+                        if (visGrid[cellIdx] == -3) {
+                            if (map_func_800485FC(x, z, xTemp, zTemp, layer) == 0) {
+                                visGrid[cellIdx] = -2;
                             } else {
-                                D_800B9714[var_s3] = var_s5++;
+                                D_800B9714[cellIdx] = var_s5++;
                             }
                         }
-                        var_s3++;
+                        cellIdx++;
                     }
                 }
             }
         }
-        var_s2 = TRUE;
-        for (var_s3 = gMapNumStreamMaps - 1; var_s3 >= 0; var_s3--) {
-            if ((s8) gMapStreamMapTable[var_s3].unk06 == 0) {
-                if (gMapStreamMapTable[var_s3].header != NULL) {
-                    var_s1 = gMapStreamMapTable[var_s3].mapID;
-                    mapInitObjSetupList(gMapStreamMapTable[var_s3].header, &gMapObjSetupLists[var_s1], var_s1, 1);
-                    mmFree(gMapStreamMapTable[var_s3].header);
+        pad2 = TRUE;
+        for (cellIdx = gMapNumStreamMaps - 1; cellIdx >= 0; cellIdx--) {
+            if ((s8) gMapStreamMapTable[cellIdx].unk06 == 0) {
+                if (gMapStreamMapTable[cellIdx].header != NULL) {
+                    var_s1 = gMapStreamMapTable[cellIdx].mapID;
+                    mapInitObjSetupList(gMapStreamMapTable[cellIdx].header, &gMapObjSetupLists[var_s1], var_s1, 1);
+                    mmFree(gMapStreamMapTable[cellIdx].header);
                     gLoadedMapsDataTable[var_s1] = NULL;
                 }
-                gMapStreamMapTable[var_s3].header = NULL;
-                gMapStreamMapTable[var_s3].mapID = -1;
+                gMapStreamMapTable[cellIdx].header = NULL;
+                gMapStreamMapTable[cellIdx].mapID = -1;
             }
-            if (var_s2 != FALSE) {
-                if (gMapStreamMapTable[var_s3].header == NULL) {
+            if (pad2 != FALSE) {
+                if (gMapStreamMapTable[cellIdx].header == NULL) {
                     gMapNumStreamMaps -= 1;
                 } else {
-                    var_s2 = FALSE;
+                    pad2 = FALSE;
                 }
             }
         }
-        for (var_s3 = 0; var_s3 < var_fp; var_s3++) {
-            blockFree(sp84[var_s3].unk4);
+        for (cellIdx = 0; cellIdx < unloadedCount; cellIdx++) {
+            blockFree(unloaded[cellIdx].unk4);
         }
         map_func_8004530C();
     }
@@ -2638,107 +2638,127 @@ void mapDecrementLayer(void) {
     gTrackFlags |= TRACKFLAG_LAYER_CHANGED;
 }
 
-void mapCheckBlockGrid(s32 gridX, s32 gridZ, s32* arg2, s32* arg3, s32* arg4, s32* arg5, s32 layer, s32 checkVis, s32 streamMapIdx) {
+void mapCheckBlockGrid(s32 gridX, s32 gridZ, VisGridRange* range0, VisGridRange* range1, VisGridRange* range2, VisGridRange* range3, s32 layer, s32 checkVis, s32 streamMapIdx) {
     MapHeader* mapHeader;
-    s32 temp_t6;
-    s32 temp_v1_2;
+    s32 cellOffset;
+    s32 cellValue;
     u32 temp;
-    u32* var_t2;
-    u32* var_t3;
-    u32 *var_v0;
+    u32* gridA;
+    u32* gridB;
+    u32* grid;
     Struct_D_800B9768_unk4* temp_v1;
 
     temp_v1 = &D_800B9768.unk4[gMapStreamMapTable[streamMapIdx].mapID];
     mapHeader = gMapStreamMapTable[streamMapIdx].header;
     gridX -= temp_v1->xMin;
     gridZ -= temp_v1->zMin;
+
     if (streamMapIdx == -1) {
-        temp_v1_2 = 1;
-        arg2[1] = temp_v1_2;
-        arg2[3] = temp_v1_2;
-        arg2[2] = -1;
-        arg2[0] = -1;
-        arg3[3] = -1;
-        arg3[2] = 0;
-        arg3[1] = 0;
-        arg3[0] = 0;
-        arg4[3] = -1;
-        arg4[2] = 0;
-        arg4[1] = 0;
-        arg4[0] = 0;
-        arg5[3] = -1;
-        arg5[2] = 0;
-        arg5[1] = 0;
-        arg5[0] = 0;
+        cellValue = 1;
+
+        range0->xMax = cellValue;
+        range0->zMax = cellValue;
+        range0->zMin = -1;
+        range0->xMin = -1;
+
+        range1->zMax = -1;
+        range1->zMin = 0;
+        range1->xMax = 0;
+        range1->xMin = 0;
+
+        range2->zMax = -1;
+        range2->zMin = 0;
+        range2->xMax = 0;
+        range2->xMin = 0;
+
+        range3->zMax = -1;
+        range3->zMin = 0;
+        range3->xMax = 0;
+        range3->xMin = 0;
+        
         if (layer != 0) {
-            arg2[3] = -2;
+            range0->zMax = -2;
         }
 
         return;
     }
 
     if (checkVis != 0) {
-        var_t2 = (u32 *)mapHeader->grid_A2_ptr;
-        var_t3 = (u32 *)mapHeader->grid_B2_ptr;
+        gridA = (u32*)mapHeader->grid_A2_ptr;
+        gridB = (u32*)mapHeader->grid_B2_ptr;
     } else {
-        var_t2 = (u32 *)mapHeader->grid_A1_ptr;
-        var_t3 = (u32 *)mapHeader->grid_B1_ptr;
+        gridA = (u32*)mapHeader->grid_A1_ptr;
+        gridB = (u32*)mapHeader->grid_B1_ptr;
     }
-    temp_t6 = ((mapHeader->gridSizeX * (gridZ)) + (gridX)) << 1;
+
+    cellOffset = ((mapHeader->gridSizeX * gridZ) + gridX) << 1;
+
     if (layer == 0) {
-        var_v0 = var_t2;
-        var_v0 += temp_t6;
-        temp_v1_2 = var_v0[0];
-        arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
-        arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg2[3] = (temp_v1_2 & 0xF) - 7;
-        temp_v1_2 >>= 0x10;
-        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF);
-        arg3[0] -= 7;
-        arg3[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg3[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg3[3] = (temp_v1_2 & 0xF) - 7;
-        temp_v1_2 = var_v0[1];
-        arg4[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
-        arg4[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg4[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg4[3] = (temp_v1_2 & 0xF) - 7;
-        temp_v1_2 >>= 0x10;
-        arg5[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
-        arg5[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg5[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg5[3] = (temp_v1_2 & 0xF) - 7;
+        grid = gridA;
+        grid += cellOffset;
+        cellValue = grid[0];
+
+        range0->xMin = ((cellValue >> 0xC) & 0xF) - 7;
+        range0->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range0->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range0->zMax = (cellValue & 0xF) - 7;
+
+        cellValue >>= 0x10;
+        range1->xMin = ((cellValue >> 0xC) & 0xF);
+        range1->xMin -= 7;
+        range1->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range1->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range1->zMax = (cellValue & 0xF) - 7;
+
+        cellValue = grid[1];
+        range2->xMin = ((cellValue >> 0xC) & 0xF) - 7;
+        range2->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range2->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range2->zMax = (cellValue & 0xF) - 7;
+
+        cellValue >>= 0x10;
+        range3->xMin = ((cellValue >> 0xC) & 0xF) - 7;
+        range3->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range3->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range3->zMax = (cellValue & 0xF) - 7;
+
         return;
     }
-    arg2[3] = -1;
-    arg2[2] = 0;
-    arg2[1] = -1;
-    arg2[0] = 0;
-    arg3[3] = -1;
-    arg3[2] = 0;
-    arg3[1] = -1;
-    arg3[0] = 0;
-    arg4[3] = -1;
-    arg4[2] = 0;
-    arg4[1] = -1;
-    arg4[0] = 0;
-    arg5[3] = -1;
-    arg5[2] = 0;
-    arg5[1] = -1;
-    arg5[0] = 0;
-    temp_v1_2 = mapHeader->blockIDs_ptr[temp_t6 >> 1];
-    if ((temp_v1_2 & 0x7F) != 0x7F) {
-        temp_v1_2 = var_t3[(((temp_v1_2 & 0x7F) << 2) + layer) - 1];
-        arg2[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
-        arg2[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg2[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg2[3] = (temp_v1_2 & 0xF) - 7;
-        temp_v1_2 >>= 0x10;
-        arg3[0] = ((temp_v1_2 >> 0xC) & 0xF) - 7;
-        arg3[2] = ((temp_v1_2 >> 8) & 0xF) - 7;
-        arg3[1] = ((temp_v1_2 >> 4) & 0xF) - 7;
-        arg3[3] = (temp_v1_2 & 0xF) - 7;
+
+    range0->zMax = -1;
+    range0->zMin = 0;
+    range0->xMax = -1;
+    range0->xMin = 0;
+
+    range1->zMax = -1;
+    range1->zMin = 0;
+    range1->xMax = -1;
+    range1->xMin = 0;
+
+    range2->zMax = -1;
+    range2->zMin = 0;
+    range2->xMax = -1;
+    range2->xMin = 0;
+
+    range3->zMax = -1;
+    range3->zMin = 0;
+    range3->xMax = -1;
+    range3->xMin = 0;
+
+    cellValue = mapHeader->blockIDs_ptr[cellOffset >> 1];
+
+    if ((cellValue & 0x7F) != 0x7F) {
+        cellValue = gridB[(((cellValue & 0x7F) << 2) + layer) - 1];
+        range0->xMin = ((cellValue >> 0xC) & 0xF) - 7;
+        range0->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range0->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range0->zMax = (cellValue & 0xF) - 7;
+
+        cellValue >>= 0x10;
+        range1->xMin = ((cellValue >> 0xC) & 0xF) - 7;
+        range1->zMin = ((cellValue >> 8) & 0xF) - 7;
+        range1->xMax = ((cellValue >> 4) & 0xF) - 7;
+        range1->zMax = (cellValue & 0xF) - 7;
     }
 }
 
@@ -3064,18 +3084,18 @@ void map_func_800484A8(void) {
     mmSetDelay(2);
 }
 
-s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
+s32 map_func_800485FC(s32 x, s32 z, s32 worldGridX, s32 worldGridZ, s32 layer) {
     GlobalMapCell* currentMap;
     s16 blockID;
     s32 fieldIndex;
     s32 i;
     s8* currentBlockIndices;
 
-    fieldIndex = GRID_INDEX(arg1, arg0);
-    currentBlockIndices = gBlockIndices[arg4];
-    currentMap = gDecodedGlobalMap[arg4];
+    fieldIndex = GRID_INDEX(z, x);
+    currentBlockIndices = gBlockIndices[layer];
+    currentMap = gDecodedGlobalMap[layer];
     currentMap += fieldIndex;
-    map_func_80046428(arg2, arg3, currentMap, arg4);
+    map_func_80046428(worldGridX, worldGridZ, currentMap, layer);
     blockID = currentMap->blockID;
     if (blockID < 0) {
         blockID = -1;
@@ -3092,7 +3112,7 @@ s32 map_func_800485FC(s32 arg0, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
             return 1;
         }
     }
-    blockLoad(blockID, fieldIndex, arg4, /*fromAssetThread=*/FALSE);
+    blockLoad(blockID, fieldIndex, layer, /*fromAssetThread=*/FALSE);
     return 1;
 }
 

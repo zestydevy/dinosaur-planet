@@ -266,11 +266,11 @@ static void WL_LevelControl_handleAct2(Object* self) {
 
         player = objGetPlayer(); //@bug: already assigned
 
-        mainSetBits(BIT_FC, 1);
+        mainSetBits(BIT_DF_Shrine_SharpClaw_Drop_Magic_Gems, TRUE);
 
         //Restore some magic and make sure the player has the 1st Spirit
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
+        dll_player(player)->add_magic(player, 20);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_1, TRUE);
 
         //Use envFxActions
         envfxAction(self, self, 0x204, 0);
@@ -282,7 +282,7 @@ static void WL_LevelControl_handleAct2(Object* self) {
 
     //If Krystal has the Medium Food Bag and it doesn't have any green apples, add 10 of them (@debug code related to Randorn?)
     if (mainGetBits(BIT_Krystal_Foodbag_M)) {
-        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+        foodbag = dll_player(player)->func66(player, 15);
         if (foodbag && (mainGetBits(BIT_Green_Apple_Count) == 0)) {
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
             ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
@@ -321,8 +321,8 @@ static void WL_LevelControl_handleAct3(Object* self) {
 
         //Restore some magic and make sure the player has the 2nd Spirit
         player = objGetPlayer();
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_2, TRUE);
+        dll_player(player)->add_magic(player, 20);
 
         dInitSpirit2Visit = FALSE;
     } else if (dInitSpirit2Visit) {
@@ -359,8 +359,8 @@ static void WL_LevelControl_handleAct4(Object* self) {
 
         //Restore some magic and make sure the player has the 3rd Spirit
         player = objGetPlayer();
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_3, TRUE);
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_3, TRUE);
+        dll_player(player)->add_magic(player, 20);
 
         dInitSpirit3Visit = FALSE;
     }
@@ -430,8 +430,8 @@ static void WL_LevelControl_handleAct5(Object* self) {
         mainSetBits(BIT_Spell_Illusion, 1);
 
         //Restore some magic and make sure the player has the 4th Spirit
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_4, TRUE);
+        dll_player(player)->add_magic(player, 20);
 
         mainSetBits(BIT_WM_Act5_Sabre_Dock_Pushed_Crate_Onto_GuardClaw, 0);
 
@@ -473,7 +473,7 @@ static void WL_LevelControl_handleAct5(Object* self) {
 
     //Handle Sabre entering the hall with the GuardClaw
     if (mainGetBits(BIT_WM_Act5_Sabre_Entered_GuardClaw_Hall)) {
-        lastUsedSpell = ((DLL_210_Player*)player->dll)->vtbl->func50(player);
+        lastUsedSpell = dll_player(player)->func50(player);
 
         //Warp the player away if they're not using the Illusion or Forcefield Spells
         if ((lastUsedSpell != BIT_Spell_Illusion) && 
@@ -525,7 +525,7 @@ static void WL_LevelControl_handleAct6(Object* self) {
     //Set up the visit (only runs once)
     if (dInitSpirit6Visit && (mainGetBits(BIT_Play_Seq_020D) == FALSE)) {
         //Add 10 green apples, and 1 red and brown apple to the food bag (@debug code related to Randorn?)
-        foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 15);
+        foodbag = dll_player(player)->func66(player, 15);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->set_capacity(foodbag);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
         ((DLL_IFoodbag*)foodbag->dll)->vtbl->collect_food(foodbag, FOOD_Green_Apple);
@@ -545,7 +545,7 @@ static void WL_LevelControl_handleAct6(Object* self) {
         mainSetBits(BIT_Spell_Forcefield, 1);
 
         //Restore some magic and make sure the player has the 6th Spirit
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_6, TRUE);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_6, TRUE);
 
         dInitSpirit6Visit = FALSE;
     }
@@ -574,8 +574,8 @@ static void WL_LevelControl_handleAct7(Object* self) {
 
         //Restore some magic and make sure the player has the 7th Spirit
         player = objGetPlayer();
-        ((DLL_210_Player*)player->dll)->vtbl->set_spirit_bits(player, PLAYER_SPIRIT_7, TRUE);
-        ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, 20);
+        dll_player(player)->set_spirit_bits(player, PLAYER_SPIRIT_7, TRUE);
+        dll_player(player)->add_magic(player, 20);
 
         dInitSpirit7Visit = FALSE;
 
