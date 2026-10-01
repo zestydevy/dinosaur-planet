@@ -1,5 +1,4 @@
 #include "common.h"
-#include "sys/gfx/modgfx.h"
 
 /*0x0*/ static s16 data_0[] = {
     0, 0, 0, 15, 0,
