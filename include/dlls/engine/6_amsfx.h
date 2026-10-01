@@ -901,6 +901,8 @@ enum SoundID {
 
     SOUND_B47 = 0xB47,
 
+    SOUND_B55 = 0xB55,
+
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
     SOUND_B62 = 0xB62, // ProjBall

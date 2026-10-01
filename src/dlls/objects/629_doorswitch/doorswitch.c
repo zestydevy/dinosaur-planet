@@ -30,27 +30,27 @@ void dll_629_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_629_setup(Object* self, DLL629_Setup* setup, s32 reset) {
-    DLL629_Data* temp_v1;
+    DLL629_Data* objdata;
 
-    temp_v1 = self->data;
+    objdata = self->data;
     self->srt.yaw = setup->unk18 << 8;
     self->srt.roll = setup->unk19 << 8;
     self->srt.pitch = setup->unk1C;
-    temp_v1->unk0 = (s16) setup->unk1E;
-    temp_v1->unk2 = (s16) setup->unk1A;
-    if (mainGetBits((s32) temp_v1->unk0) != 0) {
-        temp_v1->unk4 = 1U;
+    objdata->unk0 = (s16) setup->unk1E;
+    objdata->unk2 = (s16) setup->unk1A;
+    if (mainGetBits((s32) objdata->unk0) != 0) {
+        objdata->unk4 = 1U;
     }
-    if ((self->id == 0x3E7) && (temp_v1->unk4 != 0)) {
+    if ((self->id == OBJ_VFP_LiftIndicat) && (objdata->unk4 != 0)) {
         self->modelInstIdx = 1;
     }
-    self->stateFlags |= 0x2000;
+    self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0xDC | func: 1 | export: 1
 
 void dll_629_control(Object* self) {
-    if (self->id != 0x3E7) {
+    if (self->id != OBJ_VFP_LiftIndicat) {
         dll_629_func_23C(self);
     } else {
         dll_629_func_3D4(self);
@@ -64,7 +64,7 @@ void dll_629_update(Object* self) { }
 void dll_629_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     DLL629_Data* objdata = self->data;
 
-    if (self->id != 0x3E7) {
+    if (self->id != OBJ_VFP_LiftIndicat) {
         if (visibility != 0) {
             if (objdata->unk4 != 0) {
                 return;
@@ -105,12 +105,12 @@ static void dll_629_func_23C(Object* self) {
     if (objdata->unk4 != 0 || mainGetBits(objdata->unk0) == 0) {
         return;
     } 
-    gDLL_6_AMSFX->vtbl->Play(self, 0xB55U, MAX_VOLUME, NULL, NULL, 0, NULL);
+    gDLL_6_AMSFX->vtbl->Play(self, SOUND_B55, MAX_VOLUME, NULL, NULL, 0, NULL);
     i =  0x28;
     // FAKE
     do {} while (0);
     while (i--) {
-        gDLL_17_partfx->vtbl->spawn(self, 0x551, NULL, 2, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_551, NULL, 2, -1, NULL);
     }
     data_0 = dllLoad(DLL_ID_107, 1U);
     data_0->vtbl->func0(self, 0x11, NULL, 2, -1, NULL);
@@ -121,14 +121,14 @@ static void dll_629_func_23C(Object* self) {
 
 // offset: 0x3D4 | func: 8
 static void dll_629_func_3D4(Object* self) {
-    DLL629_Data* sp34;
+    DLL629_Data* objdata;
 
-    sp34 = self->data;
-    if (sp34->unk4 == 0) {
-        if (mainGetBits((s32) sp34->unk0) != 0) {
-            gDLL_6_AMSFX->vtbl->Play(self, 0xB55U, 0x7FU, NULL, NULL, 0, NULL);
+    objdata = self->data;
+    if (objdata->unk4 == 0) {
+        if (mainGetBits((s32) objdata->unk0) != 0) {
+            gDLL_6_AMSFX->vtbl->Play(self, SOUND_B55, MAX_VOLUME, NULL, NULL, 0, NULL);
             objSetModel(self, 1);
-            sp34->unk4 = 1;
+            objdata->unk4 = 1;
         }
     }
 }
