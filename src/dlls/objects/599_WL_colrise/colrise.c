@@ -28,14 +28,13 @@ void dll_599_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_599_setup(Object* self, DLL599_Setup* setup, s32 reset) {
-    DLL599_Data* objdata;
+    DLL599_Data* objdata = self->data;
 
-    objdata = self->data;
     self->animCallback = dll_599_func_48C;
     self->srt.yaw = setup->unk18 << 8;
     objdata->unk0 = (s16) setup->unk1E;
     if (data_0 == 0) {
-        data_0 = dllLoad(0x1024U, 1U);
+        data_0 = dllLoad(DLL_ID_140, 1U);
     }
 }
 // offset: 0x98 | func: 1 | export: 1
@@ -43,11 +42,10 @@ void dll_599_control(Object* self) {
     Object* polyhit;
     s32 i;
     ObjSetup* objSetup;
-    DLL599_Data* objData; //38
+    DLL599_Data* objData;
     s8 i_2;
     f32 temp_fv0;
     f32 temp_fv0_2;
-
 
     objData = self->data;
     objSetup = self->setup;
@@ -94,7 +92,7 @@ void dll_599_control(Object* self) {
     
     if (i_2 != 0) {
         if (objData->unk4 == 0) {
-            gDLL_6_AMSFX->vtbl->Play(self, 0x1E1, MAX_VOLUME, &objData->unk4, NULL, 0, NULL);
+            gDLL_6_AMSFX->vtbl->Play(self, SOUND_1E1_Stone_Moving_Loop, MAX_VOLUME, &objData->unk4, NULL, 0, NULL);
         }
     } else {
         if (mathRnd(0, 0x28) == 0) {
