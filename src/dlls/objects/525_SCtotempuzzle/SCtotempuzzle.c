@@ -29,21 +29,21 @@ void dll_525_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
-    DLL525_Data* DLL515Data;
+    DLL525_Data* DLL525Data;
     s16 temp_v1;
 
-    DLL515Data = self->data;
+    DLL525Data = self->data;
     self->modelInstIdx = setup->unk1B;
     if (self->modelInstIdx < 0 || self->modelInstIdx >= 6) {
         self->modelInstIdx = 0;
     }
     self->srt.yaw = -0x7FFF;
-    DLL515Data->unk8 = ((u16)self->srt.yaw) / 8192; // TODO: that cast is sus
+    DLL525Data->unk8 = ((u16)self->srt.yaw) / 8192; // TODO: that cast is sus
     temp_v1 = mathRnd(7, 0xA) * 0xA;
-    DLL515Data->unk0 = temp_v1;
-    DLL515Data->unk4 = temp_v1;
+    DLL525Data->unk0 = temp_v1;
+    DLL525Data->unk4 = temp_v1;
     if (mathRnd(0, 1) != 0) {
-        DLL515Data->unkA = 1;
+        DLL525Data->unkA = 1;
     }
     self->animCallback = dll_525_func_81C;
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED);
