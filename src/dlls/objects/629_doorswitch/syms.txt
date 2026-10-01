@@ -1,15 +1,15 @@
 .text = 0x0:
-dll_629_ctor = 0x0;
-dll_629_dtor = 0xC;
-dll_629_obj_Setup = 0x18;
-dll_629_obj_Control = 0xDC;
-dll_629_obj_Update = 0x140;
-dll_629_obj_Print = 0x14C;
-dll_629_obj_Free = 0x1D0;
-dll_629_obj_GetModelFlags = 0x218;
-dll_629_obj_GetDataSize = 0x228;
-dll_629_func_23C = 0x23C;
-dll_629_func_3D4 = 0x3D4;
+VFP_DoorSwitch_ctor = 0x0;
+VFP_DoorSwitch_dtor = 0xC;
+VFP_DoorSwitch_obj_Setup = 0x18;
+VFP_DoorSwitch_obj_Control = 0xDC;
+VFP_DoorSwitch_obj_Update = 0x140;
+VFP_DoorSwitch_obj_Print = 0x14C;
+VFP_DoorSwitch_obj_Free = 0x1D0;
+VFP_DoorSwitch_obj_GetModelFlags = 0x218;
+VFP_DoorSwitch_obj_GetDataSize = 0x228;
+VFP_DoorSwitch_func_23C = 0x23C;
+VFP_DoorSwitch_func_3D4 = 0x3D4;
 
 .rodata = 0x4E8:
 

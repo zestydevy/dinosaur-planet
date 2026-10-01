@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_599_ctor
-.dword dll_599_dtor
+.dword WL_colrise_ctor
+.dword WL_colrise_dtor
 
 # export table
-/*0*/ .dword dll_599_obj_Setup
-/*1*/ .dword dll_599_obj_Control
-/*2*/ .dword dll_599_obj_Update
-/*3*/ .dword dll_599_obj_Print
-/*4*/ .dword dll_599_obj_Free
-/*5*/ .dword dll_599_obj_GetModelFlags
-/*6*/ .dword dll_599_obj_GetDataSize
+/*0*/ .dword WL_colrise_obj_Setup
+/*1*/ .dword WL_colrise_obj_Control
+/*2*/ .dword WL_colrise_obj_Update
+/*3*/ .dword WL_colrise_obj_Print
+/*4*/ .dword WL_colrise_obj_Free
+/*5*/ .dword WL_colrise_obj_GetModelFlags
+/*6*/ .dword WL_colrise_obj_GetDataSize

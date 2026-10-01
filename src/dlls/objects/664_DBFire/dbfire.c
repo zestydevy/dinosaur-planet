@@ -1,10 +1,16 @@
-#include "common.h"
+#include "dll.h"
+#include "sys/dll.h"
+#include "sys/main.h"
+#include "dlls/engine/17_partfx.h"
 #include "sys/gfx/modgfx.h"
+#include "game/gamebits.h"
+#include "sys/gfx/modgfx.h"
+#include "sys/rand.h"
 
 typedef struct {
     s16 _unk0;
     s16 unk2;
-    s8 unk4;
+    u8 unk4;
     s8 _unk5;
     s16 unk6;
     u8 unk8; 
@@ -12,33 +18,29 @@ typedef struct {
     s16 _unkA;
     s32 _unkC;
     SRT unk10;
-} DLL664_Data;
+} DBfire_Data;
 
 typedef struct {
     ObjSetup base;
     s16 unk18;
     u8 unk1A;
     u8 unk1B;
-} DLL664_Setup;
+} DBfire_Setup;
 
 // offset: 0x0 | ctor
-void dll_664_ctor(void* dll) { }
+void DBfire_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void dll_664_dtor(void* dll) { }
+void DBfire_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_664_obj_Setup(Object* self, DLL664_Setup* setup, s32 reset) {
-    DLL664_Data* objdata = self->data;
-    f32 var_ft1;
-    u8 temp_v0;
-
-    temp_v0 = setup->unk1A;
-    if (temp_v0 != 0) {
-        var_ft1 =  temp_v0;
-        self->srt.scale = var_ft1 * 0.01f;
+void dll_664_obj_Setup(Object* self, DBfire_Setup* setup, s32 reset) {
+    DBfire_Data* objdata = self->data;
+    
+    if (setup->unk1A != 0) {
+        self->srt.scale = setup->unk1A * 0.01f;
     }
-    objdata->unk4 = (u8) setup->unk1B;
+    objdata->unk4 = setup->unk1B;
     objdata->unk6 = 0;
     objdata->unk8 = 0;
     objdata->unk2 = mathRnd(0, 0x3E8);
@@ -46,8 +48,8 @@ void dll_664_obj_Setup(Object* self, DLL664_Setup* setup, s32 reset) {
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void dll_664_obj_Control(Object* self) {
-    DLL664_Data* objdata = self->data;
+void DBfire_obj_Control(Object* self) {
+    DBfire_Data* objdata = self->data;
     DLL_IModgfx* dll;
     
     if (objdata->unk8 < 2) {
@@ -107,25 +109,23 @@ void dll_664_obj_Control(Object* self) {
 }
 
 // offset: 0x49C | func: 2 | export: 2
-void dll_664_obj_Update(Object* self) { }
+void DBfire_obj_Update(Object* self) { }
 
 // offset: 0x4A8 | func: 3 | export: 3
-void dll_664_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void DBfire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
 
 // offset: 0x4C0 | func: 4 | export: 4
-void dll_664_obj_Free(Object* self, s32 onlySelf);
-void dll_664_obj_Free(Object* self, s32 onlySelf) {
+void DBfire_obj_Free(Object* self, s32 onlySelf) {
     gDLL_14_Modgfx->vtbl->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x530 | func: 5 | export: 5
-s32 dll_664_obj_GetModelFlags(s32 arg0) {
+s32 DBfire_obj_GetModelFlags(s32 arg0) {
     return MODFLAGS_1;
 }
 
 // offset: 0x540 | func: 6 | export: 6
-s32 dll_664_obj_GetDataSize(s32 arg0, s32 arg1) {
-    return sizeof(DLL664_Data);
+s32 DBfire_obj_GetDataSize(s32 arg0, s32 arg1) {
+    return sizeof(DBfire_Data);
 }
-
