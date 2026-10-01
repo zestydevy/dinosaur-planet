@@ -316,7 +316,7 @@ void CFCrystal_func_288(Object* self) {
         if ((objdata->unk30[0] != 0) || (objdata->unk30[1] != 0) || (objdata->unk30[2] != 0)) {
             if (objdata->unk16A > 100) {
                 if ((objdata->unk30[0] != 0) && (objdata->unk30[1] != 0) && (objdata->unk30[2] != 0)) {
-                    data_10->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
+                    data_10->vtbl->Spawn(self, 0, NULL, 1, -1, NULL);
                 } else {
                     dll_partfx->spawn(self, PARTICLE_7B, NULL, 0, -1, NULL);
                 }
@@ -324,7 +324,7 @@ void CFCrystal_func_288(Object* self) {
             if (objdata->unk168 > 100) {
                 objdata->unk168 = 0;
                 if ((objdata->unk30[0] != 0) && (objdata->unk30[1] != 0) && (objdata->unk30[2] != 0)) {
-                    data_10->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
+                    data_10->vtbl->Spawn(self, 0, NULL, 1, -1, NULL);
                 }
             }
             if (objdata->unk169 > 100) {

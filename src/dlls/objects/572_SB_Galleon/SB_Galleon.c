@@ -335,7 +335,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
                 }
             }
             if (objdata->shiphead) {
-                tempDll->vtbl->Func0(objdata->shiphead, 1, 0, 0x10000 | 0x2, -1, NULL);
+                tempDll->vtbl->Spawn(objdata->shiphead, 1, 0, 0x10000 | 0x2, -1, NULL);
             }
             objdata->unk82 = 0;
             break;
@@ -388,7 +388,7 @@ int SB_Galleon_anim_callback(Object *self, Object *animObj, AnimObj_Data *animOb
         objdata->unk82 = 50;
         if (objdata->shiphead) {
             tempDll = objdata->dll;
-            tempDll->vtbl->Func0(objdata->shiphead, 0, 0, 0x10000 | 0x2, -1, NULL);
+            tempDll->vtbl->Spawn(objdata->shiphead, 0, 0, 0x10000 | 0x2, -1, NULL);
         }
     }
     return 0;

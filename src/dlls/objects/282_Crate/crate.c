@@ -125,7 +125,7 @@ void crate_control(Object* self) {
             srt.yaw = 0;
             srt.pitch = 0;
             srt.roll = 0;
-            dModGfxDLLDamaged->vtbl->Func0(0, 1, &srt, 0x401, -1, &dModGfxParams);
+            dModGfxDLLDamaged->vtbl->Spawn(0, 1, &srt, 0x401, -1, &dModGfxParams);
         }
     }
     
@@ -183,7 +183,7 @@ void crate_control(Object* self) {
         }
 
         //Create debris
-        dModGfxDLLDestroyed->vtbl->Func0(self, 1, 0, 2, -1, 0);
+        dModGfxDLLDestroyed->vtbl->Spawn(self, 1, 0, 2, -1, 0);
     }
     
     //Handle flash opacity (after being damaged, fade in/out red glow)

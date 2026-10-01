@@ -105,15 +105,15 @@ void campfire_control(Object* self) {
             modGfxArg = 0;
         }
         
-        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_115, 1);
-        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         modGfxDLL = dllLoad(DLL_ID_114, 1);
-        modGfxDLL->vtbl->Func0(self, modGfxArg, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, modGfxArg, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         self->unkE0 = TRUE;

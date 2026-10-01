@@ -58,15 +58,15 @@ void WLTorch_obj_Setup(Object* self, WLTorch_Setup* setup, s32 reset) {
     if (objdata->mode == WLTorch_MODE_0) {
         modGfxDLL = dllLoad(DLL_ID_121, 1);
         self->srt.scale *= 0.5f;
-        modGfxDLL->vtbl->Func0(self, 1, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, 1, &fxTransform, 0x10004, -1, 0);
     } else if (objdata->mode == WLTorch_MODE_7F_Blue) {
         modGfxDLL = dllLoad(DLL_ID_121, 1);
         self->srt.scale *= 0.5f;
-        modGfxDLL->vtbl->Func0(self, 2, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, 2, &fxTransform, 0x10004, -1, 0);
     } else {
         modGfxDLL = dllLoad(DLL_ID_115, 1);
         self->srt.scale *= 0.5f;
-        modGfxDLL->vtbl->Func0(self, 2, &fxTransform, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, 2, &fxTransform, 0x10004, -1, 0);
     }
 
     self->srt.scale *= 2.0f;

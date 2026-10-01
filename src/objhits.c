@@ -683,7 +683,7 @@ u8 func_80026DF4(Object* obj, Unk80026DF4* hitConfigs, u8 hitConfigCount, u8 fli
                 loadedDLL = dllLoadActual(DLL_ID_106, 1, FALSE);
                 // @fake
                 if (1) {}
-                loadedDLL->vtbl->Func0(0, 1, &srtFX, 0x401, -1, sp48);
+                loadedDLL->vtbl->Spawn(0, 1, &srtFX, 0x401, -1, sp48);
                 if (loadedDLL != NULL) {
                     dllFree(loadedDLL);
                 }

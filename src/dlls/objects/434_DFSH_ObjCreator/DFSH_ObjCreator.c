@@ -76,8 +76,8 @@ void DFSH_ObjCreator_obj_Control(Object* self) {
 
     if ((self->unkE0 == 0) && mainGetBits(BIT_DF_Shrine_Activate_ObjCreator_1 + setup->creatorIndex)) {
         modgfx = dllLoad(DLL_ID_146, 1);
-        modgfx->vtbl->Func0(self, 0, 0, 1, -1, 0);
-        modgfx->vtbl->Func0(self, 1, 0, 1, -1, 0);
+        modgfx->vtbl->Spawn(self, 0, 0, 1, -1, 0);
+        modgfx->vtbl->Spawn(self, 1, 0, 1, -1, 0);
         dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
         dllFree(modgfx);
         

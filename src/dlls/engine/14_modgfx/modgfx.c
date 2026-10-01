@@ -659,18 +659,18 @@ void modgfx_Func2(s32 arg0, s32 arg1, s32 arg2) {
                             for (var_s0_2 = 0; var_s0_2 < (s32) bss_0[sp108]->unk9C[sp104].unk4.x; var_s0_2++) {
                                 if (mathRnd(0, 5) == 0) {
                                     if (bss_0[sp108]->unkA4 & 1) {
-                                        modgfx->vtbl->Func0(NULL, 0, &bss_0[sp108]->unkC, 1, -1, NULL);
+                                        modgfx->vtbl->Spawn(NULL, 0, &bss_0[sp108]->unkC, 1, -1, NULL);
                                     } else {
-                                        modgfx->vtbl->Func0(bss_0[sp108]->unk4, 0, NULL, 1, -1, NULL);
+                                        modgfx->vtbl->Spawn(bss_0[sp108]->unk4, 0, NULL, 1, -1, NULL);
                                     }
                                 }
                             }
                         } else {
                             for (var_s0_2 = 0; var_s0_2 < (s32) bss_0[sp108]->unk9C[sp104].unk4.x; var_s0_2++) {
                                 if (bss_0[sp108]->unkA4 & 1) {
-                                    modgfx->vtbl->Func0(NULL, 0, &bss_0[sp108]->unkC, 1, -1, 0);
+                                    modgfx->vtbl->Spawn(NULL, 0, &bss_0[sp108]->unkC, 1, -1, 0);
                                 } else {
-                                    modgfx->vtbl->Func0(bss_0[sp108]->unk4, 0, NULL, 1, -1, 0);
+                                    modgfx->vtbl->Spawn(bss_0[sp108]->unk4, 0, NULL, 1, -1, 0);
                                 }
                             }
                         }

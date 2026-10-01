@@ -6,7 +6,7 @@
 
 DLL_INTERFACE(DLL_IModgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*Func0)(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);
+    /*0*/ s32 (*Spawn)(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);
 };
 
 #endif

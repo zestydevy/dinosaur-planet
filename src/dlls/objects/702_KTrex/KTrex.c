@@ -919,7 +919,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
             _bss_60.roll = 0;
             sp3C[1] += mathRnd(0, 0x9B);
             sp3C[2] += mathRnd(0, 0x9B);
-            _data_E4->vtbl->Func0(self, 0, &_bss_60, 1, -1, &sp3C);
+            _data_E4->vtbl->Spawn(self, 0, &_bss_60, 1, -1, &sp3C);
         }
         if (fsa->hitpoints <= 0) {
             fsa->hitpoints = 0;

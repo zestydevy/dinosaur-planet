@@ -43,7 +43,7 @@ void DLL792_obj_Setup(Object* self, DLL792_Setup* objSetup, s32 reset) {
 void DLL792_obj_Control(Object* self) {
     //Create a massive radial flare effect
     if (mathRnd(0, 2) == 0) {
-        dModGfxDLL->vtbl->Func0(self, 1, NULL, 4, -1, NULL);
+        dModGfxDLL->vtbl->Spawn(self, 1, NULL, 4, -1, NULL);
     }
     
     //Creates blue particles, arranged in two vertical columns?

@@ -74,12 +74,12 @@ void WL_spiritplace_control(Object *self) {
     if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 0) {
         if (objdata->effectTimer <= 0) {
             if (objdata->unk6 == 0) {
-                _data_0->vtbl->Func0(self, 4, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Spawn(self, 4, NULL, 4, -1, &objdata->unk10);
             } else if (objdata->unk6 == 4) {
-                _data_0->vtbl->Func0(self, 0, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->Func0(self, 1, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->Func0(self, 2, NULL, 4, -1, &objdata->unk10);
-                _data_0->vtbl->Func0(self, 3, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Spawn(self, 0, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Spawn(self, 1, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Spawn(self, 2, NULL, 4, -1, &objdata->unk10);
+                _data_0->vtbl->Spawn(self, 3, NULL, 4, -1, &objdata->unk10);
             }
             objdata->unk6++;
             if (objdata->unk6 >= 9) {
@@ -90,7 +90,7 @@ void WL_spiritplace_control(Object *self) {
         objdata->effectTimer -= gUpdateRate;
     } else if (mainGetBits(BIT_WM_Spirit_Release_Effect) && objdata->mode == 2) {
         if (objdata->effectTimer <= 0) {
-            _data_0->vtbl->Func0(self, 4, NULL, 4, -1, &objdata->unk10);
+            _data_0->vtbl->Spawn(self, 4, NULL, 4, -1, &objdata->unk10);
             objdata->effectTimer = 195 + mathRnd(0, 35);
         }
         objdata->effectTimer -= gUpdateRate;
@@ -99,7 +99,7 @@ void WL_spiritplace_control(Object *self) {
         objdata->mode == 0 &&
         mathRnd(1, 2) == 2 &&
         vec3Distance(&objGetPlayer()->globalPosition, &self->globalPosition) < 90.0f) {
-            _data_4->vtbl->Func0(self, 4, NULL, 1, -1, NULL);
+            _data_4->vtbl->Spawn(self, 4, NULL, 1, -1, NULL);
     }
     if (mainGetBits(objdata->bit2) && objdata->unk0 == 0) {
         self->srt.roll += 200;

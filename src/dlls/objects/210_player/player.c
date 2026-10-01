@@ -1258,7 +1258,7 @@ void dll_210_func_2534(Object* self, Player_Data* objData, ObjFSA_Data* fsa) {
         fxTransform.roll = 0;
         fxTransform.scale = 1.0f;
         if ((s32)&modGfxDLL) {} // @fake
-        modGfxDLL->vtbl->Func0(self, 0, &fxTransform, 1, -1, &fxColour);
+        modGfxDLL->vtbl->Spawn(self, 0, &fxTransform, 1, -1, &fxColour);
 
         if (modGfxDLL != NULL) {
             dllFree(modGfxDLL);
@@ -8842,7 +8842,7 @@ s32 dll_210_func_18EAC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
                             _data_7C0 = dllLoad(DLL_ID_176, 1U);
                         }
                         if (_data_7C0 != NULL) {
-                            _data_7C0->vtbl->Func0(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
+                            _data_7C0->vtbl->Spawn(player->linkedObject, player->id == 0, 0, 0x10404, -1, 0);
                         }
                         _bss_24 = 35.0f;
                     }

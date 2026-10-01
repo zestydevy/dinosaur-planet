@@ -566,9 +566,9 @@ s32 dll_274_func_225C(Object* self, DLL274_Data* objData) {
                 mainSetBits(BIT_1C9, 0);
             }
             
-            sp58 = dllLoad(0x1003, 1);
-            sp58->vtbl->Func0(self, 0x14, 0, 2, -1, 0);
-            sp58->vtbl->Func0(self, 0x14, 0, 2, -1, 0);
+            sp58 = dllLoad(DLL_ID_107, 1);
+            sp58->vtbl->Spawn(self, 0x14, 0, 2, -1, 0);
+            sp58->vtbl->Spawn(self, 0x14, 0, 2, -1, 0);
             dllFree(sp58);
             
             dll_amSfx->Play(NULL, 0x778, 0x64, NULL, NULL, 0, NULL);

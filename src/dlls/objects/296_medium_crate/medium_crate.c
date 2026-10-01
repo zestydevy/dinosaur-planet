@@ -194,14 +194,14 @@ void medium_crate_control(Object *self) {
                     sp48.pitch = 0;
                     sp48.yaw = 0;
                     sp48.scale = 1.0f;
-                    _data_4->vtbl->Func0(NULL, 1, &sp48, 0x401, -1, &sp60);
+                    _data_4->vtbl->Spawn(NULL, 1, &sp48, 0x401, -1, &sp60);
                 }
             } else {
                 if (objdata->unk8 != 0) {
                     dll_amSfx->Stop(objdata->unk8);
                     objdata->unk8 = 0;
                 }
-                _data_0->vtbl->Func0(self, 1, NULL, 2, -1, NULL);
+                _data_0->vtbl->Spawn(self, 1, NULL, 2, -1, NULL);
                 dll_amSfx->Play(self, objdata->soundID2, MAX_VOLUME, NULL, NULL, 0, NULL);
                 objdata->unkC = 50;
                 objdata->unk17 = 0;

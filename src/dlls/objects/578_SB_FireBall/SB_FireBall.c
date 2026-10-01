@@ -29,7 +29,7 @@ void SB_FireBall_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
     objdata = self->data;
     dll = dllLoad(DLL_ID_133, 1);
-    dll->vtbl->Func0(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
+    dll->vtbl->Spawn(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
     dllFree(dll);
     self->unkDC = 1200;
     objdata->unk6 = 0;

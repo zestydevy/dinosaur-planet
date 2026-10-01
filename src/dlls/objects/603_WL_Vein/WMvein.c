@@ -81,7 +81,7 @@ void WMvein_control(Object* self) {
         if (objdata->effectCreated == FALSE) {
 
             modGfxDLL = (DLL_IModgfx*)dllLoad(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
-            objdata->modgfxReturnVal = modGfxDLL->vtbl->Func0(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
+            objdata->modgfxReturnVal = modGfxDLL->vtbl->Spawn(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
             dllFree(modGfxDLL);
             objdata->effectCreated = TRUE;
         }

@@ -81,10 +81,10 @@ void dll_704_control(Object* self) {
     }
     if (objdata->unk0 & 1) {
         if (_data_0 != NULL) {
-            _data_0->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
-            _data_0->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
-            _data_0->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
-            _data_0->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
+            _data_0->vtbl->Spawn(self, 0, NULL, 4, -1, NULL);
+            _data_0->vtbl->Spawn(self, 0, NULL, 4, -1, NULL);
+            _data_0->vtbl->Spawn(self, 0, NULL, 4, -1, NULL);
+            _data_0->vtbl->Spawn(self, 0, NULL, 4, -1, NULL);
         }
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_47E, NULL, PARTFXFLAG_2, -1, NULL);
         for (sp48 = 10; sp48 != 0; sp48--) {

@@ -147,7 +147,7 @@ void Transporter_obj_Control(Object* self) {
         //Emanate a beam of light from a randomly-selected point on the Krazoa symbol (2.5% chance) 
         if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
             (mathRnd(0, 40) == 0)) {
-            objdata->mGfxKrazoaPoints->vtbl->Func0(self, mathRnd(0, 5), NULL, 1, -1, NULL);
+            objdata->mGfxKrazoaPoints->vtbl->Spawn(self, mathRnd(0, 5), NULL, 1, -1, NULL);
         }
     }
 
@@ -159,12 +159,12 @@ void Transporter_obj_Control(Object* self) {
             objdata->timerDLL130 -= gUpdateRate;
 
             if (objdata->timerDLL129 <= 0) {
-                objdata->dll129->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
+                objdata->dll129->vtbl->Spawn(self, 0, NULL, 1, -1, NULL);
                 objdata->timerDLL129 = objdata->intervalDLL129;
             }
 
             if (objdata->isOutbound && (objdata->timerDLL130 <= 0)) {
-                objdata->dll130->vtbl->Func0(self, 0, NULL, 1, -1, NULL);
+                objdata->dll130->vtbl->Spawn(self, 0, NULL, 1, -1, NULL);
                 objdata->timerDLL130 = objdata->intervalDLL130;
             }
         }

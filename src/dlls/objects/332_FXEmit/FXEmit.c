@@ -334,10 +334,10 @@ static void FXEmit_emit(Object *self) {
             modfxDLL = dllLoad((objdata->indexInBank + 0x1000), 1);
             if (objdata->fxRate > 0) {
                 for (i = 0; i < objdata->fxRate; i++) {
-                    modfxDLL->vtbl->Func0(self, 0, 0, flags, -1, 0);
+                    modfxDLL->vtbl->Spawn(self, 0, 0, flags, -1, 0);
                 }
             } else {
-                modfxDLL->vtbl->Func0(self, 0, 0, flags, -1, 0);
+                modfxDLL->vtbl->Spawn(self, 0, 0, flags, -1, 0);
             }
             dllFree(modfxDLL);
         } else if (objdata->bank == BANK_ProjectileFX) {

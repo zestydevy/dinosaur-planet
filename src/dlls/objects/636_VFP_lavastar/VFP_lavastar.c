@@ -59,7 +59,7 @@ void VFP_lavastar_control(Object* self) {
         self->srt.transl.y = setup->base.y;
     }
     if (mathRnd(0, 3) == 0) {
-        sDLL_182->vtbl->Func0(self, 0, NULL, 4, -1, NULL);
+        sDLL_182->vtbl->Spawn(self, 0, NULL, 4, -1, NULL);
     }
     if (objdata->soundHandle == 0) {
         dll_amSfx->Play(self, SOUND_AAE, MAX_VOLUME, &objdata->soundHandle, NULL, 0, NULL);
