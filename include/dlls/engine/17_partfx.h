@@ -46,6 +46,8 @@ enum ParticleID {
     PARTICLE_A3 = 0xA3,
     PARTICLE_A4 = 0xA4,
     PARTICLE_A6 = 0xA6,
+    PARTICLE_A7 = 0xA7,
+    PARTICLE_AA = 0XAA,
     PARTICLE_Explosion = 0xAB,
     PARTICLE_C7 = 0xC7,
     /* --- DLL 40 END --- */
