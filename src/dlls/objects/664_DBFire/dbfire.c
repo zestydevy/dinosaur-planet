@@ -1,8 +1,6 @@
 #include "common.h"
 #include "sys/gfx/modgfx.h"
 
-
-
 typedef struct {
     s16 _unk0;
     s16 unk2;
@@ -14,7 +12,7 @@ typedef struct {
     s16 _unkA;
     s32 _unkC;
     SRT unk10;
-}DLL664_Data;
+} DLL664_Data;
 
 typedef struct {
     ObjSetup base;
@@ -31,25 +29,23 @@ void dll_664_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void dll_664_obj_Setup(Object* self, DLL664_Setup* setup, s32 reset) {
-    DLL664_Data* sp24;
+    DLL664_Data* objdata = self->data;
     f32 var_ft1;
     u8 temp_v0;
 
     temp_v0 = setup->unk1A;
-    sp24 = self->data;
     if (temp_v0 != 0) {
         var_ft1 =  temp_v0;
         self->srt.scale = var_ft1 * 0.01f;
     }
-    sp24->unk4 = (u8) setup->unk1B;
-    sp24->unk6 = 0;
-    sp24->unk8 = 0;
-    sp24->unk2 = mathRnd(0, 0x3E8);
+    objdata->unk4 = (u8) setup->unk1B;
+    objdata->unk6 = 0;
+    objdata->unk8 = 0;
+    objdata->unk2 = mathRnd(0, 0x3E8);
     self->visRadius = 200.0f;
 }
 
 // offset: 0xD0 | func: 1 | export: 1
-void dll_664_obj_Control(Object* self);
 void dll_664_obj_Control(Object* self) {
     DLL664_Data* objdata = self->data;
     DLL_IModgfx* dll;
@@ -62,12 +58,12 @@ void dll_664_obj_Control(Object* self) {
         if (objdata->unk6 < 0) {
             if (objdata->unk8 != 0) {
                 mathRnd(11, 12);
-                dll = dllLoad(0x103A, 1);
+                dll = dllLoad(DLL_ID_162, 1);
                 dll->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(dll);
             } else {
                 mathRnd(11, 12);
-                dll = dllLoad(0x103A, 1);
+                dll = dllLoad(DLL_ID_162, 1);
                 dll->vtbl->func0(self, 0, 0, 1, -1, 0);
                 dllFree(dll);
             }
@@ -77,7 +73,7 @@ void dll_664_obj_Control(Object* self) {
         if (objdata->unk2 <= 0) {
             objdata->unk2 = 1500;
         }
-        if (mainGetBits(0x432) != 0) {
+        if (mainGetBits(BIT_432) != 0) {
             objdata->unk8 = 2;
             objdata->unk10.transl.y = mathRnd(0, 10) + 70.0f;
             objdata->unk10.transl.x = 0;
@@ -89,7 +85,7 @@ void dll_664_obj_Control(Object* self) {
         objdata->unk10.transl.y -= 1.0f;
         if (((s32) objdata->unk10.transl.y % 10) == 0) {
             gDLL_14_Modgfx->vtbl->Func10(self);
-            dll = dllLoad(0x1020, 1);
+            dll = dllLoad(DLL_ID_136, 1);
             dll->vtbl->func0(self, 0x20, &objdata->unk10, 0, -1, 0);
             dllFree(dll);
         }
@@ -98,11 +94,11 @@ void dll_664_obj_Control(Object* self) {
             objdata->unk8 = 3;
         }
         if (mathRnd(0, 10) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, 0x3B9, NULL, 0, -1, NULL);
+            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3B9, NULL, 0, -1, NULL);
         }
     } else if (objdata->unk8 == 3) {
         objdata->unk2 -= gUpdateRate;
-        if ((objdata->unk2 < 0) && (mainGetBits(0x437) == 0)) {
+        if ((objdata->unk2 < 0) && (mainGetBits(BIT_437) == 0)) {
             objdata->unk2 = mathRnd(0, 1000);
             objdata->unk6 = 0;
             objdata->unk8 = 0;
