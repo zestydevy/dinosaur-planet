@@ -214,7 +214,7 @@ void dll_251_func_BC0(Object* self, s32 arg1, s32 arg2, s32 arg3, s32 arg4) {
     fxTransform.transl.y = objHitInfo->unk38;
     fxTransform.transl.z = objHitInfo->unk3C;
     
-    data_78->vtbl->func0(0, 1, &fxTransform, 0x401, -1, sp50[data_4C[idx] & 0xFFFF]);
+    data_78->vtbl->Spawn(0, 1, &fxTransform, 0x401, -1, sp50[data_4C[idx] & 0xFFFF]);
     
     dll_amSfx->Play(self, data_8[idx], MAX_VOLUME, NULL, NULL, 0, NULL);
 }

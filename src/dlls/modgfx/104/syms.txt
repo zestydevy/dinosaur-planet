@@ -1,0 +1,4 @@
+.text = 0x0:
+dll_104_ctor = 0x0;
+dll_104_dtor = 0xC;
+dll_104_modgfx_Func0 = 0x18;

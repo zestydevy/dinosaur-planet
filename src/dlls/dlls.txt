@@ -101,7 +101,19 @@
 102 = engine/102_camdrakor
 103 = engine/103_camdrop
 
+
 # modgfx
+104 = modgfx/104
+105 = modgfx/105
+106 = modgfx/106
+107 = modgfx/107
+108 = modgfx/108
+109 = modgfx/109
+110 = modgfx/110
+111 = modgfx/111
+112 = modgfx/112
+113 = modgfx/113
+114 = modgfx/114
 
 
 # projgfx

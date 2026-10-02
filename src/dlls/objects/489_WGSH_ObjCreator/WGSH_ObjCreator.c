@@ -53,9 +53,9 @@ void WGSH_ObjCreator_control(Object *self) {
         self->unkE0 = 0;
     }
     if ((self->unkE0 == 0) && (mainGetBits(BIT_1D3) != 0)) {
-        sp38 = dllLoad(DLL_ID_146, 1);
-        sp38->vtbl->func0(self, 0, 0, 1, -1, 0);
-        sp38->vtbl->func0(self, 1, 0, 1, -1, 0);
+        sp38 = (DLL_IModgfx*)dllLoad(DLL_ID_146, 1);
+        sp38->vtbl->Spawn(self, 0, 0, 1, -1, 0);
+        sp38->vtbl->Spawn(self, 1, 0, 1, -1, 0);
         dll_amSfx->Play(NULL, SOUND_303, MAX_VOLUME, NULL, NULL, 0, NULL);
         dllFree(sp38);
         objdata->countdownRate = 1;

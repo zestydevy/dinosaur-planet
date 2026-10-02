@@ -4,7 +4,6 @@
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/modgfx/133.h"
 #include "dlls/objects/573_SB_Cloudrunner.h"
 
 typedef struct {
@@ -25,12 +24,12 @@ void SB_FireBall_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void SB_FireBall_setup(Object *self, ObjSetup *setup, s32 arg2) {
-    void *dll;
+    DLL_IModgfx *dll;
     SB_FireBall_Data *objdata;
 
     objdata = self->data;
     dll = dllLoad(DLL_ID_133, 1);
-    ((DLL_133*)dll)->vtbl->base.func0(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
+    dll->vtbl->Spawn(self, 4, NULL, 0x10000 | 0x2, -1, NULL);
     dllFree(dll);
     self->unkDC = 1200;
     objdata->unk6 = 0;

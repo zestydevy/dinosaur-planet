@@ -113,7 +113,7 @@ void GPSH_Shrine_obj_Setup(Object* self, GPSH_Shrine_Setup* setup, s32 reset) {
 
     //Create glowing circle around test's startpoint
     modgfxDLL = dllLoad(DLL_ID_122, 1);
-    objdata->modGfxCircle = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
+    objdata->modGfxCircle = modgfxDLL->vtbl->Spawn(self, 2, 0, 0x402, -1, 0);
     dllFree(modgfxDLL);
 
     _bss_8 = 0.00001f;
@@ -237,11 +237,11 @@ void GPSH_Shrine_obj_Control(Object* self) {
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
                 modgfxDLL = dllLoad(DLL_ID_147, 1);
-                modgfxDLL->vtbl->func0(self, 2, 0, 1, -1, 0);
+                modgfxDLL->vtbl->Spawn(self, 2, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
 
                 modgfxDLL = dllLoad(DLL_ID_148, 1);
-                modgfxDLL->vtbl->func0(self, 0, 0, 1, -1, 0);
+                modgfxDLL->vtbl->Spawn(self, 0, 0, 1, -1, 0);
                 dllFree(modgfxDLL);
 
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
@@ -336,7 +336,7 @@ void GPSH_Shrine_obj_Control(Object* self) {
             mainSetBits(BIT_DB_Entered_Shrine_1, 1);
             mainSetBits(BIT_DB_Entered_Shrine_2, 1);
             modgfxDLL = dllLoad(DLL_ID_122, 1);
-            objdata->modGfxCircle = modgfxDLL->vtbl->func0(self, 2, 0, 0x402, -1, 0);
+            objdata->modGfxCircle = modgfxDLL->vtbl->Spawn(self, 2, 0, 0x402, -1, 0);
             dllFree(modgfxDLL);
             mainSetBits(BIT_GPSH_Placed_SW_Scene_Root, 0);
             mainSetBits(BIT_GPSH_Placed_CRF_Scene_Gem, 0);

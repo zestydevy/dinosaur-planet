@@ -62,7 +62,7 @@ void WMvein_control(Object* self) {
     WMvein_Data* objdata;
     Vec3f delta;
     Object* player;
-    DLL_Unknown* modGfxDLL;
+    DLL_IModgfx* modGfxDLL;
     f32 distance;
 
     objdata = self->data;
@@ -80,8 +80,8 @@ void WMvein_control(Object* self) {
     if (distance <= objdata->fxRadius) {
         if (objdata->effectCreated == FALSE) {
 
-            modGfxDLL = dllLoad(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
-            objdata->modgfxReturnVal = ((DLL_IModgfx*)modGfxDLL)->vtbl->func0(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
+            modGfxDLL = (DLL_IModgfx*)dllLoad(DLL_ID_MODGFX_BASE + objdata->modGfxDLLIndex, 1);
+            objdata->modgfxReturnVal = modGfxDLL->vtbl->Spawn(self, objdata->modGfxFuncArg1, 0, 1, -1, 0);
             dllFree(modGfxDLL);
             objdata->effectCreated = TRUE;
         }

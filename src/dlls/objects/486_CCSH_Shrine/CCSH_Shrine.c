@@ -73,7 +73,7 @@ void CCSH_Shrine_setup(Object* self, CCSH_Shrine_Setup* setup, s32 reset) {
     objdata->unkA = 0;
     objdata->unk12 = 0;
     modgfx = dllLoad(DLL_ID_122, 1);
-    objdata->unkC = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
+    objdata->unkC = modgfx->vtbl->Spawn(self, 0, 0, 0x402, -1, 0);
     dllFree(modgfx);
 }
 
@@ -161,10 +161,10 @@ void CCSH_Shrine_control(Object* self) {
                 mainSetBits(BIT_DB_Entered_Shrine_3, 0);
                 gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
                 modgfx = dllLoad(DLL_ID_147, 1);
-                modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
+                modgfx->vtbl->Spawn(self, 0, 0, 1, -1, 0);
                 dllFree(modgfx);
                 modgfx = dllLoad(DLL_ID_148, 1);
-                modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
+                modgfx->vtbl->Spawn(self, 0, 0, 1, -1, 0);
                 dllFree(modgfx);
                 mainSetBits(BIT_DB_Entered_Shrine_1, 0);
                 dll_modgfx->Func7(&objdata->unkC);
@@ -219,7 +219,7 @@ void CCSH_Shrine_control(Object* self) {
             mainSetBits(BIT_5B2, 0);
             mainSetBits(BIT_5B9, 1);
             modgfx = dllLoad(DLL_ID_122, 1);
-            objdata->unkC = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
+            objdata->unkC = modgfx->vtbl->Spawn(self, 0, 0, 0x402, -1, 0);
             dllFree(modgfx);
             mainSetBits(BIT_1CD, 0);
             objdata->unkE = 0;

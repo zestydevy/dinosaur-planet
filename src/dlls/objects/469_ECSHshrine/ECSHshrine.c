@@ -93,7 +93,7 @@ void ECSHshrine_obj_Setup(Object* self, ECSHshrine_Setup* setup, s32 reset) {
 
     //Create glowing circle around test's startpoint
     modGfxDLL = dllLoad(DLL_ID_122, 1);
-    objdata->modGfxCircle = modGfxDLL->vtbl->func0(self, 2, NULL, 0x402, -1, NULL);
+    objdata->modGfxCircle = modGfxDLL->vtbl->Spawn(self, 2, NULL, 0x402, -1, NULL);
     dllFree(modGfxDLL);
 
     dShrine = self;
@@ -198,11 +198,11 @@ void ECSHshrine_obj_Control(Object* self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
             modGfxDLL = dllLoad(DLL_ID_147, 1);
-            modGfxDLL->vtbl->func0(self, 2, NULL, 1, -1, NULL);
+            modGfxDLL->vtbl->Spawn(self, 2, NULL, 1, -1, NULL);
             dllFree(modGfxDLL);
 
             modGfxDLL = dllLoad(DLL_ID_148, 1);
-            modGfxDLL->vtbl->func0(self, 0, NULL, 1, -1, NULL);
+            modGfxDLL->vtbl->Spawn(self, 0, NULL, 1, -1, NULL);
             dllFree(modGfxDLL);
 
             mainSetBits(BIT_DB_Entered_Shrine_1, 0);
@@ -456,7 +456,7 @@ void ECSHshrine_obj_Control(Object* self) {
         mainSetBits(BIT_DB_Entered_Shrine_2, 1);
 
         modGfxDLL = dllLoad(DLL_ID_122, 1);
-        objdata->modGfxCircle = modGfxDLL->vtbl->func0(self, 2, NULL, 0x402, -1, NULL);
+        objdata->modGfxCircle = modGfxDLL->vtbl->Spawn(self, 2, NULL, 0x402, -1, NULL);
         dllFree(modGfxDLL);
         break;
     case ECShrine_STATE_Finished:

@@ -91,7 +91,7 @@ void DFShrine_obj_Setup(Object* self, DFShrine_Setup* setup, s32 reset) {
     objdata->testTimer = 0;
 
     modgfx = dllLoad(DLL_ID_122, 1);
-    objdata->modGfxRing = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
+    objdata->modGfxRing = modgfx->vtbl->Spawn(self, 0, 0, 0x402, -1, 0);
     dllFree(modgfx);
 }
 
@@ -208,11 +208,11 @@ void DFShrine_obj_Control(Object* self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(0, self, -1);
 
             modgfx = dllLoad(DLL_ID_147, 1);
-            modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
+            modgfx->vtbl->Spawn(self, 0, 0, 1, -1, 0);
             dllFree(modgfx);
 
             modgfx = dllLoad(DLL_ID_148, 1);
-            modgfx->vtbl->func0(self, 0, 0, 1, -1, 0);
+            modgfx->vtbl->Spawn(self, 0, 0, 1, -1, 0);
             dllFree(modgfx);
 
             mainSetBits(BIT_DB_Entered_Shrine_1, 0);
@@ -336,7 +336,7 @@ void DFShrine_obj_Control(Object* self) {
         objdata->testTimer = 0;
 
         modgfx = dllLoad(DLL_ID_122, 1);
-        objdata->modGfxRing = modgfx->vtbl->func0(self, 0, 0, 0x402, -1, 0);
+        objdata->modGfxRing = modgfx->vtbl->Spawn(self, 0, 0, 0x402, -1, 0);
         dllFree(modgfx);
         break;
     }

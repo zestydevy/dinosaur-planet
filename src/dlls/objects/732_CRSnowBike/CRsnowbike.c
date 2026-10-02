@@ -2022,7 +2022,7 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if (yJoy > 10) {
                 flamesArg = yJoy;
                 flamesArg = (0.01f * flamesArg) + 0.1f;
-                objData->modGfxDLLFlames->vtbl->func0(self, 0, 0, 0x404, -1, &flamesArg);
+                objData->modGfxDLLFlames->vtbl->Spawn(self, 0, 0, 0x404, -1, &flamesArg);
             }
 
             objData->fxTimer = 30;
@@ -2031,11 +2031,11 @@ void CRSnowBike_handle_engine_sfx_and_modgfx(Object* self, CRSnowBike_Data* objD
             if ((self->srt.roll > 1000) && (forwardSpeed < -1.0f)) {
                 fxTransform.scale = self->srt.roll / 8000.0f;
                 fxTransform.scale *= (-forwardSpeed / 3.8f);
-                objData->modGfxDLLWaves->vtbl->func0(self, 0, &fxTransform, 0x404, -1, 0);
+                objData->modGfxDLLWaves->vtbl->Spawn(self, 0, &fxTransform, 0x404, -1, 0);
             } else if ((self->srt.roll < -1000) && (forwardSpeed < -1.0f)) {
                 fxTransform.scale = self->srt.roll / -8000.0f;
                 fxTransform.scale *= (-forwardSpeed / 3.8f);
-                objData->modGfxDLLWaves->vtbl->func0(self, 1, &fxTransform, 0x404, -1, 0);
+                objData->modGfxDLLWaves->vtbl->Spawn(self, 1, &fxTransform, 0x404, -1, 0);
             }
         }
     }

@@ -4,10 +4,9 @@
 #include "dll_def.h"
 #include "sys/objects.h"
 
-// TODO: This might be the same interface for all modgfx DLLs
 DLL_INTERFACE(DLL_IModgfx) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
-    /*0*/ s32 (*func0)(Object*, s32, SRT*, u32, s32, void*);
+    /*0*/ s32 (*Spawn)(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);
 };
 
 #endif

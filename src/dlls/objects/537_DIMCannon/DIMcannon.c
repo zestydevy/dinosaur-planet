@@ -676,7 +676,7 @@ void DIMCannon_tickCannonBall(Object* self) {
     
     //Create modGfx
     if (objData->createModGfx) {
-        dModGfxDLL->vtbl->func0(self, 2, 0, 0x10002, -1, 0);
+        dModGfxDLL->vtbl->Spawn(self, 2, 0, 0x10002, -1, 0);
         objData->createModGfx = FALSE;
     }
 }

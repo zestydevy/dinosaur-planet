@@ -258,7 +258,7 @@ void SCbeacon_attempt_to_light(Object* self) {
         //Create fire model
         dll_modgfx->Func10(self);
         modGfxDLL = dllLoad(DLL_ID_114, 1);
-        modGfxDLL->vtbl->func0(self, 2, 0, 0x10004, -1, 0);
+        modGfxDLL->vtbl->Spawn(self, 2, 0, 0x10004, -1, 0);
         dllFree(modGfxDLL);
         
         //Disable targetting and advance to lit state

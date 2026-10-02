@@ -659,18 +659,18 @@ void modgfx_Func2(s32 arg0, s32 arg1, s32 arg2) {
                             for (var_s0_2 = 0; var_s0_2 < (s32) bss_0[sp108]->unk9C[sp104].unk4.x; var_s0_2++) {
                                 if (mathRnd(0, 5) == 0) {
                                     if (bss_0[sp108]->unkA4 & 1) {
-                                        modgfx->vtbl->func0(NULL, 0, &bss_0[sp108]->unkC, 1, -1, NULL);
+                                        modgfx->vtbl->Spawn(NULL, 0, &bss_0[sp108]->unkC, 1, -1, NULL);
                                     } else {
-                                        modgfx->vtbl->func0(bss_0[sp108]->unk4, 0, NULL, 1, -1, NULL);
+                                        modgfx->vtbl->Spawn(bss_0[sp108]->unk4, 0, NULL, 1, -1, NULL);
                                     }
                                 }
                             }
                         } else {
                             for (var_s0_2 = 0; var_s0_2 < (s32) bss_0[sp108]->unk9C[sp104].unk4.x; var_s0_2++) {
                                 if (bss_0[sp108]->unkA4 & 1) {
-                                    modgfx->vtbl->func0(NULL, 0, &bss_0[sp108]->unkC, 1, -1, 0);
+                                    modgfx->vtbl->Spawn(NULL, 0, &bss_0[sp108]->unkC, 1, -1, 0);
                                 } else {
-                                    modgfx->vtbl->func0(bss_0[sp108]->unk4, 0, NULL, 1, -1, 0);
+                                    modgfx->vtbl->Spawn(bss_0[sp108]->unk4, 0, NULL, 1, -1, 0);
                                 }
                             }
                         }
@@ -2095,9 +2095,9 @@ void modgfx_Func18(s16* arg0) {
 }
 
 // offset: 0x6E24 | func: 35 | export: 19
-void modgfx_Func19(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7) {
+void modgfx_Func19(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7) {
     bss_AD0.unk0 = bss_7C0;
-    bss_AD0.unk5D =  bss_AC4 - bss_AC0;
+    bss_AD0.unk5D = bss_AC4 - bss_AC0;
     if (arg7 == 0 && arg6 == 0) {
         bss_AD0.unk54 |= 0x2000000;
     } else {
@@ -2110,9 +2110,9 @@ void modgfx_Func19(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 a
             bss_AD0.unk2C.y += bss_AD0.unk4->globalPosition.y;
             bss_AD0.unk2C.z += bss_AD0.unk4->globalPosition.z;
         } else {
-            bss_AD0.unk2C.x += arg0->srt.transl.x;
-            bss_AD0.unk2C.y += arg0->srt.transl.y;
-            bss_AD0.unk2C.z += arg0->srt.transl.z;
+            bss_AD0.unk2C.x += arg0->transl.x;
+            bss_AD0.unk2C.y += arg0->transl.y;
+            bss_AD0.unk2C.z += arg0->transl.z;
         }
     }
 

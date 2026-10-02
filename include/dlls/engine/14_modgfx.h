@@ -62,7 +62,7 @@ DLL_INTERFACE(DLL_14_modgfx) {
 /*16*/ void (*Func16)(s16 arg0);
 /*17*/ void (*Func17)(s16 arg0);
 /*18*/ void (*Func18)(s16* arg0);
-/*19*/ void (*Func19)(Object* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7);
+/*19*/ void (*Func19)(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7);
 /*20*/ void (*Func20)(s32 arg0);
 /*21*/ s16 (*Func21)(void);
 };

@@ -759,7 +759,7 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
                 gDLL_17_partfx->vtbl->spawn(actor, PARTICLE_3C, NULL, 2, -1, NULL);
             }
             modgfx = dllLoad(DLL_ID_109, 1);
-            modgfx->vtbl->func0(actor, 0, 0, 2, -1, 0);
+            modgfx->vtbl->Spawn(actor, 0, 0, 2, -1, 0);
             dllFree(modgfx);
             break;
         }

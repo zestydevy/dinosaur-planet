@@ -306,7 +306,7 @@ void WL_Crystal_control(Object* self) {
 
             //25% chance of 3D mesh light ray effect
             if (!mathRnd(0, 4)) {
-                data_sun_modGFX->vtbl->func0(self, 0, 0, 1, -1, 0);
+                data_sun_modGFX->vtbl->Spawn(self, 0, 0, 1, -1, 0);
             }
 
             //~0.6% chance of creating particles and playing sound effect

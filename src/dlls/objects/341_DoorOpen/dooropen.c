@@ -60,7 +60,7 @@ void DoorOpen_control(Object* self) {
     if ((objData->gamebit != NO_GAMEBIT) && mainGetBits(objData->gamebit)) {
         objData->fxCreated = TRUE;
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_28A, NULL, 4, -1, NULL);
-        dModGfxDLL->vtbl->func0(self, objData->pitch, 0, 4, -1, objData);
+        dModGfxDLL->vtbl->Spawn(self, objData->pitch, 0, 4, -1, objData);
     }
 }
 
