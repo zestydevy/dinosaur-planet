@@ -12,8 +12,8 @@ typedef struct {
     ObjSetup base;
     u8 _unk18[0x1A - 0x18];
     s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
+    s16 reverseBit;
+    s16 playerInsideBit;
 } WindLift_Setup;
 
 // size: 0x18
@@ -28,9 +28,9 @@ typedef struct {
 } WindLift_Data_1C;
 
 typedef struct {
-    s32 unk0;
-    s32 unk4;
-    s32 unk8;
+    s32 windLiftID;
+    s32 playerInsideBit;
+    s32 reverseBit;
     u8 _unkC[0x10 - 0xC];
     u32 unk10;
     f32 unk14;
@@ -40,7 +40,7 @@ typedef struct {
     u32 unk170_0 : 1;
 } WindLift_Data;
 
-static void WindLift_func_880(Object*, Object*, WindLift_Data_1C*, f32, s32, s32, s32);
+static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2, f32 arg3, s32 switchedOff, s32 isPlayer, s32 windLiftID);
 static void WindLift_func_F0C(WindLift_Data_1C* arg0, s32 arg1);
 
 // offset: 0x0 | ctor
@@ -54,17 +54,17 @@ void WindLift_obj_Setup(Object* self, WindLift_Setup* setup, s32 reset) {
     s32 i;
     WindLift_Data* objdata = self->data;
 
-    objdata->unk4 = setup->unk1E;
-    objdata->unk0 = objdata->unk4 - 88;
-    objdata->unk8 = setup->unk1C;
+    objdata->playerInsideBit = setup->playerInsideBit;
+    objdata->windLiftID = objdata->playerInsideBit - BIT_CRF_WindLift1_PlayerInside;
+    objdata->reverseBit = setup->reverseBit;
     objdata->unk18 = 0;
     objdata->unk14 = 2.0f;
-    if ((mainGetBits(BIT_57) != 0) || (objdata->unk0 >= 4)) {
+    if ((mainGetBits(BIT_CRF_WindLifts_Powered) != 0) || (objdata->windLiftID >= 4)) {
         objdata->unk18 = 60;
     }
     objdata->unk10 = 0;
     for (i = 0; i < 14; i++) {
-        WindLift_func_F0C(&objdata->unk1C[i], objdata->unk0);
+        WindLift_func_F0C(&objdata->unk1C[i], objdata->windLiftID);
     }
 }
 
@@ -75,7 +75,7 @@ void WindLift_obj_Control(Object* self) {
     Object* player;
     Object** objs;
     f32 sp6C;
-    s32 sp68;
+    s32 switchedOff;
     s32 numObjs;
     s32 j;
     s32 slot;
@@ -84,13 +84,13 @@ void WindLift_obj_Control(Object* self) {
 
     objdata = self->data;
     setup = (WindLift_Setup*)self->setup;
-    if ((mainGetBits(BIT_57) != 0) || (objdata->unk0 >= 5)) {
-        if ((objdata->unk0 == 2) && (mainGetBits(BIT_476) == 0)) {
-            if (mainGetBits(BIT_5D) != 0) {
+    if ((mainGetBits(BIT_CRF_WindLifts_Powered) != 0) || (objdata->windLiftID >= 5)) {
+        if ((objdata->windLiftID == 2) && (mainGetBits(BIT_476) == 0)) {
+            if (mainGetBits(BIT_CRF_WindLift3_Reverse) != 0) {
                 mainSetBits(BIT_476, 1);
             }
         } else {
-            if (((objdata->unk18++) < 60) && (mainGetBits(objdata->unk4) == 0)) {
+            if (((objdata->unk18++) < 60) && (mainGetBits(objdata->playerInsideBit) == 0)) {
                 self->srt.yaw -= (s32) (gUpdateRate * 100 * objdata->unk18 * objdata->unk18) / 60;
                 if (objdata->unk10 == 0) {
                     dll_amSfx->Play(self, SOUND_124, MAX_VOLUME, &objdata->unk10, NULL, 0, NULL);
@@ -101,8 +101,8 @@ void WindLift_obj_Control(Object* self) {
                 return;
             }
             objSetModel(self, 1);
-            sp68 = mainGetBits(objdata->unk8);
-            if (sp68 != 0) {
+            switchedOff = mainGetBits(objdata->reverseBit);
+            if (switchedOff) {
                 self->srt.yaw -= gUpdateRate * 0x9F4;
             } else {
                 self->srt.yaw -= gUpdateRate * 0xCCC;
@@ -110,7 +110,7 @@ void WindLift_obj_Control(Object* self) {
             if (objdata->unk10 == 0) {
                 dll_amSfx->Play(self, SOUND_124, MAX_VOLUME, &objdata->unk10, NULL, 0, NULL);
             } else {
-                if (sp68 != 0) {
+                if (switchedOff) {
                     objdata->unk14 = (f32) (objdata->unk14 + ((1.0f - objdata->unk14) * 0.03125f));
                 } else {
                     objdata->unk14 = (f32) (objdata->unk14 + ((2.0f - objdata->unk14) * 0.03125f));
@@ -119,13 +119,13 @@ void WindLift_obj_Control(Object* self) {
             }
             sp6C = (f32) setup->unk1A;
             player = objGetPlayer();
-            if (mainGetBits(objdata->unk4) != 0) {
+            if (mainGetBits(objdata->playerInsideBit) != 0) {
                 if (objdata->unk170_0 == 0) {
                     objdata->unk170_0 = 1;
                     gDLL_5_AMSEQ2->vtbl->set(player, 0x11F, STUBBED_STR("windlift.c"), 0, AMSEQ_DEBUG_STR("AMB_WINDLIFT"));
                 }
                 if (player != NULL) {
-                    WindLift_func_880(self, player, &objdata->unk1C[0], sp6C, sp68, TRUE, objdata->unk0);
+                    WindLift_func_880(self, player, &objdata->unk1C[0], sp6C, switchedOff, TRUE, objdata->windLiftID);
                 }
             } else {
                 if (objdata->unk170_0 != 0) {
@@ -163,7 +163,7 @@ void WindLift_obj_Control(Object* self) {
                     for (j = 2; j < 14; j++) {
                         if (objdata->unk1C[j].unk0 == NULL) {
                             slot = j;
-                            WindLift_func_F0C(&objdata->unk1C[j], objdata->unk0);
+                            WindLift_func_F0C(&objdata->unk1C[j], objdata->windLiftID);
                             j = 2000; // rare use the 'break' keyword challenge (impossible)
                         }
                     }
@@ -174,8 +174,8 @@ void WindLift_obj_Control(Object* self) {
                     }
                 }
                 objdata->unk1C[slot].unk14 = slot;
-                if (!((*objs)->stateFlags & 0x1000) && ((*objs) != NULL)) {
-                    WindLift_func_880(self, *(objs++), &objdata->unk1C[slot], sp6C, sp68, FALSE, objdata->unk0);
+                if (!((*objs)->stateFlags & OBJSTATE_IN_SEQ) && ((*objs) != NULL)) {
+                    WindLift_func_880(self, *(objs++), &objdata->unk1C[slot], sp6C, switchedOff, FALSE, objdata->windLiftID);
                 }
             }
             for (k = 2; k < 14; k++) {
@@ -217,7 +217,7 @@ u32 WindLift_obj_GetDataSize(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x880 | func: 7
-static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2, f32 arg3, s32 arg4, s32 isPlayer, s32 arg6) {
+static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2, f32 arg3, s32 switchedOff, s32 isPlayer, s32 windLiftID) {
     Object* player;
     f32 objHeight;
     f32 temp_fv0_2;
@@ -234,7 +234,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
     }
     xzDist = vec3DistanceXZ(&obj->globalPosition, &self->globalPosition);
     if (!(xzDist > 113.0f) || (arg2->unk10 & 0xE0)) {
-        if (!(arg2->unk10 & 0x80) || arg4 == 0) {
+        if (!(arg2->unk10 & 0x80) || !switchedOff) {
             if (xzDist < 110.0f) {
                 if (!(arg2->unk10 & 0xE0) || (arg2->unk10 & 0x80)) {
                     if (((!arg2->unk10) & 0x80) && (objHeight < 20.0f)) { // @bug? should probably be !(arg2->unk10 & 0x80)
@@ -251,10 +251,10 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                         }
                         arg2->unk10 &= ~0x2;
                     }
-                    if (arg4 == 0) {
+                    if (!switchedOff) {
                         arg2->unk10 |= 0x40;
                         arg2->unk10 &= ~0x20;
-                        temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | arg6;
+                        temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
                         objSendMesg(obj, 0xF, self, (void* ) (temp));
                         arg2->unk10 &= ~0x80;
                     } else {
@@ -264,7 +264,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                     do { } while (0); // @fake
                 }
                 var_ft5 = 0.324f;
-                if ((arg2->unk10 & 0xE) && (arg2->unk10 & 8) && (arg4 == 0)) {
+                if ((arg2->unk10 & 0xE) && (arg2->unk10 & 8) && !switchedOff) {
                     arg3 *= 0.6f;
                 }
                 arg3 *= 0.6f;
@@ -272,7 +272,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                     if (objHeight < 3.0f) {
                         objHeight = 3.0f;
                     }
-                    if (arg4 == 0) {
+                    if (!switchedOff) {
                         temp_fv0_2 = arg3 - (arg2->unkC * arg2->unkC * arg2->unkC * (arg3 / 50.0f));
                         var_fa0 = (temp_fv0_2 - objHeight) < 0.0f
                             ? 0.0f
@@ -321,10 +321,10 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                     if (arg2->unkC == 0.0f) {
                         arg2->unkC = -0.001f;
                     }
-                    if ((objHeight < 20.0f) && (arg4 != 0)) {
+                    if ((objHeight < 20.0f) && switchedOff) {
                         arg2->unk11 = 0;
                         arg2->unkC = 0.0f;
-                        temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | arg6;
+                        temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
                         objSendMesg(obj, 0x10, self, (void* ) (temp));
                         arg2->unk10 |= 0x80;
                         if (isPlayer) {
@@ -343,7 +343,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                     ((DLL_210_Player*)obj->dll)->vtbl->func58(obj, 0);
                 }
                 if (!isPlayer && (xzDist < 113.0f)) {
-                    temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | arg6;
+                    temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
                     objSendMesg(obj, 0x10, self, (void* ) (temp));
                     arg2->unk10 &= ~0xF1;
                     if (arg2->unk10 & 0xE) {

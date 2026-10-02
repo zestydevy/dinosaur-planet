@@ -313,8 +313,8 @@ OBJ_SETUPS: dict[int, ObjSetup] = {
     ]),
     # WindLift
     370: ObjSetup([
-        ObjSetupField(0x1C, "unk1C"),
-        ObjSetupField(0x1E, "unk1E"),
+        ObjSetupField(0x1C, "reverseBit"),
+        ObjSetupField(0x1E, "playerInsideBit"),
     ]),
     # CFPowerBase
     371: ObjSetup([

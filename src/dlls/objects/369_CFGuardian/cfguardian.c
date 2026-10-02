@@ -266,7 +266,7 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         objdata->movedata.unk4A9 |= 0x28;
         objdata->talkState = CFGUARDIAN_TALK_Enabled;
         objdata->talkSeqSelector = 0;
-        if (mainGetBits(BIT_57) != 0) {
+        if (mainGetBits(BIT_CRF_WindLifts_Powered) != 0) {
             objdata->state = CFGUARDIAN_STATE_InWindShaft;
         }
         if (mainGetBits(BIT_4C1) != 0) {
@@ -440,7 +440,7 @@ static s32 CFGuardian_control(Object* self) {
         }
         break;
     case CFGUARDIAN_STATE_WaitingForWindLiftPower:
-        if (mainGetBits(BIT_57) != 0) {
+        if (mainGetBits(BIT_CRF_WindLifts_Powered) != 0) {
             objdata->state = CFGUARDIAN_STATE_InWindShaft;
             objdata->talkSeqSelector = 0;
         } else if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
@@ -601,7 +601,7 @@ static s32 CFGuardian_control(Object* self) {
             objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             objdata->flags &= ~(CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
         }
-        if (mainGetBits(BIT_4BE) != 0) {
+        if (mainGetBits(BIT_CRF_Throne_Room_Quest_Complete) != 0) {
             objdata->state = CFGUARDIAN_STATE_WalkingToRaceArea;
             objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             self->unkDC = 0;

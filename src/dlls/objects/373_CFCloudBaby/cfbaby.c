@@ -18,14 +18,20 @@
 #include "macros.h"
 
 typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    u8 unk1C;
-    u8 unk1D;
-    s16 unk1E;
-    u8 unk20;
-    s16 unk22;
+/*00*/ ObjSetup base;
+       // Considers things (the player, beans) to be close below this distance.
+/*18*/ s16 closeMaxDist;
+       // Can be rescued by the player below this distance.
+/*1A*/ s16 rescueMaxDist;
+/*1C*/ u8 initialState;
+/*1D*/ u8 yaw8;
+       // Set when initially rescued.
+/*1E*/ s16 rescuedGamebit;
+       // Swaps to this state after the player gets close for the first time.
+/*20*/ u8 initialState2;
+       // Set when the rescued timer completes and is considered 
+       // to be in the throne room now.
+/*22*/ s16 reachedPerchGamebit;
 } CFCloudBaby_Setup;
 
 typedef struct {
@@ -33,38 +39,56 @@ typedef struct {
     Vec3f unkC;
     Vec3f unk18;
     Vec3f unk24;
-    f32 unk30;
+    f32 tValue;
     f32 unk34;
 } CFCloudBaby_Data_4;
 
 typedef struct {
-    s32 unk0;
+    s32 rescuedTimer;
     CFCloudBaby_Data_4 unk4;
     HeadAnimation unk3C;
     HeadAnimation unk60;
-    f32 unk84;
-    f32 unk88;
+    f32 beanXDir;
+    f32 beanZDir;
     f32 unk8C;
-    f32 unk90;
-    f32 unk94;
-    s32 unk98;
-    s32 unk9C;
+    f32 animChange;
+    f32 beanScale;
+    s32 swapInitialState;
+    s32 swappedInitialState;
     s32 unkA0;
-    s32 unkA4;
+    s32 attackingPlayer;
     s32 unkA8;
-    s32 unkAC;
-    u8 unkB0;
-    s32 unkB4;
-    s16 unkB8;
+    s32 state;
+    u8 prevState;
+    s32 distracted;
+    s16 origYaw;
     s16 unkBA;
     u8 _unkBC[0xFC - 0xBC];
-    Object* unkFC;
-    f32 unk100;
-    f32 unk104;
-    f32 unk108;
+    Object* bean;
+    Vec3f savedPos; // from before being distracted
     UnkCurvesStruct unk10C;
-    u8 unk214;
+    u8 flags;
 } CFCloudBaby_Data;
+
+enum CFCloudBabyStates {
+    CFCLOUDBABY_STATE_0_FleeIfPlayerIsClose = 0,
+    CFCLOUDBABY_STATE_1 = 1,
+    CFCLOUDBABY_STATE_2 = 2,
+    CFCLOUDBABY_STATE_3_WaitForKyte = 3,
+    CFCLOUDBABY_STATE_4_PeckIfPlayerIsClose = 4,
+    CFCLOUDBABY_STATE_5_DistractedByKyte = 5,
+    CFCLOUDBABY_STATE_6_InChest = 6,
+    CFCLOUDBABY_STATE_7_RescuedWhileEatingBean = 7,
+    CFCLOUDBABY_STATE_8_WaitingForBean = 8,
+    CFCLOUDBABY_STATE_9_WalkToBean = 9,
+    CFCLOUDBABY_STATE_10_EatBean = 10,
+    CFCLOUDBABY_STATE_11_EatingBean = 11,
+    CFCLOUDBABY_STATE_12_Rescued = 12
+};
+
+enum CFCloudBabyFlags {
+    CFCLOUDBABY_RescueTimerActive = 0x1
+};
 
 /*0x0*/ static s16 data_0[] = {
     0x00ba, 0x00bb, 0x00bc, 0x00bd 
@@ -78,13 +102,13 @@ typedef struct {
 };
 
 static int CFCloudBaby_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
-static void CFCloudBaby_func_12EC(Object* self, Object* obj, CFCloudBaby_Data* objdata);
-static s32 CFCloudBaby_func_15A8(Object* self, f32 targX, f32 targY, f32 targZ, f32 speed);
-static s32 CFCloudBaby_func_180C(Object* self, UnkCurvesStruct* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5);
-static s32 CFCloudBaby_func_1B88(Object* self, CurveSetup* arg1, CFCloudBaby_Data_4* arg2, f32* arg3, f32 arg4);
+static void CFCloudBaby_turnToFaceObj(Object* self, Object* obj, CFCloudBaby_Data* objdata);
+static s32 CFCloudBaby_moveToPos(Object* self, f32 targX, f32 targY, f32 targZ, f32 speed);
+static s32 CFCloudBaby_navigatePathToThroneRoom(Object* self, UnkCurvesStruct* arg1, f32 speed, f32 arg3, f32 arg4, f32 arg5);
+static s32 CFCloudBaby_moveToPathStart(Object* self, CurveSetup* curve, CFCloudBaby_Data_4* arg2, f32* tValue, f32 speed);
 static f32 CFCloudBaby_func_1DB0(CFCloudBaby_Data_4* arg0, Vec3f* arg1, Vec3f* arg2, Vec3f* arg3, s32 arg4);
-static void CFCloudBaby_func_1FA0(Object* self, f32 arg1);
-static s32 CFCloudBaby_func_2050(Object* self, CFCloudBaby_Data* objdata);
+static void CFCloudBaby_setupPathToThroneRoom(Object* self, f32 speed);
+static s32 CFCloudBaby_checkForKyte(Object* self, CFCloudBaby_Data* objdata);
 
 // offset: 0x0 | ctor
 void CFCloudBaby_ctor(void* dll) { }
@@ -99,25 +123,25 @@ void CFCloudBaby_obj_Setup(Object* self, CFCloudBaby_Setup* setup, s32 reset) {
     func_8002674C(self);
     objInitMesgQueue(self, 4);
     self->animCallback = CFCloudBaby_animCallback;
-    self->srt.yaw = setup->unk1D << 8;
+    self->srt.yaw = setup->yaw8 << 8;
     objAddObjectType(self, OBJTYPE_CFCloudBaby);
     objAddObjectType(self, OBJTYPE_Baddie);
     objdata = self->data;
-    objdata->unk98 = 0;
-    objdata->unk9C = 0;
+    objdata->swapInitialState = FALSE;
+    objdata->swappedInitialState = FALSE;
     objdata->unkA0 = 0;
-    objdata->unkA4 = 0;
+    objdata->attackingPlayer = FALSE;
     objdata->unkA8 = 0;
-    objdata->unkAC = setup->unk1C;
-    objdata->unkB4 = 0;
-    objdata->unk0 = 0;
-    objdata->unkFC = 0;
-    objdata->unkB8 = self->srt.yaw;
-    objdata->unk214 = 0;
-    if (mainGetBits(setup->unk22) != 0) {
+    objdata->state = setup->initialState;
+    objdata->distracted = 0;
+    objdata->rescuedTimer = 0;
+    objdata->bean = NULL;
+    objdata->origYaw = self->srt.yaw;
+    objdata->flags = 0;
+    if (mainGetBits(setup->reachedPerchGamebit) != 0) {
         func_800267A4(self);
         self->srt.flags |= OBJFLAG_INVISIBLE;
-        objdata->unk214 &= ~1;
+        objdata->flags &= ~CFCLOUDBABY_RescueTimerActive;
         objDisable(self);
         objFreeObjectType(self, OBJTYPE_CFCloudBaby);
         objFreeObjectType(self, OBJTYPE_Baddie);
@@ -141,25 +165,33 @@ void CFCloudBaby_obj_Control(Object* self) {
     objdata = self->data;
     player = objGetPlayer();
     sidekick = objGetSidekick();
-    if (objdata->unk0 != 0) {
-        objdata->unk214 |= 1;
-        if (objdata->unk0 == 480) {
-            CFCloudBaby_func_1FA0(self, 3.0f);
+
+    if (objdata->rescuedTimer != 0) {
+        // rescued, flying away
+        objdata->flags |= CFCLOUDBABY_RescueTimerActive;
+        if (objdata->rescuedTimer == 480) {
+            CFCloudBaby_setupPathToThroneRoom(self, 3.0f);
         }
-        objdata->unkAC = 0;
-        if (objdata->unk0 > 0) {
-            objdata->unk0 -= gUpdateRate;
+        objdata->state = CFCLOUDBABY_STATE_0_FleeIfPlayerIsClose;
+        if (objdata->rescuedTimer > 0) {
+            // @bug: At 60 Hz this will reduce the timer to 0 making it impossible to rescue the CloudRunner
+            //       in the chest as the player has no way of leaving the treasure room (see below) fast
+            //       enough to let the perch bit be set. At 30 Hz and below the timer will become negative 
+            //       (it always starts at 1 in this build), which will let this rescue logic continue to 
+            //       stall until the player leaves. This will also be an issue if the player enters a seq 
+            //       on the tick this timer hits zero for the same reasons.
+            objdata->rescuedTimer -= gUpdateRate;
         }
-        if (objdata->unk0 <= 0) {
-            if ((mainGetBits(BIT_50B) == 0) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {
-                if (setup->unk22 != -1) {
-                    mainSetBits(setup->unk22, 1);
+        if (objdata->rescuedTimer <= 0) {
+            if ((mainGetBits(BIT_CRF_Player_In_Treasure_Room) == FALSE) && !(player->stateFlags & OBJSTATE_IN_SEQ)) {
+                if (setup->reachedPerchGamebit != -1) {
+                    mainSetBits(setup->reachedPerchGamebit, 1);
                 }
                 STUBBED_PRINTF(" The Birdy End is Nigh ");
-                objdata->unk0 = 0;
+                objdata->rescuedTimer = 0;
                 func_800267A4(self);
                 self->srt.flags |= OBJFLAG_INVISIBLE;
-                objdata->unk214 &= ~0x1;
+                objdata->flags &= ~CFCLOUDBABY_RescueTimerActive;
                 objDisable(self);
                 objFreeObjectType(self, OBJTYPE_CFCloudBaby);
                 objFreeObjectType(self, OBJTYPE_Baddie);
@@ -168,164 +200,180 @@ void CFCloudBaby_obj_Control(Object* self) {
             self->srt.flags |= OBJFLAG_INVISIBLE;
             return;
         }
-        diPrintf("Bird Timer %i ", objdata->unk0);
-        if (CFCloudBaby_func_180C(self, &objdata->unk10C, 3.0f, objdata->unk84, objdata->unk8C, objdata->unk88) != 0) {
+        diPrintf("Bird Timer %i ", objdata->rescuedTimer);
+        if (CFCloudBaby_navigatePathToThroneRoom(self, &objdata->unk10C, 3.0f, objdata->beanXDir, objdata->unk8C, objdata->beanZDir) != 0) {
             self->opacity = 0;
         }
-    } else if (objdata->unkAC != 6) {
-        self->unkAF |= ARROW_FLAG_8_No_Targetting;
-        if ((objdata->unk9C == 0) && (objdata->unk98 != 0) && (mainGetBits(setup->unk1E) != 0)) {
-            objdata->unk9C = 1;
-            objdata->unkAC = setup->unk20;
-        }
-        isPlayerClose = vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->unk18;
-        if (isPlayerClose || ((objdata->unkAC == 4)) || (objdata->unkAC == 5) || (objdata->unkAC == 0)) {
-            switch (objdata->unkAC) {
-            case 0:
-                objdata->unk98 = 0;
-                /* fallthrough */
-            case 1:
-                if (isPlayerClose) {
-                    gDLL_3_Animation->vtbl->start_obj_sequence(objdata->unkAC + 1, self, -1);
-                }
-                CFCloudBaby_func_2050(self, objdata);
-                objdata->unk98 = 1;
-                break;
-            case 2:
-            case 8:
-            case 9:
-            case 10:
-            case 11:
-                gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
-                objdata->unkAC = 8;
-                break;
-            case 4:
-                if (objdata->unkA4 != 0) {
-                    objdata->unkA8 = 0;
-                    objdata->unkA4 = (s32) (objAnimAdvance(self, 0.0064f, gUpdateRateF, NULL) == 0);
-                } else if ((mathRnd(0, 10) == 1) && (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->unk1A)) {
-                    objAnimSet(self, 0x12, 0.0f, 0);
-                    dll_amSfx->Play(self, SOUND_8B, 0x7E, NULL, NULL, 0, NULL);
-                    objdata->unkA4 = 1;
-                } else {
-                    CFCloudBaby_func_12EC(self, player, objdata);
-                }
-                if ((objdata->unkA4 != 0) && (self->animProgress > 0.5f)) {
-                    func_80026128(self, 9, 1, 0);
-                } else {
-                    func_80026160(self);
-                }
-                /* fallthrough */
-            case 3:
-                CFCloudBaby_func_2050(self, objdata);
-                break;
-            case 7:
-                gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 5, TEXTABLE_571, TEXTABLE_572, 5);
-                mainIncrementBits(BIT_901);
-                gDLL_1_cmdmenu->vtbl->energy_bar_set(5 - mainGetBits(BIT_901));
-                self->srt.yaw = objdata->unkB8;
+        return;
+    }
+
+    if (objdata->state == CFCLOUDBABY_STATE_6_InChest) {
+        // rescuing this CloudRunner is handled by the chest
+        return;
+    }
+
+    self->unkAF |= ARROW_FLAG_8_No_Targetting;
+    if (!objdata->swappedInitialState && objdata->swapInitialState && (mainGetBits(setup->rescuedGamebit) != 0)) {
+        objdata->swappedInitialState = TRUE;
+        objdata->state = setup->initialState2;
+    }
+    isPlayerClose = vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->closeMaxDist;
+    if (isPlayerClose || 
+            (objdata->state == CFCLOUDBABY_STATE_4_PeckIfPlayerIsClose) || 
+            (objdata->state == CFCLOUDBABY_STATE_5_DistractedByKyte) || 
+            (objdata->state == CFCLOUDBABY_STATE_0_FleeIfPlayerIsClose)) {
+        switch (objdata->state) {
+        case CFCLOUDBABY_STATE_0_FleeIfPlayerIsClose:
+            objdata->swapInitialState = FALSE;
+            /* fallthrough */
+        case CFCLOUDBABY_STATE_1:
+            if (isPlayerClose) {
+                gDLL_3_Animation->vtbl->start_obj_sequence(objdata->state + 1, self, -1);
+            }
+            CFCloudBaby_checkForKyte(self, objdata);
+            objdata->swapInitialState = TRUE;
+            break;
+        case CFCLOUDBABY_STATE_2:
+        case CFCLOUDBABY_STATE_8_WaitingForBean:
+        case CFCLOUDBABY_STATE_9_WalkToBean:
+        case CFCLOUDBABY_STATE_10_EatBean:
+        case CFCLOUDBABY_STATE_11_EatingBean:
+            // flee away from player
+            gDLL_3_Animation->vtbl->start_obj_sequence(1, self, -1);
+            objdata->state = CFCLOUDBABY_STATE_8_WaitingForBean;
+            break;
+        case CFCLOUDBABY_STATE_4_PeckIfPlayerIsClose:
+            if (objdata->attackingPlayer) {
+                objdata->unkA8 = 0;
+                objdata->attackingPlayer = (s32) (objAnimAdvance(self, 0.0064f, gUpdateRateF, NULL) == 0);
+            } else if ((mathRnd(0, 10) == 1) && (vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->rescueMaxDist)) {
+                // peck at player
+                objAnimSet(self, 0x12, 0.0f, 0);
+                dll_amSfx->Play(self, SOUND_8B, 0x7E, NULL, NULL, 0, NULL);
+                objdata->attackingPlayer = TRUE;
+            } else {
+                CFCloudBaby_turnToFaceObj(self, player, objdata);
+            }
+            if (objdata->attackingPlayer && (self->animProgress > 0.5f)) {
+                // activate damage hitbox to deal damage with the peck
+                func_80026128(self, 9, 1, 0);
+            } else {
+                func_80026160(self);
+            }
+            /* fallthrough */
+        case CFCLOUDBABY_STATE_3_WaitForKyte:
+            CFCloudBaby_checkForKyte(self, objdata);
+            break;
+        case CFCLOUDBABY_STATE_7_RescuedWhileEatingBean:
+            // rescued
+            gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 5, TEXTABLE_571, TEXTABLE_572, 5);
+            mainIncrementBits(BIT_CRF_Num_Rescued_Baby_CloudRunners);
+            gDLL_1_cmdmenu->vtbl->energy_bar_set(5 - mainGetBits(BIT_CRF_Num_Rescued_Baby_CloudRunners));
+            self->srt.yaw = objdata->origYaw;
+            gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
+            objdata->rescuedTimer = 1;
+            mainSetBits(setup->rescuedGamebit, 1);
+            self->unkDC = 0;
+            break;
+        case CFCLOUDBABY_STATE_5_DistractedByKyte:
+            func_80026160(self);
+            self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+            if ((vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->rescueMaxDist) 
+                    && (self->unkAF & ARROW_FLAG_1_Interacted)) {
+                // rescue
+                joyDisableButtons(0, A_BUTTON);
+                self->srt.yaw = objdata->origYaw;
                 gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
-                objdata->unk0 = 1;
-                mainSetBits(setup->unk1E, 1);
+                objdata->rescuedTimer = 1;
+                gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 5, TEXTABLE_571, TEXTABLE_572, 5);
+                mainIncrementBits(BIT_CRF_Num_Rescued_Baby_CloudRunners);
+                gDLL_1_cmdmenu->vtbl->energy_bar_set(5 - mainGetBits(BIT_CRF_Num_Rescued_Baby_CloudRunners));
+                objdata->state = CFCLOUDBABY_STATE_12_Rescued;
+                mainSetBits(setup->rescuedGamebit, 1);
                 self->unkDC = 0;
                 break;
-            case 5:
-                func_80026160(self);
-                self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-                if ((vec3Distance(&self->globalPosition, &player->globalPosition) < (f32) setup->unk1A) 
-                        && (self->unkAF & ARROW_FLAG_1_Interacted)) {
-                    joyDisableButtons(0, A_BUTTON);
-                    self->srt.yaw = objdata->unkB8;
-                    gDLL_3_Animation->vtbl->start_obj_sequence(4, self, -1);
-                    objdata->unk0 = 1;
-                    gDLL_1_cmdmenu->vtbl->energy_bar_create(0, 5, TEXTABLE_571, TEXTABLE_572, 5);
-                    mainIncrementBits(BIT_901);
-                    gDLL_1_cmdmenu->vtbl->energy_bar_set(5 - mainGetBits(BIT_901));
-                    objdata->unkAC = 0xC;
-                    mainSetBits(setup->unk1E, 1);
-                    self->unkDC = 0;
-                    break;
-                } else if (objdata->unkB4 != 0) {
-                    if (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick) == 0) {
-                        objGetAnimChange(self, 0.5f, &objdata->unk90);
-                        if (CFCloudBaby_func_15A8(self, objdata->unk100, objdata->unk104, objdata->unk108, 0.5f) != 0) {
-                            objdata->unkB4 = 0;
-                            objdata->unkAC = objdata->unkB0;
-                        }
-                        objAnimAdvance(self, objdata->unk90, (f32) gUpdateRate, NULL);
-                    } else {
-                        self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
-                        CFCloudBaby_func_12EC(self, sidekick, objdata);
+            } else if (objdata->distracted) {
+                if (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick) == 0) {
+                    // no longer being distracted, move back to original pos
+                    objGetAnimChange(self, 0.5f, &objdata->animChange);
+                    if (CFCloudBaby_moveToPos(self, objdata->savedPos.x, objdata->savedPos.y, objdata->savedPos.z, 0.5f) != 0) {
+                        objdata->distracted = FALSE;
+                        objdata->state = objdata->prevState;
                     }
-                    break;
-                }
-                /* fallthrough */
-            case 12:
-            default:
-                CFCloudBaby_func_12EC(self, player, objdata);
-                break;
-            }
-        } else if (objdata->unkAC >= 8) {
-            switch (objdata->unkAC) {
-            case 11:
-                objdata->unkAC = 8;
-                /* fallthrough */
-            case 8:
-                foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-                // @bug: bean will be uninitialized if the foodbag is null
-                if (foodbag != NULL) {
-                    bean = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, 
-                        FOOD_Red_Bean | FOOD_Brown_Bean | FOOD_Blue_Bean);
-                }
-                if ((bean != NULL) && (vec3Distance(&self->globalPosition, &bean->globalPosition) < (f32) setup->unk18)) {
-                    objdata->unkAC = 9;
-                    objdata->unkB8 = objAngleToObjectXZ(self, bean, NULL) + self->srt.yaw;
-                    objdata->unk84 = bean->srt.transl.x - self->srt.transl.x;
-                    objdata->unk88 = bean->srt.transl.z - self->srt.transl.z;
-                    if ((objdata->unk84 != 0.0f) || (objdata->unk88 != 0.0f)) {
-                        magnitude = sqrtf(SQ(objdata->unk84) + SQ(objdata->unk88));
-                        objdata->unkBA = (s16) ((magnitude / 0.5f) - 18.0f);
-                        objdata->unk84 *= (0.5f / magnitude);
-                        objdata->unk88 *= (0.5f / magnitude);
-                        objAnimSet(self, 9, 0.0f, 0);
-                        objGetAnimChange(self, 0.5f, &objdata->unk90);
-                        objdata->unkFC = bean;
-                        objdata->unk94 = bean->srt.scale;
-                    } else {
-                        return;
-                    }
-                }
-                break;
-            case 9:
-                objdata->unkBA -= 1;
-                if (objdata->unkBA < 0) {
-                    objdata->unkAC = 10;
-                    self->srt.yaw = objdata->unkB8;
+                    objAnimAdvance(self, objdata->animChange, (f32) gUpdateRate, NULL);
                 } else {
-                    self->srt.yaw += (objdata->unkB8 - self->srt.yaw) / 8;
-                    self->srt.transl.x += objdata->unk84;
-                    self->srt.transl.z += objdata->unk88;
+                    // allow interaction and watch kyte
+                    self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
+                    CFCloudBaby_turnToFaceObj(self, sidekick, objdata);
                 }
-                objAnimAdvance(self, objdata->unk90, (f32) gUpdateRate, NULL);
-                break;
-            case 10:
-                gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
-                break;
-            default:
-                CFCloudBaby_func_12EC(self, player, objdata);
                 break;
             }
-        } else {
-            if (objdata->unk98 != 0) {
-                CFCloudBaby_func_12EC(self, player, objdata);
+            /* fallthrough */
+        case CFCLOUDBABY_STATE_12_Rescued:
+        default:
+            CFCloudBaby_turnToFaceObj(self, player, objdata);
+            break;
+        }
+    } else if (objdata->state >= CFCLOUDBABY_STATE_8_WaitingForBean) {
+        switch (objdata->state) {
+        case CFCLOUDBABY_STATE_11_EatingBean:
+            objdata->state = CFCLOUDBABY_STATE_8_WaitingForBean;
+            /* fallthrough */
+        case CFCLOUDBABY_STATE_8_WaitingForBean:
+            foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
+            // @bug: bean will be uninitialized if the foodbag is null
+            if (foodbag != NULL) {
+                bean = ((DLL_IFoodbag*)foodbag->dll)->vtbl->get_nearest_placed_food_of_type(foodbag, self, 
+                    FOOD_Red_Bean | FOOD_Brown_Bean | FOOD_Blue_Bean);
             }
+            if ((bean != NULL) && (vec3Distance(&self->globalPosition, &bean->globalPosition) < (f32) setup->closeMaxDist)) {
+                objdata->state = CFCLOUDBABY_STATE_9_WalkToBean;
+                objdata->origYaw = objAngleToObjectXZ(self, bean, NULL) + self->srt.yaw;
+                objdata->beanXDir = bean->srt.transl.x - self->srt.transl.x;
+                objdata->beanZDir = bean->srt.transl.z - self->srt.transl.z;
+                if ((objdata->beanXDir != 0.0f) || (objdata->beanZDir != 0.0f)) {
+                    magnitude = sqrtf(SQ(objdata->beanXDir) + SQ(objdata->beanZDir));
+                    objdata->unkBA = (s16) ((magnitude / 0.5f) - 18.0f);
+                    objdata->beanXDir *= (0.5f / magnitude);
+                    objdata->beanZDir *= (0.5f / magnitude);
+                    objAnimSet(self, 9, 0.0f, 0);
+                    objGetAnimChange(self, 0.5f, &objdata->animChange);
+                    objdata->bean = bean;
+                    objdata->beanScale = bean->srt.scale;
+                } else {
+                    return;
+                }
+            }
+            break;
+        case CFCLOUDBABY_STATE_9_WalkToBean:
+            objdata->unkBA -= 1;
+            if (objdata->unkBA < 0) {
+                objdata->state = CFCLOUDBABY_STATE_10_EatBean;
+                self->srt.yaw = objdata->origYaw;
+            } else {
+                self->srt.yaw += (objdata->origYaw - self->srt.yaw) / 8;
+                self->srt.transl.x += objdata->beanXDir;
+                self->srt.transl.z += objdata->beanZDir;
+            }
+            objAnimAdvance(self, objdata->animChange, (f32) gUpdateRate, NULL);
+            break;
+        case CFCLOUDBABY_STATE_10_EatBean:
+            gDLL_3_Animation->vtbl->start_obj_sequence(3, self, -1);
+            break;
+        default:
+            CFCloudBaby_turnToFaceObj(self, player, objdata);
+            break;
         }
-
-        if (mathRnd(0, 0x1E) == 0) {
-            objExpr_func_80034B94(self, &objdata->unk60, data_0[mathRnd(0, 3)]);
+    } else {
+        if (objdata->swapInitialState) {
+            CFCloudBaby_turnToFaceObj(self, player, objdata);
         }
-        objExpr_func_80034BC0(self, &objdata->unk60);
     }
+
+    if (mathRnd(0, 30) == 0) {
+        objExpr_func_80034B94(self, &objdata->unk60, data_0[mathRnd(0, 3)]);
+    }
+    objExpr_func_80034BC0(self, &objdata->unk60);
 }
 
 static const char str_1[] = " Distracted ";
@@ -372,13 +420,11 @@ static int CFCloudBaby_animCallback(Object* self, Object* animObj, AnimObj_Data*
     Object* foodbag;
     f32 xDist;
     f32 zDist;
-    CFCloudBaby_Setup* setup;
-    s8 sp3B;
+    CFCloudBaby_Setup* setup = (CFCloudBaby_Setup*)self->setup;
+    s8 isPlayerClose;
     s16 angle;
-    CFCloudBaby_Data* objdata;
-
-    setup = (CFCloudBaby_Setup*)self->setup;
-    objdata = self->data;
+    CFCloudBaby_Data* objdata = self->data;
+    
     if (self->seqSlot == 4) {
         return 0;
     }
@@ -386,54 +432,54 @@ static int CFCloudBaby_animCallback(Object* self, Object* animObj, AnimObj_Data*
     player = objGetPlayer();
     xDist = player->srt.transl.x - setup->base.x;
     zDist = player->srt.transl.z - setup->base.z;
-    if ((SQ(xDist) + SQ(zDist)) < (f32) SQ(setup->unk18)) {
-        sp3B = TRUE;
+    if ((SQ(xDist) + SQ(zDist)) < (f32) SQ(setup->closeMaxDist)) {
+        isPlayerClose = TRUE;
     } else {
-        sp3B = FALSE;
+        isPlayerClose = FALSE;
     }
-    if (sp3B && (mathRnd(0, 10) == 1)) {
+    if (isPlayerClose && (mathRnd(0, 10) == 1)) {
         dll_amSfx->Play(self, SOUND_8C_Baby_CloudRunner, 0x7E, NULL, NULL, 0, NULL);
     }
-    switch (objdata->unkAC) {
-    case 10:
-    case 11:
-        if ((animObjData->lastMessage == 1) && (objdata->unkFC != NULL)) {
+    switch (objdata->state) {
+    case CFCLOUDBABY_STATE_10_EatBean:
+    case CFCLOUDBABY_STATE_11_EatingBean:
+        if ((animObjData->lastMessage == 1) && (objdata->bean != NULL)) {
             foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-            ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, objdata->unkFC);
-            objFreeObject(objdata->unkFC);
-            objdata->unkFC = NULL;
+            ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, objdata->bean);
+            objFreeObject(objdata->bean);
+            objdata->bean = NULL;
         }
-        if (objdata->unkFC != NULL) {
-            objdata->unk94 *= 0.995f;
-            objdata->unkFC->srt.scale = objdata->unk94;
+        if (objdata->bean != NULL) {
+            objdata->beanScale *= 0.995f;
+            objdata->bean->srt.scale = objdata->beanScale;
         }
-        objdata->unkAC = 11;
-        if ((vec3Distance(&self->globalPosition, &player->globalPosition) < setup->unk1A) 
+        objdata->state = CFCLOUDBABY_STATE_11_EatingBean;
+        if ((vec3Distance(&self->globalPosition, &player->globalPosition) < setup->rescueMaxDist) 
                 && (self->unkAF & ARROW_FLAG_1_Interacted)) {
-            if (objdata->unkFC != NULL) {
+            if (objdata->bean != NULL) {
                 foodbag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 0xF);
-                ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, objdata->unkFC);
-                objFreeObject(objdata->unkFC);
-                objdata->unkFC = NULL;
+                ((DLL_IFoodbag*)foodbag->dll)->vtbl->destroy_placed_food(foodbag, objdata->bean);
+                objFreeObject(objdata->bean);
+                objdata->bean = NULL;
             }
-            objdata->unkAC = 7;
+            objdata->state = CFCLOUDBABY_STATE_7_RescuedWhileEatingBean;
             return 4;
         }
     default:
         break;
-    case 0:
-    case 8:
+    case CFCLOUDBABY_STATE_0_FleeIfPlayerIsClose:
+    case CFCLOUDBABY_STATE_8_WaitingForBean:
         animObjData->unk7A &= ~2;
         angle = objAngleToObjectXZ(self, player, NULL);
         objExpr_func_80032CF8(self, player, &objdata->unk3C, 0x28);
         self->srt.yaw += angle / 8;
-        if (sp3B != 0) {
+        if (isPlayerClose != 0) {
             animObjData->unk9D |= 4;
         } else {
             animObjData->unk9D = 8;
         }
         break;
-    case 5:
+    case CFCLOUDBABY_STATE_5_DistractedByKyte:
         animObjData->unk7A &= ~2;
         angle = objAngleToObjectXZ(self, objGetSidekick(), NULL);
         objExpr_func_80032CF8(self, objGetSidekick(), &objdata->unk3C, 0x28);
@@ -444,17 +490,17 @@ static int CFCloudBaby_animCallback(Object* self, Object* animObj, AnimObj_Data*
 }
 
 // offset: 0x12A4 | func: 8 | export: 7
-s32 CFCloudBaby_Func_12A4(Object* self) {
+s32 CFCloudBaby_IsRescuedTimerDone(Object* self) {
     CFCloudBaby_Data* objdata = self->data;
-    return (objdata->unk214 & 1) == FALSE;
+    return (objdata->flags & CFCLOUDBABY_RescueTimerActive) == FALSE;
 }
 
 // offset: 0x12BC | func: 9 | export: 8
-s32 CFCloudBaby_Func_12BC(Object* self) {
+s32 CFCloudBaby_RescueFromChest(Object* self) {
     CFCloudBaby_Data* objdata = self->data;
 
-    if (objdata->unkAC == 6) {
-        objdata->unk0 = 1;
+    if (objdata->state == CFCLOUDBABY_STATE_6_InChest) {
+        objdata->rescuedTimer = 1;
         return 1;
     } else {
         return 0;
@@ -462,7 +508,7 @@ s32 CFCloudBaby_Func_12BC(Object* self) {
 }
 
 // offset: 0x12EC | func: 10
-static void CFCloudBaby_func_12EC(Object* self, Object* obj, CFCloudBaby_Data* objdata) {
+static void CFCloudBaby_turnToFaceObj(Object* self, Object* obj, CFCloudBaby_Data* objdata) {
     s16 angle;
     HeadAnimation headanim;
     s16 var_v0;
@@ -493,7 +539,7 @@ static void CFCloudBaby_func_12EC(Object* self, Object* obj, CFCloudBaby_Data* o
 }
 
 // offset: 0x1464 | func: 11
-static void CFCloudBaby_func_1464(Object* self, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
+static void CFCloudBaby_findNextCurve(Object* self, UnkCurvesStruct* arg1, s32 arg2, s32 arg3, f32 arg4) {
     s32 sp28[2];
 
     if (arg2 == 1) {
@@ -507,11 +553,11 @@ static void CFCloudBaby_func_1464(Object* self, UnkCurvesStruct* arg1, s32 arg2,
 }
 
 // offset: 0x14F0 | func: 12
-static s32 CFCloudBaby_func_14F0(Object* self, UnkCurvesStruct* arg1, f32 arg2) {
+static s32 CFCloudBaby_doCurveMove(Object* self, UnkCurvesStruct* arg1, f32 speed) {
     s32 sp24;
 
     sp24 = 0;
-    if ((curves_func_800053B0(&arg1->unk0, arg2) != 0) || (arg1->unk0.unk10 != 0)) {
+    if ((curves_func_800053B0(&arg1->unk0, speed) != 0) || (arg1->unk0.unk10 != 0)) {
         sp24 = gDLL_26_Curves->vtbl->func_4704(arg1);
     }
     self->srt.transl.x = arg1->unk0.unk68.x;
@@ -521,7 +567,7 @@ static s32 CFCloudBaby_func_14F0(Object* self, UnkCurvesStruct* arg1, f32 arg2) 
 }
 
 // offset: 0x15A8 | func: 13
-static s32 CFCloudBaby_func_15A8(Object* self, f32 targX, f32 targY, f32 targZ, f32 speed) {
+static s32 CFCloudBaby_moveToPos(Object* self, f32 targX, f32 targY, f32 targZ, f32 speed) {
     f32 dirX;
     f32 dirY;
     f32 dirZ;
@@ -551,32 +597,32 @@ static s32 CFCloudBaby_func_15A8(Object* self, f32 targX, f32 targY, f32 targZ, 
 }
 
 // offset: 0x1730 | func: 14
-static CurveSetup* CFCloudBaby_func_1730(Object* self, s32 arg1, Vec3f* arg2, s32 arg3) {
-    s32 temp_v0;
-    s32 sp2C[2];
-    CurveSetup* sp28;
+static CurveSetup* CFCloudBaby_findCloudBabyCurve(Object* self, s32 arg1, Vec3f* pos, s32 arg3) {
+    s32 uid;
+    s32 curveTypes[2];
+    CurveSetup* curve;
 
-    sp28 = NULL;
+    curve = NULL;
     if (arg3 == 1) {
-        sp2C[0] = 0;
-        sp2C[1] = 0;
+        curveTypes[0] = 0;
+        curveTypes[1] = 0;
     } else {
-        sp2C[0] = 0x19;
-        sp2C[1] = 0x15;
+        curveTypes[0] = 0x19;
+        curveTypes[1] = 0x15;
     }
-    temp_v0 = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
-        sp2C, ARRAYCOUNT(sp2C), arg1);
-    if (temp_v0 >= 0) {
-        sp28 = gDLL_26_Curves->vtbl->func_39C(temp_v0);
-        arg2->x = sp28->pos.x;
-        arg2->y = sp28->pos.y;
-        arg2->z = sp28->pos.z;
+    uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
+        curveTypes, ARRAYCOUNT(curveTypes), arg1);
+    if (uid >= 0) {
+        curve = gDLL_26_Curves->vtbl->func_39C(uid);
+        pos->x = curve->pos.x;
+        pos->y = curve->pos.y;
+        pos->z = curve->pos.z;
     }
-    return sp28;
+    return curve;
 }
 
 // offset: 0x180C | func: 15
-static s32 CFCloudBaby_func_180C(Object* self, UnkCurvesStruct* arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5) {
+static s32 CFCloudBaby_navigatePathToThroneRoom(Object* self, UnkCurvesStruct* arg1, f32 speed, f32 arg3, f32 arg4, f32 arg5) {
     s16 sp46;
     s32 sp40;
     f32 sp3C;
@@ -596,12 +642,12 @@ static s32 CFCloudBaby_func_180C(Object* self, UnkCurvesStruct* arg1, f32 arg2, 
     sp3C = self->srt.transl.x;
     sp38 = self->srt.transl.z;
     if (self->unkDC == 0) {
-        if (CFCloudBaby_func_1B88(self, NULL, &objdata->unk4, &objdata->unk4.unk30, arg2) != 0) {
-            CFCloudBaby_func_1464(self, arg1, 0, 0, 200.0f);
+        if (CFCloudBaby_moveToPathStart(self, NULL, &objdata->unk4, &objdata->unk4.tValue, speed) != 0) {
+            CFCloudBaby_findNextCurve(self, arg1, 0, 0, 200.0f);
             self->unkDC = 1;
         }
     } else {
-        sp40 = CFCloudBaby_func_14F0(self, arg1, arg2);
+        sp40 = CFCloudBaby_doCurveMove(self, arg1, speed);
     }
     sp3C = self->srt.transl.x - sp3C;
     sp38 = self->srt.transl.z - sp38;
@@ -643,13 +689,13 @@ static s32 CFCloudBaby_func_180C(Object* self, UnkCurvesStruct* arg1, f32 arg2, 
 }
 
 // offset: 0x1B88 | func: 16
-static s32 CFCloudBaby_func_1B88(Object* self, CurveSetup* arg1, CFCloudBaby_Data_4* arg2, f32* arg3, f32 arg4) {
+static s32 CFCloudBaby_moveToPathStart(Object* self, CurveSetup* curve, CFCloudBaby_Data_4* arg2, f32* tValue, f32 speed) {
     f32 sp48[4];
     s16 sp40[3];
     s32 sp3C;
 
     sp3C = 0;
-    if (arg1 != NULL) {
+    if (curve != NULL) {
         arg2->unk18.f[1] = 0.0f;
         arg2->unk18.f[2] = 0.0f;
         arg2->unk24.f[1] = 0.0f;
@@ -658,33 +704,33 @@ static s32 CFCloudBaby_func_1B88(Object* self, CurveSetup* arg1, CFCloudBaby_Dat
         arg2->unk24.f[0] = -200.0f;
         mathRotateYPR(&self->srt, &arg2->unk18);
         sp40[2] = 0;
-        sp40[1] = arg1->unk2D;
-        sp40[0] = arg1->unk2C;
+        sp40[1] = curve->unk2D;
+        sp40[0] = curve->unk2C;
         mathRotateYPR((SRT* )&sp40, &arg2->unk24);
-        *arg3 = 0.0f;
+        *tValue = 0.0f;
         arg2->unk34 = CFCloudBaby_func_1DB0(arg2, &arg2->unk18, &arg2->unkC, &arg2->unk24, 0xA);
     } else {
-        *arg3 += (arg4 * (f32) gUpdateRate) / arg2->unk34;
-        if (*arg3 >= 1.0f) {
+        *tValue += (speed * (f32) gUpdateRate) / arg2->unk34;
+        if (*tValue >= 1.0f) {
             sp3C = 1;
-            *arg3 = 1.0f;
+            *tValue = 1.0f;
         }
     }
     sp48[0] = arg2->unk0.f[0];
     sp48[1] = arg2->unkC.f[0];
     sp48[2] = arg2->unk18.f[0];
     sp48[3] = arg2->unk24.f[0];
-    self->srt.transl.x = curvesHermite(sp48, *arg3, NULL);
+    self->srt.transl.x = curvesHermite(sp48, *tValue, NULL);
     sp48[0] = arg2->unk0.f[1];
     sp48[1] = arg2->unkC.f[1];
     sp48[2] = arg2->unk18.f[1];
     sp48[3] = arg2->unk24.f[1];
-    self->srt.transl.y = curvesHermite(sp48, *arg3, NULL);
+    self->srt.transl.y = curvesHermite(sp48, *tValue, NULL);
     sp48[0] = arg2->unk0.f[2];
     sp48[1] = arg2->unkC.f[2];
     sp48[2] = arg2->unk18.f[2];
     sp48[3] = arg2->unk24.f[2];
-    self->srt.transl.z = curvesHermite(sp48, *arg3, NULL);
+    self->srt.transl.z = curvesHermite(sp48, *tValue, NULL);
     return sp3C;
 }
 
@@ -744,31 +790,32 @@ static f32 CFCloudBaby_func_1DB0(CFCloudBaby_Data_4* arg0, Vec3f* arg1, Vec3f* a
 }
 
 // offset: 0x1FA0 | func: 18
-static void CFCloudBaby_func_1FA0(Object* self, f32 arg1) {
+static void CFCloudBaby_setupPathToThroneRoom(Object* self, f32 speed) {
     CFCloudBaby_Data* objdata = self->data;
     
-    bcopy(&self->srt.transl, &objdata->unk4, sizeof(Vec3f));
+    bcopy(&self->srt.transl, &objdata->unk4.unk0, sizeof(Vec3f));
     self->unkDC = 0;
-    CFCloudBaby_func_1B88(self, 
-        CFCloudBaby_func_1730(self, 0, &objdata->unk4.unkC, 0), 
+    CFCloudBaby_moveToPathStart(self, 
+        CFCloudBaby_findCloudBabyCurve(self, 0, &objdata->unk4.unkC, 0), 
         &objdata->unk4, 
-        &objdata->unk4.unk30, 
-        arg1);
+        &objdata->unk4.tValue, 
+        speed);
 }
 
 // offset: 0x2050 | func: 19
-static s32 CFCloudBaby_func_2050(Object* self, CFCloudBaby_Data* objdata) {
+static s32 CFCloudBaby_checkForKyte(Object* self, CFCloudBaby_Data* objdata) {
     Object* sidekick = objGetSidekick();
     
     if ((sidekick != NULL) && (((DLL_ISidekick*)sidekick->dll)->vtbl->Func24(sidekick) != 0)) {
-        objdata->unk100 = self->srt.transl.x;
-        objdata->unk104 = self->srt.transl.y;
-        objdata->unk108 = self->srt.transl.z;
-        objdata->unkB0 = (u8) objdata->unkAC;
-        objdata->unkAC = 5;
-        objdata->unkB4 = 1;
+        // kyte using distract
+        objdata->savedPos.x = self->srt.transl.x;
+        objdata->savedPos.y = self->srt.transl.y;
+        objdata->savedPos.z = self->srt.transl.z;
+        objdata->prevState = (u8) objdata->state;
+        objdata->state = CFCLOUDBABY_STATE_5_DistractedByKyte;
+        objdata->distracted = TRUE;
         self->srt.yaw = -0x3300;
-        if (objdata->unk98 != 0) {
+        if (objdata->swapInitialState) {
             gDLL_3_Animation->vtbl->start_obj_sequence(5, self, -1);
         }
         return 1;

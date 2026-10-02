@@ -15,5 +15,5 @@ _exports:
 /*4*/ .dword CFCloudBaby_obj_Free
 /*5*/ .dword CFCloudBaby_obj_GetModelFlags
 /*6*/ .dword CFCloudBaby_obj_GetDataSize
-/*7*/ .dword CFCloudBaby_Func_12A4
-/*8*/ .dword CFCloudBaby_Func_12BC
+/*7*/ .dword CFCloudBaby_IsRescuedTimerDone
+/*8*/ .dword CFCloudBaby_RescueFromChest

@@ -164,7 +164,7 @@ void CFCrystal_func_288(Object* self) {
     objdata = self->data;
     mesgArg = NULL;
     player = objGetPlayer();
-    if ((mainGetBits(BIT_57) == 0) && (mainGetBits(BIT_4E0) == 0) 
+    if ((mainGetBits(BIT_CRF_WindLifts_Powered) == 0) && (mainGetBits(BIT_4E0) == 0) 
             && (vec3Distance(&self->globalPosition, &player->globalPosition) < 310.0f)) {
         objdata->unk164 += gUpdateRate;
         if (objdata->unk164 > 180) {
@@ -218,20 +218,20 @@ void CFCrystal_func_288(Object* self) {
     if (objdata->unk30[3] == 0) {
         objSendMesgMany(OBJ_CFMainCrystal, OBJMSG_SEND_FILTER_ID | OBJMSG_SEND_IGNORE_SENDER, self, 0x110004, NULL);
     }
-    if ((mainGetBits(BIT_54) != 0) && (objdata->unk30[0] == 0)) {
+    if ((mainGetBits(BIT_CRF_Red_PowerBase) != 0) && (objdata->unk30[0] == 0)) {
         objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110001, NULL);
     }
-    if ((mainGetBits(BIT_55) != 0) && (objdata->unk30[1] == 0)) {
+    if ((mainGetBits(BIT_CRF_Green_PowerBase) != 0) && (objdata->unk30[1] == 0)) {
         objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110002, NULL);
     }
-    if ((mainGetBits(BIT_56) != 0) && (objdata->unk30[2] == 0)) {
+    if ((mainGetBits(BIT_CRF_Blue_PowerBase) != 0) && (objdata->unk30[2] == 0)) {
         objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110003, NULL);
     }
     for (i = 0; i < 10; i++) { objdata->unk38[i].unk1B = 0; }
     sp8C = 0;
     var_s5 = 0;
     if (objdata->unk30[3] != 0) {
-        if (mainGetBits(BIT_57) != 0) {
+        if (mainGetBits(BIT_CRF_WindLifts_Powered) != 0) {
             if (objdata->unk30[0] != 0) {
                 objdata->unk30[0] = 0x78;
             }

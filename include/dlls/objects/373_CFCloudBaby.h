@@ -6,8 +6,8 @@
 
 DLL_INTERFACE(DLL_373_CFCloudBaby) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ s32 (*func7)(Object*); // returns whether a flag is unset
-    /*8*/ s32 (*func8)(Object*);
+    /*7*/ s32 (*IsRescuedTimerDone)(Object* self);
+    /*8*/ s32 (*RescueFromChest)(Object* self);
 };
 
 #endif // _DLLS_373_H
