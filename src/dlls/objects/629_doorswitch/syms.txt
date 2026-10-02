@@ -1,0 +1,17 @@
+.text = 0x0:
+VFP_DoorSwitch_ctor = 0x0;
+VFP_DoorSwitch_dtor = 0xC;
+VFP_DoorSwitch_obj_Setup = 0x18;
+VFP_DoorSwitch_obj_Control = 0xDC;
+VFP_DoorSwitch_obj_Update = 0x140;
+VFP_DoorSwitch_obj_Print = 0x14C;
+VFP_DoorSwitch_obj_Free = 0x1D0;
+VFP_DoorSwitch_obj_GetModelFlags = 0x218;
+VFP_DoorSwitch_obj_GetDataSize = 0x228;
+VFP_DoorSwitch_func_23C = 0x23C;
+VFP_DoorSwitch_func_3D4 = 0x3D4;
+
+.rodata = 0x4E8:
+
+.data = 0x4E8:
+data_0 = 0x0; // absolute:0x4E8

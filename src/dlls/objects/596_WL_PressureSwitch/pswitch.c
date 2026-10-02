@@ -158,7 +158,7 @@ void WLPressureSwitch_obj_Control(Object* self) {
     //Play stone rumbling sound when moving
     if (playSound) {
         if (!objdata->soundHandle) {
-            dll_amSfx->Play(self, SOUND_1e1_Stone_Moving_Loop, MAX_VOLUME, &objdata->soundHandle, 0, 0, 0);
+            dll_amSfx->Play(self, SOUND_1E1_Stone_Moving_Loop, MAX_VOLUME, &objdata->soundHandle, 0, 0, 0);
         }
     } else {
         if (objdata->soundHandle) {

@@ -1,0 +1,13 @@
+.text = 0x0:
+CloudBall_ctor = 0x0;
+CloudBall_dtor = 0xC;
+CloudBall_obj_Setup = 0x18;
+CloudBall_obj_Control = 0x40;
+CloudBall_obj_Update = 0x4C0;
+CloudBall_obj_Print = 0x644;
+CloudBall_obj_Free = 0x65C;
+CloudBall_obj_GetModelFlags = 0x704;
+CloudBall_obj_GetDataSize = 0x714;
+
+.rodata = 0x784:
+_oob_rodata_0 = 0x0; // absolute:0x784
