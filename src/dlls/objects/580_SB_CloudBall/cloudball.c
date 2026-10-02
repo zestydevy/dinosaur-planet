@@ -5,7 +5,7 @@
 typedef struct {
     s32 _unk0;
     Object* unk4;
-    u8 _unk8 [0x34 - 0x08];   
+    u8 _unk8[0x34 - 0x08];   
 } CloudBall_Data;
 
 // offset: 0x0 | ctor
@@ -30,10 +30,8 @@ void CloudBall_obj_Control(Object* self);
 
 // offset: 0x4C0 | func: 2 | export: 2
 void CloudBall_Update(Object* self) {
-    ObjectHitInfo* temp_v0;
-    s32 var_s0;
+    s32 var_s0 = 20;
 
-    var_s0 = 0x14;
     if (self->objhitInfo->unk48 != NULL) {
         gDLL_6_AMSFX->vtbl->Play(NULL, SOUND_95_Explosion, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->objhitInfo->unk58 &= ~0x1;
@@ -53,9 +51,8 @@ void CloudBall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Tri
 
 // offset: 0x65C | func: 4 | export: 4
 void CloudBall_free(Object* self, s32 onlySelf) {
-    CloudBall_Data* objdata;
+    CloudBall_Data* objdata = self->data;
     
-    objdata = self->data;
     gDLL_14_Modgfx->vtbl->Func5(self);
     gDLL_13_Expgfx->vtbl->func5(self);
     if (onlySelf == 0) {

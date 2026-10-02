@@ -22,7 +22,7 @@ typedef struct {
     s16 unk1A;
     s16 unk1C;
     s16 unk1E;
-} DLL629_Setup;
+} VFP_DoorSwitch_Setup;
 
 static void VFP_DoorSwitch_func_23C(Object* self);
 static void VFP_DoorSwitch_func_3D4(Object* self);
@@ -34,7 +34,7 @@ void VFP_DoorSwitch_ctor(void* dll) { }
 void VFP_DoorSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_DoorSwitch_setup(Object* self, DLL629_Setup* setup, s32 reset) {
+void VFP_DoorSwitch_obj_Setup(Object* self, VFP_DoorSwitch_Setup* setup, s32 reset) {
     VFP_DoorSwitch_Data* objdata;
 
     objdata = self->data;
@@ -53,7 +53,7 @@ void VFP_DoorSwitch_setup(Object* self, DLL629_Setup* setup, s32 reset) {
 }
 
 // offset: 0xDC | func: 1 | export: 1
-void VFP_DoorSwitch_control(Object* self) {
+void VFP_DoorSwitch_obj_Control(Object* self) {
     if (self->id != OBJ_VFP_LiftIndicat) {
         VFP_DoorSwitch_func_23C(self);
     } else {
@@ -62,10 +62,10 @@ void VFP_DoorSwitch_control(Object* self) {
 }
 
 // offset: 0x140 | func: 2 | export: 2
-void VFP_DoorSwitch_update(Object* self) { }
+void VFP_DoorSwitch_obj_Update(Object* self) { }
 
 // offset: 0x14C | func: 3 | export: 3
-void dll_629_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void VFP_DoorSwitch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     VFP_DoorSwitch_Data* objdata = self->data;
 
     if (self->id != OBJ_VFP_LiftIndicat) {
@@ -80,17 +80,17 @@ void dll_629_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 }
 
 // offset: 0x1D0 | func: 4 | export: 4
-void VFP_DoorSwitch_free(Object* self, s32 onlySelf) {
+void VFP_DoorSwitch_obj_Free(Object* self, s32 onlySelf) {
     gDLL_13_Expgfx->vtbl->func5(self);
 }
 
 // offset: 0x218 | func: 5 | export: 5
-u32 VFP_DoorSwitch_get_model_flags(Object* self) {
+u32 VFP_DoorSwitch_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x228 | func: 6 | export: 6
-u32 VFP_DoorSwitch_get_data_size(Object* self, u32 offsetAddr) {
+u32 VFP_DoorSwitch_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(VFP_DoorSwitch_Data);
 }
 
@@ -115,7 +115,7 @@ static void VFP_DoorSwitch_func_23C(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_551, NULL, 2, -1, NULL);
     }
     data_0 = dllLoad(DLL_ID_107, 1);
-    data_0->vtbl->func0(self, 0x11, NULL, 2, -1, NULL);
+    data_0->vtbl->Spawn(self, 0x11, NULL, 2, -1, NULL);
     dllFree(data_0);
 
     objdata->unk4 = 1;

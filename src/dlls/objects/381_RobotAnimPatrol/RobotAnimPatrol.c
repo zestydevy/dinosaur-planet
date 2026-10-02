@@ -92,7 +92,7 @@ typedef struct {
 enum RobotAnimPatrolFlags {
     ROBOTANIMPATROL_FLAGS_Destroyed = 1,
     ROBOTANIMPATROL_FLAGS_Unk2 = 2,
-    ROBOTANIMPATROL_FLAGS_Unk4 = 4,
+    ROBOTANIMPATROL_FLAGS_Unk4 = 4
 };
 
 /*0x0*/ static DLTri sLaserTris[] = {

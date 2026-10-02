@@ -1,16 +1,16 @@
-#include "dll.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objprint.h"
-#include "game/gamebits.h"
 #include "sys/rand.h"
+#include "game/gamebits.h"
+#include "dll.h"
 
 typedef struct {
     s16 unk0;
     u32 unk4;
     s8 unk8;
-} WL_Colrise_Data;
+} WLColrise_Data;
 
 typedef struct {
     ObjSetup base;
@@ -19,7 +19,7 @@ typedef struct {
     s16 unk1A;
     s16 unk1C;
     s16 unk1E; 
-} WL_Colrise_Setup;
+} WLColrise_Setup;
 
 static DLL_IModgfx* data_0 = NULL;
 
@@ -32,8 +32,8 @@ void WL_colrise_ctor(void* dll) { }
 void WL_colrise_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_colrise_setup(Object* self, WL_Colrise_Setup* setup, s32 reset) {
-    WL_Colrise_Data* objdata = self->data;
+void WL_colrise_setup(Object* self, WLColrise_Setup* setup, s32 reset) {
+    WLColrise_Data* objdata = self->data;
 
     self->animCallback = WL_colrise_animCallback;
     self->srt.yaw = setup->unk18 << 8;
@@ -48,7 +48,7 @@ void WL_colrise_control(Object* self) {
     Object* polyhit;
     s32 i;
     ObjSetup* objSetup;
-    WL_Colrise_Data* objData;
+    WLColrise_Data* objData;
     s8 i_2;
     f32 temp_fv0;
     f32 temp_fv0_2;
@@ -100,8 +100,8 @@ void WL_colrise_control(Object* self) {
             gDLL_6_AMSFX->vtbl->Play(self, SOUND_1E1_Stone_Moving_Loop, MAX_VOLUME, &objData->unk4, NULL, 0, NULL);
         }
     } else {
-        if (mathRnd(0, 0x28) == 0) {
-            data_0->vtbl->func0(self, mathRnd(0, 5), 0, 1, -1, 0);
+        if (mathRnd(0, 40) == 0) {
+            data_0->vtbl->Spawn(self, mathRnd(0, 5), 0, 1, -1, 0);
         }
 
         if (objData->unk4 != 0) {
@@ -123,7 +123,7 @@ void WL_colrise_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 
 // offset: 0x3E4 | func: 4 | export: 4
 void WL_colrise_free(Object* self, s32 onlySelf) {
-    WL_Colrise_Data* objdata;
+    WLColrise_Data* objdata;
 
     objdata = self->data;
     if (data_0 != 0) {
@@ -142,7 +142,7 @@ u32 WL_colrise_get_model_flags(Object* self) {
 
 // offset: 0x478 | func: 6 | export: 6
 u32 WL_colrise_get_data_size(Object* self, u32 offsetAddr) {
-    return sizeof(WL_Colrise_Data);
+    return sizeof(WLColrise_Data);
 }
 
 // offset: 0x48C | func: 7

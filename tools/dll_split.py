@@ -598,7 +598,7 @@ class DLLSplitter:
                         c_file.write(f'#pragma GLOBAL_ASM("{asm_path.as_posix()}/{func.getName()}.s")\n')
 
     EMPTY_CTOR_DTOR = [0xAFA40000, 0x03E00008, 0x00000000]
-    DEFAULT_MODGFX_SETUP = [0xAFA40000, 0xAFA50004, 0xAFA60008, 0xAFA7000C, 0x00001025, 0x03E00008, 0x00000000, 0x00000000, 0x00000000, 0x00000000]
+    DEFAULT_MODGFX_SPAWN = [0xAFA40000, 0xAFA50004, 0xAFA60008, 0xAFA7000C, 0x00001025, 0x03E00008, 0x00000000, 0x00000000, 0x00000000, 0x00000000]
     DEFAULT_OBJ_SETUP = [0xAFA40000, 0xAFA50004,  0xAFA60008, 0x03E00008, 0x000000]
     DEFAULT_OBJ_CONTROL = [0xAFA40000, 0x03E00008, 0x00000000]
     DEFAULT_OBJ_UPDATE = [0xAFA40000, 0x03E00008, 0x00000000]
@@ -632,7 +632,7 @@ class DLLSplitter:
         if dll.number >= 104:
             # Modgfx DLL, check for function defaults
             if export_idx == 0:
-                if self.__instructions_equal(func, self.DEFAULT_MODGFX_SETUP):
+                if self.__instructions_equal(func, self.DEFAULT_MODGFX_SPAWN):
                     c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {{\n    return 0;\n}}\n')
                     return True
                 else:

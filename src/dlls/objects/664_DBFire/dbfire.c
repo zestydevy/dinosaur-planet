@@ -34,7 +34,7 @@ void DBfire_ctor(void* dll) { }
 void DBfire_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_664_obj_Setup(Object* self, DBfire_Setup* setup, s32 reset) {
+void DBfire_obj_Setup(Object* self, DBfire_Setup* setup, s32 reset) {
     DBfire_Data* objdata = self->data;
     
     if (setup->unk1A != 0) {
@@ -43,7 +43,7 @@ void dll_664_obj_Setup(Object* self, DBfire_Setup* setup, s32 reset) {
     objdata->unk4 = setup->unk1B;
     objdata->unk6 = 0;
     objdata->unk8 = 0;
-    objdata->unk2 = mathRnd(0, 0x3E8);
+    objdata->unk2 = mathRnd(0, 1000);
     self->visRadius = 200.0f;
 }
 
@@ -61,12 +61,12 @@ void DBfire_obj_Control(Object* self) {
             if (objdata->unk8 != 0) {
                 mathRnd(11, 12);
                 dll = dllLoad(DLL_ID_162, 1);
-                dll->vtbl->func0(self, 0, 0, 1, -1, 0);
+                dll->vtbl->Spawn(self, 0, 0, 1, -1, 0);
                 dllFree(dll);
             } else {
                 mathRnd(11, 12);
                 dll = dllLoad(DLL_ID_162, 1);
-                dll->vtbl->func0(self, 0, 0, 1, -1, 0);
+                dll->vtbl->Spawn(self, 0, 0, 1, -1, 0);
                 dllFree(dll);
             }
             objdata->unk8 ^= 1;
@@ -88,7 +88,7 @@ void DBfire_obj_Control(Object* self) {
         if (((s32) objdata->unk10.transl.y % 10) == 0) {
             gDLL_14_Modgfx->vtbl->Func10(self);
             dll = dllLoad(DLL_ID_136, 1);
-            dll->vtbl->func0(self, 0x20, &objdata->unk10, 0, -1, 0);
+            dll->vtbl->Spawn(self, 0x20, &objdata->unk10, 0, -1, 0);
             dllFree(dll);
         }
         if (objdata->unk10.transl.y < 0.0f) {
