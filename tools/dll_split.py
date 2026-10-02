@@ -214,7 +214,7 @@ class DLLSplitter:
     ]
 
     MODGFX_INTERFACE = [
-        "Func0",
+        "Spawn",
     ]
 
     def __default_symbol_names(self, dll: AnalyzedDLL, prefix: str):
@@ -248,14 +248,18 @@ class DLLSplitter:
             addr = sym.vram - dll.text.vram
             func_name = f"Func_{addr:X}"
             
-            # TODO: modgfx/projgfx support
-            if dll.number >= 210 and i < len(self.OBJECT_INTERFACE):
+            # TODO: projgfx support
+            if dll.number >= 210:
                 # Object DLL
-                func_name = f"obj_{self.OBJECT_INTERFACE[i]}"
-
-            if dll.number >= 104 and i < len(self.MODGFX_INTERFACE):
+                if i < len(self.OBJECT_INTERFACE):
+                    func_name = f"obj_{self.OBJECT_INTERFACE[i]}"
+            elif dll.number >= 186:
+                # projgfx DLL
+                pass
+            elif dll.number >= 104:
                 # modgfx DLL
-                func_name = f"modgfx_{self.MODGFX_INTERFACE[i]}"
+                if i < len(self.MODGFX_INTERFACE):
+                    func_name = f"modgfx_{self.MODGFX_INTERFACE[i]}"
             
             sym.name = f"{prefix}_{func_name}"
 
@@ -628,15 +632,6 @@ class DLLSplitter:
             else:
                 c_file.write(f'void {func.getName()}(void* dll);\n')
             return False
-        
-        if dll.number >= 104:
-            # Modgfx DLL, check for function defaults
-            if export_idx == 0:
-                if self.__instructions_equal(func, self.DEFAULT_MODGFX_SPAWN):
-                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {{\n    return 0;\n}}\n')
-                    return True
-                else:
-                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);\n')
 
         if dll.number >= 210:
             # Object DLL, check for function defaults
@@ -689,6 +684,17 @@ class DLLSplitter:
                     return True
                 else:
                     c_file.write(f'u32 {func.getName()}(Object* self, u32 offsetAddr);\n')
+        elif dll.number >= 186:
+            # Projgfx DLL
+            pass
+        elif dll.number >= 104:
+            # Modgfx DLL, check for function defaults
+            if export_idx == 0:
+                if self.__instructions_equal(func, self.DEFAULT_MODGFX_SPAWN):
+                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {{\n    return 0;\n}}\n')
+                    return True
+                else:
+                    c_file.write(f's32 {func.getName()}(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data);\n')
         
         return False
 
