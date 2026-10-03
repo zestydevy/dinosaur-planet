@@ -164,7 +164,7 @@ void CFCrystal_func_288(Object* self) {
     objdata = self->data;
     mesgArg = NULL;
     player = objGetPlayer();
-    if ((mainGetBits(BIT_CRF_WindLifts_Powered) == 0) && (mainGetBits(BIT_4E0) == 0) 
+    if ((mainGetBits(BIT_CRF_WindLifts_Powered) == 0) && (mainGetBits(BIT_Play_Seq_0057_CF_PowerRoom_WindLifts_Activating) == 0) 
             && (vec3Distance(&self->globalPosition, &player->globalPosition) < 310.0f)) {
         objdata->unk164 += gUpdateRate;
         if (objdata->unk164 > 180) {
@@ -350,7 +350,7 @@ void CFCrystal_func_288(Object* self) {
             objdata->unk150 += gUpdateRate;
         }
         if (objdata->unk150 > 30) {
-            mainSetBits(BIT_4E0, 1);
+            mainSetBits(BIT_Play_Seq_0057_CF_PowerRoom_WindLifts_Activating, 1);
             mainSetBits(BIT_Player_Immune_to_Rainbow_Scarabs, 0);
         }
         if (objdata->unk150 >= 60) {

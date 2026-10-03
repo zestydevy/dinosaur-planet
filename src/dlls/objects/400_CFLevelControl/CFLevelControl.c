@@ -1,22 +1,17 @@
-#include "dll.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
 #include "sys/print.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
 #include "game/gamebits.h"
-#include "macros.h"
 #include "sys/dll.h"
 #include "sys/objtype.h"
 #include "sys/gfx/projgfx.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/373_CFCloudBaby.h"
-
-// CFGuardian/CFSupTreasureCh
-DLL_INTERFACE(DLL_CFGuardianCFSupTreasureCh) {
-    /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ s32 (*func7)(Object*); // returns whether a flag is unset
-};
+#include "dlls/objects/common/cf_can_unload.h"
+#include "macros.h"
+#include "dll.h"
 
 typedef struct {
 /*00*/ u8 _unk0;
@@ -26,11 +21,11 @@ typedef struct {
 } CFLevelControl_Data;
 
 enum CFLevelControl_Flags {
-    CFLEVELCONTROL_FLAG_1 = 1
+    CFLEVELCONTROL_IsFirstTick = 1
 };
 
 /*0x0*/ static u32 sTriggerPassed = 0;
-/*0x4*/ static DLL_IProjgfx *sDLL190 = NULL;
+/*0x4*/ static DLL_IProjgfx *sLightningProjgfx = NULL;
 /*0x8*/ static s16 sBabyCRStartPerchLandBits[5] = {
     BIT_Play_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_One,
     BIT_Play_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Two,
@@ -98,15 +93,15 @@ typedef struct {
 /*00*/ s32 uID;
 /*04*/ f32 distance;
 /*08*/ s32 mapID;
-/*0C*/ s16 gamebit1;
+/*0C*/ s16 toggleBit;
 /*0E*/ u8 objgroup;
-/*0F*/ u8 status;
-/*10*/ s16 gamebit2;
-/*12*/ u8 unk12;
-} Data6C;
-/*0x6C*/ static Data6C _data_6C[] = {
-    //uID                  dist    mapID                     gamebit1                                               objgroup  status  gamebit2     ?
-    { UID_Guardian,        800.0f, MAP_CLOUDRUNNER_DUNGEON,  BIT_4E0,                                               3,        0,      NO_GAMEBIT,  0  },
+/*0F*/ u8 status; // current objgroup status
+/*10*/ s16 enabledBit;
+/*12*/ u8 createPointID; // create point curve ID to reset obj to on levelcontrol init
+} DistObjGroupToggle;
+/*0x6C*/ static DistObjGroupToggle sDistObjGroupToggles[] = {
+    //uID                  dist    mapID                     toggleBit                                              objgroup  status  enabledBit   createPointID
+    { UID_Guardian,        800.0f, MAP_CLOUDRUNNER_DUNGEON,  BIT_Play_Seq_0057_CF_PowerRoom_WindLifts_Activating,   3,        0,      NO_GAMEBIT,  0  },
     { UID_Chest_1,         400.0f, MAP_CLOUDRUNNER_TREASURE, BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away,  5,        0,      BIT_8CC,     10 },
     { UID_Chest_2,         400.0f, MAP_CLOUDRUNNER_TREASURE, BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away,  6,        0,      BIT_8CC,     11 },
     { UID_Chest_3,         400.0f, MAP_CLOUDRUNNER_TREASURE, BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away,  7,        0,      BIT_8CC,     12 },
@@ -135,13 +130,13 @@ typedef struct {
 
 // size: 0x6
 typedef struct {
-/*00*/ s16 gamebit1;
-/*02*/ s16 gamebit2;
+/*00*/ s16 enableBit;
+/*02*/ s16 disableBit;
 /*04*/ s16 objgroup;
-} Data114;
-/*0x114*/ static Data114 _data_114[] = {
-    //gamebit1  gamebit2  objgroup
-    { BIT_524,  BIT_525,  22 }
+} SimpleObjGroupToggle;
+/*0x114*/ static SimpleObjGroupToggle sSimpleObjGroupToggles[] = {
+    //enableBit                    disableBit                    objgroup
+    { BIT_CRF_Enable_ObjGroup_22,  BIT_CRF_Disable_ObjGroup_22,  22 }
 };
 
 // @bug: This array is not large enough to list all potentially 31 enabled objgroups.
@@ -160,12 +155,12 @@ static void CFLevelControl_func_67C(Object *, DataD0 *, s32);
 static s32 CFLevelControl_setBitAfterRequiredBits(s16 bit, s16 *requiredBits, s32 requiredBitsCount);
 static void CFLevelControl_func_914(void);
 static void CFLevelControl_func_9EC(Data54 *, s32);
-static void CFLevelControl_func_AE8(Data114 *, s32);
-static void CFLevelControl_func_BB8(Data6C *, s32);
-static void CFLevelControl_func_DC0(Data6C *, s32);
-static Vec3f *CFLevelControl_get_position_of_saved_obj(s32);
-static void CFLevelControl_func_1000(void);
-static s32 CFLevelControl_func_10BC(Object *);
+static void CFLevelControl_doSimpleObjGroupToggling(SimpleObjGroupToggle *, s32);
+static void CFLevelControl_doDistBasedObjGroupToggling(DistObjGroupToggle *, s32);
+static void CFLevelControl_resetObjPositions(DistObjGroupToggle *, s32);
+static Vec3f *CFLevelControl_getPositionOfSavedObj(s32);
+static void CFLevelControl_treasRoboControl(void);
+static s32 CFLevelControl_entranceControl(Object *);
 
 // offset: 0x0 | ctor
 void CFLevelControl_ctor(void *dll) { }
@@ -178,10 +173,10 @@ void CFLevelControl_setup(Object *self, ObjSetup *setup, s32 arg2) {
     CFLevelControl_Data *objdata;
 
     objdata = self->data;
-    objdata->flags = CFLEVELCONTROL_FLAG_1;
+    objdata->flags = CFLEVELCONTROL_IsFirstTick;
     sTriggerPassed = mainGetBits(BIT_CF_Entrance_Trigger_Passed);
     CFLevelControl_func_67C(self, _data_D0, _data_110);
-    sDLL190 = dllLoad(DLL_ID_190, 1);
+    sLightningProjgfx = dllLoad(DLL_ID_190, 1);
     mainCreateTempDLL(DLL_ID_MOVELIB);
 }
 
@@ -190,9 +185,9 @@ void CFLevelControl_control(Object *self) {
     CFLevelControl_Data *objdata;
 
     objdata = self->data;
-    if (objdata->flags & CFLEVELCONTROL_FLAG_1) {
-        CFLevelControl_func_DC0(_data_6C, ARRAYCOUNT(_data_6C));
-        objdata->flags &= ~CFLEVELCONTROL_FLAG_1;
+    if (objdata->flags & CFLEVELCONTROL_IsFirstTick) {
+        CFLevelControl_resetObjPositions(sDistObjGroupToggles, ARRAYCOUNT(sDistObjGroupToggles));
+        objdata->flags &= ~CFLEVELCONTROL_IsFirstTick;
     }
     CFLevelControl_func_3F0(self, _data_D0, _data_110);
     // Open treasure room doors once the first four baby CloudRunners are rescued
@@ -208,12 +203,13 @@ void CFLevelControl_control(Object *self) {
         sEndCutsceneRequiredBits, ARRAYCOUNT(sEndCutsceneRequiredBits));
     CFLevelControl_func_914();
     CFLevelControl_func_9EC(_data_54, ARRAYCOUNT(_data_54));
-    CFLevelControl_func_BB8(_data_6C, ARRAYCOUNT(_data_6C));
+    CFLevelControl_doDistBasedObjGroupToggling(sDistObjGroupToggles, ARRAYCOUNT(sDistObjGroupToggles));
+    // Disable Galleon dock objgroup 22 once the CFTreasRobo segment starts
     if (!mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left)) {
-        CFLevelControl_func_AE8(_data_114, ARRAYCOUNT(_data_114));
+        CFLevelControl_doSimpleObjGroupToggling(sSimpleObjGroupToggles, ARRAYCOUNT(sSimpleObjGroupToggles));
     }
-    CFLevelControl_func_10BC(self);
-    CFLevelControl_func_1000();
+    CFLevelControl_entranceControl(self);
+    CFLevelControl_treasRoboControl();
     diPrintf(" Layer NO %i : ", mapGetLayer());
 }
 
@@ -230,8 +226,8 @@ void CFLevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Tr
 // offset: 0x314 | func: 4 | export: 4
 void CFLevelControl_free(Object *self, s32 a1) {
     mainRemoveTempDLL(DLL_ID_MOVELIB);
-    if (sDLL190) {
-        dllFree(sDLL190);
+    if (sLightningProjgfx) {
+        dllFree(sLightningProjgfx);
     }
 }
 
@@ -379,11 +375,11 @@ static void CFLevelControl_func_914(void) {
     if (mainGetBits(BIT_Played_Seq_0041_Scales_Kills_The_Queen) && !mainGetBits(BIT_CF_Floor_Destroyed)) {
         if (mainGetBits(BIT_Kyte_Flight_Curve) != 0x11) {
             mainSetBits(BIT_Kyte_Flight_Curve, 0x11);
-            mainSetBits(BIT_454, 1);
+            mainSetBits(BIT_Kyte_Trapped, 1);
             STUBBED_PRINTF(" KYTE TRAPPED \n "); // guessed location
         }
-    } else if (mainGetBits(BIT_454)) {
-        mainSetBits(BIT_454, 0);
+    } else if (mainGetBits(BIT_Kyte_Trapped)) {
+        mainSetBits(BIT_Kyte_Trapped, 0);
         STUBBED_PRINTF(" KYTE ESCAPPED \n "); // guessed location
     }
 }
@@ -412,67 +408,73 @@ static void CFLevelControl_func_9EC(Data54 *data, s32 count) {
 /*0xD4*/ static const char str_D4[] = " CRAP IS BOLLOX ";
 
 // offset: 0xAE8 | func: 13
-static void CFLevelControl_func_AE8(Data114 *data, s32 count) {
+static void CFLevelControl_doSimpleObjGroupToggling(SimpleObjGroupToggle *t, s32 count) {
     while (count--) {
-        if (mainGetBits(data->gamebit1) && !mainGetBits(data->gamebit2)) {
-            gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, data->objgroup, 1);
-            mainSetBits(data->gamebit1, 0);
+        if (mainGetBits(t->enableBit) && !mainGetBits(t->disableBit)) {
+            gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, t->objgroup, 1);
+            mainSetBits(t->enableBit, 0);
         }
-        data++;
+        t++;
     }
 }
 
 // offset: 0xBB8 | func: 14
-static void CFLevelControl_func_BB8(Data6C *data, s32 count) {
+static void CFLevelControl_doDistBasedObjGroupToggling(DistObjGroupToggle *t, s32 count) {
     Vec3f *objPos;
     Object *chestOrGuardian;
     f32 distance;
 
     while (count--) {
-        if ((data->gamebit2 == NO_GAMEBIT) || (mainGetBits(data->gamebit2))) {
-            objPos = CFLevelControl_get_position_of_saved_obj(data->uID);
+        if ((t->enabledBit == NO_GAMEBIT) || (mainGetBits(t->enabledBit))) {
+            objPos = CFLevelControl_getPositionOfSavedObj(t->uID);
             if (objPos) {
+                // Compare distance of whichever is closer: the camera or CFTreasRobo
                 distance = camDistance(objPos->x, objPos->y, objPos->z);
                 objGetNearestType(OBJTYPE_CFTreasRobo, objPos, &distance);
-                chestOrGuardian = objGetObjectByUID(data->uID);
+                chestOrGuardian = objGetObjectByUID(t->uID);
                 if (chestOrGuardian) {
-                    if (data->distance < distance && ((data->gamebit1 == NO_GAMEBIT) || (!mainGetBits(data->gamebit1))) && (((DLL_CFGuardianCFSupTreasureCh*)chestOrGuardian->dll)->vtbl->func7(chestOrGuardian))) {
-                        data->status = 0;
-                        gDLL_29_Gplay->vtbl->set_obj_group_status(chestOrGuardian->mapID, data->objgroup, data->status);
+                    if (t->distance < distance && ((t->toggleBit == NO_GAMEBIT) || (!mainGetBits(t->toggleBit))) && (((DLL_ICFCanUnload*)chestOrGuardian->dll)->vtbl->CanUnload(chestOrGuardian))) {
+                        // Moved far away and obj should unload, disable objgroup
+                        t->status = 0;
+                        gDLL_29_Gplay->vtbl->set_obj_group_status(chestOrGuardian->mapID, t->objgroup, t->status);
                     }
-                } else if (distance < data->distance || ((data->gamebit1 != NO_GAMEBIT) && (mainGetBits(data->gamebit1)))) {
-                    if (!data->status) {}
-                    data->status = 1;
-                    gDLL_29_Gplay->vtbl->set_obj_group_status(data->mapID, data->objgroup, data->status);
+                } else {
+                    if (distance < t->distance || ((t->toggleBit != NO_GAMEBIT) && (mainGetBits(t->toggleBit)))) {
+                        // Moved close and obj should load, enable objgroup
+                        if (!t->status) {}
+                        t->status = 1;
+                        gDLL_29_Gplay->vtbl->set_obj_group_status(t->mapID, t->objgroup, t->status);
+                    }
                 }
             }
         }
-        data++;
+        t++;
     }
 }
 
 // offset: 0xDC0 | func: 15
-static void CFLevelControl_func_DC0(Data6C *data, s32 count) {
+static void CFLevelControl_resetObjPositions(DistObjGroupToggle *t, s32 count) {
     ObjSetup *setup;
     SRT transform;
 
     while (count--) {
-        setup = mapFindObjSetup(data->uID, NULL, NULL, NULL, NULL);
+        setup = mapFindObjSetup(t->uID, NULL, NULL, NULL, NULL);
         if (setup) {
-            if (data->unk12) {
-                ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(data->unk12, &transform);
+            if (t->createPointID) {
+                // Reset setup position to create point curve
+                ((DLL_53_movelib*)(gTempDLLInsts[1]))->vtbl->func7(t->createPointID, &transform);
                 setup->x = transform.transl.x;
                 setup->y = transform.transl.y;
                 setup->z = transform.transl.z;
             }
-            mapSaveObject(setup, data->mapID, setup->x, setup->y, setup->z);
+            mapSaveObject(setup, t->mapID, setup->x, setup->y, setup->z);
         }
-        data++;
+        t++;
     }
 }
 
 // offset: 0xEC8 | func: 16
-static Vec3f* CFLevelControl_get_position_of_saved_obj(s32 uID) {
+static Vec3f* CFLevelControl_getPositionOfSavedObj(s32 uID) {
     s16 numSavedObjs;
     SavedObject *savedObjs;
     s32 i;
@@ -489,15 +491,16 @@ static Vec3f* CFLevelControl_get_position_of_saved_obj(s32 uID) {
 }
 
 // offset: 0x1000 | func: 17
-static void CFLevelControl_func_1000(void) {
+static void CFLevelControl_treasRoboControl(void) {
     diPrintf(" STart Seq Val %i ", mainGetBits(BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left));
+    // Disable CFTreasRobo objgroup once the baby in the chest is freed
     if (gDLL_29_Gplay->vtbl->get_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, 23) && mainGetBits(BIT_CF_Free_Cloudrunner_From_Chest)) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_CLOUDRUNNER_FORTRESS, 23, 0);
     }
 }
 
 // offset: 0x10BC | func: 18
-static s32 CFLevelControl_func_10BC(Object *self) {
+static s32 CFLevelControl_entranceControl(Object *self) {
     s32 rand;
     SRT transform;
 
@@ -509,17 +512,18 @@ static s32 CFLevelControl_func_10BC(Object *self) {
     transform.transl.z = 0.0f;
     transform.scale = 2.0f;
     if (mainGetBits(BIT_CF_Entrance_Trigger_Passed) != sTriggerPassed) {
+        // Do a sneaky lightning flash to distract from hiding the stairwell while the real thing loads 
         gDLL_28_ScreenFade->vtbl->func3(10, SCREEN_FADE_WHITE, 0.3f);
-        sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
-        sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
-        sDLL190->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
+        sLightningProjgfx->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
+        sLightningProjgfx->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
+        sLightningProjgfx->vtbl->func0(self, 2, &transform, 1, -1, 4, 0);
         dll_amSfx->Play(self, SOUND_73_Thunder, MAX_VOLUME, NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" you have Passed "); // guessed location
         sTriggerPassed = mainGetBits(BIT_CF_Entrance_Trigger_Passed);
-    } else if ((mathRnd(0, 100) == 0) && (mainGetBits(BIT_577))) {
+    } else if ((mathRnd(0, 100) == 0) && (mainGetBits(BIT_CRF_Lightning_Enabled))) {
         rand = mathRnd(5, 10);
         gDLL_28_ScreenFade->vtbl->func3(rand, SCREEN_FADE_WHITE, 0.1f + rand * 0.05f);
-        sDLL190->vtbl->func0(self, 2, NULL, 1, -1, 4, 0);
+        sLightningProjgfx->vtbl->func0(self, 2, NULL, 1, -1, 4, 0);
         dll_amSfx->Play(self, SOUND_73_Thunder, 77 + rand * 10 , NULL, NULL, 0, NULL);
         STUBBED_PRINTF(" Lighting Flash "); // guessed location
     }

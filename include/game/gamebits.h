@@ -1112,7 +1112,7 @@ typedef enum {
     BIT_451 = 0x451, // len:1 group:0
     BIT_SH_ObjGroup_Bits = 0x452, // len:32 group:3
     BIT_453 = 0x453, // len:1 group:2
-    BIT_454 = 0x454, // len:1 group:1
+    BIT_Kyte_Trapped = 0x454, // len:1 group:1
     BIT_455 = 0x455, // len:1 group:1
     BIT_456 = 0x456, // len:1 group:0
     BIT_457 = 0x457, // len:1 group:0
@@ -1252,7 +1252,7 @@ typedef enum {
     BIT_Play_Seq_0210_CF_Exit_Cutscene = 0x4DD, // len:1 group:1
     BIT_4DE = 0x4DE, // len:1 group:1
     BIT_4DF = 0x4DF, // len:1 group:1
-    BIT_4E0 = 0x4E0, // len:1 group:1
+    BIT_Play_Seq_0057_CF_PowerRoom_WindLifts_Activating = 0x4E0, // len:1 group:1
     BIT_4E1 = 0x4E1, // len:1 group:1
     BIT_Tricky_Talk_Sequence = 0x4E2, // len:16 group:3 [SIDEKICK] (sequenceID for talking to Tricky, set via Trigger objects)
     BIT_4E3 = 0x4E3, // len:8 group:1
@@ -1320,8 +1320,8 @@ typedef enum {
     BIT_521 = 0x521, // len:1 group:1
     BIT_VFP_Flamethrower_Turned_Off_2 = 0x522, // len:1 group:1
     BIT_523 = 0x523, // len:1 group:1
-    BIT_524 = 0x524, // len:1 group:1
-    BIT_525 = 0x525, // len:1 group:1
+    BIT_CRF_Enable_ObjGroup_22 = 0x524, // len:1 group:1
+    BIT_CRF_Disable_ObjGroup_22 = 0x525, // len:1 group:1
     BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left = 0x526, // len:1 group:1
     BIT_527 = 0x527, // len:1 group:1
     BIT_528 = 0x528, // len:1 group:1
@@ -1403,7 +1403,7 @@ typedef enum {
     BIT_574 = 0x574, // len:1 group:1
     BIT_CF_Entrance_Trigger_Passed = 0x575, // len:1 group:1
     BIT_SW_Alpine_Roots = 0x576, // len:3 group:2    [INVENTORY]
-    BIT_577 = 0x577, // len:1 group:1
+    BIT_CRF_Lightning_Enabled = 0x577, // len:1 group:1
     BIT_SnowHorn_Tutorial_NumRootsFed = 0x578, // len:3 group:2
     BIT_579 = 0x579, // len:1 group:0
     BIT_57A = 0x57A, // len:1 group:0

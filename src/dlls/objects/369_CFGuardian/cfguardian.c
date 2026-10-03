@@ -117,7 +117,7 @@ enum CFGuardianSeq {
 
 enum CFGuardianFlags {
     CFGUARDIAN_FLAG_1 = 0x1,
-    CFGUARDIAN_FLAG_2 = 0x2,
+    CFGUARDIAN_FLAG_FollowingCurvePath = 0x2,
     CFGUARDIAN_FLAG_WalkToTarget = 0x4,
 };
 
@@ -399,7 +399,7 @@ static s32 CFGuardian_control(Object* self) {
     baddieDist = 1000.0f;
     trackHeight = 1.0f;
     objdata = self->data;
-    objdata->flags &= ~CFGUARDIAN_FLAG_2;
+    objdata->flags &= ~CFGUARDIAN_FLAG_FollowingCurvePath;
     diPrintf("Guardian ");
     objdata->animRate = 0.005f;
     player = objGetPlayer();
@@ -427,7 +427,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.7f, 0, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_WaitingAtWindLift;
         }
@@ -527,7 +527,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.3f, 1, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_Courtyard_WaitingForKyte;
             objAnim_func_80024D74(self, 0x32);
@@ -611,7 +611,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.6f, 2, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_Vanish;
         }
@@ -1029,9 +1029,9 @@ void CFGuardian_func_2770(void) {
 }
 
 // offset: 0x2778 | func: 21 | export: 7
-s32 CFGuardian_Func_2778(Object* self) {
+s32 CFGuardian_cf_CanUnload(Object* self) {
     CFGuardian_Data* objdata = self->data;
-    return (objdata->flags & CFGUARDIAN_FLAG_2) == FALSE;
+    return (objdata->flags & CFGUARDIAN_FLAG_FollowingCurvePath) == FALSE;
 }
 
 // offset: 0x2790 | func: 22

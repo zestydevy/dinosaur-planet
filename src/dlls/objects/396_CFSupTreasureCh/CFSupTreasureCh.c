@@ -214,7 +214,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
 }
 
 // offset: 0x700 | func: 8 | export: 7
-s32 CFSupTreasureCh_func_700(Object *self) {
+s32 CFSupTreasureCh_cf_CanUnload(Object *self) {
     CFSupTreasureCh_Data *objdata;
 
     objdata = self->data;
