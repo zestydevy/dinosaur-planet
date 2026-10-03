@@ -166,7 +166,7 @@ typedef enum {
     BIT_SB_Scales_Intro = 0x9F, // len:1 group:0
     BIT_SB_Found_Kyte = 0xA0, // len:1 group:1 task:2
     BIT_A1 = 0xA1, // len:1 group:0
-    BIT_A2 = 0xA2, // len:1 group:1
+    BIT_CRF_Scales_And_Queen_In_Courtyard = 0xA2, // len:1 group:1
     BIT_CC_Completed_Gas_Chamber_Puzzle = 0xA3, // len:1 group:2
     BIT_Galleon_Arrived_at_Warlock_Mountain = 0xA4, // len:1 group:1
     BIT_A5 = 0xA5, // len:1 group:0
@@ -603,9 +603,9 @@ typedef enum {
     BIT_254 = 0x254, // len:1 group:1
     BIT_255 = 0x255, // len:1 group:1
     BIT_Brown_Apple_Count = 0x256, // len:6 group:1 [INVENTORY]
-    BIT_257 = 0x257, // len:1 group:1
-    BIT_258 = 0x258, // len:1 group:1
-    BIT_259 = 0x259, // len:1 group:1
+    BIT_CRF_Prison_Guardian_Cell_Door_Open = 0x257, // len:1 group:1
+    BIT_CRF_Prison_EnergyEgg_Cell_Door_Open = 0x258, // len:1 group:1
+    BIT_CRF_Prison_Player_Cell_Door_Open = 0x259, // len:1 group:1
     BIT_WC_Placed_Gold_RedEye_Tooth = 0x25A, // len:1 group:1
     BIT_WC_Placed_Silver_RedEye_Tooth = 0x25B, // len:1 group:1
     BIT_25C = 0x25C, // len:1 group:1
@@ -858,7 +858,7 @@ typedef enum {
     BIT_353 = 0x353, // len:1 group:1
     BIT_354 = 0x354, // len:1 group:1
     BIT_WM_Near_Cave_Exit_Krystal_Side = 0x355, // len:1 group:2
-    BIT_356 = 0x356, // len:1 group:1
+    BIT_356 = 0x356, // len:1 group:1 (set in CRF before courtyard and after leaving player's cell, unused?)
     BIT_357 = 0x357, // len:1 group:1
     BIT_358 = 0x358, // len:1 group:1
     BIT_359 = 0x359, // len:1 group:1
@@ -868,7 +868,7 @@ typedef enum {
     BIT_35D = 0x35D, // len:1 group:1
     BIT_35E = 0x35E, // len:1 group:1
     BIT_35F = 0x35F, // len:1 group:1
-    BIT_360 = 0x360, // len:1 group:1
+    BIT_360 = 0x360, // len:1 group:1 (CRF, set when leaving prison area with cells, unused?)
     BIT_361 = 0x361, // len:1 group:1
     BIT_362 = 0x362, // len:1 group:1
     BIT_363 = 0x363, // len:1 group:0
@@ -1198,8 +1198,8 @@ typedef enum {
     BIT_4A7 = 0x4A7, // len:1 group:0
     BIT_4A8 = 0x4A8, // len:1 group:1
     BIT_Played_Seq_02AA_CF_Lose_Race = 0x4A9, // len:1 group:1
-    BIT_4AA = 0x4AA, // len:1 group:1
-    BIT_4AB = 0x4AB, // len:1 group:1
+    BIT_Played_Seq_02AB_CF_SpellStone_Activation = 0x4AA, // len:1 group:1
+    BIT_Play_Seq_02AB_CF_SpellStone_Activation = 0x4AB, // len:1 group:1
     BIT_4AC = 0x4AC, // len:1 group:1
     BIT_4AD = 0x4AD, // len:1 group:1
     BIT_SW_ObjGroup_Bits = 0x4AE, // len:32 group:3
@@ -1221,7 +1221,7 @@ typedef enum {
     BIT_CRF_Throne_Room_Quest_Complete = 0x4BE, // len:1 group:1
     BIT_4BF = 0x4BF, // len:1 group:1
     BIT_4C0 = 0x4C0, // len:1 group:1
-    BIT_4C1 = 0x4C1, // len:1 group:1
+    BIT_Played_Seq_02B2_CF_Courtyard_Water_Drains = 0x4C1, // len:1 group:1
     BIT_Burned_DIMTent_5 = 0x4C2,  // len:1 group:1     (uID 0x30439)
     BIT_Burned_DIMTent_4 = 0x4C3,  // len:1 group:1     (uID 0x30438)
     BIT_Burned_DIMTent_3 = 0x4C4,  // len:1 group:1     (uID 0x3043a)
@@ -1296,9 +1296,9 @@ typedef enum {
     BIT_509 = 0x509, // len:1 group:1
     BIT_50A = 0x50A, // len:1 group:1
     BIT_CRF_Player_In_Treasure_Room = 0x50B, // len:1 group:1
-    BIT_50C = 0x50C, // len:1 group:1
-    BIT_50D = 0x50D, // len:1 group:1
-    BIT_50E = 0x50E, // len:1 group:1
+    BIT_CRF_Unload_Dock_Baby_CloudRunner_ObjGroup = 0x50C, // len:1 group:1
+    BIT_CRF_Unload_Cliff_Baby_CloudRunner_ObjGroup = 0x50D, // len:1 group:1
+    BIT_CRF_Unload_Courtyard_Baby_CloudRunner_ObjGroup = 0x50E, // len:1 group:1
     BIT_50F = 0x50F, // len:1 group:1
     BIT_510 = 0x510, // len:1 group:0
     BIT_511 = 0x511, // len:1 group:1
@@ -1324,7 +1324,7 @@ typedef enum {
     BIT_CRF_Disable_ObjGroup_22 = 0x525, // len:1 group:1
     BIT_Play_Seq_02C6_CF_Sharpclaw_Only_Four_Chests_Left = 0x526, // len:1 group:1
     BIT_527 = 0x527, // len:1 group:1
-    BIT_528 = 0x528, // len:1 group:1
+    BIT_Play_Seq_042D_CF_Baby_CloudRunner_Trapped_In_Chest = 0x528, // len:1 group:1
     BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away = 0x529, // len:1 group:1
     BIT_52A = 0x52A, // len:1 group:1
     BIT_52B = 0x52B, // len:1 group:1
@@ -1415,7 +1415,7 @@ typedef enum {
     BIT_580 = 0x580, // len:1 group:1
     BIT_581 = 0x581, // len:6 group:0
     BIT_582 = 0x582, // len:1 group:1
-    BIT_583 = 0x583, // len:1 group:1
+    BIT_583 = 0x583, // len:1 group:1 (CRF, set at the start and end of prison, unused?)
     BIT_584 = 0x584, // len:1 group:1
     BIT_585 = 0x585, // len:1 group:1
     BIT_586 = 0x586, // len:1 group:1
@@ -2242,7 +2242,7 @@ typedef enum {
     BIT_8BC = 0x8BC, // len:1 group:1
     BIT_8BD = 0x8BD, // len:1 group:1
     BIT_8BE = 0x8BE, // len:1 group:0
-    BIT_8BF = 0x8BF, // len:1 group:1
+    BIT_CRF_Courtyard_Drop_Ladder = 0x8BF, // len:1 group:1
     BIT_8C0 = 0x8C0, // len:1 group:1
     BIT_8C1 = 0x8C1, // len:1 group:0
     BIT_8C2 = 0x8C2, // len:1 group:2
@@ -2284,7 +2284,7 @@ typedef enum {
     BIT_8E6 = 0x8E6, // len:1 group:0
     BIT_8E7 = 0x8E7, // len:1 group:0
     BIT_8E8 = 0x8E8, // len:1 group:0
-    BIT_8E9 = 0x8E9, // len:1 group:1
+    BIT_CRF_Prison_Guardian_Exited_WindLift = 0x8E9, // len:1 group:1
     BIT_8EA = 0x8EA, // len:1 group:1
     BIT_8EB = 0x8EB, // len:1 group:1
     BIT_KP_Map_Act = 0x8EC, // len:4 group:1
