@@ -526,7 +526,7 @@ typedef enum {
     BIT_207 = 0x207, // len:1 group:1
     BIT_208 = 0x208, // len:1 group:1
     BIT_209 = 0x209, // len:1 group:1
-    BIT_20A = 0x20A, // len:1 group:1
+    BIT_Play_Seq_017C_CF_This_Is_CloudRunner_Fortress = 0x20A, // len:1 group:1
     BIT_20B = 0x20B, // len:1 group:0
     BIT_20C = 0x20C, // len:4 group:0
     BIT_20D = 0x20D, // len:1 group:0
@@ -534,7 +534,7 @@ typedef enum {
     BIT_20F = 0x20F, // len:1 group:0
     BIT_210 = 0x210, // len:1 group:2
     BIT_211 = 0x211, // len:1 group:1
-    BIT_212 = 0x212, // len:1 group:1
+    BIT_Played_Seq_017C_CF_This_Is_CloudRunner_Fortress = 0x212, // len:1 group:1
     BIT_213 = 0x213, // len:1 group:1
     BIT_214 = 0x214, // len:1 group:1
     BIT_215 = 0x215, // len:1 group:1

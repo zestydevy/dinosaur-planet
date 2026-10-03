@@ -87,9 +87,9 @@ void dll_368_obj_Control(Object* self) {
         }
         break;
     case 7:
-        if (mainGetBits(BIT_20A) != 0) {
+        if (mainGetBits(BIT_Play_Seq_017C_CF_This_Is_CloudRunner_Fortress) != 0) {
             gDLL_3_Animation->vtbl->start_obj_sequence(8, self, -1);
-            mainSetBits(BIT_20A, 0);
+            mainSetBits(BIT_Play_Seq_017C_CF_This_Is_CloudRunner_Fortress, 0);
         }
         break;
     }

@@ -8,10 +8,10 @@ _exports:
 .dword CFLevelControl_dtor
 
 # export table
-/*0*/ .dword CFLevelControl_setup
-/*1*/ .dword CFLevelControl_control
-/*2*/ .dword CFLevelControl_update
-/*3*/ .dword CFLevelControl_print
-/*4*/ .dword CFLevelControl_free
-/*5*/ .dword CFLevelControl_get_model_flags
-/*6*/ .dword CFLevelControl_get_data_size
+/*0*/ .dword CFLevelControl_obj_Setup
+/*1*/ .dword CFLevelControl_obj_Control
+/*2*/ .dword CFLevelControl_obj_Update
+/*3*/ .dword CFLevelControl_obj_Print
+/*4*/ .dword CFLevelControl_obj_Free
+/*5*/ .dword CFLevelControl_obj_GetModelFlags
+/*6*/ .dword CFLevelControl_obj_GetDataSize

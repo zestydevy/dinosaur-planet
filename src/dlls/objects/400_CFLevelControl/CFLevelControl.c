@@ -172,7 +172,7 @@ void CFLevelControl_ctor(void* dll) { }
 void CFLevelControl_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFLevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
+void CFLevelControl_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
     CFLevelControl_Data* objdata = self->data;
     
     objdata->flags = CFLEVELCONTROL_IsFirstTick;
@@ -183,7 +183,7 @@ void CFLevelControl_setup(Object* self, ObjSetup* setup, s32 arg2) {
 }
 
 // offset: 0xCC | func: 1 | export: 1
-void CFLevelControl_control(Object* self) {
+void CFLevelControl_obj_Control(Object* self) {
     CFLevelControl_Data* objdata = self->data;
 
     if (objdata->flags & CFLEVELCONTROL_IsFirstTick) {
@@ -215,17 +215,17 @@ void CFLevelControl_control(Object* self) {
 }
 
 // offset: 0x2B4 | func: 2 | export: 2
-void CFLevelControl_update(Object* self) { }
+void CFLevelControl_obj_Update(Object* self) { }
 
 // offset: 0x2C0 | func: 3 | export: 3
-void CFLevelControl_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFLevelControl_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x314 | func: 4 | export: 4
-void CFLevelControl_free(Object* self, s32 a1) {
+void CFLevelControl_obj_Free(Object* self, s32 a1) {
     mainRemoveTempDLL(DLL_ID_MOVELIB);
     if (sLightningProjgfx) {
         dllFree(sLightningProjgfx);
@@ -233,12 +233,12 @@ void CFLevelControl_free(Object* self, s32 a1) {
 }
 
 // offset: 0x378 | func: 5 | export: 5
-u32 CFLevelControl_get_model_flags(Object* self) {
+u32 CFLevelControl_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x388 | func: 6 | export: 6
-u32 CFLevelControl_get_data_size(Object* self, u32 a1) {
+u32 CFLevelControl_obj_GetDataSize(Object* self, u32 a1) {
     return sizeof(CFLevelControl_Data);
 }
 
