@@ -632,7 +632,7 @@ class DLLSplitter:
             else:
                 c_file.write(f'void {func.getName()}(void* dll);\n')
             return False
-        
+
         if dll.number >= 210:
             # Object DLL, check for function defaults
             if export_idx == 0:
