@@ -132,7 +132,7 @@ void modgfx_Func0(void) {
 }
 
 // offset: 0xF4 | func: 1 | export: 1
-s16 modgfx_Func1(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7) {
+s16 modgfx_Func1(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 textureID, Texture* tex) {
     s32 sp54;
     s32 var_t1;
     DLTri* var_v1;
@@ -339,11 +339,11 @@ s16 modgfx_Func1(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s1
     bss_0[temp_v0]->unk13E = 0;
     bss_0[temp_v0]->unk98 = NULL;
     bss_0[temp_v0]->unk13F = 0;
-    if (arg7 != NULL) {
-        bss_0[temp_v0]->unk98 = arg7;
+    if (tex != NULL) {
+        bss_0[temp_v0]->unk98 = tex;
         bss_0[temp_v0]->unk13F = 1;
-    } else if (arg6 != 0) {
-        bss_0[temp_v0]->unk98 = texLoadTexture(arg6);
+    } else if (textureID != 0) {
+        bss_0[temp_v0]->unk98 = texLoadTexture(textureID);
         bss_0[temp_v0]->unk13F = 0;
     }
     if (arg0->unk54 & 0x40000) {
@@ -2095,10 +2095,10 @@ void modgfx_Func18(s16* arg0) {
 }
 
 // offset: 0x6E24 | func: 35 | export: 19
-void modgfx_Func19(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7) {
+void modgfx_Func19(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 textureID, Texture* tex) {
     bss_AD0.unk0 = bss_7C0;
     bss_AD0.unk5D = bss_AC4 - bss_AC0;
-    if (arg7 == 0 && arg6 == 0) {
+    if (tex == NULL && textureID == 0) {
         bss_AD0.unk54 |= 0x2000000;
     } else {
         bss_AD0.unk54 |= 0x4000000;
@@ -2116,7 +2116,7 @@ void modgfx_Func19(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6
         }
     }
 
-    data_2C = modgfx_Func1(&bss_AD0, 0, arg3, arg1, arg5, arg4, arg6, arg7);
+    data_2C = modgfx_Func1(&bss_AD0, 0, arg3, arg1, arg5, arg4, textureID, tex);
 }
 
 // offset: 0x6F88 | func: 36 | export: 20
