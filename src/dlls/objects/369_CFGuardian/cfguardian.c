@@ -57,8 +57,8 @@ enum CFGuardianState {
     CFGUARDIAN_STATE_WaitingAtWindLift = 3,
     CFGUARDIAN_STATE_WaitingForWindLiftPower = 4,
     CFGUARDIAN_STATE_5 = 5, // unused
-    CFGUARDIAN_STATE_InWindShaft = 6,
-    CFGUARDIAN_STATE_LeavingWindShaft = 7, // leaving top of wind shaft
+    CFGUARDIAN_STATE_InWindLift = 6,
+    CFGUARDIAN_STATE_LeavingWindLift = 7, // leaving top of wind lift
     CFGUARDIAN_STATE_Courtyard_WaitingForKyte = 8, // waiting for kyte to be freed
     CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby = 9, // waiting for cloud baby rescue
     CFGUARDIAN_STATE_WalkingToRaceArea = 10, // walk to drained water
@@ -108,7 +108,7 @@ enum CFGuardianSeq {
     CFGUARDIAN_SEQ_LetsGetOutOfHere = 5,
     CFGUARDIAN_SEQ_SummoningBoneDust = 6,
     CFGUARDIAN_SEQ_KyteLocationHint = 7,
-    CFGUARDIAN_SEQ_WindShaftPowerHint = 8,
+    CFGUARDIAN_SEQ_WindLiftPowerHint = 8,
     CFGUARDIAN_SEQ_BabyCloudRunnerReminder = 9,
     CFGUARDIAN_SEQ_SpellStoneActivationReminder = 10,
     CFGUARDIAN_SEQ_SpellStoneRaceReminder = 11,
@@ -117,7 +117,7 @@ enum CFGuardianSeq {
 
 enum CFGuardianFlags {
     CFGUARDIAN_FLAG_1 = 0x1,
-    CFGUARDIAN_FLAG_2 = 0x2,
+    CFGUARDIAN_FLAG_FollowingCurvePath = 0x2,
     CFGUARDIAN_FLAG_WalkToTarget = 0x4,
 };
 
@@ -156,10 +156,10 @@ enum CFGuardianTalkState {
     {CFGUARDIAN_STATE_WaitingToBeFreed,                 {CFGUARDIAN_SEQ_IllusionSpellHint,            -1}}, 
     {CFGUARDIAN_STATE_LeavingCell,                      {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
     {CFGUARDIAN_STATE_WaitingAtWindLift,                {CFGUARDIAN_SEQ_GivePowerRoomKey,             -1}}, 
-    {CFGUARDIAN_STATE_WaitingForWindLiftPower,          {CFGUARDIAN_SEQ_WindShaftPowerHint,           CFGUARDIAN_SEQ_PowerCrystalsHint}}, 
+    {CFGUARDIAN_STATE_WaitingForWindLiftPower,          {CFGUARDIAN_SEQ_WindLiftPowerHint,            CFGUARDIAN_SEQ_PowerCrystalsHint}}, 
     {CFGUARDIAN_STATE_5,                                {CFGUARDIAN_SEQ_SummoningBoneDust,            -1}}, 
-    {CFGUARDIAN_STATE_InWindShaft,                      {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
-    {CFGUARDIAN_STATE_LeavingWindShaft,                 {CFGUARDIAN_SEQ_KyteLocationHint,             CFGUARDIAN_SEQ_SummoningBoneDust}}, 
+    {CFGUARDIAN_STATE_InWindLift,                       {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
+    {CFGUARDIAN_STATE_LeavingWindLift,                  {CFGUARDIAN_SEQ_KyteLocationHint,             CFGUARDIAN_SEQ_SummoningBoneDust}}, 
     {CFGUARDIAN_STATE_Courtyard_WaitingForKyte,         {CFGUARDIAN_SEQ_KyteLocationHint,             CFGUARDIAN_SEQ_SummoningBoneDust}}, 
     {CFGUARDIAN_STATE_Courtyard_WaitingForCloudBaby,    {CFGUARDIAN_SEQ_BabyCloudRunnerReminder,      CFGUARDIAN_SEQ_SummoningBoneDust}}, 
     {CFGUARDIAN_STATE_WalkingToRaceArea,                {CFGUARDIAN_SEQ_LetsGetOutOfHere,             -1}}, 
@@ -266,10 +266,10 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         objdata->movedata.unk4A9 |= 0x28;
         objdata->talkState = CFGUARDIAN_TALK_Enabled;
         objdata->talkSeqSelector = 0;
-        if (mainGetBits(BIT_57) != 0) {
-            objdata->state = CFGUARDIAN_STATE_InWindShaft;
+        if (mainGetBits(BIT_CRF_WindLifts_Powered) != 0) {
+            objdata->state = CFGUARDIAN_STATE_InWindLift;
         }
-        if (mainGetBits(BIT_4C1) != 0) {
+        if (mainGetBits(BIT_Played_Seq_02B2_CF_Courtyard_Water_Drains) != 0) {
             objdata->state = CFGUARDIAN_STATE_WaitingForRaceCompletion;
         }
         func_8002674C(self);
@@ -356,7 +356,7 @@ static int CFGuardian_animCallback(Object* actor, Object* animObj, AnimObj_Data*
         mapSaveObject(actor->setup, actor->mapID, actor->srt.transl.x, actor->srt.transl.y, actor->srt.transl.z);
         return 0;
     }
-    if (objdata->state != CFGUARDIAN_STATE_InWindShaft) {
+    if (objdata->state != CFGUARDIAN_STATE_InWindLift) {
         var_v1 = &sp3C[0];
     } else {
         var_v1 = &sp3C[1];
@@ -399,7 +399,7 @@ static s32 CFGuardian_control(Object* self) {
     baddieDist = 1000.0f;
     trackHeight = 1.0f;
     objdata = self->data;
-    objdata->flags &= ~CFGUARDIAN_FLAG_2;
+    objdata->flags &= ~CFGUARDIAN_FLAG_FollowingCurvePath;
     diPrintf("Guardian ");
     objdata->animRate = 0.005f;
     player = objGetPlayer();
@@ -415,7 +415,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        if (mainGetBits(BIT_257) != 0) {
+        if (mainGetBits(BIT_CRF_Prison_Guardian_Cell_Door_Open) != 0) {
             objdata->state = CFGUARDIAN_STATE_LeavingCell;
             objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             self->unkDC = 0;
@@ -427,7 +427,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.7f, 0, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_WaitingAtWindLift;
         }
@@ -440,15 +440,15 @@ static s32 CFGuardian_control(Object* self) {
         }
         break;
     case CFGUARDIAN_STATE_WaitingForWindLiftPower:
-        if (mainGetBits(BIT_57) != 0) {
-            objdata->state = CFGUARDIAN_STATE_InWindShaft;
+        if (mainGetBits(BIT_CRF_WindLifts_Powered) != 0) {
+            objdata->state = CFGUARDIAN_STATE_InWindLift;
             objdata->talkSeqSelector = 0;
         } else if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
             objdata->talkSeqSelector = (objdata->talkSeqSelector + 1) % 2;
         }
         break;
-    case CFGUARDIAN_STATE_InWindShaft:
+    case CFGUARDIAN_STATE_InWindLift:
         diPrintf(" UpWind Lift ");
         if (objdata->windLiftState != 0) {
             if (objdata->windLiftState >= 2) {
@@ -473,7 +473,7 @@ static s32 CFGuardian_control(Object* self) {
                     }
                     if (var_fa0 < 150.0f) {
                         objAddObjectType(self, OBJTYPE_WindLiftable);
-                        objdata->state = CFGUARDIAN_STATE_LeavingWindShaft;
+                        objdata->state = CFGUARDIAN_STATE_LeavingWindLift;
                         objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
                     }
                 }
@@ -482,7 +482,7 @@ static s32 CFGuardian_control(Object* self) {
                 var_fa0 = ABS_EXPR(self->velocity.y * 400.0f);
                 self->srt.yaw += var_fa0;
                 objdata->animRate = 0.04f;
-                if (mainGetBits(BIT_8E9) != 0) {
+                if (mainGetBits(BIT_CRF_Prison_Guardian_Exited_WindLift) != 0) {
                     STUBBED_PRINTF("Guardian Out of WindLIft Boyo !!! ");
                     objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);
                     objAnim_func_80024D74(self, 0x32);
@@ -523,11 +523,11 @@ static s32 CFGuardian_control(Object* self) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
         break;
-    case CFGUARDIAN_STATE_LeavingWindShaft:
+    case CFGUARDIAN_STATE_LeavingWindLift:
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.3f, 1, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_Courtyard_WaitingForKyte;
             objAnim_func_80024D74(self, 0x32);
@@ -601,7 +601,7 @@ static s32 CFGuardian_control(Object* self) {
             objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             objdata->flags &= ~(CFGUARDIAN_FLAG_WalkToTarget | CFGUARDIAN_FLAG_1);
         }
-        if (mainGetBits(BIT_4BE) != 0) {
+        if (mainGetBits(BIT_CRF_Throne_Room_Quest_Complete) != 0) {
             objdata->state = CFGUARDIAN_STATE_WalkingToRaceArea;
             objAnimSet(self, CFGUARDIAN_MODANIM_Walk, 0, 0);
             self->unkDC = 0;
@@ -611,7 +611,7 @@ static s32 CFGuardian_control(Object* self) {
         if (objdata->talkState == CFGUARDIAN_TALK_SpokenTo) {
             objdata->talkState = CFGUARDIAN_TALK_Enabled;
         }
-        objdata->flags |= CFGUARDIAN_FLAG_2;
+        objdata->flags |= CFGUARDIAN_FLAG_FollowingCurvePath;
         if (CFGuardian_followCurvePath(self, &objdata->unk53C, 0.6f, 2, &objdata->animRate) != 0) {
             objdata->state = CFGUARDIAN_STATE_Vanish;
         }
@@ -650,7 +650,7 @@ static s32 CFGuardian_control(Object* self) {
             gDLL_3_Animation->vtbl->start_obj_sequence(CFGUARDIAN_SEQ_SpellStoneActivationReminder, self, -1);
             mainSetBits(BIT_CRF_Race_Guardian_Reminder, 0);
         }
-        if (mainGetBits(BIT_4AA) != 0) {
+        if (mainGetBits(BIT_Played_Seq_02AB_CF_SpellStone_Activation) != 0) {
             objdata->state = CFGUARDIAN_STATE_NoOp_SpellStoneActivated;
         }
         break;
@@ -664,7 +664,7 @@ static s32 CFGuardian_control(Object* self) {
         case 15:
             // enter windlift
             STUBBED_PRINTF(" Guardian In Elevatoe "); // guessed location
-            objdata->state = CFGUARDIAN_STATE_InWindShaft;
+            objdata->state = CFGUARDIAN_STATE_InWindLift;
             objAnimSet(self, CFGUARDIAN_MODANIM_Floating, 0, 0);
             objAnim_func_80024D74(self, 0xFA);
             objdata->windLiftState = 1;
@@ -691,7 +691,7 @@ static s32 CFGuardian_control(Object* self) {
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         joyDisableButtons(0, A_BUTTON);
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_SpellStone_CRF) != 0) {
-            mainSetBits(BIT_4AB, 1);
+            mainSetBits(BIT_Play_Seq_02AB_CF_SpellStone_Activation, 1);
         } else if (objdata->talkState == CFGUARDIAN_TALK_Enabled) {
             seqno = CFGuardian_mapLookup(sTalkSeqStateMap, objdata->state, sTalkSeqStateMapLength, objdata->talkSeqSelector);
             if (seqno != -1) {
@@ -1029,9 +1029,9 @@ void CFGuardian_func_2770(void) {
 }
 
 // offset: 0x2778 | func: 21 | export: 7
-s32 CFGuardian_Func_2778(Object* self) {
+s32 CFGuardian_cf_CanUnload(Object* self) {
     CFGuardian_Data* objdata = self->data;
-    return (objdata->flags & CFGUARDIAN_FLAG_2) == FALSE;
+    return (objdata->flags & CFGUARDIAN_FLAG_FollowingCurvePath) == FALSE;
 }
 
 // offset: 0x2790 | func: 22

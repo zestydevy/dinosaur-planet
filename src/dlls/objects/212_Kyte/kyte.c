@@ -545,7 +545,7 @@ static void Kyte_func_CE8(Object* self, DLL212_Data* objData) {
     CurveSetup* var_s0;
     CurveSetup* sp30;
 
-    sp38 = mainGetBits(BIT_454);
+    sp38 = mainGetBits(BIT_Kyte_Trapped);
     if (sp38 != 0) {
         sp3C = mainGetBits(BIT_Kyte_Flight_Curve);
         if (sp3C == 0) {

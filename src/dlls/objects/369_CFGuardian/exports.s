@@ -15,4 +15,4 @@ _exports:
 /*4*/ .dword CFGuardian_obj_Free
 /*5*/ .dword CFGuardian_obj_GetModelFlags
 /*6*/ .dword CFGuardian_obj_GetDataSize
-/*7*/ .dword CFGuardian_Func_2778
+/*7*/ .dword CFGuardian_cf_CanUnload
