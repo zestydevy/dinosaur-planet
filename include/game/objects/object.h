@@ -286,18 +286,6 @@ typedef struct ObjSetup {
 /*14*/  s32 uID;
 } ObjSetup;
 
-typedef struct {
-/*0000*/    u8 unk0[0x10 - 0x0];
-/*0010*/    u8 *unk10;
-/*0014*/    u8 unk14[0x44 - 0x14];
-/*0044*/    s32 unk44;
-/*0048*/    u8 unk48[0x5d - 0x48];
-/*005D*/    s8 unk5D;
-/*005E*/    u8 unk5E[0x71 - 0x5e];
-/*0071*/    u8 unk71;
-/*0072*/    u8 unk72;
-} ObjectStruct50;
-
 #define OBJ_SHADOW_FLAG_GET_TEX_SLOT(flags) (flags & 0x3)
 #define OBJ_SHADOW_FLAG_MAKE_TEX_SLOT(slot) (slot & 0x3)
 
@@ -430,7 +418,7 @@ DLL_INTERFACE(DLL_IObject) {
           // onlySelf: true if the object should only free itself and not child/associated objects (not including linked objects)
     /*4*/ void (*Free)(struct Object *obj, s32 onlySelf);
     /*5*/ u32 (*GetModelFlags)(struct Object *obj);
-          // offset: 
+          // offsetAddr: 
           // - 1st call: byte offset from the start of the object's memory to the allocated data.
           // - 2nd call: address of the object's allocated data.
     /*6*/ u32 (*GetDataSize)(struct Object *obj, u32 offsetAddr);
@@ -523,8 +511,5 @@ typedef struct {
 /*18*/  u8 unk18;
 /*19*/  u8 unk19;
 } SidekickSetup;
-
-extern struct Object * object_pointer_array[]; //first is always player character.
-extern u16 objectCount;
 
 #endif

@@ -180,7 +180,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
                 mainSetBits(BIT_CRF_Treasure_Chest_Key, 0);
                 if (cloudbaby) {
                     STUBBED_PRINTF(" FLY AWAY BADY ");
-                    ((DLL_373_CFCloudBaby*)cloudbaby->dll)->vtbl->func8(cloudbaby);
+                    ((DLL_373_CFCloudBaby*)cloudbaby->dll)->vtbl->RescueFromChest(cloudbaby);
                     objdata->flags |= CFSUPTREASURECH_FREED_BABY_1;
                     objdata->flags |= CFSUPTREASURECH_FREED_BABY_2;
                 }
@@ -214,7 +214,7 @@ int CFSupTreasureCh_func_424(Object *self, Object *animObj, AnimObj_Data *animOb
 }
 
 // offset: 0x700 | func: 8 | export: 7
-s32 CFSupTreasureCh_func_700(Object *self) {
+s32 CFSupTreasureCh_cf_CanUnload(Object *self) {
     CFSupTreasureCh_Data *objdata;
 
     objdata = self->data;

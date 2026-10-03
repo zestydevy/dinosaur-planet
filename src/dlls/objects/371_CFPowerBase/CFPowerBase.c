@@ -36,20 +36,21 @@ void CFPowerBase_obj_Setup(Object* self, CFPowerBase_Setup* setup, s32 reset) {
     self->srt.yaw = setup->yaw8 << 8;
     objdata->gamebit = setup->gamebit;
     switch (objdata->gamebit) {
-    case 0x54:
+    case BIT_CRF_Red_PowerBase:
         objdata->seqno = 0;
         break;
-    case 0x55:
+    case BIT_CRF_Green_PowerBase:
         objdata->seqno = 1;
         objSetModel(self, 2);
         break;
-    case 0x56:
+    case BIT_CRF_Blue_PowerBase:
         objdata->seqno = 2;
         objSetModel(self, 1);
         break;
     }
     self->animCallback = CFPowerBase_animCallback;
     objInitMesgQueue(self, 2);
+    // @bug: objdata->crystalBit read before it's ever set (this is overriden by Control anyway)
     if (mainGetBits(objdata->crystalBit) != 0) {
         self->unkAF &= ~ARROW_FLAG_10_Greyed_Out;
     } else {
@@ -62,13 +63,13 @@ void CFPowerBase_obj_Control(Object* self) {
     CFPowerBase_Data* objdata = self->data;
     
     switch (objdata->gamebit) {
-    case BIT_54:
+    case BIT_CRF_Red_PowerBase:
         objdata->crystalBit = BIT_CRF_Red_Power_Crystal;
         break;
-    case BIT_55:
+    case BIT_CRF_Green_PowerBase:
         objdata->crystalBit = BIT_CRF_Green_Power_Crystal;
         break;
-    case BIT_56:
+    case BIT_CRF_Blue_PowerBase:
         objdata->crystalBit = BIT_CRF_Blue_Power_Crystal;
         break;
     }
@@ -124,17 +125,17 @@ static int CFPowerBase_animCallback(Object* self, Object* animObj, AnimObj_Data*
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
         case 0x110001:
-            if ((objdata->gamebit == BIT_54) && (animObjData->time > 460)) {
+            if ((objdata->gamebit == BIT_CRF_Red_PowerBase) && (animObjData->time > 460)) {
                 objSendMesg(sender, 0x110001, self, NULL);
             }
             break;
         case 0x110002:
-            if ((objdata->gamebit == BIT_55) && (animObjData->time > 460)) {
+            if ((objdata->gamebit == BIT_CRF_Green_PowerBase) && (animObjData->time > 460)) {
                 objSendMesg(sender, 0x110002, self, NULL);
             }
             break;
         case 0x110003:
-            if ((objdata->gamebit == BIT_56) && (animObjData->time > 460)) {
+            if ((objdata->gamebit == BIT_CRF_Blue_PowerBase) && (animObjData->time > 460)) {
                 objSendMesg(sender, 0x110003, self, NULL);
             }
             break;

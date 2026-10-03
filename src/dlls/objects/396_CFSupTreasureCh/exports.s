@@ -15,6 +15,6 @@ _exports:
 /*4*/ .dword CFSupTreasureCh_free
 /*5*/ .dword CFSupTreasureCh_get_model_flags
 /*6*/ .dword CFSupTreasureCh_get_data_size
-/*7*/ .dword CFSupTreasureCh_func_700
+/*7*/ .dword CFSupTreasureCh_cf_CanUnload
 /*8*/ .dword CFSupTreasureCh_func_718
 /*9*/ .dword CFSupTreasureCh_func_7B8

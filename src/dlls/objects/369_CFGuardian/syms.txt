@@ -22,7 +22,7 @@ CFGuardian_func_26F0 = 0x26F0;
 CFGuardian_func_26F8 = 0x26F8;
 CFGuardian_mapLookup = 0x2700;
 CFGuardian_func_2770 = 0x2770;
-CFGuardian_Func_2778 = 0x2778;
+CFGuardian_cf_CanUnload = 0x2778;
 CFGuardian_doModAnimSfx = 0x2790;
 
 .rodata = 0x2A9C:
