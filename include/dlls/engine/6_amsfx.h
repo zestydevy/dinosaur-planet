@@ -303,7 +303,7 @@ enum SoundID {
     SOUND_1D4_Metal_Ratcheting_Loop = 0x1D4,
     SOUND_1D5_Metal_Squeak = 0x1D5,
 
-    SOUND_1e1_Stone_Moving_Loop = 0x1e1,
+    SOUND_1E1_Stone_Moving_Loop = 0x1E1,
 
     SOUND_1E2_Garunda_Te_Will_somebody_get_me_out_of_here = 0x1E2,
     SOUND_1E3_SharpClaw_Ah_Shuddup = 0x1E3, // used in DLL 33
@@ -900,6 +900,8 @@ enum SoundID {
     SOUND_B3C_Machinery_Charge_Up = 0xB3C,
 
     SOUND_B47 = 0xB47,
+
+    SOUND_B55 = 0xB55,
 
     SOUND_B5C_Machinery_Clunk = 0xB5C,
 
