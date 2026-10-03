@@ -113,5 +113,5 @@ s32 dll_123_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         }
     }
 
-    return gDLL_14_Modgfx->vtbl->Func1(&sp348, 0, 5, data_0, 4, data_34, TEXTABLE_5E, NULL);
+    return dll_modgfx->Func1(&sp348, 0, 5, data_0, 4, data_34, TEXTABLE_5E, NULL);
 }
