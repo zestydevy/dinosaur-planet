@@ -199,5 +199,5 @@ s32 dll_117_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         }
     }
 
-    return dll_modgfx->Func1(&sp350, 0, 0xE, data_0, 0xC, data_8C, 0x40, NULL);
+    return dll_modgfx->Func1(&sp350, 0, 0xE, data_0, 0xC, data_8C, TEXTABLE_40, NULL);
 }
