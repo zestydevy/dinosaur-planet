@@ -1,7 +1,7 @@
 .text = 0x0:
 dll_122_ctor = 0x0;
 dll_122_dtor = 0xC;
-dll_122_modgfx_Func0 = 0x18;
+dll_122_modgfx_Spawn = 0x18;
 
 .rodata = 0x464:
 

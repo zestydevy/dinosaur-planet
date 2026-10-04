@@ -8,4 +8,4 @@ _exports:
 .dword dll_123_dtor
 
 # export table
-/*0*/ .dword dll_123_modgfx_Func0
+/*0*/ .dword dll_123_modgfx_Spawn

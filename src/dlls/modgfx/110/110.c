@@ -54,7 +54,7 @@ void dll_110_ctor(void* dll) { }
 void dll_110_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_110_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+s32 dll_110_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     dll_modgfx->Func12(obj, type, 0x12U, 3, 9);
     flags |= 0x04004484;
     dll_modgfx->Func18(data_2CC);
