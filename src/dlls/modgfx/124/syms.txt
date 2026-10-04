@@ -1,0 +1,4 @@
+.text = 0x0:
+dll_124_ctor = 0x0;
+dll_124_dtor = 0xC;
+dll_124_modgfx_Spawn = 0x18;

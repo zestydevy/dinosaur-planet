@@ -34,7 +34,7 @@ void dll_106_ctor(void* dll) { }
 void dll_106_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_106_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, DLL106_Data* data) {
+s32 dll_106_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, DLL106_Data* data) {
     ModgfxStruct sp3C8;
     ModgfxStruct_0 spC8[32];
     ModgfxStruct_0* temp_s0;

@@ -1,7 +1,7 @@
 .text = 0x0:
 dll_114_ctor = 0x0;
 dll_114_dtor = 0xC;
-dll_114_modgfx_Func0 = 0x18;
+dll_114_modgfx_Spawn = 0x18;
 
 .rodata = 0x4F4:
 

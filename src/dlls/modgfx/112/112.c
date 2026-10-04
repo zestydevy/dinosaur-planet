@@ -29,7 +29,7 @@ void dll_112_ctor(void* dll) { }
 void dll_112_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_112_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+s32 dll_112_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     ModgfxStruct sp350;
     ModgfxStruct_0 sp50[32];
     ModgfxStruct_0 *temp;
@@ -187,5 +187,5 @@ s32 dll_112_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         }
     }
 
-    return dll_modgfx->Func1(&sp350, 0, 14, data_0, 0xC, data_8C, 0x46, NULL);
+    return dll_modgfx->Func1(&sp350, 0, 14, data_0, 0xC, data_8C, TEXTABLE_46, NULL);
 }

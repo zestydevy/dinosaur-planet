@@ -1,5 +1,4 @@
 #include "common.h"
-#include "sys/gfx/modgfx.h"
 
 /*0x0*/ static s16 data_0[] = {
     0, 0, 0, 15, 0,
@@ -32,7 +31,7 @@ void dll_105_ctor(void* dll) { }
 void dll_105_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_105_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+s32 dll_105_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     ModgfxStruct sp348;
     ModgfxStruct_0 sp48[32];
     ModgfxStruct_0 *temp;
@@ -151,5 +150,5 @@ s32 dll_105_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
             sp348.unk2C.f[2] += transform->transl.f[2];
         }
     }
-    return dll_modgfx->Func1(&sp348, 0, 0x11, data_0, 8, data_AC, 0x47, NULL);
+    return dll_modgfx->Func1(&sp348, 0, 0x11, data_0, 8, data_AC, TEXTABLE_47, NULL);
 }
