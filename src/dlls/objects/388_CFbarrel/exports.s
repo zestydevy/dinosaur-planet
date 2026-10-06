@@ -8,11 +8,11 @@ _exports:
 .dword CFbarrel_dtor
 
 # export table
-/*0*/ .dword CFbarrel_setup
-/*1*/ .dword CFbarrel_control
-/*2*/ .dword CFbarrel_update
-/*3*/ .dword CFbarrel_print
-/*4*/ .dword CFbarrel_free
-/*5*/ .dword CFbarrel_get_model_flags
-/*6*/ .dword CFbarrel_get_data_size
-/*7*/ .dword CFbarrel_func_17F4
+/*0*/ .dword CFbarrel_obj_Setup
+/*1*/ .dword CFbarrel_obj_Control
+/*2*/ .dword CFbarrel_obj_Update
+/*3*/ .dword CFbarrel_obj_Print
+/*4*/ .dword CFbarrel_obj_Free
+/*5*/ .dword CFbarrel_obj_GetModelFlags
+/*6*/ .dword CFbarrel_obj_GetDataSize
+/*7*/ .dword CFbarrel_Func_17F4
