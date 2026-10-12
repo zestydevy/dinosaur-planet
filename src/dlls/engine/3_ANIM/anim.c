@@ -145,8 +145,8 @@ enum Anim6CodeEventType {
     ANIM_CODE_EVT_6_COUNTDOWN_TIMER = 11,
     ANIM_CODE_EVT_6_COUNTDOWN_TIMER_SFX = 12,
     ANIM_CODE_EVT_6_SFX_STOP = 13,
-    ANIM_CODE_EVT_6_14 = 14,
-    ANIM_CODE_EVT_6_15 = 15,
+    ANIM_CODE_EVT_6_FADE_OUT = 14,
+    ANIM_CODE_EVT_6_FADE_IN = 15,
     ANIM_CODE_EVT_6_16 = 16,
     ANIM_CODE_EVT_6_TOGGLE_LETTERBOX = 18,
     ANIM_CODE_EVT_6_ENABLE_LETTERBOX = 19,
@@ -2726,7 +2726,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
             _bss_3A8[st->seqSlot] |= ACTORUSETTING_NO_LETTERBOX;
         }
         break;
-    case ANIM_CODE_EVT_6_14:
+    case ANIM_CODE_EVT_6_FADE_OUT:
         if (arg4 != 0) {
             break;
         }
@@ -2734,7 +2734,7 @@ static s32 anim_do_code_event_6(Object *animObj, Object *actor, AnimObj_Data *st
             gDLL_28_ScreenFade->vtbl->fade(sp54, SCREEN_FADE_BLACK);
         }
         break;
-    case ANIM_CODE_EVT_6_15:
+    case ANIM_CODE_EVT_6_FADE_IN:
         if (arg4 != 0) {
             break;
         }

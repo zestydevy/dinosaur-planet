@@ -1907,7 +1907,7 @@ void objFreeEffectBox(Object *obj) {
 }
 
 /** Set interaction arrow params? */
-void obj_func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 colourIndex) {
+void obj_func_80023BF8(Object *obj, s32 interactRadius, s32 hlRadius, s32 lockExitRadius, u8 hlAngularRange, u8 flags) {
     ObjectStruct78 *dst;
 
     if (obj != NULL) {
@@ -1916,24 +1916,24 @@ void obj_func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param
         if (dst != NULL) {
             dst += obj->unkD4;
 
-            if (param2 != 0) {
-                dst->interactRadius = param2 >> 2;
+            if (interactRadius != 0) {
+                dst->interactRadius = interactRadius >> 2;
             }
 
-            if (param4 != 0) {
-                dst->lockExitRadius = param4 >> 2;
+            if (lockExitRadius != 0) {
+                dst->lockExitRadius = lockExitRadius >> 2;
             }
 
-            if (param3 != 0) {
-                dst->hlRadius = param3 >> 2;
+            if (hlRadius != 0) {
+                dst->hlRadius = hlRadius >> 2;
             }
 
-            if (param5 != 0) {
-                dst->hlAngularRange = param5;
+            if (hlAngularRange != 0) {
+                dst->hlAngularRange = hlAngularRange;
             }
 
-            if (colourIndex != 0) {
-                dst->flags = colourIndex ;
+            if (flags != 0) {
+                dst->flags = flags;
             }
         }
     }

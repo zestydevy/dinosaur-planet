@@ -827,17 +827,17 @@ s32 curves_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
 }
 
 // offset: 0x218C | func: 24 | export: 15
-s32 curves_func_218C(s32 arg0) {
-    CurveSetup* temp_a0;
+s32 curves_func_218C(s32 id) {
+    CurveSetup* curve;
     s32 i;
 
-    STUBBED_PRINTF(" Curve Id %i ", arg0);
+    STUBBED_PRINTF(" Curve Id %i ", id);
     for (i = 0; i < _bss_28A8; i++) {
-        temp_a0 = _bss_8[i].setup;
-        if (temp_a0->curveType == 0x15) {
-            STUBBED_PRINTF(" CI %i ", temp_a0->type15.unk34);
-            if (arg0 == temp_a0->type15.unk34) {
-                return temp_a0->uID;
+        curve = _bss_8[i].setup;
+        if (curve->curveType == 0x15) {
+            STUBBED_PRINTF(" CI %i ", curve->type15.unk34);
+            if (id == curve->type15.unk34) {
+                return curve->uID;
             }
         }
     }

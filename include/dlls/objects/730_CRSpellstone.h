@@ -6,7 +6,8 @@
 
 DLL_INTERFACE(DLL_730_CRSpellstone) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ void (*func7)(Object*, s32);
+    /*7*/ int (*SetState)(Object* self, s32 newValue);
+    /*8*/ int (*IsNotRescued)(Object* self);
 };
 
 #endif // _DLLS_730_H

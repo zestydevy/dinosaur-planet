@@ -701,7 +701,7 @@ static CurveSetup* Kyte_func_1134(Object* self, u8 arg1, u8 arg2) {
                 ((arg2 && sp94.z < 0.0f) || (arg2 == 0 && sp94.z > 0.0f)) &&
                 temp_s1->curveType == 0x22 &&
                 temp_s1->base_type22.unk4 < 3 &&
-                (temp_s1->type22.unk30 == -1 || mainGetBits(temp_s1->type22.unk30) != 0) &&
+                (temp_s1->type22.activeBit == -1 || mainGetBits(temp_s1->type22.activeBit) != 0) &&
                 (temp_s1->type22.usedBit == -1 || mainGetBits(temp_s1->type22.usedBit) == 0) &&
                 trackGetLineIntersect(&self->srt.transl, &spA0, 1.0f, 0, NULL, self, 2, -1, 0xFF, 0) == 0
             ) {
@@ -822,7 +822,8 @@ static CurveSetup* Kyte_func_1730(DLL212_Data* objData, CurveSetup* setup, Curve
 
 // offset: 0x1864 | func: 33
 static CurveSetup* Kyte_func_1864(CurveSetup* setup) {
-    if ((setup->type22.unk30 == -1 || mainGetBits(setup->type22.unk30) != 0) && (setup->type22.usedBit == -1 || mainGetBits(setup->type22.usedBit) == 0)) {
+    if ((setup->type22.activeBit == -1 || mainGetBits(setup->type22.activeBit) != 0) 
+        && (setup->type22.usedBit == -1 || mainGetBits(setup->type22.usedBit) == 0)) {
         return setup;
     }
 
@@ -854,7 +855,7 @@ static CurveSetup* Kyte_func_18F8(DLL212_Data* objData, CurveSetup* setup, s32 a
             setups[setupIdx] = gDLL_26_Curves->vtbl->func_39C(setup->links[linkIdx]);
             if (setups[setupIdx] != NULL) {
                 if (
-                    (setups[setupIdx]->type22.unk30 == -1 || mainGetBits(setups[setupIdx]->type22.unk30) != 0) &&
+                    (setups[setupIdx]->type22.activeBit == -1 || mainGetBits(setups[setupIdx]->type22.activeBit) != 0) &&
                     (setups[setupIdx]->type22.usedBit == -1 || mainGetBits(setups[setupIdx]->type22.usedBit) == 0) &&
                     (arg2 == setups[setupIdx]->base_type22.unk4 || (arg2 == -1 && setups[setupIdx]->unk1A < 3))
                 ) {
@@ -862,7 +863,7 @@ static CurveSetup* Kyte_func_18F8(DLL212_Data* objData, CurveSetup* setup, s32 a
                         if (setups[setupIdx]->links[subLinkIdx] >= 0 && (setups[setupIdx]->unk1B & var_s4) - var_s2 == 0) {
                             setups[subSetupIdx] = gDLL_26_Curves->vtbl->func_39C(setups[setupIdx]->links[subLinkIdx]);
                             if (setups[subSetupIdx] != NULL) {
-                                if ((setups[subSetupIdx]->type22.unk30 == -1 || mainGetBits(setups[subSetupIdx]->type22.unk30) != 0) &&
+                                if ((setups[subSetupIdx]->type22.activeBit == -1 || mainGetBits(setups[subSetupIdx]->type22.activeBit) != 0) &&
                                     (setups[subSetupIdx]->type22.usedBit == -1 || mainGetBits(setups[subSetupIdx]->type22.usedBit) == 0) &&
                                     (arg2 == setups[subSetupIdx]->base_type22.unk4 || (arg2 == -1 && setups[subSetupIdx]->unk1A < 3))) {
                                     subSetupIdx++;

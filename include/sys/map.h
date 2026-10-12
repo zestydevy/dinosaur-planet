@@ -509,7 +509,7 @@ void dlSetEnvColorNoSync(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dlSetBlendColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
 void dlSetFillColor(Gfx **gdl, u32 color);
 void dlSetFogColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a);
-void dlTriangles(Gfx **gdl, DLTri *tris, s32 triCount);
+void dlTriangles(Gfx **gdl, const DLTri *tris, s32 triCount);
 
 // Render Settings
 
@@ -550,8 +550,8 @@ Block* mapGetBlockByIndex(s32 blockIndex);
 
 // Map/Track (again)
 
-u8 trackObjVisCheck(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
-u8 trackIsSphereInFrustum(Vec3f *v, f32 radius);
+s32 trackObjVisCheck(Object* obj); // check if obj is visible (wrt. fade, camera frustum)
+s32 trackIsSphereInFrustum(Vec3f *v, f32 radius);
 
 // streaming stuff starts here
 

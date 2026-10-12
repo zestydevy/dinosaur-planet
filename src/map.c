@@ -198,7 +198,6 @@ void blockTexanimTick(void);
 void trackUpdateFrustum(void);
 void blockColorTableTick(void);
 void trackDrawMain(void);
-u8 trackIsSphereInFrustum(Vec3f *v, f32 radius);
 void mapConvertObjPositionsToWS(MapHeader *map, f32 X, f32 Z);
 void mapInitObjSetupList(MapHeader* map, MapObjSetupList* setupList, s32 mapID, s32 curvesOnly);
 MapHeader *mapLoadStreamMap(s32, s32);
@@ -478,9 +477,9 @@ void dlSetFogColor(Gfx **gdl, u8 r, u8 g, u8 b, u8 a) {
     }
 }
 
-void dlTriangles(Gfx **gdl, DLTri *tris, s32 triCount) {
+void dlTriangles(Gfx **gdl, const DLTri *tris, s32 triCount) {
     s32 n;
-    DLTri *tri;
+    const DLTri *tri;
 
     for (n = triCount >> 1; n != 0; n--, tris += 2)
     {
@@ -1897,7 +1896,7 @@ s32 map_func_80045600(s32 arg0, BitStream *stream, s16 arg2, s16 arg3, s16 arg4)
  * Updates the object's distance-based fade and returns whether the object is visible 
  * according to the distance fade and frustum culling.
  */
-u8 trackObjVisCheck(Object* obj) {
+s32 trackObjVisCheck(Object* obj) {
     f32 fadeDist;
     Object* playerObj;
     f32 dist;
@@ -1946,7 +1945,7 @@ u8 trackObjVisCheck(Object* obj) {
     return trackIsSphereInFrustum(&obj->globalPosition, obj->visRadius);
 }
 
-u8 trackIsSphereInFrustum(Vec3f *v, f32 radius) {
+s32 trackIsSphereInFrustum(Vec3f *v, f32 radius) {
     u8 i;
 
     for (i = 0; i < MAP_LAYER_COUNT; i++)

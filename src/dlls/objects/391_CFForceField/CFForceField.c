@@ -117,7 +117,7 @@ void CFForceField_obj_Control(Object* self) {
         objdata->unk28 -= gUpdateRate;
         objdata->unk24 = objdata->unk28;
         if (objdata->unk28 < 0) {
-            mainSetBits(BIT_34F, 1);
+            mainSetBits(BIT_Play_Seq_01D7_CF_Kyte_Freed, 1);
             objFreeObject(self);
         }
     }

@@ -2699,8 +2699,8 @@ static void dll_211_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg
         temp_s1 = temp_a1[i].setup;
         if (temp_s1->curveType == 0x24 && temp_s1->unk3 == 0) {
             if (
-                (temp_s1->type22.unk30 == -1 || mainGetBits(temp_s1->type22.unk30) != 0) &&
-                (temp_s1->type22.usedBit == -1 || mainGetBits(temp_s1->type22.usedBit) == 0)
+                (temp_s1->type24.activeBit == -1 || mainGetBits(temp_s1->type24.activeBit) != 0) &&
+                (temp_s1->type24.usedBit == -1 || mainGetBits(temp_s1->type24.usedBit) == 0)
             ) {
                 temp_fs0 = 
                     SQ(objData->unk2C->z - temp_s1->pos.z) + (
@@ -2864,8 +2864,8 @@ static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32
             if (sp68[var_s2] != NULL) {
                 if ((arg2 == 0 || arg2 == (arg1->unk4_u8[var_s2]))) {
                     if (
-                        (sp68[var_s2]->type22.unk30 == -1 || mainGetBits(sp68[var_s2]->type22.unk30) != 0) &&
-                        (sp68[var_s2]->type22.usedBit == -1 || mainGetBits(sp68[var_s2]->type22.usedBit) == 0)
+                        (sp68[var_s2]->type24.activeBit == -1 || mainGetBits(sp68[var_s2]->type24.activeBit) != 0) &&
+                        (sp68[var_s2]->type24.usedBit == -1 || mainGetBits(sp68[var_s2]->type24.usedBit) == 0)
                     ) {
                         var_s2++;
                     }
@@ -2893,7 +2893,8 @@ static CurveSetup* dll_211_func_7EFC(DLL211_Data* objData, CurveSetup* arg1, s32
 
 // offset: 0x8114 | func: 63
 static CurveSetup* dll_211_func_8114(CurveSetup* setup) {
-    if ((setup->type22.unk30 == -1 || mainGetBits(setup->type22.unk30) != 0) && (setup->type22.usedBit == -1 || mainGetBits(setup->type22.usedBit) == 0)) {
+    if ((setup->type24.activeBit == -1 || mainGetBits(setup->type24.activeBit) != 0) 
+        && (setup->type24.usedBit == -1 || mainGetBits(setup->type24.usedBit) == 0)) {
         return setup;
     }
     return NULL;

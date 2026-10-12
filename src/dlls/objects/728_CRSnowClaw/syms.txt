@@ -1,0 +1,21 @@
+.text = 0x0:
+CRSnowClaw_ctor = 0x0;
+CRSnowClaw_dtor = 0xC;
+CRSnowClaw_obj_Setup = 0x18;
+CRSnowClaw_obj_Control = 0xA0;
+CRSnowClaw_obj_Update = 0x3CC;
+CRSnowClaw_obj_Print = 0x674;
+CRSnowClaw_obj_Free = 0x8C4;
+CRSnowClaw_obj_GetModelFlags = 0x8D4;
+CRSnowClaw_obj_GetDataSize = 0x8E4;
+CRSnowClaw_animCallback = 0x8F8;
+CRSnowClaw_printVehicle = 0xBF0;
+CRSnowClaw_vehicleRiderAnim = 0xD58;
+CRSnowClaw_func_EC8 = 0xEC8;
+
+.rodata = 0xF9C:
+str_0 = 0x0; // absolute:0xF9C
+
+.data = 0x103C:
+data_0 = 0x0; // absolute:0x103C
+data_8 = 0x8; // absolute:0x1044
