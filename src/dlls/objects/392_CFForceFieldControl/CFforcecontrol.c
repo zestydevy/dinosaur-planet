@@ -69,7 +69,7 @@ void CFForceControl_obj_Setup(Object* self, CFForceControl_Setup* setup, s32 res
     objdata->unk34 = 1;
     objdata->unk30 = 0x51;
     objdata->unk4C = 90.0f;
-    mainSetBits(BIT_30B, 1);
+    mainSetBits(BIT_CRF_ForceField_Active, 1);
     CFForceControl_func_628(objdata);
 }
 
@@ -77,8 +77,8 @@ void CFForceControl_obj_Setup(Object* self, CFForceControl_Setup* setup, s32 res
 void CFForceControl_obj_Control(Object* self) {
     CFForceControl_Data* objdata = self->data;
     
-    if (mainGetBits(BIT_2E1) != 0) {
-        mainSetBits(BIT_30B, 0);
+    if (mainGetBits(BIT_CRF_BlastedRoof_Blasted) != 0) {
+        mainSetBits(BIT_CRF_ForceField_Active, 0);
         objDisable(self);
         gDLL_6_AMSFX->vtbl->Play(self, SOUND_5B9, MAX_VOLUME, NULL, NULL, 0, NULL);
         if (objdata->unk54 != 0) {

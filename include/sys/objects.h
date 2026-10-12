@@ -47,7 +47,7 @@ void objFreeEffectBox(Object *obj);
 void *objAllocSetup(s32 size, s32 objId);
 
 void objHandleAnimseqActors(void);
-void obj_func_80023BF8(Object *obj, s32 param2, s32 param3, s32 param4, u8 param5, u8 param6);
+void obj_func_80023BF8(Object *obj, s32 interactRadius, s32 hlRadius, s32 lockExitRadius, u8 hlAngularRange, u8 flags);
 
 s32 objMove(Object *obj, f32 dx, f32 dy, f32 dz);
 Object *objGetObjectByUID(s32 param1);

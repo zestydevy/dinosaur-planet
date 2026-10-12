@@ -140,7 +140,7 @@ typedef struct {
 } CRSnowBike_Data;
 
 /*0x0*/ static CRSnowBike_Gamebits dRaceGamebits[] = {
-    { BIT_CF_Race_Started, BIT_498, BIT_49C },
+    { BIT_CF_Race_Started, BIT_498, BIT_Played_Seq_0205_CF_Race_Scales_Intro },
     { BIT_GP_Sharpclaw_Jetbike_Cutscene2, BIT_77E, BIT_77F }
 };
 /*0xC*/ static u32 dCheckpointUIDs[][3] = {

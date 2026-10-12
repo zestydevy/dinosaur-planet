@@ -132,7 +132,7 @@ def read_objects(objects_bin: BufferedReader,
 
         if len(str_bytes) == 0:
             break
-        id = tab_to_id[tabidx]
+        id = tab_to_id.get(tabidx, -1)
 
         objects_bin.seek(offset + 0x58, os.SEEK_SET)
         dll_id = struct.unpack_from(">H", objects_bin.read(2))[0]

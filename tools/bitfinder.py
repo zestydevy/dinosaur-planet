@@ -9,7 +9,6 @@ from typing import TypedDict
 from objlist import read_objects, Obj
 
 SCRIPT_DIR = Path(os.path.dirname(os.path.realpath(__file__)))
-BIN_ASSETS_DIR = Path("bin/assets")
 
 class ObjSetupBit:
     bit: int
@@ -352,6 +351,11 @@ OBJ_SETUPS: dict[int, ObjSetup] = {
     389: ObjSetup([
         ObjSetupField(0x1E, "blastedGamebit"),
         ObjSetupField(0x20, "hitCountGamebit"),
+    ]),
+    # CFExplodeWall
+    390: ObjSetup([
+        ObjSetupField(0x3E, "gamebitFinished"),
+        ObjSetupField(0x40, "gamebitExplode"),
     ]),
     # CFMainSlideDoor
     393: ObjSetup([
@@ -779,6 +783,17 @@ class MapObject(TypedDict):
     y: float
     z: float
 
+class CurveSetup(TypedDict):
+    map_id: int
+    map_name: str
+    obj_id: int
+    obj_name: str
+    uid: int
+    x: float
+    y: float
+    z: float
+    curveType: int
+
 def check_trigger_object(data: bytes, offset: int, bits: set[int], found: list[ObjSetupBit]):
     for cmdi in range(8):
         cond, cmdid, param1, param2 = struct.unpack_from(">BBBB", data, offset + 0x18 + (cmdi * 4))
@@ -830,6 +845,35 @@ def length_to_struct_format(length: int, signed: bool):
         raise NotImplementedError()
 
 last_map_id = -1
+def check_curve_setup(data: bytes, offset: int, curvedef: CurveSetup, bits: set[int]):
+    global last_map_id
+    found: list[ObjSetupBit] = []
+
+    if curvedef["curveType"] == 0x22 or curvedef["curveType"] == 0x24: # kyte/tricky
+        activeBit, usedBit = struct.unpack_from(">hh", data, offset + 0x30)
+        if activeBit in bits:
+            found.append(ObjSetupBit(activeBit, "activeBit"))
+        if usedBit in bits:
+            found.append(ObjSetupBit(usedBit, "usedBit"))
+
+    if len(found) == 0:
+        return
+
+    if last_map_id != curvedef["map_id"]:
+        last_map_id = curvedef["map_id"]
+        print(f"{curvedef['map_name']}:")
+    
+    print(f"  {curvedef['obj_name']} 0x{curvedef['obj_id']:X} (UID 0x{curvedef['uid']:X}):")
+    print(f"    pos: {curvedef['x']},{curvedef['y']},{curvedef['z']}")
+    print(f"    curveType: 0x{curvedef['curveType']:X}")
+
+    if curvedef["curveType"] == 0x22: # kyte
+        flightGroup = struct.unpack_from(">H", data, offset + 0x4)[0]
+        print(f"    flightGroup: {flightGroup}")
+
+    for bit in found:
+        print(f"    {bit.desc}: 0x{bit.bit:X}")
+
 def check_map_object(data: bytes, offset: int, romdef: MapObject, bits: set[int]):
     global last_map_id
     found: list[ObjSetupBit] = []
@@ -906,33 +950,56 @@ def check_maps(maps: BufferedReader, maps_tab: BufferedReader, mapinfo: Buffered
             if quarter_size == 0:
                 break
             if (quarter_size * 4) >= 0x18 and m != 17:
-                exclusions1 = struct.unpack_from(">B", data, offset + 0x3)[0]
-                load_flags, byte5 = struct.unpack_from(">BB", data, offset + 0x4)
-                byte6, fade_dist = struct.unpack_from(">BB", data, offset + 0x6)
-                x, y, z = struct.unpack_from(">fff", data, offset + 0x8)
-                uid = struct.unpack_from(">i", data, offset + 0x14)[0]
-                acts = parse_act_exclusions_as_inclusions(exclusions1, byte5)
+                if obj_id == 110: # curve
+                    x, y, z = struct.unpack_from(">fff", data, offset + 0x8)
+                    uid = struct.unpack_from(">i", data, offset + 0x14)[0]
+                    curveType = struct.unpack_from(">b", data, offset + 0x19)[0]
+                    
+                    obj = objmap.get(obj_id, None)
 
-                obj = objmap.get(obj_id, None)
+                    curvedef: CurveSetup = {
+                        "map_id": m,
+                        "map_name": names[m],
+                        "obj_id": obj_id,
+                        "obj_name": obj['name'] if obj != None else "(none)",
+                        "uid": uid,
+                        "x": x,
+                        "y": y,
+                        "z": z,
+                        "curveType": curveType
+                    }
 
-                romdef: MapObject = {
-                    "map_id": m,
-                    "map_name": names[m],
-                    "obj_id": obj_id,
-                    "obj_name": obj['name'] if obj != None else "(none)",
-                    "dll_id": obj["dll_id"] if obj != None else -1,
-                    "uid": uid,
-                    "acts": acts,
-                    "load_flags": load_flags,
-                    "byte5": byte5,
-                    "byte6": byte6,
-                    "fade_dist": fade_dist,
-                    "x": x,
-                    "y": y,
-                    "z": z
-                }
+                    check_curve_setup(data, offset, curvedef, bits)
+                elif obj_id == 5: # checkpoint4
+                    pass
+                else:
+                    exclusions1 = struct.unpack_from(">B", data, offset + 0x3)[0]
+                    load_flags, byte5 = struct.unpack_from(">BB", data, offset + 0x4)
+                    byte6, fade_dist = struct.unpack_from(">BB", data, offset + 0x6)
+                    x, y, z = struct.unpack_from(">fff", data, offset + 0x8)
+                    uid = struct.unpack_from(">i", data, offset + 0x14)[0]
+                    acts = parse_act_exclusions_as_inclusions(exclusions1, byte5)
 
-                check_map_object(data, offset, romdef, bits)
+                    obj = objmap.get(obj_id, None)
+
+                    romdef: MapObject = {
+                        "map_id": m,
+                        "map_name": names[m],
+                        "obj_id": obj_id,
+                        "obj_name": obj['name'] if obj != None else "(none)",
+                        "dll_id": obj["dll_id"] if obj != None else -1,
+                        "uid": uid,
+                        "acts": acts,
+                        "load_flags": load_flags,
+                        "byte5": byte5,
+                        "byte6": byte6,
+                        "fade_dist": fade_dist,
+                        "x": x,
+                        "y": y,
+                        "z": z
+                    }
+
+                    check_map_object(data, offset, romdef, bits)
 
             offset += (quarter_size * 4)
 
@@ -1066,32 +1133,33 @@ def check_seqs(seqs: list[ObjSeq], bits: set[int]):
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument("--base-dir", type=str, dest="base_dir", help="The root of the project.", default=str(SCRIPT_DIR.joinpath("..")))
+    parser.add_argument("-C", type=str, dest="change_dir", help="The directory containing the extracted filesystem.", 
+                        default=str(SCRIPT_DIR.joinpath("../bin/assets")))
     parser.add_argument("bits", nargs="+", type=str, help="Bit IDs to search for.")
 
     args = parser.parse_args()
 
-    # Do all path lookups from the base directory
-    os.chdir(Path(args.base_dir).resolve())
+    # Do all path lookups from the chosen directory
+    os.chdir(Path(args.change_dir).resolve())
 
     bits = set([int(bit, base=0) for bit in args.bits])
 
     objmap: dict[int, Obj] = {}
-    with open(BIN_ASSETS_DIR.joinpath("OBJECTS.bin"), "rb") as objects_bin, \
-         open(BIN_ASSETS_DIR.joinpath("OBJECTS.tab"), "rb") as objects_tab, \
-         open(BIN_ASSETS_DIR.joinpath("OBJINDEX.bin"), "rb") as objects_idx:
+    with open("OBJECTS.bin", "rb") as objects_bin, \
+         open("OBJECTS.tab", "rb") as objects_tab, \
+         open("OBJINDEX.bin", "rb") as objects_idx:
         objects = read_objects(objects_bin, objects_tab, objects_idx)
         for obj in objects:
             objmap[obj["id"]] = obj
 
-    with open(BIN_ASSETS_DIR.joinpath("MAPS.bin"), "rb") as maps, \
-         open(BIN_ASSETS_DIR.joinpath("MAPS.tab"), "rb") as maps_tab, \
-         open(BIN_ASSETS_DIR.joinpath("MAPINFO.bin"), "rb") as mapinfo:
+    with open("MAPS.bin", "rb") as maps, \
+         open("MAPS.tab", "rb") as maps_tab, \
+         open("MAPINFO.bin", "rb") as mapinfo:
         check_maps(maps, maps_tab, mapinfo, objmap, bits)
 
-    with open(BIN_ASSETS_DIR.joinpath("OBJSEQ2CURVE.tab"), "rb") as objseq2curve_tab_file, \
-        open(BIN_ASSETS_DIR.joinpath("ANIMCURVES.tab"), "rb") as animcurves_tab_file, \
-        open(BIN_ASSETS_DIR.joinpath("ANIMCURVES.bin"), "rb") as animcurves_bin_file:
+    with open("OBJSEQ2CURVE.tab", "rb") as objseq2curve_tab_file, \
+        open("ANIMCURVES.tab", "rb") as animcurves_tab_file, \
+        open("ANIMCURVES.bin", "rb") as animcurves_bin_file:
         seqs = seqs_from_bin(
             objseq2curve_tab_file,
             animcurves_tab_file, animcurves_bin_file)

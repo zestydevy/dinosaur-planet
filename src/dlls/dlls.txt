@@ -425,6 +425,7 @@
 605 = objects/605_WLworm
 606 = objects/606_WL_Wallpower
 607 = objects/607_WL_LevelControl
+608 = objects/608_WM_GeneralScale
 609 = objects/609_WLFireFly
 610 = objects/610_WL_spiritplace
 611 = objects/611_WL_seqpoint
@@ -495,6 +496,7 @@
 722 = objects/722_MMP_mseedrecept
 723 = objects/723_GPbonfire
 725 = objects/725_SC_flamegameflame
+728 = objects/728_CRSnowClaw
 729 = objects/729_CRCloudRace
 730 = objects/730_CRspellStone
 731 = objects/731_CRFuelTank

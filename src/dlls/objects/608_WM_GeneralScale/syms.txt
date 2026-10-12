@@ -1,0 +1,21 @@
+.text = 0x0:
+WMGeneralScale_ctor = 0x0;
+WMGeneralScale_dtor = 0xC;
+WMGeneralScale_obj_Setup = 0x18;
+WMGeneralScale_obj_Control = 0x54;
+WMGeneralScale_obj_Update = 0x60;
+WMGeneralScale_obj_Print = 0x6C;
+WMGeneralScale_obj_Free = 0x124;
+WMGeneralScale_obj_GetModelFlags = 0x134;
+WMGeneralScale_obj_GetDataSize = 0x144;
+WMGeneralScale_animCallback = 0x158;
+WMGeneralScale_printMask = 0x3B4;
+
+.rodata = 0x948:
+rodata_0 = 0x0; // absolute:0x948
+rodata_C0 = 0xC0; // absolute:0xA08
+rodata_F0 = 0xF0; // absolute:0xA38
+jtbl_120 = 0x120; // absolute:0xA68 force_migration:True function_owner:WMGeneralScale_animCallback
+
+.data = 0xA98:
+data_0 = 0x0; // absolute:0xA98

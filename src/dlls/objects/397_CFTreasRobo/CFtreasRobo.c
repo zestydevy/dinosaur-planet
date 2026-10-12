@@ -139,7 +139,7 @@ void CFTreasRobo_obj_Control(Object* self) {
         objdata->unk154->srt.transl.y = self->srt.transl.y;
         objdata->unk154->srt.transl.z = self->srt.transl.z;
     }
-    if (objdata->state == 0xE) {
+    if (objdata->state == 14) {
         if (mainGetBits(BIT_334) != 0) {
             STUBBED_PRINTF(" First Robot Activated ");
             objdata->state = 0;
@@ -229,7 +229,7 @@ void CFTreasRobo_obj_Control(Object* self) {
             }
             break;
         case 10:
-            mainSetBits(BIT_8F7, 0);
+            mainSetBits(BIT_CRF_Galleon_Force_Low_Detail, 0);
             mainSetBits(BIT_Play_Seq_02C7_Scales_Takes_Baby_Cloudrunner_Away, 1);
             mainSetBits(BIT_CRF_Galleon_Fade_to_High_Detail, 1);
             mainSetBits(BIT_CRF_Galleon_Fade_to_Low_Detail, 0);

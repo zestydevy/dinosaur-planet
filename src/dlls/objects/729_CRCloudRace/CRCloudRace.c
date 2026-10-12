@@ -101,7 +101,7 @@ void CRCloudRace_do(Object *self) {
             mainSetBits(BIT_CF_Killed_Sharpclaw_In_Treasure_Room, 1);
         }
         if (((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
-            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 1);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Bike_Intro, 1);
             mainSetBits(BIT_CF_Race_Started, 1);
             objdata->state = STATE_Race;
         }
@@ -138,7 +138,7 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
         if (mainGetBits(BIT_SpellStone_CRF)) {
             objdata->state = STATE_Race_Won;
             mainSetBits(BIT_CF_Race_Started, 0);
-            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Bike_Intro, 0);
             gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 2, 0);
         }
     } else {
@@ -146,8 +146,8 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
         if (mainGetBits(BIT_Played_Seq_02AA_CF_Lose_Race) && !((DLL_210_Player*)player->dll)->vtbl->get_vehicle(player)) {
             mainSetBits(BIT_CF_Race_Started, 0);
             // reset sequences
-            mainSetBits(BIT_Play_Seq_0206_CF_Race_Intro, 0);
-            mainSetBits(BIT_Played_Seq_0206_CF_Race_Intro, 0);
+            mainSetBits(BIT_Play_Seq_0206_CF_Race_Bike_Intro, 0);
+            mainSetBits(BIT_Played_Seq_0206_CF_Race_Bike_Intro, 0);
             mainSetBits(BIT_Play_Seq_02AA_CF_Lose_Race, 0);
             mainSetBits(BIT_Played_Seq_02AA_CF_Lose_Race, 0);
             // replay sharpclaw sequence
@@ -155,7 +155,7 @@ void CRCloudRace_do_race(Object *self, CRCloudRace_Data *objdata) {
             mainSetBits(BIT_Play_Seq_02AC_CF_Sharpclaw_With_Spellstone, 1);
             spellstone = objGetNearestTypeTo(OBJTYPE_32, self, &distance);
             if (spellstone) {
-                ((DLL_730_CRSpellstone*)spellstone->dll)->vtbl->func7(spellstone, 1);
+                ((DLL_730_CRSpellstone*)spellstone->dll)->vtbl->SetState(spellstone, 1);
             }
             objdata->state = STATE_Restart_Race;
         }

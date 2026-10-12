@@ -141,6 +141,7 @@ enum ObjectControlNumber {
 	OBJCONTROL_WGbouncyVine = 128
 };
 
+// Larger priority number = higher priority. Priority determines control and update order.
 #define OBJPRIORITY_TRIGGER 40
 #define OBJPRIORITY_PLAYER 60
 #define OBJPRIORITY_DEFAULT 80

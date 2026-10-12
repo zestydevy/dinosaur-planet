@@ -741,7 +741,7 @@ typedef enum {
     BIT_2DE = 0x2DE, // len:1 group:1
     BIT_2DF = 0x2DF, // len:1 group:1
     BIT_2E0 = 0x2E0, // len:1 group:1
-    BIT_2E1 = 0x2E1, // len:1 group:1
+    BIT_CRF_BlastedRoof_Blasted = 0x2E1, // len:1 group:1
     BIT_2E2 = 0x2E2, // len:1 group:0
     BIT_2E3 = 0x2E3, // len:1 group:0
     BIT_2E4 = 0x2E4, // len:1 group:0
@@ -775,7 +775,7 @@ typedef enum {
     BIT_Played_Seq_01CF_CF_Baby_Cloudrunner_Lands_On_Perch_Five = 0x300, // len:1 group:1
     BIT_301 = 0x301, // len:1 group:1
     BIT_302 = 0x302, // len:1 group:1
-    BIT_303 = 0x303, // len:1 group:1
+    BIT_CRF_Dock_Left_BigDoorSwitch_State = 0x303, // len:1 group:1
     BIT_WC_Play_Seq_189_Moon_Temple_Magic_Bridge_Appears = 0x304, // len:1 group:1
     BIT_305 = 0x305, // len:1 group:1
     BIT_306 = 0x306, // len:1 group:1
@@ -783,7 +783,7 @@ typedef enum {
     BIT_308 = 0x308, // len:1 group:1
     BIT_309 = 0x309, // len:1 group:1
     BIT_CRF_Play_Seq_005D_Treasure_Room_Door_Opening_Sequences = 0x30A, // len:1 group:1
-    BIT_30B = 0x30B, // len:1 group:1
+    BIT_CRF_ForceField_Active = 0x30B, // len:1 group:1
     BIT_30C = 0x30C, // len:1 group:1
     BIT_30D = 0x30D, // len:1 group:1
     BIT_30E = 0x30E, // len:1 group:1
@@ -851,7 +851,7 @@ typedef enum {
     BIT_34C = 0x34C, // len:1 group:1
     BIT_34D = 0x34D, // len:1 group:1
     BIT_34E = 0x34E, // len:1 group:1
-    BIT_34F = 0x34F, // len:1 group:1
+    BIT_Play_Seq_01D7_CF_Kyte_Freed = 0x34F, // len:1 group:1
     BIT_350 = 0x350, // len:1 group:1
     BIT_351 = 0x351, // len:1 group:1
     BIT_352 = 0x352, // len:1 group:1
@@ -861,7 +861,7 @@ typedef enum {
     BIT_356 = 0x356, // len:1 group:1 (set in CRF before courtyard and after leaving player's cell, unused?)
     BIT_357 = 0x357, // len:1 group:1
     BIT_358 = 0x358, // len:1 group:1
-    BIT_359 = 0x359, // len:1 group:1
+    BIT_Played_Seq_01D7_CF_Kyte_Freed = 0x359, // len:1 group:1
     BIT_35A = 0x35A, // len:1 group:1
     BIT_35B = 0x35B, // len:1 group:1
     BIT_35C = 0x35C, // len:1 group:1
@@ -1183,10 +1183,10 @@ typedef enum {
     BIT_498 = 0x498, // len:1 group:1
     BIT_Play_Seq_02AA_CF_Lose_Race = 0x499, // len:1 group:1
     BIT_Play_Seq_02A9_CF_Race_End = 0x49A, // len:1 group:1
-    BIT_49B = 0x49B, // len:1 group:1
-    BIT_49C = 0x49C, // len:1 group:1
-    BIT_Play_Seq_0206_CF_Race_Intro = 0x49D, // len:1 group:1
-    BIT_Played_Seq_0206_CF_Race_Intro = 0x49E, // len:1 group:1
+    BIT_Play_Seq_0205_CF_Race_Scales_Intro = 0x49B, // len:1 group:1
+    BIT_Played_Seq_0205_CF_Race_Scales_Intro = 0x49C, // len:1 group:1
+    BIT_Play_Seq_0206_CF_Race_Bike_Intro = 0x49D, // len:1 group:1
+    BIT_Played_Seq_0206_CF_Race_Bike_Intro = 0x49E, // len:1 group:1
     BIT_Played_Seq_02A9_CF_Race_End = 0x49F, // len:1 group:1
     BIT_4A0 = 0x4A0, // len:1 group:1
     BIT_DF_Seq_0035_Shrine_Door_Opens = 0x4A1, // len:1 group:0
@@ -2298,7 +2298,7 @@ typedef enum {
     BIT_8F4 = 0x8F4, // len:1 group:2
     BIT_VFP_Flamethrower_Turned_Off = 0x8F5, // len:1 group:1
     BIT_8F6 = 0x8F6, // len:1 group:0
-    BIT_8F7 = 0x8F7, // len:1 group:1
+    BIT_CRF_Galleon_Force_Low_Detail = 0x8F7, // len:1 group:1
     BIT_8F8 = 0x8F8, // len:1 group:0
     BIT_8F9 = 0x8F9, // len:1 group:1
     BIT_8FA = 0x8FA, // len:1 group:0
@@ -2307,7 +2307,7 @@ typedef enum {
     BIT_8FD = 0x8FD, // len:1 group:1
     BIT_8FE = 0x8FE, // len:1 group:1
     BIT_8FF = 0x8FF, // len:1 group:1
-    BIT_900 = 0x900, // len:3 group:1
+    BIT_CRF_BlastedRoof_Damage_Counter = 0x900, // len:3 group:1
     BIT_CRF_Num_Rescued_Baby_CloudRunners = 0x901, // len:3 group:1
     BIT_Force_CFGuardian_TalkSeq = 0x902, // len:1 group:1
     BIT_903 = 0x903, // len:1 group:2

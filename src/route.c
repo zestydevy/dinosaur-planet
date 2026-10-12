@@ -142,7 +142,7 @@ CurveSetup* routeNext(Route* route) {
 }
 
 s32 routeIsAllowedKyteCurve(CurveSetup* arg0, UnkVoxmap2Struct *arg1) {
-    if ((arg0->type22.unk30 == -1 || mainGetBits(arg0->type22.unk30) != 0) && 
+    if ((arg0->type22.activeBit == -1 || mainGetBits(arg0->type22.activeBit) != 0) && 
         (arg0->type22.usedBit == -1 || mainGetBits(arg0->type22.usedBit) == 0)) {
         if (arg0->base_type22.unk4 == arg1->unk0) {
             return TRUE;
@@ -202,8 +202,8 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
                     break;
                 case 0x24: // Tricky
                     mainGetBits(BIT_Tricky_Talk_Sequence);
-                    if ((neighbor->type22.unk30 == -1 || mainGetBits(neighbor->type22.unk30) != 0) &&
-                           (neighbor->type22.usedBit == -1 || mainGetBits(neighbor->type22.usedBit) == 0)) {
+                    if ((neighbor->type24.activeBit == -1 || mainGetBits(neighbor->type24.activeBit) != 0) &&
+                           (neighbor->type24.usedBit == -1 || mainGetBits(neighbor->type24.usedBit) == 0)) {
                         routeAddNeighbor(route, basePoint, baseCurveIdx, 
                             (u32) (vec3DistanceSquared(&base->pos, &neighbor->pos) + (f32) basePoint->netDist), 
                             neighbor);

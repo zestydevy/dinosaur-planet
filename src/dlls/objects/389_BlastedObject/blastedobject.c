@@ -46,6 +46,7 @@ void BlastedObject_obj_Setup(Object* self, BlastedObject_Setup* setup, s32 reset
             objSetModel(self, objdata->hitCount);
         }
     }
+    // @bug: Always re-enables hit count 0 bit
     mainSetBits(BIT_2DE, 1);
     self->srt.yaw = setup->yaw8 << 8;
     if (mainGetBits(setup->blastedGamebit) != 0) {

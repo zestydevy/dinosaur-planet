@@ -142,6 +142,7 @@ void CFCloudBaby_obj_Setup(Object* self, CFCloudBaby_Setup* setup, s32 reset) {
         func_800267A4(self);
         self->srt.flags |= OBJFLAG_INVISIBLE;
         objdata->flags &= ~CFCLOUDBABY_RescueTimerActive;
+        // @bug: objDisable has no effect in obj setup
         objDisable(self);
         objFreeObjectType(self, OBJTYPE_CFCloudBaby);
         objFreeObjectType(self, OBJTYPE_Baddie);
