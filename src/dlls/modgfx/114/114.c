@@ -39,7 +39,7 @@ void dll_114_ctor(void* dll) { }
 void dll_114_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-s32 dll_114_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
+s32 dll_114_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 arg4, void* data) {
     ModgfxStruct sp350;
     ModgfxStruct_0 sp50[32];
     ModgfxStruct_0 *temp;
@@ -50,7 +50,7 @@ s32 dll_114_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     s32 i;
 
     var_fa1 = 1.0f;
-    setup = obj->setup;
+    setup = (CampFire_Setup*)obj->setup;
     var_t0 = setup->scale;
     if (type == 1) {
         var_fa1 = 4.0f;
@@ -221,5 +221,5 @@ s32 dll_114_modgfx_Func0(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         }
     }
 
-    return dll_modgfx->Func1(&sp350, 0, 0x15, data_0, 0x18, data_D4, 0x8E, NULL);
+    return dll_modgfx->Func1(&sp350, 0, 0x15, data_0, 0x18, data_D4, TEXTABLE_8E, NULL);
 }

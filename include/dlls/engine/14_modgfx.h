@@ -44,7 +44,7 @@ typedef struct {
 DLL_INTERFACE(DLL_14_modgfx) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*Func0)(void);
-/*1*/ s16 (*Func1)(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 arg6, Texture* arg7);
+/*1*/ s16 (*Func1)(ModgfxStruct* arg0, s32 arg1, s32 arg2, s16* arg3, s32 arg4, s16* arg5, s32 textureID, Texture* tex);
 /*2*/ void (*Func2)(s32 arg0, s32 arg1, s32 arg2);
 /*3*/ void (*Func3)(void);
 /*4*/ void (*Func4)(Object* arg0);
@@ -62,7 +62,7 @@ DLL_INTERFACE(DLL_14_modgfx) {
 /*16*/ void (*Func16)(s16 arg0);
 /*17*/ void (*Func17)(s16 arg0);
 /*18*/ void (*Func18)(s16* arg0);
-/*19*/ void (*Func19)(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 arg6, Texture* arg7);
+/*19*/ void (*Func19)(SRT* arg0, s16* arg1, s32 arg3, s16* arg4, s32 arg5, s32 textureID, Texture* tex);
 /*20*/ void (*Func20)(s32 arg0);
 /*21*/ s16 (*Func21)(void);
 };
