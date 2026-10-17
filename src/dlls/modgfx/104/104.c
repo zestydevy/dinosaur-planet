@@ -1,4 +1,8 @@
-#include "common.h"
+#include "sys/math.h"
+#include "game/objects/object.h"
+#include "dlls/engine/14_modgfx.h"
+#include "sys/gfx/textable.h"
+#include "dll.h"
 
 // offset: 0x0 | ctor
 void dll_104_ctor(void* dll) { }

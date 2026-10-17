@@ -1,4 +1,9 @@
-#include "common.h"
+#include "sys/math.h"
+#include "game/objects/object.h"
+#include "dlls/engine/14_modgfx.h"
+#include "sys/gfx/textable.h"
+#include "dll.h"
+#include "sys/rand.h"
 
 typedef struct {
     s32 unk0;

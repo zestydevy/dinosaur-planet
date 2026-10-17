@@ -1,4 +1,5 @@
-#include "common.h"
+#include "sys/math.h"
+#include "game/objects/object.h"
 
 // offset: 0x0 | ctor
 void dll_124_ctor(void* dll) { }
