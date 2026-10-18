@@ -48,9 +48,9 @@ s32 dll_138_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     temp->unk14 = 8;
     temp->unk10 = data_8C;
     temp->unk0 = 2;
-    temp->unk4.f[0] = mathRnd(0xA, 0xF) * 0.4f;
-    temp->unk4.f[1] = mathRnd(0xA, 0xF) * 0.4f;
-    temp->unk4.f[2] = mathRnd(0xA, 0xF) * 0.8f;
+    temp->unk4.f[0] = mathRnd(10, 15) * 0.4f;
+    temp->unk4.f[1] = mathRnd(10, 15) * 0.4f;
+    temp->unk4.f[2] = mathRnd(10, 15) * 0.8f;
     temp++;
 
     temp->unk16 = 0;
@@ -75,9 +75,9 @@ s32 dll_138_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     temp->unk14 = 0;
     temp->unk10 = NULL;
     temp->unk0 = 0x400000;
-    temp->unk4.f[0] = mathRnd(-0x7D0, 0xC8);
-    temp->unk4.f[1] = mathRnd(-0xC8, 0xC8);
-    temp->unk4.f[2] = mathRnd(-0xC8, 0xC8);
+    temp->unk4.f[0] = mathRnd(-2000, 200);
+    temp->unk4.f[1] = mathRnd(-200, 200);
+    temp->unk4.f[2] = mathRnd(-200, 200);
     temp++;
 
     temp->unk16 = 1;
