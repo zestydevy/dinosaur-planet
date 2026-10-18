@@ -22,7 +22,7 @@
 // offset: 0x0 | ctor
 void dll_137_ctor(void* dll) { }
 
-// offset: 0xC | dtor
+// offset: 12 | dtor
 void dll_137_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
@@ -71,26 +71,26 @@ s32 dll_137_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         temp->unk10 = data_8C;
         temp->unk0 = 2;
         var_t1 = 0;
-        temp_fv1 = mathRnd(0, 0xC) * 0.05f;
+        temp_fv1 = mathRnd(0, 12) * 0.05f;
         temp_fa0 = 3.5f + temp_fv1;
         temp->unk4.f[0] = temp_fa0;
         temp->unk4.f[1] = temp_fa0;
         temp->unk4.f[2] = 20.0f + temp_fv1;
         temp++;
 
-        temp->unk16 = 0; // unk2E
-        temp->unk14 = 9; // unk2C
-        temp->unk10 = data_8C; // unk28
-        temp->unk0 = 0x80; // unk18
-        temp->unk4.f[0] = 0.0f; // unk1C
-        temp->unk4.f[1] = 0.0f; // unk20
+        temp->unk16 = 0;
+        temp->unk14 = 9;
+        temp->unk10 = data_8C;
+        temp->unk0 = 0x80;
+        temp->unk4.f[0] = 0.0f;
+        temp->unk4.f[1] = 0.0f;
         temp->unk4.f[2] = 32676.0f;
         temp++;
 
-        temp->unk16 = 0; // unk46
-        temp->unk14 = 8; // unk44
-        temp->unk10 = data_A4; // unk40
-        temp->unk0 = 4; // unk30
+        temp->unk16 = 0;
+        temp->unk14 = 8;
+        temp->unk10 = data_A4;
+        temp->unk0 = 4;
         temp->unk4.f[0] = 100.0f;
         temp->unk4.f[1] = 0.0f;
         temp->unk4.f[2] = 0.0f;
@@ -111,7 +111,7 @@ s32 dll_137_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         temp->unk14 = 8;
         temp->unk10 = data_8C;
         temp->unk0 = 2;
-        temp_fv1 = mathRnd(0, 0xC) * 0.05f;
+        temp_fv1 = mathRnd(0, 12) * 0.05f;
         temp_fa0 = 1.2f + temp_fv1;
         temp->unk4.f[0] = temp_fa0;
         temp->unk4.f[1] = temp_fa0;
@@ -119,21 +119,21 @@ s32 dll_137_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
         temp++;
 
         var_t1 = 0;
-        temp->unk16 = 0; // unk2E
-        temp->unk14 = 0x8C; // unk2C
-        temp->unk10 = NULL; // unk28
-        temp->unk0 = 0x20000000; // unk18
-        temp->unk4.f[0] = 999.0f; // unk1C
-        temp->unk4.f[1] = 96.0f; // unk20
-        temp->unk4.f[2] = 97.0f; // unk24
+        temp->unk16 = 0;
+        temp->unk14 = 0x8C;
+        temp->unk10 = NULL;
+        temp->unk0 = 0x20000000;
+        temp->unk4.f[0] = 999.0f;
+        temp->unk4.f[1] = 96.0f;
+        temp->unk4.f[2] = 97.0f;
         temp++;
 
-        temp->unk16 = 0; // unk46
-        temp->unk14 = 9; // unk44
-        temp->unk10 = data_8C; // unk40
-        temp->unk0 = 0x80; // unk30
-        temp->unk4.f[0] = 0.0f; // unk34
-        temp->unk4.f[1] = 0.0f; // unk38
+        temp->unk16 = 0;
+        temp->unk14 = 9;
+        temp->unk10 = data_8C;
+        temp->unk0 = 0x80;
+        temp->unk4.f[0] = 0.0f;
+        temp->unk4.f[1] = 0.0f;
         temp->unk4.f[2] = 32676.0f;
         temp++;
     }
