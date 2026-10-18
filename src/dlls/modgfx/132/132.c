@@ -216,9 +216,9 @@ s32 dll_132_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     }
 
     if (type == 0) {
-        var_v1 = gDLL_14_Modgfx->vtbl->Func1(&sp348, 0, 0x15, data_4, 0x18, data_D8, TEXTABLE_2E, NULL);
+        var_v1 = dll_modgfx->Func1(&sp348, 0, 0x15, data_4, 0x18, data_D8, TEXTABLE_2E, NULL);
     } else {
-        var_v1 = gDLL_14_Modgfx->vtbl->Func1(&sp348, 0, 0x15, data_4, 0x18, data_D8, TEXTABLE_D9, NULL);
+        var_v1 = dll_modgfx->Func1(&sp348, 0, 0x15, data_4, 0x18, data_D8, TEXTABLE_D9, NULL);
     }
     return var_v1;
 }
