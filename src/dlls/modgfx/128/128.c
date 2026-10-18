@@ -1,4 +1,8 @@
-#include "common.h"
+#include "sys/math.h"
+#include "game/objects/object.h"
+#include "dlls/engine/14_modgfx.h"
+#include "sys/gfx/textable.h"
+#include "dll.h"
 
 /*0x0*/ static s16 data_0[] = {
     1000, 0, 0, 0, 0, 707, 0, -707, 15, 0, 0, 0, -1000, 31, 0, -707,
@@ -39,8 +43,8 @@ s32 dll_128_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     ModgfxStruct_0 *temp;
     s32 pad[2];
     s32 i;
+
     temp = sp48;
-    
     temp->unk16 = 0;
     temp->unk14 = 0x12;
     temp->unk10 = data_150;
