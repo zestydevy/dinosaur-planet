@@ -888,7 +888,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
     damageType = func_80025F40(self, &hitBy, &hitSphereID, &hitDamage);
     if (damageType != 0) {
         modelInst = self->modelInsts[self->modelInstIdx];
-        temp_v1 = modelInst->unk24;
+        temp_v1 = (MtxF*) modelInst->unk24;
         if ((fsa->hitpoints != 0) && ((hitSphereID == 3) || (hitSphereID == 2))) {
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[hitSphereID][2];
@@ -905,7 +905,7 @@ static void dll_702_func_1EF0(Object* self, ObjFSA_Data* fsa) {
         } else {
             dll_amSfx->Play(self, sSndDeflectAttack[mathRnd(0, 1)], MAX_VOLUME, NULL, NULL, 0, NULL);
             modelInst = self->modelInsts[self->modelInstIdx];
-            temp_v1 = modelInst->unk24;
+            temp_v1 = (MtxF*) modelInst->unk24;
             _bss_60.transl.x = temp_v1->m[hitSphereID][1] + gWorldX;
             _bss_60.transl.y = temp_v1->m[hitSphereID][2];
             _bss_60.transl.z = temp_v1->m[hitSphereID][3] + gWorldZ;
