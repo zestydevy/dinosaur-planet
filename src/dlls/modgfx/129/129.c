@@ -188,7 +188,7 @@ s32 dll_129_modgfx_Spawn(Object* obj, s32 type, SRT* transform, u32 flags, s32 a
     sp348.unk5D = temp - sp48;
     for (i = 0; i < 7; i++) { sp348.unk46[i] = data_1F8[i]; }
     sp348.unk0 = sp48;
-    sp348.unk54 =0x0C0100C0 | flags;
+    sp348.unk54 = flags | 0x0C0100C0;
     if (sp348.unk54 & 1) {
         if (sp348.unk4 != NULL) {
             sp348.unk2C.f[0] += sp348.unk4->globalPosition.f[0];
