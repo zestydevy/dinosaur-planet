@@ -1,4 +1,8 @@
-#include "common.h"
+#include "sys/math.h"
+#include "game/objects/object.h"
+#include "dlls/engine/14_modgfx.h"
+#include "sys/gfx/textable.h"
+#include "dll.h"
 
 /*0x0*/ static s16 data_0[] = {
     0, 3400, 0, 0, 0, 866, 2900, 0, 8, 0, 866, 1900, 0, 15, 0, 0,
