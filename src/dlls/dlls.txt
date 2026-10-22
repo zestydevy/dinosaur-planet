@@ -171,7 +171,7 @@
 232 = objects/232_VampireBat
 233 = objects/233_BigScorpionRobot
 234 = objects/234_ScorpionRobot
-236 = objects/236_WG_Triffid
+236 = objects/236_WG_PollenPod
 241 = objects/241_SkeetlaWall
 243 = objects/243_Lunaimar
 245 = objects/245_BalloonBaddie

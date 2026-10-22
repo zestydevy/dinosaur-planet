@@ -547,7 +547,7 @@ void mainChangeMap(s32 mapID, s32 setupID, s32 playerno, s32 menuID) {
 
     location = gDLL_29_Gplay->vtbl->get_player_saved_location();
 
-    map_func_80048054(mapID, setupID, &location->vec.x, &location->vec.y, &location->vec.z, &location->mapLayer);
+    mapGetSetupPoint(mapID, setupID, &location->vec.x, &location->vec.y, &location->vec.z, &location->mapLayer);
     gDLL_29_Gplay->vtbl->savepoint(&location->vec, 0, 0, location->mapLayer);
 
     gMainDoMapChange = TRUE;

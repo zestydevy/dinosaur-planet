@@ -8,68 +8,64 @@
 #include "sys/objtype.h"
 
 typedef struct {
-    Baddie_Setup baddie;
-} WGTriffid_Setup;
-
-typedef struct {
     f32 animSpeed;
     s8 unk4;
     u8 changedState;
     u8 createdPollen;
-} WGTriffid_ActualData;
+} WGPollenPod_ActualData;
 
 typedef struct {
 /*000*/    Baddie baddie;
-/*3FC*/    WGTriffid_ActualData data;
-} WGTriffid_Data;
+/*3FC*/    WGPollenPod_ActualData data;
+} WGPollenPod_Data;
 
 typedef enum {
-    WGTriffid_ASTATE_0,
-    WGTriffid_ASTATE_1,
-    WGTriffid_ASTATE_2,
-    WGTriffid_ASTATE_3
-} WGTriffid_FSA_AnimStates;
+    WGPollenPod_ASTATE_0,
+    WGPollenPod_ASTATE_1,
+    WGPollenPod_ASTATE_2,
+    WGPollenPod_ASTATE_3
+} WGPollenPod_FSA_AnimStates;
 
 typedef enum {
-    WGTriffid_LSTATE_0
-} WGTriffid_FSA_LogicStates;
+    WGPollenPod_LSTATE_0
+} WGPollenPod_FSA_LogicStates;
 
 /*0x0*/ static s8 dHitDamageMap[] = {
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1,
     -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1, -1
 };
 
-/*0x0*/ static ObjFSA_StateCallback sAnimStates[sizeof(WGTriffid_FSA_AnimStates)];
-/*0x10*/ static ObjFSA_StateCallback sLogicStates[sizeof(WGTriffid_FSA_LogicStates)];
+/*0x0*/ static ObjFSA_StateCallback sAnimStates[sizeof(WGPollenPod_FSA_AnimStates)];
+/*0x10*/ static ObjFSA_StateCallback sLogicStates[sizeof(WGPollenPod_FSA_LogicStates)];
 
-static void WGTriffid_fsa_state_setup(void);
-static s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
-static s32 WGTriffid_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static void WGPollenPod_fsa_state_setup(void);
+static s32 WGPollenPod_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGPollenPod_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGPollenPod_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGPollenPod_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate);
+static s32 WGPollenPod_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate);
 
 // offset: 0x0 | func: 0
-void WGTriffid_fsa_state_setup(void) {
-    sAnimStates[WGTriffid_ASTATE_0] = WGTriffid_anim_state_0;
-    sAnimStates[WGTriffid_ASTATE_1] = WGTriffid_anim_state_1;
-    sAnimStates[WGTriffid_ASTATE_2] = WGTriffid_anim_state_2;
-    sAnimStates[WGTriffid_ASTATE_3] = WGTriffid_anim_state_3;
+void WGPollenPod_fsa_state_setup(void) {
+    sAnimStates[WGPollenPod_ASTATE_0] = WGPollenPod_anim_state_0;
+    sAnimStates[WGPollenPod_ASTATE_1] = WGPollenPod_anim_state_1;
+    sAnimStates[WGPollenPod_ASTATE_2] = WGPollenPod_anim_state_2;
+    sAnimStates[WGPollenPod_ASTATE_3] = WGPollenPod_anim_state_3;
 
-    sLogicStates[WGTriffid_LSTATE_0] = WGTriffid_logic_state_0;
+    sLogicStates[WGPollenPod_LSTATE_0] = WGPollenPod_logic_state_0;
 }
 // offset: 0x5C | ctor
-void WGTriffid_ctor(void* dll) {
-    WGTriffid_fsa_state_setup();
+void WGPollenPod_ctor(void* dll) {
+    WGPollenPod_fsa_state_setup();
 }
 
 // offset: 0x9C | dtor
-void WGTriffid_dtor(void *dll) { }
+void WGPollenPod_dtor(void *dll) { }
 
 // offset: 0xA8 | func: 1 | export: 0
-void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
+void WGPollenPod_setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     s32 pad[2];
-    WGTriffid_ActualData* objData;
+    WGPollenPod_ActualData* objData;
     Baddie* baddie;
     u8 flags;
 
@@ -80,11 +76,11 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
         flags = 1 | 2 | 4;
     }
     
-    if ((objSetup->baddie.unk2B & 0x20) == FALSE) {
+    if ((objSetup->unk2B & 0x20) == FALSE) {
         flags |= 8;
     }
     
-    gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 4, 1, 0x108, flags, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 4, 1, 0x108, flags, 20.0f);
     self->animCallback = NULL;
     
     objData = baddie->objdata;
@@ -95,8 +91,8 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
     objAnimSet(self, 0, 0.5f, 0);
     
     baddie->fsa.flags |= OBJFSA_FLAG_1000000;
-    baddie->fsa.animState = WGTriffid_ASTATE_0;
-    baddie->fsa.logicState = WGTriffid_LSTATE_0;
+    baddie->fsa.animState = WGPollenPod_ASTATE_0;
+    baddie->fsa.logicState = WGPollenPod_LSTATE_0;
     baddie->fsa.hitpoints = 1;
     baddie->fsa.flags |= OBJFSA_FLAG_4000;
 
@@ -108,11 +104,11 @@ void WGTriffid_setup(Object* self, WGTriffid_Setup* objSetup, s32 reset) {
 }
 
 // offset: 0x1EC | func: 2 | export: 1
-void WGTriffid_control(Object* self) {
+void WGPollenPod_control(Object* self) {
     /*0x1C*/ s16 dFXScales[] = { 0x0206, 0x0167, 0x0165, 0x0206};
-    WGTriffid_ActualData* objData;
+    WGPollenPod_ActualData* objData;
     Baddie* baddie;
-    WGTriffid_Setup* objSetup;
+    Baddie_Setup* objSetup;
     Object* player;
     Object* weapon;
     Vec3f d;
@@ -122,7 +118,7 @@ void WGTriffid_control(Object* self) {
     s32 i;
     
     baddie = self->data;
-    objSetup = (WGTriffid_Setup*)self->setup;
+    objSetup = (Baddie_Setup*)self->setup;
     objData = baddie->objdata;
     player = objGetPlayer();
     
@@ -131,10 +127,10 @@ void WGTriffid_control(Object* self) {
     }
     
     if (self->unkE0 == 0) {
-        self->srt.transl.f[0] = objSetup->baddie.base.x;
-        self->srt.transl.f[1] = objSetup->baddie.base.y;
-        self->srt.transl.f[2] = objSetup->baddie.base.z;
-        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->baddie.unk2E, self, -1);
+        self->srt.transl.f[0] = objSetup->base.x;
+        self->srt.transl.f[1] = objSetup->base.y;
+        self->srt.transl.f[2] = objSetup->base.z;
+        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }
@@ -148,7 +144,7 @@ void WGTriffid_control(Object* self) {
     baddie->fsa.targetDist = 0.0f;
     
     if (player != NULL) {
-        if ((baddie->fsa.animState != WGTriffid_ASTATE_2) && (baddie->fsa.animState != WGTriffid_ASTATE_3)) {
+        if ((baddie->fsa.animState != WGPollenPod_ASTATE_2) && (baddie->fsa.animState != WGPollenPod_ASTATE_3)) {
             d.f[0] = player->globalPosition.f[0] - self->globalPosition.f[0];
             d.f[1] = player->globalPosition.f[1] - self->globalPosition.f[1];
             d.f[2] = player->globalPosition.f[2] - self->globalPosition.f[2];
@@ -188,8 +184,8 @@ void WGTriffid_control(Object* self) {
             }
         }
     } else {
-        if ((baddie->fsa.animState != WGTriffid_ASTATE_3) && (baddie->fsa.animState != WGTriffid_ASTATE_2)) {
-            gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, WGTriffid_ASTATE_2);
+        if ((baddie->fsa.animState != WGPollenPod_ASTATE_3) && (baddie->fsa.animState != WGPollenPod_ASTATE_2)) {
+            gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, WGPollenPod_ASTATE_2);
             objData->changedState = TRUE;
         }
     }
@@ -202,17 +198,17 @@ void WGTriffid_control(Object* self) {
 }
 
 // offset: 0x6C4 | func: 3 | export: 2
-void WGTriffid_update(Object *self) { }
+void WGPollenPod_update(Object *self) { }
 
 // offset: 0x6D0 | func: 4 | export: 3
-void WGTriffid_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WGPollenPod_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if ((visibility) && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x730 | func: 5 | export: 4
-void WGTriffid_free(Object* self, s32 a1) {
+void WGPollenPod_free(Object* self, s32 a1) {
     Baddie* objData;
 
     objData = self->data;
@@ -227,17 +223,17 @@ void WGTriffid_free(Object* self, s32 a1) {
 }
 
 // offset: 0x7D4 | func: 6 | export: 5
-u32 WGTriffid_get_model_flags(Object* self) {
+u32 WGPollenPod_get_model_flags(Object* self) {
     return MODFLAGS_1 | MODFLAGS_8;
 }
 
 // offset: 0x7E4 | func: 7 | export: 6
-u32 WGTriffid_get_data_size(Object *self, u32 offsetAddr) {
-    return sizeof(WGTriffid_Data);
+u32 WGPollenPod_get_data_size(Object *self, u32 offsetAddr) {
+    return sizeof(WGPollenPod_Data);
 }
 
 // offset: 0x7F8 | func: 8
-static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
+static void WGPollenPod_create_pollen(Object* self, Baddie* baddie) {
     ObjSetup* pollenSetup;
     Object* pollen;
     s16 thetaA;
@@ -269,8 +265,8 @@ static void WGTriffid_create_pollen(Object* self, Baddie* baddie) {
 }
 
 // offset: 0xA20 | func: 9
-s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    WGTriffid_ActualData* objData;
+s32 WGPollenPod_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+    WGPollenPod_ActualData* objData;
     Baddie* baddie;
 
     baddie = self->data;
@@ -292,7 +288,7 @@ s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     func_80028D2C(self);
 
     if (fsa->target != NULL) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGTriffid_ASTATE_1);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGPollenPod_ASTATE_1);
         objData->changedState = TRUE;
     }
 
@@ -300,9 +296,9 @@ s32 WGTriffid_anim_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0xB44 | func: 10
-s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGPollenPod_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_ActualData* objData;
+    WGPollenPod_ActualData* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
@@ -324,16 +320,16 @@ s32 WGTriffid_anim_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 
     if (objData->createdPollen == FALSE) {
         objData->createdPollen = TRUE;
-        WGTriffid_create_pollen(self, baddie);
+        WGPollenPod_create_pollen(self, baddie);
     }
     
     return 0;
 }
 
 // offset: 0xC60 | func: 11
-s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGPollenPod_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_ActualData* objData;
+    WGPollenPod_ActualData* objData;
     void* sp20;
 
     baddie = self->data;
@@ -351,7 +347,7 @@ s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     self->objhitInfo->unk5E = 0;
     
     if ((self->curModAnimId == 0) && (self->animProgress == 1.0f)) {
-        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGTriffid_ASTATE_3);
+        gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, WGPollenPod_ASTATE_3);
         objData->changedState = TRUE;
     }
     
@@ -359,9 +355,9 @@ s32 WGTriffid_anim_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0xD64 | func: 12
-s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGPollenPod_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     Baddie* baddie;
-    WGTriffid_ActualData* objData;
+    WGPollenPod_ActualData* objData;
 
     baddie = self->data;
     objData = baddie->objdata;
@@ -392,7 +388,7 @@ s32 WGTriffid_anim_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 }
 
 // offset: 0xEA0 | func: 13
-s32 WGTriffid_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
+s32 WGPollenPod_logic_state_0(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     return 0;
 } 
 

@@ -1,0 +1,27 @@
+.text = 0x0:
+WGPollenPod_fsa_state_setup = 0x0;
+WGPollenPod_ctor = 0x5C;
+WGPollenPod_dtor = 0x9C;
+WGPollenPod_setup = 0xA8;
+WGPollenPod_control = 0x1EC;
+WGPollenPod_update = 0x6C4;
+WGPollenPod_print = 0x6D0;
+WGPollenPod_free = 0x730;
+WGPollenPod_get_model_flags = 0x7D4;
+WGPollenPod_get_data_size = 0x7E4;
+WGPollenPod_create_pollen = 0x7F8;
+WGPollenPod_anim_state_0 = 0xA20;
+WGPollenPod_anim_state_1 = 0xB44;
+WGPollenPod_anim_state_2 = 0xC60;
+WGPollenPod_anim_state_3 = 0xD64;
+WGPollenPod_logic_state_0 = 0xEA0;
+
+.rodata = 0xF68:
+
+.data = 0xF78:
+dHitDamageMap = 0x0; // absolute:0xF78
+dFXScales = 0x1C; // absolute:0xF94
+
+.bss = 0xFA8:
+sAnimStates = 0x0; // absolute:0xFA8
+sLogicStates = 0x10; // absolute:0xFB8

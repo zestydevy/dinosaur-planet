@@ -6,6 +6,7 @@
 #include "sys/asset.h"
 #include "sys/bitstream.h"
 #include "sys/di_rcp.h"
+#include "sys/map_enums.h"
 #include "sys/pi.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -2947,7 +2948,7 @@ void map_func_80048034(void) {
     gMobileMapUnknown = 0;
 }
 
-void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8* arg5) {
+void mapGetSetupPoint(s32 mapID, s32 setupID, f32* x, f32* y, f32* z, s8* layer) {
     MapInfo *sp64;
     s32 mapBinSize;
     u32 mapBinOffset;
@@ -2964,11 +2965,11 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         mapReadLayout(&D_800B9768.unk4[mapID], &D_800B9768.unk10->unk0[mapID], 0, 0, mapID);
         D_800B9768.unkC[mapID] = 0;
     }
-    *arg5 = D_800B9768.unkC[mapID];
-    if (mapID == 1) {
-        *arg2 = 0.0f;
-        *arg3 = 0.0f;
-        *arg4 = 0.0f;
+    *layer = D_800B9768.unkC[mapID];
+    if (mapID == MAP_FRONT_END2) {
+        *x = 0.0f;
+        *y = 0.0f;
+        *z = 0.0f;
     } else {
         mapBinOffset = READ_MAPS_TAB(mapID, 0);
         mapBinSize = READ_MAPS_TAB(mapID, 7) - mapBinOffset;
@@ -2979,10 +2980,10 @@ void map_func_80048054(s32 mapID, s32 arg1, f32* arg2, f32* arg3, f32* arg4, s8*
         map->originWorldZ = (D_800B9768.unk4[mapID].zMin + map->originOffsetZ) * BLOCKS_GRID_UNIT_F;
         objsetup = (SetupPoint_Setup*)map->objectInstanceFile_ptr;
         while (offset < map->objectInstancesFileLength) {
-            if ((objsetup->base.objId == OBJ_setuppoint) && (arg1 == objsetup->unk19)) {
-                *arg2 = objsetup->base.x + map->originWorldX;
-                *arg3 = objsetup->base.y;
-                *arg4 = objsetup->base.z + map->originWorldZ;
+            if ((objsetup->base.objId == OBJ_setuppoint) && (setupID == objsetup->setupID)) {
+                *x = objsetup->base.x + map->originWorldX;
+                *y = objsetup->base.y;
+                *z = objsetup->base.z + map->originWorldZ;
                 gDLL_29_Gplay->vtbl->set_act(mapID, objsetup->mapAct);
                 for (group = 0; group < 32; group++) {
                     if ((objsetup->objGroupStatusBits >> group) & 1) {

@@ -1,4 +1,6 @@
-#include "common.h"
+#include "PR/os.h"
+#include "PR/ultratypes.h"
+#include "sys/memory.h"
 
 // size: 0x38
 typedef struct {

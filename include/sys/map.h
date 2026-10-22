@@ -433,7 +433,7 @@ typedef struct {
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ u8 mapAct;
-/*19*/ u8 unk19;
+/*19*/ u8 setupID;
 /*1C*/ u32 objGroupStatusBits;
 } SetupPoint_Setup;
 
@@ -570,7 +570,7 @@ void mapDecrementLayer(void);
 void map_func_8004773C(void);
 s32 mapGetType(void);
 void map_func_80048034(void);
-void map_func_80048054(s32 mapID, s32, f32 *, f32 *, f32 *, s8 *);
+void mapGetSetupPoint(s32 mapID, s32 setupID, f32* x, f32* y, f32* z, s8* layer);
 void map_func_800483BC(f32, f32, f32);
 s32 mapGetLayer(void);
 
