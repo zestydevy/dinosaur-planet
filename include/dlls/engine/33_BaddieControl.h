@@ -55,7 +55,7 @@ typedef struct {
 /*3F8*/ UnkCurvesStruct *unk3F8;
 } Baddie;
 
-// size:0x38
+// ctrl: 29 | size:0x38
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s16 unk18; //gamebit set when defeated
@@ -66,14 +66,14 @@ typedef struct {
 /*22*/ s16 unk22; //droppedItemIdx
 /*24*/ s16 unk24; //objSeqID
 /*26*/ s8 unk26;
-/*27*/ s8 initialWeaponID;
-/*28*/ s8 unk28;
-/*29*/ u8 unk29;
+/*27*/ s8 initialWeaponID; // chuka playerAimOffsetY
+/*28*/ s8 unk28; // chuka angularRange
+/*29*/ u8 unk29; // chuka range2D
 /*2A*/ s8 unk2A; //yaw (when respawned)?
 /*2B*/ u8 unk2B; //flags?
 /*2C*/ s16 unk2C; //respawn time (in seconds)?
 /*2E*/ s8 unk2E; //objSeqID, played when lifetime expires?
-/*2F*/ u8 unk2F;
+/*2F*/ u8 unk2F; // chuka chuckProbability
 /*30*/ s16 unk30;
 /*32*/ u8 quarterHitpoints; // HP / 4
 /*33*/ u8 pad33;

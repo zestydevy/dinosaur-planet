@@ -8,29 +8,6 @@
 #include "sys/math.h"
 
 typedef struct {
-    ObjSetup base;
-    s16 gamebitDead;
-    s16 unk1A;
-    s16 _unk1C;
-    s16 _unk1E;
-    s16 _unk20;
-    s16 droppedItemIdx;
-    s16 _unk24; 
-    s8 _unk26;
-    s8 playerAimOffsetY;
-    s8 angularRange; //(Degrees) When the Chuka's yaw is within this angular range of facing towards the player (and the player is in lateral range), a ChukaChuck can be thrown
-    u8 range2D;
-    s8 yaw;
-    u8 _unk2B;
-    u8 _unk2C;
-    u8 _unk2D;
-    u8 _unk2E;
-    u8 chuckProbability;
-    s16 _unk30;
-    u8 health;
-} Chuka_Setup;
-
-typedef struct {
     f32 blinkTimer;
     u8 flags;
     u16 range2D;            //When the player is inside this lateral range of the Chuka, a ChukaChuck can be thrown
@@ -84,24 +61,24 @@ void Chuka_ctor(void *dll) { }
 void Chuka_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Chuka_setup(Object* self, Chuka_Setup* setup, s32 reset) {
+void Chuka_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     Chuka_Data* objData = self->data;
 
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
 
-    objData->gamebitDead = setup->gamebitDead;
+    objData->gamebitDead = setup->unk18;
     if ((objData->gamebitDead != NO_GAMEBIT) && mainGetBits( objData->gamebitDead)) {
         Chuka_die(self, objData);
         return;
     }
 
-    objData->range2D = setup->range2D * 8;
-    objData->droppedItemIdx = setup->droppedItemIdx;
-    objData->health = setup->health;
-    objData->angularRange = ((u16)setup->angularRange) * 182;
-    objData->chuckProbability = setup->chuckProbability;
-    objData->playerAimOffsetY = setup->playerAimOffsetY;
-    self->srt.yaw = setup->yaw << 8;
+    objData->range2D = setup->unk29 * 8;
+    objData->droppedItemIdx = setup->unk22;
+    objData->health = setup->quarterHitpoints;
+    objData->angularRange = ((u16)setup->unk28) * 182;
+    objData->chuckProbability = setup->unk2F;
+    objData->playerAimOffsetY = setup->initialWeaponID;
+    self->srt.yaw = setup->unk2A << 8;
 }
 
 

@@ -1,17 +1,9 @@
-#include "common.h"
+#include "game/objects/object.h"
+#include "game/objects/objsetups.h"
+#include "sys/map.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 textureIndex;       //Primary material: index in TABLES.bin subfile #14 ("scroll table")
-    s16 gamebitActivate;    //Unused, but instances of this object store a gamebitID here (e.g. 0x95)
-    s8 uSpeedB;             //U scroll speed for secondary blend material 
-    s8 vSpeedB;             //V scroll speed for secondary blend material 
-    s8 uSpeedA;             //U scroll speed for primary material              
-    s8 vSpeedA;             //V scroll speed for primary material              
-    s16 blendTextureIndex;  //Secondary blend material: index in TABLES.bin subfile #14 (optional, -1 if unused)
-                            //Blend material is used for multitextured scrolling water, etc.
-} TexScroll2_Setup;
 
 typedef struct {
     s32 materialIndex;      //Index of the main material being animated (in the local Block's materials)
@@ -32,7 +24,7 @@ void TexScroll2_ctor(void* dll) { }
 void TexScroll2_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void TexScroll2_obj_Setup(Object* self, TexScroll2_Setup* objSetup, s32 reset) {
+void TexScroll2_obj_Setup(Object* self, TexScroll_Setup* objSetup, s32 reset) {
     TexScroll2_Data* objData = self->data;
 
     objData->uSpeedA = objSetup->uSpeedA;
@@ -91,7 +83,7 @@ u32 TexScroll2_obj_GetDataSize(Object* self, u32 offsetAddr) {
 // offset: 0x1BC | func: 7
 void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
     Block* block;
-    TexScroll2_Setup* objSetup;
+    TexScroll_Setup* objSetup;
     Texture* texture;
     Texture* textureBlended;
     s32 textureCount;
@@ -103,7 +95,7 @@ void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
     s32 heightB;
     s32* scrollTable;
 
-    objSetup = (TexScroll2_Setup*)self->setup;
+    objSetup = (TexScroll_Setup*)self->setup;
 
     //Get object's local Block
     block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z));

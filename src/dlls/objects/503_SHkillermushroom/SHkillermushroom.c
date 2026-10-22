@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/objsetups.h"
 #include "game/objects/object.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"

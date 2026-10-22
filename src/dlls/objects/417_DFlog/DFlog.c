@@ -3,8 +3,8 @@
 #include "dlls/objects/common/weapon.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/418_DFriverflow.h"
-#include "dlls/objects/419_DFdockpoint.h"
 #include "dlls/objects/common/vehicle.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"
@@ -15,11 +15,6 @@
 #include "sys/objprint.h"
 #include "sys/intersect.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} DFlog_Setup;
 
 typedef struct {
     u8 _unk0[0x240 - 0x0];
@@ -83,7 +78,7 @@ void DFlog_ctor(void* dll) { }
 void DFlog_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFlog_obj_Setup(Object* self, DFlog_Setup* setup, s32 reset) {
+void DFlog_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     DFlog_Data* objdata;
     s32 i;
 
@@ -93,7 +88,7 @@ void DFlog_obj_Setup(Object* self, DFlog_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Vehicle);
 
     self->animCallback = DFlog_animCallback;
-    self->srt.yaw = (setup->yaw & 0xFFFF) << 8;
+    self->srt.yaw = (setup->generic.yaw & 0xFFFF) << 8;
     
     gDLL_27->vtbl->init(&objdata->unk28C, 
         DLL27FLAG_NONE, 
@@ -450,7 +445,7 @@ static void DFlog_func_E8C(Object* self) {
     f32 spD0;
     f32 spC8[2];
     f32 spC4;
-    DFdockpoint_Setup* dockpointSetup;
+    Ctrl51_Setup* dockpointSetup;
     f32 distance;
     Object* weapon;
     Vec3f spAC;
@@ -471,7 +466,7 @@ static void DFlog_func_E8C(Object* self) {
     distance = 10000.0f;
     objdata->dockpoint = objGetNearestTypeTo(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
-        dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
+        dockpointSetup = (Ctrl51_Setup*)objdata->dockpoint->setup;
         distance = vec3Distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
         // Reduce velocity while near a dockpoint
         if (objdata->mountState == VEHICLE_Mounted) {
@@ -480,7 +475,7 @@ static void DFlog_func_E8C(Object* self) {
             damp = 0.5f;
         }
 
-        if (distance < dockpointSetup->range) {
+        if (distance < dockpointSetup->dockpoint.range) {
             for (i = 0; i < 2; i++) {
                 objdata->velocity[i].x *= damp;
                 objdata->velocity[i].z *= damp;

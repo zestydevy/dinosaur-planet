@@ -4,6 +4,7 @@
 #include "sys/map.h"
 #include "sys/objects.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 
 typedef struct {
 /*00*/ s16 warpDelayTimer;
@@ -12,18 +13,6 @@ typedef struct {
 /*08*/ f32 range;
 /*0C*/ u8 objSeqPlayed;
 } WarpPoint_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 unk19;
-/*1A*/ s8 warpID;
-/*1B*/ s8 objectSeqIndex;
-/*1C*/ s8 isInboundWarp;
-/*1D*/ s8 mode;
-/*1E*/ s8 quarterRange;
-/*20*/ s16 gamebit;
-} WarpPoint_Setup;
 
 typedef enum {
     WarpPoint_OBJSEQ_0, //0x81 (outbound) (FADE NOT CHECKED) Warp immediately via objSeq message, has unseen player anims too (curling into ball?)
@@ -55,7 +44,7 @@ void WarpPoint_ctor(void* dll) { }
 void WarpPoint_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WarpPoint_obj_Setup(Object* self, WarpPoint_Setup* setup, s32 reset) {
+void WarpPoint_obj_Setup(Object* self, Warp_Setup* setup, s32 reset) {
     WarpPoint_Data* objdata = self->data;
 
     self->animCallback = WarpPoint_animCallback;
@@ -80,14 +69,14 @@ void WarpPoint_obj_Setup(Object* self, WarpPoint_Setup* setup, s32 reset) {
 // offset: 0xAC | func: 1 | export: 1
 void WarpPoint_obj_Control(Object* self) {
     Object* player;
-    WarpPoint_Setup* setup;
+    Warp_Setup* setup;
     WarpPoint_Data* objdata;
     f32 dx;
     f32 dy;
     f32 dz;
     f32 dist;
 
-    setup = (WarpPoint_Setup*)self->setup;
+    setup = (Warp_Setup*)self->setup;
     objdata = self->data;
     player = objGetPlayer();
 
@@ -225,7 +214,7 @@ u32 WarpPoint_obj_GetDataSize(Object* self, u32 offsetAddr) {
 
 // offset: 0x89C | func: 7
 int WarpPoint_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 prevCallbackValue) {
-    WarpPoint_Setup* setup = (WarpPoint_Setup*)self->setup;
+    Warp_Setup* setup = (Warp_Setup*)self->setup;
 
     //Warp the player (with a fade-to-black) via animMessage1
     if ((setup->mode != WarpPoint_MODE_2) && (animObjData->lastMessage == 1)) {

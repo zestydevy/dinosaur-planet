@@ -1,20 +1,13 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/objsetups.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    s16 unk1A;
-    s16 reverseBit;
-    s16 playerInsideBit;
-} WindLift_Setup;
 
 // size: 0x18
 typedef struct {
@@ -50,13 +43,13 @@ void WindLift_ctor(void* dll) { }
 void WindLift_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WindLift_obj_Setup(Object* self, WindLift_Setup* setup, s32 reset) {
+void WindLift_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     s32 i;
     WindLift_Data* objdata = self->data;
 
-    objdata->playerInsideBit = setup->playerInsideBit;
+    objdata->playerInsideBit = setup->windLift.playerInsideBit;
     objdata->windLiftID = objdata->playerInsideBit - BIT_CRF_WindLift1_PlayerInside;
-    objdata->reverseBit = setup->reverseBit;
+    objdata->reverseBit = setup->windLift.reverseBit;
     objdata->unk18 = 0;
     objdata->unk14 = 2.0f;
     if ((mainGetBits(BIT_CRF_WindLifts_Powered) != 0) || (objdata->windLiftID >= 4)) {
@@ -71,7 +64,7 @@ void WindLift_obj_Setup(Object* self, WindLift_Setup* setup, s32 reset) {
 // offset: 0xF8 | func: 1 | export: 1
 void WindLift_obj_Control(Object* self) {
     WindLift_Data* objdata;
-    WindLift_Setup* setup;
+    Ctrl51_Setup* setup;
     Object* player;
     Object** objs;
     f32 sp6C;
@@ -83,7 +76,7 @@ void WindLift_obj_Control(Object* self) {
     s32 k;
 
     objdata = self->data;
-    setup = (WindLift_Setup*)self->setup;
+    setup = (Ctrl51_Setup*)self->setup;
     if ((mainGetBits(BIT_CRF_WindLifts_Powered) != 0) || (objdata->windLiftID >= 5)) {
         if ((objdata->windLiftID == 2) && (mainGetBits(BIT_476) == 0)) {
             if (mainGetBits(BIT_CRF_WindLift3_Reverse) != 0) {
@@ -117,7 +110,7 @@ void WindLift_obj_Control(Object* self) {
                 }
                 dll_amSfx->SetPitch(objdata->unk10, objdata->unk14);
             }
-            sp6C = (f32) setup->unk1A;
+            sp6C = (f32) setup->windLift.unk1A;
             player = objGetPlayer();
             if (mainGetBits(objdata->playerInsideBit) != 0) {
                 if (objdata->unk170_0 == 0) {

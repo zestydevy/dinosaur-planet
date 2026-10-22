@@ -59,6 +59,7 @@ typedef struct {
 /*2*/ s16 params; // official name: val
 } AnimCurvesEvent;
 
+// ctrl: 16 | size: 0x28
 typedef struct {
     ObjSetup base;
     /** isObjSeq2CurveIndex (1 bit) | sequenceID (11 bits) | actorIndex (4 bits) */

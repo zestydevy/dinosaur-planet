@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"

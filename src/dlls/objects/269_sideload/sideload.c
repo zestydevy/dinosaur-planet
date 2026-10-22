@@ -1,11 +1,10 @@
-#include "common.h"
 #include "game/gamebits.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitUnlocked;    //GamebitID determining whether the sidekick is unlocked (i.e. Kyte rescued)
-    u8 sidekickIndex;       //Whether this should load Tricky/Kyte (see `SideLoad_Indices`)
-} SideLoad_Setup;
+#include "game/objects/object.h"
+#include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
+#include "sys/main.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 
 typedef struct {
     u8 loaded;              //Boolean: whether the sidekick has been loaded by the SideLoad object
@@ -61,7 +60,6 @@ void sideload_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
-
 
 // offset: 0x1A8 | func: 4 | export: 4
 void sideload_free(Object *self, s32 onlySelf) { }

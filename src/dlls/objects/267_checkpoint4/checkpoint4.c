@@ -1,4 +1,5 @@
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
 #include "dlls/objects/267_checkpoint4.h"

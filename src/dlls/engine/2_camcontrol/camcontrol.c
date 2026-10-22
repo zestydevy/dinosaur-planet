@@ -16,7 +16,6 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "unktypes.h"
 #include "dll.h"
-#include "prevent_bss_reordering.h"
 
 // official filename: camcontrol.c
 

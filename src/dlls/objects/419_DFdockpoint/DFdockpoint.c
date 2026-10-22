@@ -1,10 +1,9 @@
 #include "PR/ultratypes.h"
+#include "game/objects/objsetups.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "game/objects/object_id.h"
-#include "dlls/objects/419_DFdockpoint.h"
-#include "dlls/objects/793_BWLog.h"
 
 // offset: 0x0 | ctor
 void DFdockpoint_ctor(void *dll) { }
@@ -13,21 +12,21 @@ void DFdockpoint_ctor(void *dll) { }
 void DFdockpoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFdockpoint_setup(Object *self, DFdockpoint_Setup *objsetup, s32 arg2) {
+void DFdockpoint_setup(Object *self, Ctrl51_Setup *objsetup, s32 arg2) {
     objAddObjectType(self, OBJTYPE_Dockpoint);
-    self->srt.yaw = (objsetup->yaw & 0xFF) << 8;
+    self->srt.yaw = (objsetup->dockpoint.yaw & 0xFF) << 8;
 }
 
 // offset: 0x78 | func: 1 | export: 1
 void DFdockpoint_control(Object *self) {
-    DFdockpoint_Setup *setup;
-    BWLog_Setup *logsetup;
+    Ctrl51_Setup *setup;
+    Ctrl51_Setup *logsetup;
     s32 logCount;
 
-    setup = (DFdockpoint_Setup*)self->setup;
+    setup = (Ctrl51_Setup*)self->setup;
 
     //Do nothing if the dockpoint doesn't create a log
-    if (setup->spawnLogDisabled) {
+    if (setup->dockpoint.type) {
         return;
     }
 
@@ -36,8 +35,8 @@ void DFdockpoint_control(Object *self) {
        so a log will be rapidly created/deleted until the player comes into the log's load range */
     objGetAllOfType(OBJTYPE_Vehicle, &logCount);
     if (logCount == 0) {
-        logsetup = objAllocSetup(sizeof(BWLog_Setup), OBJ_BWLog);
-        logsetup->base.quarterSize = sizeof(BWLog_Setup)/4;
+        logsetup = objAllocSetup(sizeof(Ctrl51_Setup), OBJ_BWLog);
+        logsetup->base.quarterSize = sizeof(Ctrl51_Setup)/4;
         logsetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
         logsetup->base.loadDistance = 50;
         logsetup->base.fadeFlags = OBJSETUP_FADE_MAIN;
@@ -45,7 +44,7 @@ void DFdockpoint_control(Object *self) {
         logsetup->base.x = self->srt.transl.x;
         logsetup->base.y = self->srt.transl.y;
         logsetup->base.z = self->srt.transl.z;
-        logsetup->yaw = setup->yaw;
+        logsetup->generic.yaw = setup->dockpoint.yaw;
         objSetupObject(&logsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
     }
 }

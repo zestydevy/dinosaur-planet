@@ -6,9 +6,9 @@
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "dll.h"
-
 #include "dlls/objects/745_DR_Cage.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
 s32 unk0;

@@ -19,7 +19,6 @@
 #include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering2.h"
 
 enum KTLogicStates {
     KT_LSTATE_0 = 0,

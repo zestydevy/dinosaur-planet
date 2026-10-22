@@ -1,7 +1,7 @@
 #include "common.h"
+#include "game/objects/objsetups.h"
 #include "sys/map.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/common/collectable.h"
 
 #define MASK_SPEED 0.1f
 
@@ -172,8 +172,8 @@ void DIMTent_obj_Control(Object* self) {
             cogSetup->gamebitCollected = BIT_DIM_Gear_3;
             cogSetup->gamebitSecondary = NO_GAMEBIT;
             cogSetup->gamebitCount = NO_GAMEBIT;
-            cogSetup->objHitsValue = 5;
-            cogSetup->yaw = self->srt.yaw >> 8;
+            cogSetup->scale = 5;
+            cogSetup->yaw8 = self->srt.yaw >> 8;
             objSetupObject(&cogSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
         }
     }

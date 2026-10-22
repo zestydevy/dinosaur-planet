@@ -1,18 +1,12 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw8;
-    u8 _unk19[0x1E - 0x19];
-    s16 gamebit;
-} CFPowerBase_Setup;
 
 typedef struct {
     s16 gamebit;
@@ -30,11 +24,11 @@ void CFPowerBase_ctor(void* dll) { }
 void CFPowerBase_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFPowerBase_obj_Setup(Object* self, CFPowerBase_Setup* setup, s32 reset) {
+void CFPowerBase_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     CFPowerBase_Data* objdata = self->data;
 
-    self->srt.yaw = setup->yaw8 << 8;
-    objdata->gamebit = setup->gamebit;
+    self->srt.yaw = setup->generic.yaw << 8;
+    objdata->gamebit = setup->generic.bitA;
     switch (objdata->gamebit) {
     case BIT_CRF_Red_PowerBase:
         objdata->seqno = 0;

@@ -3,6 +3,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -14,15 +15,13 @@
 #include "dlls/objects/common/foodbag.h"
 #include "types.h"
 
-#include "dlls/objects/common/collectable.h"
-
 typedef struct {
     u32 soundHandle;            //Cleared on free, but not used for any sound calls
     f32 distanceToPlayer;  
     f32 interactionRadius;
     f32 timerDestroy;           //Countdown after receiving collection message from sender
     s8 sidekickArgBase;         //Base arg value used for sidekick-related collectables
-    u8 objHitsValue;
+    u8 unk11;
     u8 unused12;
     u8 pause;                   //Control function ends early when this is set
     s16 gamebitCollected;       //Set when collected: collectable vanishes when set
@@ -78,9 +77,9 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     objAddObjectType(self, OBJTYPE_Collectable);
     objInitMesgQueue(self, 2);
 
-    self->srt.yaw = objSetup->yaw << 8;
-    self->srt.pitch = objSetup->pitch << 8;
-    self->srt.roll = objSetup->roll << 8;
+    self->srt.yaw = objSetup->yaw8 << 8;
+    self->srt.pitch = objSetup->pitch8 << 8;
+    self->srt.roll = objSetup->roll8 << 8;
     self->srt.scale = self->def->scale;
 
     self->animCallback = (void*)&collectable_anim_callback;
@@ -89,7 +88,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 
     bzero(objData, sizeof(Collectable_Data));    
     objData->sidekickArgBase = objSetup->messageArgBase;
-    objData->objHitsValue = objSetup->objHitsValue;
+    objData->unk11 = objSetup->scale;
     objData->pause = 0;
     objData->areaValue = -2;
     objData->moving = 0;

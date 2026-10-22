@@ -19,6 +19,7 @@ typedef struct {
     };
 } TriggerCommand;
 
+// ctrl: 21,22,23,24,25,26,27,28 | size: 0x50
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ TriggerCommand commands[8];

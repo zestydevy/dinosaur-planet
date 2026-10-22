@@ -2,11 +2,11 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/260_Pollen.h"
-#include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/math.h"
 #include "sys/memory.h"
@@ -605,7 +605,7 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
         return NULL;
     }
     
-    dropSetup->objHitsValue = 20;
+    dropSetup->scale = 20;
     dropSetup->gamebitCount = NO_GAMEBIT;
     dropSetup->gamebitCollected = NO_GAMEBIT;
     dropSetup->gamebitSecondary = NO_GAMEBIT;
@@ -613,9 +613,9 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
     dropSetup->base.y = obj->srt.transl.y + 30.0f;
     dropSetup->base.z = obj->srt.transl.z;
     if (arg3 != 0) {
-        dropSetup->unk2E = 2;
+        dropSetup->mode = 2;
     } else {
-        dropSetup->unk2E = 1;
+        dropSetup->mode = 1;
     }
     dropSetup->base.loadFlags = baddieSetup->base.loadFlags;
     dropSetup->base.loadDistance = baddieSetup->base.loadDistance;

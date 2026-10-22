@@ -1,11 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 hitsAnimatorID;
-} WCFloorTile_Setup;
+#include "game/objects/objsetups.h"
 
 typedef struct {
     f32 timer;
@@ -36,7 +31,7 @@ void WCFloorTile_ctor(void* dll) { }
 void WCFloorTile_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCFloorTile_obj_Setup(Object* self, WCFloorTile_Setup* objSetup, s32 reset) {
+void WCFloorTile_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     WCFloorTile_Data* objData = self->data;
 
     self->srt.yaw = -M_90_DEGREES;
@@ -53,10 +48,10 @@ void WCFloorTile_obj_Control(Object* self) {
     f32 opacity;
     Object* obj;
     WCFloorTile_Data* objData;
-    WCFloorTile_Setup* objSetup;
+    Ctrl51_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (WCFloorTile_Setup*)self->setup;
+    objSetup = (Ctrl51_Setup*)self->setup;
 
     //Reappear and don't fall when the player backtracks through the corridor
     if (mainGetBits(BIT_WC_Moon_Temple_Hazards_Deactivated)) {
@@ -173,7 +168,7 @@ u32 WCFloorTile_obj_GetDataSize(Object* self, u32 offsetAddr) {
 
 // offset: 0x544 | func: 7
 void WCFloorTile_manageHitLines(Object* self, WCFloorTile_Data* objData) {
-    WCFloorTile_Setup* objSetup = (WCFloorTile_Setup*)self->setup;
+    Ctrl51_Setup* objSetup = (Ctrl51_Setup*)self->setup;
 
     if (trackIntersectNeedsUpdate()) {
         objData->flags |= WCFloorTile_FLAG_Hits_Update_Needed;
@@ -181,7 +176,7 @@ void WCFloorTile_manageHitLines(Object* self, WCFloorTile_Data* objData) {
 
     //Update the jump/grab HITS line(s) associated with the tile
     if ((objData->flags & WCFloorTile_FLAG_Hits_Update_Needed) && (trackIntersectNeedsUpdate() == FALSE)) {
-        trackToggleHitLine(objSetup->hitsAnimatorID, self->parent, objData->flags & WCFloorTile_FLAG_Hits_Line_Enabled);
+        trackToggleHitLine(objSetup->wcFloorTile.hitsAnimatorID, self->parent, objData->flags & WCFloorTile_FLAG_Hits_Line_Enabled);
         objData->flags &= ~WCFloorTile_FLAG_Hits_Update_Needed;
     }
 }

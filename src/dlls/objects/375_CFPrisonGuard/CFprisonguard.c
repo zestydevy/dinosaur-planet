@@ -4,18 +4,13 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/objsetups.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 sightRange;
-} CFPrisonGuard_Setup;
 
 typedef struct {
     u32 soundHandle;
@@ -59,12 +54,12 @@ void CFPrisonGuard_ctor(void* dll) { }
 void CFPrisonGuard_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFPrisonGuard_obj_Setup(Object* self, CFPrisonGuard_Setup* objSetup, s32 reset) {
+void CFPrisonGuard_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     CFPrisonGuard_Data* objData = self->data;
     
     objData->flags = CFPrisonGuard_FLAG_1_First_Tick;
     
-    self->srt.yaw = objSetup->yaw << 8;
+    self->srt.yaw = objSetup->cfPrisonGuard.yaw << 8;
     self->animCallback = (void*)CFPrisonGuard_animCallback;
     
     objInitMesgQueue(self, 4);
@@ -83,12 +78,12 @@ void CFPrisonGuard_obj_Control(Object* self) {
     CFPrisonGuard_Data* objData;
     Object* player;
     f32 distance;
-    CFPrisonGuard_Setup* objSetup;
+    Ctrl51_Setup* objSetup;
     u32 keyCollected;
 
     objData = self->data;
     player = objGetPlayer();
-    objSetup = (CFPrisonGuard_Setup*)self->setup;
+    objSetup = (Ctrl51_Setup*)self->setup;
     
     if (mainGetBits(BIT_CRF_CloudRunner_Uncle_Escaped) || (objData->flags & CFPrisonGuard_FLAG_4_Dead)) {
         STUBBED_PRINTF(" Removing Guard ");
@@ -103,7 +98,7 @@ void CFPrisonGuard_obj_Control(Object* self) {
     
     //Catch the player if they're nearby and not using the Illusion Spell
     if ((keyCollected == FALSE) && 
-        (distance < objSetup->sightRange) && 
+        (distance < objSetup->cfPrisonGuard.sightRange) && 
         (((DLL_210_Player*)player->dll)->vtbl->func50(player) != BIT_Spell_Illusion)
     ) {
         gDLL_3_Animation->vtbl->start_obj_sequence(CFPrisonGuard_OBJSEQ_1_Player_Detected, self, -1);
@@ -180,11 +175,11 @@ int CFPrisonGuard_animCallback(Object* self, Object* animObj, AnimObj_Data* anim
     s8 bitValBoneHeadFreed;
     s8 guardDetectedPlayer;
     f32 distance;
-    CFPrisonGuard_Setup* objSetup;
+    Ctrl51_Setup* objSetup;
 
     objData = self->data;
     outMesgArg = 0;
-    objSetup = (CFPrisonGuard_Setup*)self->setup;
+    objSetup = (Ctrl51_Setup*)self->setup;
     
     diPrintf(" State %i ", objData->state);
 
@@ -236,7 +231,7 @@ label2:
     switch (objData->state) {
     case CFPrisonGuard_STATE_0:
         distance = vec3Distance(&self->globalPosition, &player->globalPosition);
-        if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->sightRange)) {
+        if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->cfPrisonGuard.sightRange)) {
             if (((DLL_210_Player*)player->dll)->vtbl->func50(player) != BIT_Spell_Illusion) {
                 guardDetectedPlayer = TRUE;
                 objData->state = CFPrisonGuard_STATE_4;
@@ -259,7 +254,7 @@ label2:
         break;
     case CFPrisonGuard_STATE_1:
         distance = vec3Distance(&self->globalPosition, &player->globalPosition);
-        if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->sightRange)) {
+        if ((bitValBoneHeadFreed == FALSE) && (distance < objSetup->cfPrisonGuard.sightRange)) {
             if (((DLL_210_Player*)player->dll)->vtbl->func50(player) != BIT_Spell_Illusion) {
                 guardDetectedPlayer = TRUE;
                 objData->state = CFPrisonGuard_STATE_4;

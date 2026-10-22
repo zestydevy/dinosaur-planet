@@ -1,16 +1,8 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
+#include "game/objects/objsetups.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 sequenceIndex;
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebit;
-} NWtreebridge_Setup;
 
 typedef struct {
     s16 gamebit;            //Tree falls when set
@@ -30,15 +22,15 @@ void NWtreebridge_ctor(void *dll) { }
 void NWtreebridge_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void NWtreebridge_setup(Object* self, NWtreebridge_Setup* objSetup, s32 arg2) {
+void NWtreebridge_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
     NWtreebridge_Data* objdata;
 
     objdata = self->data;
     objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = (void*)&NWtreebridge_anim_callback;
-    self->srt.yaw = objSetup->yaw << 8;
-    objdata->sequenceIndex = objSetup->sequenceIndex;
-    objdata->gamebit = objSetup->gamebit;
+    self->srt.yaw = objSetup->generic.yaw << 8;
+    objdata->sequenceIndex = objSetup->generic.type;
+    objdata->gamebit = objSetup->generic.bitA;
     if (mainGetBits(objdata->gamebit)) {
         objdata->seqValue = 380;
     }

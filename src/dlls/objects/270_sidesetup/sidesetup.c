@@ -1,17 +1,9 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/model.h"
 #include "types.h"
-
-typedef struct {
-/*00*/	ObjSetup base;
-/*18*/	union Unk18{
-        u8 byte[2];
-        s16 halfword;
-    } unk18;
-/*1A*/	u8 unk1A;
-} SideSetupObj_Setup;
 
 void sidesetup_ctor(void *dll) { }
 

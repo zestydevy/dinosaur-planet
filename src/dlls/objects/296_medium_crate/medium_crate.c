@@ -4,6 +4,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -14,7 +15,6 @@
 #include "sys/rand.h"
 #include "types.h"
 
-#include "dlls/objects/common/collectable.h"
 #include "dlls/objects/297_scarab.h"
 #include "dlls/objects/615_crawler.h"
 
@@ -476,7 +476,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
                 } else {
                     foodPickupSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_applePickup);
                 }
-                foodPickupSetup->objHitsValue = 20;
+                foodPickupSetup->scale = 20;
                 foodPickupSetup->gamebitCount = NO_GAMEBIT;
                 foodPickupSetup->gamebitCollected = NO_GAMEBIT;
                 foodPickupSetup->base.x = self->srt.transl.x;

@@ -177,6 +177,17 @@ typedef enum {
     TrackLine_SETTINGB_Nonsolid = 0x80       //Player can pass through
 } TrackLineSettingsB;
 
+typedef enum {
+    Collectable_Type_Inventory = 0x1,       //Used by [CFPrisonKey, CFPowerCrystal1, CFPowerCrystal2, CFPowerCrystal3, CFPowerRoomKey, CFTreasureChest, CFExplosiveKey, WCSunStone, WCMoonStone, WCTrexTooth, DIMBridgeCogCol, DIMShackleKey, DIMAlpineRoot, DIMAlpineRoot2, DIMTruthHorn, DIM2CellKey, DIM2SilverKey, DIM2GoldKey, DIM2PuzzleKey, CCCellKey, CCgoldnuggetPic, NWtrickyball, NWalpineroot, NWreplaymedal, SC_golden_nugge, SC_MMP_Key, WMconsolestone, DB_egg, DBmap, DBDiamond, PadlockKey, GuardPass, Dynamite, Spellstone, Duster, EnergyPlant1, EnergyPlant2, foodbagSmall, foodbagMedium, foodbagLarge, FireNut, fishingnetColle]
+    Collectable_Type_Spells = 0x2,          //Used by [EarthQuakSpell, FireSpell, IllusionSpell, PortalSpell, ProjectileSpell]
+    Collectable_Type_Food = 0x4,            //Used by [meatPickup, applePickup, beanPickup]
+    Collectable_Type_SidekickA = 0x8,       //Unused? Sidekick-related (Tricky?)
+    Collectable_Type_SidekickB = 0x10,      //Unused? Sidekick-related (Kyte?)
+    Collectable_Type_20 = 0x20,             //Unused?
+    Collectable_Type_Magic = 0x40,          //Used by [WM_PureMagic, BoneDust, MagicDustSmall, MagicDustMid, MagicDustLarge, MagicDustHuge]
+    Collectable_Type_Upgrade = 0x80         //Used by [OBJ_WeaponUp]
+} Collectable_Types;
+
 typedef struct {
     s16 unk0;             //always 0 in ROM
     s16 type;             //see Collectable_Types

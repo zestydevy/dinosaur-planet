@@ -13,10 +13,6 @@
 #include "dlls/objects/251_weapons.h"
 
 typedef struct {
-    Baddie_Setup baddie;
-} SnowWorm_Setup;
-
-typedef struct {
     f32 timeSinceHit;
     s16 animStateSeqIdx;
     s16 consecutiveHits;
@@ -223,7 +219,7 @@ void SnowWorm_ctor(void* dll) {
 void SnowWorm_dtor(void* dll) { }
 
 // offset: 0x178 | func: 1 | export: 0
-void SnowWorm_obj_Setup(Object* self, SnowWorm_Setup* objSetup, s32 reset) {
+void SnowWorm_obj_Setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     Baddie* baddie;
     u8 flags;
 
@@ -233,10 +229,10 @@ void SnowWorm_obj_Setup(Object* self, SnowWorm_Setup* objSetup, s32 reset) {
     if (reset) {
         flags = 1 | 2 | 4;
     }
-    if ((objSetup->baddie.unk2B & 0x20) == FALSE) {
+    if ((objSetup->unk2B & 0x20) == FALSE) {
         flags |= 8;
     }
-    gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 0xE, 8, 0x102, flags, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 0xE, 8, 0x102, flags, 20.0f);
 
     self->animCallback = NULL;
 

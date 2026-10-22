@@ -1,6 +1,11 @@
-#include "common.h"
-#include "dlls/objects/255_ProjBall.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
+#include "sys/lfx.h"
+#include "sys/main.h"
+#include "sys/objects.h"
+#include "sys/objhits.h"
+#include "sys/rand.h"
+#include "dll.h"
 
 typedef struct {
     u8 _unk0[0x8];
@@ -25,12 +30,12 @@ void ProjBall_ctor(void* dll) { }
 void ProjBall_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ProjBall_obj_Setup(Object* self, ProjBall_Setup* objSetup, s32 reset) {
+void ProjBall_obj_Setup(Object* self, Projectile_Setup* objSetup, s32 reset) {
     ProjBall_Data* objData;
-    ProjBall_Setup* setup;
+    Projectile_Setup* setup;
 
     objData = self->data;
-    setup = (ProjBall_Setup*)self->setup;
+    setup = (Projectile_Setup*)self->setup;
     objData->unk34 = mathRnd(600, 900);
     objData->unk36 = mathRnd(-600, 600);
 
@@ -63,13 +68,13 @@ static void ProjBall_func_9F0(Object* self, ProjBall_Data* objData, Object* obj)
 void ProjBall_obj_Control(Object* self) {
     ProjBall_Data* objData;
     Object* sp68;
-    ProjBall_Setup* objSetup;
+    Projectile_Setup* objSetup;
     SRT fxTransform;
     f32 trackHeight;
 
     objData = self->data;
     sp68 = (Object*)self->unkE0;
-    objSetup = (ProjBall_Setup*)self->setup;
+    objSetup = (Projectile_Setup*)self->setup;
     
     if (objData->unk18 == 0) {
         objData->unk14 = (60.0f / vec3Length(&self->velocity));
@@ -171,10 +176,10 @@ void ProjBall_obj_Control(Object* self) {
 void ProjBall_obj_Update(Object* self) {
     ProjBall_Data* objData;
     SRT fxTransform;
-    ProjBall_Setup* objSetup;
+    Projectile_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (ProjBall_Setup*)self->setup;
+    objSetup = (Projectile_Setup*)self->setup;
     
     fxTransform.transl.x = 0.0f;
     fxTransform.transl.y = 0.0f;

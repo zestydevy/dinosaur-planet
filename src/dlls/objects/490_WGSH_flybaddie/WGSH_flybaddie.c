@@ -1,12 +1,12 @@
 
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/491_WGSH_projball.h"
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -240,7 +240,7 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
-    projballSetup = objAllocSetup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
+    projballSetup = objAllocSetup(sizeof(Projectile_Setup), OBJ_WGSH_projball);
     projballSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     projballSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     projballSetup->loadDistance = 0xFF;

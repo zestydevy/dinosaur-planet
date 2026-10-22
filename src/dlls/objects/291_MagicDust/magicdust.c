@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/math.h"
 #include "sys/objmsg.h"
 #include "dlls/engine/17_partfx.h"
@@ -22,7 +23,7 @@ void MagicDust_ctor(void *dll) { }
 void MagicDust_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void MagicDust_obj_Setup(Object* self, MagicDust_Setup* objSetup, s32 reset) {
+void MagicDust_obj_Setup(Object* self, Collectable_Setup* objSetup, s32 reset) {
     s32 angle;
     f32 speed;
     MagicDust_Data* objData = self->data;

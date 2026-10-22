@@ -1,9 +1,9 @@
 #include "dlls/engine/27.h"
 #include "dlls/engine/53_movelib.h"
-#include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
@@ -118,7 +118,7 @@ enum CFGuardianSeq {
 enum CFGuardianFlags {
     CFGUARDIAN_FLAG_1 = 0x1,
     CFGUARDIAN_FLAG_FollowingCurvePath = 0x2,
-    CFGUARDIAN_FLAG_WalkToTarget = 0x4,
+    CFGUARDIAN_FLAG_WalkToTarget = 0x4
 };
 
 enum CFGuardianTalkState {
@@ -769,7 +769,7 @@ static void CFGuardian_spawnBoneDust(Object* self, Object** dustObjs, Collectabl
 
     for (i = 0; i < 6; i++) {
         dustSetups[i] = objAllocSetup(sizeof(Collectable_Setup), OBJ_BoneDust);
-        dustSetups[i]->objHitsValue = 2;
+        dustSetups[i]->scale = 2;
         dustSetups[i]->gamebitCount = -1;
         dustSetups[i]->gamebitCollected = -1;
         dustSetups[i]->base.x = positions[i].x + self->srt.transl.x;

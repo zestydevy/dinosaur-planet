@@ -1,16 +1,11 @@
-#include "common.h"
+#include "game/gamebits.h"
+#include "game/objects/objsetups.h"
+#include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/main.h"
 #include "sys/newshadows.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 fallPlayerRange; //The player must be inside this lateral distance from the icicle, for it to fall
-    u8 scale;
-    s16 gamebitEnabled; //The icicle's state machine won't run until this gamebit is set (when specified)
-    s16 fallDelayTimer; //The icicle will start falling after this delay, after the fall conditions are activated
-} IMIcicle_Setup;
+#include "sys/objprint.h"
+#include "dll.h"
 
 typedef struct {
     f32 groundY;

@@ -7,22 +7,6 @@
 #include "game/objects/object.h"
 
 typedef struct {
-    ObjSetup base;
-    u16 unused18;
-    u8 unk1A;       //Set by MagicPlant, but not used by MagicDust?
-    u8 unused1B; 
-    s16 unk1C;      //Set by MagicPlant, but not used by MagicDust?
-    u16 unused1E; 
-    s32 unused20; 
-    s16 unk24;      //Set by MagicPlant, but not used by MagicDust?
-    u8 modelIdx;    //Which model index to use (MagicDustSmall/Mid/Large/Huge only have 1 model: maybe at one stage all 4 types existed on a single MagicDust object?)
-    u8 unused27;
-    s32 unused28;
-    s16 unk2C;      //Set by MagicPlant, but not used by MagicDust?
-    s16 mode;       //Behaviour variations (see `MagicDust_Modes`)
-} MagicDust_Setup;
-
-typedef struct {
     DLL27_Data collision;
     f32 collisionRadius;    //Radius for collider and collection (+8 units for collection)
     f32 timer;              //Timer (in frames) for different events: delayed fall, vanish, delete

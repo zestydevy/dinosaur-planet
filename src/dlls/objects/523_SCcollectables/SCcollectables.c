@@ -1,9 +1,9 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -45,15 +45,15 @@ void SCcollectables_setup(Object* self, Collectable_Setup* objsetup, UNK_TYPE_32
     objAddObjectType(self, OBJTYPE_Collectable);
     objInitMesgQueue(self, 2);
 
-    self->srt.yaw = objsetup->yaw << 8;
-    self->srt.pitch = objsetup->pitch << 8;
-    self->srt.roll = objsetup->roll << 8;
+    self->srt.yaw = objsetup->yaw8 << 8;
+    self->srt.pitch = objsetup->pitch8 << 8;
+    self->srt.roll = objsetup->roll8 << 8;
     self->srt.scale = self->def->scale;
     self->modelInstIdx = objsetup->modelIdx;
     self->velocity.y = 0.0f;
     
     if (self->objhitInfo) {
-        self->objhitInfo->unk52 = objsetup->objHitsValue;
+        self->objhitInfo->unk52 = objsetup->scale;
     }
     
     objdata->gamebitCount = objsetup->gamebitCount;

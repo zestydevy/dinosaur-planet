@@ -3,12 +3,12 @@
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/85_attentioncam.h"
-#include "dlls/objects/255_ProjBall.h"
 #include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/420_DFropenode.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/animseq.h"
 #include "sys/footsteps.h"
 #include "sys/gfx/model.h"
@@ -45,13 +45,11 @@
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "dlls/objects/418_DFriverflow.h"
-#include "dlls/objects/793_BWLog.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
 #include "unktypes.h"
 #include "sys/objexpr.h"
-#include "prevent_bss_reordering.h"
 #include "dongle.h"
 
 static void dll_210_func_1BC0(Object* player, Player_Data* arg1);
@@ -3520,7 +3518,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     f32 factorX;
     f32 factorY;
     Camera* cam;
-    ProjBall_Setup *objsetup;
+    Projectile_Setup *objsetup;
     Object *weapon;
     Object *projectile;
     Object *target;
@@ -3545,7 +3543,7 @@ void dll_210_func_90A0(Object* player, ObjFSA_Data* fsa, f32 updateRate) {
     gDLL_6_AMSFX->vtbl->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     
     while (count) {
-        objsetup = (ProjBall_Setup*) objAllocSetup(sizeof(ProjBall_Setup), OBJ_projball);
+        objsetup = (Projectile_Setup*) objAllocSetup(sizeof(Projectile_Setup), OBJ_projball);
         objsetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
         objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->base.loadDistance = 0xFF;
@@ -3646,7 +3644,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     var_s4 = 1;
     dll_amSfx->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
     while (var_s4) {
-        temp_v0 = objAllocSetup(0x24, OBJ_grenade);
+        temp_v0 = objAllocSetup(sizeof(Projectile_Setup), OBJ_grenade);
         temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
         temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
         temp_v0->loadDistance = 0xFF;
@@ -3703,7 +3701,7 @@ void dll_210_func_955C(Object* player, ObjFSA_Data* fsa, f32 arg2) {
 void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     SRT spF8;
     SRT spE0;
-    ObjSetup* temp_v0;
+    Projectile_Setup* temp_v0;
     Object* temp_a0;
     Object* spD4;
     MtxF sp94;
@@ -3722,17 +3720,17 @@ void dll_210_func_98CC(Object* player, ObjFSA_Data* fsa, f32 arg2) {
     DLL_Unknown* dll;
 
     dll_amSfx->Play(NULL, SOUND_2B8_Spell_Fired, MAX_VOLUME, NULL, NULL, 0, NULL);
-    temp_v0 = objAllocSetup(0x24, OBJ_icebeam);
-    temp_v0->loadFlags = OBJSETUP_LOAD_MANUAL;
-    temp_v0->fadeFlags = OBJSETUP_FADE_MANUAL;
-    temp_v0->loadDistance = 0xFF;
-    temp_v0->fadeDistance = 0xFF;
-    temp_v0->x = player->linkedObject->globalPosition.x;
-    temp_v0->y = player->linkedObject->globalPosition.y;
-    temp_v0->z = player->linkedObject->globalPosition.z;
+    temp_v0 = objAllocSetup(sizeof(Projectile_Setup), OBJ_icebeam);
+    temp_v0->base.loadFlags = OBJSETUP_LOAD_MANUAL;
+    temp_v0->base.fadeFlags = OBJSETUP_FADE_MANUAL;
+    temp_v0->base.loadDistance = 0xFF;
+    temp_v0->base.fadeDistance = 0xFF;
+    temp_v0->base.x = player->linkedObject->globalPosition.x;
+    temp_v0->base.y = player->linkedObject->globalPosition.y;
+    temp_v0->base.z = player->linkedObject->globalPosition.z;
     temp_a0 = player->linkedObject;
-    ((s8*)temp_v0)[0x19] = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
-    temp_v0_2 = objSetupObject(temp_v0, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    temp_v0->unk19 = ((DLL_Unknown *)temp_a0->dll)->vtbl->func[16].withOneArgS32((s32)temp_a0);
+    temp_v0_2 = objSetupObject(&temp_v0->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (temp_v0_2 == NULL) {
         return;
     }

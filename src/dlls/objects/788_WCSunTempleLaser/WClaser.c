@@ -1,17 +1,9 @@
 #include "common.h"
 #include "game/gamebits.h"
+#include "game/objects/objsetups.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objmsg.h"
 #include "dlls/objects/210_player.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 mode;
-    s16 offIntervalDuration;
-    s16 firingDuration;
-    s16 gamebitEnabled;
-} WCSunTempleLaser_Setup;
 
 typedef struct {
     Texture* texLaser;
@@ -60,12 +52,12 @@ void WCSunTempleLaser_ctor(void* dll) { }
 void WCSunTempleLaser_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCSunTempleLaser_obj_Setup(Object* self, WCSunTempleLaser_Setup* objSetup, s32 reset) {
+void WCSunTempleLaser_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     WCSunTempleLaser_Data* objData = self->data;
     
     objInitMesgQueue(self, 2);
     
-    self->srt.yaw = objSetup->yaw << 8;
+    self->srt.yaw = objSetup->wcLaser.yaw << 8;
     
     objData->timerDelay = mathRnd(-80, 80) + 400;
     
@@ -77,13 +69,13 @@ void WCSunTempleLaser_obj_Setup(Object* self, WCSunTempleLaser_Setup* objSetup, 
         objData->texLaser = texLoadTexture(TEXTABLE_2E);
     }
     
-    objData->timerFiring = mathRnd(0, objSetup->firingDuration);
-    objData->timerOffInterval = mathRnd(0, objSetup->offIntervalDuration);
+    objData->timerFiring = mathRnd(0, objSetup->wcLaser.firingDuration);
+    objData->timerOffInterval = mathRnd(0, objSetup->wcLaser.offIntervalDuration);
 }
 
 // offset: 0x140 | func: 1 | export: 1
 void WCSunTempleLaser_obj_Control(Object* self) {
-    WCSunTempleLaser_Setup* objSetup;
+    Ctrl51_Setup* objSetup;
     WCSunTempleLaser_Data* objData;
     s32 pad1[3];
     f32 sin;
@@ -102,24 +94,24 @@ void WCSunTempleLaser_obj_Control(Object* self) {
     s32 pad3[2];
     f32 sp34;
 
-    objSetup = (WCSunTempleLaser_Setup*)self->setup;
+    objSetup = (Ctrl51_Setup*)self->setup;
     objData = self->data;
     objData->timerDelay -= gUpdateRateF;
     
-    if ((objSetup->mode != WCSunTempleLaser_MODE_Always_On) && (mainGetBits(BIT_WC_Moon_Temple_Hazards_Deactivated))) {
-        mainSetBits(objSetup->gamebitEnabled, FALSE);
+    if ((objSetup->wcLaser.type != WCSunTempleLaser_MODE_Always_On) && (mainGetBits(BIT_WC_Moon_Temple_Hazards_Deactivated))) {
+        mainSetBits(objSetup->wcLaser.bitEnabled, FALSE);
     }
     
     //Laser's State Machine (starting/stopping/waiting)
-    if (mainGetBits(objSetup->gamebitEnabled)) {
+    if (mainGetBits(objSetup->wcLaser.bitEnabled)) {
         if (objData->flags & WCSunTempleLaser_Flag_Firing) {
-            if (objSetup->mode != WCSunTempleLaser_MODE_Always_On) {
+            if (objSetup->wcLaser.type != WCSunTempleLaser_MODE_Always_On) {
                 objData->timerFiring -= gUpdateRateF;
             }
             
             if (objData->timerFiring < 0.0f) {
                 //Switch off
-                objData->timerOffInterval = objSetup->offIntervalDuration;
+                objData->timerOffInterval = objSetup->wcLaser.offIntervalDuration;
                 objData->flags &= ~WCSunTempleLaser_Flag_Firing;
                 
                 if (objData->soundHandle != 0) {
@@ -151,7 +143,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                         
                         //Create modGfx
                         if (dModGfxDLL != NULL) {
-                            effectIdx = (objSetup->mode == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 15;
+                            effectIdx = (objSetup->wcLaser.type == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 15;
                             dModGfxDLL->vtbl->Spawn(self, effectIdx, NULL, 0x10004, -1, NULL);
                         }
                     }
@@ -160,7 +152,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                         if (objData->state == WCSunTempleLaser_STATE_1_Started) {
                             objData->state = WCSunTempleLaser_STATE_2_Stopping;
                             if (dModGfxDLL != NULL) {
-                                effectIdx = (objSetup->mode == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 16;
+                                effectIdx = (objSetup->wcLaser.type == WCSunTempleLaser_MODE_Timed_Blue) ? 13 : 16;
                                 dModGfxDLL->vtbl->Spawn(self, effectIdx, NULL, 0x10004, -1, NULL);
                             }
                         }
@@ -169,11 +161,11 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                     }
                 }
             }
-        } else if (objSetup->mode != WCSunTempleLaser_MODE_Always_On) {
+        } else if (objSetup->wcLaser.type != WCSunTempleLaser_MODE_Always_On) {
             //Laser off, wait out the interval between blasts
             objData->timerOffInterval -= gUpdateRateF;
             if (objData->timerOffInterval <= 0.0f) {
-                objData->timerFiring = objSetup->firingDuration;
+                objData->timerFiring = objSetup->wcLaser.firingDuration;
                 objData->flags |= WCSunTempleLaser_Flag_Firing;
                 objData->state = WCSunTempleLaser_STATE_0_Off;
                 objData->beamStartHissPlayed = FALSE;
@@ -229,7 +221,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
         }
         
         //Check the laser's gamebit and its firing flag
-        if ((mainGetBits(objSetup->gamebitEnabled) == FALSE) || (objData->flags & WCSunTempleLaser_Flag_Firing) == FALSE) {
+        if ((mainGetBits(objSetup->wcLaser.bitEnabled) == FALSE) || (objData->flags & WCSunTempleLaser_Flag_Firing) == FALSE) {
             objData->laserIsActive = FALSE;
         }
 

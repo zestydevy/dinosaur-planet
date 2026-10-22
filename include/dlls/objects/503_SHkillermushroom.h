@@ -11,15 +11,6 @@
 #define SPORE_ATTACK_DURATION 120.0f
 
 typedef struct {
-    ObjSetup base;
-    u16 attackCooldown;     //How long (in frames) until the mushroom leaves its attack outro state
-    u16 regrowWaitDuration; //How long (in frames) until the mushroom starts regrowing after being collected/killed
-    s16 gamebitAttacked;    //Optional gamebitID to set when the mushroom is damaged
-    u8 aggroRadius;         //While in idle state, attacks the player with spores if they enter this radius
-    u8 modelIdx;            //Mushroom design (only has 1 model, though)
-} SHkillermushroom_Setup;
-
-typedef struct {
     f32 timer;              //Cooldown timer for various behaviour (growing, attacking, etc.)
     f32 scaleMax;           //Maximum scale once grown (randomly varied by ±10%)
     f32 growDuration;       //How long it'll take for the mushroom to finish regrowing (after starting to scale up)

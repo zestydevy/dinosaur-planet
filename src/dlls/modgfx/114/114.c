@@ -1,9 +1,9 @@
+#include "game/objects/objsetups.h"
 #include "sys/math.h"
 #include "game/objects/object.h"
 #include "dlls/engine/14_modgfx.h"
 #include "sys/gfx/textable.h"
 #include "dll.h"
-#include "dlls/objects/common/campfire.h"
 
 /*0x0*/ static s16 data_0[] = {
     0, 0, 1000, 0, 0, 866, 0, 500, 11, 0, 866, 0, -500, 22, 0, 0,

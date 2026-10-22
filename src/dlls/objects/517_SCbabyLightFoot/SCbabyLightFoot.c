@@ -66,7 +66,7 @@ void dll_517_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     if (arg2 != 0) {
         var_v0 = 0x17;
     }
-    gDLL_33_BaddieControl->vtbl->setup(self, (Baddie_Setup* ) setup, (Baddie* ) baddie, 2, 1, 0x108, (u8) var_v0, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, setup, baddie, 2, 1, 0x108, (u8) var_v0, 20.0f);
     self->animCallback = dll_517_func_2FC;
     baddie->fsa.animState = 0;
     baddie->fsa.logicState = 0;
@@ -84,7 +84,7 @@ void dll_517_control(Object* self) {
 
     sp24 = self->data;
     if (self->unkDC == 0) {
-        if (gDLL_33_BaddieControl->vtbl->func11(self, (Baddie* ) sp24, 1U) != 0) {
+        if (gDLL_33_BaddieControl->vtbl->func11(self, sp24, 1U) != 0) {
            dll_517_func_334(self, sp24, &sp24->fsa);
         }
     }
@@ -106,7 +106,7 @@ void dll_517_free(Object* self, s32 arg1) {
 
     sp24 = self->data;
     objFreeObjectType(self, OBJTYPE_Baddie);
-    gDLL_33_BaddieControl->vtbl->free(self, (Baddie* ) sp24, 0x20U);
+    gDLL_33_BaddieControl->vtbl->free(self, sp24, 0x20U);
 }
 
 
@@ -141,7 +141,7 @@ static void dll_517_func_334(Object* arg0, Baddie* baddie, ObjFSA_Data* arg2) {
     objExprEyeIdle(arg0, &baddie -> unk3BC);
     arg2->target = objGetPlayer();
     gDLL_33_BaddieControl->vtbl->func10(arg0, arg2, 0.17f, 1);
-    baddie->unk3AC = (Object* ) arg0->animObj;
+    baddie->unk3AC = arg0->animObj;
     arg0->animObj = NULL;
     gDLL_18_objfsa->vtbl->tick(arg0, arg2, gUpdateRateF, gUpdateRateF, _bss_0, _bss_8);
     arg0->animObj = baddie->unk3AC;

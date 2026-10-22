@@ -1,20 +1,12 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/objsetups.h"
 #include "sys/objtype.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
 #include "dlls/objects/358_debris.h"
 #include "dlls/objects/505_SHspore.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 regrowthDelay;
-    s16 sporeLaunchInterval;    //Frames between spore launches (actual interval has some randomised variance added to this value)
-    s16 gamebitGrow;            //When specified, plant only grows when gamebit set (and gamebit unset upon exploding)
-    s8 sporeAngularRange;       //Variance in launched SHspores' flight yaw
-    s8 yaw;
-} SHrocketmushroom_Setup;
 
 typedef struct {
     f32 timer;          //Countdown timer for various states (waiting, growing, launching spore)

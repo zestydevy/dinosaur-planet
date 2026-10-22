@@ -18,10 +18,6 @@
 #include "prevent_bss_reordering.h"
 
 typedef struct {
-    Baddie_Setup baddie;
-} DLL228_Setup;
-
-typedef struct {
     s8 unk0[12];
     Vec3f origin;  //Coords for the attachPoint the thorn will be fired from
 } CaictuaAimData;

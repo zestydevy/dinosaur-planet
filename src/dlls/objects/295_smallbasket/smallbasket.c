@@ -6,6 +6,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/dll.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -17,7 +18,6 @@
 #include "sys/objtype.h"
 #include "sys/rand.h"
 
-#include "dlls/objects/common/collectable.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/297_scarab.h"
 #include "dlls/objects/615_crawler.h"
@@ -767,7 +767,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             } else {
                 foodSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_applePickup);
             }
-            foodSetup->objHitsValue = 20;
+            foodSetup->scale = 20;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitCollected = NO_GAMEBIT;
             if (objData->throwFlags != 0) {

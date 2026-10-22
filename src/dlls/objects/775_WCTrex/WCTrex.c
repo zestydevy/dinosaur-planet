@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/53_movelib.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
@@ -60,7 +61,7 @@ void WCTrex_ctor(void *dll) {
 void WCTrex_dtor(void *dll) { }
 
 // offset: 0xD0 | func: 1 | export: 0
-void WCTrex_setup(Object* self, ObjSetup* setup, s32 reset) {
+void WCTrex_setup(Object* self, Baddie_Setup* setup, s32 reset) {
     WCTrex_Data* objdata = self->data;
     s16 sp4C[] = {5,  5, 10, 10, 10, 10, 10, 10};
     s16 sp3C[] = {5, 10, 20, 20, 20, 20, 20, 20};

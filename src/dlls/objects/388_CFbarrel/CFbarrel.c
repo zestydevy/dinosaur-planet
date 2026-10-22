@@ -6,6 +6,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/objsetups.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -19,12 +20,6 @@
 #include "macros.h"
 
 /** @file official filename: CFbarrel.c */
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw8;
-/*19*/ s8 unk19;
-} CFbarrel_Setup;
 
 typedef struct {
 /*00*/ Pickup pickup;
@@ -68,7 +63,7 @@ void CFbarrel_ctor(void *dll) { }
 void CFbarrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFbarrel_obj_Setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
+void CFbarrel_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     CFbarrel_Data* objdata = self->data;
     Pickup* pickup = self->data;
     
@@ -77,7 +72,7 @@ void CFbarrel_obj_Setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Barrel);
     objAddObjectType(self, OBJTYPE_WindLiftable);
     objInitMesgQueue(self, 4);
-    self->srt.yaw = setup->yaw8 << 8;
+    self->srt.yaw = setup->generic.yaw << 8;
     self->unkE0 = 0;
     objdata->unk38 = 0;
     objdata->isHeld = FALSE;
@@ -89,7 +84,7 @@ void CFbarrel_obj_Setup(Object* self, CFbarrel_Setup* setup, s32 reset) {
     objdata->flags = 0;
     objdata->unk28 = 0.0f;
     objdata->unk3A = objdata->unk38;
-    if (setup->unk19 > 0) {
+    if (setup->generic.type > 0) {
         objdata->isLevelObj = FALSE;
     } else {
         objdata->isLevelObj = TRUE;

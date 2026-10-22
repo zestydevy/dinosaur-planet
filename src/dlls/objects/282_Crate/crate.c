@@ -2,10 +2,10 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/objsetups.h"
 #include "sys/objtype.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/common/collectable.h"
 
 #define REAPPEAR_TIME 1200.0f //20 seconds
 #define FLASH_MAX_OPACITY 120.0f
@@ -159,7 +159,7 @@ void crate_control(Object* self) {
             foodSetup->base.x = self->srt.transl.x;
             foodSetup->base.y = self->srt.transl.y + 10.0f;
             foodSetup->base.z = self->srt.transl.z;
-            foodSetup->objHitsValue = 3;
+            foodSetup->scale = 3;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitSecondary = NO_GAMEBIT;
             objSetupObject(
