@@ -9,7 +9,6 @@
 #include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "dlls/objects/216_SnowWorm.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/251_weapons.h"
 
 typedef struct {
@@ -628,10 +627,10 @@ void SnowWorm_func_1374(Object* self, Baddie* baddie) {
   * Creates an `IceBall` Object, thrown at the player.
   */
 void SnowWorm_throwIceBall(Object* self, SnowWorm_DataActual* objData) {
-    ChukaChuck_Setup* iceSetup;
+    BaddieProjectile_Setup* iceSetup;
     Object* ice;
 
-    iceSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_IceBall);
+    iceSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_IceBall);
     iceSetup->base.x = objData->throwOrigin.transl.x;
     iceSetup->base.y = objData->throwOrigin.transl.y;
     iceSetup->base.z = objData->throwOrigin.transl.z;

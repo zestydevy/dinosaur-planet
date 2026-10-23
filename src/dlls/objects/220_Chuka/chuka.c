@@ -1,7 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/220_Chuka.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
@@ -220,12 +219,12 @@ void Chuka_receive_message(Object* self, u8 message) {
   */
 static void Chuka_chuck(Object* self) {
     Chuka_Data* objData;
-    ChukaChuck_Setup* chuckSetup;
+    BaddieProjectile_Setup* chuckSetup;
     Object* chuck;
     Object* player;
 
     objData = self->data;
-    chuckSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_ChukaChuck);
+    chuckSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_ChukaChuck);
     chuckSetup->base.x = self->srt.transl.x;
     chuckSetup->base.y = self->srt.transl.y;
     chuckSetup->base.z = self->srt.transl.z;

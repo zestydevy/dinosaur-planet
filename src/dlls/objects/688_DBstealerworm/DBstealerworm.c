@@ -1,7 +1,6 @@
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/3_animation.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
@@ -526,12 +525,12 @@ void DBStealerWorm_handleSpitAndFxFlags(Object* self, Baddie* baddie) {
 
 // offset: 0x1048 | func: 14
 void DBStealerWorm_spit(Object* self, Baddie* baddie) {
-    ChukaChuck_Setup* chuckSetup;
+    BaddieProjectile_Setup* chuckSetup;
     Object* chuck;
     f32 throwFactor;
     f32 throwTime; //Duration of throw in frames
 
-    chuckSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_IceBallSmall);
+    chuckSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_IceBallSmall);
     chuckSetup->base.x = self->srt.transl.x;
     chuckSetup->base.y = self->srt.transl.y + 15.0f;
     chuckSetup->base.z = self->srt.transl.z;

@@ -15,7 +15,7 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 
-#include "prevent_bss_reordering.h"
+#include "prevent_bss_reordering2.h"
 
 typedef struct {
     s8 unk0[12];

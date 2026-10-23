@@ -125,7 +125,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->id = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
-    fxEmit = objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    fxEmit = objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (fxEmit != NULL) {
         fxEmit->unkC4 = self;
     }

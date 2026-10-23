@@ -1,6 +1,9 @@
 #include "common.h"
 
-#include "dlls/objects/261_PollenFragment.h"
+typedef struct {
+    u32 lifetime;
+    u32 soundHandle;
+} PollenFragment_Data;
 
 // offset: 0x0 | ctor
 void PollenFragment_ctor(void *dll) { }
@@ -9,7 +12,7 @@ void PollenFragment_ctor(void *dll) { }
 void PollenFragment_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void PollenFragment_setup(Object* self, PollenFragment_Setup* objSetup, s32 arg2) {
+void PollenFragment_setup(Object* self, BaddieProjectile_Setup* objSetup, s32 arg2) {
     PollenFragment_Data* objData = self->data;
     
     func_800267A4(self);

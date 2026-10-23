@@ -242,7 +242,7 @@ static void WGPollenPod_create_pollen(Object* self, Baddie* baddie) {
 
     i = 0;
     do {
-        pollenSetup = objAllocSetup(sizeof(Pollen_Setup), OBJ_Pollen);
+        pollenSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_Pollen);
         pollenSetup->x = (Sinf(self->srt.yaw) * 16.0f) + self->srt.transl.x;
         pollenSetup->y = self->srt.transl.y;
         pollenSetup->z = (Cosf(self->srt.yaw) * 16.0f) + self->srt.transl.z;
