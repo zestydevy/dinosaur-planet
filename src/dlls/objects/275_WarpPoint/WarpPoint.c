@@ -1,10 +1,10 @@
 #include "dll.h"
+#include "game/objects/setups/39_Warp.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/objects.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
 
 typedef struct {
 /*00*/ s16 warpDelayTimer;

@@ -1,7 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/31_SideSetup.h"
 #include "sys/gfx/model.h"
 #include "types.h"
 
@@ -9,7 +9,7 @@ void sidesetup_ctor(void *dll) { }
 
 void sidesetup_dtor(void *dll) { }
 
-void sidesetup_setup(Object *self, SideSetupObj_Setup *objsetup, s32 arg2) {
+void sidesetup_setup(Object *self, SideSetup_Setup *objsetup, s32 arg2) {
     objsetup->unk1A = objsetup->unk18.byte[0] - 1;
     objsetup->unk18.halfword = -1;
 }

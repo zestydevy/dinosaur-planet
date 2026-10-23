@@ -1,7 +1,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/32_SideLoad.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"

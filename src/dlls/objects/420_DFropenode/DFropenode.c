@@ -1,12 +1,8 @@
 #include "common.h"
 #include "dlls/objects/420_DFropenode.h"
+#include "game/objects/setups/56_RopeNode.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-} DLL420_Setup;
 
 typedef struct DLL420_Grandchild_TypeA {
     Vec3f unk0; //Position adjustment for the rope node
@@ -116,13 +112,13 @@ void dll_420_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x984 | func: 4 | export: 4
 void dll_420_free(Object* self, s32 onlySelf) {
     DLL420_Data* objData;
-    DLL420_Setup* objSetup;
+    RopeNode_Setup* objSetup;
     s32 i;
     s32 count; //38
     Object** objects;
     Object* otherObj;
 
-    objSetup = (DLL420_Setup*)self->setup;
+    objSetup = (RopeNode_Setup*)self->setup;
     objData = self->data;
 
     data_4--;

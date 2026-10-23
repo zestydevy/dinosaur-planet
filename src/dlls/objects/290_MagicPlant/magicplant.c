@@ -1,7 +1,7 @@
 #include "common.h"
 #include "macros.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"

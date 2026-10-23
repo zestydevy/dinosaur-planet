@@ -1,6 +1,6 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 

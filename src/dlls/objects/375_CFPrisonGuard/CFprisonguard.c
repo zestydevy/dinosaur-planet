@@ -4,7 +4,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"

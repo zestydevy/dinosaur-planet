@@ -1,24 +1,11 @@
 #include "common.h"
+#include "game/objects/setups/85_ProjectileTarget.h"
 #include "sys/gfx/model.h"
 
 typedef struct {
     u8 switchPressed;
     f32 resetTimer;
 } ProjectileSwitch_Data;
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebit;            //GamebitID to set when switch is hit
-    s16 resetDelay;         //Number of seconds until the switch resets to its unpressed state (if `Switch_FLAG_Resets_After_Delay` is set)
-    u8 pitch;               //Rotation
-    u8 scale;               //Scale multiplier (0x64 = 100%)
-    u8 modelIndexAndFlags;  //Flags on lowest two bits, modelIndex on upper bits
-    u8 yaw;                 //Rotation
-    u8 tintR;
-    u8 tintG;
-    u8 tintB;
-    u8 enableTint;          //Enable tinting the switch to a different colour
-} ProjectileSwitch_Setup;
 
 typedef enum {
     Switch_FLAG_Can_Be_Toggled_Via_Attacks = 1, //Repeated Projectile Spell hits will toggle the switch's state
@@ -34,7 +21,7 @@ void ProjectileSwitch_ctor(void* dll) { }
 void ProjectileSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ProjectileSwitch_obj_Setup(Object* self, ProjectileSwitch_Setup* objSetup, s32 reset) {
+void ProjectileSwitch_obj_Setup(Object* self, ProjectileTarget_Setup* objSetup, s32 reset) {
     ProjectileSwitch_Data* objData = self->data;
     
     self->srt.yaw = objSetup->yaw << 8;
@@ -49,7 +36,7 @@ void ProjectileSwitch_obj_Setup(Object* self, ProjectileSwitch_Setup* objSetup, 
     self->objhitInfo->unk52 = (objSetup->scale * self->def->hitbox_flagsB6) / 64;
     
     //Set model instance
-    self->modelInstIdx = objSetup->modelIndexAndFlags >> 2;
+    self->modelInstIdx = objSetup->settings >> 2;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
@@ -70,11 +57,11 @@ void ProjectileSwitch_obj_Setup(Object* self, ProjectileSwitch_Setup* objSetup, 
 
 // offset: 0x1B0 | func: 1 | export: 1
 void ProjectileSwitch_obj_Control(Object* self) {
-    ProjectileSwitch_Setup* objSetup;
+    ProjectileTarget_Setup* objSetup;
     ProjectileSwitch_Data* objData;
 
     objData = self->data;
-    objSetup = (ProjectileSwitch_Setup*)self->setup;
+    objSetup = (ProjectileTarget_Setup*)self->setup;
     
     if (objData->switchPressed && (mainGetBits(objSetup->gamebit) == FALSE)) {
         ProjectileSwitch_changeState(self, FALSE, TRUE);
@@ -94,14 +81,14 @@ void ProjectileSwitch_obj_Control(Object* self) {
     //React to Projectile Switch attacks
     if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
         if (objData->switchPressed) {
-            if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Can_Be_Toggled_Via_Attacks) {
+            if ((objSetup->settings & 3) == Switch_FLAG_Can_Be_Toggled_Via_Attacks) {
                 ProjectileSwitch_changeState(self, FALSE, TRUE);
                 mainSetBits(objSetup->gamebit, 0);
             }
         } else {
             ProjectileSwitch_changeState(self, TRUE, TRUE);
             mainSetBits(objSetup->gamebit, 1);
-            if ((objSetup->modelIndexAndFlags & 3) == Switch_FLAG_Resets_After_Delay) {
+            if ((objSetup->settings & 3) == Switch_FLAG_Resets_After_Delay) {
                 objData->resetTimer = objSetup->resetDelay * 0.1f * 60.0f;
             }
         }
@@ -113,7 +100,7 @@ void ProjectileSwitch_obj_Update(Object* self) { }
 
 // offset: 0x3A4 | func: 3 | export: 3
 void ProjectileSwitch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    ProjectileSwitch_Setup* objSetup = (ProjectileSwitch_Setup*)self->setup;
+    ProjectileTarget_Setup* objSetup = (ProjectileTarget_Setup*)self->setup;
     
     if (visibility) {
         if (objSetup->enableTint) {
@@ -128,12 +115,12 @@ void ProjectileSwitch_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x450 | func: 5 | export: 5
 u32 ProjectileSwitch_obj_GetModelFlags(Object* self) {
-    ProjectileSwitch_Setup* objSetup;
+    ProjectileTarget_Setup* objSetup;
     s32 modelIndex;
 
-    objSetup = (ProjectileSwitch_Setup*) self->setup;
+    objSetup = (ProjectileTarget_Setup*) self->setup;
                
-    modelIndex = objSetup->modelIndexAndFlags >> 2;
+    modelIndex = objSetup->settings >> 2;
     if (modelIndex >= self->def->numModels) {
         modelIndex = 0;
     }

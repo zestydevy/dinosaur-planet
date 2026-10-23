@@ -1,4 +1,4 @@
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/52_CampFire.h"
 #include "sys/math.h"
 #include "game/objects/object.h"
 #include "dlls/engine/14_modgfx.h"

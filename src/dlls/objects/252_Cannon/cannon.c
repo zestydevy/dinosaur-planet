@@ -1,7 +1,7 @@
 #include "dlls/engine/17_partfx.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/37_Cannon.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"

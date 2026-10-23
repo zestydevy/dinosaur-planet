@@ -1,6 +1,7 @@
 #include "dlls/objects/437_EWTrobotpatrol.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/58_RobotPatrol.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -130,7 +131,7 @@ void EWTrobotpatrolB_spawnRobo(Object* self, CurveSetup* startNode) {
     while (objdata->robos[i] != NULL) {
         i++;
     }
-    roboSetup = objAllocSetup(sizeof(EWTrobotpatrol_Setup), OBJ_EWTrobotpatrol);
+    roboSetup = objAllocSetup(sizeof(RobotPatrol_Setup), OBJ_EWTrobotpatrol);
     roboSetup->actExclusions1 = setup->base.actExclusions1;
     roboSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     roboSetup->fadeDistance = setup->roboFadeDistance;

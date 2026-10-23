@@ -3,20 +3,13 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/57_ObjCreator.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 _unk18[0x1A - 0x18];
-/*1A*/ s16 type;
-/*1C*/ u8 _unk1C[0x1E - 0x1C];
-/*1E*/ s8 rotation; // yaw >> 8
-} GPSH_ObjCreator_Setup;
 
 typedef struct {
 /*0*/ s16 timer;
@@ -49,10 +42,10 @@ void GPSH_ObjCreator_ctor(void* dll) { }
 void GPSH_ObjCreator_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPSH_ObjCreator_setup(Object* self, GPSH_ObjCreator_Setup* setup, s32 reset) {
+void GPSH_ObjCreator_setup(Object* self, ObjCreator_Setup* setup, s32 reset) {
     GPSH_ObjCreator_Data* objdata = self->data;
 
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw8 << 8;
     self->unkE0 = 0;
     objdata->timer = 100;
     objdata->timerRate = 0;
@@ -65,14 +58,14 @@ void GPSH_ObjCreator_setup(Object* self, GPSH_ObjCreator_Setup* setup, s32 reset
 
 // offset: 0x5C | func: 1 | export: 1
 void GPSH_ObjCreator_control(Object* self) {
-    GPSH_ObjCreator_Setup* setup;
+    ObjCreator_Setup* setup;
     GPSH_PickObj_Setup* pickObjSetup;
     GPSH_flybaddie_Setup* flybaddieSetup;
     GPSH_ObjCreator_Data* objdata;
     s32 _pad;
     DLL_IModgfx* modgfx;
 
-    setup = (GPSH_ObjCreator_Setup*)self->setup;
+    setup = (ObjCreator_Setup*)self->setup;
     objdata = self->data;
     if (mainGetBits(BIT_5AF) != 0) {
         // Reset

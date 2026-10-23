@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 
 typedef struct {
     f32 minZ;                       //The position of the vertex furthest from the model's origin along Z (will be negative, and effectively bridge's length)

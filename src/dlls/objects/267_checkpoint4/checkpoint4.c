@@ -1,5 +1,5 @@
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/5_Checkpoint.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
 #include "dlls/objects/267_checkpoint4.h"
@@ -25,7 +25,7 @@ void checkpoint4_ctor(void *dll) { }
 void checkpoint4_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void checkpoint4_setup(Object *self, checkpoint4_Setup *setup, s32 arg2) {
+void checkpoint4_setup(Object *self, Checkpoint_Setup *setup, s32 arg2) {
     s32 i;
     f32 scale;
     checkpoint4_Data *objdata;

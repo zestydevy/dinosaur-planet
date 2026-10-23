@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 
 typedef struct {
     f32 timer;

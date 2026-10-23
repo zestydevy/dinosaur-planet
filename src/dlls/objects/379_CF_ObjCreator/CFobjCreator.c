@@ -1,11 +1,5 @@
-#include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s32 _unk18;
-    u16 _unk1C;
-    s8 unk1E;    
-}DLL379_Setup;
+#include "game/objects/setups/57_ObjCreator.h"
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void dll_379_ctor(void *dll) { }
@@ -14,8 +8,8 @@ void dll_379_ctor(void *dll) { }
 void dll_379_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_379_setup(Object* self, DLL379_Setup* setup, s32 arg2) {
-    self->srt.yaw = setup->unk1E << 8;
+void dll_379_setup(Object* self, ObjCreator_Setup* setup, s32 arg2) {
+    self->srt.yaw = setup->yaw8 << 8;
 }
 
 // offset: 0x30 | func: 1 | export: 1

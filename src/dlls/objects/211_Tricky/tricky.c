@@ -426,7 +426,7 @@ void dll_211_control(Object* self) {
             break;
         case 5:
             objData->unk1D = 5;
-            temp_v0_2 = objAllocSetup(sizeof(SidekickToy_Setup), OBJ_SidekickBall);
+            temp_v0_2 = objAllocSetup(sizeof(ObjSetup), OBJ_SidekickBall);
             temp_v0_2->fadeDistance = 0x96;
             temp_v0_2->loadFlags = 2;
             temp_v0_2->x = self->globalPosition.x;

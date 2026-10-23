@@ -1,15 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/85_ProjectileTarget.h"
 #include "sys/objhits.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebit;            //Gamebit to affect when damaged by an explosion
-    s16 timerDuration;      //For Mode 2: how long (in 10ths of a second) until the gamebit unsets after an explosion
-    s8 unk1C;
-    u8 scale;               //Target scale
-    u8 mode;                //Which gamebit setting mode to use (see `BlownUpTarget_Modes`)
-} BlownUpTarget_Setup;
 
 typedef struct {
     u8 gamebitValue;        //Current value of the target's gamebit
@@ -29,7 +21,7 @@ void BlownUpTarget_ctor(void* dll) { }
 void BlownUpTarget_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void BlownUpTarget_obj_Setup(Object* self, BlownUpTarget_Setup* objSetup, s32 reset) {
+void BlownUpTarget_obj_Setup(Object* self, ProjectileTarget_Setup* objSetup, s32 reset) {
     BlownUpTarget_Data* objData = self->data;
     
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -47,11 +39,11 @@ void BlownUpTarget_obj_Setup(Object* self, BlownUpTarget_Setup* objSetup, s32 re
 
 // offset: 0x108 | func: 1 | export: 1
 void BlownUpTarget_obj_Control(Object* self) {
-    BlownUpTarget_Setup* objSetup;
+    ProjectileTarget_Setup* objSetup;
     BlownUpTarget_Data* objData;
 
     objData = self->data;
-    objSetup = (BlownUpTarget_Setup*)self->setup;
+    objSetup = (ProjectileTarget_Setup*)self->setup;
     
     //Check if the target's gamebit is unset, and sync with it
     if ((objData->gamebitValue != FALSE) && (mainGetBits(objSetup->gamebit) == FALSE)) {
@@ -72,7 +64,7 @@ void BlownUpTarget_obj_Control(Object* self) {
     if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Explosion) {
         if (objData->gamebitValue) {
             //If Mode 1 is in use, unset the gamebit when damaged
-            if (objSetup->mode == BlownUpTarget_MODE_1_Damage_Toggles_Gamebit) {
+            if (objSetup->settings == BlownUpTarget_MODE_1_Damage_Toggles_Gamebit) {
                 objData->gamebitValue = FALSE;
                 mainSetBits(objSetup->gamebit, FALSE);
             }
@@ -82,8 +74,8 @@ void BlownUpTarget_obj_Control(Object* self) {
             mainSetBits(objSetup->gamebit, TRUE);
 
             //If Mode 2 is in use, start a countdown to unsetting the gamebit
-            if (objSetup->mode == BlownUpTarget_MODE_2_Damage_Sets_Gamebit_Temporarily) {
-                objData->timer = objSetup->timerDuration * 0.1f * 60.0f;
+            if (objSetup->settings == BlownUpTarget_MODE_2_Damage_Sets_Gamebit_Temporarily) {
+                objData->timer = objSetup->resetDelay * 0.1f * 60.0f;
             }
         }
     }

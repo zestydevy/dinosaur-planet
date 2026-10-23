@@ -1,6 +1,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/58_RobotPatrol.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/gfx/animseq.h"
@@ -13,12 +14,6 @@
 #include "sys/lighting.h"
 #include "sys/voxmap.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1A - 0x18];
-/*1A*/ u8 unk1A;
-} RobotPatrol_Setup;
 
 typedef struct {
 /*0*/ f32 stickXF;

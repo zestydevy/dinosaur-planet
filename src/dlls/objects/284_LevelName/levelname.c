@@ -4,6 +4,7 @@
 #include "dlls/engine/21_gametext.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/71_LevelName.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/fonts.h"
@@ -11,15 +12,6 @@
 #include "sys/math.h"
 #include "sys/memory.h"
 #include "sys/objects.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitShown;
-    s16 unk1A;
-    s16 unk1C;
-    s16 textID;
-    u8 activationRadius;
-} LevelName_Setup;
 
 typedef struct {
 /*00*/ GameTextChunk* gametext;

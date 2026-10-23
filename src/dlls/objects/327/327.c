@@ -1,7 +1,7 @@
 // Official DLL name unknown, but used for many basic stationary animated props/characters
 
 #include "game/gamebits.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/30.h"
 #include "sys/main.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"

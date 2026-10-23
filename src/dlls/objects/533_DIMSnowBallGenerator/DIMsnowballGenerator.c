@@ -1,14 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "dlls/objects/532_DIMsnowball.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 snowballInterval;   //How many frames to wait between creating snowballs
-    u8 unk1A;
-    u8 unk1B;
-    u8 yaw;
-} DIMSnowBallGenerator_Setup;
+#include "game/objects/setups/74_DIMSnowBallGenerator.h"
 
 typedef struct {
     s16 timer;              //Countdown until a snowball is created

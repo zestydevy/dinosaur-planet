@@ -6,7 +6,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/animseq.h"
 #include "sys/math.h"
 #include "sys/memory.h"

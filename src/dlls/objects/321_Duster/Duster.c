@@ -3,7 +3,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"

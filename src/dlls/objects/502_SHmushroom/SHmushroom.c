@@ -1,8 +1,8 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
 #include "macros.h"
+#include "game/objects/setups/43_Mushroom.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
@@ -43,7 +43,7 @@
 
 static s16 SHmushroom_flee_from_player(Object* self, Object* fleeingFrom, SHmushroom_Data* objData, f32 distance);
 static s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Data* objData, f32 distance);
-static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData, SHmushroom_Setup* objSetup);
+static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData, Mushroom_Setup* objSetup);
 
 // offset: 0x0 | ctor
 void SHmushroom_ctor(void *dll) { }
@@ -52,7 +52,7 @@ void SHmushroom_ctor(void *dll) { }
 void SHmushroom_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
+void SHmushroom_setup(Object* self, Mushroom_Setup* setup, s32 arg2) {
 	SHmushroom_Data* objData;
 	UnkFunc_80024108Struct animInfo;
 	s32 curveEndpoint;
@@ -147,7 +147,7 @@ void SHmushroom_setup(Object* self, SHmushroom_Setup* setup, s32 arg2) {
 // offset: 0x3A8 | func: 1 | export: 1
 void SHmushroom_control(Object* self) {
 	Object* dinoFoodBag;
-	SHmushroom_Setup* objSetup;
+	Mushroom_Setup* objSetup;
 	s32 i;
 	Object* sidekick;
 	Object* hitBy;
@@ -163,7 +163,7 @@ void SHmushroom_control(Object* self) {
 	s32 temp;
 
 	objData = self->data;
-	objSetup = (SHmushroom_Setup*)self->setup;
+	objSetup = (Mushroom_Setup*)self->setup;
 	player = objGetPlayer();
 	sidekick = objGetSidekick();
 
@@ -288,7 +288,7 @@ void SHmushroom_free(Object* self, s32 a1) {
 
 // offset: 0x8E4 | func: 5 | export: 5
 u32 SHmushroom_get_model_flags(Object* self) {
-	SHmushroom_Setup* objSetup = (SHmushroom_Setup*)self->setup;
+	Mushroom_Setup* objSetup = (Mushroom_Setup*)self->setup;
 	return MODFLAGS_MODEL_INDEX(objSetup->modelIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
@@ -397,7 +397,7 @@ s16 SHmushroom_flee_along_curve(Object* self, Object* fleeingFrom, SHmushroom_Da
 }
 
 // offset: 0xD74 | func: 9
-static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData, SHmushroom_Setup* objSetup) {
+static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData, Mushroom_Setup* objSetup) {
 	f32 speed;
 	f32 dx;
 	f32 dz;

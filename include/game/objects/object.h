@@ -55,9 +55,9 @@ enum ObjectControlNumber {
 	OBJCONTROL_SnowHorn = 40,
 	OBJCONTROL_InvHit = 41,
 	OBJCONTROL_Icicle = 42,
-	OBJCONTROL_BlueMushroom = 43,
-	OBJCONTROL_RedMushroom = 44, // aka killer mushroom
-	OBJCONTROL_PurpleMushroom = 45, // aka rocket mushroom
+	OBJCONTROL_Mushroom = 43,
+	OBJCONTROL_KillerMushroom = 44,
+	OBJCONTROL_RocketMushroom = 45,
 	OBJCONTROL_Curve = 46,
 	OBJCONTROL_GroundQuake = 47,
 	OBJCONTROL_Weapon = 48,
@@ -73,7 +73,7 @@ enum ObjectControlNumber {
 	OBJCONTROL_RobotPatrol = 58,
 	OBJCONTROL_Door = 59, // not all doors, but many
 	OBJCONTROL_LevelControl = 60,
-	OBJCONTROL_PushBlock = 61,
+	OBJCONTROL_PushPull = 61,
 	OBJCONTROL_TriggerCurve = 62,
 	OBJCONTROL_SidekickBall = 63,
 	OBJCONTROL_CFPerch = 64,
@@ -233,6 +233,8 @@ enum ObjSetupLoadFlags {
     // called "group" by default.dol
     OBJSETUP_LOAD_IN_MAP_OBJGROUP = 0x10,
     // skip unload check for distance to player/camera
+    //
+    // called "Block" by default.dol
     OBJSETUP_LOAD_FLAG20 = 0x20
 };
 

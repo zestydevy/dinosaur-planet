@@ -1,6 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/gfx/model.h"
 
 typedef struct {

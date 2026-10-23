@@ -1,8 +1,8 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/44_KillerMushroom.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
@@ -50,7 +50,7 @@ void SHkillermushroom_ctor(void *dll) { }
 void SHkillermushroom_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHkillermushroom_setup(Object* self, SHkillermushroom_Setup* objSetup, s32 arg2) {
+void SHkillermushroom_setup(Object* self, KillerMushroom_Setup* objSetup, s32 arg2) {
     SHkillermushroom_Data* objData;
     ObjectShadow* shadow;
 
@@ -93,12 +93,12 @@ void SHkillermushroom_control(Object* self) {
     s32 pad;
     u16 playerDistance;
     u8 i;
-    SHkillermushroom_Setup* objSetup;
+    KillerMushroom_Setup* objSetup;
     SRT fxTransform;
 
     objData = self->data;
     player = objGetPlayer();
-    objSetup = (SHkillermushroom_Setup*)self->setup;
+    objSetup = (KillerMushroom_Setup*)self->setup;
 
     func_80026160(self);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
@@ -414,7 +414,7 @@ void SHkillermushroom_free(Object* self, s32 a1) {
 
 // offset: 0xDB8 | func: 5 | export: 5
 u32 SHkillermushroom_get_model_flags(Object* self) {
-    SHkillermushroom_Setup* setup = (SHkillermushroom_Setup*)self->setup;
+    KillerMushroom_Setup* setup = (KillerMushroom_Setup*)self->setup;
     return MODFLAGS_MODEL_INDEX(setup->modelIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
@@ -425,7 +425,7 @@ u32 SHkillermushroom_get_data_size(Object *self, u32 a1) {
 
 // offset: 0xDE4 | func: 7
 static void SHkillermushroom_reset(Object* self, SHkillermushroom_Data* objData, int startAtZeroScale) {
-    SHkillermushroom_Setup* objSetup = (SHkillermushroom_Setup*)self->setup;
+    KillerMushroom_Setup* objSetup = (KillerMushroom_Setup*)self->setup;
 
     self->srt.roll = mathRnd(-1500, 1500);
     self->srt.pitch = mathRnd(-1500, 1500);

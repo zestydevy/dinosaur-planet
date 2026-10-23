@@ -5,6 +5,7 @@
 #include "dlls/objects/common/sidekick.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/72_Thorntail.h"
 #include "sys/curves.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
@@ -55,11 +56,6 @@ typedef struct {
 /*874*/ u8 unk874;
 /*875*/ u8 _unk875[0x878 - 0x875];
 } SHthorntail_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 thorntail; // which Thorntail this is
-} SHthorntail_Setup;
 
 enum ThorntailSeq {
     THORNTAILSEQ_0_HaveYouWokenTheSwapStone = 0, // 0x275
@@ -223,27 +219,27 @@ enum ThorntailCurveSubtype {
 
 static void SHthorntail_updateShadow(Object* self);
 static int SHthorntail_animCallback(Object *actor, Object *animObj, AnimObj_Data *animObjData, s8 a3);
-static void SHthorntail_sleepySetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_sleepyInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_sleepyControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_sleepyAct2Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_sleepyAct3Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_sleepyAct4Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_traderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_traderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_traderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_traderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_traderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_traderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_elderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_elderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup);
-static void SHthorntail_elderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_elderAct1Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_elderAct2Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_elderAct3Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
-static void SHthorntail_elderAct4Control(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup);
+static void SHthorntail_sleepySetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_sleepyInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_sleepyControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_sleepyAct2Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_sleepyAct3Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_sleepyAct4Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_traderSetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_traderInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_traderControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_traderAct2Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_traderAct3Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_traderAct4Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_elderSetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_elderInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup);
+static void SHthorntail_elderControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_elderAct1Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_elderAct2Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_elderAct3Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
+static void SHthorntail_elderAct4Control(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup);
 
 // offset: 0x0 | ctor
 void SHthorntail_ctor(void *dll) { }
@@ -254,9 +250,9 @@ void SHthorntail_dtor(void *dll) { }
 // offset: 0x18 | func: 0 | export: 0
 // @bug: Missing 3rd param
 #ifndef AVOID_UB
-void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup/*, s32 reset*/) {
+void SHthorntail_obj_Setup(Object *self, Thorntail_Setup *setup/*, s32 reset*/) {
 #else
-void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
+void SHthorntail_obj_Setup(Object *self, Thorntail_Setup *setup, s32 reset) {
 #endif
     SHthorntail_Data *objdata = self->data;
     s32 _pad;
@@ -291,11 +287,11 @@ void SHthorntail_obj_Setup(Object *self, SHthorntail_Setup *setup, s32 reset) {
 // offset: 0x248 | func: 1 | export: 1
 void SHthorntail_obj_Control(Object* self) {
     SHthorntail_Data* objdata;
-    SHthorntail_Setup* setup;
+    Thorntail_Setup* setup;
     Object* player;
 
     objdata = self->data;
-    setup = (SHthorntail_Setup*)self->setup;
+    setup = (Thorntail_Setup*)self->setup;
     player = objGetPlayer();
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
     if (func_80026DF4(self, data_40, 15, objdata->unk874, &objdata->unk84C) == 0) {
@@ -409,14 +405,14 @@ static int SHthorntail_animCallback(Object *actor, Object *animObj, AnimObj_Data
 }
 
 // offset: 0x9B8 | func: 10
-static void SHthorntail_sleepySetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_sleepySetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     objdata->flags |= THORNTAILFLAG_RotateTalkSeqs;
     objdata->progressionBlockerGamebit = BIT_SH_Move_Thorntail_Blocking_Hollow_Log;
     SHthorntail_sleepyInit(self, objdata, setup);
 }
 
 // offset: 0xA04 | func: 11
-static void SHthorntail_sleepyInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_sleepyInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     s32 curveSubtype;
 
     if (mainGetBits(objdata->progressionBlockerGamebit) == 0) {
@@ -443,7 +439,7 @@ static void SHthorntail_sleepyInit(Object *self, SHthorntail_Data *objdata, SHth
 }
 
 // offset: 0xB40 | func: 12
-static void SHthorntail_sleepyControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void SHthorntail_sleepyControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
@@ -462,7 +458,7 @@ static void SHthorntail_sleepyControl(Object* self, SHthorntail_Data* objdata, S
 }
 
 // offset: 0xBEC | func: 13
-static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup) {
     s32 ignoreUID;
     s32 allowBranch;
     s32 numBranches;
@@ -821,21 +817,21 @@ static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, S
 }
 
 // offset: 0x19E0 | func: 14
-static void SHthorntail_sleepyAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_sleepyAct2Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x19F4 | func: 15
-static void SHthorntail_sleepyAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_sleepyAct3Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1A08 | func: 16
-static void SHthorntail_sleepyAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_sleepyAct4Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1A1C | func: 17
-static void SHthorntail_traderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_traderSetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     SHthorntail_traderInit(self, objdata, setup);
 }
 
 // offset: 0x1A58 | func: 18
-static void SHthorntail_traderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_traderInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     s32 curveSubtype;
 
     if (mainGetBits(BIT_14) == 0) {
@@ -863,7 +859,7 @@ static void SHthorntail_traderInit(Object *self, SHthorntail_Data *objdata, SHth
 }
 
 // offset: 0x1B9C | func: 19
-static void SHthorntail_traderControl(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_traderControl(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     switch (objdata->mapAct) {
     default:
     case 1:
@@ -882,7 +878,7 @@ static void SHthorntail_traderControl(Object *self, SHthorntail_Data *objdata, S
 }
 
 // offset: 0x1C48 | func: 20
-static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     Object *sidekick;
     Object *player;
 
@@ -902,30 +898,30 @@ static void SHthorntail_traderAct1Control(Object *self, SHthorntail_Data *objdat
 }
 
 // offset: 0x1D70 | func: 21
-static void SHthorntail_traderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_traderAct2Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1D84 | func: 22
-static void SHthorntail_traderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_traderAct3Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1D98 | func: 23
-static void SHthorntail_traderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_traderAct4Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1DAC | func: 24
-static void SHthorntail_elderSetup(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_elderSetup(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     objdata->flags |= THORNTAILFLAG_RotateTalkSeqs;
     objdata->progressionBlockerGamebit = BIT_SH_Move_Thorntail_Blocking_Swapstone;
     SHthorntail_elderInit(self, objdata, setup);
 }
 
 // offset: 0x1DF8 | func: 25
-static void SHthorntail_elderInit(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) {
+static void SHthorntail_elderInit(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) {
     SHthorntail_sleepyInit(self, objdata, setup);
     objdata->talkSeqs = sElderTalkSeqs;
     objdata->talkSeqsCount = ARRAYCOUNT(sElderTalkSeqs);
 }
 
 // offset: 0x1E4C | func: 26
-static void SHthorntail_elderControl(Object* self, SHthorntail_Data* objdata, SHthorntail_Setup* setup) {
+static void SHthorntail_elderControl(Object* self, SHthorntail_Data* objdata, Thorntail_Setup* setup) {
     SHthorntail_sleepyControl(self, objdata, setup);
     switch (objdata->mapAct) {
     case 1:
@@ -944,13 +940,13 @@ static void SHthorntail_elderControl(Object* self, SHthorntail_Data* objdata, SH
 }
 
 // offset: 0x1F28 | func: 27
-static void SHthorntail_elderAct1Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_elderAct1Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1F3C | func: 28
-static void SHthorntail_elderAct2Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_elderAct2Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1F50 | func: 29
-static void SHthorntail_elderAct3Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_elderAct3Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }
 
 // offset: 0x1F64 | func: 30
-static void SHthorntail_elderAct4Control(Object *self, SHthorntail_Data *objdata, SHthorntail_Setup *setup) { }
+static void SHthorntail_elderAct4Control(Object *self, SHthorntail_Data *objdata, Thorntail_Setup *setup) { }

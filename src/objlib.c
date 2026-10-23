@@ -1,7 +1,7 @@
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/281_area.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/68_Area.h"
 #include "sys/joypad.h"
 #include "sys/map.h"
 #include "sys/objlib.h"

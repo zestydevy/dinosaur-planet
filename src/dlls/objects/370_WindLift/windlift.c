@@ -1,7 +1,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"

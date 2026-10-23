@@ -1,7 +1,7 @@
 #include "common.h"
+#include "game/objects/setups/8_InfoPoint.h"
 #include "sys/fonts.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
 
 typedef struct {
     s32 xMin;

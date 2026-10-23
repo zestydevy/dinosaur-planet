@@ -1,7 +1,7 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"

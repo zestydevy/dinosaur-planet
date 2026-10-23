@@ -1,7 +1,7 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/math.h"
 #include "sys/objmsg.h"
 #include "dlls/engine/17_partfx.h"

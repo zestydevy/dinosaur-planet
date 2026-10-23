@@ -17,7 +17,7 @@ void SidekickToy_ctor(void *dll) { }
 void SidekickToy_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SidekickToy_setup(Object* self, SidekickToy_Setup* objsetup, s32 arg2) {
+void SidekickToy_setup(Object* self, ObjSetup* objsetup, s32 arg2) {
     SidekickToy_Data* objdata = self->data;
     Object* player;
     u8 colliderArg = 5;

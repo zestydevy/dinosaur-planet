@@ -1,5 +1,5 @@
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/35_TexScroll.h"
 #include "sys/map.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"

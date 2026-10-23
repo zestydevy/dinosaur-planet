@@ -1,9 +1,9 @@
-#ifndef _DLLS_418_H
-#define _DLLS_418_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_RIVERFLOW_H
+#define _SYS_GAME_OBJECTS_SETUPS_RIVERFLOW_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
+// ctrl: 55 | size: 0x20
 typedef struct {
     ObjSetup base;
     u8 yaw;
@@ -11,10 +11,6 @@ typedef struct {
     u8 flags;           //filters what is affected by the push effect. 0 = everything, bit 1 = logs, bit 2 = player
     u8 pad1B;
     s16 toggleGamebit;  //optional: gamebitID switches off the riverflow when set
-} DFriverflow_Setup;
+} Riverflow_Setup;
 
-typedef struct {
-    u8 activated;
-} DFriverflow_Data;
-
-#endif // _DLLS_418_H
+#endif

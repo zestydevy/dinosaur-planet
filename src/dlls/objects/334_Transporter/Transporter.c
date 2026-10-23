@@ -1,6 +1,6 @@
 #include "dll.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/39_Warp.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/rand.h"

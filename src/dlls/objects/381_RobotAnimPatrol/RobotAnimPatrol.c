@@ -3,7 +3,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/gfx/projgfx.h"
@@ -195,7 +195,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     objdata->spawnPos.x = setup->base.x;
     objdata->spawnPos.y = setup->base.y;
     objdata->spawnPos.z = setup->base.z;
-    objdata->spawnYaw = setup->yaw << 8;
+    objdata->spawnYaw = setup->robotAnimPatrol.yaw << 8;
     objdata->unk38 = setup->robotAnimPatrol.unk1A;
     objdata->unk24 = 0.2f;
     objdata->unk3C = 0;

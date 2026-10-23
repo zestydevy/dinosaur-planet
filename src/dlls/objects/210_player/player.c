@@ -3,12 +3,12 @@
 #include "PR/os.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/85_attentioncam.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/420_DFropenode.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/38_Projectile.h"
+#include "game/objects/setups/55_Riverflow.h"
 #include "sys/gfx/animseq.h"
 #include "sys/footsteps.h"
 #include "sys/gfx/model.h"
@@ -44,7 +44,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/27.h"
@@ -6634,14 +6633,14 @@ static void dll_210_func_128F4(f32* velocityX, f32* velocityZ, f32 deltaT, Objec
     riverInfluences = 0;
     for (i = 0; i < objCount; i++) {
         flowObj = objects[i];
-        if (((DFriverflow_Setup*)flowObj->setup)->flags & 2) {
+        if (((Riverflow_Setup*)flowObj->setup)->flags & 2) {
             riverInfluences = 1;
             dz = flowObj->srt.transl.y - player->srt.transl.y;
             if ((dz <= 200.0f) && (dz >= -200.0f)) {
                 dx = flowObj->srt.transl.x - player->srt.transl.x;
                 dz = flowObj->srt.transl.z - player->srt.transl.z;
                 dx = sqrtf(SQ(dx) + SQ(dz));
-                range = ((DFriverflow_Setup*)flowObj->setup)->range * 1.5f;
+                range = ((Riverflow_Setup*)flowObj->setup)->range * 1.5f;
                 if (dx < range) {
                     dx = ((range - dx) / range);
                     dx *= (flowObj->srt.scale * 10.0f);

@@ -2,7 +2,7 @@
 #include "dlls/engine/4_race.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/49_SnowBike.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
@@ -15,7 +15,6 @@
 #include "sys/intersect.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering.h"
 #include "prevent_bss_reordering2.h"
 
 typedef struct {

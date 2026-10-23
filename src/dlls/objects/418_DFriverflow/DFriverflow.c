@@ -1,8 +1,11 @@
-#include "common.h"
-#include "macros.h"
+#include "game/objects/setups/55_Riverflow.h"
+#include "sys/main.h"
 #include "sys/objtype.h"
+#include "macros.h"
 
-#include "dlls/objects/418_DFriverflow.h"
+typedef struct {
+    u8 activated;
+} DFriverflow_Data;
 
 // offset: 0x0 | ctor
 void DFriverflow_ctor(void *dll) { }
@@ -11,7 +14,7 @@ void DFriverflow_ctor(void *dll) { }
 void DFriverflow_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFriverflow_setup(Object* self, DFriverflow_Setup* objSetup, s32 arg2) {
+void DFriverflow_setup(Object* self, Riverflow_Setup* objSetup, s32 arg2) {
     DFriverflow_Data* objData;
 
     if (objSetup->toggleGamebit <= 0) {
@@ -33,9 +36,9 @@ void DFriverflow_setup(Object* self, DFriverflow_Setup* objSetup, s32 arg2) {
 // offset: 0x108 | func: 1 | export: 1
 void DFriverflow_control(Object* self) {
     DFriverflow_Data* objData;
-    DFriverflow_Setup* objSetup;
+    Riverflow_Setup* objSetup;
 
-    objSetup = (DFriverflow_Setup*)self->setup;
+    objSetup = (Riverflow_Setup*)self->setup;
     if (objSetup->toggleGamebit > 0) {
         objData = self->data;
         if (mainGetBits(objSetup->toggleGamebit)) {

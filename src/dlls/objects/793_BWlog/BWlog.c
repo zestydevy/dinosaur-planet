@@ -1,9 +1,9 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/common/vehicle.h"
 #include "macros.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
+#include "game/objects/setups/55_Riverflow.h"
 #include "sys/joypad.h"
 #include "sys/math.h"
 #include "sys/objects.h"
@@ -720,7 +720,7 @@ static void BWlog_findRiverflows(Object* self, BWlog_Data* objdata) {
                 dx = obj->srt.transl.x - objdata->endPoints[k].x;
                 dz = obj->srt.transl.z - objdata->endPoints[k].z;
                 dx = sqrtf(SQ(dx) + SQ(dz));
-                pushRadius = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
+                pushRadius = ((Riverflow_Setup*)obj->setup)->range * 1.5f;
                 if (dx < pushRadius) {
                     dx = (pushRadius - dx) / pushRadius;
                     dx *= obj->srt.scale * 10.0f;

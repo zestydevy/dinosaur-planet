@@ -1,11 +1,12 @@
 #include "common.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
 #include "dlls/objects/358_debris.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "dlls/objects/423_DFbarrel.h"
 #include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/55_Riverflow.h"
+#include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 
@@ -127,7 +128,7 @@ void DFbarrel_handleMovement(Object* self) {
                 dz = riverFlow->srt.transl.z - self->srt.transl.z;
                 delta = sqrtf(SQ(delta) + SQ(dz));
                 
-                range = ((DFriverflow_Setup*)riverFlow->setup)->range * 1.5f;
+                range = ((Riverflow_Setup*)riverFlow->setup)->range * 1.5f;
                 if (delta < range) {
                     delta = (range - delta) / range;
                     delta *= riverFlow->srt.scale * 10.0f;

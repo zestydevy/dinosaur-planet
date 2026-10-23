@@ -1,7 +1,8 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/45_RocketMushroom.h"
+#include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objtype.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
@@ -73,7 +74,7 @@ void SHrocketmushroom_ctor(void *dll) { }
 void SHrocketmushroom_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHrocketmushroom_setup(Object* self, SHrocketmushroom_Setup* objSetup, s32 reset) {
+void SHrocketmushroom_setup(Object* self, RocketMushroom_Setup* objSetup, s32 reset) {
     SHrocketmushroom_Data* objData = self->data;
     
     self->srt.yaw = objSetup->yaw << 8;
@@ -209,7 +210,7 @@ void SHrocketmushroom_control(Object* self) {
 
 // offset: 0x5C8 | func: 2
 void SHrocketmushroom_handle_state_1_hidden(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
-    SHrocketmushroom_Setup* objSetup = (SHrocketmushroom_Setup*)self->setup;
+    RocketMushroom_Setup* objSetup = (RocketMushroom_Setup*)self->setup;
     
     //On entering state, set up the countdown timer until regrowing
     if (objData->flags & FLAG_State_Entered) {
@@ -282,7 +283,7 @@ void SHrocketmushroom_handle_state_3_launch_spore(Object* self, SHrocketmushroom
 
 // offset: 0x970 | func: 5
 void SHrocketmushroom_handle_state_4_damaged(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
-    SHrocketmushroom_Setup* objSetup = (SHrocketmushroom_Setup*)self->setup;
+    RocketMushroom_Setup* objSetup = (RocketMushroom_Setup*)self->setup;
     
     dll_amSfx->Play(self, SOUND_8A0_Deflate_Honk, MAX_VOLUME, NULL, NULL, 0, NULL);
     SHrocketmushroom_explode(self, objData);
@@ -296,7 +297,7 @@ void SHrocketmushroom_handle_state_4_damaged(Object* self, SHrocketmushroom_Anim
 
 // offset: 0xA40 | func: 6
 void SHrocketmushroom_handle_state_0_idle(Object* self, SHrocketmushroom_AnimData* animData, SHrocketmushroom_Data* objData) {
-    SHrocketmushroom_Setup* objSetup = (SHrocketmushroom_Setup*)self->setup;
+    RocketMushroom_Setup* objSetup = (RocketMushroom_Setup*)self->setup;
 
     //Set up countdown to launching a spore
     if (objData->flags & FLAG_State_Entered) {
@@ -342,9 +343,9 @@ void SHrocketmushroom_create_spore(Object* self, SHrocketmushroom_Data* objData)
     MtxF mtx;
     SRT srt;
     Vec3f offset;
-    SHrocketmushroom_Setup* objSetup;
+    RocketMushroom_Setup* objSetup;
 
-    objSetup = (SHrocketmushroom_Setup*)self->setup;
+    objSetup = (RocketMushroom_Setup*)self->setup;
     sporeSetup = objAllocSetup(sizeof(SHSpore_Setup), OBJ_SHspore);
 
     //Calculate initial coordinate
@@ -437,9 +438,9 @@ void SHrocketmushroom_explode(Object* self, SHrocketmushroom_Data* objData) {
 
 // offset: 0x104C | func: 15
 void SHrocketmushroom_reset(Object* self, SHrocketmushroom_Data* objData, int startAtZeroScale) {
-    SHrocketmushroom_Setup* objSetup;
+    RocketMushroom_Setup* objSetup;
 
-    objSetup = (SHrocketmushroom_Setup*)self->setup;
+    objSetup = (RocketMushroom_Setup*)self->setup;
     self->srt.roll = mathRnd(-1500, 1500);
     self->srt.pitch = mathRnd(-1500, 1500);
     self->opacity = OBJECT_OPACITY_MAX;

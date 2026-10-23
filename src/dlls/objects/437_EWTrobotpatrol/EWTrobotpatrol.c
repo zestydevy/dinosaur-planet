@@ -3,6 +3,7 @@
 #include "dlls/objects/437_EWTrobotpatrol.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/58_RobotPatrol.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/gfx/textable.h"
@@ -183,7 +184,7 @@ void EWTrobotpatrol_dtor(void* dll) {
 }
 
 // offset: 0x88 | func: 0 | export: 0
-void EWTrobotpatrol_obj_Setup(Object* self, EWTrobotpatrol_Setup* setup, s32 reset) {
+void EWTrobotpatrol_obj_Setup(Object* self, RobotPatrol_Setup* setup, s32 reset) {
     EWTrobotpatrol_Data* objdata;
 
     if (sLaserBeamTexture == NULL) {

@@ -4,7 +4,7 @@
 #include "dlls/objects/291_magicdust.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"

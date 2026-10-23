@@ -1,7 +1,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "dll.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"

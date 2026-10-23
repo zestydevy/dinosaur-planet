@@ -1,5 +1,5 @@
 #include "dlls/engine/6_amsfx.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"

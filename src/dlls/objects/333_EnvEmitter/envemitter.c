@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/envfx.h"
 
 typedef struct {

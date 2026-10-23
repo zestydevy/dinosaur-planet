@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"

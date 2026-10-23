@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/gamebits.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objmsg.h"
 #include "dlls/objects/210_player.h"

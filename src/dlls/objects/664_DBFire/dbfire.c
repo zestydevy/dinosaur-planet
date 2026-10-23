@@ -1,6 +1,6 @@
-#include "game/objects/objsetups.h"
 #include "game/gamebits.h"
 #include "dlls/engine/17_partfx.h"
+#include "game/objects/setups/52_CampFire.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/gfx/modgfx.h"

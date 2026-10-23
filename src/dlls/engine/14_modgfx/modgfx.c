@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/41_InvHit.h"
 #include "sys/lfx.h"
 #include "sys/segment_13D0.h"
 #include "sys/lighting.h"

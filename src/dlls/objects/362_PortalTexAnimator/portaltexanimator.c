@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/77_AlphaAnimator.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/map.h"
@@ -10,19 +11,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "types.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebitEnable;
-/*1A*/ s16 unk1A;
-/*1C*/ u8 maxOpacity;
-/*1D*/ u8 minOpacity;
-/*1E*/ s8 animatorID;
-/*1E*/ s8 unk1F;
-/*20*/ s8 unk20;
-/*21*/ u8 removeCollision; //When enabled, shape is tangible while visible
-/*22*/ u16 minDistance;
-} PortalTexAnimator_Setup;
 
 typedef struct {
 /*00*/ s32 animatedVertexCount;
@@ -37,7 +25,7 @@ typedef struct {
 /*19*/ s8 unk19;
 } PortalTexAnimator_Data;
 
-static void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block);
+static void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, AlphaAnimator_Setup* setup, Block* block);
 
 // offset: 0x0 | ctor
 void PortalTexAnimator_ctor(void* dll){ }
@@ -46,25 +34,25 @@ void PortalTexAnimator_ctor(void* dll){ }
 void PortalTexAnimator_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void PortalTexAnimator_obj_Setup(Object* self, PortalTexAnimator_Setup* objSetup, s32 reset) {
+void PortalTexAnimator_obj_Setup(Object* self, AlphaAnimator_Setup* objSetup, s32 reset) {
     PortalTexAnimator_Data* objdata;
 
     objdata = self->data;
 
     objdata->unk19 = -1;
-    objdata->minDistance = objSetup->minDistance;
+    objdata->minDistance = objSetup->portalTexAnim.minDistance;
     objdata->maxDistance = objSetup->base.loadDistance * 8;
 }
 
 // offset: 0x78 | func: 1 | export: 1
 void PortalTexAnimator_obj_Control(Object* self) {
     PortalTexAnimator_Data* objdata;
-    PortalTexAnimator_Setup* setup;
+    AlphaAnimator_Setup* setup;
     Block* block;
     f32 distance;
     f32 blendValue;
 
-    setup = (PortalTexAnimator_Setup*)self->setup;
+    setup = (AlphaAnimator_Setup*)self->setup;
     objdata = self->data;
 
     //Get the object's local BLOCKS model
@@ -81,7 +69,7 @@ void PortalTexAnimator_obj_Control(Object* self) {
 
     //Animate tagged shapes' vertex opacity based on player distance
     if (objdata->animatedVertexCount == 0) {
-        objdata->animatorID = setup->animatorID;
+        objdata->animatorID = setup->portalTexAnim.animatorID;
         objdata->animatedVertexCount = blockGetAnimatorVertexCount(self, objdata->animatorID);
 
         if (objdata->animatedVertexCount == 0) {
@@ -93,19 +81,19 @@ void PortalTexAnimator_obj_Control(Object* self) {
             return;
         }
 
-        objdata->minDistance = setup->minDistance;
+        objdata->minDistance = setup->portalTexAnim.minDistance;
         objdata->maxDistance = setup->base.loadDistance * 8;
-        objdata->minDistanceCopy = setup->minDistance;
+        objdata->minDistanceCopy = setup->portalTexAnim.minDistance;
 
         //Check gamebits (unfinished: doesn't do anything with this)
-        if (setup->gamebitEnable == NO_GAMEBIT) {
+        if (setup->portalTexAnim.gamebitEnable == NO_GAMEBIT) {
             objdata->enabled = TRUE;
         } else {
-            objdata->enabled = mainGetBits(setup->gamebitEnable);
+            objdata->enabled = mainGetBits(setup->portalTexAnim.gamebitEnable);
         }
 
         //Set both vertex animation buffers' animated vertices to max opacity
-        objdata->vertexOpacity = setup->maxOpacity;
+        objdata->vertexOpacity = setup->portalTexAnim.maxOpacity;
         PortalTexAnimator_animateVertices(objdata, setup, block); 
         block->vtxFlags ^= 1;
         PortalTexAnimator_animateVertices(objdata, setup, block);
@@ -123,13 +111,13 @@ void PortalTexAnimator_obj_Control(Object* self) {
             blendValue = 0.0f;
         }
 
-        objdata->vertexOpacity = setup->minOpacity + (setup->maxOpacity - setup->minOpacity) * blendValue;
+        objdata->vertexOpacity = setup->portalTexAnim.minOpacity + (setup->portalTexAnim.maxOpacity - setup->portalTexAnim.minOpacity) * blendValue;
         PortalTexAnimator_animateVertices(objdata, setup, block);
     }
 }
 
 // offset: 0x310 | func: 2
-void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, PortalTexAnimator_Setup* setup, Block* block) {
+void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, AlphaAnimator_Setup* setup, Block* block) {
     BlockShape* shapes;
     Vtx_t* vertices;
     s32 shapeIdx;
@@ -147,12 +135,12 @@ void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, PortalTe
             //Switch shape's draw flags when opacity is zero
             if (objdata->vertexOpacity == 0){
                 shapes[shapeIdx].flags |= RENDER_SHAPE_HIDE;
-                if (setup->removeCollision){
+                if (setup->portalTexAnim.removeCollision){
                     shapes[shapeIdx].flags |= RENDER_UNK800;
                 }
             } else {
                 shapes[shapeIdx].flags &= ~RENDER_SHAPE_HIDE;
-                if (setup->removeCollision){
+                if (setup->portalTexAnim.removeCollision){
                     shapes[shapeIdx].flags &= ~RENDER_UNK800;
                 }
             }

@@ -1,16 +1,7 @@
 #include "common.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/59_Door.h"
 #include "sys/gfx/model.h"
-
-typedef struct { 
-    ObjSetup base;
-    s8 unk18;
-    u8 _unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 _unk1E; 
-    s16 unk20;
-} DLL279_Setup;
 
 typedef struct {
     u8 _unk0 [0xC - 0x00];
@@ -32,13 +23,13 @@ void dll_279_setup(Object *self, ObjSetup *setup, s32 arg2);
 
 // offset: 0x16C | func: 1 | export: 1
 void dll_279_control(Object* self) {
-    DLL279_Setup* setup;
+    Door_Setup* setup;
     DLL279_Data* objdata;
 
     objdata = self->data;
     objdata->unk19 = 0;
     if (self->unkDC == 0) {
-        setup = (DLL279_Setup*)self->setup;
+        setup = (Door_Setup*)self->setup;
         self->srt.transl.x = setup->base.x;
         self->srt.transl.y = setup->base.y;
         self->srt.transl.z = setup->base.z;
@@ -90,7 +81,7 @@ u32 dll_279_get_data_size(Object *self, u32 a1) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/279_Door/dll_279_func_39C.s")
 
 // offset: 0x1034 | func: 8
-void dll_279_func_1034(Vec3f* arg0, DLL279_Setup* objSetup) {
+void dll_279_func_1034(Vec3f* arg0, Door_Setup* objSetup) {
     Camera* camera;
     f32 f0;
     u8 temp;

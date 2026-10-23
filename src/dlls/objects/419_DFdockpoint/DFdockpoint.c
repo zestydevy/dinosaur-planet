@@ -1,5 +1,5 @@
 #include "PR/ultratypes.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/51.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"

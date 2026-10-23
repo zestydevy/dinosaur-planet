@@ -4,7 +4,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"

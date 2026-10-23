@@ -2,9 +2,8 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "types.h"
+#include "game/objects/setups/68_Area.h"
 #include "sys/gfx/model.h"
-
-#include "dlls/objects/281_area.h"
 
 // offset: 0x0 | ctor
 void area_ctor(void *dll){ }
@@ -13,7 +12,7 @@ void area_ctor(void *dll){ }
 void area_dtor(void *dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void area_setup(Object* self, s32 arg1) {
+void area_setup(Object* self, Area_Setup* setup) {
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
 

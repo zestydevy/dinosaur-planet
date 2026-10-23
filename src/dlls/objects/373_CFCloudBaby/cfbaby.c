@@ -5,6 +5,7 @@
 #include "dlls/objects/common/foodbag.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/67_CFCloudBaby.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/textable.h"
 #include "sys/joypad.h"
@@ -16,23 +17,6 @@
 #include "sys/print.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-       // Considers things (the player, beans) to be close below this distance.
-/*18*/ s16 closeMaxDist;
-       // Can be rescued by the player below this distance.
-/*1A*/ s16 rescueMaxDist;
-/*1C*/ u8 initialState;
-/*1D*/ u8 yaw8;
-       // Set when initially rescued.
-/*1E*/ s16 rescuedGamebit;
-       // Swaps to this state after the player gets close for the first time.
-/*20*/ u8 initialState2;
-       // Set when the rescued timer completes and is considered 
-       // to be in the throne room now.
-/*22*/ s16 reachedPerchGamebit;
-} CFCloudBaby_Setup;
 
 typedef struct {
     Vec3f unk0;

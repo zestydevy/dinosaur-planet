@@ -17,7 +17,7 @@ class Obj(TypedDict):
     dll_id: int
     control_no: int
     name: str
-    folder: str
+    folder: int
 
 def emit_header(objects: list[Obj]):
     dir = SCRIPT_DIR.joinpath("objh")

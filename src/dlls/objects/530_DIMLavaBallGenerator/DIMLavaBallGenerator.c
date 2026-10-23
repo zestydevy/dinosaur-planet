@@ -1,5 +1,6 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/73_DIMLavaBallGenerator.h"
 #include "sys/main.h"
 #include "dll.h"
 #include "sys/objects.h"
@@ -35,20 +36,6 @@ typedef struct {
     u8 unk16;
     u8 unk17;
 } DIMLavaBallGenerator_Data;
-
-typedef struct {
-    ObjSetup base;
-    s16 timerMax;
-    u8 unk1A;
-    u8 unk1B;
-    u8 unk1C;
-    u8 index;
-    s16 gamebit1;
-    u8 unk20;
-    u8 unk21;
-    s16 gamebit2;
-    s16 gamebit3;
-} DIMLavaBallGenerator_Setup;
 
 // offset: 0x0 | ctor
 void DIMLavaBallGenerator_ctor(void *dll) { }

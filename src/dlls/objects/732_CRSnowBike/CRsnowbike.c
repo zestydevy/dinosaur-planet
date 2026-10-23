@@ -2,10 +2,10 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/49_SnowBike.h"
+#include "game/objects/setups/5_Checkpoint.h"
 #include "sys/curves.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
@@ -948,7 +948,7 @@ s8 CRSnowBike_get_ranking(Object* self) {
 // offset: 0x1C38 | func: 19 | export: 18
 void CRSnowBike_sharpclaw_start_race(Object* self) {
     s32 checkpointUID;
-    checkpoint4_Setup* checkpointSetup;
+    Checkpoint_Setup* checkpointSetup;
     CRSnowBike_Data* objData;
     SnowBike_Setup* objSetup;
 
@@ -968,7 +968,7 @@ void CRSnowBike_sharpclaw_start_race(Object* self) {
         break;
     }
     
-    checkpointSetup = (checkpoint4_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
+    checkpointSetup = (Checkpoint_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
     if (checkpointSetup == NULL) {
         return;
     }

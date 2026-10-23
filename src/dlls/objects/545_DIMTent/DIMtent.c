@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/map.h"
 #include "sys/gfx/modgfx.h"
 

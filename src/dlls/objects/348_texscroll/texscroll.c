@@ -1,6 +1,6 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/35_TexScroll.h"
 #include "sys/debug.h"
 #include "sys/main.h"
 #include "sys/map.h"

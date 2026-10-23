@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
-#include "game/objects/objsetups.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/9_EffectBox.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"

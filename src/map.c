@@ -2,7 +2,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/common/vehicle.h"
 #include "game/objects/object_id.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/4_SetupPoint.h"
 #include "sys/gfx/texture.h"
 #include "sys/asset.h"
 #include "sys/bitstream.h"

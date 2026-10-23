@@ -7,6 +7,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/61_PushPull.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -17,12 +18,6 @@
 #include "sys/objtype.h"
 #include "sys/rand.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-} DLL274_Setup;
 
 typedef struct {
     u8 _unk0[0xC - 0x0];
@@ -183,9 +178,9 @@ void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
 // offset: 0x1058 | func: 4 | export: 4
 void dll_274_free(Object* self, s32 onlySelf) {
     DLL274_Data* objData;
-    DLL274_Setup* objSetup;
+    PushPull_Setup* objSetup;
 
-    objSetup = (DLL274_Setup*)self->setup;
+    objSetup = (PushPull_Setup*)self->setup;
     objData = self->data;
     
     switch (self->id) {
@@ -378,7 +373,7 @@ int dll_274_func_1A24(Object* self, Object* animObj, AnimObj_Data* animData, s8 
 
 // offset: 0x1D18 | func: 14
 static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
-    DLL274_Setup* objSetup;
+    PushPull_Setup* objSetup;
     Vec3f* var_s1;
     MtxF mtx;
     Vec3f* var_s0;
@@ -391,7 +386,7 @@ static void dll_274_func_1D18(Object* self, DLL274_Data* objData) {
     TrackLineIntersectResult sp90;
     s32 pad;
 
-    objSetup = (DLL274_Setup*)self->setup;
+    objSetup = (PushPull_Setup*)self->setup;
     
     spEA = (-0x80 >> (7 - objData->unk88));
     
@@ -447,10 +442,10 @@ void dll_274_func_2020(Object* self, MtxF* oMtx) {
 
 // offset: 0x20A0 | func: 16
 void dll_274_func_20A0(Object* self, DLL274_Data* objData) {
-    DLL274_Setup* objSetup;
+    PushPull_Setup* objSetup;
     TextureAnimator* texAnim;
 
-    objSetup = (DLL274_Setup*)self->setup;
+    objSetup = (PushPull_Setup*)self->setup;
     objData->unkA0 = 1.2f;
     objData->unkA4 = 0.6f;
     objData->unkA8 = 0.6f;

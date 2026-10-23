@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/355_WallAnimator.h"
+#include "game/objects/setups/80_WallAnimator.h"
 #include "sys/map.h"
 #include "sys/math.h"
 #include "sys/memory.h"

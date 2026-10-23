@@ -1,9 +1,9 @@
-#ifndef _DLLS_281_H
-#define _DLLS_281_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_AREA_H
+#define _SYS_GAME_OBJECTS_SETUPS_AREA_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
+// ctrl: 68 | size: ?
 typedef struct {
     ObjSetup base;
     u16 value;      //Passed to other objects when inside the Area object's volume, via objGetAreaValueAtPoint
@@ -14,4 +14,4 @@ typedef struct {
     u8 pitch;
 } Area_Setup;
 
-#endif // _DLLS_281_H
+#endif

@@ -4,7 +4,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"

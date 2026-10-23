@@ -1,4 +1,4 @@
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/18_StaticCamera.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 

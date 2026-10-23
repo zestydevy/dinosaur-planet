@@ -1,7 +1,7 @@
 #include "common.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/objsetups.h"
+#include "game/objects/setups/55_Riverflow.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
@@ -117,7 +117,7 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
             dz = riverFlow->srt.transl.z - self->srt.transl.z;
             delta = sqrtf(SQ(delta) + SQ(dz));
             
-            range = ((DFriverflow_Setup*)riverFlow->setup)->range * 1.5f;
+            range = ((Riverflow_Setup*)riverFlow->setup)->range * 1.5f;
             if (delta < range) {
                 delta = (range - delta) / range;
                 delta *= riverFlow->srt.scale * 10.0f;
