@@ -2,6 +2,7 @@
 #define _DLLS_3_H
 
 #include "PR/ultratypes.h"
+#include "game/objects/setups/16_AnimObj.h"
 #include "sys/gfx/animseq.h"
 #include "dll_def.h"
 
