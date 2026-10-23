@@ -3,16 +3,9 @@
 // WCSunDoor is one example: not doing much itself, but opening the Sun Temple when controlled by a nearby WCSeqObject.
 // Based on that, the unofficial name "SeqProp" has been used here for this DLL.
 
+#include "game/objects/setups/103.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 roll;
-/*19*/ u8 pitch;
-/*1A*/ u8 yaw;
-/*1B*/ u8 scale;
-} SeqProp_Setup;
 
 // offset: 0x0 | ctor
 void SeqProp_ctor(void* dll) { }
@@ -21,13 +14,13 @@ void SeqProp_ctor(void* dll) { }
 void SeqProp_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SeqProp_obj_Setup(Object* self, SeqProp_Setup* setup, s32 reset) {
+void SeqProp_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     self->srt.roll = setup->roll << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;
 
-    if (setup->scale != 0) {
-        self->srt.scale = setup->scale / 255.0f;
+    if (setup->setting != 0) {
+        self->srt.scale = setup->setting / 255.0f;
         if (self->srt.scale == 0.0f) {
             self->srt.scale = 1.0f;
         }

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/52_CampFire.h"
 #include "sys/objhits.h"
 #include "sys/gfx/modgfx.h"

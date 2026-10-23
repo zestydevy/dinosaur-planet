@@ -1,6 +1,6 @@
 #include "common.h"
-#include "dlls/objects/258_Caictua_Thorn.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "sys/math.h"
 
 // offset: 0x0 | ctor
@@ -10,7 +10,7 @@ void Caictua_Thorn_ctor(void* dll) { }
 void Caictua_Thorn_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Caictua_Thorn_setup(Object* self, Caictua_Thorn_Setup* objSetup, s32 reset) {
+void Caictua_Thorn_setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     self->unkDC = 180;
     self->opacity = OBJECT_OPACITY_MAX;
     func_800267A4(self);

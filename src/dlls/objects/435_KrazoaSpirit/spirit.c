@@ -1,6 +1,7 @@
 #include "dll.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/main.h"

@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "sys/camera.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -22,7 +23,7 @@ void kamerian_flame_ctor(void* dll){ }
 void kamerian_flame_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void kamerian_flame_setup(Object* self, s32 arg1, s32 arg2) {
+void kamerian_flame_setup(Object* self, Ctrl103_Setup* setup, s32 arg2) {
     ObjectShadow* temp_v0;
     ObjectShadow* temp_v0_2;
 

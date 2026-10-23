@@ -3,17 +3,9 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/103.h"
 #include "sys/objtype.h"
 #include "dlls/objects/421_DFcradle.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 stateFlags;
-    f32 scale;
-} DFPulley_Setup;
 
 typedef struct {
     u32 soundHandle;
@@ -36,7 +28,7 @@ void DFPulley_ctor(void* dll) { }
 void DFPulley_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFPulley_setup(Object* self, DFPulley_Setup* objSetup, s32 reset) {
+void DFPulley_setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     DFPulley_Data* objData = self->data;
     
     if (self->id == OBJ_DFpulley) {
@@ -46,9 +38,9 @@ void DFPulley_setup(Object* self, DFPulley_Setup* objSetup, s32 reset) {
     self->srt.roll = objSetup->roll << 8;
     self->srt.pitch = objSetup->pitch << 8;
     self->srt.yaw = objSetup->yaw << 8;
-    self->srt.scale *= objSetup->scale;
+    self->srt.scale *= objSetup->size;
     
-    self->stateFlags = objSetup->stateFlags;
+    self->stateFlags = objSetup->setting;
     
     objData->state = mainGetBits(BIT_DF_Cradle_Powered);
 

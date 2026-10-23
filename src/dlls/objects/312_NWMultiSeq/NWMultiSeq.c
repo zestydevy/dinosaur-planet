@@ -1,22 +1,10 @@
+#include "game/objects/setups/92_NWMultiSeq.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 playedBits[8];
-/*28*/ s16 playBits[8];
-/*38*/ u8 rotation;
-/*39*/ u8 flags;
-/*3A*/ u8 replaySeqIndex;
-/*3B*/ u8 replayActorMask;
-/*3C*/ s16 preemptTime;
-/*3E*/ u8 _unk3E[0x40 - 0x3E];
-/*40*/ s8 seqIndices[8];
-} NWMultiSeq_Setup;
 
 typedef struct {
 /*0*/ u8 state;

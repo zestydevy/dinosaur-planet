@@ -3,6 +3,7 @@
 #include "PR/gbi.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
@@ -10,17 +11,6 @@
 #include "sys/objexpr.h"
 #include "sys/print.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitRise;      //plays sequence of pillar rising
-    s16 gamebitRaised;    //set when pillar rising sequence has played
-    s16 unk1C;            //sequence-related, value of 0x96 on each pillar instance 
-    s8 sequenceIndex;     //sequence index to play (always index 0 on instances)
-    u8 yaw;
-    u8 unk20;             //used as arg2 when playing sequence (values for the 3 pillar instances: 0xFF, 0, 1)
-    s16 gamebitDoorOpen;  //GP_PillarDoor already open, but seems to be intended for playing Seq 0x39A
-} GP_ShrinePillar_Setup;
 
 typedef struct {
     u8 state;
@@ -49,13 +39,13 @@ void GP_ShrinePillar_ctor(void *dll) { }
 void GP_ShrinePillar_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2) {
+void GP_ShrinePillar_setup(Object* self, SeqDoor_Setup* setup, s32 arg2) {
     TextureAnimator* animTexture;
     GP_ShrinePillar_Data* objdata;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
-    if (setup->gamebitRaised != NO_GAMEBIT) {
-        if (mainGetBits(setup->gamebitRaised)) {
+    if (setup->gamebitRestoreState != NO_GAMEBIT) {
+        if (mainGetBits(setup->gamebitRestoreState)) {
             objdata->state = STATE_Raised;
         }
     } else {
@@ -76,23 +66,23 @@ void GP_ShrinePillar_setup(Object* self, GP_ShrinePillar_Setup* setup, s32 arg2)
 // offset: 0xE0 | func: 1 | export: 1
 void GP_ShrinePillar_control(Object* self) {
     GP_ShrinePillar_Data* objdata;
-    GP_ShrinePillar_Setup* setup;
-    s32 seqArg2;
+    SeqDoor_Setup* setup;
+    s32 enabledActors;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
-    setup = (GP_ShrinePillar_Setup*)self->setup;
+    setup = (SeqDoor_Setup*)self->setup;
 
     diPrintf("control\n");
     if (objdata->startSequence) {
-        if ((setup->unk1C != 0) && (objdata->state != STATE_Underground)) {
-            seqArg2 = setup->unk20;
-            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1C);
+        if ((setup->preemptTime != 0) && (objdata->state != STATE_Underground)) {
+            enabledActors = setup->preemptEnabledActors;
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
         } else {
-            seqArg2 = -1; 
+            enabledActors = -1; 
         }
 
-        if (setup->sequenceIndex != -1) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(setup->sequenceIndex, self, seqArg2);
+        if (setup->objSeqIdx != -1) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objSeqIdx, self, enabledActors);
         }
         objdata->startSequence = FALSE;
     }
@@ -125,7 +115,7 @@ u32 GP_ShrinePillar_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x264 | func: 7
 int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 a3) {
-    GP_ShrinePillar_Setup* setup;
+    SeqDoor_Setup* setup;
     GP_ShrinePillar_Data* objdata;
     TextureAnimator* animatedTexture1;
     TextureAnimator* animatedTexture2;
@@ -134,14 +124,14 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
     s32 pad;
 
     objdata = (GP_ShrinePillar_Data*)self->data;
-    setup = (GP_ShrinePillar_Setup*)self->setup;
+    setup = (SeqDoor_Setup*)self->setup;
 
     diPrintf("override %d\n", objdata->state);
 
     switch (objdata->state) {
     case STATE_Underground:
         //Waiting for gamebit (set when leaving each act of Desert Force Point Temple)
-        if (mainGetBits(setup->gamebitRise)) {
+        if (mainGetBits(setup->gamebitOpenA)) {
             objdata->state = STATE_Rising;
         }
         break;
@@ -150,15 +140,15 @@ int GP_ShrinePillar_anim_callback(Object* self, Object* animObj, AnimObj_Data* a
         for (index = 0; index < animObjData->messageCount; index++) {
             if (animObjData->messages[index] == 1) {
                 objdata->state = STATE_Raised;
-                if (setup->gamebitRaised != NO_GAMEBIT) {
-                    mainSetBits(setup->gamebitRaised, 1);
+                if (setup->gamebitRestoreState != NO_GAMEBIT) {
+                    mainSetBits(setup->gamebitRestoreState, 1);
                 }
             }
         }
         break;
     case STATE_Raised:
         //Waiting for door opening gamebit to be set
-        if (mainGetBits(setup->gamebitDoorOpen)) {
+        if (mainGetBits(setup->gamebitOpenB)) {
             objdata->state = STATE_Waiting_for_Door_Open;
         }
         break;

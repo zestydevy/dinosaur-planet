@@ -2,6 +2,13 @@
 
 #include "dlls/objects/453_CCfirecrystalin.h"
 
+/** 
+ * @file
+ * Note: This DLL/object does not accept a normal ObjSetup. It's part of controlNo 103
+ *       but the setup accepted below uses different field types (including a pointer).
+ *       This object cannot be pre-placed in the map and can only be spawned in at runtime.
+ */
+
 // offset: 0x0 | ctor
 void CCfirecrystalin_ctor(void *dll) { }
 

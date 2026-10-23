@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
@@ -7,13 +8,6 @@
 #include "dll.h"
 #include "game/gamebits.h"
 #include "game/gametexts_ui.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 roll;
-/*19*/ u8 pitch;
-/*1A*/ u8 yaw;
-} CCspellpage_Setup;
 
 static int CCspellpage_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
@@ -24,7 +18,7 @@ void CCspellpage_ctor(void *dll) { }
 void CCspellpage_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCspellpage_setup(Object *self, CCspellpage_Setup *setup, s32 arg2) {
+void CCspellpage_setup(Object *self, Ctrl103_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.roll = setup->roll << 8;

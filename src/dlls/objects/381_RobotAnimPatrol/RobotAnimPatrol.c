@@ -3,6 +3,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/51.h"
 #include "sys/camera.h"
 #include "sys/dll.h"

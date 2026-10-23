@@ -7,6 +7,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/38_Projectile.h"
 #include "game/objects/setups/55_Riverflow.h"
 #include "sys/gfx/animseq.h"

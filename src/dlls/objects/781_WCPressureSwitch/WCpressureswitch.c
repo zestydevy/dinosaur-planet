@@ -1,16 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/86_PressurePad.h"
 #include "sys/objtype.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 modelIdx;
-/*1A*/ s16 gameBitPressed;             //Gamebit to set when the switch is pressed down
-/*1C*/ u8 yOffsetAnimation;            //How far down the switch should move when pressed
-/*1D*/ u8 yThreshold;                  //Threshold for other objects pressing switch
-/*1E*/ u8 distanceGuardCommand;        //Player distance at which Guard sidekick command is selectable (only used by some implementations)
-/*20*/ s16 gamebitActivated;           //Gamebit to check if switch is deactivated
-} PressureSwitch_Setup;
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -38,7 +28,7 @@ void WCPressureSwitch_ctor(void* dll) { }
 void WCPressureSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCPressureSwitch_obj_Setup(Object* self, PressureSwitch_Setup* setup, s32 reset) {
+void WCPressureSwitch_obj_Setup(Object* self, PressurePad_Setup* setup, s32 reset) {
     PressureSwitch_Data* objData;
     s32 index;
 
@@ -67,14 +57,14 @@ void WCPressureSwitch_obj_Setup(Object* self, PressureSwitch_Setup* setup, s32 r
 
 // offset: 0x150 | func: 1 | export: 1
 void WCPressureSwitch_obj_Control(Object* self) {
-    PressureSwitch_Setup* setup;
+    PressurePad_Setup* setup;
     f32 deltaY;
     Object* listedObject;
     TextureAnimator* animTexture;
     s32 index;
     PressureSwitch_Data* objdata;
 
-    setup = (PressureSwitch_Setup*)self->setup;
+    setup = (PressurePad_Setup*)self->setup;
     objdata = self->data;
 
     //Bail if switch deactivated
@@ -173,7 +163,7 @@ void WCPressureSwitch_obj_Free(Object* self, s32 onlySelf) {
 
 // offset: 0x594 | func: 5 | export: 5
 u32 WCPressureSwitch_obj_GetModelFlags(Object* self) {
-    PressureSwitch_Setup* setup = (PressureSwitch_Setup*)self->setup;
+    PressurePad_Setup* setup = (PressurePad_Setup*)self->setup;
     s32 modelIndex;
 
     modelIndex = setup->modelIdx;
@@ -232,11 +222,11 @@ s32 WCPressureSwitch_isObjectOnSwitch(Object* self) {
 // offset: 0x6CC | func: 9
 static int WCPressureSwitch_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 prevCallbackValue) {
     PressureSwitch_Data* objdata;
-    PressureSwitch_Setup* setup;
+    PressurePad_Setup* setup;
     u8 index;
 
     objdata = self->data;
-    setup = (PressureSwitch_Setup*)self->setup;
+    setup = (PressurePad_Setup*)self->setup;
 
     if (animObjData->lastMessage == 1) {
         for (index = 0; index < 10; index++) {

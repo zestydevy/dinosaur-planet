@@ -18,9 +18,12 @@
 
 struct Object;
 
-// Enum for ObjDef/Object controlNo
+// Enum for ObjDef/Object controlNo.
+// Each ctrl # has an associated ObjSetup. Objects that have the same controlNo share the same
+// setup struct layout and size.
 enum ObjectControlNumber {
-	OBJCONTROL_None = 0,
+	OBJCONTROL_PlacedFood = -1,
+	OBJCONTROL_Dummy = 0,
 	OBJCONTROL_Player = 1,
 	OBJCONTROL_Sidekick = 2,
 	OBJCONTROL_SphereTest = 3,
@@ -30,11 +33,17 @@ enum ObjectControlNumber {
 	OBJCONTROL_RgbaLight = 7,
 	OBJCONTROL_InfoPoint = 8,
 	OBJCONTROL_EffectBox = 9,
+	OBJCONTROL_Unused10 = 10,
 	OBJCONTROL_Animator = 11,
+	OBJCONTROL_Unused12 = 12,
+	OBJCONTROL_Unused13 = 13,
+	OBJCONTROL_Unused14 = 14,
+	OBJCONTROL_Unused15 = 15,
 	OBJCONTROL_AnimObj = 16,
-	OBJCONTROL_Unk17 = 17, // no object is defined with this ctrl #
+	OBJCONTROL_Unk17 = 17, // no object is defined with this ctrl #, but used by anim DLL
 	OBJCONTROL_StaticCamera = 18,
 	OBJCONTROL_WalkCamera = 19,
+	OBJCONTROL_Unused20 = 20,
 	OBJCONTROL_TriggerPoint = 21,
 	OBJCONTROL_TriggerPlane = 22,
 	OBJCONTROL_TriggerCylinder = 23,
@@ -47,8 +56,10 @@ enum ObjectControlNumber {
 	OBJCONTROL_Unk30 = 30, // props?
 	OBJCONTROL_SideSetup = 31,
 	OBJCONTROL_SideLoad = 32,
+	OBJCONTROL_Unused33 = 33,
 	OBJCONTROL_DigHole = 34,
 	OBJCONTROL_Texscroll = 35,
+	OBJCONTROL_Unused36 = 36,
 	OBJCONTROL_Cannon = 37,
 	OBJCONTROL_Projectile = 38,
 	OBJCONTROL_Warp = 39,
@@ -66,7 +77,7 @@ enum ObjectControlNumber {
 	OBJCONTROL_Unk51 = 51, // very broad group... is there anything in common?
 	OBJCONTROL_CampFire = 52,
 	OBJCONTROL_Switch = 53,
-	OBJCONTROL_Unk54 = 54, // no object is defined with this ctrl #
+	OBJCONTROL_Unk54 = 54, // no object is defined with this ctrl #, but used by the cannon DLL
 	OBJCONTROL_Riverflow = 55,
 	OBJCONTROL_RopeNode = 56,
 	OBJCONTROL_ObjCreator = 57,
@@ -99,13 +110,14 @@ enum ObjectControlNumber {
 	OBJCONTROL_Debris = 84,
 	OBJCONTROL_ProjectileTarget = 85,
 	OBJCONTROL_PressurePad = 86,
-	OBJCONTROL_Door2 = 87, // more doors
+	OBJCONTROL_SeqDoor = 87,
 	OBJCONTROL_UseObj = 88,
 	OBJCONTROL_SeqObj = 89,
 	OBJCONTROL_SeqObj2 = 90, // more seqobjs
 	OBJCONTROL_IMMultiSeq = 91,
 	OBJCONTROL_NWMultiSeq = 92,
-	OBJCONTROL_Unk93 = 93, // test of knowledge stuff?
+	OBJCONTROL_PickObj = 93,
+	OBJCONTROL_Unused94 = 94,
 	OBJCONTROL_CClogpush = 95,
 	OBJCONTROL_SfxPlayer = 96,
 	OBJCONTROL_TreeFruit = 97,
@@ -115,8 +127,9 @@ enum ObjectControlNumber {
 	OBJCONTROL_Crate2 = 101,
 	OBJCONTROL_LFXEmitter = 102,
 	OBJCONTROL_Unk103 = 103, // broad group
-	OBJCONTROL_DFbarrelcreator = 104,
+	OBJCONTROL_DFBarrelCreator = 104,
 	OBJCONTROL_ExplodeSurface = 105, // stuff related to explode floors/walls
+	OBJCONTROL_Unused106 = 106,
 	OBJCONTROL_DB_RockFallgen = 107,
 	OBJCONTROL_MagicPlant = 108,
 	OBJCONTROL_IMIcePillar = 109,

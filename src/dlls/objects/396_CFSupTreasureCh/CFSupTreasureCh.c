@@ -1,5 +1,6 @@
 #include "dlls/objects/373_CFCloudBaby.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
@@ -14,13 +15,6 @@ typedef struct {
 /*08*/ u8 flags;
 /*0A*/ s16 yTheta;
 } CFSupTreasureCh_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 hasBaby;
-/*19*/ u8 unk19;
-/*1A*/ u8 yaw;
-} CFSupTreasureCh_Setup;
 
 typedef enum {
     CFSUPTREASURECH_PLAY_SEQ = 1,
@@ -42,14 +36,14 @@ void CFSupTreasureCh_ctor(void *dll) { }
 void CFSupTreasureCh_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFSupTreasureCh_setup(Object *self, CFSupTreasureCh_Setup *setup, s32 arg2) {
+void CFSupTreasureCh_setup(Object *self, Ctrl103_Setup *setup, s32 arg2) {
     CFSupTreasureCh_Data *objdata;
 
     objdata = self->data;
     objAddObjectType(self, OBJTYPE_CFSupTreasureChest);
     self->animCallback = CFSupTreasureCh_func_424;
-    self->srt.yaw = setup->yaw << 8;
-    if (setup->hasBaby) {
+    self->srt.yaw = setup->cfSupTreasureCh.yaw << 8;
+    if (setup->cfSupTreasureCh.hasBaby) {
         if (mainGetBits(BIT_CF_Free_Cloudrunner_From_Chest)) {
             objdata->objectSeqIndex = -1;
         } else {
@@ -124,11 +118,11 @@ void CFSupTreasureCh_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, T
 
 // offset: 0x374 | func: 4 | export: 4
 void CFSupTreasureCh_free(Object *self, s32 a1) {
-    CFSupTreasureCh_Setup *setup;
+    Ctrl103_Setup *setup;
 
-    setup = (CFSupTreasureCh_Setup*)self->setup;
+    setup = (Ctrl103_Setup*)self->setup;
     objFreeObjectType(self, OBJTYPE_CFSupTreasureChest);
-    if (setup->hasBaby) {
+    if (setup->cfSupTreasureCh.hasBaby) {
         gDLL_29_Gplay->vtbl->set_obj_group_status(self->mapID, 4, 0);
     }
     STUBBED_PRINTF(" Treasure Freeded");

@@ -1,19 +1,9 @@
 #include "PR/ultratypes.h"
 #include "common.h"
+#include "game/objects/setups/86_PressurePad.h"
 #include "sys/math.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 modelIdx;
-/*1A*/ s16 gameBitPressed;             //Gamebit to set when the switch is pressed down
-/*1C*/ u8 yOffsetAnimation;            //How far down the switch should move when pressed
-/*1D*/ u8 yThreshold;                  //Threshold for other objects pressing switch
-/*1E*/ u8 distanceGuardCommand;        //Player distance at which Guard sidekick command is selectable (only used by DLL 287)
-/*20*/ s16 gamebitActivated;           //Gamebit to check if switch is deactivated
-} PressureSwitch_Setup;
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -34,7 +24,7 @@ void PressureSwitch_ctor(void* dll) { }
 void PressureSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void PressureSwitch_obj_Setup(Object* self, PressureSwitch_Setup* setup, s32 reset) {
+void PressureSwitch_obj_Setup(Object* self, PressurePad_Setup* setup, s32 reset) {
     PressureSwitch_Data* objdata;
     s32 index;
     
@@ -67,13 +57,13 @@ void PressureSwitch_obj_Control(Object* self) {
     Object* sidekick;
     Object* player;
     Object* listedObject;
-    PressureSwitch_Setup* setup;
+    PressurePad_Setup* setup;
     s32 pad;
     PressureSwitch_Data* objdata;
     s8 playSound;
     s32 index;
 
-    setup = (PressureSwitch_Setup*)self->setup;
+    setup = (PressurePad_Setup*)self->setup;
     objdata = self->data;
 
     //Bail if switch deactivated
@@ -231,11 +221,11 @@ s32 PressureSwitch_isObjectOnSwitch(Object* self) {
 // offset: 0x718 | func: 9
 static int PressureSwitch_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 prevCallbackValue) {
     PressureSwitch_Data* objdata;
-    PressureSwitch_Setup* setup;
+    PressurePad_Setup* setup;
     u8 index;
 
     objdata = self->data;
-    setup = (PressureSwitch_Setup*)self->setup;
+    setup = (PressurePad_Setup*)self->setup;
 
     if (animObjData->lastMessage == 1) {
         for (index = 0; index < 10; index++) {

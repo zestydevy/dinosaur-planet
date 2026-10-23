@@ -2,12 +2,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    u8 yaw;
-} Barrel_Setup;
+#include "game/objects/setups/103.h"
 
 typedef struct {
     Pickup pickup;
@@ -28,7 +23,7 @@ void Barrel_ctor(void *dll) { }
 void Barrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Barrel_setup(Object* self, Barrel_Setup* objSetup, s32 reset) {
+void Barrel_setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     gDLL_54_pickup->vtbl->setup(self, (Pickup*)self->data, 33);

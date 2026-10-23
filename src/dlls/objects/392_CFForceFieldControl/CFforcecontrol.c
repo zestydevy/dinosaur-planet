@@ -1,9 +1,10 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
-#include "dlls/objects/391_CFForceField.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/103.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -12,13 +13,6 @@
 #include "macros.h"
 
 /** @file official filename: CFforcecontrol.c */
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 _unk19[0x1C - 0x19];
-    f32 unk1C;
-} CFForceControl_Setup;
 
 typedef struct {
     f32 unk0;
@@ -52,20 +46,20 @@ void CFForceControl_ctor(void* dll) { }
 void CFForceControl_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFForceControl_obj_Setup(Object* self, CFForceControl_Setup* setup, s32 reset) {
+void CFForceControl_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     CFForceControl_Data* objdata = self->data;
     f32 temp;
     
     func_8002674C(self);
     func_80026128(self, 7, 0, -1);
     func_80026724(self);
-    if (setup->unk1C != 0.0f) {
-        temp = setup->unk1C / 255.0f;
+    if (setup->cfForceField.size != 0.0f) {
+        temp = setup->cfForceField.size / 255.0f;
         self->srt.scale = self->def->scale * temp;
         self->visRadius = 400.0f;
     }
-    objdata->unk3C = setup->unk18;
-    objdata->unk38 = (s32) setup->unk1C;
+    objdata->unk3C = setup->cfForceField.unk18;
+    objdata->unk38 = (s32) setup->cfForceField.size;
     objdata->unk34 = 1;
     objdata->unk30 = 0x51;
     objdata->unk4C = 90.0f;
@@ -154,13 +148,13 @@ u32 CFForceControl_obj_GetDataSize(Object* self, u32 offsetAddr) {
 
 // offset: 0x544 | func: 7
 static void CFForceControl_func_544(Object* self) {
-    CFForceField_Setup* forcefield;
+    Ctrl103_Setup* forcefield;
     ObjSetup* setup;
     CFForceControl_Data* objdata;
 
     setup = self->setup;
     objdata = self->data;
-    forcefield = objAllocSetup(sizeof(CFForceField_Setup), OBJ_CFForceField);
+    forcefield = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_CFForceField);
     forcefield->base.x = self->srt.transl.x;
     forcefield->base.y = self->srt.transl.y;
     forcefield->base.z = self->srt.transl.z;
@@ -168,8 +162,8 @@ static void CFForceControl_func_544(Object* self) {
     forcefield->base.byte5 = setup->byte5;
     forcefield->base.byte6 = setup->byte6;
     forcefield->base.fadeDistance = setup->fadeDistance;
-    forcefield->unk1C = 90.0f;
-    forcefield->unk18 = (s8) objdata->unk3C ^ 0; // @fake (partially)
+    forcefield->cfForceField.size = 90.0f;
+    forcefield->cfForceField.unk18 = (s8) objdata->unk3C ^ 0; // @fake (partially)
     forcefield->base.objId = OBJ_CFForceField;
     objSetupObject(&forcefield->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
 }

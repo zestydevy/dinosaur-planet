@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "dlls/objects/609_WMFireFly.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/objtype.h"
 
 typedef struct {

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/103.h"
 #include "sys/curves.h"
 #include "sys/objtype.h"
 #include "dlls/objects/347_texscroll2.h"
@@ -31,7 +32,7 @@ void DFCradle_ctor(void* dll) { }
 void DFCradle_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFCradle_obj_Setup(Object* self, DFCradle_Setup* setup, s32 reset) {
+void DFCradle_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     DFCradle_Data* objData = self->data;
     /*0x18*/ s32 dCurveTypes[] = { 1 };
     Object* pulley;

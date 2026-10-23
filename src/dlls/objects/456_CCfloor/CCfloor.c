@@ -1,14 +1,7 @@
 #include "common.h"
 
 #include "dlls/engine/2_camcontrol.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18; //unused
-    u8 radius;
-    u8 yOffset;
-    f32 scale;
-} CCfloor_Setup;
+#include "game/objects/setups/103.h"
 
 // offset: 0x0 | ctor
 void CCfloor_ctor(void *dll) { }
@@ -17,8 +10,8 @@ void CCfloor_ctor(void *dll) { }
 void CCfloor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCfloor_setup(Object* self, CCfloor_Setup* objSetup, s32 arg2) {
-    self->srt.scale = objSetup->scale * self->def->scale * 100.0f;
+void CCfloor_setup(Object* self, Ctrl103_Setup* objSetup, s32 arg2) {
+    self->srt.scale = objSetup->ccFloor.size * self->def->scale * 100.0f;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_UPDATE_DISABLED);
     self->opacity = 0xC0;
 }
@@ -32,19 +25,19 @@ void CCfloor_update(Object *self) { }
 // offset: 0x7C | func: 3 | export: 3
 void CCfloor_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
     Cam* cam;
-    CCfloor_Setup* objSetup;
+    Ctrl103_Setup* objSetup;
 
     cam = gDLL_2_Camera->vtbl->get_cam();
-    objSetup = (CCfloor_Setup*)self->setup;
+    objSetup = (Ctrl103_Setup*)self->setup;
     
     //Rotate object with the camera
     self->srt.yaw = -1*cam->srt.yaw + 0x8000;   
 
     //Lock object's X/Z coords to camera, with an offset based on the camera's yaw
     //The idea seems to be to create an ocean plane following the camera
-    self->srt.transl.x = cam->srt.transl.f[0] - (mathSinfInterp(cam->srt.yaw) * (objSetup->radius * 0x10));
-    self->srt.transl.y = objSetup->base.y - objSetup->yOffset; //locked y coord, ignoring camera
-    self->srt.transl.z = cam->srt.transl.f[2] + (mathCosfInterp(cam->srt.yaw) * (objSetup->radius * 0x10));
+    self->srt.transl.x = cam->srt.transl.f[0] - (mathSinfInterp(cam->srt.yaw) * (objSetup->ccFloor.radius * 0x10));
+    self->srt.transl.y = objSetup->base.y - objSetup->ccFloor.yOffset; //locked y coord, ignoring camera
+    self->srt.transl.z = cam->srt.transl.f[2] + (mathCosfInterp(cam->srt.yaw) * (objSetup->ccFloor.radius * 0x10));
    
     //Undo previous by just locking the object's coords directly to the camera
     self->srt.transl.x = cam->srt.transl.x;

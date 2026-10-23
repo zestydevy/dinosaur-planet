@@ -2,6 +2,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/gfx/modgfx.h"
 
 typedef struct {

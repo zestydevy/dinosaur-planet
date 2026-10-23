@@ -1,16 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/objlib.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 gamebitRestoreState;
-    s16 unk1C;
-    s8 unk1E;
-    u8 yaw;
-    s8 unk20;
-    u8 scale;
-} CFTreasureDoor_Setup;
 
 typedef struct {
     u8 preemptState;
@@ -43,7 +33,7 @@ void CFTreasureDoor_ctor(void* dll) { }
 void CFTreasureDoor_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFTreasureDoor_obj_Setup(Object* self, CFTreasureDoor_Setup* objSetup, s32 reset) {
+void CFTreasureDoor_obj_Setup(Object* self, SeqDoor_Setup* objSetup, s32 reset) {
     CFTreasureDoor_Data* objData;
     TextureAnimator* texAnim;
 

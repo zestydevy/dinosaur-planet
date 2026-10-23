@@ -2,15 +2,12 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/103.h"
 #include "sys/objhits.h"
 #include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-    ObjSetup base;
-} CCsandwormBoss_Setup;
 
 typedef struct {
     u8 state;                       //State Machine value
@@ -125,7 +122,7 @@ void CCsandwormBoss_ctor(void *dll) { }
 void CCsandwormBoss_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCsandwormBoss_setup(Object* self, CCsandwormBoss_Setup* objSetup, s32 reset) {
+void CCsandwormBoss_setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     CCsandwormBoss_Data* objData;
 
     objData = self->data;

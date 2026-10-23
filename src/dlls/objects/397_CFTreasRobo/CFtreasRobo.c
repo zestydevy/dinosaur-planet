@@ -6,6 +6,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/textable.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
@@ -20,11 +21,6 @@
 #include "macros.h"
 
 /** @file official filename: CFtreasRobo.c */
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-} CFTreasRobo_Setup;
 
 typedef struct {
     f32 unk0;
@@ -80,7 +76,7 @@ void CFTreasRobo_ctor(void* dll) { }
 void CFTreasRobo_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFTreasRobo_obj_Setup(Object* self, CFTreasRobo_Setup* setup, s32 reset) {
+void CFTreasRobo_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     CFTreasRobo_Data* objdata;
 
     STUBBED_PRINTF(" ROBOT  ROBOT  CREATED \n\n\n");
@@ -94,7 +90,7 @@ void CFTreasRobo_obj_Setup(Object* self, CFTreasRobo_Setup* setup, s32 reset) {
     objdata->unk1A6 = 4;
     objdata->unk1A7 = 0;
     objAddObjectType(self, OBJTYPE_CFTreasRobo);
-    if (setup->unk18 != 0) {
+    if (setup->cfTreasRobo.unk18 != 0) {
         objdata->state = 14;
         objdata->unk1A2 = 2;
         objdata->unk1A4 = 2;

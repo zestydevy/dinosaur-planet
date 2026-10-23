@@ -1,3 +1,4 @@
+#include "game/objects/setups/95_CClogpush.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
@@ -8,18 +9,6 @@ typedef struct {
 /*01*/ u8 unk1;
 /*04*/ Object *obj;
 } CClogpush_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebit1;
-/*1A*/ s16 gamebit2;
-/*1C*/ s16 gamebit3;
-/*1E*/ s16 unk1E;
-/*20*/ u8 unk20;
-/*21*/ u8 objType; // 11
-/*22*/ u8 objectSeqIndex;
-/*23*/ u8 flags;
-} CClogpush_Setup;
 
 typedef enum {
     STATE_0,

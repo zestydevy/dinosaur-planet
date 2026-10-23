@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"

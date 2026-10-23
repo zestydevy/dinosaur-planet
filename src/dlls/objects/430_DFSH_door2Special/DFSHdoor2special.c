@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/objects/429_DFSH_Door1Special.h"
+#include "game/objects/setups/87_SeqDoor.h"
 
 static int DFSH_Door2Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
@@ -10,7 +11,7 @@ void DFSH_Door2Special_ctor(void* dll) { }
 void DFSH_Door2Special_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFSH_Door2Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32 reset) {
+void DFSH_Door2Special_obj_Setup(Object* self, SeqDoor_Setup* objSetup, s32 reset) {
     DFSH_DoorSpecial_Data* objData;
     TextureAnimator* texAnim;
 
@@ -19,7 +20,7 @@ void DFSH_Door2Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup,
 
     //Restore texture glow state
     {
-        if (mainGetBits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitOpenB)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_2_Pulse;
         } else {
             objData->glowState = DFSH_DoorSpecial_GLOW_0_Unlit;
@@ -67,17 +68,17 @@ u32 DFSH_Door2Special_obj_GetDataSize(Object* self, u32 offsetAddr) {
 // offset: 0x174 | func: 7
 int DFSH_Door2Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     TextureAnimator* texAnim;
-    DFSH_DoorSpecial_Setup* objSetup;
+    SeqDoor_Setup* objSetup;
     DFSH_DoorSpecial_Data* objData;
     s32 frame;
 
     objData = self->data;
-    objSetup = (DFSH_DoorSpecial_Setup*)self->setup;
+    objSetup = (SeqDoor_Setup*)self->setup;
     
     //Texture glow State Machine
     switch (objData->glowState) {
     case DFSH_DoorSpecial_GLOW_0_Unlit:
-        if (mainGetBits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitOpenB)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_1_Fade_In;
         }
         break;

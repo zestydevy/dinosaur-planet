@@ -2,14 +2,9 @@
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/model.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 speedX;
-    u8 speedY;
-    u8 speedZ;
-} DRbullet_Setup;
 
 typedef struct {
     Object* lfxEmitter;
@@ -37,7 +32,7 @@ void DRbullet_ctor(void *dll) { }
 void DRbullet_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
+void DRbullet_setup(Object* self, Ctrl103_Setup* objSetup, s32 arg2) {
     ObjectShadow* shadowData;
     DRbullet_Data* objData;
 
@@ -50,9 +45,9 @@ void DRbullet_setup(Object* self, DRbullet_Setup* objSetup, s32 arg2) {
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
-    self->velocity.x = objSetup->speedX;   
-    self->velocity.y = objSetup->speedY;
-    self->velocity.z = objSetup->speedZ;
+    self->velocity.x = objSetup->drBullet.speedX;   
+    self->velocity.y = objSetup->drBullet.speedY;
+    self->velocity.z = objSetup->drBullet.speedZ;
 
     shadowData = self->shadow;
     if (shadowData != NULL) {

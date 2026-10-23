@@ -1,6 +1,7 @@
 #include "game/objects/object.h"
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
+#include "game/objects/setups/103.h"
 #include "sys/camera.h"
 #include "sys/gfx/model.h"
 #include "sys/map.h"
@@ -9,13 +10,6 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-} CFMagicWall_Setup;
 
 static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID);
 
@@ -32,7 +26,7 @@ void CFMagicWall_setup(Object *self, ObjSetup *setup, s32 arg2) {
 
 // offset: 0x5C | func: 1 | export: 1
 void CFMagicWall_control(Object* self) {
-    CFMagicWall_Setup* setup;
+    Ctrl103_Setup* setup;
     Object* player;
     u8 var_a1;
     f32 var_fv0;
@@ -40,9 +34,9 @@ void CFMagicWall_control(Object* self) {
     s32 pad[2];
     f32 temp;
 
-    setup = (CFMagicWall_Setup*)self->setup;
+    setup = (Ctrl103_Setup*)self->setup;
     player = objGetPlayer();
-    var_ft1 = (f32)setup->unk1A;
+    var_ft1 = (f32)setup->cfMagicWall.unk1A;
     temp = vec3Distance(&self->globalPosition, &player->globalPosition);
     if (temp < vec3Distance(&self->globalPosition, &objGetSidekick()->globalPosition)) {
         var_fv0 = vec3Distance(&self->globalPosition, &player->globalPosition);
@@ -54,13 +48,13 @@ void CFMagicWall_control(Object* self) {
     }
     if (var_fv0 < var_ft1) {
         var_a1 = ((var_fv0 / var_ft1) * 255.0f);
-        if (setup->unk19 == 0) {
+        if (setup->cfMagicWall.unk19 == 0) {
             var_a1 = (255 - var_a1);
         }
     } else {
-        var_a1 = (setup->unk19 * 255);
+        var_a1 = (setup->cfMagicWall.unk19 * 255);
     }
-    CFMagicWall_func_384(self, var_a1, setup->unk18);
+    CFMagicWall_func_384(self, var_a1, setup->cfMagicWall.animatorID);
 }
 
 // offset: 0x2C0 | func: 2 | export: 2

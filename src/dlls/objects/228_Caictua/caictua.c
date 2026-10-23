@@ -3,11 +3,11 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/251_weapons.h"
 #include "dlls/objects/228_Caictua.h"
-#include "dlls/objects/258_Caictua_Thorn.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "game/objects/setups/103.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -535,7 +535,8 @@ static void Caictua_shootThorn(Object* self, Baddie* baddie) {
     //Fire two thorns
     i = 2;
     while (i--) {
-        thornSetup = objAllocSetup(sizeof(Caictua_Thorn_Setup), OBJ_Caictua_Thorn);
+        // @bug: OBJ_Caictua_Thorn is in the controlNo group 103 but the allocated setup here is too big
+        thornSetup = objAllocSetup(sizeof(Ctrl103_Setup) + 4, OBJ_Caictua_Thorn);
         originX = objData->aim[i].origin.x;
         originY = objData->aim[i].origin.y;
         originZ = objData->aim[i].origin.z;

@@ -1,15 +1,10 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/objects/setups/103.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 
 s32 objAnimAdvance(Object*, f32, f32 updateRate, UnkFunc_80024108Struct*);
-
-typedef struct {
-    ObjSetup base;
-    u16 unk18;                  //Unused
-    u8 yaw;
-} CCcage_Setup;
 
 typedef struct {
     u8 timesHit;                //How many times cage's been hit with Projectile Spell
@@ -45,7 +40,7 @@ void CCcage_ctor(void *dll) { }
 void CCcage_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCcage_setup(Object* self, CCcage_Setup* objSetup, s32 arg2) {
+void CCcage_setup(Object* self, Ctrl103_Setup* objSetup, s32 arg2) {
     CCcage_Data* objData;
 
     objData = self->data;
@@ -77,12 +72,12 @@ void CCcage_control(Object* self) {
     Object* nearbyObject;
     f32 tValue;
     s16 index;
-    CCcage_Setup* objSetup;
+    Ctrl103_Setup* objSetup;
     CCcage_Data* objData;
 
     searchDistance = 100;
     objData = self->data;
-    objSetup = (CCcage_Setup*)self->setup;
+    objSetup = (Ctrl103_Setup*)self->setup;
     
     //Look for nearby CClightfoot
     if (objData->children[0] == NULL) {

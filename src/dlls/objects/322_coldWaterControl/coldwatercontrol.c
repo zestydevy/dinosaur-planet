@@ -1,10 +1,7 @@
 #include "common.h"
 
 #include "dlls/objects/210_player.h"
-
-typedef struct {
-    ObjSetup base;
-} ColdWaterControl_Setup;
+#include "game/objects/setups/103.h"
 
 typedef struct {
     f32 timer;
@@ -22,7 +19,7 @@ void ColdWaterControl_ctor(void *dll) { }
 void ColdWaterControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ColdWaterControl_setup(Object* self, ColdWaterControl_Setup* arg1, s32 arg2) {
+void ColdWaterControl_setup(Object* self, Ctrl103_Setup* arg1, s32 arg2) {
     ColdWaterControl_Data* objData = self->data;
     objData->timer = COLDWATER_INITIAL;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;

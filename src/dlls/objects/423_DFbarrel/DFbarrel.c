@@ -1,10 +1,10 @@
 #include "common.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
 #include "dlls/objects/358_debris.h"
-#include "dlls/objects/423_DFbarrel.h"
 #include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "game/objects/setups/55_Riverflow.h"
 #include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objhits.h"
@@ -32,7 +32,7 @@ void DFbarrel_ctor(void* dll) { }
 void DFbarrel_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFbarrel_obj_Setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
+void DFbarrel_obj_Setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;

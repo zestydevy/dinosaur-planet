@@ -1,24 +1,13 @@
 #include "common.h"
+#include "game/objects/setups/101_Crate2.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
 
 typedef struct {
    s8 unk0;
    s8 unk1;
-}DLL320_Data;
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    u8 unk1E;
-    u8 unk1F;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-}DLL320_Setup;
+} DLL320_Data;
+
 /*0x0*/ static DLL_IModgfx* _data_0 = NULL;
 
 // offset: 0x0 | ctor
@@ -28,7 +17,7 @@ void dll_320_ctor(void *dll) { }
 void dll_320_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_320_setup(Object* self, DLL320_Setup* setup, s32 arg2) {
+void dll_320_setup(Object* self, Crate2_Setup* setup, s32 arg2) {
     DLL320_Data* objdata;
     f32 sp20;
     ObjectHitInfo* temp_v1_3;
@@ -62,7 +51,7 @@ void dll_320_control(Object* self) {
     ObjectHitInfo* temp_v0;
     DLL320_Data* objdata;
     void* sp48;
-    DLL320_Setup* sp40;
+    Crate2_Setup* sp40;
     f32 sp3C;
     f32 temp_fv0;
     Object* temp_v0_2;
@@ -82,7 +71,7 @@ void dll_320_control(Object* self) {
         }
     }
     if (objdata->unk1 <= 0) {
-        sp40 = (DLL320_Setup*)self->setup;
+        sp40 = (Crate2_Setup*)self->setup;
         objdata->unk0 = 1;
         temp_v0 = self->objhitInfo;
         temp_v0->unk58 &= 0xFFFE;
@@ -115,7 +104,7 @@ void dll_320_update(Object *self) { }
 // offset: 0x3E0 | func: 3 | export: 3
 
 void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    DLL320_Setup* objsetup;
+    Crate2_Setup* objsetup;
     DLL320_Data* objdata = self->data;
 
     if (objdata->unk0 != 0) {
@@ -123,7 +112,7 @@ void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle*
     }
 
     if (visibility != 0) {
-        objsetup = (DLL320_Setup*)self->setup; 
+        objsetup = (Crate2_Setup*)self->setup; 
         if (objsetup->unk1F & 1) {
             objprintSetMultiplierColor((s16) objsetup->unk20, (s16) objsetup->unk21, (s16) objsetup->unk22);
         }

@@ -13,6 +13,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -56,7 +57,7 @@ void Tumbleweed_ctor(void* dll) { }
 void Tumbleweed_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Tumbleweed_obj_Setup(Object* self, Tumbleweed_Setup* setup, s32 reset) {
+void Tumbleweed_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     Tumbleweed_Data* objData;
     GoldenNugget_Setup* goldSetup;
     Object** objects;
@@ -67,8 +68,8 @@ void Tumbleweed_obj_Setup(Object* self, Tumbleweed_Setup* setup, s32 reset) {
     
     objData->homeX = self->srt.transl.x;
     objData->homeZ = self->srt.transl.z;
-    objData->interactRadius = 2.0f * setup->interactRadius;
-    objData->carryingGold = setup->carryingGold;
+    objData->interactRadius = 2.0f * setup->tumbleweed.interactRadius;
+    objData->carryingGold = setup->tumbleweed.carryingGold;
     objData->flags = Tumbleweed_FLAG_None;
     objData->baseScale = self->srt.scale;
     objData->timer = objData->baseScale / mathRnd(200, 500);
@@ -808,17 +809,17 @@ int Tumbleweed_didPlayerLiftTwig(Object* self) {
   * Used to turn the Tumbleweeds into a bundle of twigs when attacked.
 */
 void Tumbleweed_createTwigs(Object* self) {
-    Tumbleweed_Setup* setup;
+    Ctrl103_Setup* setup;
 
     switch (self->id) {
         case OBJ_Tumbleweed1:
-            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed1twig);
+            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed1twig);
             break;
         case OBJ_Tumbleweed2:
-            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed2twig);
+            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed2twig);
             break;
         case OBJ_Tumbleweed3:
-            setup = objAllocSetup(sizeof(Tumbleweed_Setup), OBJ_Tumbleweed3twig);
+            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed3twig);
             break;
     }
     
@@ -828,10 +829,10 @@ void Tumbleweed_createTwigs(Object* self) {
     setup->base.fadeDistance = 0xFF;
     setup->base.loadFlags = OBJSETUP_LOAD_FLAG20;
     setup->base.fadeFlags = OBJSETUP_FADE_MAIN;
-    setup->roll = self->srt.roll;
-    setup->pitch = self->srt.pitch;
-    setup->yaw = self->srt.yaw;
-    setup->carryingGold = 0;
-    setup->interactRadius = 64.0f;
+    setup->tumbleweed.roll = self->srt.roll;
+    setup->tumbleweed.pitch = self->srt.pitch;
+    setup->tumbleweed.yaw = self->srt.yaw;
+    setup->tumbleweed.carryingGold = 0;
+    setup->tumbleweed.interactRadius = 64.0f;
     objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

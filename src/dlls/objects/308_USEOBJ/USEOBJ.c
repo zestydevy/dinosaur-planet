@@ -2,6 +2,7 @@
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/88_UseObj.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
@@ -18,20 +19,6 @@ typedef enum  {
     USEOBJ_ReplayIncludeActor3 = 0x40,
     USEOBJ_ReplayIncludeActor4 = 0x80
 } UseObjFlags;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 pitch;
-/*1A*/ u8 roll;
-/*1B*/ u8 flags;
-/*1C*/ s16 gamebitUsed; // gamebit that says whether this object was already used
-/*1E*/ s16 gamebitRequiredItem; // inventory item required to use this object
-/*20*/ s8 objectSeqIndex;
-/*21*/ s8 modelInstIdx;
-/*22*/ s16 gamebitEnabled; // gamebit that says whether this object is enabled (and can be used)
-/*24*/ s16 replayStartTime; // if not zero, the sequence will be replayed if the object was already used
-} UseObj_Setup;
 
 typedef struct {
     u8 used;
@@ -54,7 +41,7 @@ void UseObj_obj_Setup(Object* self, UseObj_Setup* setup, s32 reset) {
     self->srt.roll = setup->roll << 8;
     self->animCallback = UseObj_animCallback;
 
-    self->modelInstIdx = setup->modelInstIdx;
+    self->modelInstIdx = setup->modelno;
     if (self->modelInstIdx >= self->def->numModels) {
         STUBBED_PRINTF("USEOBJ.c: modelno out of range romdefno=%d\n", self->modelInstIdx);
         self->modelInstIdx = 0;

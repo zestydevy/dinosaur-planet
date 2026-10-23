@@ -2,6 +2,7 @@
 #include "game/objects/object_id.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/52_CampFire.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"

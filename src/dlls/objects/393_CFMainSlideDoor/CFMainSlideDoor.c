@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -9,18 +10,6 @@
 #include "sys/objprint.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s8 unk1E;
-    u8 unk1F;
-    u8 unk20;
-    u8 unk21;
-    s16 unk22;
-} CFMainSlideDoor_Setup;
 
 typedef struct {
     u8 unk0;
@@ -35,13 +24,13 @@ void CFMainSlideDoor_ctor(void *dll) { }
 void CFMainSlideDoor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2) {
+void CFMainSlideDoor_setup(Object* self, SeqDoor_Setup* setup, s32 arg2) {
     CFMainSlideDoor_Data* objdata;
 
     self->unkDC = 0;
-    self->srt.yaw = setup->unk1F << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = CFMainSlideDoor_func_268;
-    self->srt.scale = setup->unk21 * (1.0f / 64.0f);
+    self->srt.scale = setup->scale * (1.0f / 64.0f);
     self->srt.scale *= self->def->scale;
     objdata = (CFMainSlideDoor_Data*)self->data;
     objdata->unk0 = vec3DistanceXZ(&self->globalPosition, &objGetPlayer()->globalPosition) < 130.0f;
@@ -50,16 +39,16 @@ void CFMainSlideDoor_setup(Object* self, CFMainSlideDoor_Setup* setup, s32 arg2)
 // offset: 0x108 | func: 1 | export: 1
 void CFMainSlideDoor_control(Object* self) {
     CFMainSlideDoor_Data* objdata;
-    CFMainSlideDoor_Setup* setup;
+    SeqDoor_Setup* setup;
 
     if (self->unkDC == 0) {
-        setup = (CFMainSlideDoor_Setup*)self->setup;
+        setup = (SeqDoor_Setup*)self->setup;
         objdata = (CFMainSlideDoor_Data*)self->data;
-        if ((setup->unk1C != 0) && (objdata->unk0 != 0)) {
-            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->unk1C);
+        if ((setup->preemptTime != 0) && (objdata->unk0 != 0)) {
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
         }
-        if (setup->unk1E != -1) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(setup->unk1E, self, -1);
+        if (setup->objSeqIdx != -1) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objSeqIdx, self, -1);
         }
         self->unkDC = 1;
     }
@@ -91,7 +80,7 @@ u32 CFMainSlideDoor_get_data_size(Object *self, u32 a1) {
 // offset: 0x268 | func: 7
 int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
     CFMainSlideDoor_Data* objdata;
-    CFMainSlideDoor_Setup* setup;
+    SeqDoor_Setup* setup;
     Object* player;
     Object* sidekick;
     s32 var_t6;
@@ -110,18 +99,18 @@ int CFMainSlideDoor_func_268(Object* a0, Object* a1, AnimObj_Data* a2, s8 a3) {
         var_t7 = 0;
     }
     objdata = (CFMainSlideDoor_Data*)a0->data;
-    setup = (CFMainSlideDoor_Setup*)a0->setup;
+    setup = (SeqDoor_Setup*)a0->setup;
     if (objdata->unk0 == 0) {
-        if (mainGetBits(setup->unk18) != 0) {
-            if (setup->unk22 == -1 || mainGetBits(setup->unk22) != 0) {
-                mainSetBits(setup->unk1A, 1);
+        if (mainGetBits(setup->gamebitOpenA) != 0) {
+            if (setup->gamebitOpenB == -1 || mainGetBits(setup->gamebitOpenB) != 0) {
+                mainSetBits(setup->gamebitRestoreState, 1);
                 if (var_t6 != 0 || var_t7 != 0) {
                     objdata->unk0 = 2;
                 }
             }
         }
     } else if (objdata->unk0 == 1) {
-        if (mainGetBits(setup->unk18) != 0 || (setup->unk22 != -1 && mainGetBits(setup->unk22) != 0)) {
+        if (mainGetBits(setup->gamebitOpenA) != 0 || (setup->gamebitOpenB != -1 && mainGetBits(setup->gamebitOpenB) != 0)) {
             if ((var_t6 == 0) && (var_t7 == 0)) {
                 objdata->unk0 = 3;
             }

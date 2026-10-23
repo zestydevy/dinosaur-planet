@@ -7,6 +7,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
