@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/103.h"
+#include "game/objects/setups/117.h"
 #include "sys/objhits.h"
 
 #include "dlls/objects/226_tumbleweedbush.h"
@@ -39,7 +40,7 @@ void TumbleweedBush_ctor(void* dll) { }
 void TumbleweedBush_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void TumbleweedBush_obj_Setup(Object* self, TumbleweedBush_Setup* objSetup, s32 reset) {
+void TumbleweedBush_obj_Setup(Object* self, Ctrl117_Setup* objSetup, s32 reset) {
     s32 pad[2];
     s32 type;
     s32 i;
@@ -138,7 +139,7 @@ void TumbleweedBush_obj_Update(Object* self) { }
 
 // offset: 0x518 | func: 3 | export: 3
 void TumbleweedBush_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    TumbleweedBush_Setup* objSetup = (TumbleweedBush_Setup*)self->setup;
+    Ctrl117_Setup* objSetup = (Ctrl117_Setup*)self->setup;
     
     if (visibility) {
         //Tint the tree using a colour multiplier
@@ -188,7 +189,7 @@ void TumbleweedBush_RemoveTumbleweed(Object* self, Object* tumbleweed) {
  */
 s8 TumbleweedBush_createTumbleweed(Object* self) {
     TumbleweedBush_Data* objData;
-    TumbleweedBush_Setup* objSetup;
+    Ctrl117_Setup* objSetup;
     Ctrl103_Setup* weedSetup;
     Object** objects;
     s32 weedIdx;
@@ -199,7 +200,7 @@ s8 TumbleweedBush_createTumbleweed(Object* self) {
     f32 dayTime;
 
     objData = self->data;
-    objSetup = (TumbleweedBush_Setup*)self->setup;
+    objSetup = (Ctrl117_Setup*)self->setup;
 
     //Get tumbleweed objectID from tree objectID
     switch (self->id){
@@ -253,7 +254,7 @@ s8 TumbleweedBush_createTumbleweed(Object* self) {
 
     //Check if the Tumbleweed should be carrying a Shiny Nugget
     if (objData->carryingGold & 1) {
-        objSetup = (TumbleweedBush_Setup*)self->setup;
+        objSetup = (Ctrl117_Setup*)self->setup;
         if ((objSetup->base.uID == 0x292C) && (objData->tumbleweedsGrown == 6)) {
             weedSetup->tumbleweed.carryingGold = 1;
 

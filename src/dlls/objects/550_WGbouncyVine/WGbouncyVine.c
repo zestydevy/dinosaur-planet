@@ -1,13 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/128_WGbouncyVine.h"
 #include "sys/objhits.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 gamebitA;           //GamebitID for defeating a nearby Pollen Cannon
-    s16 gamebitB;           //GamebitID for defeating a nearby Pollen Cannon
-    s16 gamebitHurtPlayer;  //Vine bounces and hurts the player when this is set (by TriggerPlane)
-} WGBouncyVine_Setup;
 
 typedef struct {
     u8 state;

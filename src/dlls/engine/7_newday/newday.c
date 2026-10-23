@@ -1,9 +1,9 @@
 #include "dlls/engine/17_partfx.h"
 #include "dlls/engine/7_newday.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/gfx/texture.h"
 #include "sys/curves.h"
 #include "sys/envfx.h"
@@ -1487,7 +1487,7 @@ static void newday_func_5124(f32 x, f32 y, f32 z) {
         fxSetup->yawSpeed = 0;
         fxSetup->activationRange = 0;
         fxSetup->bank = 0;
-        fxSetup->indexInBank = PARTICLE_53D;
+        fxSetup->id = PARTICLE_53D;
         fxSetup->fxRate = 1;
         data_C0 = objSetupObject((ObjSetup*)fxSetup, OBJINIT_FLAG4 | OBJINIT_STANDALONE, player->mapID, -1, player->parent);
         if (data_C0 == 0) {

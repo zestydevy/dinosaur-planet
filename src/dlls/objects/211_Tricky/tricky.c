@@ -4,7 +4,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/278_flameblast.h"
 #include "dlls/objects/280_sidekicktoy.h"
-#include "dlls/objects/332_FXEmit.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
@@ -3287,7 +3287,7 @@ static void dll_211_func_9050(Object* self, DLL211_Data* objData) {
     temp_v0_2->yawSpeed = 0;
     temp_v0_2->activationRange = 0;
     temp_v0_2->bank = 1;
-    temp_v0_2->indexInBank = 0x4A;
+    temp_v0_2->id = 0x4A;
     temp_v0_2->fxRate = -0x1E;
     objData->unk5F0 = objSetupObject(&temp_v0_2->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

@@ -7,19 +7,6 @@
 #include "types.h"
 
 typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 growWeedsRadius;             //Tumbleweeds grow on tree when player inside this radius (stored halved)
-    f32 scale;
-    u8 multiplyColourR;             //Colour multiplier for the tree
-    u8 multiplyColourG;             //Colour multiplier for the tree
-    u8 multiplyColourB;             //Colour multiplier for the tree
-    u8 carryingGold;                //Bitfield flags: carrying a Shiny Nugget when bit0 is set
-} TumbleweedBush_Setup;
-
-typedef struct {
     f32 unk0;                       //Set to 0.0f in setup, but otherwise unused
     f32 unused4;
     u16 growWeedsRadius;            //Tumbleweeds grow on tree when player inside this radius

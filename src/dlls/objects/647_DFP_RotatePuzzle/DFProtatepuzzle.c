@@ -1,8 +1,8 @@
 #include "common.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/math.h"
 
 typedef struct {
@@ -278,7 +278,7 @@ s32 DFP_RotatePuzzle_createFlameFXEmit(Object* self, u8 index) {
     fxSetup->yawSpeed = 0;
     fxSetup->activationRange = 0;
     fxSetup->bank = 1;
-    fxSetup->indexInBank = 17;
+    fxSetup->id = 17;
     fxSetup->fxRate = 1;
     fxSetup->interval = 0xFF;
     sFlameFXEmits[index] = objSetupObject(&fxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);

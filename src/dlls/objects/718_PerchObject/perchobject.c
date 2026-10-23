@@ -6,6 +6,7 @@
 #include "dlls/objects/common/kyte_target.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objects.h"
 #include "sys/math.h"
@@ -15,15 +16,6 @@
 #include "sys/objprint.h"
 #include "game/gamebits.h"
 #include "types.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 findCommandRange;
-/*19*/ u8 unk19;
-/*1A*/ u16 kyteFlightGroup; //curve group Kyte should traverse when using "Find" command
-/*1C*/ s16 unk1C;
-/*1E*/ u8 useDistance3D; //affects how player-to-perch distance is calculated (2D X/Z vs. full 3D)
-} PerchObject_Setup;
 
 typedef struct {
     s8 stateIndex;
@@ -55,7 +47,7 @@ void perchobject_obj_Setup(Object* self, s32 arg1, s32 arg2) {
 // offset: 0x74 | func: 1 | export: 1
 void perchobject_obj_Control(Object* self) {
     PerchObject_Data *objData;
-    PerchObject_Setup *objSetup;
+    KyteTarget_Setup *objSetup;
     Object *kyte;
     Object *player;
     CurveSetup *curveSetup;
@@ -64,13 +56,13 @@ void perchobject_obj_Control(Object* self) {
     f32 playerToCurveDistance;
 
     objData = self->data;
-    objSetup = (PerchObject_Setup *) self->setup;
+    objSetup = (KyteTarget_Setup *) self->setup;
 
     stateIndex = objData->stateIndex;
     switch (stateIndex){
         case STATE_0_Initialise:
             //Get the curveCreateInfo for Kyte's flight group
-            curveSetup = gDLL_25->vtbl->func_2A50(self, objSetup->kyteFlightGroup);
+            curveSetup = gDLL_25->vtbl->func_2A50(self, objSetup->flightGroup);
             objData->curveSetup = curveSetup;
             if (curveSetup){
                 objData->stateIndex = STATE_1_Wait_for_Player_to_Instruct_Kyte;
@@ -87,13 +79,13 @@ void perchobject_obj_Control(Object* self) {
             player = objGetPlayer();
 
             //Check distance between player and perch (either lateral X/Z distance or full 3D distance check)
-            if (objSetup->useDistance3D){
-                playerToCurveDistance = vec3DistanceSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
-                playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange));
+            if (objSetup->distCheckMode){
+                playerToCurveDistance = vec3DistanceSquared(&player->globalPosition, &objData->curveSetup->pos);
+                playerIsNearby = (u8)(playerToCurveDistance <= (objSetup->commandRange * objSetup->commandRange));
             } else {
-                playerToCurveDistance = vec3DistanceXZSquared(&player->globalPosition, (Vec3f *) (&objData->curveSetup->pos.x));
+                playerToCurveDistance = vec3DistanceXZSquared(&player->globalPosition, &objData->curveSetup->pos);
                 playerIsNearby = FALSE;
-                if (playerToCurveDistance <= (objSetup->findCommandRange * objSetup->findCommandRange)) {
+                if (playerToCurveDistance <= (objSetup->commandRange * objSetup->commandRange)) {
                     playerIsNearby = TRUE;
                 }
                 if (1) { } //fake?
@@ -105,7 +97,7 @@ void perchobject_obj_Control(Object* self) {
                 ((DLL_ISidekick*) kyte->dll)->vtbl->EnableCommand(kyte, Sidekick_Command_INDEX_1_Find);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)){
                     STUBBED_PRINTF("should activate the command\n");
-                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
                 }
             }
             break;
@@ -201,22 +193,22 @@ static int perchobject_anim_callback(Object* self, Object* animObj, AnimObj_Data
     s32 pad;
     Object* kyte;
     PerchObject_Data* objData;
-    PerchObject_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
 
     objGetSidekick(); //@bug: not stored to variable, called again later!
     objData = self->data;
-    objSetup = (PerchObject_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
 
     kyte = objGetSidekick();    
     if (kyte) {
-        if (vec3DistanceSquared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->findCommandRange)) {
+        if (vec3DistanceSquared(&objGetPlayer()->globalPosition, (Vec3f*)&(objData->curveSetup)->pos.x) <= SQ(objSetup->commandRange)) {
             //Enable Find command option
             ((DLL_ISidekick*)kyte->dll)->vtbl->EnableCommand(kyte, Sidekick_Command_INDEX_1_Find);
             
             //Check if Find command was used
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                 STUBBED_PRINTF("should activate the command\n");
-                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
             }
         }
     }

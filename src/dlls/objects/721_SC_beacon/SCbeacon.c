@@ -3,6 +3,7 @@
 #include "unktypes.h"
 #include "game/lightactions.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/map_enums.h"
 #include "sys/objtype.h"
 #include "sys/lfx.h"
@@ -24,7 +25,7 @@ void SCbeacon_ctor(void *dll) { }
 void SCbeacon_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCbeacon_obj_Setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
+void SCbeacon_obj_Setup(Object* self, KyteTarget_Setup* objSetup, s32 arg2) {
     SCbeacon_Data* objData = self->data;
 
     self->animCallback = SCbeacon_anim_callback;
@@ -62,16 +63,16 @@ void SCbeacon_obj_Setup(Object* self, SCbeacon_Setup* objSetup, s32 arg2) {
 // offset: 0x110 | func: 1 | export: 1
 void SCbeacon_obj_Control(Object* self) {
     SCbeacon_Data* objData;
-    SCbeacon_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     Object* sidekick;
     Object* player;
     u8 playerIsNearby;
 
     objData = self->data;
-    objSetup = (SCbeacon_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     player = objGetPlayer();
     
-    playerIsNearby = (vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->playerRange));
+    playerIsNearby = (vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->commandRange));
     
     objData->flags &= ~SCbeacon_FLAG_Emit_Light;
 
@@ -111,7 +112,7 @@ void SCbeacon_obj_Control(Object* self) {
 
             //Check if Flame command was selected
             if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteCurveID);
+                mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
             }
         }
         break;
@@ -242,13 +243,13 @@ s32 SCbeacon_KyteTarget_Func_804(Object* self) {
   */
 void SCbeacon_attempt_to_light(Object* self) {
     s32 pad;
-    SCbeacon_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     DLL_IModgfx* modGfxDLL;
     CurveSetup* curveSetup;
     SCbeacon_Data* objData;
 
     objData = self->data;
-    objSetup = (SCbeacon_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     
     if (mainGetBits(objData->gamebitTwigs)) {
         //Play burning sound loops
@@ -267,7 +268,7 @@ void SCbeacon_attempt_to_light(Object* self) {
         objData->state = SCbeacon_STATE_Lit;
 
         //Set Kyte curve gamebit
-        objData->kyteCurve = gDLL_25->vtbl->func_2BC4(self, objSetup->kyteCurveID);
+        objData->kyteCurve = gDLL_25->vtbl->func_2BC4(self, objSetup->flightGroup);
         if (objData->kyteCurve->type22.usedBit != NO_GAMEBIT) {
             mainSetBits(objData->kyteCurve->type22.usedBit, 1);
         }
@@ -280,11 +281,11 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
     u8 playerIsNearby;
     Object* player;
     Object* sidekick;
-    SCbeacon_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
 
     player = objGetPlayer();
     objData = self->data;
-    objSetup = (SCbeacon_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     
     /* @bug: Causes Tumbleweed twigs to suddenly appear in the bowl when Kyte uses Flame,
              because any sequence that includes SC_beacon will cause this animCallback to be called!
@@ -292,7 +293,7 @@ int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animDat
     */
     objData->flags |= SCbeacon_FLAG_Add_Tumbleweed;
     
-    playerIsNearby = (vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->playerRange));
+    playerIsNearby = (vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= SQ(objSetup->commandRange));
 
     switch (objData->state) {
     case SCbeacon_STATE_Lighting:

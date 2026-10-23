@@ -4,6 +4,7 @@
 #include "dlls/objects/404_CFExplodePieces.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/105_Exploder.h"
 #include "sys/objtype.h"
 
 #define MAX_PIECES 15
@@ -142,7 +143,7 @@ typedef struct {
     { OBJ_CCexplodedoor,  OBJ_CCexplodedoorPi, 1,     1 }
 };
 
-static void CFExplodeWall_explode(Object* self, CFExplodeWall_Setup* objSetup, s32 skipModelCentrepointCalc, CFExplodeWall_Data* objData);
+static void CFExplodeWall_explode(Object* self, Exploder_Setup* objSetup, s32 skipModelCentrepointCalc, CFExplodeWall_Data* objData);
 static Object* CFExplodeWall_createPiece(Object* self, s32 objectID, CFExplodeWall_PieceData* arg2, s32 index);
 
 // offset: 0x0 | ctor
@@ -152,7 +153,7 @@ void CFExplodeWall_ctor(void* dll) { }
 void CFExplodeWall_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFExplodeWall_obj_Setup(Object* self, CFExplodeWall_Setup* objSetup, s32 reset) {
+void CFExplodeWall_obj_Setup(Object* self, Exploder_Setup* objSetup, s32 reset) {
     CFExplodeWall_Data* objData;
     u32 i;
 
@@ -184,13 +185,13 @@ void CFExplodeWall_obj_Setup(Object* self, CFExplodeWall_Setup* objSetup, s32 re
 // offset: 0x108 | func: 1 | export: 1
 void CFExplodeWall_obj_Control(Object* self) {
     u32 i;
-    CFExplodeWall_Setup* objSetup;
+    Exploder_Setup* objSetup;
     CFExplodeWall_Data* objData;
     s32 pieceVal;
     Object* obj;
 
     objData = self->data;
-    objSetup = (CFExplodeWall_Setup*)self->setup;
+    objSetup = (Exploder_Setup*)self->setup;
 
     //Finished
     if (objData->state == CFExplodeWall_STATE_2_Finished) {
@@ -275,7 +276,7 @@ u32 CFExplodeWall_obj_GetDataSize(Object* self, u32 offsetAddr) {
 /*0x0*/ static const char str_0[] = " Simple Exploder ";
 
 // offset: 0x3E8 | func: 7
-static void CFExplodeWall_calculatePieceData(Object* self, CFExplodeWall_PieceData* piece, CFExplodeWall_Setup* objSetup) {
+static void CFExplodeWall_calculatePieceData(Object* self, CFExplodeWall_PieceData* piece, Exploder_Setup* objSetup) {
     f32 dx;
     f32 dy;
     f32 dz;
@@ -358,7 +359,7 @@ static void CFExplodeWall_calculatePieceData(Object* self, CFExplodeWall_PieceDa
 }
 
 // offset: 0x884 | func: 8
-void CFExplodeWall_explode(Object* self, CFExplodeWall_Setup* objSetup, s32 skipModelCentrepointCalc, CFExplodeWall_Data* objData) {
+void CFExplodeWall_explode(Object* self, Exploder_Setup* objSetup, s32 skipModelCentrepointCalc, CFExplodeWall_Data* objData) {
     #define PIECE (&objData->pieceData[i])
     s32 sumX;
     s32 sumY;
@@ -449,9 +450,9 @@ void CFExplodeWall_explode(Object* self, CFExplodeWall_Setup* objSetup, s32 skip
 
 // offset: 0xC60 | func: 9
 Object* CFExplodeWall_createPiece(Object* self, s32 objectID, CFExplodeWall_PieceData* pieceData, s32 index) {
-    CFExplodePieces_Setup* setup;
+    ExploderPiece_Setup* setup;
 
-    setup = objAllocSetup(sizeof(CFExplodePieces_Setup), objectID);
+    setup = objAllocSetup(sizeof(ExploderPiece_Setup), objectID);
     setup->base.objId = objectID;
     setup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     setup->base.loadDistance = 0xFF;

@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/119_KTRexFloorSwitch.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
@@ -17,19 +18,6 @@ typedef struct {
     f32 unk10;
     u8 unk14;
 } KT_RexFloorSwitch_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    u8 unk1E;
-    u8 unk1F;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-} KT_RexFloorSwitch_Setup;
 
 /*0x0*/ static s32 _data_0[] = { 0x19 };
 

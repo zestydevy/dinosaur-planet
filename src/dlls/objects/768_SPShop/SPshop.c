@@ -3,6 +3,7 @@
 #include "dlls/objects/768_SPshop.h"
 #include "game/objects/object_id.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/122_SPShop.h"
 #include "sys/envfx.h"
 #include "sys/lighting.h"
 #include "sys/lfx.h"
@@ -118,7 +119,7 @@ void SPShop_ctor(void* dll) { }
 void SPShop_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SPShop_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
+void SPShop_obj_Setup(Object* self, SPShop_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_LevelControl);
     mainSetBits(BIT_SP_Exiting_Shop, FALSE);
     SPShop_randomisePrices();

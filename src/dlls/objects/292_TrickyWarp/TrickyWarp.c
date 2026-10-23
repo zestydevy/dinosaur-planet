@@ -1,17 +1,10 @@
 #include "PR/ultratypes.h"
+#include "game/objects/setups/112_TrickyWarp.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-/*0x00*/ ObjSetup base;
-/*0x18*/ u8 yaw;
-/*0x1A*/ s16 range;
-/*0x1C*/ s8 unk1C[0x20 - 0x1C];
-/*0x20*/ s16 gamebit;
-} TrickyWarp_Setup;
 
 // offset: 0x0 | ctor
 void TrickyWarp_ctor(void *dll) { }

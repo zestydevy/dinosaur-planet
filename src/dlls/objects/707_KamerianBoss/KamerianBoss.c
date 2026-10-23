@@ -3,9 +3,9 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
@@ -122,7 +122,7 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->yawSpeed = 0;
     setup->activationRange = 0;
     setup->bank = 0;
-    setup->indexInBank = (s16) arg4;
+    setup->id = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
     fxEmit = objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);

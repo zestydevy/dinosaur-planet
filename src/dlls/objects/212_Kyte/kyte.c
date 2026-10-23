@@ -2,10 +2,10 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/278_flameblast.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "dlls/objects/common/kyte_target.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/dll.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
@@ -1602,7 +1602,7 @@ static s32 Kyte_func_3A2C(Object* self, DLL212_Data_194* arg1) {
     temp_v0_3->yawSpeed = 0;
     temp_v0_3->activationRange = 0;
     temp_v0_3->bank = 1;
-    temp_v0_3->indexInBank = 0x4A;
+    temp_v0_3->id = 0x4A;
     temp_v0_3->fxRate = -0x1E;
     arg1->unk10 = objSetupObject(&temp_v0_3->base, 5, self->mapID, -1, self->parent);
     return 1;

@@ -6,25 +6,6 @@
 #include "dll_def.h"
 #include "types.h"
 
-typedef struct {
-    ObjSetup base;
-    u8 pieceCount;
-    s16 yaw;
-    s16 pitch;
-    s16 roll;
-    Vec3s16 displacementOrigin;
-    Vec3s16 _unk26;
-    s16 explosionPower;
-    s16 floorOffset;
-    s16 acceleration;
-    Vec3s16 _unk32;
-    u16 lifetimeMax;
-    s16 _unk3A;
-    s16 _unk3C;
-    s16 gamebitFinished;
-    s16 gamebitExplode;
-} CFExplodeWall_Setup;
-
 typedef enum {
     CFExplodeWall_STATE_0_Waiting,
     CFExplodeWall_STATE_1_Exploding,

@@ -2,14 +2,10 @@
 #include "dlls/objects/453_CCfirecrystalin.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/111_FireCrystal.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objmsg.h"
 #include "sys/objlib.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitCollected;
-} CCfirecrystal_Setup;
 
 typedef struct {
     u8 state;
@@ -35,7 +31,7 @@ void CCfirecrystal_ctor(void *dll) { }
 void CCfirecrystal_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) {
+void CCfirecrystal_setup(Object* self, FireCrystal_Setup* objSetup, s32 arg2) {
     CCfirecrystal_Data* objData;
     void* lightAction;
 
@@ -81,10 +77,10 @@ void CCfirecrystal_setup(Object* self, CCfirecrystal_Setup* objSetup, s32 arg2) 
 // offset: 0x210 | func: 1 | export: 1
 void CCfirecrystal_control(Object* self) {
     CCfirecrystal_Data* objData;
-    CCfirecrystal_Setup* objSetup;
+    FireCrystal_Setup* objSetup;
     u32 message;
 
-    objSetup = (CCfirecrystal_Setup*)self->setup;
+    objSetup = (FireCrystal_Setup*)self->setup;
     objData = self->data;
     
     self->opacity = mathRnd(0, 56) + 100;
@@ -175,9 +171,9 @@ u32 CCfirecrystal_get_data_size(Object *self, u32 a1) {
 // offset: 0x53C | func: 7
 Object* CCfirecrystal_create_flame(Object* self, s8 rotateSpeed, s8 yaw, u8 scrollSpeed) {
     CCfirecrystalin_Setup* flameSetup;
-    CCfirecrystal_Setup* objSetup;
+    FireCrystal_Setup* objSetup;
 
-    objSetup = (CCfirecrystal_Setup*)self->setup;
+    objSetup = (FireCrystal_Setup*)self->setup;
 
     flameSetup = objAllocSetup(sizeof(CCfirecrystalin_Setup), OBJ_CCfirecrystalin);
     flameSetup->base.x = objSetup->base.x;

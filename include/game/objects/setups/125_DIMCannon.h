@@ -1,10 +1,9 @@
-#ifndef _DLLS_537_H
-#define _DLLS_537_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_DIMCANNON_H
+#define _SYS_GAME_OBJECTS_SETUPS_DIMCANNON_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
-/* ObjSetup for DIMCannon */
+// ctrl: 125 | size: 0x2c
 typedef struct {
 /*00*/  ObjSetup base;
 /*18*/  s16 gamebitSiloCoverOpen;
@@ -21,4 +20,4 @@ typedef struct {
 /*2B*/  u8 rangeSiloRetreat;
 } DIMCannon_Setup;
 
-#endif //_DLLS_537_H
+#endif

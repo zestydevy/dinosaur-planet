@@ -1,13 +1,7 @@
 #include "common.h"
+#include "game/objects/setups/113_TrickyGuard.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 range;
-/*1A*/ s16 gamebit;
-} TrickyGuard_Setup;
 
 // offset: 0x0 | ctor
 void TrickyGuard_ctor(void *dll) { }

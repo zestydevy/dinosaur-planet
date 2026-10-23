@@ -1,5 +1,4 @@
 #include "dlls/engine/17_partfx.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"

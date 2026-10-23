@@ -1,5 +1,5 @@
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/332_FXEmit.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/dll.h"
 #include "game/gamebits.h"
 #include "sys/gfx/animseq.h"
@@ -62,7 +62,7 @@ void FXEmit_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
 
     objdata->activationRange = setup->activationRange * 4;
     objdata->bank = setup->bank;
-    objdata->indexInBank = setup->indexInBank;
+    objdata->indexInBank = setup->id;
     objdata->fxRate = setup->fxRate;
     self->srt.scale = 0.1f;
     objdata->toggleGamebit = setup->toggleGamebit;

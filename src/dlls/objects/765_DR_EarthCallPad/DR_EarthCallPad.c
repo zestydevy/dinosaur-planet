@@ -1,8 +1,8 @@
 #include "dlls/engine/17_partfx.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
 #include "sys/objects.h"
@@ -94,7 +94,7 @@ static Object* DR_EarthCallPad_create_fx(Object* self, s32 partID) {
     fxSetup->base.x = self->srt.transl.x;
     fxSetup->base.y = self->srt.transl.y;
     fxSetup->base.z = self->srt.transl.z;
-    fxSetup->indexInBank = partID;
+    fxSetup->id = partID;
     fxSetup->fxRate = 0;
     fxSetup->toggleGamebit = NO_GAMEBIT;
     return objSetupObject(&fxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);

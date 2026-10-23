@@ -1,14 +1,14 @@
-#ifndef _DLLS_332_H
-#define _DLLS_332_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_FXEMIT_H
+#define _SYS_GAME_OBJECTS_SETUPS_FXEMIT_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
+// ctrl: 118 | size: 0x2c
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s8 activationRange;
 /*19*/ s8 bank;
-/*1A*/ s16 indexInBank;
+/*1A*/ s16 id; // ID of FX to emit. Depends on the bank and/or DLL
 /*1C*/ s16 fxRate;
 /*1E*/ s16 toggleGamebit;
 /*20*/ s16 disableGamebit;
@@ -24,4 +24,4 @@ typedef struct {
 /*2A*/ s16 intervalSoundID; //soundID to play during interval activation
 } FXEmit_Setup;
 
-#endif // _DLLS_332_H
+#endif

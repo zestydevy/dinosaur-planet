@@ -68,7 +68,7 @@ void camlockon_func_18(Cam* cam, s32 arg1, CamLockOn_Params* data) {
         xDist = target->unk74[target->unkD4].refPoint.x - sp20->globalPosition.x;
         zDist = target->unk74[target->unkD4].refPoint.z - sp20->globalPosition.z;
     }
-    if (target->controlNo != OBJCONTROL_KTRex) {
+    if (target->controlNo != OBJCONTROL_KTrex) {
         sState->unk0 = sqrtf(SQ(xDist) + SQ(zDist));
     } else {
         sState->unk0 = 200.0f;
@@ -138,7 +138,7 @@ void camlockon_func_1B8(Cam* cam) {
     }
     if (!(btns & Z_TRIG) || (camlockon_func_BC0(cam), ((cam->targetFlags & 2) != 0))) {
         sp5C = sp3C->globalPosition.y + 20.0f;
-        if ((sp94->controlNo == OBJCONTROL_Baddie) || (sp94->controlNo == OBJCONTROL_KTRex)) {
+        if ((sp94->controlNo == OBJCONTROL_Baddie) || (sp94->controlNo == OBJCONTROL_KTrex)) {
             var_fv0 = gDLL_33_BaddieControl->vtbl->func8(sp94);
             if (var_fv0 > 20.0f) {
                 sp5C = sp3C->globalPosition.y + var_fv0;

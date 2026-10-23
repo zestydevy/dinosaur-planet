@@ -2,6 +2,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/768_SPshop.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/124_SPItem.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
@@ -11,14 +12,6 @@ typedef struct {
     Object* shop;           //SPShop
     s16 gametextLineIdx;    //Descriptive text's string index in Gametext file #3
 } SPItem_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 modelIndex;
-    u8 itemIndex;
-    u8 yaw;
-    u8 pitch;
-} SPItem_Setup;
 
 static int SPItem_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 static void SPItem_boughtCallback(Object* self, Object* override, AnimObj_Data* animObjData);

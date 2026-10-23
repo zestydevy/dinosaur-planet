@@ -1,9 +1,16 @@
-#ifndef _DLLS_345_H
-#define _DLLS_345_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_WATERFALLSPRAY_H
+#define _SYS_GAME_OBJECTS_SETUPS_WATERFALLSPRAY_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
+typedef enum {
+    WaterFallSpray_FLAG_Big_Mist_Cloud = 0x1,
+    WaterFallSpray_FLAG_Falling_Droplets = 0x2,
+    WaterFallSpray_FLAG_Small_Mist_Cloud = 0x4,
+    WaterFallSpray_FLAG_Mist_Jet = 0x8
+} WaterFallSpray_Flags;
+
+// ctrl: 127 | size: 0x28
 typedef struct {
 /*00*/ ObjSetup base;
 /*18*/ s16 gamebit;     //Unused, but seems intended for a gamebit
@@ -19,12 +26,5 @@ typedef struct {
 /*23*/ u8 flags;
 /*24*/ u8 iterations;
 } WaterFallSpray_Setup;
-
-typedef enum {
-    WaterFallSpray_FLAG_Big_Mist_Cloud = 0x1,
-    WaterFallSpray_FLAG_Falling_Droplets = 0x2,
-    WaterFallSpray_FLAG_Small_Mist_Cloud = 0x4,
-    WaterFallSpray_FLAG_Mist_Jet = 0x8
-} WaterFallSpray_Flags;
 
 #endif
