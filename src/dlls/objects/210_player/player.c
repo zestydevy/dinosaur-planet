@@ -529,8 +529,8 @@ void dll_210_setup(Object* player, u32 arg1) {
         player->shadow->maxDistScale = player->shadow->scale * 0.5f;
     }
     gDLL_1_cmdmenu->vtbl->request_new_player_stats_snapshot();
-    data->foodbag = objSetupObject(objAllocSetup(sizeof(Foodbag_ObjSetup), OBJ_foodbagGeneral), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
-    data->sidekickFoodbag = objSetupObject(objAllocSetup(sizeof(Foodbag_ObjSetup), OBJ_sidefoodbagGene), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
+    data->foodbag = objSetupObject(objAllocSetup(sizeof(Generic_Setup), OBJ_foodbagGeneral), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
+    data->sidekickFoodbag = objSetupObject(objAllocSetup(sizeof(Generic_Setup), OBJ_sidefoodbagGene), OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, player->parent);
     data->modAnims = _data_98;
     if (player->id == 0) {
         data->unk3B4 = _data_2F8;
