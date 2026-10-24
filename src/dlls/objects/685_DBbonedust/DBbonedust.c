@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/685_DBbonedust.h"
+#include "game/objects/setups/51_Generic.h"
 
 // offset: 0x0 | ctor
 void DBBoneDust_ctor(void *dll) { }
@@ -9,7 +10,7 @@ void DBBoneDust_ctor(void *dll) { }
 void DBBoneDust_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBBoneDust_setup(Object* self, DBBoneDust_Setup* objSetup, s32 arg2) {
+void DBBoneDust_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DBBoneDust_Data* objData;
 
     objData = self->data;

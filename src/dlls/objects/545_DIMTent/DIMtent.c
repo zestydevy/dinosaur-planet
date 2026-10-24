@@ -1,7 +1,8 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/map.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/common/collectable.h"
 
 #define MASK_SPEED 0.1f
 
@@ -19,14 +20,6 @@
 
 #define THRESHOLD_SNOW_EVAPORATE 60.0f
 #define THRESHOLD_END_FADEOUT 68.0f
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 tentIndex;     //An index (0-11 inclusive) for deciding which tent holds the bridge cog
-    u16 unused1C;
-    s16 gamebitBurnt;  //Set when the tent's been destroyed, prevents it reappearing
-} DIMTent_Setup;
 
 typedef struct {
     f32 maskY;      //Progress of the burn masking effect
@@ -172,8 +165,8 @@ void DIMTent_obj_Control(Object* self) {
             cogSetup->gamebitCollected = BIT_DIM_Gear_3;
             cogSetup->gamebitSecondary = NO_GAMEBIT;
             cogSetup->gamebitCount = NO_GAMEBIT;
-            cogSetup->objHitsValue = 5;
-            cogSetup->yaw = self->srt.yaw >> 8;
+            cogSetup->scale = 5;
+            cogSetup->yaw8 = self->srt.yaw >> 8;
             objSetupObject(&cogSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
         }
     }

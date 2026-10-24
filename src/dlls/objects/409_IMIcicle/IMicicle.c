@@ -1,16 +1,11 @@
-#include "common.h"
+#include "game/gamebits.h"
+#include "game/objects/setups/42_Icicle.h"
+#include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/main.h"
 #include "sys/newshadows.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 fallPlayerRange; //The player must be inside this lateral distance from the icicle, for it to fall
-    u8 scale;
-    s16 gamebitEnabled; //The icicle's state machine won't run until this gamebit is set (when specified)
-    s16 fallDelayTimer; //The icicle will start falling after this delay, after the fall conditions are activated
-} IMIcicle_Setup;
+#include "sys/objprint.h"
+#include "dll.h"
 
 typedef struct {
     f32 groundY;
@@ -48,7 +43,7 @@ void IMIcicle_dtor(void* dll) {
 }
 
 // offset: 0x70 | func: 0 | export: 0
-void IMIcicle_obj_Setup(Object* self, IMIcicle_Setup* objSetup, s32 reset) {
+void IMIcicle_obj_Setup(Object* self, Icicle_Setup* objSetup, s32 reset) {
     IMIcicle_Data* objData;
     ObjectHitInfo* objHits;
     ObjectShadow* shadow;
@@ -88,12 +83,12 @@ void IMIcicle_obj_Control(Object* self) {
     ObjectHitInfo* objHits;
     ObjectShadow* objShadow;
     s32 opacity;
-    IMIcicle_Setup* objSetup;
+    Icicle_Setup* objSetup;
 
     objData = self->data;
     objHits = self->objhitInfo;
     objShadow = self->shadow;
-    objSetup = (IMIcicle_Setup*)self->setup;
+    objSetup = (Icicle_Setup*)self->setup;
     
     if (sModGfxDLL == NULL) {
         sModGfxDLL = dllLoad(DLL_ID_107, 1);
@@ -278,7 +273,7 @@ f32 IMIcicle_getGroundY(Object* self) {
 // offset: 0x940 | func: 8
 s32 IMIcicle_shouldIcicleFall(Object* self, Object* player) {
     s32 pad[2];
-    IMIcicle_Setup* objSetup;
+    Icicle_Setup* objSetup;
     f32 dy;
     f32 lateralDistance;
 
@@ -286,7 +281,7 @@ s32 IMIcicle_shouldIcicleFall(Object* self, Object* player) {
         return FALSE;
     }
     
-    objSetup = (IMIcicle_Setup*)self->setup;
+    objSetup = (Icicle_Setup*)self->setup;
     lateralDistance = vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
     
     dy = self->srt.transl.y - player->srt.transl.y;

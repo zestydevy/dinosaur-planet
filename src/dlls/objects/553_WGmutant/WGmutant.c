@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objprint.h"
 
@@ -8,12 +9,6 @@ typedef struct {
 /*01*/ u8 unk1;
 /*02*/ u8 _unk2[0x8 - 0x2];
 } WGmutant_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1F - 0x18];
-/*1F*/ u8 yaw;
-} WGmutant_Setup;
 
 static int WGmutant_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
@@ -24,7 +19,7 @@ void WGmutant_ctor(void *dll) { }
 void WGmutant_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WGmutant_setup(Object *self, WGmutant_Setup *setup, s32 arg2) {
+void WGmutant_setup(Object *self, SeqDoor_Setup *setup, s32 arg2) {
     WGmutant_Data *objdata = self->data;
     objdata->unk0 = 0;
     objdata->unk1 = 1;

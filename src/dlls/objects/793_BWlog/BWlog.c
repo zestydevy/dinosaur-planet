@@ -1,9 +1,9 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/418_DFriverflow.h"
-#include "dlls/objects/419_DFdockpoint.h"
 #include "dlls/objects/common/vehicle.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/55_Riverflow.h"
 #include "sys/joypad.h"
 #include "sys/math.h"
 #include "sys/objects.h"
@@ -87,7 +87,7 @@ void BWlog_ctor(void *dll) { }
 void BWlog_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void BWlog_obj_Setup(Object *self, ObjSetup *setup, s32 arg2) {
+void BWlog_obj_Setup(Object *self, Generic_Setup *setup, s32 arg2) {
     BWlog_Data *objdata = (BWlog_Data*)self->data;
     s32 i;
 
@@ -127,7 +127,7 @@ void BWlog_obj_Control(Object* self) {
     MtxF invPitchYawMtx;
     f32 sp9C;
     f32 distance;
-    DFdockpoint_Setup* dockpointSetup;
+    DFDockpoint_Setup* dockpointSetup;
     s32 i;
 
     objdata = (BWlog_Data*)self->data;
@@ -135,7 +135,7 @@ void BWlog_obj_Control(Object* self) {
     distance = 10000.0f;
     objdata->dockpoint = objGetNearestTypeTo(OBJTYPE_Dockpoint, self, &distance);
     if (objdata->dockpoint != NULL) {
-        dockpointSetup = (DFdockpoint_Setup*)objdata->dockpoint->setup;
+        dockpointSetup = (DFDockpoint_Setup*)objdata->dockpoint->setup;
         distance = vec3Distance(&self->globalPosition, &objdata->dockpoint->globalPosition);
         // Reduce velocity while near a dockpoint
         if (objdata->mountState == VEHICLE_Mounted) {
@@ -720,7 +720,7 @@ static void BWlog_findRiverflows(Object* self, BWlog_Data* objdata) {
                 dx = obj->srt.transl.x - objdata->endPoints[k].x;
                 dz = obj->srt.transl.z - objdata->endPoints[k].z;
                 dx = sqrtf(SQ(dx) + SQ(dz));
-                pushRadius = ((DFriverflow_Setup*)obj->setup)->range * 1.5f;
+                pushRadius = ((Riverflow_Setup*)obj->setup)->range * 1.5f;
                 if (dx < pushRadius) {
                     dx = (pushRadius - dx) / pushRadius;
                     dx *= obj->srt.scale * 10.0f;

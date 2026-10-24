@@ -1,19 +1,6 @@
 #include "common.h"
 #include "game/gamebits.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitActivate;            //Gamebit controlling when the fade is activated/deactivated
-    s16 gamebitActivated;           //(For modes 0, 2, 3) Optionally gamebit that's set when the fade animation is complete - also used to restore fully-faded state
-    u8 initialOpacity;              //Opacity at the beginning of the fade animation (can be higher than the goal opacity)
-    u8 goalOpacity;                 //Opacity at the end of the fade animation (can be lower than the initial opacity)
-    s8 animatorID;                  //Vertices will only be affected if they have this shape animatorID
-    s8 fadeSpeed;                   //Fade in rate. In radial mode, the sign inverts the behaviour (fade inside/outside radius)!
-    u8 flags;                       //Mode stored on bits 0, 1 (see `GET_MODE` macro) - higher bits determine whether to play a sound
-    u8 removeCollisionWhenHidden;   //Boolean, fade affects whether the affected shapes are tangible
-    u16 fadeRadiusGoal;             //(For radial mode) End radius of the fade animation
-    u16 soundID;                    //Which sound to play (requires sound playing enabled on `objData->flags`)
-} AlphaAnimator_Setup;
+#include "game/objects/setups/77_AlphaAnimator.h"
 
 typedef struct {
     s32 animatedVertexCount;        //How many vertices are affected by the AlphaAnimator
@@ -72,7 +59,7 @@ void AlphaAnimator_obj_Control(Object* self) {
     objSetup = (AlphaAnimator_Setup*)self->setup;
     objData = self->data;
 
-    mode = GET_MODE(objSetup->flags);
+    mode = GET_MODE(objSetup->alphaAnim.flags);
 
     //Get the object's local BLOCKS model
     block = mapGetBlockByIndex(mapWorldCoordsToBlockIndex(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2]));
@@ -88,7 +75,7 @@ void AlphaAnimator_obj_Control(Object* self) {
 
     //Set up animated vertices
     if (objData->animatedVertexCount == 0) {
-        objData->animatorID = objSetup->animatorID;
+        objData->animatorID = objSetup->alphaAnim.animatorID;
         objData->animatedVertexCount = blockGetAnimatorVertexCount(self, objData->animatorID);
 
         //If no animatable vertices were found, zero out the animatorID
@@ -99,18 +86,18 @@ void AlphaAnimator_obj_Control(Object* self) {
         if (objData->animatorID != 0) {
             objData->fadeRadiusOuter = 0.0f;
             objData->fadeRadiusInner = 0.0f;
-            objData->fadeRadiusGoal = objSetup->fadeRadiusGoal;
+            objData->fadeRadiusGoal = objSetup->alphaAnim.fadeRadiusGoal;
 
-            if (objSetup->gamebitActivate == NO_GAMEBIT) {
+            if (objSetup->alphaAnim.gamebitActivate == NO_GAMEBIT) {
                 objData->fadeActivated = TRUE;
             } else {
-                objData->fadeActivated = mainGetBits(objSetup->gamebitActivate);
+                objData->fadeActivated = mainGetBits(objSetup->alphaAnim.gamebitActivate);
             }
 
-            objData->vtxOpacity = objSetup->initialOpacity;
+            objData->vtxOpacity = objSetup->alphaAnim.initialOpacity;
 
-            if ((objSetup->gamebitActivated != NO_GAMEBIT) && mainGetBits(objSetup->gamebitActivated)) {
-                objData->vtxOpacity = objSetup->goalOpacity;
+            if ((objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) && mainGetBits(objSetup->alphaAnim.gamebitActivated)) {
+                objData->vtxOpacity = objSetup->alphaAnim.goalOpacity;
                 objData->fadeActivated = TRUE;
                 objData->fadeRadiusOuter = objData->fadeRadiusGoal + 1.0f;
             }
@@ -135,11 +122,11 @@ void AlphaAnimator_obj_Control(Object* self) {
     }
 
     if (mode == AlphaAnimator_MODE_2_Toggleable_Fade) {
-        objData->fadeActivated = mainGetBits(objSetup->gamebitActivate);
+        objData->fadeActivated = mainGetBits(objSetup->alphaAnim.gamebitActivate);
         if ((objData->fadeCompletedTicks >= 3) && (objData->fadeActivated != objData->prevFadeActivated)) {
             //Optionally play a sound soon after the fade is completed
-            if (SHOULD_SOUND_PLAY(objSetup->flags)) {
-                gDLL_6_AMSFX->vtbl->Play(self, objSetup->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+            if (SHOULD_SOUND_PLAY(objSetup->alphaAnim.flags)) {
+                gDLL_6_AMSFX->vtbl->Play(self, objSetup->alphaAnim.soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
             }
 
             objData->fadeCompletedTicks = 0;
@@ -156,45 +143,45 @@ void AlphaAnimator_obj_Control(Object* self) {
 
         //Don't continue to the fade State Machine until gamebitActivate is set
         if (objData->fadeActivated == FALSE) {
-            objData->fadeActivated = mainGetBits(objSetup->gamebitActivate);
+            objData->fadeActivated = mainGetBits(objSetup->alphaAnim.gamebitActivate);
 
             //Optionally play a sound when fading in
             if (objData->fadeActivated) {
-                if (SHOULD_SOUND_PLAY(objSetup->flags)) {
-                    gDLL_6_AMSFX->vtbl->Play(self, objSetup->soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
+                if (SHOULD_SOUND_PLAY(objSetup->alphaAnim.flags)) {
+                    gDLL_6_AMSFX->vtbl->Play(self, objSetup->alphaAnim.soundID, MAX_VOLUME, NULL, NULL, 0, NULL);
                 }
             } else {
                 return;
             }
 
-            if (objSetup->gamebitActivate) { }
+            if (objSetup->alphaAnim.gamebitActivate) { }
         }
     }
 
     switch (mode) {
     case AlphaAnimator_MODE_0_Basic_Fade_and_Set_Gamebit:
-        if (objSetup->goalOpacity < objSetup->initialOpacity) {
+        if (objSetup->alphaAnim.goalOpacity < objSetup->alphaAnim.initialOpacity) {
             //Fade out
-            objData->vtxOpacity -= objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity <= objSetup->goalOpacity) {
-                objData->vtxOpacity = objSetup->goalOpacity;
+            objData->vtxOpacity -= objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity <= objSetup->alphaAnim.goalOpacity) {
+                objData->vtxOpacity = objSetup->alphaAnim.goalOpacity;
 
                 //Optionally set a gamebit when the goal opacity has been reached
-                if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                    mainSetBits(objSetup->gamebitActivated, TRUE);
+                if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                    mainSetBits(objSetup->alphaAnim.gamebitActivated, TRUE);
                 }
 
                 objData->fadeCompletedTicks++;
             }
         } else {
             //Fade in
-            objData->vtxOpacity += objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity >= objSetup->goalOpacity) {
-                objData->vtxOpacity = objSetup->goalOpacity;
+            objData->vtxOpacity += objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity >= objSetup->alphaAnim.goalOpacity) {
+                objData->vtxOpacity = objSetup->alphaAnim.goalOpacity;
 
                 //Optionally set a gamebit when the goal opacity has been reached
-                if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                    mainSetBits(objSetup->gamebitActivated, TRUE);
+                if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                    mainSetBits(objSetup->alphaAnim.gamebitActivated, TRUE);
                 }
 
                 objData->fadeCompletedTicks++;
@@ -202,73 +189,73 @@ void AlphaAnimator_obj_Control(Object* self) {
         }
         break;
     case AlphaAnimator_MODE_1_Basic_Fade:
-        if (objSetup->goalOpacity < objSetup->initialOpacity) {
+        if (objSetup->alphaAnim.goalOpacity < objSetup->alphaAnim.initialOpacity) {
             //Fade out
-            objData->vtxOpacity -= objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity < objSetup->goalOpacity) {
-                opacityDiff = objSetup->goalOpacity - objData->vtxOpacity;
-                objData->vtxOpacity = objSetup->initialOpacity - opacityDiff;
+            objData->vtxOpacity -= objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity < objSetup->alphaAnim.goalOpacity) {
+                opacityDiff = objSetup->alphaAnim.goalOpacity - objData->vtxOpacity;
+                objData->vtxOpacity = objSetup->alphaAnim.initialOpacity - opacityDiff;
             }
         } else {
             //Fade in
-            objData->vtxOpacity += objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity > objSetup->initialOpacity) {
-                opacityDiff = objData->vtxOpacity - objSetup->goalOpacity;
-                objData->vtxOpacity = objSetup->goalOpacity + opacityDiff;
+            objData->vtxOpacity += objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity > objSetup->alphaAnim.initialOpacity) {
+                opacityDiff = objData->vtxOpacity - objSetup->alphaAnim.goalOpacity;
+                objData->vtxOpacity = objSetup->alphaAnim.goalOpacity + opacityDiff;
             }
         }
         break;
     case AlphaAnimator_MODE_2_Toggleable_Fade:
         if (objData->fadeActivated) {
-            if (objSetup->goalOpacity < objSetup->initialOpacity) {
+            if (objSetup->alphaAnim.goalOpacity < objSetup->alphaAnim.initialOpacity) {
                 //Fade out
-                objData->vtxOpacity -= objSetup->fadeSpeed * gUpdateRate;
-                if (objData->vtxOpacity <= objSetup->goalOpacity) {
-                    objData->vtxOpacity = objSetup->goalOpacity;
+                objData->vtxOpacity -= objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+                if (objData->vtxOpacity <= objSetup->alphaAnim.goalOpacity) {
+                    objData->vtxOpacity = objSetup->alphaAnim.goalOpacity;
 
                     //Optionally set a gamebit when the goal opacity has been reached
-                    if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                        mainSetBits(objSetup->gamebitActivated, TRUE);
+                    if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                        mainSetBits(objSetup->alphaAnim.gamebitActivated, TRUE);
                     }
 
                     objData->fadeCompletedTicks++;
                 }
             } else {
                 //Fade in
-                objData->vtxOpacity += objSetup->fadeSpeed * gUpdateRate;
-                if (objData->vtxOpacity >= objSetup->goalOpacity) {
-                    objData->vtxOpacity = objSetup->goalOpacity;
+                objData->vtxOpacity += objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+                if (objData->vtxOpacity >= objSetup->alphaAnim.goalOpacity) {
+                    objData->vtxOpacity = objSetup->alphaAnim.goalOpacity;
 
                     //Optionally set a gamebit when the goal opacity has been reached
-                    if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                        mainSetBits(objSetup->gamebitActivated, TRUE);
+                    if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                        mainSetBits(objSetup->alphaAnim.gamebitActivated, TRUE);
                     }
 
                     objData->fadeCompletedTicks++;
                 }
             }
-        } else if (objSetup->goalOpacity < objSetup->initialOpacity) {
+        } else if (objSetup->alphaAnim.goalOpacity < objSetup->alphaAnim.initialOpacity) {
             //Fade back in
-            objData->vtxOpacity += objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity >= objSetup->initialOpacity) {
-                objData->vtxOpacity = objSetup->initialOpacity;
+            objData->vtxOpacity += objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity >= objSetup->alphaAnim.initialOpacity) {
+                objData->vtxOpacity = objSetup->alphaAnim.initialOpacity;
 
                 //Optionally unset a gamebit when the fade has returned to its initial opacity
-                if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                    mainSetBits(objSetup->gamebitActivated, FALSE);
+                if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                    mainSetBits(objSetup->alphaAnim.gamebitActivated, FALSE);
                 }
 
                 objData->fadeCompletedTicks++;
             }
         } else {
             //Fade back out
-            objData->vtxOpacity -= objSetup->fadeSpeed * gUpdateRate;
-            if (objData->vtxOpacity <= objSetup->initialOpacity) {
-                objData->vtxOpacity = objSetup->initialOpacity;
+            objData->vtxOpacity -= objSetup->alphaAnim.fadeSpeed * gUpdateRate;
+            if (objData->vtxOpacity <= objSetup->alphaAnim.initialOpacity) {
+                objData->vtxOpacity = objSetup->alphaAnim.initialOpacity;
 
                 //Optionally unset a gamebit when the fade has returned to its initial opacity
-                if (objSetup->gamebitActivated != NO_GAMEBIT) {
-                    mainSetBits(objSetup->gamebitActivated, FALSE);
+                if (objSetup->alphaAnim.gamebitActivated != NO_GAMEBIT) {
+                    mainSetBits(objSetup->alphaAnim.gamebitActivated, FALSE);
                 }
 
                 objData->fadeCompletedTicks++;
@@ -276,12 +263,12 @@ void AlphaAnimator_obj_Control(Object* self) {
         }
         break;
     case AlphaAnimator_MODE_3_Radial_Falloff_Fade:
-        fadeSpeed = (objSetup->fadeSpeed < 0) ? -objSetup->fadeSpeed : objSetup->fadeSpeed;
+        fadeSpeed = (objSetup->alphaAnim.fadeSpeed < 0) ? -objSetup->alphaAnim.fadeSpeed : objSetup->alphaAnim.fadeSpeed;
 
         objData->fadeRadiusOuter += (fadeSpeed / 10.0f) * gUpdateRateF;
         if (objData->fadeRadiusOuter > objData->fadeRadiusGoal) {
             objData->fadeRadiusOuter = objData->fadeRadiusGoal;
-            mainSetBits(objSetup->gamebitActivated, TRUE);
+            mainSetBits(objSetup->alphaAnim.gamebitActivated, TRUE);
             objData->fadeCompletedTicks++;
         }
 
@@ -310,7 +297,7 @@ void AlphaAnimator_animateVertices(AlphaAnimator_Data* objData, AlphaAnimator_Se
         if (objData->animatorID == shapes[shapeIdx].animatorID) {
             //Loop over the shape's vertices
             for (vtxIdx = shapes[shapeIdx].vtxBase; vtxIdx < shapes[shapeIdx + 1].vtxBase; vtxIdx++) {
-                if (GET_MODE(objSetup->flags) != AlphaAnimator_MODE_3_Radial_Falloff_Fade) {
+                if (GET_MODE(objSetup->alphaAnim.flags) != AlphaAnimator_MODE_3_Radial_Falloff_Fade) {
                     vertices[vtxIdx].cn[3] = objData->vtxOpacity;
                 } else {
                     //Mode 3: Radial Falloff Fade
@@ -325,7 +312,7 @@ void AlphaAnimator_animateVertices(AlphaAnimator_Data* objData, AlphaAnimator_Se
                             }
 
                             //Optionally invert behaviour
-                            if (objSetup->fadeSpeed < 0) {
+                            if (objSetup->alphaAnim.fadeSpeed < 0) {
                                 //Fade out vertices inside the radius
                                 vertices[vtxIdx].cn[3] = tOpacity * MAX_OPACITY;
                             } else {
@@ -335,21 +322,21 @@ void AlphaAnimator_animateVertices(AlphaAnimator_Data* objData, AlphaAnimator_Se
                         }
                         animVtxIdx++;
                     } else {
-                        vertices[vtxIdx].cn[3] = objSetup->initialOpacity;
+                        vertices[vtxIdx].cn[3] = objSetup->alphaAnim.initialOpacity;
                     }
                 }
             }
 
             //Update shape's render flags
-            if (GET_MODE(objSetup->flags) != AlphaAnimator_MODE_3_Radial_Falloff_Fade) {
+            if (GET_MODE(objSetup->alphaAnim.flags) != AlphaAnimator_MODE_3_Radial_Falloff_Fade) {
                 if (objData->vtxOpacity == 0) {
                     shapes[shapeIdx].flags |= RENDER_SHAPE_HIDE;
-                    if (objSetup->removeCollisionWhenHidden) {
+                    if (objSetup->alphaAnim.removeCollisionWhenHidden) {
                         shapes[shapeIdx].flags |= RENDER_UNK800;
                     }
                 } else {
                     shapes[shapeIdx].flags &= ~RENDER_SHAPE_HIDE;
-                    if (objSetup->removeCollisionWhenHidden) {
+                    if (objSetup->alphaAnim.removeCollisionWhenHidden) {
                         shapes[shapeIdx].flags &= ~RENDER_UNK800;
                     }
                 }
@@ -357,10 +344,10 @@ void AlphaAnimator_animateVertices(AlphaAnimator_Data* objData, AlphaAnimator_Se
                 //Mode 3: Radial Falloff Fade
                 if (objData->fadeActivated) {
                     shapes[shapeIdx].flags &= ~RENDER_SHAPE_HIDE;
-                    if ((objData->fadeCompletedTicks != 0) && (objSetup->goalOpacity == 0)) {
+                    if ((objData->fadeCompletedTicks != 0) && (objSetup->alphaAnim.goalOpacity == 0)) {
                         shapes[shapeIdx].flags |= RENDER_SHAPE_HIDE;
                     }
-                } else if (objSetup->initialOpacity == 0) {
+                } else if (objSetup->alphaAnim.initialOpacity == 0) {
                     shapes[shapeIdx].flags |= RENDER_SHAPE_HIDE;
                 }
             }

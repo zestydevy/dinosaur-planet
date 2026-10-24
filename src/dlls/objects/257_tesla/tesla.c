@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/110_Tesla.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
@@ -15,19 +16,6 @@ typedef struct {
     f32 unk10;
     s32 unk14;
 } Tesla_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    u8 unk1E;
-    u8 unk1F;
-    u8 unk20;
-    u8 damageStrength;
-} Tesla_Setup;
 
 static void dll_257_func_1144(Object* self, Tesla_Setup* setup);
 

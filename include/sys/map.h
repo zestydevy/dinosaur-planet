@@ -430,13 +430,6 @@ typedef struct {
 /*0010*/    u8 unk14[4];
 } Plane;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 mapAct;
-/*19*/ u8 setupID;
-/*1C*/ u32 objGroupStatusBits;
-} SetupPoint_Setup;
-
 typedef struct MapObjSetupList {
        // Byte offset to the list of each object setup group
 /*00*/ s32 groups[32];

@@ -1,22 +1,9 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/9_EffectBox.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 roll;
-/*1A*/ u8 halfWidth;  // x dimension (stored halved), centred around origin
-/*1B*/ u8 halfHeight; // y dimension (stored halved), base of box at origin
-/*1C*/ u8 halfLength; // z dimension (stored halved), centred around origin
-/*1D*/ u8 effect;
-/*1E*/ u8 _unk1E;     // Unused, but rarely set to 1 in ROM?
-/*1F*/ u8 gamebitDisableValue;      // disabled if the target gamebit is this value
-/*20*/ s16 gamebitEnable;           // -1 if this effect box is always enabled
-/*22*/ u8 target;                   // see `EffectBox_Targets`
-} EffectBox_Setup;
 
 typedef enum {
     EffectBox_EFFECT_Fall_Reset = 0,        //Puts camera underneath you and causes fall reset

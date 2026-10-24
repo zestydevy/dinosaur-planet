@@ -9,12 +9,7 @@
 #include "sys/objlib.h"
 #include "sys/objtype.h"
 #include "dlls/objects/216_SnowWorm.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/251_weapons.h"
-
-typedef struct {
-    Baddie_Setup baddie;
-} SnowWorm_Setup;
 
 typedef struct {
     f32 timeSinceHit;
@@ -223,7 +218,7 @@ void SnowWorm_ctor(void* dll) {
 void SnowWorm_dtor(void* dll) { }
 
 // offset: 0x178 | func: 1 | export: 0
-void SnowWorm_obj_Setup(Object* self, SnowWorm_Setup* objSetup, s32 reset) {
+void SnowWorm_obj_Setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     Baddie* baddie;
     u8 flags;
 
@@ -233,10 +228,10 @@ void SnowWorm_obj_Setup(Object* self, SnowWorm_Setup* objSetup, s32 reset) {
     if (reset) {
         flags = 1 | 2 | 4;
     }
-    if ((objSetup->baddie.unk2B & 0x20) == FALSE) {
+    if ((objSetup->unk2B & 0x20) == FALSE) {
         flags |= 8;
     }
-    gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 0xE, 8, 0x102, flags, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 0xE, 8, 0x102, flags, 20.0f);
 
     self->animCallback = NULL;
 
@@ -632,10 +627,10 @@ void SnowWorm_func_1374(Object* self, Baddie* baddie) {
   * Creates an `IceBall` Object, thrown at the player.
   */
 void SnowWorm_throwIceBall(Object* self, SnowWorm_DataActual* objData) {
-    ChukaChuck_Setup* iceSetup;
+    BaddieProjectile_Setup* iceSetup;
     Object* ice;
 
-    iceSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_IceBall);
+    iceSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_IceBall);
     iceSetup->base.x = objData->throwOrigin.transl.x;
     iceSetup->base.y = objData->throwOrigin.transl.y;
     iceSetup->base.z = objData->throwOrigin.transl.z;

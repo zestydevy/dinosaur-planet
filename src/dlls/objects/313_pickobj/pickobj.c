@@ -1,13 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/93_PickObj.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 yaw;
-    u8 modelIdx;
-    s16 pickupParam;
-} PickObj_Setup;
 
 typedef struct {
     Pickup pickupData;

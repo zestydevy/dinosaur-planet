@@ -1,5 +1,6 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -8,15 +9,6 @@
 #include "dll.h"
 
 /** @file official filename: CFtoggleswitch.c (also used for Dragon Rock objects tho) */
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*1A*/ s16 preemptTime;
-/*1C*/ u8 _unk1C[0x1E - 0x1C];
-/*1E*/ s16 enabledGamebit;
-/*20*/ s16 stateGamebit;
-} ToggleSwitch_Setup;
 
 typedef struct {
     u8 flags;
@@ -41,7 +33,7 @@ void ToggleSwitch_dtor(void* dll) { }
 void ToggleSwitch_obj_Setup(Object* self, ToggleSwitch_Setup* setup, s32 reset) {
     ToggleSwitch_Data* objdata;
 
-    self->srt.yaw = setup->unk18 << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = ToggleSwitch_animCallback;
     objdata = self->data;
     objdata->enabled = mainGetBits(setup->enabledGamebit);

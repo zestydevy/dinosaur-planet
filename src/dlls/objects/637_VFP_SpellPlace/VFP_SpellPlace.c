@@ -2,19 +2,13 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[6];
-    s16 unk1E;
-    s16 unk20;
-} VFP_SpellPlace_Setup;
 
 // size:0x6
 typedef struct {
@@ -33,12 +27,12 @@ void VFP_SpellPlace_ctor(void *dll) { }
 void VFP_SpellPlace_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_SpellPlace_setup(Object* self, VFP_SpellPlace_Setup* setup, s32 a2) {
+void VFP_SpellPlace_setup(Object* self, Generic_Setup* setup, s32 a2) {
     VFP_SpellPlace_Data* objdata;
 
     objdata = self->data;
-    objdata->unk0 = setup->unk1E;
-    objdata->unk2 = setup->unk20;
+    objdata->unk0 = setup->bitA;
+    objdata->unk2 = setup->bitB;
     
     if (mainGetBits(objdata->unk2) != 0 || mainGetBits(objdata->unk0) != 0) {
         objdata->unk4 = 1;

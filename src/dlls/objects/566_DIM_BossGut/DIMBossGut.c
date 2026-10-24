@@ -1,5 +1,8 @@
-#include "common.h"
+#include "dlls/engine/33_BaddieControl.h"
+#include "sys/main.h"
 #include "sys/objanim.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
 
 static int dll_566_func_194(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 
@@ -10,7 +13,7 @@ void dll_566_ctor(void *dll) { }
 void dll_566_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_566_setup(Object* self, ObjSetup* setup, s32 arg2) {
+void dll_566_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = dll_566_func_194;
     objAnimSet(self, 0, 0.0f, 0U);

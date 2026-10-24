@@ -4,6 +4,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "dll.h"

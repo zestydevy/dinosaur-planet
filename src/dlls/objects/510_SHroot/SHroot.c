@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
 
 typedef struct {
@@ -9,16 +10,7 @@ typedef struct {
     u8 unk12;
     u8 unk13; 
     s16 unk14;
-//0x18
-}DLL510_Data;
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 _unk19;
-    s16 unk1A;
-    u16 _unk1C;
-    s16 unk1E;
-}DLL510_Setup;
+} DLL510_Data;
 
 // offset: 0x0 | ctor
 void dll_510_ctor(void *dll) { }
@@ -27,16 +19,16 @@ void dll_510_ctor(void *dll) { }
 void dll_510_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
+void dll_510_setup(Object* self, Generic_Setup* setup, s32 arg2) {
 
     DLL510_Data* temp_v1;
     temp_v1 = self->data;
 
-    temp_v1->unk0 = (setup->unk1A / 255.0f);
+    temp_v1->unk0 = (setup->genericA / 255.0f);
     self->srt.scale = self->def->scale - (temp_v1->unk0 * 0.5f);
-    self->srt.yaw = setup->unk18 << 8;
-    self->velocity.f[1] = 0.0f;
-    if (mainGetBits((s32) setup->unk1E) != 0) {
+    self->srt.yaw = setup->yaw << 8;
+    self->velocity.y = 0.0f;
+    if (mainGetBits(setup->bitA) != 0) {
         temp_v1->unk12 = 4;
     }
 }
@@ -46,13 +38,13 @@ void dll_510_setup(Object* self, DLL510_Setup* setup, s32 arg2) {
 void dll_510_control(Object* self) {
     s32 pad;
     DLL510_Data* objData;
-    DLL510_Setup* objSetup;
+    Generic_Setup* objSetup;
     s32 count; 
     s32 i;
     TrackHeightResult** sp48;
 
     objData = self->data;
-    objSetup = (DLL510_Setup*)self->setup; 
+    objSetup = (Generic_Setup*)self->setup; 
     switch (objData->unk12) {
     case 0:
         if (func_80025F40(self, NULL, NULL, NULL) == Damage_Type_Projectile) {
@@ -113,7 +105,7 @@ void dll_510_control(Object* self) {
             }
         }
         if ((objData->unk13 & 2) && (self->srt.transl.f[1] < (objData->unk4 + 40.0f))) {
-            mainSetBits(objSetup->unk1E, 1);
+            mainSetBits(objSetup->bitA, 1);
             objData->unk12 = 2;
             return;
         }

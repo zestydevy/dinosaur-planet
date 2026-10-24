@@ -3,6 +3,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/99_Fish.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
@@ -12,23 +13,6 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    u8 yaw;
-/*19*/    u8 scale;
-/*1A*/    u8 peekDuration;
-/*1B*/    u8 bubbleRate;
-/*1C*/    u16 swimDurationBeforePeek;     //How long to stay in State 2, before transitioning into peek state (#3)
-/*1E*/    u16 respawnDuration;
-/*20*/    u8 maxLateralSpeed;             //Stored at 100x actual value
-/*21*/    u8 jumpDistanceLateral;
-/*22*/    u8 jumpDuration;
-/*23*/    u8 jumpAnticipateDuration;
-/*24*/    u8 jumpRecoveryDuration;
-/*26*/    u16 swimDurationAfterPeek;      //How long to stay in State 4, before transitioning into jump state
-/*28*/    u8 surfaceOffsetY;
-} fish_Setup;
 
 typedef struct {
 /*00*/    f32 animSpeed;
@@ -102,7 +86,7 @@ void fish_ctor(void *dll) { }
 void fish_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void fish_setup(Object *self, fish_Setup *setup, s32 reset) {
+void fish_setup(Object *self, Fish_Setup *setup, s32 reset) {
     fish_Data *objdata = self->data;
 
     if (setup->surfaceOffsetY == 0) {
@@ -117,7 +101,7 @@ void fish_setup(Object *self, fish_Setup *setup, s32 reset) {
 // offset: 0x84 | func: 1
 static void fish_initialise(Object* self) {
     fish_Data* objdata;
-    fish_Setup* setup;
+    Fish_Setup* setup;
     f32 curveParam;
     Vec4f curve;
     f32 jumpHeightFactorSq;
@@ -125,7 +109,7 @@ static void fish_initialise(Object* self) {
     f32 jumpCalcSq;
 
     objdata = self->data;
-    setup = (fish_Setup*)self->setup;
+    setup = (Fish_Setup*)self->setup;
 
     objdata->timer = 0.0f;
     objdata->bubbleTimer = 0.0f;
@@ -184,14 +168,14 @@ static void fish_initialise(Object* self) {
 // offset: 0x630 | func: 2 | export: 1
 void fish_control(Object* self) {
     s32 damageType;
-    fish_Setup* setup;
+    Fish_Setup* setup;
     f32 bubblesPerSecond;
     fish_Data* objdata;
     Object* player;
     f32 timerPow4;
     f32 timerSq;
 
-    setup = (fish_Setup*)self->setup;
+    setup = (Fish_Setup*)self->setup;
     objdata = self->data;
     
     player = objGetPlayer();
@@ -587,13 +571,13 @@ static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* e
 // offset: 0x1978 | func: 12
 static s32 fish_jump_handle_flight(Object *self) {
     fish_Data* objdata;
-    fish_Setup* setup;
+    Fish_Setup* setup;
     Vec3f vJump;
     Vec3s16 eulerRotation;
     s32 flightStillOngoing;
 
     objdata = self->data;
-    setup = (fish_Setup*)self->setup;
+    setup = (Fish_Setup*)self->setup;
 
     flightStillOngoing = TRUE;
 
@@ -671,12 +655,12 @@ static s32 fish_jump_handle_flight(Object *self) {
 // offset: 0x1EF4 | func: 13
 static s32 fish_jump_handle_anticipation(Object* self) {
     fish_Data* objdata;
-    fish_Setup* setup;
+    Fish_Setup* setup;
     Vec3f vAntic;
     Vec3s16 eulerRotation;
     s32 anticipationStillOngoing;
 
-    setup = (fish_Setup*)self->setup;
+    setup = (Fish_Setup*)self->setup;
     objdata = self->data;
 
     eulerRotation.x = self->srt.yaw;

@@ -1,23 +1,15 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/31_SideSetup.h"
 #include "sys/gfx/model.h"
 #include "types.h"
-
-typedef struct {
-/*00*/	ObjSetup base;
-/*18*/	union Unk18{
-        u8 byte[2];
-        s16 halfword;
-    } unk18;
-/*1A*/	u8 unk1A;
-} SideSetupObj_Setup;
 
 void sidesetup_ctor(void *dll) { }
 
 void sidesetup_dtor(void *dll) { }
 
-void sidesetup_setup(Object *self, SideSetupObj_Setup *objsetup, s32 arg2) {
+void sidesetup_setup(Object *self, SideSetup_Setup *objsetup, s32 arg2) {
     objsetup->unk1A = objsetup->unk18.byte[0] - 1;
     objsetup->unk18.halfword = -1;
 }

@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -13,15 +14,6 @@
 #include "types.h"
 
 // Note: This file appears to be called "lift1.c" in the original game.
-
-typedef struct {
-/*0x00*/ ObjSetup base;
-/*0x18*/ s8 rotation;
-/*0x1A*/ s16 unused1A;          //Sets value for objdata->unused0, but otherwise unused
-/*0x1C*/ s16 alreadyEnabled;    //Lift ignores activation gamebit and silently ascends into position
-/*0x1E*/ s16 unused1E;          //Sets value for objdata->unusedC, but otherwise unused
-/*0x20*/ s16 gamebitActivated;
-} DFPLift_Setup;
 
 typedef struct {
 /*0x00*/ f32 unused0;
@@ -63,12 +55,12 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
     objdata = (DFPLift_Data*)self->data;
 
     self->animCallback = DFPLift_func_91C;
-    self->srt.yaw = setup->rotation * 256;
+    self->srt.yaw = setup->yaw * 256;
 
     objdata->state = LIFT_STATE_INIT;
     objdata->gamebitActivated = setup->gamebitActivated;
-    objdata->unusedC = setup->unused1E;
-    objdata->unused0 = setup->unused1A;
+    objdata->unusedC = setup->unk1E;
+    objdata->unused0 = setup->unk1A;
     objdata->alreadyEnabled = setup->alreadyEnabled;
 
     self->srt.transl.y -= LIFT_DOWN;

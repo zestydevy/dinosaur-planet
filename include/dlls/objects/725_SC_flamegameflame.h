@@ -7,17 +7,6 @@
 #include "types.h"
 
 typedef struct {
-    ObjSetup base;
-    u8 flameRange;          //Distance at which Kyte should use Flame command     
-    s8 unk19;
-    u16 kyteFlightCurveID;  //The curve path Kyte should follow when Flame is used
-    s8 unk1C;
-    s8 unk1D;
-    s8 unk1E;
-    u8 yaw;
-} SCFlameGameFlame_Setup;
-
-typedef struct {
     u8 unused0;
     s32 unk4;               //Set to 0 in setup, but otherwise unused. Maybe meant to store index of target in dKyteFlightCurveIDs etc?
     u8 flags;

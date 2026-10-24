@@ -2,17 +2,8 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 seqIndex;                //sequence index (in objDef) to play when translated
-    s16 gametextID;             //gametext fileID of subtitles to display when translated
-    s16 unused1C;
-    s16 gamebitTranslated;      //gamebit set when Krazoa Translator is used on textblock
-    s16 gamebitInteractable;    //gamebit queried to tell if textblock should be powered on
-} Textblock_Setup;
 
 typedef struct {
     f32 baseY;

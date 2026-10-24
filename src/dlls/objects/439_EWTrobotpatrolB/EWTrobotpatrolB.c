@@ -1,6 +1,8 @@
 #include "dlls/objects/437_EWTrobotpatrol.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/100_EWTrobotpatrolB.h"
+#include "game/objects/setups/58_RobotPatrol.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -13,14 +15,6 @@
 
 #define MAX_ROBOS 12
 #define MAX_NODES 24
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 unk18; // unused due to, presumably, missing code. likely the number of robos to spawn 
-/*19*/ u8 numNodes; // set but unused, the dll discovers this count on its own
-/*1A*/ u8 roboFadeDistance;
-/*1B*/ u8 maxSearchTime; // maximum search time (after aggro) divided by 64
-} EWTrobotpatrolB_Setup;
 
 typedef struct {
 /*00*/ Object* robos[MAX_ROBOS];
@@ -130,7 +124,7 @@ void EWTrobotpatrolB_spawnRobo(Object* self, CurveSetup* startNode) {
     while (objdata->robos[i] != NULL) {
         i++;
     }
-    roboSetup = objAllocSetup(sizeof(EWTrobotpatrol_Setup), OBJ_EWTrobotpatrol);
+    roboSetup = objAllocSetup(sizeof(RobotPatrol_Setup), OBJ_EWTrobotpatrol);
     roboSetup->actExclusions1 = setup->base.actExclusions1;
     roboSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     roboSetup->fadeDistance = setup->roboFadeDistance;

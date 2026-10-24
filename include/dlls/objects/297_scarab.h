@@ -8,14 +8,6 @@
 #include "types.h"
 
 typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unused19;
-    s16 lifetime;
-    u8 _unk1C[8];
-} Scarab_Setup;
-
-typedef struct {
 /*00*/ u32 soundHandle;         //Manages crawling sound loop
 /*04*/ f32 speedX;              //Scurry speed
 /*08*/ f32 speedZ;              //Scurry speed

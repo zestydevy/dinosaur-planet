@@ -1,5 +1,6 @@
 #include "dll.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "game/objects/object_id.h"
 #include "dlls/engine/6_amsfx.h"
@@ -12,16 +13,6 @@ typedef struct {
 /*00*/ u8 unk0[0x4];
 } CRFuelTank_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18;
-/*19*/ u8 _unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ u8 _unk1C;
-/*1D*/ u8 _unk1D;
-/*1E*/ s16 gamebit;
-} CRFuelTank_Setup;
-
 // offset: 0x0 | ctor
 void CRFuelTank_ctor(void *dll) { }
 
@@ -29,11 +20,11 @@ void CRFuelTank_ctor(void *dll) { }
 void CRFuelTank_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CRFuelTank_setup(Object *self, CRFuelTank_Setup *setup, s32 arg2) {
+void CRFuelTank_setup(Object *self, Generic_Setup *setup, s32 arg2) {
     self->stateFlags |= OBJSTATE_PRINT_DISABLED;
     func_8002674C(self);
-    func_80026128(self, 0x1D, setup->unk1A / 10, 0);
-    if ((setup->gamebit != NO_GAMEBIT) && (mainGetBits(setup->gamebit))) {
+    func_80026128(self, 0x1D, setup->genericA / 10, 0);
+    if ((setup->bitA != NO_GAMEBIT) && (mainGetBits(setup->bitA))) {
         func_80026160(self);
         func_800267A4(self);
         self->srt.flags |= OBJFLAG_INVISIBLE;
@@ -56,18 +47,18 @@ void CRFuelTank_control(Object *self) {
 // offset: 0x164 | func: 2 | export: 2
 void CRFuelTank_update(Object *self) {
     ObjectHitInfo *hitinfo;
-    CRFuelTank_Setup *setup;
+    Generic_Setup *setup;
 
     hitinfo = self->objhitInfo;
-    setup = (CRFuelTank_Setup*)self->setup;
+    setup = (Generic_Setup*)self->setup;
     if (hitinfo->unk48 && hitinfo->unk48->id == OBJ_CRSnowBike) {
         func_80026160(self);
         func_800267A4(self);
         dll_amSfx->Play(self, SOUND_B3C_Machinery_Charge_Up, MAX_VOLUME, NULL, NULL, 0, NULL);
         self->opacity = 250;
         self->unkE0 = 1;
-        if (setup->gamebit != NO_GAMEBIT) {
-            mainSetBits(setup->gamebit, 1);
+        if (setup->bitA != NO_GAMEBIT) {
+            mainSetBits(setup->bitA, 1);
         }
     }
 }

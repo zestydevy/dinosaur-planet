@@ -1,6 +1,7 @@
 #include "dlls/engine/26_curves.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -12,16 +13,6 @@
 #include "macros.h"
 
 /** @file official name: CFTreasSharpy.c */
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw8;
-/*19*/ s8 unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 unk1C;
-/*1E*/ s16 unk1E;
-/*20*/ s16 unk20;
-} CFTreasSharpy_Setup;
 
 typedef struct {
     Object* chuckObj;

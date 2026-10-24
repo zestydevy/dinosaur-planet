@@ -14,6 +14,7 @@
 #include "game/objects/object_id.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/40_SnowHorn.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/joypad.h"

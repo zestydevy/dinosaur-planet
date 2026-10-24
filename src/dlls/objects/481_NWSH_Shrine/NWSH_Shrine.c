@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
@@ -31,12 +32,6 @@ typedef struct {
     u8 unk17;
 } NWSH_Shrine_Data;
 
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    s16 unk1A;
-} NWSH_Shrine_Setup;
-
 /*0x0*/ static Texture *_data_0 = NULL;
 
 static int dll_481_func_C10(Object *self, Object *a1, AnimObj_Data *a2, s8 a3);
@@ -49,15 +44,15 @@ void dll_481_ctor(void *dll) { }
 void dll_481_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_481_setup(Object *self, NWSH_Shrine_Setup *setup, s32 arg2) {
+void dll_481_setup(Object *self, Shrine_Setup *setup, s32 arg2) {
     NWSH_Shrine_Data *objdata;
     DLL_IModgfx *sp30;
 
     objdata = self->data;
     self->srt.yaw = 0;
     objdata->unk0 = 0xA;
-    if (setup->unk1A > 0) {
-        objdata->unk0 = (s16) (setup->unk1A >> 2);
+    if (setup->testStartRange > 0) {
+        objdata->unk0 = (s16) (setup->testStartRange >> 2);
     }
     objdata->unk12 = 0;
     objdata->unk13 = 0;

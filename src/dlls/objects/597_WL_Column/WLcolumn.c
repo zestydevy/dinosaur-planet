@@ -4,17 +4,13 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/intersect.h"
 #include "sys/joypad.h"
 #include "sys/map.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WL_Column_Setup;
 
 typedef struct {
     s16 messageArgLo;
@@ -39,7 +35,7 @@ void WL_Column_ctor(void* dll) { }
 void WL_Column_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_Column_obj_Setup(Object* self, WL_Column_Setup* objSetup, s32 reset) {
+void WL_Column_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     self->srt.yaw = objSetup->yaw << 8;
     self->srt.pitch = -M_180_DEGREES;
 }

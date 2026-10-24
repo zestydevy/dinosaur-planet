@@ -38,7 +38,7 @@ void DFP_LevelControl_ctor(void *dll) { }
 void DFP_LevelControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFP_LevelControl_setup(Object* self, DFPTLevelControl_Setup* objSetup, s32 arg2) {
+void DFP_LevelControl_setup(Object* self, ObjSetup* objSetup, s32 arg2) {
     u8 act;
 
     objAddObjectType(self, OBJTYPE_LevelControl);

@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/map_enums.h"
 #include "sys/objects.h"
@@ -7,16 +8,6 @@
 #include "sys/print.h"
 #include "macros.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 rotation; // yaw >> 8
-/*19*/ s8 triggerCondition;
-/*1A*/ s16 triggerRange;
-/*1C*/ s16 seqno; // object seq index
-/*1E*/ s16 conditionBit; // if not -1, bit that determines if the seqpoint is enabled. required value depends on the trigger condition
-/*20*/ s16 triggeredBit; // if not -1, this bit is set to 1 once seqpoint is triggered. prevents re-trigger if bit is already 1
-} WL_seqpoint_Setup;
 
 typedef struct {
 /*00*/ f32 triggerRange;

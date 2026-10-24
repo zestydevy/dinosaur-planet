@@ -5,6 +5,7 @@
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/16_AnimObj.h"
 #include "sys/objanim.h"
 
 #define ANIMCURVES_KEYFRAME_CHANNELS 19
@@ -59,26 +60,7 @@ typedef struct {
 /*2*/ s16 params; // official name: val
 } AnimCurvesEvent;
 
-typedef struct {
-    ObjSetup base;
-    /** isObjSeq2CurveIndex (1 bit) | sequenceID (11 bits) | actorIndex (4 bits) */
-    s16 sequenceIdBitfield;
-    s16 unk1A; // event gamebit?
-    s16 target; // target (actor) object ID + 4
-    s8 unk1E;
-    s8 seqSlot;
-    s8 unk20;
-    s8 unk21;
-    s8 activate;
-    s8 unk23;
-    u8 camEaseDuration;
-} AnimObj_Setup;
-
 #define ANIMCURVES_IS_OBJSEQ2CURVE_INDEX 0x8000
-
-//For reading different values from `sequenceIdBitfield`
-#define ANIMOBJ_SEQID(idBitfield) ((idBitfield & 0x7FF0) >> 4)
-#define ANIMOBJ_ACTORIDX(idBitfield) (idBitfield & 0xF)
 
 typedef void (*AnimObj_DataF4Callback)(Object *actor, Object *override, struct AnimObj_Data* arg2);
 typedef s32 (*AnimObj_DecisionCallback)(Object *actor, Object *override, s32 arg2);

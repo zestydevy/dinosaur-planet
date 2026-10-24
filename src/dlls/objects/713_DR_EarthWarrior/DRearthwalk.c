@@ -7,6 +7,7 @@
 #include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/joypad.h"
@@ -19,12 +20,6 @@
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 rotation;
-/*19*/ s8 unk19;
-} DRearthwalk_Setup;
 
 typedef struct {
 /*000*/ ObjFSA_Data fsa;
@@ -185,18 +180,18 @@ void DRearthwalk_ctor(void* dll) {
 void DRearthwalk_dtor(void *dll) { }
 
 // offset: 0xD8 | func: 1 | export: 0
-void DRearthwalk_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
+void DRearthwalk_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     DRearthwalk_Data* objdata;
     s32 _pad[2];
     u8 sp50[] = {1, 1, 1, 1};
     s16 sp44[] = {0x000a, 0x000a, 0x0000, 0x0000, 0x0000};
     s16 sp38[] = {0x0014, 0x0014, 0x0000, 0x0000, 0x0000};
 
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = DRearthwalk_func_1EBC;
     objAddObjectType(self, OBJTYPE_Vehicle);
     objdata = self->data;
-    objdata->unkA5C = setup->unk19;
+    objdata->unkA5C = setup->type;
     objdata->unkA52 = 5;
     objdata->talkSeq = -1;
     if (self->shadow != NULL) {
@@ -215,7 +210,7 @@ void DRearthwalk_setup(Object* self, DRearthwalk_Setup* setup, s32 arg2) {
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func2(self, &objdata->movedata, -4551, 5461, 2);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func5(&objdata->movedata, 300, 120);
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func6(&objdata->movedata, sp38, sp44, 2);
-    if (setup->unk19 == 1) {
+    if (setup->type == 1) {
         objdata->energy = 1;
         objdata->unkA58 |= 0x100;
         objdata->unkA60_1 = 1;

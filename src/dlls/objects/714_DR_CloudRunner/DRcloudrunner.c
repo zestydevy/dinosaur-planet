@@ -2,33 +2,26 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/rand.h"
 #include "sys/main.h"
 #include "dll.h"
-
 #include "dlls/objects/745_DR_Cage.h"
 #include "types.h"
+#include "prevent_bss_reordering.h"
 
 typedef struct {
-s32 unk0;
-s8 unk4[0x25B - 0x4];
-s8 unk25B;
-s8 unk25C[0x272 - 0x25C];
-s8 unk272;
-s8 unk273[0x910 - 0x273];
-s16 unk910;
-s8 unk912[0x920 - 0x912];
-u8 unk920;
+    s32 unk0;
+    s8 unk4[0x25B - 0x4];
+    s8 unk25B;
+    s8 unk25C[0x272 - 0x25C];
+    s8 unk272;
+    s8 unk273[0x910 - 0x273];
+    s16 unk910;
+    s8 unk912[0x920 - 0x912];
+    u8 unk920;
 } DRCloudRunner_Data;
-
-typedef struct {
-ObjSetup base;
-s16 unk18;
-s16 unk1A;
-s16 unk1C;
-s16 unk1E;
-} DRCloudRunner_Setup;
 
 /*0x0*/ static u16 _data_0[] = {
     0x091d, 0x091e, 0x091f, 0x0000
@@ -214,10 +207,10 @@ u32 dll_714_get_data_size(Object *self, u32 a1) {
 s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
     DRCloudRunner_Data* objdata2;
     u32 new_var;
-    DRCloudRunner_Setup* setup;
+    Generic_Setup* setup;
     Object* parent;
 
-    setup = (DRCloudRunner_Setup*)self->setup;
+    setup = (Generic_Setup*)self->setup;
     if (objdata->unk272) {
         func_800267A4(self);
         objdata->unk25B = 0;
@@ -247,7 +240,7 @@ s32 dll_714_func_1968(Object* self, DRCloudRunner_Data* objdata, s32 arg2) {
     }
 
     new_var = 4;
-    if (mainGetBits(setup->unk1E)) {
+    if (mainGetBits(setup->bitA)) {
         self->unkC4 = NULL;
         objdata2->unk920 = (((new_var * (objdata2->unk910 > 0)) * 4) & 0x10) | (objdata2->unk920 & 0xFFEF);
         return 3;

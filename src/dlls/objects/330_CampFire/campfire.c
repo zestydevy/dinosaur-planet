@@ -1,11 +1,17 @@
-#include "common.h"
-#include "sys/gfx/model.h"
-#include "sys/gfx/modgfx.h"
-#include "sys/objhits.h"
-#include "dll.h"
+#include "game/gamebits.h"
+#include "game/objects/object_id.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
-#include "dlls/objects/common/campfire.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/52_CampFire.h"
+#include "sys/dll.h"
+#include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
+#include "sys/main.h"
+#include "sys/objhits.h"
+#include "sys/objprint.h"
+#include "sys/rand.h"
+#include "dll.h"
 
 typedef struct {
     Object* light;          //LFXEmitter
@@ -149,7 +155,7 @@ void campfire_control(Object* self) {
             lfxSetup->base.x = self->srt.transl.x;
             lfxSetup->base.y = self->srt.transl.y + mathRnd(0, 30);
             lfxSetup->base.z = self->srt.transl.z;
-            lfxSetup->unk1E = objSetup->lfxUnk1E;
+            lfxSetup->unk1E = objSetup->lfxIdx;
             if (lfxSetup->unk1E == 0) {
                 lfxSetup->unk1E = 0x59;
             }

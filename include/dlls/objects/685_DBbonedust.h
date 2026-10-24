@@ -12,15 +12,6 @@ typedef enum {
 } DBBoneDust_States;
 
 typedef struct {
-    ObjSetup base;
-    u16 _unk18;
-    u16 _unk1A;
-    u16 _unk1C;
-    s16 unk1E;
-    s16 unk20;
-} DBBoneDust_Setup;
-
-typedef struct {
     f32 baseY;
     // s32 rotation; //union of s32 and two s16s? TO-DO: see if this can work without union
     union {

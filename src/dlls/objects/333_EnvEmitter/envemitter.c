@@ -1,14 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/envfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 activateRange;
-    s8 unk19;
-    s16 actionIdxBase;
-    s16 gamebitActivate;
-    s16 gamebitActionIdxOffset;
-} EnvEmitter_Setup;
 
 typedef struct {
     f32 activateRange;

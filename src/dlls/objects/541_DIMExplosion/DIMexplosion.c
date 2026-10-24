@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-#include "dlls/objects/541_DIMexplosion.h"
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s32 unused0;
@@ -15,7 +15,7 @@ void DIMExplosion_ctor(void *dll) { }
 void DIMExplosion_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMExplosion_obj_Setup(Object* self, DIMExplosion_Setup* objSetup, s32 reset) {
+void DIMExplosion_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     DIMExplosion_Data* objData = self->data;
     
     objData->initialScale = 0.01f;

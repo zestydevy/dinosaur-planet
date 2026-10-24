@@ -1,16 +1,13 @@
-#include "common.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/objects/object_id.h"
+#include "game/objects/setups/37_Cannon.h"
 #include "sys/gfx/model.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
-
-#include "dlls/objects/253_CannonBall.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 yaw;
-    u8 unk19;       //Unknown purpose. Maybe meant as a lifetime for the cannon or its cannonballs?
-} Cannon_Setup;
+#include "sys/objprint.h"
+#include "sys/print.h"
+#include "dll.h"
 
 typedef struct {
     f32 unk0;                         //Set to 0 at when changing states, but otherwise unused
@@ -165,7 +162,7 @@ dummy_label1: ;
     case Cannon_STATE_Firing:
         //Fire a cannonball
         camGetObjectChildPosition(self, &x, &y, &z);
-        cannonballSetup = objAllocSetup(sizeof(CannonBall_Setup), OBJ_CannonBall);
+        cannonballSetup = objAllocSetup(sizeof(ObjSetup), OBJ_CannonBall);
         cannonballSetup->x = x;
         cannonballSetup->y = y + 30.0f;
         cannonballSetup->z = z;

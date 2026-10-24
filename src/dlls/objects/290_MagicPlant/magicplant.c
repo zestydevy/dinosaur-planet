@@ -1,6 +1,8 @@
 #include "common.h"
 #include "macros.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/108_MagicPlant.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objtype.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
@@ -193,7 +195,7 @@ u32 MagicPlant_obj_GetDataSize(Object *self, u32 offsetAddr) {
 
 // offset: 0x5F8 | func: 7
 static void MagicPlant_createMagicDust(Object* self, s32 objectID) {
-    MagicDust_Setup* dustSetup;
+    Collectable_Setup* dustSetup;
     MagicPlant_Setup* objSetup;
     Object* magicDust;
     MagicPlant_Data* objData;
@@ -201,14 +203,14 @@ static void MagicPlant_createMagicDust(Object* self, s32 objectID) {
     objSetup = (MagicPlant_Setup*)self->setup;
     objData = self->data;
 
-    dustSetup = objAllocSetup(sizeof(MagicDust_Setup), objectID);
-    dustSetup->unk1A = 20;
-    dustSetup->unk2C = -1;
-    dustSetup->unk1C = -1;
+    dustSetup = objAllocSetup(sizeof(Collectable_Setup), objectID);
+    dustSetup->scale = 20;
+    dustSetup->gamebitCount = -1;
+    dustSetup->gamebitCollected = -1;
     dustSetup->base.x = self->srt.transl.x;
     dustSetup->base.y = self->srt.transl.y;
     dustSetup->base.z = self->srt.transl.z;
-    dustSetup->unk24 = -1;
+    dustSetup->gamebitSecondary = -1;
     dustSetup->base.loadFlags = objSetup->base.loadFlags;
     dustSetup->base.byte5 = objSetup->base.byte5;
     dustSetup->base.byte6 = objSetup->base.byte6;

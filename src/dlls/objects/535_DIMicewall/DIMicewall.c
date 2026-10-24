@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 
@@ -8,14 +9,6 @@ typedef struct {
     s8 melted;
     s8 flameRange;
 } DIMIceWall_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18;
-    s16 health;
-    s16 flameRange;
-    s16 gamebitMelted;   
-} DIMIceWall_Setup;
 
 // offset: 0x0 | ctor
 void DIMIceWall_ctor(void* dll) { }

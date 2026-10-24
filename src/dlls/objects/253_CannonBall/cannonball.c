@@ -1,8 +1,15 @@
-#include "common.h"
+#include "dlls/engine/6_amsfx.h"
+#include "game/objects/setups/38_Projectile.h"
+#include "sys/main.h"
+#include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
+#include "dll.h"
 
-#include "dlls/objects/253_CannonBall.h"
+typedef struct {
+    s16 timer;
+} CannonBall_Data;
 
 // offset: 0x0 | ctor
 void CannonBall_ctor(void *dll) { }
@@ -11,7 +18,7 @@ void CannonBall_ctor(void *dll) { }
 void CannonBall_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CannonBall_setup(Object *self, CannonBall_Setup *setup, s32 arg2) { }
+void CannonBall_setup(Object *self, Projectile_Setup *setup, s32 arg2) { }
 
 // offset: 0x2C | func: 1 | export: 1
 void CannonBall_control(Object* self) {

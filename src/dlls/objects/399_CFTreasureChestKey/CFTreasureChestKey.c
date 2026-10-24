@@ -1,5 +1,6 @@
 #include "dlls/objects/217_GuardClaw.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -9,18 +10,6 @@
 #include "sys/objmsg.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1A - 0x18];
-/*1A*/ u8 scale; // scale * 64
-/*1B*/ u8 yaw8;
-/*1C*/ s16 itemGamebit; // treasure key inventory item bit
-/*1E*/ u8 _unk1E[0x22 - 0x1E];
-/*22*/ u8 pitch8;
-/*23*/ u8 roll8;
-/*24*/ s16 guardClawDefeatedGamebit;
-} CFTreasureChestKey_Setup;
 
 typedef struct {
     u8 guardClawAlive : 1;
@@ -38,7 +27,7 @@ void CFTreasureChestKey_ctor(void* dll) { }
 void CFTreasureChestKey_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFTreasureChestKey_obj_Setup(Object* self, CFTreasureChestKey_Setup* setup, s32 reset) {
+void CFTreasureChestKey_obj_Setup(Object* self, Collectable_Setup* setup, s32 reset) {
     CFTreasureChestKey_Data* objdata = self->data;
     
     objAddObjectType(self, OBJTYPE_32);
@@ -51,10 +40,10 @@ void CFTreasureChestKey_obj_Setup(Object* self, CFTreasureChestKey_Setup* setup,
     objdata->freeKey = objdata->keyGiven = FALSE;
     self->srt.scale = (f32) setup->scale * (1.0f / 64.0f);
     self->srt.scale *= self->def->scale;
-    if (mainGetBits(setup->guardClawDefeatedGamebit)) {
+    if (mainGetBits(setup->gamebitSecondary)) {
         objdata->freeKey = TRUE;
     }
-    if (mainGetBits(setup->itemGamebit)) {
+    if (mainGetBits(setup->gamebitCollected)) {
         objDisable(self);
         objdata->keyGiven = TRUE;
     }
@@ -62,7 +51,7 @@ void CFTreasureChestKey_obj_Setup(Object* self, CFTreasureChestKey_Setup* setup,
 
 // offset: 0x19C | func: 1 | export: 1
 void CFTreasureChestKey_obj_Control(Object* self) {
-    CFTreasureChestKey_Setup* setup = (CFTreasureChestKey_Setup*)self->setup;
+    Collectable_Setup* setup = (Collectable_Setup*)self->setup;
     CFTreasureChestKey_Data* objdata = self->data;
     Object* player = objGetPlayer();
     s32 _pad;
@@ -100,8 +89,8 @@ void CFTreasureChestKey_obj_Control(Object* self) {
             // @bug: need to disable A-button after iteract
             // Give player the key
             objdata->keyGiven = TRUE;
-            mainSetBits(setup->itemGamebit, 1);
-            STUBBED_PRINTF(" Bit %i Set\n", setup->itemGamebit);
+            mainSetBits(setup->gamebitCollected, 1);
+            STUBBED_PRINTF(" Bit %i Set\n", setup->gamebitCollected);
             objSendMesg(player, 0x7000A, self, (void* )0x10000);
         }
     }
@@ -119,14 +108,14 @@ void CFTreasureChestKey_obj_Update(Object* self) { }
 // offset: 0x3CC | func: 3 | export: 3
 void CFTreasureChestKey_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     CFTreasureChestKey_Data* objdata;
-    CFTreasureChestKey_Setup* setup;
+    Collectable_Setup* setup;
     Object* guardClaw;
     f32 dist;
 
-    setup = (CFTreasureChestKey_Setup*)self->setup;
+    setup = (Collectable_Setup*)self->setup;
     objdata = self->data;
     dist = 2000.0f;
-    if (!mainGetBits(setup->guardClawDefeatedGamebit)) {
+    if (!mainGetBits(setup->gamebitSecondary)) {
         // GuardClaw not defeated yet, attach to their model
         guardClaw = objGetNearestTypeTo(OBJTYPE_Baddie, self, &dist);
         // @bug: we need to confirm this is actually a GuardClaw pointer????? not all baddie DLLs implement this!

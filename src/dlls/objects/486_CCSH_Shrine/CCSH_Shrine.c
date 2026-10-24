@@ -1,4 +1,5 @@
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
@@ -10,12 +11,6 @@
 #include "sys/objtype.h"
 #include "sys/envfx.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    s16 unk1A;
-} CCSH_Shrine_Setup;
 
 typedef struct {
     s16 unk0;
@@ -44,14 +39,14 @@ void CCSH_Shrine_ctor(void* dll) { }
 void CCSH_Shrine_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCSH_Shrine_setup(Object* self, CCSH_Shrine_Setup* setup, s32 reset) {
+void CCSH_Shrine_setup(Object* self, Shrine_Setup* setup, s32 reset) {
     CCSH_Shrine_Data* objdata = self->data;
     DLL_IModgfx* modgfx;
     
     self->srt.yaw = 0;
     objdata->unk0 = 0xA;
-    if (setup->unk1A > 0) {
-        objdata->unk0 = setup->unk1A >> 8;
+    if (setup->testStartRange > 0) {
+        objdata->unk0 = setup->testStartRange >> 8;
     }
     objdata->unkF = 0;
     objdata->unk10 = 0;

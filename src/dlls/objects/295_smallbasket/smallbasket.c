@@ -6,6 +6,8 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/dll.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -17,20 +19,8 @@
 #include "sys/objtype.h"
 #include "sys/rand.h"
 
-#include "dlls/objects/common/collectable.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/297_scarab.h"
-#include "dlls/objects/615_crawler.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 storedItemID;
-/*1A*/ s16 storedItemQuantity;
-/*1C*/ s16 unk1C;                   //some time (in seconds)
-/*1E*/ s16 gamebit;
-/*20*/ s16 autoThrowRadius;
-} SmallBasket_Setup;
 
 typedef struct{
 /*00*/ s32 unk0;                //timer
@@ -586,7 +576,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         switch (type) {
         case SmallBasket_ITEM_Scorpion:
             scorpionSetup = (Scorpion_Setup*)objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
-            scorpionSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scorpionSetup->yaw = mathRnd(-0x7F, 0x7E);
             scorpionSetup->base.x = mathRnd(-10, 10) + self->srt.transl.x;
             scorpionSetup->base.y = self->srt.transl.y;
             scorpionSetup->base.z = mathRnd(-10, 10) + self->srt.transl.z;
@@ -637,7 +627,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             break;
         case SmallBasket_ITEM_Scarab_Red:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
-            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scarabSetup->yaw = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -678,7 +668,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             break;
         case SmallBasket_ITEM_Scarab_Gold:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
-            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scarabSetup->yaw = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -720,7 +710,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             break;
         case SmallBasket_ITEM_Scarab_Rainbow:
             scarabSetup = (Scarab_Setup*)objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
-            scarabSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scarabSetup->yaw = mathRnd(-0x7F, 0x7E);
             scarabSetup->base.x = self->srt.transl.x;
             scarabSetup->base.y = self->srt.transl.y;
             scarabSetup->base.z = self->srt.transl.z;
@@ -767,7 +757,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             } else {
                 foodSetup = (Collectable_Setup*)objAllocSetup(sizeof(Collectable_Setup), OBJ_applePickup);
             }
-            foodSetup->objHitsValue = 20;
+            foodSetup->scale = 20;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitCollected = NO_GAMEBIT;
             if (objData->throwFlags != 0) {

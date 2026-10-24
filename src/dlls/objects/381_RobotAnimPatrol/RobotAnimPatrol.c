@@ -3,6 +3,8 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/gfx/projgfx.h"
@@ -15,16 +17,6 @@
 #include "sys/print.h"
 #include "sys/voxmap.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 rotation;
-/*19*/ u8 unk19[0x1A - 0x19];
-/*1A*/ s16 unk1A;
-/*1C*/ u8 unk1C[0x1E - 0x1C];
-/*1E*/ s16 unk1E;
-/*20*/ s16 unk20;
-} RobotAnimPatrol_Setup;
 
 typedef struct {
 /*00*/ f32 unk0;
@@ -159,7 +151,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, RobotAnimPatrol_Setup* setup, s32 r
     
     sp3B = 5;
     objdata->flags = 0;
-    if ((setup->unk1E != -1) && (mainGetBits(setup->unk1E) != 0)) {
+    if ((setup->destroyedBit != -1) && (mainGetBits(setup->destroyedBit) != 0)) {
         objdata->flags |= ROBOTANIMPATROL_FLAGS_Destroyed;
         return;
     }
@@ -204,7 +196,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, RobotAnimPatrol_Setup* setup, s32 r
     objdata->spawnPos.x = setup->base.x;
     objdata->spawnPos.y = setup->base.y;
     objdata->spawnPos.z = setup->base.z;
-    objdata->spawnYaw = setup->rotation << 8;
+    objdata->spawnYaw = setup->yaw << 8;
     objdata->unk38 = setup->unk1A;
     objdata->unk24 = 0.2f;
     objdata->unk3C = 0;
@@ -479,7 +471,7 @@ int RobotAnimPatrol_animCallback(Object* self, Object* animObj, AnimObj_Data* an
         }
     }
 
-    if (mainGetBits(setup->unk20) != 0) {
+    if (mainGetBits(setup->crashBit) != 0) {
         objdata->crashTick = 1;
         return 4;
     }
@@ -1011,8 +1003,8 @@ static void RobotAnimPatrol_crashControl(Object* self, RobotAnimPatrol_Data* obj
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
         setup = (RobotAnimPatrol_Setup*)self->setup;
-        if (setup->unk1E != -1) {
-            mainSetBits(setup->unk1E, 1);
+        if (setup->destroyedBit != -1) {
+            mainSetBits(setup->destroyedBit, 1);
         }
         objDisable(self);
         objdata->flags |= ROBOTANIMPATROL_FLAGS_Destroyed;

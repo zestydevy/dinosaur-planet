@@ -1,13 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 modelIdx;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitActivated;
-} WCTrexStatue_Setup;
 
 static int WCTrexStatue_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 

@@ -1,11 +1,5 @@
+#include "game/objects/setups/103.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-} DFcavedoor_Setup;
 
 // offset: 0x0 | ctor
 void DFcavedoor_ctor(void *dll) { }
@@ -14,7 +8,7 @@ void DFcavedoor_ctor(void *dll) { }
 void DFcavedoor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFcavedoor_setup(Object* self, DFcavedoor_Setup* setup, s32 reset) {
+void DFcavedoor_setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     self->srt.roll = setup->roll << 8;
     self->srt.pitch = setup->pitch << 8;
     self->srt.yaw = setup->yaw << 8;

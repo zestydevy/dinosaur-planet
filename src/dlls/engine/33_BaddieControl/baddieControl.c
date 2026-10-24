@@ -2,11 +2,11 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/260_Pollen.h"
-#include "dlls/objects/common/collectable.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/animseq.h"
 #include "sys/math.h"
 #include "sys/memory.h"
@@ -19,20 +19,6 @@
 #include "dll.h"
 
 // baddieControl.c (default.dol)
-
-// Common object setup for objects that drop from defeating a baddie
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    u8 _unk1E[0x24 - 0x1E];
-    s16 unk24;
-    u8 _unk26[0x2C - 0x26];
-    s16 unk2C;
-    s16 unk2E;
-} BaddieDrop_ObjSetup;
 
 /*0x0*/ static Object *_bss_0;
 
@@ -549,16 +535,16 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
 
     switch (droppedItemIdx) {
     case BaddieDrop_1_MagicDust_Mid:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustMid);
         break;
     case BaddieDrop_2_Energy_Gem:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_EnergyGem1);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_EnergyGem1);
         break;
     case BaddieDrop_3_Energy_Egg:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_meatPickup);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_meatPickup);
         break;
     case BaddieDrop_4_MagicDust_Mid:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustMid);
         if (gamebitID != NO_GAMEBIT) {
             dropSetup->gamebitCollected = gamebitID;
         }
@@ -590,22 +576,22 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
         _bss_0 = drop;
         return drop;
     case BaddieDrop_6_MagicDust_Small:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustSmall);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustSmall);
         break;
     case BaddieDrop_7_MagicDust_Mid:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustMid);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustMid);
         break;
     case BaddieDrop_8_MagicDust_Large:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustLarge);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustLarge);
         break;
     case BaddieDrop_9_MagicDust_Huge:
-        dropSetup = objAllocSetup(sizeof(BaddieDrop_ObjSetup), OBJ_MagicDustHuge);
+        dropSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustHuge);
         break;
     default:
         return NULL;
     }
     
-    dropSetup->objHitsValue = 20;
+    dropSetup->scale = 20;
     dropSetup->gamebitCount = NO_GAMEBIT;
     dropSetup->gamebitCollected = NO_GAMEBIT;
     dropSetup->gamebitSecondary = NO_GAMEBIT;
@@ -613,9 +599,9 @@ Object* BaddieControl_drop_collectable(Object* obj, BaddieDrop_IDs droppedItemId
     dropSetup->base.y = obj->srt.transl.y + 30.0f;
     dropSetup->base.z = obj->srt.transl.z;
     if (arg3 != 0) {
-        dropSetup->unk2E = 2;
+        dropSetup->mode = 2;
     } else {
-        dropSetup->unk2E = 1;
+        dropSetup->mode = 1;
     }
     dropSetup->base.loadFlags = baddieSetup->base.loadFlags;
     dropSetup->base.loadDistance = baddieSetup->base.loadDistance;

@@ -1,6 +1,7 @@
 #include "dll.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
 
@@ -8,11 +9,6 @@ typedef struct {
     f32 cooldownTimer;
     u8 state;
 } WCTempleLift_Data;
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WCTempleLift_Setup;
 
 typedef enum {
     Lift_STATE_Down,
@@ -31,7 +27,7 @@ void WCTempleLift_ctor(void* dll) { }
 void WCTempleLift_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCTempleLift_obj_Setup(Object* self, WCTempleLift_Setup* setup, s32 reset) {
+void WCTempleLift_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     self->srt.yaw = setup->yaw << 8;
 }
 

@@ -1,19 +1,13 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 
 typedef struct {
 /*00*/ s16 gamebit;
 } WL_SpiritSet_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 _unk19[0x1E - 0x19];
-/*1E*/ s16 gamebit;
-} WL_SpiritSet_Setup;
 
 // offset: 0x0 | ctor
 void WL_SpiritSet_ctor(void *dll) { }
@@ -22,7 +16,7 @@ void WL_SpiritSet_ctor(void *dll) { }
 void WL_SpiritSet_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_SpiritSet_setup(Object *self, WL_SpiritSet_Setup *setup, s32 arg2) {
+void WL_SpiritSet_setup(Object *self, Generic_Setup *setup, s32 arg2) {
     WL_SpiritSet_Data *objdata;
 
     objdata = self->data;
@@ -30,7 +24,7 @@ void WL_SpiritSet_setup(Object *self, WL_SpiritSet_Setup *setup, s32 arg2) {
     if (self->id == OBJ_WL_SpiritSet) {
         self->srt.scale = 0.0085f;
     }
-    objdata->gamebit = setup->gamebit;
+    objdata->gamebit = setup->bitA;
 }
 
 // offset: 0x60 | func: 1 | export: 1

@@ -1,17 +1,10 @@
 #include "common.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/52_CampFire.h"
 #include "sys/objhits.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitFrozen;
-    u8 scale;
-    u8 unk1B;
-    u8 lfxIgnorePlayerDistance;
-    u16 lfxIdx;
-} DRIceFire_Setup;
 
 typedef struct {
     Object* lfxEmitter;
@@ -37,7 +30,7 @@ void DRIceFire_ctor(void* dll) { }
 void DRIceFire_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DRIceFire_obj_Setup(Object* self, DRIceFire_Setup* objSetup, s32 reset) {
+void DRIceFire_obj_Setup(Object* self, CampFire_Setup* objSetup, s32 reset) {
     DRIceFire_Data* objData;
     f32 scale;
 
@@ -52,7 +45,7 @@ void DRIceFire_obj_Setup(Object* self, DRIceFire_Setup* objSetup, s32 reset) {
     self->unkE0 = FALSE;
     
     //Check if the pipe's already frozen over, otherwise enable firey damage and sounds
-    if ((objData->state = mainGetBits(objSetup->gamebitFrozen))) {
+    if ((objData->state = mainGetBits(objSetup->gamebitID))) {
         objSetModel(self, 1);
         func_800267A4(self);
     } else {
@@ -84,13 +77,13 @@ void DRIceFire_obj_Control(Object* self) {
     SRT fxTransform;
     LFXEmitter_Setup* lfxSetup;
     s32 createLight;
-    DRIceFire_Setup* objSetup;
+    CampFire_Setup* objSetup;
     f32 playerDistance;
     DRIceFire_Data* objData;
 
     objData = self->data;
     player = objGetPlayer();
-    objSetup = (DRIceFire_Setup*)self->setup;
+    objSetup = (CampFire_Setup*)self->setup;
 
     //Do nothing after being frozen over with the Ice Blast Spell
     if (objData->state == DRIceFire_STATE_1_Frozen) {
@@ -165,14 +158,14 @@ void DRIceFire_obj_Control(Object* self) {
     //Handle LFXEmitter
     if (objData->lfxEmitter != NULL) {
         //Unload lfxEmitter when player is at a distance (optionally)
-        if ((objSetup->lfxIgnorePlayerDistance == FALSE) && (playerDistance > 110.0f)) {
+        if ((objSetup->alwaysIlluminates == FALSE) && (playerDistance > 110.0f)) {
             objFreeObject(objData->lfxEmitter);
             objData->lfxEmitter = NULL;
         }
     } else {
         //Create lfxEmitter when burning
         createLight = FALSE;
-        if (objSetup->lfxIgnorePlayerDistance == FALSE) {
+        if (objSetup->alwaysIlluminates == FALSE) {
             if (playerDistance < 100.0f) {
                 createLight = TRUE;
             }
@@ -204,10 +197,10 @@ void DRIceFire_obj_Control(Object* self) {
 // offset: 0x7D4 | func: 2 | export: 2
 void DRIceFire_obj_Update(Object* self) {
     DRIceFire_Data* objData;
-    DRIceFire_Setup* objSetup;
+    CampFire_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DRIceFire_Setup*)self->setup;
+    objSetup = (CampFire_Setup*)self->setup;
     
     //Check for Ice Blast Spell damage
     if (func_80025F40(self, NULL, NULL, NULL) != Damage_Type_Ice_Blast) {
@@ -215,7 +208,7 @@ void DRIceFire_obj_Update(Object* self) {
     }
 
     if (objData->flameHealth-- < 0) {
-        mainSetBits(objSetup->gamebitFrozen, TRUE);
+        mainSetBits(objSetup->gamebitID, TRUE);
         objData->state = DRIceFire_STATE_2_Freezing;
         objSetModel(self, 1);
         dll_modgfx->Func10(self);

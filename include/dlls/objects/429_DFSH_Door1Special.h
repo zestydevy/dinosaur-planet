@@ -13,18 +13,6 @@
 */
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebitOpened;       //[Main Door Only] Opens the door
-/*1A*/ s16 gamebitDoorState;    //[Main Door Only] Restores the door's state during setup
-/*1C*/ s16 seqPreemptTime;      //[Main Door Only] ObjSeq time to jump to when restoring state
-/*1E*/ s8 seqIndex;             //[Main Door Only] ObjSeq to play
-/*1F*/ u8 yaw;
-/*20*/ u8 enabledActors;        //[Main Door Only] ObjSeq actor mask
-/*21*/ u8 scale;
-/*22*/ s16 gamebitLit;          //A point on the door's Krazoa symbol lights up when this gamebit is set (through pressing ancient switches around Discovery Falls)
-} DFSH_DoorSpecial_Setup;
-
-typedef struct {
     u16 phase;      //Phase angle for the Krazoa symbol's glow effect
     u8 state;       //[Main Door Only] SeqDoor state (`DFSH_DoorSpecial_States`)
     u8 glowState;   //Glow effect state (`DFSH_DoorSpecial_GlowStates`)

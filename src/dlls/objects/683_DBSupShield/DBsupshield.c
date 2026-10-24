@@ -1,11 +1,6 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    s16 unk1A; //objhits-related
-} DBSupShield_Setup;
 
 // offset: 0x0 | ctor
 void DBSupShield_ctor(void *dll) { }
@@ -14,9 +9,9 @@ void DBSupShield_ctor(void *dll) { }
 void DBSupShield_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBSupShield_setup(Object* self, DBSupShield_Setup* objSetup, s32 arg2) {
-    if (objSetup->unk1A) {
-        func_80026940(self, objSetup->unk1A);
+void DBSupShield_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
+    if (objSetup->genericA) {
+        func_80026940(self, objSetup->genericA);
     }
 }
 

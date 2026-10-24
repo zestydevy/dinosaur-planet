@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -9,16 +10,6 @@
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s32 _unk18;
-/*1C*/ s16 flag1;
-/*1E*/ s16 _unk1E;
-/*20*/ s16 _unk20;
-/*22*/ s16 _unk22;
-/*24*/ s16 flag2;
-} DBDiamond_Setup;
 
 typedef struct {
 /*000*/ u8 unk0;
@@ -31,15 +22,15 @@ void DBdiamond_ctor(void *dll) { }
 void DBdiamond_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
+void DBdiamond_setup(Object *self, Collectable_Setup *setup, s32 arg2) {
     DBDiamond_Data *objdata = self->data;
 
-    if (mainGetBits(setup->flag1)){
+    if (mainGetBits(setup->gamebitCollected)){
         objdata->unk0 = 1;
         return;
     }
 
-    if (mainGetBits(setup->flag2)) {
+    if (mainGetBits(setup->gamebitSecondary)) {
         objdata->unk0 = 2;
         objAddObjectType(self, OBJTYPE_39);
         return;
@@ -51,19 +42,19 @@ void DBdiamond_setup(Object *self, DBDiamond_Setup *setup, s32 arg2) {
 // offset: 0xD0 | func: 1 | export: 1
 void DBdiamond_control(Object* self) {
     Object* player;
-    DBDiamond_Setup* setup;
+    Collectable_Setup* setup;
     DBDiamond_Data* objdata;
     SeqJoint* seqJoint;
 
     player = objGetPlayer();
-    setup = (DBDiamond_Setup *)self->setup;
+    setup = (Collectable_Setup *)self->setup;
     objdata = self->data;
 
     if (objdata->unk0 != 1 && objdata->unk0 == 2 && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         if (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < 60.0f) {
             objFreeObjectType(self, OBJTYPE_39);
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
-            mainSetBits(setup->flag1, 1);
+            mainSetBits(setup->gamebitCollected, 1);
             objSendMesg(player, 0x7000A, self, (void*)0x10000);
             objdata->unk0 = 1;
         }

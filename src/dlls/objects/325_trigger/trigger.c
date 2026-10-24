@@ -1,3 +1,4 @@
+#include "game/objects/setups/Trigger.h"
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "sys/lfx.h"
 
@@ -17,12 +18,6 @@ typedef struct{
     u8 unk33;
     s32 _unk34[3];
 } CFLamp_Data;
-
-typedef struct{
-    ObjSetup base;
-    s16 _unk18;
-    s16 unk1A;
-} CFLamp_Setup;
 
 static int dll_405_func_FC(Object*, Object*, AnimObj_Data*, s8);
 

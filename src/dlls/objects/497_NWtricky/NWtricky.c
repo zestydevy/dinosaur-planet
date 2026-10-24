@@ -6,6 +6,7 @@
 #include "game/gametexts.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/78_GroundAnimator.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"

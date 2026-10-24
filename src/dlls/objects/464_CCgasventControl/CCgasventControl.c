@@ -1,5 +1,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/objects/setups/103.h"
 #include "sys/main.h"
 #include "game/objects/object.h"
 #include "sys/objects.h"
@@ -14,12 +15,6 @@ typedef struct {
 /*04*/ Object *player;
 /*08*/ f32 timer;
 } CCgasventControl_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1A-0x18];
-/*1A*/ u8 yaw;
-} CCgasventControl_Setup;
 
 typedef enum {
     STATE_Loading,
@@ -40,7 +35,7 @@ void CCgasventControl_ctor(void *dll) { }
 void CCgasventControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCgasventControl_setup(Object *self, CCgasventControl_Setup *setup, s32 arg2) {
+void CCgasventControl_setup(Object *self, Ctrl103_Setup *setup, s32 arg2) {
     CCgasventControl_Data *objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
     if (mainGetBits(BIT_CC_Completed_Gas_Chamber_Puzzle)) {

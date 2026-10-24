@@ -1,14 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 mode;                //Sets object transform flags when nonzero, and enables control function when set to 2
-    s16 explosionScale;     //Scale for modGfxDLL function call transform, and for object's objHits
-    s16 modGfxArg1;         //Arg1 for the modGfxDLL's function call (type of model to create?)
-    s16 gamebitExplode;     //Explodes when this gamebit is set, or sets this gamebit when damaged by barrel explosion
-} DRExplodeDoor_Setup;
 
 typedef struct {
     s32 unused0;

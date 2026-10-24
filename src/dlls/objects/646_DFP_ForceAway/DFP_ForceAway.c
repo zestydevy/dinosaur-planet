@@ -2,17 +2,10 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yRadiusQuarter;
-/*19*/ s8 type;
-/*1A*/ s16 xRadius;
-/*1C*/ s16 zRadius;
-} DFP_ForceAway_Setup;
 
 typedef struct {
 /*0*/ s16 xRadius;

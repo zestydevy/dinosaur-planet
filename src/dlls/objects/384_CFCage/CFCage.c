@@ -1,6 +1,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/66_CFCage.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -9,12 +10,6 @@
 #include "dll.h"
 
 /** @file For both the CFPrisonCage and CFCageSwitch! */
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebit;
-/*1A*/ u8 yaw8;
-} CFCage_Setup;
 
 static int CFCage_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
 

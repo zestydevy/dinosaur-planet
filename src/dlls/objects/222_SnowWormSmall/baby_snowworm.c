@@ -2,7 +2,6 @@
 
 #include "common.h"
 #include "dlls/engine/18_objfsa.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/222_SnowWormSmall.h"
 #include "dlls/objects/251_weapons.h"
 #include "game/objects/interaction_arrow.h"
@@ -11,10 +10,6 @@
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    Baddie_Setup baddie;
-} SnowWormSmall_Setup;
 
 typedef struct {
     f32 soundTimer;
@@ -163,7 +158,7 @@ void SnowWormSmall_ctor(void* dll) {
 void SnowWormSmall_dtor(void* dll) { }
 
 // offset: 0x10C | func: 1 | export: 0
-void SnowWormSmall_obj_Setup(Object* self, SnowWormSmall_Setup* objSetup, s32 reset) {
+void SnowWormSmall_obj_Setup(Object* self, Baddie_Setup* objSetup, s32 reset) {
     u8 flags;
     SnowWormSmall_DataActual* objData;
     Baddie* baddie;
@@ -174,10 +169,10 @@ void SnowWormSmall_obj_Setup(Object* self, SnowWormSmall_Setup* objSetup, s32 re
     if (reset) {
         flags = 1 | 2 | 4;
     }
-    if ((objSetup->baddie.unk2B & 0x20) == FALSE) {
+    if ((objSetup->unk2B & 0x20) == FALSE) {
         flags |= 8;
     }
-    gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 7, 6, 0x102, flags, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 7, 6, 0x102, flags, 20.0f);
     
     self->animCallback = NULL;
     
@@ -195,19 +190,19 @@ void SnowWormSmall_obj_Setup(Object* self, SnowWormSmall_Setup* objSetup, s32 re
 // offset: 0x250 | func: 2 | export: 1
 void SnowWormSmall_obj_Control(Object* self) {
     Baddie* baddie;
-    SnowWormSmall_Setup* objSetup;
+    Baddie_Setup* objSetup;
     ObjFSA_Data* fsa;
     f32 time;
 
     baddie = self->data;
-    objSetup = (SnowWormSmall_Setup*)self->setup;
+    objSetup = (Baddie_Setup*)self->setup;
     fsa = &baddie->fsa;
     
     if (self->unkDC) {
         if (((baddie->fsa.logicState != SnowWormSmall_LSTATE_3_Dead) || (baddie->unk3B0 & SnowWormSmall_LSTATE_1_Hit)) && 
-            (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->baddie.base.uID))
+            (gDLL_29_Gplay->vtbl->did_time_expire(objSetup->base.uID))
         ) {
-            gDLL_33_BaddieControl->vtbl->setup(self, &objSetup->baddie, baddie, 7, 6, 0x102, 0x26, 20.0f);
+            gDLL_33_BaddieControl->vtbl->setup(self, objSetup, baddie, 7, 6, 0x102, 0x26, 20.0f);
             baddie->unk3B6 = 0;
             dll_amSfx->Play(self, SOUND_B20_Low_Grunt, MAX_VOLUME, NULL, NULL, 0, NULL);
             objAnimSet(self, 8, 0.0f, 0x10);
@@ -219,10 +214,10 @@ void SnowWormSmall_obj_Control(Object* self) {
     }
     
     if (self->unkE0 == 0) {
-        self->srt.transl.x = objSetup->baddie.base.x;
-        self->srt.transl.y = objSetup->baddie.base.y;
-        self->srt.transl.z = objSetup->baddie.base.z;
-        dll_anim->start_obj_sequence(objSetup->baddie.unk2E, self, -1);
+        self->srt.transl.x = objSetup->base.x;
+        self->srt.transl.y = objSetup->base.y;
+        self->srt.transl.z = objSetup->base.z;
+        dll_anim->start_obj_sequence(objSetup->unk2E, self, -1);
         self->unkE0 = 1;
         return;
     }
@@ -245,7 +240,7 @@ void SnowWormSmall_obj_Control(Object* self) {
         SnowWormSmall_func_BF8(self, baddie, fsa);
     }
     
-    self->srt.transl.y = objSetup->baddie.base.y - 2.0f;
+    self->srt.transl.y = objSetup->base.y - 2.0f;
 }
 
 // offset: 0x4F0 | func: 3 | export: 2
@@ -453,12 +448,12 @@ void SnowWormSmall_func_F50(Object* self, Baddie* baddie) {
 
 // offset: 0x106C | func: 14
 void SnowWormSmall_throwIceBall(Object* self, Baddie* baddie) {
-    ChukaChuck_Setup* chuckSetup;
+    BaddieProjectile_Setup* chuckSetup;
     Object* chuck;
     f32 throwFactor;
     f32 throwTime; //Duration of throw in frames
 
-    chuckSetup = objAllocSetup(sizeof(ChukaChuck_Setup), OBJ_IceBallSmall);
+    chuckSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_IceBallSmall);
     chuckSetup->base.x = self->srt.transl.x;
     chuckSetup->base.y = self->srt.transl.y + 15.0f;
     chuckSetup->base.z = self->srt.transl.z;

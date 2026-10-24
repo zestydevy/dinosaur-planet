@@ -8,23 +8,6 @@
 #include "types.h"
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s32 unk18;
-/*1c*/ s32 unk1C;
-/*20*/ s32 unk20;
-/*24*/ s16 gamebitDropped;
-} GoldenNugget_Setup;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 roll;
-/*19*/ s8 pitch;
-/*1A*/ s8 yaw;
-/*1B*/ u8 carryingGold;     //Bitfield flags: carrying a Shiny Nugget when bit0 is set
-/*1C*/ f32 interactRadius;  //Distance at which player can interact with tumbleweed
-} Tumbleweed_Setup;
-
-typedef struct {
 /*000*/ DLL27_Data collision;       //Terrain/HITS data
 /*260*/ u16 characterDistance;      //Distance to character Tumbleweed's fleeing from (player/sidekick)
 /*262*/ u16 interactRadius;         //Distance at which player can interact with tumbleweed

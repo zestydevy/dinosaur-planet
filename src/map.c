@@ -2,6 +2,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/common/vehicle.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/4_SetupPoint.h"
 #include "sys/gfx/texture.h"
 #include "sys/asset.h"
 #include "sys/bitstream.h"
@@ -4214,13 +4215,13 @@ void mapUpdateObjectsStreaming(s32 arg0) {
         if (obj->mapID >= 0) {
             if (!(objSetup->loadFlags & OBJSETUP_LOAD_MANUAL)) {
                 if (objSetup->loadFlags & OBJSETUP_LOAD_IN_MAP_OBJGROUP) {
-                    if ((obj->controlNo >= OBJCONTROL_None) && (mapShouldObjUnload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_Dummy) && (mapShouldObjUnload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (gLoadedMapsDataTable[obj->mapID] == NULL)) {
                         unloadObj = TRUE;
                     }
                 } else {
-                    if ((obj->controlNo >= OBJCONTROL_None) && (mapShouldObjUnload(obj) != 0)) {
+                    if ((obj->controlNo >= OBJCONTROL_Dummy) && (mapShouldObjUnload(obj) != 0)) {
                         unloadObj = TRUE;
                     } else if ((obj->mapID < MAP_ID_MAX) && (map_func_8004AEFC(obj->mapID, sp70, var_s4) == 0)) {
                         unloadObj = TRUE;

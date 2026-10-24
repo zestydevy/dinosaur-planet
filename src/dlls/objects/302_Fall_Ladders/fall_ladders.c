@@ -1,15 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 modelIdx;        //Which ladder model to use
-    s16 raisedOffsetY;  //When raised, the ladder starts off this far above its base position
-    s16 unused1C;
-    s16 gamebitRaise;   //Ladder rises up by sequence when this gamebit is set (exclusive to `VFP_Ladders2`)
-    s16 gamebitFall;    //Ladder starts falling when this gamebit is set
-} Fall_Ladders_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     f32 raisedOffsetY;  //When raised, the ladder starts off this far above its base position
@@ -35,7 +26,7 @@ void Fall_Ladders_ctor(void* dll) { }
 void Fall_Ladders_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Fall_Ladders_obj_Setup(Object* self, Fall_Ladders_Setup* objSetup, s32 reset) {
+void Fall_Ladders_obj_Setup(Object* self, FallLadders_Setup* objSetup, s32 reset) {
     Fall_Ladders_Data* objData = self->data;
     
     self->srt.yaw = objSetup->yaw << 8;
@@ -55,11 +46,11 @@ void Fall_Ladders_obj_Setup(Object* self, Fall_Ladders_Setup* objSetup, s32 rese
 
 // offset: 0xC4 | func: 1 | export: 1
 void Fall_Ladders_obj_Control(Object* self) {
-    Fall_Ladders_Setup* objSetup;
+    FallLadders_Setup* objSetup;
     Fall_Ladders_Data* objData;
     f32 magnitude;
 
-    objSetup = (Fall_Ladders_Setup*)self->setup;
+    objSetup = (FallLadders_Setup*)self->setup;
     objData = self->data;
     
     //For the special Fall Ladder in VFPT Act 2, use sequences to handle lowering (and uniquely: raising!) instead

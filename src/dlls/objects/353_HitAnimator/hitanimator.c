@@ -1,3 +1,4 @@
+#include "game/objects/setups/79_HitAnimator.h"
 #include "common.h"
 
 typedef struct {
@@ -6,15 +7,6 @@ typedef struct {
     u8 gamebitState;
     u8 gamebitStatePrev;
 } HitAnimator_Data;
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitActivate; //gamebitID to check before animating
-    u8 enableFlag1;      //when enabled, `HitAnimator_Flag_1` is stored whenever the value of the HitAnimator's gamebit changes, provided its local Block is loaded
-    u8 blocksAnimatorID; //when animating Blocks model Shapes
-    u8 mode;             //decides which behaviour to use: removing/adding HITS lines, removing/adding Blocks Shapes, fading in/out Blocks Shapes
-    u8 hitsAnimatorID;   //when animating HITS lines
-} HitAnimator_Setup;
 
 typedef enum {
     HitAnimator_Mode_Invert = 1,  //Remove the target when gamebit set (instead of enabling it when gamebit set)

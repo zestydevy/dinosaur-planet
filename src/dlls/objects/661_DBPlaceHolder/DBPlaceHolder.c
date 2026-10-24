@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/89_SeqObj.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "types.h"
@@ -10,21 +11,12 @@
 #include "sys/objprint.h"
 #include "sys/main.h"
 
+// gamebitHasPlayed: egg/diamond bit - 0x3C5, 0x3C6 and 0x3C8 (should be 0x3C7 according to DBlevelControl?)
+// gamebitPlay: picked up egg bit? always 0x3C4 - checked in DBlevelControl
+
 typedef struct {
     u8 flags;
 } DBPlaceHolder_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebit1; // egg/diamond bit - 0x3C5, 0x3C6 and 0x3C8 (should be 0x3C7 according to DBlevelControl?)
-/*1A*/ s16 gamebit2; // picked up egg bit? always 0x3C4 - checked in DBlevelControl
-/*1C*/ u8 yaw;
-/*1D*/ u8 flags;
-/*1E*/ s8 objectSeqIndex;
-/*1F*/ s8 stealable;
-/*20*/ s16 preemptTime;
-/*22*/ u16 preemptEnabledActorsConfig;
-} DBPlaceHolder_Setup;
 
 typedef enum {
     DBPlaceHolder_FLAG_0_None = 0,
@@ -44,18 +36,18 @@ void DBPlaceHolder_ctor(void *dll) { }
 void DBPlaceHolder_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 reset) {
+void DBPlaceHolder_setup(Object *self, SeqObj_Setup *setup, s32 reset) {
     DBPlaceHolder_Data *objdata = self->data;
 
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = DBPlaceHolder_anim_callback;
     objdata->flags = DBPlaceHolder_FLAG_0_None;
 
-    if (mainGetBits(setup->gamebit1)) {
+    if (mainGetBits(setup->gamebitHasPlayed)) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags |= DBPlaceHolder_FLAG_1;
 
-        if (setup->preemptTime != 0) {
+        if (setup->replayStartTime != 0) {
             objdata->flags |= DBPlaceHolder_FLAG_10_Preempt;
         }
     }
@@ -68,43 +60,43 @@ void DBPlaceHolder_setup(Object *self, DBPlaceHolder_Setup *setup, s32 reset) {
 // offset: 0xD8 | func: 1 | export: 1
 void DBPlaceHolder_control(Object *self) {
     DBPlaceHolder_Data *objdata;
-    DBPlaceHolder_Setup *setup;
+    SeqObj_Setup *setup;
     Object *player;
     f32 x;
     f32 z;
 
-    setup = (DBPlaceHolder_Setup*)self->setup;
+    setup = (SeqObj_Setup*)self->setup;
     objdata = self->data;
 
-    if ((setup->stealable == TRUE) && !(objdata->flags & DBPlaceHolder_FLAG_4_StealerWormTarget) && mainGetBits(setup->gamebit2)) {
+    if ((setup->type == 1) && !(objdata->flags & DBPlaceHolder_FLAG_4_StealerWormTarget) && mainGetBits(setup->gamebitPlay)) {
         objAddObjectType(self, OBJTYPE_39);
         objdata->flags |= DBPlaceHolder_FLAG_4_StealerWormTarget;
     }
 
     if (objdata->flags & DBPlaceHolder_FLAG_2_Interacted) {
-        mainSetBits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebitHasPlayed, 1);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags &= ~DBPlaceHolder_FLAG_2_Interacted;
         objdata->flags |= DBPlaceHolder_FLAG_1;
     }
 
-    if (!(objdata->flags & DBPlaceHolder_FLAG_1) && (self->unkAF & ARROW_FLAG_1_Interacted) && mainGetBits(setup->gamebit2)) {
+    if (!(objdata->flags & DBPlaceHolder_FLAG_1) && (self->unkAF & ARROW_FLAG_1_Interacted) && mainGetBits(setup->gamebitPlay)) {
         player = objGetPlayer();
         x = player->srt.transl.x - self->srt.transl.x;
         z = player->srt.transl.z - self->srt.transl.z;
         self->srt.yaw = mathAtan2(x, z);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         objdata->flags |= DBPlaceHolder_FLAG_2_Interacted;
-        gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, -1);
+        gDLL_3_Animation->vtbl->start_obj_sequence(setup->seqIndex, self, -1);
     }
 
     if (objdata->flags & DBPlaceHolder_FLAG_10_Preempt) {
-        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->replayStartTime);
 
-        if (setup->flags & 0x10) {
-            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, setup->preemptEnabledActorsConfig);
+        if (setup->playbackOptions & SEQOBJ_OPTIONS_HasReplayActorMask) {
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->seqIndex, self, setup->replayActorMask);
         } else {
-            gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex, self, 1);
+            gDLL_3_Animation->vtbl->start_obj_sequence(setup->seqIndex, self, 1);
         }
 
         objdata->flags &= ~DBPlaceHolder_FLAG_10_Preempt;
@@ -148,10 +140,10 @@ u32 DBPlaceHolder_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x430 | func: 7
 int DBPlaceHolder_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
-    DBPlaceHolder_Setup *setup = (DBPlaceHolder_Setup*)self->setup;
+    SeqObj_Setup *setup = (SeqObj_Setup*)self->setup;
 
     if (animObjData->lastMessage == 2) {
-        mainSetBits(setup->gamebit1, 1);
+        mainSetBits(setup->gamebitHasPlayed, 1);
     }
 
     return 0;

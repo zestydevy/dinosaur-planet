@@ -4,6 +4,8 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
@@ -31,16 +33,6 @@ typedef struct {
     Vec3f unk6C;
     MtxF unk78;
 } DLL565_DataActual; //B8
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} DIM_BossSpit_Setup; //TODO: move to header
 
 /*0x0*/ static u32 data_0[] = {
     0x00000001, 0x00000008, 0x00000009, 0x00000009, 0x0000000a, 0x0000000a, 0x0000000a, 0x0000000a, 
@@ -967,10 +959,10 @@ void dll_565_func_2AE4(Object* self, f32 x, f32 y, f32 z) {
 
 // offset: 0x2C20 | func: 18
 void dll_565_func_2C20(SRT* srt, Vec3f* velocity) {
-    DIM_BossSpit_Setup* spitSetup;
+    Projectile_Setup* spitSetup;
     Object* spit;
 
-    spitSetup = (DIM_BossSpit_Setup*)objAllocSetup(sizeof(DIM_BossSpit_Setup), OBJ_DIM_BossSpit);
+    spitSetup = (Projectile_Setup*)objAllocSetup(sizeof(Projectile_Setup), OBJ_DIM_BossSpit);
     spitSetup->base.x = srt->transl.x;
     spitSetup->base.y = srt->transl.y;
     spitSetup->base.z = srt->transl.z;

@@ -1,5 +1,6 @@
 #include "dll.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/39_Warp.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/rand.h"
@@ -30,15 +31,6 @@ typedef struct {
 /*26*/ u8 runTimersPostPowerUp; //[OUTBOUND] Enables countdown to applying enxFX / warping player away (after powering up finished)
 } Transporter_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 yaw;
-/*19*/ u8 unk19;
-/*1A*/ s8 warpID;
-/*1B*/ u8 unk1B[0x20 - 0x1B];
-/*20*/ s16 gamebitEnabled;    //When specified, the Transporter will only be powered on when this gamebit is set
-} Transporter_Setup;
-
 static int Transporter_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
@@ -48,7 +40,7 @@ void Transporter_ctor(void* dll) { }
 void Transporter_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Transporter_obj_Setup(Object* self, Transporter_Setup* setup, s32 reset) {
+void Transporter_obj_Setup(Object* self, Warp_Setup* setup, s32 reset) {
     Transporter_Data* objdata;
 
     objdata = self->data;
@@ -81,11 +73,11 @@ void Transporter_obj_Control(Object* self) {
     f32 distToPlayer;
     f32 mag1;
     SRT transform;
-    Transporter_Setup* setup;
+    Warp_Setup* setup;
     Transporter_Data* objdata;
 
     objdata = self->data;
-    setup = (Transporter_Setup*)self->setup;
+    setup = (Warp_Setup*)self->setup;
 
     //Show a tutorial when approaching a Transporter for the first time
     if ((self->unkAF & ARROW_FLAG_4_Highlighted) && !mainGetBits(BIT_Shown_ZLock_Interact_Message)) {
@@ -125,7 +117,7 @@ void Transporter_obj_Control(Object* self) {
             objdata->runTimersPostPowerUp = FALSE;
         } else {
             //Set up outbound warp when the player interacts with the Transporter's LockIcon
-            if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
+            if (((setup->gamebit == NO_GAMEBIT) || mainGetBits(setup->gamebit)) && 
                 (self->unkAF & ARROW_FLAG_1_Interacted)
             ) {
                 joyDisableButtons(0, A_BUTTON);
@@ -145,7 +137,7 @@ void Transporter_obj_Control(Object* self) {
         }
 
         //Emanate a beam of light from a randomly-selected point on the Krazoa symbol (2.5% chance) 
-        if (((setup->gamebitEnabled == NO_GAMEBIT) || mainGetBits(setup->gamebitEnabled)) && 
+        if (((setup->gamebit == NO_GAMEBIT) || mainGetBits(setup->gamebit)) && 
             (mathRnd(0, 40) == 0)) {
             objdata->mGfxKrazoaPoints->vtbl->Spawn(self, mathRnd(0, 5), NULL, 1, -1, NULL);
         }
@@ -316,10 +308,10 @@ void Transporter_obj_Control(Object* self) {
 
 // offset: 0xC00 | func: 2 | export: 2
 void Transporter_obj_Update(Object* self) {
-    Transporter_Setup* setup;
+    Warp_Setup* setup;
 
-    setup = (Transporter_Setup*)self->setup;
-    if ((setup->gamebitEnabled != NO_GAMEBIT) && (mainGetBits(setup->gamebitEnabled) == FALSE)) {
+    setup = (Warp_Setup*)self->setup;
+    if ((setup->gamebit != NO_GAMEBIT) && (mainGetBits(setup->gamebit) == FALSE)) {
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     } else {
         self->unkAF &= ~ARROW_FLAG_8_No_Targetting;

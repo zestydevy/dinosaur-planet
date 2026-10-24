@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/fonts.h"
 #include "sys/map_enums.h"
 
@@ -17,10 +18,6 @@
 
 #define YAW_SPEED_MAX 40.0f
 #define YAW_SPEED_DELTA 2.0f
-
-typedef struct {
-    ObjSetup base;
-} SCTotemStrength_Setup;
 
 typedef struct {
     Object* lightFoot;         //Muscle LightFoot
@@ -82,7 +79,7 @@ static int SCTotemStrength_anim_callback(Object* self, Object* overrideObj, Anim
 static void SCTotemStrength_set_level_state(Object* self, u8 value);
 
 // offset: 0x18 | func: 0 | export: 0
-void SCTotemStrength_setup(Object* self, SCTotemStrength_Setup* objSetup, s32 arg2) {
+void SCTotemStrength_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     SCTotemStrength_Data* objData;
 
     objData = self->data;

@@ -1,7 +1,7 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "dlls/engine/90_camstatic.h"
-#include "dlls/objects/715_StaticCamera.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/18_StaticCamera.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/math.h"

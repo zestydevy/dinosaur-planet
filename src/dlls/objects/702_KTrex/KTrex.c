@@ -3,6 +3,7 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/120_KTrex.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/generic_stack.h"
@@ -19,7 +20,6 @@
 #include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "prevent_bss_reordering2.h"
 
 enum KTLogicStates {
     KT_LSTATE_0 = 0,
@@ -128,15 +128,6 @@ typedef struct {
 /*154*/ SRT unk154;
 /*16C*/ Vec3f unk16C;
 } KTrex_Data;
-
-typedef struct {
-/*00*/ Baddie_Setup base;
-/*38*/ f32 speeds[3]; // Movement speed, per "anger" level.
-/*44*/ u16 roarTime[3]; // How long a roar lasts.
-/*4A*/ u16 vulnerableTime[4]; // How long the boss is vulnerable for.
-/*52*/ u8 reverseChance[4]; // Chance to reverse direction.
-/*56*/ u8 chargeChance[4]; // Chance to charge without seeing Sabre.
-} KTrex_ObjSetup;
 
 enum KTModAnims {
     KTANIM_Idle = 0,
@@ -347,7 +338,7 @@ void dll_702_setup(Object *self, ObjSetup *setup, s32 arg2);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/702_KTrex/dll_702_setup.s")
 #else
 // missing static refs
-void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
+void dll_702_setup(Object* self, KTrex_Setup* setup, s32 arg2) {
     CurveSetup* curve;
     s32 i;
     s32 var_v0;
@@ -359,7 +350,7 @@ void dll_702_setup(Object* self, Baddie_Setup* setup, s32 arg2) {
     if (arg2 != 0) {
         var_v0 = 0x11;
     }
-    gDLL_33_BaddieControl->vtbl->setup(self, setup, baddie, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
+    gDLL_33_BaddieControl->vtbl->setup(self, &setup->base, baddie, 9, 0xC, 0x100, (u8) var_v0, 20.0f);
     self->animCallback = dll_702_func_119C;
     gDLL_18_objfsa->vtbl->set_anim_state(self, &baddie->fsa, KT_ASTATE_0);
     baddie->fsa.logicState = KT_LSTATE_2_WALK; // set initial state
@@ -1112,11 +1103,11 @@ static s32 dll_702_logic_state_1(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 // offset: 0x2E64 | func: 33
 /** Walk straight down arena segment. */
 static s32 dll_702_logic_state_2(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    KTrex_ObjSetup* objsetup;
+    KTrex_Setup* objsetup;
     s32 chanceIdx;
     s32 reversed;
 
-    objsetup = (KTrex_ObjSetup*)self->setup;
+    objsetup = (KTrex_Setup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_1_MOVING_STRAIGHT);
         sKTData->anger = 0;
@@ -1174,11 +1165,11 @@ static s32 dll_702_logic_state_3(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 // offset: 0x3208 | func: 35
 /** Stop moving and do a roar. */
 static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    KTrex_ObjSetup* objsetup;
+    KTrex_Setup* objsetup;
     f32 var_ft1;
     u16 temp_t3;
 
-    objsetup = (KTrex_ObjSetup*)self->setup;
+    objsetup = (KTrex_Setup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_4_ROAR);
         sKTData->timer = (f32) objsetup->roarTime[sKTData->roarType];
@@ -1197,9 +1188,9 @@ static s32 dll_702_logic_state_4(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 // offset: 0x3330 | func: 36
 /** Charging straight down an arena segment. */
 static s32 dll_702_logic_state_5(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    KTrex_ObjSetup* objsetup;
+    KTrex_Setup* objsetup;
 
-    objsetup = (KTrex_ObjSetup*)self->setup;
+    objsetup = (KTrex_Setup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_1_MOVING_STRAIGHT);
         sKTData->anger = 1;
@@ -1248,9 +1239,9 @@ static s32 dll_702_logic_state_7(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 // offset: 0x35A0 | func: 39
 /** On ground, vulnerable after getting zapped. */
 static s32 dll_702_logic_state_8(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    KTrex_ObjSetup* objsetup;
+    KTrex_Setup* objsetup;
 
-    objsetup = (KTrex_ObjSetup*)self->setup;
+    objsetup = (KTrex_Setup*)self->setup;
     if (fsa->enteredLogicState) {
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, KT_ASTATE_7_ON_GROUND);
         sKTData->timer = (f32) objsetup->vulnerableTime[sKTData->fightProgress >> 1];
@@ -1297,11 +1288,11 @@ static s32 dll_702_logic_state_9(Object* self, ObjFSA_Data* fsa, f32 updateRate)
 // offset: 0x3828 | func: 41
 /** Full charge around the entire arena. */
 static s32 dll_702_logic_state_10(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
-    KTrex_ObjSetup* objsetup;
+    KTrex_Setup* objsetup;
     s32 segment;
     s32 reversed;
 
-    objsetup = (KTrex_ObjSetup*)self->setup;
+    objsetup = (KTrex_Setup*)self->setup;
     segment = KTFLAG_GET_SEGMENT(sKTData->flags);
     reversed = sKTData->flags & KTFLAG_REVERSED;
     if (fsa->enteredLogicState) {

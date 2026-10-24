@@ -2,6 +2,7 @@
 #include "dlls/engine/4_race.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/49_SnowBike.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
@@ -87,16 +88,6 @@ typedef struct {
 /*3E1*/ s8 unk3E1;
 } IMSnowBike_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 unk18;
-/*19*/ u8 unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ u8 unk1C;
-/*1D*/ u8 unk1D;
-/*1E*/ s16 unk1E;
-} IMSnowBike_Setup;
-
 enum IMSnowBikeFlags {
     SNOWBIKEFLAG_NONE = 0x0,
     SNOWBIKEFLAG_1 = 0x1,
@@ -157,15 +148,15 @@ void dll_711_ctor(void *dll) { }
 void dll_711_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
+void dll_711_setup(Object *self, SnowBike_Setup *setup, s32 arg2) {
     IMSnowBike_Data *objdata = (IMSnowBike_Data*)self->data;
-    IMSnowBike_Setup *setup2 = (IMSnowBike_Setup*)self->setup;
+    SnowBike_Setup *setup2 = (SnowBike_Setup*)self->setup;
     s32 _pad[2];
     u8 sp3C[] = {0x05, 0x05, 0x05, 0x05}; // _data_AC
     s32 var_v0;
 
     bzero(objdata, sizeof(IMSnowBike_Data));
-    objdata->unk3CC = (s16) ((setup->unk18 & 0xFFFF) << 8);
+    objdata->unk3CC = (s16) ((setup->yaw & 0xFFFF) << 8);
     objdata->unk2F4 = 0;
     objdata->unk2F8 = 0;
     _data_A8 = (DLL_IModgfx*)dllLoad(DLL_ID_106, 1);
@@ -176,7 +167,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
         DLL27FLAG_40000 | DLL27FLAG_4 | DLL27FLAG_2 | DLL27FLAG_1, 
         1);
     gDLL_27->vtbl->setup_terrain_collider(&objdata->unk4C, 4, _data_0, _data_30, sp3C);
-    if (setup->unk19 != 0) {
+    if (setup->isSharpClawBike != 0) {
         objdata->unk3DC = 3;
     } else {
         objdata->unk3DC = 5;
@@ -187,13 +178,13 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     if (self->shadow != NULL) {
         self->shadow->flags |= (OBJ_SHADOW_FLAG_4000 | OBJ_SHADOW_FLAG_TOP_DOWN | OBJ_SHADOW_FLAG_USE_OBJ_YAW | OBJ_SHADOW_FLAG_CUSTOM_DIR);
     }
-    if (setup->unk19 != 0) {
+    if (setup->isSharpClawBike != 0) {
         objdata->flags |= SNOWBIKEFLAG_IS_CPU;
     }
     objdata->unk18.unk10 = -1;
     objdata->unk18.unk14 = -1;
     objdata->unk18.unk18 = -1;
-    objdata->unk48 = setup->unk1C;
+    objdata->unk48 = setup->racetrackIdx;
     objdata->unk49 = setup->unk1D;
     objdata->unk0.transl.x = self->srt.transl.x;
     objdata->unk0.transl.y = self->srt.transl.y;
@@ -201,7 +192,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
     objAddObjectType(self, OBJTYPE_Vehicle);
     _bss_0 = texLoadTexture(0x89);
     _bss_4 = texLoadTexture(0x3C);
-    if (mainGetBits(setup2->unk1E) != 0) {
+    if (mainGetBits(setup2->gamebitFinished) != 0) {
         var_v0 = SNOWBIKEFLAG_1;
     } else {
         var_v0 = SNOWBIKEFLAG_NONE;
@@ -212,7 +203,7 @@ void dll_711_setup(Object *self, IMSnowBike_Setup *setup, s32 arg2) {
 // offset: 0x2A0 | func: 1 | export: 1
 void dll_711_control(Object *self) {
     IMSnowBike_Data *objdata;
-    IMSnowBike_Setup *setup;
+    SnowBike_Setup *setup;
     Object *player;
     f32 spB8;
     MtxF sp78;
@@ -229,14 +220,14 @@ void dll_711_control(Object *self) {
     IMSnowBike_Data_2E0 *sp40;
     
     objdata = self->data;
-    setup = (IMSnowBike_Setup*)self->setup;
+    setup = (SnowBike_Setup*)self->setup;
     sp44 = &objdata->unk2AC;
     sp40 = &objdata->unk2E0;
     spB8 = 0.0f;
     if ((objdata->flags & SNOWBIKEFLAG_1)) {
         return;
     }
-    if (mainGetBits(setup->unk1E) != 0) {
+    if (mainGetBits(setup->gamebitFinished) != 0) {
         objdata->flags |= SNOWBIKEFLAG_1;
         return;
     }
@@ -284,7 +275,7 @@ void dll_711_control(Object *self) {
             self->objhitInfo->unk5B = 0;
             self->objhitInfo->unk5C = 0;
             objdata->unk3DB = 0;
-            if ((setup->unk1A == -1) || (mainGetBits(setup->unk1A) != 0)) {
+            if ((setup->gamebitUnlocked == -1) || (mainGetBits(setup->gamebitUnlocked) != 0)) {
                 self->unkAF &= ~0x10;
             } else {
                 self->unkAF |= 0x10;
@@ -774,8 +765,6 @@ static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl,
     *vtxs = spA4;
     *pols = sp9C;
 }
-
-
 
 // offset: 0x1ED0 | func: 21
 static void dll_711_func_1ED0(Object *self, IMSnowBike_Data_2AC *a1) {

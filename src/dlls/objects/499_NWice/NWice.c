@@ -1,16 +1,10 @@
 #include "common.h"
+#include "game/objects/setups/103.h"
 #include "sys/objtype.h"
 
 typedef struct {
     Object *unk0;
 } DLL499_Data;
-
-// DLL 449 and object types 0x3E share this? maybe?
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1B - 0x18];
-    u8 unk1B;
-} UnkObjType3E_Setup;
 
 // offset: 0x0 | ctor
 void dll_499_ctor(void *dll) { }
@@ -33,8 +27,8 @@ void dll_499_control(Object* self) {
     Object** objList;
     f32 dist;
     s32 i;
-    UnkObjType3E_Setup *setup;
-    UnkObjType3E_Setup *temp2;
+    Ctrl103_Setup *setup;
+    Ctrl103_Setup *temp2;
 
     dist = M_INFINITY_F;
     objdata = self->data;
@@ -59,11 +53,11 @@ void dll_499_control(Object* self) {
     }
 
     objList = objGetAllOfType(OBJTYPE_NWanimice, &numObjs);
-    setup = (UnkObjType3E_Setup*)self->setup;
+    setup = (Ctrl103_Setup*)self->setup;
     for (i = 0; i < numObjs; i++) {
         if (self != objList[i]) {
-            temp2 = (UnkObjType3E_Setup*)objList[i]->setup;
-            if (setup->unk1B == temp2->unk1B) {
+            temp2 = (Ctrl103_Setup*)objList[i]->setup;
+            if (setup->nwIce.id == temp2->nwIce.id) {
                 objdata->unk0 = objList[i];
                 break;
             }

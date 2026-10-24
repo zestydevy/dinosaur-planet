@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
@@ -10,14 +11,7 @@ void FirePole_ctor(void *dll) { }
 void FirePole_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 scale; //0x2000 is 1x scale
-    s16 roll;
-} FirePole_Setup;
-
-void FirePole_setup(Object* self, FirePole_Setup* setup, s32 reset) {
+void FirePole_setup(Object* self, Firepole_Setup* setup, s32 reset) {
     s32 objID;
     DLL_IModgfx* modGfxDLL;
     SRT fxTransform;

@@ -1,13 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitDestroyed;
-} DIMWoodDoor_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s8 health;

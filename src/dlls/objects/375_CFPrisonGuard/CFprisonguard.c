@@ -4,18 +4,13 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 sightRange;
-} CFPrisonGuard_Setup;
 
 typedef struct {
     u32 soundHandle;

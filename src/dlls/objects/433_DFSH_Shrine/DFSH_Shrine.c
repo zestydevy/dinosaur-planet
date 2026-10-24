@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
@@ -27,12 +28,6 @@ typedef struct {
 /*14*/ u8 startedBgMusic;
 } DFShrine_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 _unk18;
-/*1A*/ s16 testStartRange;
-} DFShrine_Setup;
-
 typedef enum {
     DFShrine_STATE_0_Waiting,
     DFShrine_STATE_1_Test_Start,
@@ -57,7 +52,7 @@ void DFShrine_ctor(void* dll) { }
 void DFShrine_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFShrine_obj_Setup(Object* self, DFShrine_Setup* setup, s32 reset) {
+void DFShrine_obj_Setup(Object* self, Shrine_Setup* setup, s32 reset) {
     DFShrine_Data* objdata = self->data;
     DLL_IModgfx* modgfx;
     

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 
 typedef struct {
@@ -18,12 +19,6 @@ typedef struct {
     s16 _unk2A;
    // [0x2C]; 
 } DLL246_Data;
-typedef struct {
-    ObjSetup base;
-    u8 _unk18;
-    s8 unk19;
-    s16 unk1A;
-} DLL426_Setup;
 
 /*0x0*/ static s32 _data_0[] = {
     0x00000002, 0x00000003, 0x00000000, 0x00000000
@@ -44,7 +39,7 @@ void dll_246_ctor(void *dll) { }
 void dll_246_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_246_setup(Object* self, DLL426_Setup* setup, s32 arg2) {
+void dll_246_setup(Object* self, SwarmBaddie_Setup* setup, s32 arg2) {
     DLL246_Data* objdata;
 
     objdata = self->data;

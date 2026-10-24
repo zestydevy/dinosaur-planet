@@ -1,18 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/gfx/animseq.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x1A - 0x18];
-/*1A*/ s16 partidx; // 0 or 1
-/*1C*/ u8 unk1C[0x1E - 0x1C];
-/*1E*/ s16 gamebit;
-/*20*/ s16 unk20;
-/*22*/ s8 roll;
-/*23*/ s8 pitch;
-/*24*/ s8 yaw;
-} DIMbosscrackparticles_Setup;
 
 static int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3);
 
@@ -23,7 +12,7 @@ void DIMbosscrackparticles_ctor(void *dll) { }
 void DIMbosscrackparticles_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMbosscrackparticles_setup(Object *self, DIMbosscrackparticles_Setup *setup, s32 arg2) {
+void DIMbosscrackparticles_setup(Object *self, FXEmit_Setup *setup, s32 arg2) {
     self->srt.yaw = 0;
     self->srt.scale = 0.1f;
     self->animCallback = DIMbosscrackparticles_anim_callback;
@@ -34,11 +23,11 @@ void DIMbosscrackparticles_setup(Object *self, DIMbosscrackparticles_Setup *setu
 
 // offset: 0x70 | func: 1 | export: 1
 void DIMbosscrackparticles_control(Object *self) {
-    DIMbosscrackparticles_Setup *setup;
+    FXEmit_Setup *setup;
 
-    setup = (DIMbosscrackparticles_Setup*)self->setup;
-    if (mainGetBits(setup->gamebit)) {
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->partidx, NULL, PARTFXFLAG_2, -1, NULL);
+    setup = (FXEmit_Setup*)self->setup;
+    if (mainGetBits(setup->toggleGamebit)) {
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->id, NULL, PARTFXFLAG_2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C8, NULL, PARTFXFLAG_2, -1, NULL);
     }
 }
@@ -66,13 +55,13 @@ u32 DIMbosscrackparticles_get_data_size(Object *self, u32 a1) {
 
 // offset: 0x1C4 | func: 7
 int DIMbosscrackparticles_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
-    DIMbosscrackparticles_Setup *setup;
+    FXEmit_Setup *setup;
 
-    setup = (DIMbosscrackparticles_Setup*)self->setup;
-    if (!mainGetBits(setup->gamebit)) {
+    setup = (FXEmit_Setup*)self->setup;
+    if (!mainGetBits(setup->toggleGamebit)) {
         return 0;
     } else {
-        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->partidx, NULL, PARTFXFLAG_2, -1, NULL);
+        gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C6 + setup->id, NULL, PARTFXFLAG_2, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_4C8, NULL, PARTFXFLAG_2, -1, NULL);
     }
     return 0;

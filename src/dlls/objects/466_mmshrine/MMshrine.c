@@ -3,6 +3,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/texture.h"
@@ -37,12 +38,6 @@ typedef struct {
 /*13*/ u8 unk13;
 } MMShrine_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
-} Shrine_Setup;
-
 /*0x0*/ static Texture* _data_0 = 0;
 /*0x4*/ static u8 _data_4 = 1;
 
@@ -63,8 +58,8 @@ void MMshrine_setup(Object* self, Shrine_Setup* setup, s32 arg2) {
     objdata = self->data;
     self->srt.yaw = 0;
     objdata->unk0 = 0xA;
-    if (setup->unk1A > 0) {
-        objdata->unk0 = (s16) (setup->unk1A >> 8);
+    if (setup->testStartRange > 0) {
+        objdata->unk0 = (s16) (setup->testStartRange >> 8);
     }
     objdata->unkF = 0;
     objdata->unk10 = 0;

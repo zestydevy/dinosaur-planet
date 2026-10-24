@@ -1,17 +1,12 @@
 #include "common.h"
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/map_enums.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/envfx.h"
 #include "sys/gfx/modgfx.h"
 #include "dlls/objects/210_player.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 testStartRadius;
-} DBSHshrine_Setup;
 
 typedef struct {
     s16 testStartRadius;
@@ -41,15 +36,15 @@ void DBSHshrine_ctor(void *dll) { }
 void DBSHshrine_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBSHshrine_setup(Object* self, DBSHshrine_Setup* objSetup, s32 arg2) {
+void DBSHshrine_setup(Object* self, Shrine_Setup* objSetup, s32 arg2) {
     DBSHshrine_Data* objData;
     DLL_IModgfx* modGfxDLL;
 
     objData = self->data;
     self->srt.yaw = 0;
     objData->testStartRadius = 10;
-    if (objSetup->testStartRadius > 0) {
-        objData->testStartRadius = objSetup->testStartRadius >> 8;
+    if (objSetup->testStartRange > 0) {
+        objData->testStartRadius = objSetup->testStartRange >> 8;
     }
     objData->state = 0;
     objData->unkF = 0;

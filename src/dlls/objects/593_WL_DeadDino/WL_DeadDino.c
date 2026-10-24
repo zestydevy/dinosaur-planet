@@ -4,17 +4,11 @@
 #include "dlls/objects/291_magicdust.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 survived;        //The EarthWalker animates and can be talked to when this is set
-    s16 deadModAnimIdx; //This modAnimIdx is used when `objSetup->survived == FALSE`
-    s16 pitch;
-} DeadDino_Setup;
 
 typedef struct {
     s32 _unk0;
@@ -303,16 +297,16 @@ void WL_DeadDino_func_8E4(void) {
 
 // offset: 0x8EC | func: 9
 static Object* WL_DeadDino_createMagicDust(Object* self) {
-    MagicDust_Setup* magicSetup;
+    Collectable_Setup* magicSetup;
 
-    magicSetup = objAllocSetup(sizeof(MagicDust_Setup), OBJ_MagicDustMid);
-    magicSetup->unk1A = 20;
-    magicSetup->unk2C = -1;
-    magicSetup->unk1C = -1;
+    magicSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_MagicDustMid);
+    magicSetup->scale = 20;
+    magicSetup->gamebitCount = -1;
+    magicSetup->gamebitCollected = -1;
     magicSetup->base.x = self->srt.transl.x;
     magicSetup->base.y = self->srt.transl.y + 40.0f;
     magicSetup->base.z = self->srt.transl.z;
-    magicSetup->unk24 = -1;
+    magicSetup->gamebitSecondary = -1;
     magicSetup->base.loadFlags = OBJSETUP_LOAD_MANUAL;
     magicSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     magicSetup->base.loadDistance = 0xFF;

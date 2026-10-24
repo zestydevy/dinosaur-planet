@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
@@ -8,11 +9,6 @@
     VEC3F(-0.5, 1.2, -0.2), 
     VEC3F(-1, 2, -2)
 };
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} DIMBoulder_Setup;
 
 typedef struct {
     f32 scale;
@@ -34,7 +30,7 @@ void DIMBoulder_ctor(void *dll) { }
 void DIMBoulder_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMBoulder_setup(Object* self, DIMBoulder_Setup* objSetup, s32 arg2) {
+void DIMBoulder_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DIMBoulder_Data* objData;
 
     objData = self->data;

@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -9,12 +10,6 @@
 #include "sys/objprint.h"
 #include "sys/objexpr.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1A-0x18];
-/*1A*/ u8 yaw;
-} CClightfoot_Setup;
 
 typedef struct {
 /*00*/ u8 spokeToPlayer;
@@ -36,7 +31,7 @@ void CClightfoot_ctor(void *self) { }
 void CClightfoot_dtor(void *self) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CClightfoot_setup(Object *self, CClightfoot_Setup *setup, s32 arg2) {
+void CClightfoot_setup(Object *self, Ctrl103_Setup *setup, s32 arg2) {
     CClightfoot_Data *objdata;
 
     objdata = self->data;

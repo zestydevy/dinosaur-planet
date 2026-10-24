@@ -2,7 +2,6 @@
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/220_Chuka.h"
 #include "dlls/objects/216_SnowWorm.h"
-#include "dlls/objects/221_ChukaChuck.h"
 #include "dlls/objects/222_SnowWormSmall.h"
 #include "game/objects/object.h"
 #include "sys/math.h"
@@ -23,7 +22,7 @@ void ChukaChuck_ctor(void* dll) { }
 void ChukaChuck_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ChukaChuck_obj_Setup(Object* self, ChukaChuck_Setup* setup, s32 reset) {
+void ChukaChuck_obj_Setup(Object* self, BaddieProjectile_Setup* setup, s32 reset) {
     self->unkDC = 180;
     func_800267A4(self);
     self->opacity = OBJECT_OPACITY_MAX;

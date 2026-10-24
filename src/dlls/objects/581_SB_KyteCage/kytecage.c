@@ -6,6 +6,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/object_def.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objexpr.h"
 #include "sys/main.h"
@@ -30,11 +31,6 @@ typedef struct {
     s8 unk7;
 } KyteCage_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-} KyteCage_Setup;
-
 static int kyteCage_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 
 // offset: 0x0 | ctor
@@ -44,7 +40,7 @@ void kyteCage_ctor(void *dll) { }
 void kyteCage_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void kyteCage_setup(Object* self, KyteCage_Setup* setup, s32 arg2) {
+void kyteCage_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     KyteCage_Data* data = self->data;
 
     self->animCallback = kyteCage_anim_callback;

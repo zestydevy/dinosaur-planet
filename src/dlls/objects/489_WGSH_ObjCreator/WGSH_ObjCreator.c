@@ -2,18 +2,12 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/57_ObjCreator.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1E - 0x18];
-    s8 rotation;
-    s8 disableSpawner;
-} WGSH_ObjCreator_Setup;
 
 typedef struct {
     s32 unk0;
@@ -28,10 +22,10 @@ void WGSH_ObjCreator_ctor(void *dll) { }
 void WGSH_ObjCreator_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WGSH_ObjCreator_setup(Object *self, WGSH_ObjCreator_Setup *setup, s32 arg2) {
+void WGSH_ObjCreator_setup(Object *self, ObjCreator_Setup *setup, s32 arg2) {
     WGSH_ObjCreator_Data *objdata = self->data;
 
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw8 << 8;
     self->unkE0 = 0;
     objdata->timer = 100;
     objdata->countdownRate = 0;
@@ -42,12 +36,12 @@ void WGSH_ObjCreator_setup(Object *self, WGSH_ObjCreator_Setup *setup, s32 arg2)
 
 // offset: 0x54 | func: 1 | export: 1
 void WGSH_ObjCreator_control(Object *self) {
-    WGSH_ObjCreator_Setup *setup;
+    ObjCreator_Setup *setup;
     WGSH_ObjCreator_Data *objdata;
     ObjSetup *flybaddieSetup;
     DLL_IModgfx *sp38;
 
-    setup = (WGSH_ObjCreator_Setup*)self->setup;
+    setup = (ObjCreator_Setup*)self->setup;
     objdata = self->data;
     if ((self->unkE0 != 0) && (mainGetBits(BIT_1D4) != 0)) {
         self->unkE0 = 0;
@@ -64,7 +58,7 @@ void WGSH_ObjCreator_control(Object *self) {
     if (objdata->countdownRate != 0) {
         objdata->timer -= (objdata->countdownRate * gUpdateRate);
     }
-    if ((objdata->timer <= 0) && !setup->disableSpawner) {
+    if ((objdata->timer <= 0) && !setup->creatorIndex) {
         // @bug: Does not allocate enough bytes for flybaddie setup (should be 0x1C bytes)
         flybaddieSetup = objAllocSetup(0x18, OBJ_WGSH_flybaddie);
         flybaddieSetup->x = setup->base.x;

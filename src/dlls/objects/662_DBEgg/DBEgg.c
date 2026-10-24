@@ -1,23 +1,10 @@
 #include "common.h"
-#include "dlls/objects/418_DFriverflow.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/55_Riverflow.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "dlls/objects/210_player.h"
-
-typedef struct {
-    ObjSetup base;
-    u16 _unk18;
-    u8 unk1A;
-    u8 unk1B;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    u8 unk22;
-    u8 unk23;
-    s16 unk24;
-    u8 unk26;
-} DBEgg_Setup;
 
 typedef struct {
     f32 unk0;
@@ -130,7 +117,7 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
             dz = riverFlow->srt.transl.z - self->srt.transl.z;
             delta = sqrtf(SQ(delta) + SQ(dz));
             
-            range = ((DFriverflow_Setup*)riverFlow->setup)->range * 1.5f;
+            range = ((Riverflow_Setup*)riverFlow->setup)->range * 1.5f;
             if (delta < range) {
                 delta = (range - delta) / range;
                 delta *= riverFlow->srt.scale * 10.0f;
@@ -164,17 +151,17 @@ void dll_662_func_FA8(Object* self, Vec3f* velocity) {
 void dll_662_func_1670(Object* self) {
     Object* player;
     DBEgg_Data* objdata;
-    DBEgg_Setup* setup;
+    Collectable_Setup* setup;
 
     player = objGetPlayer();
     objdata = self->data;
-    setup = (DBEgg_Setup*)self->setup;
+    setup = (Collectable_Setup*)self->setup;
 
     objFreeObjectType(self, OBJTYPE_38);
     objdata->unk10C = 3;
     mainSetBits(BIT_DB_Picked_Up_Egg, 1);
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
-    mainSetBits(setup->unk1C, 1);
+    mainSetBits(setup->gamebitCollected, 1);
 
     objSendMesg(player, 0x7000A, self, (void* )0x10000);
 }
@@ -188,23 +175,23 @@ s32 dll_662_func_1240(Object* self, f32* arg1, f32 arg2, f32 arg3, s32 arg4);
 
 void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
     f32 sp3C; //3C
-    DBEgg_Setup* objSetup; //38
+    Collectable_Setup* objSetup; //38
 
-    objSetup = (DBEgg_Setup*)self->setup;
+    objSetup = (Collectable_Setup*)self->setup;
     
     self->srt.transl.x = objSetup->base.x;
     self->srt.transl.y = objSetup->base.y;
     self->srt.transl.z = objSetup->base.z;
     
     objData->unk10D = 0;
-    self->srt.yaw = objSetup->unk1B << 8;
-    self->srt.pitch = objSetup->unk22 << 8;
-    self->srt.roll = objSetup->unk23 << 8;
+    self->srt.yaw = objSetup->yaw8 << 8;
+    self->srt.pitch = objSetup->pitch8 << 8;
+    self->srt.roll = objSetup->roll8 << 8;
 
-    self->srt.scale = objSetup->unk1A * 0.015625f;
+    self->srt.scale = objSetup->scale * (1.0f / 64.0f);
     self->srt.scale *= self->def->scale;
 
-    if (mainGetBits(objSetup->unk1C)) {
+    if (mainGetBits(objSetup->gamebitCollected)) {
         objData->unk10C = 3;
     } else {
         objData->unk10C = 1;
@@ -216,17 +203,17 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
         }
     }
     
-    if (objSetup->unk26) {
+    if (objSetup->modelIdx) {
         objData->unk10D |= 1;
-        if (objSetup->unk26 == 2) {
+        if (objSetup->modelIdx == 2) {
             objData->unk10D |= 2;
         }
         
-        if (objSetup->unk26 == 3) {
+        if (objSetup->modelIdx == 3) {
             objData->unk10C = 0xA;
         }
         
-        if (objSetup->unk26 == 4) {
+        if (objSetup->modelIdx == 4) {
             objData->unk10D |= 4;
             objData->unk10D &= ~1;
         }
@@ -234,7 +221,7 @@ void dll_662_func_1744(Object* self, DBEgg_Data* objData) {
 
     objAddObjectType(self, 0x26);
     
-    if (mainGetBits(objSetup->unk24)) {
+    if (mainGetBits(objSetup->gamebitSecondary)) {
         objData->unk10C = 5;
     } else {
         objData->unk10C = 0xC;

@@ -1,19 +1,28 @@
-#include "common.h"
+#include "dlls/engine/4_race.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
-#include "macros.h"
+#include "game/objects/object_id.h"
+#include "game/objects/setups/49_SnowBike.h"
+#include "game/objects/setups/5_Checkpoint.h"
 #include "sys/curves.h"
+#include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
+#include "sys/gfx/textable.h"
+#include "sys/joypad.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
 #include "sys/objlib.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/267_checkpoint4.h"
+#include "sys/print.h"
 #include "unktypes.h"
+#include "dll.h"
+#include "macros.h"
 
 typedef struct {
     s8 unk0[0xE];
@@ -79,17 +88,6 @@ typedef enum {
     CRSnowBike_ANIMCMD_2_Lose_Race = 2,
     CRSnowBike_ANIMCMD_3_Free_Fuel_Gauge = 3
 } CRSnowBike_AnimCommands;
-
-typedef struct {
-    ObjSetup base;
-    u8 yaw;
-    u8 isSharpClawBike;             // Whether the bike can only be driven by SharpClaw
-    s16 gamebitUnlocked;            // The bike can only be mounted when this gamebit is set
-    u8 racetrackIdx;                // Which race the bike is used in (CloudRunner Fortress vs. Golden Plains)
-    u8 unk1D;
-    s16 gamebitFinished;            // Bike disappears and stops updating when this gamebit is set
-    u8 yJoySharpClaw;               // Strength factor for SharpClaws' simulated yJoy steering value
-} CRSnowBike_Setup;
 
 typedef struct {
     SRT srtCurves;                   //Stores CPU racers' current checkpoint/curve-interpolated position
@@ -229,15 +227,15 @@ void CRSnowBike_ctor(void* dll) { }
 void CRSnowBike_dtor(void* dll) { }
 
 // offset: 0xFC | func: 1 | export: 0
-void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
+void CRSnowBike_setup(Object* self, SnowBike_Setup* setup, s32 reset) {
     s32 pad;
     s32 pad2;
     s32 flagsValue;
-    CRSnowBike_Setup* objSetup;
+    SnowBike_Setup* objSetup;
     u8 dTerrainColliderArgs[] = {5, 5, 5, 5};
     CRSnowBike_Data* objData;
 
-    objSetup = (CRSnowBike_Setup*)self->setup;
+    objSetup = (SnowBike_Setup*)self->setup;
     objData = self->data;
     bzero(objData, sizeof(CRSnowBike_Data));
     
@@ -303,7 +301,7 @@ void CRSnowBike_setup(Object* self, CRSnowBike_Setup* setup, s32 reset) {
 
 // offset: 0x398 | func: 2 | export: 1
 void CRSnowBike_control(Object* self) {
-    CRSnowBike_Setup* objSetup;
+    SnowBike_Setup* objSetup;
     Object* player;
     s32 pad;
     f32 yOffset;
@@ -321,7 +319,7 @@ void CRSnowBike_control(Object* self) {
     CRSnowBike_MotionData* motion;
 
     objData = self->data;
-    objSetup = (CRSnowBike_Setup*)self->setup;
+    objSetup = (SnowBike_Setup*)self->setup;
     
     bikeMotion = &objData->motion;
     driverSteering = &objData->steering;
@@ -814,10 +812,10 @@ u32 CRSnowBike_get_data_size(Object* self, u32 offsetAddr) {
 // offset: 0x18FC | func: 8 | export: 7
 u8 CRSnowBike_can_bike_be_mounted(Object* self, s32 arg1) {
     CRSnowBike_Data* objData;
-    CRSnowBike_Setup* objSetup;
+    SnowBike_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (CRSnowBike_Setup*)self->setup;
+    objSetup = (SnowBike_Setup*)self->setup;
     
     if (objData->flags & CRSnowBike_FLAG_20_SharpClaw_Driver) {
         return 0;
@@ -950,11 +948,11 @@ s8 CRSnowBike_get_ranking(Object* self) {
 // offset: 0x1C38 | func: 19 | export: 18
 void CRSnowBike_sharpclaw_start_race(Object* self) {
     s32 checkpointUID;
-    checkpoint4_Setup* checkpointSetup;
+    Checkpoint_Setup* checkpointSetup;
     CRSnowBike_Data* objData;
-    CRSnowBike_Setup* objSetup;
+    SnowBike_Setup* objSetup;
 
-    objSetup = (CRSnowBike_Setup*)self->setup;
+    objSetup = (SnowBike_Setup*)self->setup;
     objData = self->data;
     
     switch (self->id) {
@@ -970,7 +968,7 @@ void CRSnowBike_sharpclaw_start_race(Object* self) {
         break;
     }
     
-    checkpointSetup = (checkpoint4_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
+    checkpointSetup = (Checkpoint_Setup*)mapFindObjSetup(checkpointUID, NULL, NULL, NULL, NULL);
     if (checkpointSetup == NULL) {
         return;
     }
@@ -1829,9 +1827,9 @@ s32 CRSnowBike_sharpclaw_handle_steering(Object* self, CRSnowBike_Data* arg1, CR
     f32 speed;
     s32 dYaw;
     s32 value;
-    CRSnowBike_Setup* objSetup;
+    SnowBike_Setup* objSetup;
 
-    objSetup = (CRSnowBike_Setup*)self->setup;
+    objSetup = (SnowBike_Setup*)self->setup;
     
     dx = self->srt.transl.x - objData->srtCurves.transl.x;
     dz = self->srt.transl.z - objData->srtCurves.transl.z;

@@ -3,6 +3,8 @@
 
 #include "common.h"
 
+// This is *technically* part of controlNo 103 but has completely different field
+// types and cannot be a pre-placed object due to the pointer field.
 typedef struct {
     ObjSetup base;
     Object* fireCrystal;

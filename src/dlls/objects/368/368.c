@@ -6,6 +6,7 @@
 #include "sys/objprint.h"
 #include "dll.h"
 
+// unknown controlNo, probably 51 "Generic"
 typedef struct {
     ObjSetup base;
     u8 _unk18;

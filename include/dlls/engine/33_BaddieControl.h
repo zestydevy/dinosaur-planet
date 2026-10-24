@@ -4,6 +4,7 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/26_curves.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/29_Baddie.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objexpr.h"
 #include "sys/math.h"
@@ -54,31 +55,6 @@ typedef struct {
 /*3F4*/ void *objdata; // pointer to remaining object data immediately following this struct
 /*3F8*/ UnkCurvesStruct *unk3F8;
 } Baddie;
-
-// size:0x38
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18; //gamebit set when defeated
-/*1A*/ s16 unk1A;
-/*1C*/ s16 unk1C;
-/*1E*/ s16 unk1E;
-/*20*/ s16 unk20;
-/*22*/ s16 unk22; //droppedItemIdx
-/*24*/ s16 unk24; //objSeqID
-/*26*/ s8 unk26;
-/*27*/ s8 initialWeaponID;
-/*28*/ s8 unk28;
-/*29*/ u8 unk29;
-/*2A*/ s8 unk2A; //yaw (when respawned)?
-/*2B*/ u8 unk2B; //flags?
-/*2C*/ s16 unk2C; //respawn time (in seconds)?
-/*2E*/ s8 unk2E; //objSeqID, played when lifetime expires?
-/*2F*/ u8 unk2F;
-/*30*/ s16 unk30;
-/*32*/ u8 quarterHitpoints; // HP / 4
-/*33*/ u8 pad33;
-/*34*/ u16 unk34;
-} Baddie_Setup;
 
 typedef enum {
     BaddieDrop_0,

@@ -1,15 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unused18;
-    s8 gamebitIndexWin;
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebitVehicleHit;
-    s16 gamebitFreeTick;
-} CRSpellStone_Setup;
 
 typedef struct {
 /*00*/ u8 state;

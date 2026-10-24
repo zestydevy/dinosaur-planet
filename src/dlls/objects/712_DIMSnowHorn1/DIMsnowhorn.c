@@ -13,6 +13,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/textable.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -31,12 +32,6 @@ typedef enum {
     DIMSnowHorn_IDX_2_Leap,             //The SnowHorn in the Leap of Faith cave
     DIMSnowHorn_IDX_3_Blizzard          //The SnowHorn summoned by the Horn of Truth, whom Sabre can ride through the blizzard
 } DIMSnowHorn_CharacterIndices;
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 characterIdx;
-} DIMSnowHorn_Setup;
 
 typedef struct {
     ObjFSA_Data fsa;
@@ -192,7 +187,7 @@ void DIMSnowHorn_dtor(void* dll) {
 }
 
 // offset: 0x1CC | func: 1 | export: 0
-void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset) {
+void DIMSnowHorn_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     DIMSnowHorn_Data* objData;
     DLL27_Data* collider;
     s32 pad;
@@ -204,7 +199,7 @@ void DIMSnowHorn_obj_Setup(Object* self, DIMSnowHorn_Setup* objSetup, s32 reset)
     objAddObjectType(self, OBJTYPE_Vehicle);
     
     objData = self->data;
-    objData->characterIdx = objSetup->characterIdx;
+    objData->characterIdx = objSetup->type;
     objData->minTurn = 5;
     objData->energy = 1000;
 

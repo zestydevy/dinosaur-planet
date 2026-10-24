@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/78_GroundAnimator.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objtype.h"
 #include "dlls/engine/6_amsfx.h"

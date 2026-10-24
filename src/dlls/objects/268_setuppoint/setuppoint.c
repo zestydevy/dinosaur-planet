@@ -1,16 +1,10 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/4_SetupPoint.h"
 #include "sys/objprint.h"
 #include "types.h"
 #include "sys/gfx/model.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18; //unused?
-/*19*/ u8 unk19; //assigned to Object->unkE0
-/*1A*/ u8 yaw;
-} SetupPoint_Setup;
 
 // offset: 0x0 | ctor
 void setuppoint_ctor(void *dll){ }
@@ -23,7 +17,7 @@ void setuppoint_setup(Object* self, SetupPoint_Setup* objsetup, s32 arg2) {
     objsetup->base.loadFlags = OBJSETUP_LOAD_CAMERA;
     objsetup->base.loadDistance = 0;
     objsetup->base.fadeDistance = 0;
-    self->unkE0 = objsetup->unk19;
+    self->unkE0 = objsetup->setupID;
     self->srt.yaw = (objsetup->yaw & 0x3F) << 0xA;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }

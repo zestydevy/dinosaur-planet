@@ -3,6 +3,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objanim.h"
 #include "sys/objects.h"
@@ -23,12 +24,6 @@ typedef struct {
 /*10*/ u8 unk10;
 } SB_ShipGun_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18;
-/*19*/ s8 gunIndex;
-} SB_ShipGun_Setup;
-
 typedef enum {
     STATE_0,
     STATE_1,
@@ -44,7 +39,7 @@ void SB_ShipGun_ctor(void *dll) { }
 void SB_ShipGun_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SB_ShipGun_setup(Object *self, SB_ShipGun_Setup *setup, s32 arg2) {
+void SB_ShipGun_setup(Object *self, Generic_Setup *setup, s32 arg2) {
     SB_ShipGun_Data *objdata;
 
     objdata = self->data;
@@ -66,7 +61,7 @@ void SB_ShipGun_control(Object *self) {
     Object *parent;
     Object *player;
     f32 spA0;
-    SB_ShipGun_Setup *setup;
+    Generic_Setup *setup;
     f32 sp9C;
     ObjSetup *cannonballSetup;
     ObjSetup *debrisSetup;
@@ -96,7 +91,7 @@ void SB_ShipGun_control(Object *self) {
 
     player = objGetPlayer();
     objdata = self->data;
-    setup = (SB_ShipGun_Setup*)self->setup;
+    setup = (Generic_Setup*)self->setup;
     sp44 = objExpr_func_80034804(self, 0);
     if (self->parent->id == OBJ_WL_Galleon) {
         self->objhitInfo->unk58 &= ~1;
@@ -128,7 +123,7 @@ void SB_ShipGun_control(Object *self) {
         }
         objAnimAdvance(self, 0.0f, gUpdateRate, NULL);
         if ((parent != NULL) && (((DLL_572_SB_Galleon*)parent->dll)->vtbl->func9(parent) == 0)) {
-            if (setup->gunIndex == 0) { // right gun
+            if (setup->type == 0) { // right gun
                 if ((var_s0_2 == 0) || (var_s0_2 == 3)) {
                     objdata->state = STATE_1;
                 }
@@ -265,7 +260,7 @@ void SB_ShipGun_control(Object *self) {
                     objSetupObject(debrisSetup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
                 }
                 gDLL_17_partfx->vtbl->spawn(self, 0x9B, NULL, PARTFXFLAG_2, -1, NULL);
-                mainSetBits(setup->gunIndex + BIT_SB_Destroyed_Right_Gun, 1);
+                mainSetBits(setup->type + BIT_SB_Destroyed_Right_Gun, 1);
             }
             if (objdata->unkE > 0) {
                 objdata->unkE--;

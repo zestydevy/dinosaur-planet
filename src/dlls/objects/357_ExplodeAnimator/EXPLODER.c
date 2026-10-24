@@ -1,6 +1,7 @@
 //"EXPLODER.c" appears to be Rare's official filename, sourced from "default.dol"
 
 #include "common.h"
+#include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objtype.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
 

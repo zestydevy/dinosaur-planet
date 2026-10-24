@@ -1,9 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WLConsole_Setup;
 
 // offset: 0x0 | ctor
 void WL_VConsole_ctor(void *dll) { }
@@ -12,7 +8,7 @@ void WL_VConsole_ctor(void *dll) { }
 void WL_VConsole_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_VConsole_setup(Object* self, WLConsole_Setup* objSetup, s32 arg2) {
+void WL_VConsole_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     self->srt.yaw = objSetup->yaw << 8;
 }
 

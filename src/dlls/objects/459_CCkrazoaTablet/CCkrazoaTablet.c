@@ -1,20 +1,13 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "sys/main.h"
 #include "sys/objlib.h"
 #include "dll.h"
 #include "sys/objexpr.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 objectSeqIndex;
-/*1A*/ s8 _unk1A[0x1E - 0x1A];
-/*1E*/ s16 gamebit;
-} CCkrazoaTablet_Setup;
 
 typedef struct {
 /*00*/ u8 unk0;

@@ -4,6 +4,7 @@
 
 /*0x0*/ static DLL_IModgfx* dModGfxDLL = NULL;
 
+// unknown controlNo
 typedef struct {
     ObjSetup base;
     s16 unk18;

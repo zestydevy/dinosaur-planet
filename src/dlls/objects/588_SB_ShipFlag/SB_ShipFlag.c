@@ -1,11 +1,7 @@
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-} SB_ShipFlag_Setup;
 
 // offset: 0x0 | ctor
 void SB_ShipFlag_ctor(void *dll) { }
@@ -14,7 +10,7 @@ void SB_ShipFlag_ctor(void *dll) { }
 void SB_ShipFlag_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SB_ShipFlag_setup(Object *self, SB_ShipFlag_Setup *setup, s32 arg2) {
+void SB_ShipFlag_setup(Object *self, Generic_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     objAnimSet(self, 0, 0.0f, 0);
 }

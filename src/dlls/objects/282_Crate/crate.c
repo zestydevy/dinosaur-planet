@@ -2,10 +2,11 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objtype.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/common/collectable.h"
 
 #define REAPPEAR_TIME 1200.0f //20 seconds
 #define FLASH_MAX_OPACITY 120.0f
@@ -14,16 +15,6 @@
 
 static DLL_IModgfx* dModGfxDLLDestroyed = NULL; //Creates particles when damaged
 static DLL_IModgfx* dModGfxDLLDamaged = NULL;   //Creates debris when destroyed
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 useNearbyCollectable;    //When set: a nearby collectable is repositioned when the crate is destroyed (no Gplay timer).
-                                //When not set: crate drops an Energy Egg, and it reappears after a Gplay timer expires.
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebitDestroyed;       //Gamebit to set when destroyed. Doesn't affect crate reappearing!
-} Crate_Setup;
 
 typedef struct {
     f32 flash;                  //Opacity for red flash effect after being damaged
@@ -159,7 +150,7 @@ void crate_control(Object* self) {
             foodSetup->base.x = self->srt.transl.x;
             foodSetup->base.y = self->srt.transl.y + 10.0f;
             foodSetup->base.z = self->srt.transl.z;
-            foodSetup->objHitsValue = 3;
+            foodSetup->scale = 3;
             foodSetup->gamebitCount = NO_GAMEBIT;
             foodSetup->gamebitSecondary = NO_GAMEBIT;
             objSetupObject(

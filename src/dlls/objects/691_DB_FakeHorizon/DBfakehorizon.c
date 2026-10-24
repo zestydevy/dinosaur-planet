@@ -1,12 +1,7 @@
 #include "common.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    s16 divisor;
-} DBFakeHorizon_Setup;
 
 typedef struct {
     s32 vtxIDs[10];     //Stores the vertexIDs of all the model vertices that have zero opacity

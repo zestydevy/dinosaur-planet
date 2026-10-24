@@ -1,14 +1,7 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitOff;
-} MMP_GeyserVent_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 /*0x0*/ static u16 dSoundIDs[] = {
     SOUND_AC5_Steam_Venting_Hiss_Low, 

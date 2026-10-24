@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/8_InfoPoint.h"
 #include "sys/fonts.h"
 #include "game/objects/interaction_arrow.h"
 
@@ -8,14 +9,6 @@ typedef struct {
     s32 yMin;
     s32 yMax;
 } TextWindowCoords;
-
-typedef struct {
-    ObjSetup base;
-    s16 gametextID;                      //Gametext to print
-    s8 unused1A;
-    u8 unk1B;                            //Assigned to `objData->unk10` in setup, but otherwise unused
-    u8 yaw;
-} InfoPoint_Setup;
 
 typedef struct {
     GameTextChunk* gametext;             //Gametext to print

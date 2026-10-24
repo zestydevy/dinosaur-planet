@@ -2,16 +2,7 @@
 
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/638_DFPlevcontrol.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 rowIndex;
-    s16 unused1A;
-    s16 inverseScale;
-    s16 unk1E;
-    s16 gamebitLowered;
-} DFPfloorbar_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s16 unk0;

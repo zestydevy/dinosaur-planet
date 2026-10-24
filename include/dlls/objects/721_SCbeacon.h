@@ -8,17 +8,6 @@
 #include "sys/curves.h"
 
 typedef struct {
-    ObjSetup base;
-    u8 playerRange;
-    u8 unused19;
-    u16 kyteCurveID;
-    s8 unused1C;
-    s8 unused1D;
-    s8 unused1E;
-    u8 yaw;
-} SCbeacon_Setup;
-
-typedef struct {
     u8 state;
     u8 flags;                   //Tracks twigs being added to bowl, and LightAction use (when lit)
     u8 prevFlags;               //Value of flags on previous flame, for comparison

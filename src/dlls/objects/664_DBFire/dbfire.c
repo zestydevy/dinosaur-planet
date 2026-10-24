@@ -1,11 +1,12 @@
-#include "dll.h"
+#include "game/gamebits.h"
+#include "dlls/engine/17_partfx.h"
+#include "game/objects/setups/52_CampFire.h"
 #include "sys/dll.h"
 #include "sys/main.h"
-#include "dlls/engine/17_partfx.h"
 #include "sys/gfx/modgfx.h"
-#include "game/gamebits.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/rand.h"
+#include "dll.h"
 
 typedef struct {
     s16 _unk0;
@@ -20,13 +21,6 @@ typedef struct {
     SRT unk10;
 } DBfire_Data;
 
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    u8 unk1A;
-    u8 unk1B;
-} DBfire_Setup;
-
 // offset: 0x0 | ctor
 void DBfire_ctor(void* dll) { }
 
@@ -34,11 +28,11 @@ void DBfire_ctor(void* dll) { }
 void DBfire_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBfire_obj_Setup(Object* self, DBfire_Setup* setup, s32 reset) {
+void DBfire_obj_Setup(Object* self, CampFire_Setup* setup, s32 reset) {
     DBfire_Data* objdata = self->data;
     
-    if (setup->unk1A != 0) {
-        self->srt.scale = setup->unk1A * 0.01f;
+    if (setup->scale != 0) {
+        self->srt.scale = setup->scale * 0.01f;
     }
     objdata->unk4 = setup->unk1B;
     objdata->unk6 = 0;

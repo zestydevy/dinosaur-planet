@@ -6,21 +6,9 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/116_CurveFish.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    u8 scale;
-/*19*/    u8 maxSpeed;
-/*1A*/    u8 ascendSpeed;
-/*1B*/    u8 diveSpeed; 
-/*1C*/    u16 swimOnBedDuration;
-/*1E*/    u16 swimOnSurfaceDuration;
-/*20*/    u16 respawnDuration;
-/*22*/    u8 curveOffsetY;
-/*23*/    u8 surfaceOffsetY; 
-} curveFish_Setup;
 
 typedef struct {
 /*000*/    f32 surfaceY;
@@ -77,11 +65,11 @@ void curveFish_setup(Object* self, ObjSetup* setup, s32 reset) {
 // offset: 0x6C | func: 1
 static void curveFish_initialise(Object* self) {
     curveFish_Data* objData;
-    curveFish_Setup* objSetup;
+    CurveFish_Setup* objSetup;
     s32 curveType;
 
     objData = self->data;
-    objSetup = (curveFish_Setup*)self->setup;
+    objSetup = (CurveFish_Setup*)self->setup;
     curveType = dCurveType;
 
     if (trackGetHeightCeiling(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &objData->surfaceY, 0)) {
@@ -103,13 +91,13 @@ static void curveFish_initialise(Object* self) {
 // offset: 0x280 | func: 2 | export: 1
 void curveFish_control(Object* self) {
     curveFish_Data* objData;
-    curveFish_Setup* objSetup;
+    CurveFish_Setup* objSetup;
     Object* player;
     s32 damageType;
     f32 animSpeedFactor;
 
     objData = self->data;
-    objSetup = (curveFish_Setup*)self->setup;
+    objSetup = (CurveFish_Setup*)self->setup;
     player = objGetPlayer();
 
     if (objData->initialised == FALSE) {

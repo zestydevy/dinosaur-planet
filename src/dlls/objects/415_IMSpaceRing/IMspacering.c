@@ -1,11 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 spinSpeed;
-    s16 rollSpeed;
-} IMSpaceRing_Setup;
 
 // offset: 0x0 | ctor
 void IMSpaceRing_ctor(void* dll) { }

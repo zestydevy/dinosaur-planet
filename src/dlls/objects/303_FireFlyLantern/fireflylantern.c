@@ -1,11 +1,8 @@
 #include "common.h"
 #include "dlls/objects/304_LanternFireFly.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-} FireFlyLantern_Setup;
 
 typedef struct {
     Object* fireflies[20];
@@ -24,7 +21,7 @@ void FireFlyLantern_ctor(void *dll) { }
 void FireFlyLantern_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void FireFlyLantern_setup(Object* self, FireFlyLantern_Setup* objSetup, s32 reset) {
+void FireFlyLantern_setup(Object* self, ObjSetup* objSetup, s32 reset) {
     FireFlyLantern_Data* objData;
     s32 i;
 

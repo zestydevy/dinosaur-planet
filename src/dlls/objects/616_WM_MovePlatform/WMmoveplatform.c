@@ -1,15 +1,10 @@
 //NOTE: this is an unused object, distinct from WM_Platform
 
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/intersect.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 playerRange;
-} WM_MovePlatform_Setup;
 
 typedef struct {
     f32 playerRange;

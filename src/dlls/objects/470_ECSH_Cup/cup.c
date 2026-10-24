@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 
 #include "dlls/objects/469_ECSHshrine.h"
@@ -8,12 +9,6 @@
 #define SINK_DISTANCE 50.0f
 
 /*0x0*/ static Object* dShrine = NULL; //ECSH_Shrine object
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 cupIndex;
-} ECSHCup_Setup;
 
 typedef struct {
     Vec3f home;

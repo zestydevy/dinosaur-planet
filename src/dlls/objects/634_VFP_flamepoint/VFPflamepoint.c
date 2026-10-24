@@ -1,15 +1,8 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 health;
-    s16 flameCommandRange;
-    s16 gamebitFlamed;
-} VFP_FlamePoint_Setup;
 
 typedef struct {
     s16 gamebitFlamed;

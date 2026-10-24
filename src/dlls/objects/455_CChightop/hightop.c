@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/103.h"
 #include "sys/objanim.h"
 
 typedef struct {
@@ -13,13 +14,6 @@ typedef struct {
     //[0x34]; 
 } DLL455_Data;
 
-typedef struct{
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-}DLL455_Setup;
-
 static int dll_455_func_6BC(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3);
 
 // offset: 0x0 | ctor
@@ -29,13 +23,13 @@ void dll_455_ctor(void *dll) { }
 void dll_455_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_455_setup(Object* self, DLL455_Setup* setup, s32 arg2) {
+void dll_455_setup(Object* self, Ctrl103_Setup* setup, s32 arg2) {
     DLL455_Data* hightopData;
 
     hightopData = self->data;
-    self->srt.yaw = setup->unk1A << 8;
-    self->srt.pitch = setup->unk19 << 8;
-    self->srt.roll = setup->unk18 << 8;
+    self->srt.yaw = setup->yaw << 8;
+    self->srt.pitch = setup->pitch << 8;
+    self->srt.roll = setup->roll << 8;
     self->animCallback = dll_455_func_6BC; 
     hightopData->unk24 = 0;
     hightopData->unk25 = 0;

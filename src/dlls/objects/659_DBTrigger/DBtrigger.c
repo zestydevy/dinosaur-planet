@@ -1,12 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebit;
-} DBTrigger_Setup;
 
 typedef struct {
     Vec3f boundsMin;
@@ -25,7 +18,7 @@ void DBTrigger_ctor(void *dll) { }
 void DBTrigger_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBTrigger_setup(Object* self, DBTrigger_Setup* objSetup, s32 arg2) {
+void DBTrigger_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DBTrigger_Data* objData = self->data;
 
     objData->pressed = 0;
@@ -40,7 +33,7 @@ void DBTrigger_setup(Object* self, DBTrigger_Setup* objSetup, s32 arg2) {
 void DBTrigger_control(Object* self) {
     s16 sequenceIndices[2] = {1, 0};
     DBTrigger_Data* objData;
-    DBTrigger_Setup* objSetup;
+    Generic_Setup* objSetup;
     Object* player;
     Object* sidekick;
     s32 seqIndex;
@@ -98,9 +91,9 @@ void DBTrigger_control(Object* self) {
     //Play a sequence to move the switch up/down
     if (seqIndex != objData->pressed) {
         objData->pressed = seqIndex;
-        objSetup = (DBTrigger_Setup*)self->setup;
+        objSetup = (Generic_Setup*)self->setup;
         if (seqIndex != 0) {
-            mainSetBits(objSetup->gamebit, mainGetBits(objSetup->gamebit) ^ 1);
+            mainSetBits(objSetup->bitA, mainGetBits(objSetup->bitA) ^ 1);
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(sequenceIndices[objData->pressed], self, -1);
     }

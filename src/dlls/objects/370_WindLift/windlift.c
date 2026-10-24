@@ -1,20 +1,13 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objects.h"
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    s16 unk1A;
-    s16 reverseBit;
-    s16 playerInsideBit;
-} WindLift_Setup;
 
 // size: 0x18
 typedef struct {

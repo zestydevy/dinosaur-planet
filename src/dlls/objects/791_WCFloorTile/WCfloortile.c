@@ -1,11 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 hitsAnimatorID;
-} WCFloorTile_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     f32 timer;

@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "sys/objects.h"
@@ -15,18 +16,6 @@ DLL_INTERFACE(DLL_BoneDust) {
     /*10*/ void (*func10)(Object*, f32, f32, f32);
 };
 
-typedef struct {
-/*00*/ObjSetup base;
-/*18*/ u8 _unk18[0x1A-0x18];
-/*1A*/ u8 unk1A;
-/*1B*/ u8 _unk1B;
-/*1C*/ s16 unk1C;
-/*1E*/ u8 _unk1E[0x24-0x1E];
-/*24*/ s16 unk24;
-/*26*/ u8 _unk26[0x2C-0x26];
-/*2C*/ s16 unk2C;
-} BoneDust_Setup;
-
 // offset: 0x0 | ctor
 void MAGICMaker_ctor(void *dll) { }
 
@@ -38,7 +27,7 @@ void MAGICMaker_setup(Object *self, ObjSetup *objsetup, s32 arg2) { }
 
 // offset: 0x2C | func: 1 | export: 1
 void MAGICMaker_control(Object *self) {
-    BoneDust_Setup *bonedustSetup;
+    Collectable_Setup *bonedustSetup;
     Object **objects;
     s32 foundObjs;
     s32 i;
@@ -60,14 +49,14 @@ void MAGICMaker_control(Object *self) {
                 }
             }
             if (foundObjs < 5) {
-                bonedustSetup = objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust);
-                bonedustSetup->unk1A = 0x14;
-                bonedustSetup->unk2C = -1;
-                bonedustSetup->unk1C = -1;
+                bonedustSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_BoneDust);
+                bonedustSetup->scale = 0x14;
+                bonedustSetup->gamebitCount = -1;
+                bonedustSetup->gamebitCollected = -1;
                 bonedustSetup->base.x = self->srt.transl.x + mathRnd(-300, 300);
                 bonedustSetup->base.y = self->srt.transl.y;
                 bonedustSetup->base.z = self->srt.transl.z + mathRnd(-300, 300);
-                bonedustSetup->unk24 = -1;
+                bonedustSetup->gamebitSecondary = -1;
                 bonedustObj = objSetupObject(&bonedustSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 if (bonedustObj) {
                     ((DLL_BoneDust*)bonedustObj->dll)->vtbl->func10(bonedustObj, 0, -0.75f, 0);

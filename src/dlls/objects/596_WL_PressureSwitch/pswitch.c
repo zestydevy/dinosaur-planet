@@ -6,6 +6,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/53_Switch.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -13,14 +14,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "types.h"
-
-//NOTE: has a different field layout to other pressure switches' setup structs
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;              //NOTE: Signed, unlike the other pressure switches' yaw setups
-/*1A*/ s16 unused1A;
-/*1C*/ s16 gameBitPressed;  //Gamebit to set when the switch is pressed down (NOTE: at 0x1C here, instead of 0x1A)
-} WLPressureSwitch_Setup;
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -42,7 +35,7 @@ void WLPressureSwitch_ctor(void* dll) { }
 void WLPressureSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLPressureSwitch_obj_Setup(Object* self, WLPressureSwitch_Setup* setup, s32 reset) {
+void WLPressureSwitch_obj_Setup(Object* self, Switch_Setup* setup, s32 reset) {
     WLPressureSwitch_Data* objdata = self->data;
 
     self->animCallback = WLPressureSwitch_animCallback;
@@ -62,14 +55,14 @@ void WLPressureSwitch_obj_Control(Object* self) {
     Object* player;
     f32 deltaY;
     Object* listedObject;
-    WLPressureSwitch_Setup* setup;
+    Switch_Setup* setup;
     WLPressureSwitch_Data* objdata;
     s8 playSound;
     s8 playerIsFarAway;
     s32 index;
 
     player = objGetPlayer();
-    setup = (WLPressureSwitch_Setup*)self->setup;
+    setup = (Switch_Setup*)self->setup;
     objdata = self->data;
 
     playerIsFarAway = FALSE;

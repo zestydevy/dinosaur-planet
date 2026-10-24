@@ -20,10 +20,6 @@ typedef enum {
 } DFPT_ObjectGroups;
 
 typedef struct {
-    ObjSetup base;
-} DFPTLevelControl_Setup;
-
-typedef struct {
     s16 zappedTimer;     //Duration for player electrocution effect (when zapped by tiles)
     u16 unused2;
     u8 unused4;

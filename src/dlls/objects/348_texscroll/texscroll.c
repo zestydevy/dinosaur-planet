@@ -1,16 +1,12 @@
-#include "common.h"
 #include "game/gamebits.h"
-#include "macros.h"
+#include "game/objects/object.h"
+#include "game/objects/setups/35_TexScroll.h"
 #include "sys/debug.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 textureIndex;       //in TABLES.bin subfile #14 ("scroll table")
-    s16 gamebitActivate;    //gamebitID that activates animation (or -1 to skip bit check)
-    s16 unused1C;
-    s8 speedU;              //scroll speed (horizontal)
-    s8 speedV;              //scroll speed (vertical)
-} TexScroll_Setup;
+#include "sys/main.h"
+#include "sys/map.h"
+#include "sys/objects.h"
+#include "sys/objprint.h"
+#include "macros.h"
 
 typedef struct {
     s16 materialIndex;      //index of material being animated (in local Block's materials)
@@ -45,8 +41,8 @@ void TexScroll_obj_Setup(Object* self, TexScroll_Setup* objSetup, s32 reset) {
     }
 
     objData->adjustDeltaTime = TRUE;
-    objData->speedU = objSetup->speedU;
-    objData->speedV = objSetup->speedV;
+    objData->speedU = objSetup->uSpeedA;
+    objData->speedV = objSetup->vSpeedA;
     objData->scrollProgress = 0;
     objData->unused18 = 0;
     objData->gamebitActivate = objSetup->gamebitActivate;

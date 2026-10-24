@@ -1,8 +1,5 @@
+#include "game/objects/setups/103.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-} WaterfallControl_Setup;
 
 // offset: 0x0 | ctor
 void WaterfallControl_ctor(void *dll) { }
@@ -11,7 +8,7 @@ void WaterfallControl_ctor(void *dll) { }
 void WaterfallControl_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WaterfallControl_setup(Object* self, WaterfallControl_Setup* arg1, s32 arg2) {
+void WaterfallControl_setup(Object* self, Ctrl103_Setup* arg1, s32 arg2) {
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 }
 

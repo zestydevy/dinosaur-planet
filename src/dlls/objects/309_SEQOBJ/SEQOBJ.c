@@ -1,21 +1,9 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "macros.h"
+#include "game/objects/setups/89_SeqObj.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebitHasPlayed; // when gamebit is set, this objseq has played before
-/*1A*/ s16 gamebitPlay;    // when gamebit is set, triggers this seqobj to play
-/*1C*/ u8 yaw;
-/*1D*/ u8 playbackOptions;
-/*1E*/ s8 seqIndex;            //The index of the sequence in the Object.bin entry's sequence list
-/*1F*/ s8 modelInstIdx;        //Choose between 3D models, visible when debugging (usually a clapperboard)
-/*20*/ s16 replayStartTime;
-/*22*/ u16 replayActorMask; // bitfield of which actors are enabled if this seq is replaying
-/*24*/ u8 warpID;              //Optionally warp the player
-} SeqObj_Setup;
 
 typedef struct {
     u8 flags;
@@ -28,14 +16,6 @@ typedef enum {
     SEQOBJ_FLAG_Replay = 2,
     SEQOBJ_FLAG_Anim_Callback_Ran = 4
 } SeqObj_Flags;
-
-typedef enum {
-    SEQOBJ_OPTIONS_ManualHasPlayedBit = 1, // don't auto update the hasPlayed gamebit
-    SEQOBJ_OPTIONS_ManualHasPlayed_Set_By_SeqCmd = 2, //gamebitFinished intended to be set via a seqCommand?
-    SEQOBJ_OPTIONS_ManualHasPlayed_Dont_Unset_Play_Gamebit = 4, //Avoids setting gamebitPlay back to 0 after sequence finishes, under some circumstances?
-    SEQOBJ_OPTIONS_AutoHasPlayed_Set_After_Sequence = 8, //Set gamebitFinished after sequences finishes, instead of immediately?
-    SEQOBJ_OPTIONS_HasReplayActorMask = 16 // if set, more than just the seqobj will be controlled by a replay
-} SeqObj_PlaybackOptions;
 
 static int SeqObj_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 prevCallbackValue);
 
@@ -54,7 +34,7 @@ void SeqObj_obj_Setup(Object* self, SeqObj_Setup* objSetup, s32 reset) {
     
     objData = self->data;
 
-    self->modelInstIdx = objSetup->modelInstIdx;
+    self->modelInstIdx = objSetup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         STUBBED_PRINTF("SEQOBJ.c: modelno out of range romdefno=%d\n", self->def->numModels);
         self->modelInstIdx = 0;

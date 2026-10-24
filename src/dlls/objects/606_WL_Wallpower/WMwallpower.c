@@ -1,19 +1,12 @@
 #include "common.h"
 
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
 
 /*0x0*/ static s16 dataTickCounter = 0;
 /*0x4*/ static DLL_IProjgfx* dataDLLProjGfx = NULL;
 /*0x8*/ static DLL_IModgfx* dataDLLModGfx = NULL;
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 fxRadius;        //2D player range for creating magic wave effects (stored halved)
-    s16 roll;
-    s16 pitch;
-} WMwallpower_Setup;
 
 typedef struct {
     f32 fxRadius;        //2D player range for creating magic wave effects

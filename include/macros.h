@@ -45,6 +45,12 @@
 #define __attribute__(x)
 #endif
 
+#ifdef __sgi
+#define STATIC_ASSERT(expression, message)
+#else
+#define STATIC_ASSERT(expression, message) _Static_assert(expression, message);
+#endif
+
 // A few systems in the game use an array as a cache table. This gives you the asset ID
 #define ASSETCACHE_ID(x)    ((x << 1) + 0)
 // A few systems in the game use an array as a cache table. This gives you the pointer to the asset

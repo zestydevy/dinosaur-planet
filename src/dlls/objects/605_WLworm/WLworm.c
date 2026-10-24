@@ -1,11 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s16 particleID;
-    s16 particleCount;
-} WLWorm_Setup;
 
 typedef struct {
     f32 unk0;           //Value set via objSetup, but unused?

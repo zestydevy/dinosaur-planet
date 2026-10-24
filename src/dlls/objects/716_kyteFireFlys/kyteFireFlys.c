@@ -1,17 +1,11 @@
 #include "common.h"
 #include "macros.h"
+#include "game/objects/setups/115_KyteTarget.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/609_WMFireFly.h"
 #include "dlls/objects/common/kyte_target.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 variance;
-    u8 kyteCommandOutValue;
-    u16 kyteFlightGroup;
-    u8 fireflyCount;
-} KyteFireFlys_Setup;
 
 typedef struct {
     Object* fireflies[13];
@@ -30,17 +24,17 @@ void KyteFireFlys_ctor(void *dll) { }
 void KyteFireFlys_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void KyteFireFlys_obj_Setup(Object* self, KyteFireFlys_Setup* objSetup, s32 reset) {
+void KyteFireFlys_obj_Setup(Object* self, KyteTarget_Setup* objSetup, s32 reset) {
     KyteFireFlys_Data* objData;
     s32 i;
 
     objData = self->data;
     
-    for (i = 0; i < objSetup->fireflyCount; i++) {
-        objData->fireflies[i] = KyteFireFlys_create_firefly(self, objSetup->variance, objSetup->variance >> 2);
+    for (i = 0; i < objSetup->setting; i++) {
+        objData->fireflies[i] = KyteFireFlys_create_firefly(self, objSetup->commandRange, objSetup->commandRange >> 2);
     }
     
-    objData->initialFireflyCount = objData->fireflyCount = objSetup->fireflyCount;
+    objData->initialFireflyCount = objData->fireflyCount = objSetup->setting;
     objData->haveCurveSetup = FALSE;
     objAddObjectType(self, OBJTYPE_KyteTarget);
 }
@@ -48,14 +42,14 @@ void KyteFireFlys_obj_Setup(Object* self, KyteFireFlys_Setup* objSetup, s32 rese
 // offset: 0xE0 | func: 1 | export: 1
 void KyteFireFlys_obj_Control(Object* self) {
     KyteFireFlys_Data* objData;
-    KyteFireFlys_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     Object* sidekick;
 
     objData = self->data;
-    objSetup = (KyteFireFlys_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
 
     if (objData->haveCurveSetup == FALSE) {
-        objData->curve = gDLL_25->vtbl->func_2A50(self, objSetup->kyteFlightGroup);
+        objData->curve = gDLL_25->vtbl->func_2A50(self, objSetup->flightGroup);
         if (objData->curve != NULL) {
             objData->haveCurveSetup = TRUE;
             self->srt.transl.x = objData->curve->pos.x;
@@ -68,13 +62,13 @@ void KyteFireFlys_obj_Control(Object* self) {
     if (objData->fireflyCount != 0) {
         sidekick = objGetSidekick();
         if (sidekick != NULL) {
-            if (vec3DistanceSquared(&objGetPlayer()->globalPosition, &objData->curve->pos) <= SQ(objSetup->variance)) {
+            if (vec3DistanceSquared(&objGetPlayer()->globalPosition, &objData->curve->pos) <= SQ(objSetup->commandRange)) {
                 //Show Find command option
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_1_Find);
 
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                     STUBBED_PRINTF("should activate the command\n");
-                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
                 }
             }
         }
@@ -115,25 +109,25 @@ u32 KyteFireFlys_obj_GetDataSize(Object *self, u32 a1) {
 
 // offset: 0x354 | func: 7 | export: 7
 s32 KyteFireFlys_KyteTarget_Interact(Object* self, s32 arg1) {
-    KyteFireFlys_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     KyteFireFlys_Data* objData;
-    s32 outValue;
+    s32 redFood;
     Object* firefly;
     Vec3f splineCoord;
     s16 gamebitID;
     u8 count;
 
-    objSetup = (KyteFireFlys_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     objData = self->data;
     
-    outValue = 0;
+    redFood = 0;
 
     if (arg1 == 2) {
         count = objData->fireflyCount;
         if (count != 0) {
             gamebitID = objData->curve->type22.usedBit;
             if (gamebitID != NO_GAMEBIT) {
-                outValue = 0;
+                redFood = 0;
                 mainSetBits(gamebitID, TRUE);
             }
             
@@ -145,7 +139,7 @@ s32 KyteFireFlys_KyteTarget_Interact(Object* self, s32 arg1) {
                 splineCoord.z = self->srt.transl.z;
                 splineCoord.y += 25.0f;
                 ((DLL_609_WMFireFly*)firefly->dll)->vtbl->set_next_spline_coord(firefly, &splineCoord);
-                outValue = objSetup->kyteCommandOutValue;
+                redFood = objSetup->redFood;
             }
         }
     }
@@ -154,7 +148,7 @@ s32 KyteFireFlys_KyteTarget_Interact(Object* self, s32 arg1) {
         objFreeObject(objData->fireflies[objData->fireflyCount]);
     }
     
-    return outValue;
+    return redFood;
 }
 
 // offset: 0x49C | func: 8 | export: 8

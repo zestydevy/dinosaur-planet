@@ -1,3 +1,4 @@
+#include "game/objects/setups/82_VisAnimator.h"
 #include "common.h"
 
 typedef struct {
@@ -7,16 +8,6 @@ typedef struct {
     u8 gamebitStatePrev; //The queried gamebit's value on the previous tick
     u8 bitMask;          //A mask used to query a specific bit in the gamebit's bitfield
 } VisAnimator_Data;
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitID;          //gamebit controlling visibility (usually multi-bit, used as a bitfield)
-    u8 animatorID1;         //the animatorID tag of the Block Shapes that will be shown/hidden
-    u8 initialVisibility;   //Boolean
-    u8 bitIndex;            //the index to check on the gamebit bitfield
-    u8 animatorID2;         //up to 3 different animatorIDs can be specified
-    u8 animatorID3;         //up to 3 different animatorIDs can be specified
-} VisAnimator_Setup;
 
 typedef enum {
     VisAnimator_FLAG_Block_Animate_Needed = 1

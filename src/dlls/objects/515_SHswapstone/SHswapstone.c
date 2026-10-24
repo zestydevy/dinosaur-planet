@@ -4,6 +4,7 @@
 #include "game/objects/object.h"
 #include "dlls/engine/29_gplay.h"
 #include "dlls/objects/210_player.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/model.h"
@@ -23,12 +24,6 @@ typedef enum {
     SWAPSTONE_PLAYER_HAS_SPELLSTONE = 0x2,
     SWAPSTONE_IS_RUBBLE = 0x4
 } SwapstoneFlags;
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    u8 rotation;
-} SHswapstone_Setup;
 
 typedef struct {
     u8 attachIdx;
@@ -59,11 +54,11 @@ void SHswapstone_ctor(void *dll) { }
 void SHswapstone_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHswapstone_setup(Object* self, SHswapstone_Setup* setup, s32 arg2) {
+void SHswapstone_setup(Object* self, Ctrl103_Setup* setup, s32 arg2) {
     SHswapstone_Data* objdata;
 
     objdata = self->data;
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = SHswapstone_anim_callback;
 
     // @bug: can't tell mapID correctly if local BLOCKS cell is unloaded upon

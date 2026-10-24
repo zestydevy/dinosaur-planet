@@ -1,14 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    s8 yaw;
-/*19*/    s8 modelIdx;                    //Which bridge model to use
-/*1A*/    s16 duration;                   //How long the bridge should stay visible for (in seconds), excluding the fade-in/fade-out times
-/*1C*/    s16 useTravellingFade;          //If this is TRUE, the bridge's fade in/out vertex animation will travel along the bridge in progressive/overlapping way
-/*1E*/    s16 gamebitVisible;             //Stores the bridge's visibility state
-/*20*/    s16 stayVisible;                //If this is FALSE, the bridge will disappear after its timer expires
-} MMP_Bridge_Setup;
 
 typedef struct {
 /*00*/ f32 minZ;                       //The position of the vertex furthest from the model's origin along Z (will be negative, and effectively bridge's length)

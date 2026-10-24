@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 
@@ -19,16 +20,6 @@ typedef struct {
 /*0x2E*/ u8 flags;
 }DLL250_Data;
 
-typedef struct {
- ObjSetup base;
-       s8 unk18;
-       s8 unk19;
-      s16 unk1A;
-      s16 unk1C;
-      s16 _unk1E; 
-       u8 unk20;
-}DLL250_Setup;
-
 /*0x0*/ static s32 _data_0[] = {
     0x00000002, 0x00000003, 0x00000000, 0x00000000
 };
@@ -44,7 +35,7 @@ void dll_250_ctor(void *dll) { }
 void dll_250_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_250_setup(Object* self, DLL250_Setup* setup, s32 arg2) {
+void dll_250_setup(Object* self, TurtleBaddie_Setup* setup, s32 arg2) {
     UnkCurvesStruct* temp_v0;
     DLL250_Data* objdata;
 
@@ -70,7 +61,7 @@ void dll_250_setup(Object* self, DLL250_Setup* setup, s32 arg2) {
 void dll_250_control(Object* self) {
     DLL250_Data* objdata;
     UnkCurvesStruct* sp68;
-    DLL250_Setup* setup;
+    TurtleBaddie_Setup* setup;
     Object* sp60;
     Vec3f sp54;
     f32 sp50;
@@ -82,7 +73,7 @@ void dll_250_control(Object* self) {
 
     objdata = self->data;
     sp68 = objdata->unk0;
-    setup = (DLL250_Setup*)self->setup;
+    setup = (TurtleBaddie_Setup*)self->setup;
     if (self->unkDC != 0) {
         if (gDLL_29_Gplay->vtbl->did_time_expire(setup->base.uID) != 0) {
             self->unkDC = 0;

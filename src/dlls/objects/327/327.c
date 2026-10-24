@@ -1,19 +1,10 @@
 // Official DLL name unknown, but used for many basic stationary animated props/characters
 
-#include "common.h"
+#include "game/gamebits.h"
+#include "game/objects/setups/30.h"
+#include "sys/main.h"
 #include "sys/objanim.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 modelIndex;          //Which model to use
-    u8 modAnimIndex;        //Which model animation to use
-    u8 animProgress;        //Initial tValue for the animation (expressed from 0-256 instead of 0-1)
-    u8 animSpeed;           //Animation playback speed (stored at 10000x actual value)
-    u8 scaleMultiplier;     //Multiplies the size of the object and its shadow (64 = 1x, 128 = 2x, 32 = 0.5x, etc.)
-    u8 yaw;
-    s16 unused1E;
-    s16 gamebitVisible;     //Toggles object visibility
-} DLL327_Setup;
+#include "sys/objprint.h"
 
 // offset: 0x0 | ctor
 void DLL327_ctor(void *dll) { }
@@ -22,7 +13,7 @@ void DLL327_ctor(void *dll) { }
 void DLL327_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DLL327_obj_Setup(Object* self, DLL327_Setup* objSetup, s32 reset) {
+void DLL327_obj_Setup(Object* self, Ctrl30_Setup* objSetup, s32 reset) {
     f32 factor;
     
     self->srt.flags |= OBJFLAG_UNK_2;
@@ -62,11 +53,11 @@ void DLL327_obj_Setup(Object* self, DLL327_Setup* objSetup, s32 reset) {
 
 // offset: 0x170 | func: 1 | export: 1
 void DLL327_obj_Control(Object* self) {
-    DLL327_Setup *objSetup;
+    Ctrl30_Setup *objSetup;
     f32 animSpeed;
     f32 animSpeedTemp;
     
-    objSetup = (DLL327_Setup*)self->setup;
+    objSetup = (Ctrl30_Setup*)self->setup;
     
     //Advance animation
     animSpeedTemp = objSetup->animSpeed;

@@ -2,16 +2,9 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 mode;
-    s16 scale;
-    s16 flags;
-    s16 gamebit;
-} WLWallTorch_Setup;
 
 typedef struct {
     Object* lfxEmitter;

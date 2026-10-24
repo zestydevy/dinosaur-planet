@@ -6,6 +6,7 @@
 #include "dlls/objects/782_WCPushBlock.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"

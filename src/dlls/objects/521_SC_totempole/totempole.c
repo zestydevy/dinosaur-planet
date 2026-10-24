@@ -1,14 +1,7 @@
 #include "common.h"
 
 #include "dlls/objects/519_SC_levelcontrol.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    u8 yaw;
-    u8 modelIndex;          //Which model to use: square/diamond/circle/triangle
-    f32 vocalsDistance;     //Music track's vocals added/removed based on this radius (stored divided by 400)
-} SCTotemPole_Setup;
+#include "game/objects/setups/103.h"
 
 typedef struct {
     u16 playerDistance;     //Player distance on current tick
@@ -47,13 +40,13 @@ void SCTotemPole_ctor(void *dll) { }
 void SCTotemPole_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCTotemPole_setup(Object* self, SCTotemPole_Setup* objSetup, s32 arg2) {
+void SCTotemPole_setup(Object* self, Ctrl103_Setup* objSetup, s32 arg2) {
     SCTotemPole_Data* objData = self->data;
     
-    objData->vocalsDistance = (s16)(objSetup->vocalsDistance * 400.0f);
-    self->srt.yaw = objSetup->yaw << 8;
+    objData->vocalsDistance = (s16)(objSetup->totempole.vocalsDistance * 400.0f);
+    self->srt.yaw = objSetup->totempole.yaw << 8;
 
-    self->modelInstIdx = objSetup->modelIndex;
+    self->modelInstIdx = objSetup->totempole.modelIndex;
     if ((self->modelInstIdx < 0) || (self->modelInstIdx >= 4)) {
         self->modelInstIdx = 0;
     }
@@ -66,7 +59,7 @@ void SCTotemPole_setup(Object* self, SCTotemPole_Setup* objSetup, s32 arg2) {
 // offset: 0x94 | func: 1 | export: 1
 void SCTotemPole_control(Object* self) {
     SCTotemPole_Data* objData;
-    SCTotemPole_Setup* objSetup;
+    Ctrl103_Setup* objSetup;
     s32 hitSphere;
     s32 hitDamage;
     Object* player;
@@ -76,7 +69,7 @@ void SCTotemPole_control(Object* self) {
     f32 time;
 
     objData = self->data;
-    objSetup = (SCTotemPole_Setup*)self->setup;
+    objSetup = (Ctrl103_Setup*)self->setup;
 
     //Find SCLevelControl
     if (objData->levelControl == NULL) {

@@ -1,14 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
-#include "dlls/objects/532_DIMsnowball.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 snowballInterval;   //How many frames to wait between creating snowballs
-    u8 unk1A;
-    u8 unk1B;
-    u8 yaw;
-} DIMSnowBallGenerator_Setup;
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/74_DIMSnowBallGenerator.h"
 
 typedef struct {
     s16 timer;              //Countdown until a snowball is created
@@ -35,7 +28,7 @@ void DIMSnowBallGenerator_obj_Setup(Object* self, DIMSnowBallGenerator_Setup* ob
 
 // offset: 0x50 | func: 1 | export: 1
 void DIMSnowBallGenerator_obj_Control(Object* self) {
-    DIMSnowBall_Setup* snowballSetup;
+    Generic_Setup* snowballSetup;
     DIMSnowBallGenerator_Setup* creatorSetup;
     DIMSnowBallGenerator_Data* objData;
 
@@ -49,7 +42,7 @@ void DIMSnowBallGenerator_obj_Control(Object* self) {
 
     //Create a snowball
     creatorSetup = (DIMSnowBallGenerator_Setup*)self->setup;
-    snowballSetup = (DIMSnowBall_Setup*)objAllocSetup(sizeof(DIMSnowBall_Setup), OBJ_DIMSnowBall);
+    snowballSetup = (Generic_Setup*)objAllocSetup(sizeof(Generic_Setup), OBJ_DIMSnowBall);
     snowballSetup->base.loadFlags = creatorSetup->base.loadFlags;
     snowballSetup->base.loadDistance = creatorSetup->base.loadDistance;
     snowballSetup->base.fadeFlags = creatorSetup->base.fadeFlags;
@@ -58,9 +51,9 @@ void DIMSnowBallGenerator_obj_Control(Object* self) {
     snowballSetup->base.y = self->srt.transl.y;
     snowballSetup->base.z = self->srt.transl.z;
     snowballSetup->base.uID = creatorSetup->base.uID;
-    snowballSetup->unk18 = creatorSetup->yaw;
-    snowballSetup->unk1A = creatorSetup->unk1A;
-    snowballSetup->unk1C = mathRnd(0, 100) / 100.0f + creatorSetup->unk1B;
+    snowballSetup->yaw = creatorSetup->yaw;
+    snowballSetup->genericA = creatorSetup->unk1A;
+    snowballSetup->genericB = mathRnd(0, 100) / 100.0f + creatorSetup->unk1B;
     objSetupObject(&snowballSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     
     objData->timer = objData->interval;

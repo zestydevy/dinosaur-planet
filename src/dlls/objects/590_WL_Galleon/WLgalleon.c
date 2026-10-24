@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/math.h"
 #include "sys/main.h"
@@ -22,11 +23,6 @@ typedef struct {
     s16 yaw;
 } WLGalleon_Data;
 
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WLGalleon_Setup;
-
 /*0x0*/ static s8 dataShowKrystalsAdventureScreen[] = {
     0, 0, 0, 0, 0, 0, 0, 0
 };
@@ -42,7 +38,7 @@ void WLgalleon_ctor(void *dll) { }
 void WLgalleon_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLgalleon_setup(Object* self, WLGalleon_Setup* setup, s32 arg2) {
+void WLgalleon_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     s32 index;
     WLGalleon_Data* objData;
 

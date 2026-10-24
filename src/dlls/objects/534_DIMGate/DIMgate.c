@@ -1,11 +1,7 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} DIMGate_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 static int DIMGate_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
@@ -16,7 +12,7 @@ void DIMGate_ctor(void* dll) { }
 void DIMGate_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMGate_setup(Object* self, DIMGate_Setup* objSetup, s32 reset) {
+void DIMGate_setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     self->animCallback = DIMGate_anim_callback;
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED;

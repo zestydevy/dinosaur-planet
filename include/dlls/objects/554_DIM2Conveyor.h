@@ -4,12 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 speed;
-} DIM2Conveyor_Setup;
-
 DLL_INTERFACE(DLL_554_DIM2Conveyor) {
 /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
 /*7*/ void (*Move)(Object* self, Object* objConveyed, f32 updateRate);

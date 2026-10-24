@@ -4,6 +4,7 @@
 #include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/gfx/model.h"
@@ -14,11 +15,6 @@
 #include "sys/objprint.h"
 #include "types.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} SHqueenearthwalker_Setup;
 
 typedef struct {
     u8 state;
@@ -59,7 +55,7 @@ void SHqueenearthwalker_ctor(void *dll) { }
 void SHqueenearthwalker_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHqueenearthwalker_obj_Setup(Object* self, SHqueenearthwalker_Setup* setup, s32 reset) {
+void SHqueenearthwalker_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     SHqueenearthwalker_Data* objdata;
 
     objdata = self->data;

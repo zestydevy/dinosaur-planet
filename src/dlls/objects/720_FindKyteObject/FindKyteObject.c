@@ -1,4 +1,5 @@
 #include "dll.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/main.h"
 #include "game/gamebits.h"
 #include "sys/objects.h"
@@ -12,16 +13,6 @@ typedef struct {
 /*08*/ u8 state;
 /*0C*/ CurveSetup* curveSetup;
 } FindKyteObject_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 findRange;
-/*19*/ u8 timerSeconds;
-/*1A*/ u16 kyteFlightCurve;
-/*1C*/ u8 kyteTalkSeq;
-/*1D*/ u8 unk1D;
-/*1E*/ u8 checkDistance2D;  //Use a lateral (2D) distance check instead of a 3D one
-} FindKyteObject_Setup;
 
 typedef enum {
     FindKyteObject_STATE_0_Finding_CurveSetup,
@@ -48,7 +39,7 @@ void FindKyteObject_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
 // offset: 0x64 | func: 1 | export: 1
 void FindKyteObject_obj_Control(Object* self) {
     CurveSetup* curveSetup;
-    FindKyteObject_Setup* setup;
+    KyteTarget_Setup* setup;
     Object* kyte;
     Object* player;
     f32 dist;
@@ -56,11 +47,11 @@ void FindKyteObject_obj_Control(Object* self) {
     FindKyteObject_Data* objdata;
 
     objdata = self->data;
-    setup = (FindKyteObject_Setup*)self->setup;
+    setup = (KyteTarget_Setup*)self->setup;
 
     switch (objdata->state) {
     case FindKyteObject_STATE_0_Finding_CurveSetup:
-        curveSetup = gDLL_25->vtbl->func_2A50(self, setup->kyteFlightCurve);
+        curveSetup = gDLL_25->vtbl->func_2A50(self, setup->findObj.flightGroup);
         objdata->curveSetup = curveSetup;
         if (curveSetup) {
             objdata->state = FindKyteObject_STATE_1_Show_Find_Command_When_Nearby;
@@ -79,27 +70,27 @@ void FindKyteObject_obj_Control(Object* self) {
         kyte = objGetSidekick();
         if (kyte) {
             player = objGetPlayer();
-            if (setup->checkDistance2D) {
+            if (setup->findObj.distCheckMode) {
                 dist = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition);
             } else {
                 dist = vec3DistanceSquared(&player->globalPosition, &self->globalPosition);
             }
 
-            if (dist <= SQ(setup->findRange * 2)) {
+            if (dist <= SQ(setup->findObj.commandRange * 2)) {
                 //Enable Find command option
                 ((DLL_ISidekick*)kyte->dll)->vtbl->EnableCommand(kyte, Sidekick_Command_INDEX_1_Find);
 
                 //Advance state if Find command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_1_Find)) {
                     objdata->flightCurve = mainGetBits(BIT_Kyte_Flight_Curve);
-                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteFlightCurve);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->findObj.flightGroup);
 
                     //Optionally set Kyte's talk sequence
-                    if (setup->kyteTalkSeq != 0) {
-                        mainSetBits(BIT_Kyte_Flight_Talk_Sequence, setup->kyteTalkSeq);
+                    if (setup->findObj.talkSeq != 0) {
+                        mainSetBits(BIT_Kyte_Flight_Talk_Sequence, setup->findObj.talkSeq);
                     }
                     
-                    objdata->timer = setup->timerSeconds * 60.0f;
+                    objdata->timer = setup->findObj.timer * 60.0f;
                     objdata->state = FindKyteObject_STATE_2_Using_Find;
                 }
             }
@@ -113,7 +104,7 @@ void FindKyteObject_obj_Control(Object* self) {
             ((gamebit = objdata->curveSetup->type22.usedBit, (gamebit != NO_GAMEBIT)) && mainGetBits(gamebit))
         ) {
             //Clear Kyte's talk sequence, if specified
-            if (setup->kyteTalkSeq != 0) {
+            if (setup->findObj.talkSeq != 0) {
                 mainSetBits(BIT_Kyte_Flight_Talk_Sequence, -1);
             }
 
@@ -121,7 +112,7 @@ void FindKyteObject_obj_Control(Object* self) {
             objdata->state = FindKyteObject_STATE_1_Show_Find_Command_When_Nearby;
 
             //Set Kyte's flight curve
-            if (mainGetBits(BIT_Kyte_Flight_Curve) == setup->kyteFlightCurve) {
+            if (mainGetBits(BIT_Kyte_Flight_Curve) == setup->findObj.flightGroup) {
                 mainSetBits(BIT_Kyte_Flight_Curve, objdata->flightCurve);
             }
         }

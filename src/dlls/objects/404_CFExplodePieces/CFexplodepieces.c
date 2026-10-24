@@ -2,6 +2,7 @@
 #include "dlls/objects/404_CFExplodePieces.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/105_Exploder.h"
 #include "sys/gfx/model.h"
 
 typedef struct {
@@ -27,7 +28,7 @@ typedef struct {
 
 static s32 CFExplodePieces_fadeOut(Object* self, CFExplodePieces_Data* objData);
 static s32 CFExplodePieces_move(Object* self, CFExplodePieces_Data* objData);
-static void CFExplodePieces_setupModelAndPhysics(Object* self, CFExplodePieces_Setup* objSetup, s32 reset, CFExplodePieces_Data* objData);
+static void CFExplodePieces_setupModelAndPhysics(Object* self, ExploderPiece_Setup* objSetup, s32 reset, CFExplodePieces_Data* objData);
 
 // offset: 0x0 | ctor
 void CFExplodePieces_ctor(void* dll) { }
@@ -38,7 +39,7 @@ void CFExplodePieces_dtor(void* dll) { }
 /*0x0*/ static const char str_0[] = "phys %i ";
 
 // offset: 0x18 | func: 0 | export: 0
-void CFExplodePieces_obj_Setup(Object* self, CFExplodePieces_Setup* objSetup, s32 reset) {
+void CFExplodePieces_obj_Setup(Object* self, ExploderPiece_Setup* objSetup, s32 reset) {
     CFExplodePieces_Data* objData;
 
     objData = self->data;
@@ -191,7 +192,7 @@ void CFExplodePieces_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x528 | func: 7 | export: 5
 u32 CFExplodePieces_obj_GetModelFlags(Object* self) {
-    CFExplodePieces_Setup* setup = (CFExplodePieces_Setup*)self->setup;
+    ExploderPiece_Setup* setup = (ExploderPiece_Setup*)self->setup;
     return MODFLAGS_MODEL_INDEX(setup->modelIdx) | MODFLAGS_LOAD_SINGLE_MODEL;
 }
 
@@ -209,7 +210,7 @@ u8 CFExplodePieces_GetState(Object* self) {
 /*0x24*/ static const char str_24[] = " Hieght From Ground %i ";
 
 // offset: 0x564 | func: 10
-static void CFExplodePieces_setupPhysics(Object* self, CFExplodePieces_Data* objData, CFExplodePieces_Setup* objSetup) {
+static void CFExplodePieces_setupPhysics(Object* self, CFExplodePieces_Data* objData, ExploderPiece_Setup* objSetup) {
     f32 floorHeight = 0.0f;
     
     self->srt.transl.x = objSetup->base.x + (objData->positionOffset.x * self->srt.scale);
@@ -249,7 +250,7 @@ static void CFExplodePieces_setupPhysics(Object* self, CFExplodePieces_Data* obj
 }
 
 // offset: 0x804 | func: 11
-void CFExplodePieces_setupModelAndPhysics(Object* self, CFExplodePieces_Setup* objSetup, s32 reset, CFExplodePieces_Data* objData) {
+void CFExplodePieces_setupModelAndPhysics(Object* self, ExploderPiece_Setup* objSetup, s32 reset, CFExplodePieces_Data* objData) {
     Vtx* vtxs0;
     Vtx* vtxs1;
     s32 i;

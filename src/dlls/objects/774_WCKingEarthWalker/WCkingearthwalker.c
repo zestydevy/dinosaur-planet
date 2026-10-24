@@ -1,12 +1,8 @@
 #include "common.h"
 #include "dlls/engine/53_movelib.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/newshadows.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WCKingEarthWalker_Setup;
 
 typedef struct {
     MoveLibData moveData;
@@ -35,7 +31,7 @@ void WCKingEarthWalker_ctor(void* dll) { }
 void WCKingEarthWalker_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCKingEarthWalker_obj_Setup(Object* self, WCKingEarthWalker_Setup* objSetup, s32 reset) {
+void WCKingEarthWalker_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     WCKingEarthWalker_Data* objData = self->data;
 /*0x0*/ s16 data_0[] = { 0, 8} ;
 /*0x4*/ s16 data_4[] = { 10, 35 };

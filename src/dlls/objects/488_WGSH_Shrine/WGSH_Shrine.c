@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/objmsg.h"
@@ -9,12 +10,6 @@
 #include "sys/print.h"
 #include "sys/envfx.h"
 #include "dll.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-} WGSH_Shrine_Setup;
 
 typedef struct {
     s16 unk0;
@@ -45,15 +40,15 @@ void dll_488_ctor(void *dll) { }
 void dll_488_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_488_setup(Object *self, WGSH_Shrine_Setup *setup, s32 arg2) {
+void dll_488_setup(Object *self, Shrine_Setup *setup, s32 arg2) {
     WGSH_Shrine_Data *objdata;
     DLL_IModgfx *sp30;
 
     objdata = self->data;
     self->srt.yaw = 0;
     objdata->unk0 = 0xA;
-    if (setup->unk1A > 0) {
-        objdata->unk0 = (s16) (setup->unk1A >> 8);
+    if (setup->testStartRange > 0) {
+        objdata->unk0 = (s16) (setup->testStartRange >> 8);
     }
     objdata->unk13 = 0;
     objdata->unk14 = 0;

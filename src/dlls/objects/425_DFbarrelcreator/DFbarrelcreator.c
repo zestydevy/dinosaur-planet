@@ -1,12 +1,7 @@
 #include "common.h"
+#include "game/objects/setups/103.h"
+#include "game/objects/setups/104_DFbarrelcreator.h"
 #include "sys/objtype.h"
-#include "dlls/objects/423_DFbarrel.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 searchDistance;  //Creates a barrel if none are found inside this radius (stored divided by 4)
-    s16 gamebitStop;    //Stops creating barrels if this gamebit is set
-} DFBarrelCreator_Setup;
 
 // offset: 0x0 | ctor
 void DFbarrelcreator_ctor(void *dll) { }
@@ -15,12 +10,12 @@ void DFbarrelcreator_ctor(void *dll) { }
 void DFbarrelcreator_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFbarrelcreator_setup(Object *self, ObjSetup *setup, s32 reset) { }
+void DFbarrelcreator_setup(Object *self, DFBarrelCreator_Setup *setup, s32 reset) { }
 
 // offset: 0x2C | func: 1 | export: 1
 void DFbarrelcreator_control(Object* self) {
     DFBarrelCreator_Setup* objSetup;
-    DFBarrel_Setup* barrel;
+    Ctrl103_Setup* barrel;
     f32 distance;
 
     objSetup = (DFBarrelCreator_Setup*)self->setup;
@@ -37,7 +32,7 @@ void DFbarrelcreator_control(Object* self) {
     }
 
     //Create a barrel
-    barrel = (DFBarrel_Setup*)objAllocSetup(sizeof(DFBarrel_Setup), OBJ_DFbarrel);
+    barrel = (Ctrl103_Setup*)objAllocSetup(sizeof(Ctrl103_Setup), OBJ_DFbarrel);
     barrel->base.loadDistance = 100;
     barrel->base.fadeDistance = 80;
     barrel->base.loadFlags = 4;

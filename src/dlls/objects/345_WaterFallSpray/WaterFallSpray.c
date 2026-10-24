@@ -1,6 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
-#include "dlls/objects/345_WaterFallSpray.h"
+#include "game/objects/setups/127_WaterFallSpray.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/main.h"

@@ -3,6 +3,7 @@
 #include "dlls/engine/29_gplay.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -34,14 +35,6 @@ typedef struct {
 /*11*/ u8 unk11;
 } Duster_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 _unk18[0x1B-0x18];
-/*1B*/ u8 unk1B;
-/*1C*/ u8 _unk1C[0x24-0x1C];
-/*24*/ s16 gamebit;
-} Duster_Setup;
-
 // offset: 0x0 | ctor
 void Duster_ctor(void *dll) { }
 
@@ -49,13 +42,13 @@ void Duster_ctor(void *dll) { }
 void Duster_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
+void Duster_setup(Object *self, Collectable_Setup *setup, s32 arg2) {
     Duster_Data *objdata = self->data;
 
     objdata->timer1 = mathRnd(0, 50);
     objdata->unk0 = 0.02f;
 
-    objdata->gamebitDiscovered = setup->gamebit;
+    objdata->gamebitDiscovered = setup->gamebitSecondary;
     if (objdata->gamebitDiscovered >= BIT_Collected_Duster_1) {
         // this is not a hidden duster
         objdata->discovered = TRUE;
@@ -66,7 +59,7 @@ void Duster_setup(Object *self, Duster_Setup *setup, s32 arg2) {
         objdata->gamebitCollected = objdata->gamebitDiscovered + DUSTER_TOTAL_COUNT;
     }
     objdata->collected = mainGetBits(objdata->gamebitCollected);
-    objdata->unk11 = setup->unk1B;
+    objdata->unk11 = setup->yaw8;
 
     if (self->objhitInfo && !objdata->discovered) {
         self->objhitInfo->unk58 |= 1;

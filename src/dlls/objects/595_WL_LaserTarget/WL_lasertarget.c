@@ -1,13 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 onDuration;
-    s16 unk1C;
-    s16 gamebitA;
-    s16 gamebitB;
-} WL_LaserTarget_Setup;
 
 typedef struct {
     s16 timer;
@@ -21,41 +13,41 @@ void WL_LaserTarget_ctor(void* dll) { }
 void WL_LaserTarget_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_LaserTarget_setup(Object* self, WL_LaserTarget_Setup* objSetup, s32 reset) {
+void WL_LaserTarget_setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     WL_LaserTarget_Data* objData = self->data;
     
-    self->modelInstIdx = mainGetBits(objSetup->gamebitA);
-    objData->timer = objSetup->onDuration;
+    self->modelInstIdx = mainGetBits(objSetup->bitA);
+    objData->timer = objSetup->genericA;
     objData->switchedOn = FALSE;
 }
 
 // offset: 0x84 | func: 1 | export: 1
 void WL_LaserTarget_control(Object* self) {
-    WL_LaserTarget_Setup* objSetup;
+    Generic_Setup* objSetup;
     WL_LaserTarget_Data* objData;
 
-    objSetup = (WL_LaserTarget_Setup*)self->setup;
+    objSetup = (Generic_Setup*)self->setup;
     objData = self->data;
     
     //React to any source of damage
     if (func_80025F40(self, NULL, NULL, NULL)) {
         objData->switchedOn = TRUE;
-        objData->timer = objSetup->onDuration;
+        objData->timer = objSetup->genericA;
     }
     
     //Reset after timer runs out
     if ((objData->timer <= 0) && objData->switchedOn) {
-        if (mainGetBits(objSetup->gamebitA)) {
+        if (mainGetBits(objSetup->bitA)) {
             objSetModel(self, 0);
-            mainSetBits(objSetup->gamebitA, FALSE);
-            mainSetBits(objSetup->gamebitB, FALSE);
+            mainSetBits(objSetup->bitA, FALSE);
+            mainSetBits(objSetup->bitB, FALSE);
         } else {
             objSetModel(self, 1);
-            mainSetBits(objSetup->gamebitA, TRUE);
-            mainSetBits(objSetup->gamebitB, TRUE);
+            mainSetBits(objSetup->bitA, TRUE);
+            mainSetBits(objSetup->bitB, TRUE);
         }
         objData->switchedOn = FALSE;
-        objData->timer = objSetup->onDuration;
+        objData->timer = objSetup->genericA;
         return;
     }
     

@@ -1,11 +1,10 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 
-#include "dlls/objects/223_CannonClaw.h"
-#include "dlls/objects/537_DIMcannon.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/125_DIMCannon.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"

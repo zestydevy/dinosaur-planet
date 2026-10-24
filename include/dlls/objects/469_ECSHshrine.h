@@ -24,12 +24,6 @@ typedef struct {
     u8 musicStarted;            //Music started via timer
 } ECSHshrine_Data;
 
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[0x1A - 0x18];
-    s16 testStartRadius;        //Test begins when player inside this radius (stored multiplied by 256)
-} ECSHshrine_Setup;
-
 typedef enum {
     ECShrine_STATE_Waiting = 0,
     ECShrine_STATE_Test_Start = 1,

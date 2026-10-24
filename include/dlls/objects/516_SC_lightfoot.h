@@ -4,25 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-    s16 unk24;
-    s16 unk26;
-    s16 unk28;
-    s8 yaw;
-    s16 unk2C;
-    s16 unk2E;
-    s16 unk30;
-    s8 unk32;
-    s32 unk34;
-} SCLightFoot_Setup; //0x38
-
 DLL_INTERFACE(DLL_516_SC_lightfoot) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ UnknownDLLFunc func7;

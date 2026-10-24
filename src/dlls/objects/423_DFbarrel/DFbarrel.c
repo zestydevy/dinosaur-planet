@@ -1,11 +1,12 @@
 #include "common.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
-#include "dlls/objects/358_debris.h"
-#include "dlls/objects/418_DFriverflow.h"
-#include "dlls/objects/423_DFbarrel.h"
-#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
+#include "game/objects/setups/51_Generic.h"
+#include "game/objects/setups/55_Riverflow.h"
+#include "game/objects/setups/83_ExplodeAnimator.h"
+#include "game/objects/setups/84_Debris.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 
@@ -31,7 +32,7 @@ void DFbarrel_ctor(void* dll) { }
 void DFbarrel_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFbarrel_obj_Setup(Object* self, DFBarrel_Setup* objSetup, s32 reset) {
+void DFbarrel_obj_Setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Barrel);
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
@@ -127,7 +128,7 @@ void DFbarrel_handleMovement(Object* self) {
                 dz = riverFlow->srt.transl.z - self->srt.transl.z;
                 delta = sqrtf(SQ(delta) + SQ(dz));
                 
-                range = ((DFriverflow_Setup*)riverFlow->setup)->range * 1.5f;
+                range = ((Riverflow_Setup*)riverFlow->setup)->range * 1.5f;
                 if (delta < range) {
                     delta = (range - delta) / range;
                     delta *= riverFlow->srt.scale * 10.0f;
@@ -208,7 +209,7 @@ void DFbarrel_handleMovement(Object* self) {
 // offset: 0x960 | func: 8
 void DFbarrel_handleDamage(Object* self) {
     DFBarrel_Data* objData;
-    DIMExplosion_Setup* explosion;
+    Generic_Setup* explosion;
     s32 hitDamage;
     Object* obj;
     f32 distance;
@@ -236,7 +237,7 @@ void DFbarrel_handleDamage(Object* self) {
         func_80026940(self, 40);
         func_80026128(self, Damage_Type_Explosion, 4, 0);
         
-        explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+        explosion = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
         explosion->base.x = self->srt.transl.x;
         explosion->base.y = self->srt.transl.y;
         explosion->base.z = self->srt.transl.z;

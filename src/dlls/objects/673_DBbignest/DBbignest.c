@@ -1,19 +1,8 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/87_SeqDoor.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitB;
-    s16 gamebitRestoreState;
-    s16 preemptTime;
-    s8 objSeqIdx;
-    u8 yaw;
-    u8 unk20;
-    u8 scale;
-    s16 gamebitC;
-} DBBigNest_Setup;
 
 typedef struct {
     u8 state;
@@ -38,7 +27,7 @@ void DBBigNest_ctor(void* dll) { }
 void DBBigNest_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBBigNest_setup(Object* self, DBBigNest_Setup* objSetup, s32 reset) {
+void DBBigNest_setup(Object* self, SeqDoor_Setup* objSetup, s32 reset) {
     DBBigNest_Data* objData = self->data;
     
     objData->sequenceNotStarted = TRUE;
@@ -71,11 +60,11 @@ void DBBigNest_setup(Object* self, DBBigNest_Setup* objSetup, s32 reset) {
 // offset: 0x128 | func: 1 | export: 1
 void DBBigNest_control(Object* self) {
     DBBigNest_Data* objData;
-    DBBigNest_Setup* objSetup;
+    SeqDoor_Setup* objSetup;
     s32 actorsEnabled;
 
     objData = self->data;
-    objSetup = (DBBigNest_Setup*)self->setup;
+    objSetup = (SeqDoor_Setup*)self->setup;
     
     actorsEnabled = -1;
 
@@ -123,19 +112,19 @@ u32 DBBigNest_get_data_size(Object* self, u32 offsetAddr) {
 // offset: 0x2CC | func: 7
 int DBBigNest_anim_callback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     DBBigNest_Data* objData;
-    DBBigNest_Setup* objSetup;
+    SeqDoor_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DBBigNest_Setup*)self->setup;
+    objSetup = (SeqDoor_Setup*)self->setup;
     
     if (objData->state == DBBigNest_STATE_0) {
-        if (mainGetBits(objSetup->gamebitB) && 
-            ((objSetup->gamebitC == NO_GAMEBIT) || mainGetBits(objSetup->gamebitC))
+        if (mainGetBits(objSetup->gamebitOpenA) && 
+            ((objSetup->gamebitOpenB == NO_GAMEBIT) || mainGetBits(objSetup->gamebitOpenB))
         ) {
             objData->state = DBBigNest_STATE_2;
         }
     } else if (objData->state == DBBigNest_STATE_1) {
-        if (mainGetBits(objSetup->gamebitB) == 0) {
+        if (mainGetBits(objSetup->gamebitOpenA) == 0) {
             objData->state = DBBigNest_STATE_3;
             objData->eggsPlaced = 0;
         }

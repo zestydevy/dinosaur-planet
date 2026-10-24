@@ -3,6 +3,7 @@
 #include "dlls/objects/315_sidefoodbag.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/121_CCgrub.h"
 #include "sys/curves.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
@@ -27,14 +28,6 @@ typedef struct {
     s16 unk13E;
     f32 unk140;
 } CCgrub_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 rangeInnerSq;
-    u8 rangeOuterSq;
-} CCgrub_Setup;
 
 typedef enum {
     CCgrub_STATE_0,

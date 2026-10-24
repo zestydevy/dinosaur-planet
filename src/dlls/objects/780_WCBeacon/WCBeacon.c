@@ -1,4 +1,5 @@
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objexpr.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -9,15 +10,6 @@ typedef struct {
 /*0*/ f32 timer;
 /*4*/ u8 state;
 } WCBeacon_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 modelIndex;
-/*1A*/ u8 _unk1A[0x1E - 0x1A];
-/*1E*/ s16 gamebitLit;
-/*20*/ s16 gamebitRise;
-} WCBeacon_Setup;
 
 enum WCBeaconState {
     WCBEACON_STATE_0_Underground = 0,

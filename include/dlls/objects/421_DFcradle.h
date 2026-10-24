@@ -23,13 +23,6 @@ typedef struct {
 } UnkCurvesStruct_Split;
 
 typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-} DFCradle_Setup;
-
-typedef struct {
     UnkCurvesStruct_Split curves;
     f32 speed;          //The cradle's current absolute movement speed along its path
     f32* splineX;

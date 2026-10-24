@@ -1,6 +1,6 @@
-#include "dlls/objects/391_CFForceField.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/103.h"
 #include "sys/intersect.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -37,7 +37,7 @@ void CFForceField_ctor(void* dll) { }
 void CFForceField_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFForceField_obj_Setup(Object* self, CFForceField_Setup* setup, s32 reset) {
+void CFForceField_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     CFForceField_Data* objdata = self->data;
     TextureAnimator* texAnimator;
     f32 temp_fv0;
@@ -49,12 +49,12 @@ void CFForceField_obj_Setup(Object* self, CFForceField_Setup* setup, s32 reset) 
         texAnimator->frame = 0;
     }
     temp_fv0 = CFForceField_func_66C(self);
-    if (setup->unk1C != 0.0f) {
-        temp = setup->unk1C / 255.0f;
+    if (setup->cfForceField.size != 0.0f) {
+        temp = setup->cfForceField.size / 255.0f;
         self->srt.scale = self->def->scale * temp;
     }
-    if ((setup->unk18 < temp_fv0) && (setup->unk18 != 0)) {
-        var_fv0 = setup->unk18;
+    if ((setup->cfForceField.unk18 < temp_fv0) && (setup->cfForceField.unk18 != 0)) {
+        var_fv0 = setup->cfForceField.unk18;
     } else {
         var_fv0 = 10.0f;
     }

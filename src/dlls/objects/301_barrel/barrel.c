@@ -1,13 +1,8 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    u8 yaw;
-} Barrel_Setup;
+#include "game/objects/setups/103.h"
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     Pickup pickup;
@@ -28,7 +23,7 @@ void Barrel_ctor(void *dll) { }
 void Barrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Barrel_setup(Object* self, Barrel_Setup* objSetup, s32 reset) {
+void Barrel_setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     self->srt.yaw = objSetup->yaw << 8;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     gDLL_54_pickup->vtbl->setup(self, (Pickup*)self->data, 33);
@@ -39,7 +34,7 @@ void Barrel_setup(Object* self, Barrel_Setup* objSetup, s32 reset) {
 void Barrel_control(Object* self) {
     Barrel_Data* objData;
     ObjSetup* objSetup;
-    DIMExplosion_Setup* explosionSetup;
+    Generic_Setup* explosionSetup;
     s32 hitDamage;
     Pickup* pickup;
 
@@ -59,7 +54,7 @@ void Barrel_control(Object* self) {
             func_80026128(self, Damage_Type_Explosion, 4, 0);
             
             //Create an explosion
-            explosionSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explosionSetup = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
             explosionSetup->base.x = self->srt.transl.x;
             explosionSetup->base.y = self->srt.transl.y;
             explosionSetup->base.z = self->srt.transl.z;

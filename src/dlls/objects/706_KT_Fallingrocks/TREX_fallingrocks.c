@@ -1,15 +1,5 @@
+#include "game/objects/setups/114.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    u16 particleID;
-    s16 unk22;
-    s16 gamebitFalling;
-} KT_Fallingrocks_Setup;
 
 // offset: 0x0 | ctor
 void KT_Fallingrocks_ctor(void* dll) { }
@@ -18,20 +8,20 @@ void KT_Fallingrocks_ctor(void* dll) { }
 void KT_Fallingrocks_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void KT_Fallingrocks_obj_Setup(Object* self, KT_Fallingrocks_Setup* objSetup, s32 reset) {
+void KT_Fallingrocks_obj_Setup(Object* self, Ctrl114_Setup* objSetup, s32 reset) {
     self->animCallback = NULL;
 }
 
 // offset: 0x2C | func: 1 | export: 1
 void KT_Fallingrocks_obj_Control(Object* self) {
-    KT_Fallingrocks_Setup* objSetup;
+    Ctrl114_Setup* objSetup;
     Object* player;
     SRT fxTransform;
     s32 i;
 
-    objSetup = (KT_Fallingrocks_Setup*)self->setup;
+    objSetup = (Ctrl114_Setup*)self->setup;
     
-    if (mainGetBits(objSetup->gamebitFalling) == FALSE) {
+    if (mainGetBits(objSetup->gamebit) == FALSE) {
         return;
     }
     
@@ -50,7 +40,7 @@ void KT_Fallingrocks_obj_Control(Object* self) {
         gDLL_17_partfx->vtbl->spawn(self, objSetup->particleID, &fxTransform, 0x200001, -1, NULL);
     }
     
-    mainSetBits(objSetup->gamebitFalling, FALSE);
+    mainSetBits(objSetup->gamebit, FALSE);
 }
 
 // offset: 0x190 | func: 2 | export: 2

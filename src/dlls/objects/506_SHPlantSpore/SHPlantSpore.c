@@ -1,18 +1,9 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 #include "dll.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*19*/ s8 unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 unk1C;
-/*1E*/ s16 unk1E;
-/*20*/ s16 unk20;
-} DLL506_Setup;
 
 // offset: 0x0 | ctor
 void dll_506_ctor(void *dll) { }
@@ -27,9 +18,9 @@ void dll_506_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x34 | func: 1 | export: 1
 void dll_506_control(Object* self) {
-    DLL506_Setup* objSetup = (DLL506_Setup*) self->setup;
+    Generic_Setup* objSetup = (Generic_Setup*) self->setup;
 
-    if ((objSetup->unk20 != NO_GAMEBIT) && (mainGetBits(objSetup->unk20) == 0)) {
+    if ((objSetup->bitB != NO_GAMEBIT) && (mainGetBits(objSetup->bitB) == 0)) {
         self->unkAF |= 8;
         return;
     }
@@ -40,10 +31,10 @@ void dll_506_control(Object* self) {
     }
     if ((self->unkAF & 1) && gDLL_1_cmdmenu->vtbl->was_this_item_used(BIT_Inventory_Purple_Mushrooms)) {
         mainDecrementBits(BIT_Inventory_Purple_Mushrooms);
-        mainSetBits(objSetup->unk1E, 1);
+        mainSetBits(objSetup->bitA, 1);
         self->unkAF |= 0x8;
     }
-    if (mainGetBits(objSetup->unk1E) == 0) {
+    if (mainGetBits(objSetup->bitA) == 0) {
         self->unkAF &= ~0x8;
     }
     objprintUpdateLockIconCoords(self);

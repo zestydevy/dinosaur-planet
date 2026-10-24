@@ -1,16 +1,7 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/51_Generic.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;
-    s16 preemptTime;      //The sequence time to jump ahead to when quickly setting the switch to its up/down position
-    s16 unk1C;
-    s16 gamebitUnlocked;  //The player can flip the switch via LockIcon interaction when this gamebit is set
-    s16 gamebitState;     //The switch's state value is stored to/restored from this gamebit
-} CFBigDoorSwitch_Setup;
 
 typedef struct {
     u8 state;            //The switch's current state (up/down)
@@ -39,8 +30,8 @@ void CFBigDoorSwitch_obj_Setup(Object* self, CFBigDoorSwitch_Setup* objSetup, s3
     }
     
     objData = self->data;
-    objData->unlocked = mainGetBits(objSetup->gamebitUnlocked);
-    objData->state = mainGetBits(objSetup->gamebitState);
+    objData->unlocked = mainGetBits(objSetup->unlockedBit);
+    objData->state = mainGetBits(objSetup->stateBit);
     objData->flags = CFBigDoorSwitch_FLAG_Preempt_Needed;
 }
 
@@ -62,11 +53,11 @@ void CFBigDoorSwitch_obj_Control(Object* self) {
         // Let the player interact with the switch, if its unlock gamebit's set.
         // This is a bit surprising, since it's barely within reach for the player and
         // the perch object placed on the switch suggests Kyte was supposed to activate it!
-        if (mainGetBits(objSetup->gamebitUnlocked)) {
+        if (mainGetBits(objSetup->unlockedBit)) {
             //Toggle state and play a sequence
             gDLL_3_Animation->vtbl->start_obj_sequence(objData->state ^ 1, self, -1);
             objData->state ^= 1;
-            mainSetBits(objSetup->gamebitState, objData->state);
+            mainSetBits(objSetup->stateBit, objData->state);
             objData->flags &= ~CFBigDoorSwitch_FLAG_Preempt_Needed;
         }
     } else if (objData->flags & CFBigDoorSwitch_FLAG_Preempt_Needed) {
@@ -78,9 +69,9 @@ void CFBigDoorSwitch_obj_Control(Object* self) {
     }
     
     //Check if the state-restoring gamebit's value differs from the switch's current state
-    if (objData->state != mainGetBits(objSetup->gamebitState)) {
+    if (objData->state != mainGetBits(objSetup->stateBit)) {
         //Sync state with the gamebit, and queue an objSeq preempt to quickly raise/lower the switch
-        objData->state = mainGetBits(objSetup->gamebitState);
+        objData->state = mainGetBits(objSetup->stateBit);
         objData->flags |= CFBigDoorSwitch_FLAG_Preempt_Needed;
     }
 }

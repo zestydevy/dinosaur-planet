@@ -1,12 +1,7 @@
 #include "game/objects/interaction_arrow.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objprint.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 alternateModel;
-} SB_SeqDoor_Setup;
 
 static int SB_SeqDoor_anim_callback(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 prevCallbackValue);
 
@@ -17,10 +12,10 @@ void SB_SeqDoor_ctor(void *dll) { }
 void SB_SeqDoor_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SB_SeqDoor_setup(Object *self, SB_SeqDoor_Setup *setup, s32 reset) {
+void SB_SeqDoor_setup(Object *self, Generic_Setup *setup, s32 reset) {
     self->animCallback = SB_SeqDoor_anim_callback;
     self->srt.yaw = setup->yaw << 8;
-    self->modelInstIdx = setup->alternateModel != 0;
+    self->modelInstIdx = setup->type != 0;
 }
 
 // offset: 0x54 | func: 1 | export: 1

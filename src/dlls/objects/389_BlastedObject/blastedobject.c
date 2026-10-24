@@ -1,19 +1,11 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/objprint.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw8;
-/*1A*/ s16 extraDamageStages; // aka health - 1. if zero, no model is drawn and it's assumed the block shapes are the visible surface
-/*1C*/ s16 shapeAnimatorID; // animator ID of block shapes to hide/remove collision of when blasted
-/*1E*/ s16 blastedGamebit; // bit to set when blasted
-/*20*/ s16 hitCountGamebit; // for persisting the hit count
-} BlastedObject_Setup;
 
 typedef struct {
     s32 blockShapesUpdated;
@@ -48,7 +40,7 @@ void BlastedObject_obj_Setup(Object* self, BlastedObject_Setup* setup, s32 reset
     }
     // @bug: Always re-enables hit count 0 bit
     mainSetBits(BIT_2DE, 1);
-    self->srt.yaw = setup->yaw8 << 8;
+    self->srt.yaw = setup->yaw << 8;
     if (mainGetBits(setup->blastedGamebit) != 0) {
         objdata->blockShapesUpdated = BlastedObject_hideBlockShapes(self, setup->shapeAnimatorID);
     }

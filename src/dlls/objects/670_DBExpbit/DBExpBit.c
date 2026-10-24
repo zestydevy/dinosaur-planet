@@ -1,12 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 _unk18;
-    s16 modelIdx;
-    s16 doDraw;
-} DBExpBit_Setup;
 
 typedef struct {
     u8 reset;

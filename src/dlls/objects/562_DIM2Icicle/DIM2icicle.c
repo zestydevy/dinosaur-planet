@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dll.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "sys/objprint.h"
@@ -14,13 +15,6 @@ typedef struct {
     u8 groundFound;
     s16 soundTimer;
 } DIM2Icicle_Data;
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 used19[5];
-    s16 gamebitFell;
-} DIM2Icicle_Setup;
 
 typedef enum {
     DIM2Icicle_STATE_Dangling = 0,
@@ -36,7 +30,7 @@ void DIM2Icicle_ctor(void *dll) { }
 void DIM2Icicle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIM2Icicle_setup(Object* self, DIM2Icicle_Setup* setup, s32 arg2) {
+void DIM2Icicle_setup(Object* self, DIM2icicle_Setup* setup, s32 arg2) {
     DIM2Icicle_Data* objdata = self->data;
     
     if (mainGetBits(setup->gamebitFell)) {
@@ -57,12 +51,12 @@ void DIM2Icicle_control(Object* self) {
     s32 pad;
     s32 opacity;
     DIM2Icicle_Data* objData;
-    DIM2Icicle_Setup* objSetup;
+    DIM2icicle_Setup* objSetup;
     s32 count;
     s32 i;
     TrackHeightResult** collisionInfo;
 
-    objSetup = (DIM2Icicle_Setup*)self->setup;
+    objSetup = (DIM2icicle_Setup*)self->setup;
     objData = self->data;
     
     switch (objData->state) {

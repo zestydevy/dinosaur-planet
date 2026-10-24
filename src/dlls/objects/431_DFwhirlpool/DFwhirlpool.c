@@ -1,10 +1,6 @@
 #include "common.h"
 
 typedef struct {
-    ObjSetup base;
-} DFwhirlpool_Setup;
-
-typedef struct {
     u8 state;
     s16 yawSpeed;
     s32 soundHandle;
@@ -30,7 +26,7 @@ void DFwhirlpool_ctor(void* dll) { }
 void DFwhirlpool_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFwhirlpool_obj_Setup(Object* self, DFwhirlpool_Setup* objSetup, s32 reset) {
+void DFwhirlpool_obj_Setup(Object* self, AnimObj_Setup* objSetup, s32 reset) {
     DFwhirlpool_Data* objData = self->data;
     
     //Check if already lowered

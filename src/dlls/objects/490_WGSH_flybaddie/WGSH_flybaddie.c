@@ -1,12 +1,13 @@
 
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/491_WGSH_projball.h"
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/38_Projectile.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -18,12 +19,6 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
-} WGSH_flybaddie_Setup;
 
 typedef struct {
 /*00*/ f32 xCurve[4];
@@ -57,7 +52,7 @@ void WGSH_flybaddie_ctor(void *dll) { }
 void WGSH_flybaddie_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
+void WGSH_flybaddie_setup(Object* self, Flybaddie_Setup* setup, s32 arg2) {
     WGSH_flybaddie_Data* objdata;
     f32 pos[3];
     Object* player;
@@ -240,7 +235,7 @@ static void WGSH_flybaddie_func_8A4(Object* self) {
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
-    projballSetup = objAllocSetup(sizeof(WGSH_projball_Setup), OBJ_WGSH_projball);
+    projballSetup = objAllocSetup(sizeof(Projectile_Setup), OBJ_WGSH_projball);
     projballSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     projballSetup->fadeFlags = OBJSETUP_FADE_MANUAL;
     projballSetup->loadDistance = 0xFF;

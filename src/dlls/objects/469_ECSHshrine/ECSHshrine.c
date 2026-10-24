@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
@@ -57,15 +58,15 @@ void ECSHshrine_ctor(void* dll) { }
 void ECSHshrine_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ECSHshrine_obj_Setup(Object* self, ECSHshrine_Setup* setup, s32 reset) {
+void ECSHshrine_obj_Setup(Object* self, Shrine_Setup* setup, s32 reset) {
     ECSHshrine_Data* objdata;
     DLL_IModgfx* modGfxDLL;
 
     objdata = self->data;
     self->srt.yaw = 0;
     objdata->testStartRadius = 10;
-    if (setup->testStartRadius > 0) {
-        objdata->testStartRadius = setup->testStartRadius >> 8;
+    if (setup->testStartRange > 0) {
+        objdata->testStartRadius = setup->testStartRange >> 8;
     }
     objdata->state = ECShrine_STATE_Waiting;
     objdata->seqValue = 0;

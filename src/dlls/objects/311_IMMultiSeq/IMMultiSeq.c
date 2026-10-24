@@ -1,4 +1,5 @@
 #include "game/objects/object.h"
+#include "game/objects/setups/91_IMMultiSeq.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
 #include "dll.h"
@@ -6,22 +7,8 @@
 #include "sys/objprint.h"
 #include "macros.h"
 
-#define IMMULTISEQ_GAMEBIT_COUNT 4
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebits1[IMMULTISEQ_GAMEBIT_COUNT];
-/*20*/ s16 gamebits2[IMMULTISEQ_GAMEBIT_COUNT];
-/*28*/ u8 yaw;
-/*29*/ u8 unk29;
-/*2A*/ u8 modelInstIdx;
-/*2B*/ u8 unk2B;
-/*2C*/ s8 objectSeqIndex[IMMULTISEQ_GAMEBIT_COUNT];
-/*30*/ u8 values;
-} IMMultiSeq_Setup;
-
-#define VALUE_GAMEBITS1(i) ((setup->values >> (i + 4)) & 1)
-#define VALUE_GAMEBITS2(i) ((setup->values >> (i    )) & 1)
+#define VALUE_GAMEBITS1(setup, i) (((setup)->values >> ((i) + 4)) & 1)
+#define VALUE_GAMEBITS2(setup, i) (((setup)->values >> ((i)    )) & 1)
 
 typedef struct {
     u8 setBitsCount; // count of gamebits with changed value
@@ -57,7 +44,7 @@ void IMMultiSeq_setup(Object *self, IMMultiSeq_Setup *setup, s32 arg2) {
     objAddObjectType(self, OBJTYPE_UseObj);
     // find index of first unset gamebit
     for (i = 0; i != IMMULTISEQ_GAMEBIT_COUNT; i++) {
-        if (mainGetBits(setup->gamebits1[i]) == VALUE_GAMEBITS1(i)) {
+        if (mainGetBits(setup->gamebits1[i]) == VALUE_GAMEBITS1(setup, i)) {
             break;
         }
     }
@@ -75,7 +62,7 @@ void IMMultiSeq_control(Object *self) {
     objdata = self->data;
     setup = (IMMultiSeq_Setup*)self->setup;
     if (objdata->flags & IMMULTISEQ_SET_GAMEBIT) {
-        value = VALUE_GAMEBITS1(objdata->setBitsCount) == 0;\
+        value = VALUE_GAMEBITS1(setup, objdata->setBitsCount) == 0;\
         gamebit = setup->gamebits1[objdata->setBitsCount];
         mainSetBits(gamebit, value);
         objdata->flags &= ~IMMULTISEQ_SET_GAMEBIT;
@@ -89,7 +76,7 @@ void IMMultiSeq_control(Object *self) {
         if (setup->gamebits2[objdata->setBitsCount] == -1) {
             objdata->setBitsCount = IMMULTISEQ_GAMEBIT_COUNT;
         } else {
-            value = (VALUE_GAMEBITS2(objdata->setBitsCount) == 0);
+            value = (VALUE_GAMEBITS2(setup, objdata->setBitsCount) == 0);
             if (mainGetBits(setup->gamebits2[objdata->setBitsCount]) == value) {
                 if (setup->objectSeqIndex[objdata->setBitsCount] != -1) {
                     gDLL_3_Animation->vtbl->start_obj_sequence(setup->objectSeqIndex[objdata->setBitsCount], self, -1);
@@ -103,7 +90,7 @@ void IMMultiSeq_control(Object *self) {
         if (setup->gamebits1[i] == -1)
             break;
         value = mainGetBits(setup->gamebits1[i]);
-        if (value != VALUE_GAMEBITS1(i)) {
+        if (value != VALUE_GAMEBITS1(setup, i)) {
             break;
         }
         objdata->setBitsCount--;
@@ -157,7 +144,7 @@ int IMMultiSeq_anim_callback(Object *self, UNUSED Object *animObj, AnimObj_Data 
     currentSetBitsCount = objdata->setBitsCount;
     nextSetBitsCount = currentSetBitsCount + 1;
     if (currentSetBitsCount != IMMULTISEQ_GAMEBIT_COUNT && nextSetBitsCount < IMMULTISEQ_GAMEBIT_COUNT && setup->gamebits2[nextSetBitsCount] != -1) {
-        value = VALUE_GAMEBITS2(nextSetBitsCount) == 0;
+        value = VALUE_GAMEBITS2(setup, nextSetBitsCount) == 0;
         if (mainGetBits(setup->gamebits2[nextSetBitsCount]) == value) {
             gDLL_3_Animation->vtbl->end_obj_sequence(self->seqSlot);
         }

@@ -7,6 +7,8 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "macros.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -22,15 +24,6 @@ typedef struct {
 /*8*/ s8 flags;
 /*9*/ s8 effectIndex; //used to switch between different effect presets during Ice Spell cooldown
 } DRLavaControl_Data;
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    s8 unused18;
-/*18*/    s8 dataIndex;
-/*1A*/    s16 freezeDuration;   //how long it takes to freeze with Ice Blast spell
-/*1C*/    s16 unused1C;
-/*1E*/    s16 gameBitFrozen;    //gamebit to set when fully cooled with Ice Blast
-} DRLavaControl_Setup;
 
 typedef enum {
     DRLavaControl_FLAG_1_Frozen = 1

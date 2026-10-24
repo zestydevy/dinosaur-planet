@@ -7,10 +7,6 @@
 #include "game/objects/object.h"
 
 typedef struct {
-    ObjSetup base;
-} SidekickToy_Setup;
-
-typedef struct {
     DLL27_Data collision;
     f32 collisionRadius;    //DLL27 parameter
     f32 timer;              //Toy will disappear 100s after being thrown

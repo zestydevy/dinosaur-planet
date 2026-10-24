@@ -1,6 +1,8 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "dll.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
@@ -24,7 +26,7 @@ void DIM_BossSpit_ctor(void* dll) { }
 void DIM_BossSpit_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIM_BossSpit_obj_Setup(Object* self, ObjSetup* setup, s32 reset) {
+void DIM_BossSpit_obj_Setup(Object* self, Projectile_Setup* setup, s32 reset) {
     DIM_BossSpit_Data* objdata;
 
     objdata = self->data;

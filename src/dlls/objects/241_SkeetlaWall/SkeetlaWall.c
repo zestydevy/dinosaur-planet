@@ -1,3 +1,4 @@
+#include "game/objects/setups/126_SkeetlaWall.h"
 #include "common.h"
 
 typedef struct {
@@ -9,17 +10,6 @@ typedef struct {
     u8 unk5;
     u8 unk6;
 } SkeetlaWall_Data;
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 unk1A;
-    u8 unk1B;
-    u8 unk1C;
-    u8 unk1D;
-    u8 unk1E;
-} SkeetlaWall_Setup;
 
 // offset: 0x0 | ctor
 void dll_241_ctor(void *dll) { }

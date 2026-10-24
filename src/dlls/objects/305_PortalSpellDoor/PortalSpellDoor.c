@@ -1,16 +1,8 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 hitsAnimatorID;      //animatorID of the HITS line(s) that should be removed when door is open
-    s16 scale;
-    s16 pitch;
-    s16 gamebitActivated;   //gamebitID set when door is open
-} PortalSpellDoor_Setup;
 
 typedef struct {
     Object* portalDoorAnim; //secondary object used during door transformation sequence

@@ -1,14 +1,8 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/103.h"
 #include "sys/objlib.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    u8 yaw;
-} CCCannonSwitch_Setup;
 
 typedef struct {
     u8 state;
@@ -29,7 +23,7 @@ void CCCannonSwitch_ctor(void* dll) { }
 void CCCannonSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CCCannonSwitch_obj_Setup(Object* self, CCCannonSwitch_Setup* objSetup, s32 reset) {
+void CCCannonSwitch_obj_Setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     CCCannonSwitch_Data* objData;
 
     objData = self->data;

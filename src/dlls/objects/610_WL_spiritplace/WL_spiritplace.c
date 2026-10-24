@@ -2,6 +2,7 @@
 #include "PR/gbi.h"
 #include "dll.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/dll.h"
@@ -26,16 +27,6 @@ typedef struct {
 /*0C*/ s16 mode;
 /*10*/ f32 unk10;
 } WL_spiritplace_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 mode;
-/*1A*/ s16 pitch;
-/*1C*/ s16 unk1C;
-/*1E*/ s16 bit1;
-/*20*/ s16 bit2;
-} WL_spiritplace_Setup;
 
 static int WL_spiritplace_func_5C4(Object *self, Object *arg1, AnimObj_Data *arg2, s8 arg3);
 

@@ -2,7 +2,6 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "dlls/objects/237_WG_PollenCannon.h"
-#include "dlls/objects/261_PollenFragment.h"
 
 #include "dlls/objects/260_Pollen.h"
 
@@ -13,7 +12,7 @@ void Pollen_ctor(void *dll) { }
 void Pollen_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void Pollen_setup(Object* self, ObjSetup* setup, s32 arg2) {
+void Pollen_setup(Object* self, BaddieProjectile_Setup* setup, s32 arg2) {
     Pollen_Data* objdata = self->data;
 
     objdata->unk0 = mathRnd(-M_180_DEGREES, M_180_DEGREES - 1);
@@ -36,13 +35,13 @@ void Pollen_setup(Object* self, ObjSetup* setup, s32 arg2) {
 
 // offset: 0x13C | func: 1
 static void Pollen_create_fragments(Object* self) {
-    PollenFragment_Setup* setup;
+    BaddieProjectile_Setup* setup;
     Object* fragment;
     s32 i;
 
     i = 6;
     while (i--) {
-        setup = objAllocSetup(sizeof(PollenFragment_Setup), OBJ_PollenFragment);
+        setup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_PollenFragment);
         setup->base.x = self->srt.transl.x;
         setup->base.y = self->srt.transl.y;
         setup->base.z = self->srt.transl.z;

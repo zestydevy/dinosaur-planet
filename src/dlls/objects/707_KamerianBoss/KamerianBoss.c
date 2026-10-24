@@ -1,10 +1,11 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
+#include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/118_FXEmit.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
 #include "sys/objanim.h"
@@ -44,12 +45,6 @@ typedef struct {
 /*48*/ Vec3f attachmentPositions[15];
 /*FC*/ f32 playerStartY;
 } KamerianBoss_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x2A - 0x18];
-/*2A*/ s8 yaw;
-} KamerianBoss_Setup;
 
 enum KDModAnims {
     KD_MODANIM_DETACH_LEFT_PIPE = 0,
@@ -127,10 +122,10 @@ static Object* KamerianBoss_create_fx_emit(Object *self, f32 x, f32 y, f32 z, s3
     setup->yawSpeed = 0;
     setup->activationRange = 0;
     setup->bank = 0;
-    setup->indexInBank = (s16) arg4;
+    setup->id = (s16) arg4;
     setup->fxRate = 1;
     setup->interval = 0;
-    fxEmit = objSetupObject((ObjSetup*)setup, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
+    fxEmit = objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, NULL);
     if (fxEmit != NULL) {
         fxEmit->unkC4 = self;
     }
@@ -162,7 +157,7 @@ static void KamerianBoss_create_projectile(Object *self, f32 x, f32 y, f32 z, s1
 }
 
 // offset: 0x320 | func: 4 | export: 0
-void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
+void KamerianBoss_setup(Object *self, Baddie_Setup *setup, s32 arg2) {
     s32 i;
     Texture *texture;
     s32 var_s0_2;
@@ -171,7 +166,7 @@ void KamerianBoss_setup(Object *self, KamerianBoss_Setup *setup, s32 arg2) {
 
     self->animCallback = NULL;
     objdata = self->data;
-    self->srt.yaw = setup->yaw << 8;
+    self->srt.yaw = setup->unk2A << 8;
     objAnimSet(self, KD_MODANIM_DETACH_RIGHT_PIPE, 0.0f, 0);
     bzero(objdata, sizeof(KamerianBoss_Data));
     objdata->health = 10;

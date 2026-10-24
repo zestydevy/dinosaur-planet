@@ -1,6 +1,7 @@
 #include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -10,12 +11,6 @@
 #include "dll.h"
 
 /** @file official filename: cfcrystal.c */
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw8;
-    s8 type;
-} CFCrystal_Setup;
 
 // size: 0x1C
 typedef struct {
@@ -67,10 +62,10 @@ void CFCrystal_ctor(void* dll) { }
 void CFCrystal_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFCrystal_obj_Setup(Object* self, CFCrystal_Setup* setup, s32 reset) {
+void CFCrystal_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     CFCrystal_Data* objdata = self->data;
     
-    self->srt.yaw = setup->yaw8 << 8;
+    self->srt.yaw = setup->yaw << 8;
     if (setup->type == 0) {
         objdata->unk168 = 0x28;
         objdata->unk169 = 0;
@@ -93,7 +88,7 @@ void CFCrystal_obj_Control(Object* self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/372_CFCrystal/CFCrystal_obj_Control.s")
 #else
 void CFCrystal_obj_Control(Object* self) {
-    CFCrystal_Setup* setup = (CFCrystal_Setup*)self->setup;
+    Generic_Setup* setup = (Generic_Setup*)self->setup;
 
     switch (setup->type) {
     case 0:

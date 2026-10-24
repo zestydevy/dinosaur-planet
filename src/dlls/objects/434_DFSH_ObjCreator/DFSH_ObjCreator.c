@@ -5,6 +5,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/57_ObjCreator.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/main.h"
@@ -28,15 +29,6 @@
 */
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebit; // Unused in this DLL, but the gamebit used to enable the ObjCreator in the `DFSH_Shrine` DLL is usually the same as the one here.
-/*1A*/ u16 _unk1A; // Unused in the DLL, but usually set to 0x1C - maybe intended as hit points?
-/*1C*/ u16 _unk1C;
-/*1E*/ s8 rotation; // yaw >> 8
-/*1F*/ s8 creatorIndex; // objCreator's index around the Krazoa symbol, used to determine which gamebit activates it and the parameters for the SharpClaw it spawns
-} DFSH_ObjCreator_Setup;
-
-typedef struct {
 /*0*/ s16 timer;
 /*2*/ s16 timerRate;
 } DFSH_ObjCreator_Data;
@@ -48,10 +40,10 @@ void DFSH_ObjCreator_ctor(void* dll) { }
 void DFSH_ObjCreator_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFSH_ObjCreator_obj_Setup(Object* self, DFSH_ObjCreator_Setup* setup, s32 reset) {
+void DFSH_ObjCreator_obj_Setup(Object* self, ObjCreator_Setup* setup, s32 reset) {
     DFSH_ObjCreator_Data* objdata = self->data;
 
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw8 << 8;
     self->unkE0 = 0;
     objdata->timer = 100;
     objdata->timerRate = 0;
@@ -61,7 +53,7 @@ void DFSH_ObjCreator_obj_Setup(Object* self, DFSH_ObjCreator_Setup* setup, s32 r
 
 // offset: 0x50 | func: 1 | export: 1
 void DFSH_ObjCreator_obj_Control(Object* self) {
-    DFSH_ObjCreator_Setup* setup = (DFSH_ObjCreator_Setup*)self->setup;
+    ObjCreator_Setup* setup = (ObjCreator_Setup*)self->setup;
     DFSH_ObjCreator_Data* objdata = self->data;
     Baddie_Setup* sharpClawSetup;
     Object* sharpClaw;

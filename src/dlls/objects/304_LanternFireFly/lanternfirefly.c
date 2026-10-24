@@ -3,6 +3,8 @@
 #include "dlls/objects/304_LanternFireFly.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "macros.h"
+#include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
 #include "sys/objtype.h"
 #include "sys/curves.h"

@@ -1,5 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/vi.h"
 #include "sys/gfx/model.h"
@@ -14,16 +15,6 @@ typedef struct {
 /*2*/ u8 state;
 /*3*/ u8 flags;
 } WCApertureSymbol_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-/*19*/ s8 modelIdx;
-/*1A*/ s16 opacityThreshold;
-/*1C*/ u16 unk1C;
-/*1E*/ s16 gamebitViewed;
-/*20*/ s16 gamebitEnabled;
-} WCApertureSymbol_Setup;
 
 typedef enum {
     STATE_Inactive,
@@ -62,13 +53,13 @@ void WCApertureSymbol_setup(Object* self, WCApertureSymbol_Setup* setup, s32 res
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = WCApertureSymbol_animCallback;
 
-    self->modelInstIdx = setup->modelIdx;
+    self->modelInstIdx = setup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = WCApertureSymbol_MODELIDX_Sun;
     }
 
-    if (mainGetBits(setup->gamebitEnabled)) {
-        if (mainGetBits(setup->gamebitViewed)) {
+    if (mainGetBits(setup->bitEnabled)) {
+        if (mainGetBits(setup->bitViewed)) {
             objdata->state = STATE_Viewed;
         } else {
             objdata->state = STATE_Waiting_for_View;
@@ -104,7 +95,7 @@ void WCApertureSymbol_control(Object* self) {
             if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == VIEWING_TERRAIN_TYPE) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 200.0f)) {
                 gDLL_7_Newday->vtbl->func4(&time);
 
-                if (setup->modelIdx == WCApertureSymbol_MODELIDX_Sun) {
+                if (setup->type == WCApertureSymbol_MODELIDX_Sun) {
                     objdata->targetOpacity = WCApertureSymbol_getTargetOpacity(self, objdata, 
                         PEAK_SUN - VIEWING_DURATION_SUN/2, 
                         PEAK_SUN + VIEWING_DURATION_SUN/2, 
@@ -119,7 +110,7 @@ void WCApertureSymbol_control(Object* self) {
                 }
 
                 if (self->opacity > setup->opacityThreshold) {
-                    mainSetBits(setup->gamebitViewed, TRUE);
+                    mainSetBits(setup->bitViewed, TRUE);
                     objdata->state = STATE_Viewed;
                     objdata->targetOpacity = OBJECT_OPACITY_MAX;
                 }
@@ -167,7 +158,7 @@ void WCApertureSymbol_free(Object* self, s32 onlySelf) { }
 // offset: 0x3F4 | func: 5 | export: 5
 u32 WCApertureSymbol_get_model_flags(Object* self) {
     WCApertureSymbol_Setup* setup = (WCApertureSymbol_Setup*)self->setup;
-    s8 modelIdx = setup->modelIdx;
+    s8 modelIdx = setup->type;
 
     if (modelIdx >= self->def->numModels) {
         modelIdx = 0;

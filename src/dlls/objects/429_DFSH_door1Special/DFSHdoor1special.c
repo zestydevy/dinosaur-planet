@@ -2,6 +2,7 @@
 #include "dlls/objects/307_SeqDoor.h"
 #include "dlls/objects/429_DFSH_Door1Special.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/87_SeqDoor.h"
 
 static int DFSH_Door1Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackResult);
 
@@ -12,7 +13,7 @@ void DFSH_Door1Special_ctor(void* dll) { }
 void DFSH_Door1Special_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFSH_Door1Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup, s32 reset) {
+void DFSH_Door1Special_obj_Setup(Object* self, SeqDoor_Setup* objSetup, s32 reset) {
     DFSH_DoorSpecial_Data* objData;
     TextureAnimator* texAnim;
 
@@ -20,7 +21,7 @@ void DFSH_Door1Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup,
     
     //Restore texture glow state
     {
-        if (mainGetBits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitOpenB)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_2_Pulse;
         } else {
             objData->glowState = DFSH_DoorSpecial_GLOW_0_Unlit;
@@ -53,8 +54,8 @@ void DFSH_Door1Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup,
     }
 
     //Restore state by gamebit
-    if (objSetup->gamebitDoorState != NO_GAMEBIT) {
-        objData->state = mainGetBits(objSetup->gamebitDoorState);
+    if (objSetup->gamebitRestoreState != NO_GAMEBIT) {
+        objData->state = mainGetBits(objSetup->gamebitRestoreState);
     } else {
         objData->state = DFSH_Door1Special_STATE_0_Closed;
     }
@@ -65,27 +66,27 @@ void DFSH_Door1Special_obj_Setup(Object* self, DFSH_DoorSpecial_Setup* objSetup,
 // offset: 0x1B0 | func: 1 | export: 1
 void DFSH_Door1Special_obj_Control(Object* self) {
     DFSH_DoorSpecial_Data* objData;
-    DFSH_DoorSpecial_Setup* objSetup;
+    SeqDoor_Setup* objSetup;
     s32 enabledActors;
 
     objData = self->data;
-    objSetup = (DFSH_DoorSpecial_Setup*)self->setup;
+    objSetup = (SeqDoor_Setup*)self->setup;
     
     if (objData->runControl == FALSE) {
         return;
     }
     
     //Skip to end of door-opening sequence if needed
-    if (objSetup->seqPreemptTime && objData->state) {
-        enabledActors = objSetup->enabledActors;
-        gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->seqPreemptTime);
+    if (objSetup->preemptTime && objData->state) {
+        enabledActors = objSetup->preemptEnabledActors;
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->preemptTime);
     } else {
         enabledActors = -1;    
     }
 
     //Play door-opening sequence
-    if (objSetup->seqIndex != -1) {
-        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->seqIndex, self, enabledActors);
+    if (objSetup->objSeqIdx != -1) {
+        gDLL_3_Animation->vtbl->start_obj_sequence(objSetup->objSeqIdx, self, enabledActors);
     }
     
     objData->runControl = FALSE;
@@ -117,18 +118,18 @@ u32 DFSH_Door1Special_obj_GetDataSize(Object* self, u32 offsetAddr) {
 // offset: 0x324 | func: 7
 int DFSH_Door1Special_animCallback(Object* self, Object* overrideObj, AnimObj_Data* animData, s8 prevCallbackResult) {
     DFSH_DoorSpecial_Data* objData;
-    DFSH_DoorSpecial_Setup* objSetup;
+    SeqDoor_Setup* objSetup;
     TextureAnimator* texAnim;
     s32 i;
     s32 frame;
 
     objData = self->data;
-    objSetup = (DFSH_DoorSpecial_Setup*)self->setup;
+    objSetup = (SeqDoor_Setup*)self->setup;
     
     //Texture glow State Machine
     switch (objData->glowState) {
     case DFSH_DoorSpecial_GLOW_0_Unlit:
-        if (mainGetBits(objSetup->gamebitLit)) {
+        if (mainGetBits(objSetup->gamebitOpenB)) {
             objData->glowState = DFSH_DoorSpecial_GLOW_1_Fade_In;
         }
         break;
@@ -157,10 +158,10 @@ int DFSH_Door1Special_animCallback(Object* self, Object* overrideObj, AnimObj_Da
     
     //Door opening State Machine (very similar to DLL 307 "SeqDoor")
     if (objData->state == DFSH_Door1Special_STATE_0_Closed) {
-        if (mainGetBits(objSetup->gamebitOpened)) {
+        if (mainGetBits(objSetup->gamebitOpenA)) {
             objData->state = DFSH_Door1Special_STATE_2_Opening;
         }
-    } else if ((objData->state == DFSH_Door1Special_STATE_1_Open) && (mainGetBits(objSetup->gamebitOpened) == FALSE)) {
+    } else if ((objData->state == DFSH_Door1Special_STATE_1_Open) && (mainGetBits(objSetup->gamebitOpenA) == FALSE)) {
         objData->state = DFSH_Door1Special_STATE_3_Closing;
     }
     
@@ -168,8 +169,8 @@ int DFSH_Door1Special_animCallback(Object* self, Object* overrideObj, AnimObj_Da
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == SeqDoor_SEQCMD_2_Finished_Opening) {
                 objData->state = DFSH_Door1Special_STATE_1_Open;
-                if (objSetup->gamebitDoorState != NO_GAMEBIT) {
-                    mainSetBits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_1_Open);
+                if (objSetup->gamebitRestoreState != NO_GAMEBIT) {
+                    mainSetBits(objSetup->gamebitRestoreState, DFSH_Door1Special_STATE_1_Open);
                 }
             }
         }
@@ -177,8 +178,8 @@ int DFSH_Door1Special_animCallback(Object* self, Object* overrideObj, AnimObj_Da
         for (i = 0; i < animData->messageCount; i++) {
             if (animData->messages[i] == SeqDoor_SEQCMD_1_Finished_Closing) {
                 objData->state = DFSH_Door1Special_STATE_0_Closed;
-                if (objSetup->gamebitDoorState != 1) { //@bug?: should this be -1 (NO_GAMEBIT)?
-                    mainSetBits(objSetup->gamebitDoorState, DFSH_Door1Special_STATE_0_Closed);
+                if (objSetup->gamebitRestoreState != 1) { //@bug?: should this be -1 (NO_GAMEBIT)?
+                    mainSetBits(objSetup->gamebitRestoreState, DFSH_Door1Special_STATE_0_Closed);
                 }
             }
         }

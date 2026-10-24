@@ -1,12 +1,5 @@
+#include "game/objects/setups/103.h"
 #include "common.h"
-
-typedef struct {
-ObjSetup base;
-/*0x18*/ u8  unk18;
-/*0x19*/ u8  unk19;
-/*0x1A*/ u8  unk1A;
-/*0x1C*/ f32 unk1C;
-} Flowers_Setup;
 
 // offset: 0x0 | ctor
 void dll_513_ctor(void *dll) { }
@@ -15,11 +8,11 @@ void dll_513_ctor(void *dll) { }
 void dll_513_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_513_setup(Object* self, Flowers_Setup* setup, s32 arg2) {
-    self->srt.yaw = setup->unk1A << 8;
-    self->srt.pitch = setup->unk19 << 8;
-    self->srt.roll = setup->unk18 << 8;
-    self->srt.scale = self->def->scale + (setup->unk1C * 0.15f);
+void dll_513_setup(Object* self, Ctrl103_Setup* setup, s32 arg2) {
+    self->srt.yaw = setup->yaw << 8;
+    self->srt.pitch = setup->pitch << 8;
+    self->srt.roll = setup->roll << 8;
+    self->srt.scale = self->def->scale + (setup->size * 0.15f);
 }
 
 // offset: 0x74 | func: 1 | export: 1

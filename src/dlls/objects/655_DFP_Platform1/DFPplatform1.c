@@ -1,15 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;
-    s16 roll;
-    s16 unk1C;
-    s16 gamebitMoveZ;
-    s16 gamebitMoveY;
-} DFP_Platform1_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s16 gamebitMoveZ;

@@ -4,6 +4,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -28,7 +29,7 @@ void SBCageKyte_ctor(void *dll) { }
 void SBCageKyte_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SBCageKyte_setup(Object* self, s32 arg1, s32 arg2) {
+void SBCageKyte_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     self->animCallback = SBCageKyte_anim_callback;
 }
 

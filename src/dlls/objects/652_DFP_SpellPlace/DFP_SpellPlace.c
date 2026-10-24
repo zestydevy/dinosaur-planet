@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -10,15 +11,6 @@
 #include "sys/objects.h"
 #include "types.h"
 #include "game/gamebits.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-} DFP_SpellPlace_Setup;
 
 typedef struct {
     s16 unk0;
@@ -37,14 +29,14 @@ void dll_652_ctor(void *dll) { }
 void dll_652_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_652_setup(Object* self, DFP_SpellPlace_Setup* setup, s32 arg2) {
+void dll_652_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     DLL652_Data* objdata;
 
     objdata = self->data;
     self->srt.yaw = setup->yaw << 8;
     self->animCallback = dll_652_func_45C;
-    objdata->unk0 = setup->unk1E;
-    objdata->unk2 = setup->unk20;
+    objdata->unk0 = setup->bitA;
+    objdata->unk2 = setup->bitB;
     if (mainGetBits(objdata->unk2) != 0 && mainGetBits(objdata->unk0) != 0) {
         objdata->unk4 = 1;
     } else {

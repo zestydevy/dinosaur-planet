@@ -1,19 +1,10 @@
 #include "common.h"
-#include "dlls/objects/332_FXEmit.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/118_FXEmit.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;               //Stored to objData->unkF during setup, but otherwise unused
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitUnused;
-    s16 gamebitSpin;        //Puzzle wheel rotates when this gamebit is set
-} DFP_RotatePuzzle_Setup;
 
 typedef struct {
     f32 initialY;           //Stores the wheel's initial Y during setup, but otherwise unused
@@ -278,7 +269,7 @@ s32 DFP_RotatePuzzle_createFlameFXEmit(Object* self, u8 index) {
     fxSetup->yawSpeed = 0;
     fxSetup->activationRange = 0;
     fxSetup->bank = 1;
-    fxSetup->indexInBank = 17;
+    fxSetup->id = 17;
     fxSetup->fxRate = 1;
     fxSetup->interval = 0xFF;
     sFlameFXEmits[index] = objSetupObject(&fxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);

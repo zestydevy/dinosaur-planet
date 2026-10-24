@@ -1,11 +1,11 @@
 #include "common.h"
+#include "game/objects/setups/41_InvHit.h"
 #include "sys/lfx.h"
 #include "sys/segment_13D0.h"
 #include "sys/lighting.h"
 #include "sys/newshadows.h"
 #include "sys/objects.h"
 #include "sys/gfx/modgfx.h"
-#include "dlls/objects/276_InvHit.h"
 #include "dlls/engine/14_modgfx.h"
 #include "macros.h"
 
@@ -479,7 +479,7 @@ void modgfx_Func2(s32 arg0, s32 arg1, s32 arg2) {
                                 spCC.transl.y = bss_0[sp108]->unkC.transl.y + spCC.transl.y;
                                 spCC.transl.z = bss_0[sp108]->unkC.transl.z + spCC.transl.z;
                             }
-                            temp_v0_4 = objAllocSetup(0x20, 0x66);
+                            temp_v0_4 = objAllocSetup(sizeof(InvHit_Setup), OBJ_InvHit);
                             temp_v0_4->unk19 = 0x10;
                             temp_v0_4->unk18 = 0xA;
                             temp_v0_4->unk1A = 1;

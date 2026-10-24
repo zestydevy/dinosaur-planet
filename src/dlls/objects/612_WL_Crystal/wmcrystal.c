@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/gfx/projgfx.h"
 #include "sys/map.h"
@@ -8,14 +9,6 @@
 #include "sys/lighting.h"
 
 #include "prevent_bss_reordering.h"
-
-typedef struct {
-/*00*/    ObjSetup base;
-/*18*/    s8 yaw;
-/*19*/    s8 modelIdx;
-/*1A*/    s16 unused1A;
-/*1C*/    s16 scale;
-} WL_Crystal_Setup;
 
 typedef struct {
 /*00*/    s16 unused0;

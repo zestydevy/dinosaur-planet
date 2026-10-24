@@ -1,15 +1,7 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 modelIdx;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitFinished;
-} WCTempleDial_Setup;
 
 typedef struct {
     f32 rotateSpeed;
@@ -67,7 +59,7 @@ void WCTempleDial_ctor(void* dll) { }
 void WCTempleDial_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCTempleDial_obj_Setup(Object* self, WCTempleDial_Setup* objSetup, s32 reset) {
+void WCTempleDial_obj_Setup(Object* self, WCDial_Setup* objSetup, s32 reset) {
     WCTempleDial_Data* objData;
     s32 i;
 
@@ -75,7 +67,7 @@ void WCTempleDial_obj_Setup(Object* self, WCTempleDial_Setup* objSetup, s32 rese
     self->srt.yaw = objSetup->yaw << 8;
     
     //Set model
-    self->modelInstIdx = objSetup->modelIdx;
+    self->modelInstIdx = objSetup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = WCTempleDial_MODEL_Sun;
     }
@@ -122,10 +114,10 @@ void WCTempleDial_obj_Control(Object* self) {
     s32 j;
     s32 wrongSwitchPressed;
     WCTempleDial_Data* objData;
-    WCTempleDial_Setup* objSetup;
+    WCDial_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (WCTempleDial_Setup*)self->setup;
+    objSetup = (WCDial_Setup*)self->setup;
     
     //When the puzzle's finished, update the sun/moon icons and return early
     if (objData->dialFlags & WCTempleDial_FLAG_Stopped) {
@@ -203,12 +195,12 @@ void WCTempleDial_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x4D4 | func: 5 | export: 5
 u32 WCTempleDial_obj_GetModelFlags(Object* self) {
-    WCTempleDial_Setup* objSetup;
+    WCDial_Setup* objSetup;
     s8 modelIdx;
 
-    objSetup = (WCTempleDial_Setup*)self->setup;
+    objSetup = (WCDial_Setup*)self->setup;
     
-    modelIdx = objSetup->modelIdx;
+    modelIdx = objSetup->type;
     if (modelIdx >= self->def->numModels) {
         modelIdx = 0;
     }
