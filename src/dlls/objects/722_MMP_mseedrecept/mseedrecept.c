@@ -8,6 +8,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -16,15 +17,6 @@
 #include "sys/objtype.h"
 #include "sys/rand.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    u16 kyteFlightGroup;
-    s16 unk1C;
-    s8 unk1E;
-    u8 yaw;
-} MoonSeedReceptacle_Setup;
 
 typedef struct {
     u8 state;
@@ -69,7 +61,7 @@ void MoonSeedReceptacle_ctor(void *dll) { }
 void MoonSeedReceptacle_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void MoonSeedReceptacle_obj_Setup(Object* self, MoonSeedReceptacle_Setup* setup, s32 reset) {
+void MoonSeedReceptacle_obj_Setup(Object* self, KyteTarget_Setup* setup, s32 reset) {
     MoonSeedReceptacle_Data* objData;
 
     objData = self->data;
@@ -110,7 +102,7 @@ void MoonSeedReceptacle_obj_Setup(Object* self, MoonSeedReceptacle_Setup* setup,
 // offset: 0x118 | func: 1 | export: 1
 void MoonSeedReceptacle_obj_Control(Object* self) {
     MoonSeedReceptacle_Data *objData;
-    MoonSeedReceptacle_Setup *objSetup;
+    KyteTarget_Setup *objSetup;
     Object *kyte;
     SRT particleTrans;
     f32 time;
@@ -118,7 +110,7 @@ void MoonSeedReceptacle_obj_Control(Object* self) {
     s32 count;
         
     objData = self->data;
-    objSetup = (MoonSeedReceptacle_Setup *) self->setup;
+    objSetup = (KyteTarget_Setup *) self->setup;
     
     if (objData->flags & MoonSeedReceptacle_FLAG_1_Sequence_Played){
         objData->state = MoonSeedReceptacle_STATE_2_Seed_Planted;
@@ -213,7 +205,7 @@ void MoonSeedReceptacle_obj_Control(Object* self) {
 
                 //Check if Flame command was used
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)){
-                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightGroup);
+                    mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
                 }
             }
             break;
@@ -335,11 +327,11 @@ u32 MoonSeedReceptacle_Func_D30(Object *self){
 // offset: 0xD40 | func: 11
 void MoonSeedReceptacle_grow(Object* self) {
     MoonSeedReceptacle_Data* objData;
-    MoonSeedReceptacle_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     CurveSetup* curveSetup;
 
     objData = self->data;
-    objSetup = (MoonSeedReceptacle_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     
     if (mainGetBits(objData->gamebitPlanted) == FALSE) {
         return;
@@ -351,7 +343,7 @@ void MoonSeedReceptacle_grow(Object* self) {
     objData->state = MoonSeedReceptacle_STATE_4_Grown;
     self->srt.transl.y = objSetup->base.y;
 
-    curveSetup = gDLL_25->vtbl->func_2BC4(self, objSetup->kyteFlightGroup);
+    curveSetup = gDLL_25->vtbl->func_2BC4(self, objSetup->flightGroup);
     objData->curveSetup = curveSetup;
     if (curveSetup->type22.usedBit != NO_GAMEBIT) {
         mainSetBits(curveSetup->type22.usedBit, TRUE);

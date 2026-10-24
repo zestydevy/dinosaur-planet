@@ -11,21 +11,12 @@
 #include "sys/objprint.h"
 #include "sys/main.h"
 
+// gamebitHasPlayed: egg/diamond bit - 0x3C5, 0x3C6 and 0x3C8 (should be 0x3C7 according to DBlevelControl?)
+// gamebitPlay: picked up egg bit? always 0x3C4 - checked in DBlevelControl
+
 typedef struct {
     u8 flags;
 } DBPlaceHolder_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 gamebit1; // egg/diamond bit - 0x3C5, 0x3C6 and 0x3C8 (should be 0x3C7 according to DBlevelControl?)
-/*1A*/ s16 gamebit2; // picked up egg bit? always 0x3C4 - checked in DBlevelControl
-/*1C*/ u8 yaw;
-/*1D*/ u8 flags;
-/*1E*/ s8 objectSeqIndex;
-/*1F*/ s8 stealable;
-/*20*/ s16 preemptTime;
-/*22*/ u16 preemptEnabledActorsConfig;
-} DBPlaceHolder_Setup;
 
 typedef enum {
     DBPlaceHolder_FLAG_0_None = 0,

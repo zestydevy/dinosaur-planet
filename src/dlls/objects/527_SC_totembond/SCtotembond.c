@@ -7,6 +7,7 @@
 #include "dlls/objects/516_SC_lightfoot.h"
 #include "dlls/objects/519_SC_levelcontrol.h"
 #include "dlls/objects/725_SC_flamegameflame.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
 
@@ -171,8 +172,8 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
     s32 angle;
     s8 lfIndex;
     s8 i;
-    SCFlameGameFlame_Setup* setupFlame;
-    SCLightFoot_Setup* setupLF;
+    KyteTarget_Setup* setupFlame;
+    Baddie_Setup* setupLF;
     Generic_Setup* objSetup;
 
     //Create 4 LightFoot and 4 Flame targets
@@ -180,7 +181,7 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         objSetup = (Generic_Setup*)self->setup;
         angle = i << 0xE; //degrees: 0, 90, 180, 270
         
-        setupLF = objAllocSetup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);
+        setupLF = objAllocSetup(sizeof(Baddie_Setup), OBJ_SC_lightfootSpe);
         setupLF->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupLF->base.y = self->srt.transl.y;
         setupLF->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
@@ -192,10 +193,10 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupLF->unk1A = 0x64C;
         setupLF->unk1C = dFinishedGamebits[lfIndex];
         setupLF->unk30 = dActivateGamebits[lfIndex];
-        setupLF->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
-        setupLF->unk32 = 1;
+        setupLF->unk2A = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
+        setupLF->quarterHitpoints = 1;
         
-        setupFlame = objAllocSetup(sizeof(SCFlameGameFlame_Setup), OBJ_SC_flamegamefla);
+        setupFlame = objAllocSetup(sizeof(KyteTarget_Setup), OBJ_SC_flamegamefla);
         setupFlame->base.x = (mathSinfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.x;
         setupFlame->base.y = self->srt.transl.y;
         setupFlame->base.z = (mathCosfInterp(self->srt.yaw + angle) * lightFootRadius) + self->srt.transl.z;
@@ -203,12 +204,12 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
         setupFlame->base.byte5 = objSetup->base.byte5;
         setupFlame->base.byte6 = objSetup->base.byte6;
         setupFlame->base.fadeDistance = objSetup->base.fadeDistance;
-        setupFlame->flameRange = 75;
-        setupFlame->unk19 = 0;
-        setupFlame->kyteFlightCurveID = dKyteFlightCurveIDs[lfIndex];
-        setupFlame->unk1C = 5;
+        setupFlame->commandRange = 75;
+        setupFlame->redFood = 0;
+        setupFlame->flightGroup = dKyteFlightCurveIDs[lfIndex];
+        setupFlame->setting = 5;
         setupFlame->unk1D = 7;
-        setupFlame->unk1E = 7;
+        setupFlame->distCheckMode = 7;
         setupFlame->yaw = (self->srt.yaw + angle + M_180_DEGREES) >> 8;
         
         objSetupObject(&setupLF->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, -1, -1, 0);

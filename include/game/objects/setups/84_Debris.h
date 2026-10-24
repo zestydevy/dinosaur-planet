@@ -1,10 +1,9 @@
-#ifndef _DLLS_358_H
-#define _DLLS_358_H
+#ifndef _SYS_GAME_OBJECTS_SETUPS_DEBRIS_H
+#define _SYS_GAME_OBJECTS_SETUPS_DEBRIS_H
 
-#include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "types.h"
 
+// ctrl: 84 | size: 0x48
 typedef struct {
     ObjSetup base;
     s8 unk18;
@@ -31,7 +30,6 @@ typedef struct {
     s16 unk42; //x
     s16 unk44; //y
     s16 unk46; //z
-} Debris_Setup; //0x48
+} Debris_Setup;
 
-#endif // _DLLS_358_H
-
+#endif

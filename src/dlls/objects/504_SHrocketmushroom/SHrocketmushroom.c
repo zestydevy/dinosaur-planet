@@ -4,10 +4,10 @@
 #include "game/objects/setups/45_RocketMushroom.h"
 #include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/83_ExplodeAnimator.h"
+#include "game/objects/setups/84_Debris.h"
 #include "sys/objtype.h"
 #include "dlls/engine/17_partfx.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
-#include "dlls/objects/358_debris.h"
 #include "dlls/objects/505_SHspore.h"
 
 typedef struct {

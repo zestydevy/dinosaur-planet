@@ -21,7 +21,6 @@
 
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/297_scarab.h"
-#include "dlls/objects/615_crawler.h"
 
 typedef struct{
 /*00*/ s32 unk0;                //timer
@@ -577,7 +576,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
         switch (type) {
         case SmallBasket_ITEM_Scorpion:
             scorpionSetup = (Scorpion_Setup*)objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
-            scorpionSetup->unk18 = mathRnd(-0x7F, 0x7E);
+            scorpionSetup->yaw = mathRnd(-0x7F, 0x7E);
             scorpionSetup->base.x = mathRnd(-10, 10) + self->srt.transl.x;
             scorpionSetup->base.y = self->srt.transl.y;
             scorpionSetup->base.z = mathRnd(-10, 10) + self->srt.transl.z;

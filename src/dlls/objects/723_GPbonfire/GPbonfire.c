@@ -9,6 +9,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
@@ -38,15 +39,6 @@ typedef struct {
 /*23*/ u8 updateFireEffect;         //replaces the modgfx fire effect when its size changes
 /*24*/ u8 callbackBool;             //Boolean associated with the cutscene callback function
 } GPBonfire_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 interactionDistance;
-/*1A*/ u16 kyteCurveID;
-/*1C*/ s16 unused1C;
-/*1E*/ s8 unused1E;
-/*1F*/ u8 yaw;
-} GPBonfire_Setup;
 
 enum GPBonfireStates{
     STATE_0_INITIALISE = 0,
@@ -78,7 +70,7 @@ void GPbonfire_ctor(void* dll){ }
 void GPbonfire_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPbonfire_obj_Setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
+void GPbonfire_obj_Setup(Object* self, KyteTarget_Setup* setup, s32 arg2) {
     GPBonfire_Data* objdata;
 
     objdata = self->data;
@@ -100,7 +92,7 @@ void GPbonfire_obj_Setup(Object* self, GPBonfire_Setup* setup, s32 arg2) {
 // offset: 0xB8 | func: 1 | export: 1
 void GPbonfire_obj_Control(Object* self) {
     GPBonfire_Data* objdata;
-    GPBonfire_Setup* setup;
+    KyteTarget_Setup* setup;
     Object* sidekick;
     Object* player;
     f32 distanceToTumbleweed;
@@ -112,10 +104,10 @@ void GPbonfire_obj_Control(Object* self) {
     Object** tumbleweeds;
 
     objdata = self->data;
-    setup = (GPBonfire_Setup*)self->setup;
+    setup = (KyteTarget_Setup*)self->setup;
     player = objGetPlayer();
 
-    playerIsNearby = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= setup->interactionDistance * setup->interactionDistance;    
+    playerIsNearby = vec3DistanceXZSquared(&player->globalPosition, &self->globalPosition) <= setup->commandRange * setup->commandRange;    
 
     objdata->currentState &= ~2;
     if (objdata->currentState & 1) {
@@ -158,7 +150,7 @@ void GPbonfire_obj_Control(Object* self) {
             if (sidekick && playerIsNearby) {
                 ((DLL_ISidekick*)sidekick->dll)->vtbl->EnableCommand(sidekick, Sidekick_Command_INDEX_4_Flame);
                 if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-                    mainSetBits(BIT_Kyte_Flight_Curve, setup->kyteCurveID);
+                    mainSetBits(BIT_Kyte_Flight_Curve, setup->flightGroup);
                 }
             }
             break;
@@ -315,12 +307,12 @@ s32 GPbonfire_KyteTarget_Func_A38(void){
 // offset: 0xA44 | func: 11
 static void GPbonfire_func_A44(Object* self) {
     GPBonfire_Data* objdata;
-    GPBonfire_Setup* setup;
+    KyteTarget_Setup* setup;
     void** dll;
     CurveSetup* curves;
 
     objdata = self->data;
-    setup = (GPBonfire_Setup*)self->setup;
+    setup = (KyteTarget_Setup*)self->setup;
 
     if (!mainGetBits(objdata->gameBitKindlingPlaced)) {
         return;
@@ -345,7 +337,7 @@ static void GPbonfire_func_A44(Object* self) {
     objdata->stateIndex = STATE_4_ADDING_TUMBLEWEEDS;
 
     //Set flag based on Kyte's curve motion
-    curves = gDLL_25->vtbl->func_2BC4(self, setup->kyteCurveID);
+    curves = gDLL_25->vtbl->func_2BC4(self, setup->flightGroup);
     objdata->curves = curves;
     if (curves->type22.usedBit != -1) {
         mainSetBits(curves->type22.usedBit, 1);

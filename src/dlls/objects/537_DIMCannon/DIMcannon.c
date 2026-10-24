@@ -40,18 +40,6 @@ typedef enum {
     DIMCannon_STATE_6_Retreated_into_Silo                       //Sets a silo-exiting gamebit when the target backs off
 } DIMCannon_States;
 
-/* ObjSetup for DIMCannonBall */
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;
-    s16 velocityY;
-    s16 velocityX;
-    s16 unk1E;
-    s16 unk20;
-    s16 unk22;
-} DIMCannonBall_Setup;
-
 /* ObjData for DIMCannonBall */
 typedef struct {
     u8 createModGfx;

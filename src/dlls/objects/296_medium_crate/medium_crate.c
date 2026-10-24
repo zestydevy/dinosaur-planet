@@ -17,7 +17,6 @@
 #include "types.h"
 
 #include "dlls/objects/297_scarab.h"
-#include "dlls/objects/615_crawler.h"
 
 typedef struct {
 /*00*/ s32 unk0;
@@ -321,7 +320,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
         switch (objdata->unk15) {
             case 0: {
                 scorpionSetup = objAllocSetup(sizeof(Scorpion_Setup), OBJ_Scorpion);
-                scorpionSetup->unk18 = mathRnd(-127, 126);
+                scorpionSetup->yaw = mathRnd(-127, 126);
                 scorpionSetup->base.x = mathRnd(-10, 10) + self->srt.transl.x;
                 scorpionSetup->base.y = self->srt.transl.y;
                 scorpionSetup->base.z = mathRnd(-10, 10) + self->srt.transl.z;

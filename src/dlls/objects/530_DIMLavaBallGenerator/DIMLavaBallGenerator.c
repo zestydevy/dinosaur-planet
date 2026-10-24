@@ -1,5 +1,6 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/73_DIMLavaBallGenerator.h"
 #include "sys/main.h"
 #include "dll.h"
@@ -14,15 +15,6 @@ DLL_INTERFACE(DLL_529_DIMLavaBall) {
     /*7*/ void (*func7)(Object*, u8, s32);
     /*8*/ s32 (*func8)(Object*);
 };
-
-typedef struct {
-    ObjSetup base;
-    u8 unk18;
-    u8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    u8 unk1E[0x24 - 0x1E];
-} DIMLavaBall_Setup;
 
 typedef struct {
     LightAction *lfxStructs[2];

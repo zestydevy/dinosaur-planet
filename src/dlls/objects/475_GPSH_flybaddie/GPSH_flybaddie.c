@@ -5,6 +5,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/38_Projectile.h"
 #include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
@@ -203,11 +204,6 @@ static void GPSH_flybaddie_func_654(Object* self) {
     objdata->zCurve[3] = (sp48[2] + objdata->unk40);
 }
 
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[12];
-} UnkObjSetup;
-
 // offset: 0x7F8 | func: 8
 static void GPSH_flybaddie_func_7F8(Object* self) {
     ObjSetup* objsetup;
@@ -220,8 +216,9 @@ static void GPSH_flybaddie_func_7F8(Object* self) {
     self->globalPosition.x = self->srt.transl.x;
     self->globalPosition.y = self->srt.transl.y;
     self->globalPosition.z = self->srt.transl.z;
-    objsetup = mmAlloc(sizeof(UnkObjSetup), ALLOC_TAG_OBJECTS_COL, NULL);
-    bzero(objsetup, sizeof(UnkObjSetup));
+    // This is almost certainly supposed to be a WGSH_projball
+    objsetup = mmAlloc(sizeof(Projectile_Setup), ALLOC_TAG_OBJECTS_COL, NULL);
+    bzero(objsetup, sizeof(Projectile_Setup));
     // @bug: ? Doesn't set objId (ends up zero, which is OBJ_Sabre)
     objsetup->loadFlags = OBJSETUP_LOAD_MANUAL;
     objsetup->fadeFlags = OBJSETUP_FADE_MANUAL;

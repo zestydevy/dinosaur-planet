@@ -1,5 +1,6 @@
 #include "common.h"
 
+// unknown controlNo
 typedef struct {
     ObjSetup base;
     u8 modelInstIdx;

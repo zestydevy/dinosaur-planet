@@ -1,6 +1,7 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/objexpr.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
@@ -23,23 +24,6 @@ typedef struct {
     s32 pad; 
     u8 _unk68[0x94 - 0x68];
 } CFPrisonUncle_Data;
-
-typedef struct{
-    ObjSetup base;
-    s16 _unk18;
-    s8 unk1A;
-    s8 unk1B;
-    s16 unk1C;
-    s16 _unk1E;
-    s16 _unk20;
-    s16 _unk22;
-    s16 unk24;
-    s8 _unk26;
-    s8 unk27;
-    s16 _unk28;
-    s16 _unk2A;
-    s16 unk2C;
-} BoneDust_Setup;
 
 /*0x0*/ static s16 dCloudRunnerChirps[] = {
     SOUND_C2_CloudRunner_Chirp_Double, 
@@ -273,7 +257,7 @@ u32 CFPrisonUncle_obj_GetDataSize(Object *self, u32 offsetAddr) {
 // offset: 0x8F4 | func: 7
 int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue) {
     CFPrisonUncle_Data* objData;
-    BoneDust_Setup* dustSetup;
+    Collectable_Setup* dustSetup;
 
     objData = self->data;
 
@@ -284,19 +268,19 @@ int CFPrisonUncle_animCallback(Object* self, Object* animObj, AnimObj_Data* anim
     if (animData->lastMessage == 2) {
         objData->magicDropped = TRUE;
         
-        dustSetup = (BoneDust_Setup*)objAllocSetup(sizeof(BoneDust_Setup), OBJ_BoneDust); 
-        dustSetup->unk1A = 2;
-        dustSetup->unk2C = -1;
-        dustSetup->unk1C = -1;
+        dustSetup = objAllocSetup(sizeof(Collectable_Setup), OBJ_BoneDust); 
+        dustSetup->scale = 2;
+        dustSetup->gamebitCount = -1;
+        dustSetup->gamebitCollected = -1;
         dustSetup->base.x = self->srt.transl.x;
         dustSetup->base.y = self->srt.transl.y + 15.0f;
         dustSetup->base.z = self->srt.transl.z;
-        dustSetup->unk24 = -1;
+        dustSetup->gamebitSecondary = -1;
         dustSetup->base.loadFlags = OBJSETUP_LOAD_MAIN;
         dustSetup->base.fadeFlags = OBJSETUP_FADE_CAMERA;
         dustSetup->base.loadDistance = 0x28;
         dustSetup->base.fadeDistance = 0xFF;
-        dustSetup->unk27 = 0;
+        dustSetup->applyColourMultiplier = 0;
         objSetupObject(&dustSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, NULL);
     }
 

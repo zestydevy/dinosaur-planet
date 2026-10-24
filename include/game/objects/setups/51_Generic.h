@@ -129,11 +129,20 @@ GENERIC_SETUP(MediumCrate_Setup,
 
 GENERIC_SETUP(Scarab_Setup, 
 /*18*/ s8 yaw; // not used
-/*19*/ s8 unused2;
+/*19*/ s8 unused1;
 /*1A*/ s16 lifetime;
-/*1C*/ s16 unused3;
-/*1E*/ s16 unused4;
-/*20*/ s16 unused5;
+/*1C*/ s16 unused2;
+/*1E*/ s16 unused3;
+/*20*/ s16 unused4;
+)
+
+GENERIC_SETUP(Scorpion_Setup, 
+/*18*/ s8 yaw;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unused2;
+/*1E*/ s16 unused3;
+/*20*/ s16 unused4;
 )
 
 GENERIC_SETUP(FallLadders_Setup, 
@@ -838,6 +847,42 @@ GENERIC_SETUP(WCFloorTile_Setup,
 /*1C*/ s16 unused1;
 /*1E*/ s16 unused2;
 /*20*/ s16 unused3;
+)
+
+GENERIC_SETUP(WLWallTorch_Setup, 
+/*18*/ s8 yaw;
+/*19*/ s8 mode;
+/*1A*/ s16 scale;
+/*1C*/ s16 flags;
+/*1E*/ s16 gamebit;
+/*20*/ s16 unused;
+)
+
+GENERIC_SETUP(WMvein_Setup, 
+/*18*/ s8 fxRadius;        //Player radius for creating effects (stored quartered)
+/*19*/ s8 modGfxFuncArg1;
+/*1A*/ s16 modGfxIndex;    //DLL index in the modgfx bank
+/*1C*/ s16 animateRoll;    //Whether to advance object roll while player inside fxRadius 
+/*1E*/ s16 unused1;
+/*20*/ s16 unused2;
+)
+
+GENERIC_SETUP(DIMCannonBall_Setup, 
+/*18*/ s8 yaw;
+/*19*/ s8 unk19;
+/*1A*/ s16 velocityY;
+/*1C*/ s16 velocityX;
+/*1E*/ s16 unused1;
+/*20*/ s16 unused2;
+)
+
+GENERIC_SETUP(DIMLavaBall_Setup, 
+/*18*/ s8 unk18;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 unused1;
+/*20*/ s16 unused2;
 )
 
 #undef GENERIC_SETUP_STRINGIFY

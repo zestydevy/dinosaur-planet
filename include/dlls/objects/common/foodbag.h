@@ -31,19 +31,6 @@ typedef enum {
     FOOD_Blue_Bean   = FOOD_TYPE(11)  //0x400
 } FoodTypes;
 
-/** ObjSetup struct for food Objects placed in the world
-  * 
-  * (e.g. OBJ_foodbagRedApple, OBJ_foodbagNewFish, OBJ_foodbagBlueMush)
-  */
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s8 yaw;
-    s16 unk1C;
-    s16 unk1E;
-} PlacedFood_Setup;
-
 typedef struct {
     struct DLL_56_Putdown *dllPutdown;  //Handles removing/updating food bag items
     FoodbagGamebits capacityGamebits;   //Bag size gamebits

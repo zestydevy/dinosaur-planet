@@ -1,12 +1,12 @@
 #include "common.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
-#include "dlls/objects/358_debris.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/103.h"
 #include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/55_Riverflow.h"
 #include "game/objects/setups/83_ExplodeAnimator.h"
+#include "game/objects/setups/84_Debris.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 

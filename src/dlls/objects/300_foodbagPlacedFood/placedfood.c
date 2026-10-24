@@ -2,6 +2,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/-1_PlacedFood.h"
 #include "sys/objmsg.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/315_sidefoodbag.h"

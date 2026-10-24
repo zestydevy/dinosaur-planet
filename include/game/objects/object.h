@@ -520,13 +520,4 @@ typedef struct ObjListItem {
     Object *obj;
 } ObjListItem;
 
-/** Used to load Tricky/Kyte's object 
-  * 
-*/
-typedef struct {
-/*00*/  ObjSetup base;
-/*18*/  u8 unk18;
-/*19*/  u8 unk19;
-} SidekickSetup;
-
 #endif

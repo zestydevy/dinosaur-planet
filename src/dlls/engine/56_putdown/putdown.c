@@ -2,6 +2,7 @@
 
 #include "dlls/engine/56_putdown.h"
 #include "dlls/objects/common/foodbag.h"
+#include "game/objects/setups/-1_PlacedFood.h"
 
 void putdown_delete_food_from_bag(u8 arg0, u16 arg1, FoodbagContents* bagSlots, FoodbagItem* foodItems);
 void putdown_update_food_quantity_gamebits(FoodbagContents* bagSlots, FoodbagItem* food);

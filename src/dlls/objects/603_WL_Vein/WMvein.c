@@ -1,16 +1,9 @@
 #include "common.h"
 
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
 
 /*0x0*/ static DLL_Unknown* _data_0 = NULL;
-
-typedef struct {
-    ObjSetup base;
-    s8 fxRadius;        //Player radius for creating effects (stored quartered)
-    s8 modGfxFuncArg1;
-    s16 modGfxIndex;    //DLL index in the modgfx bank
-    s16 animateRoll;    //Whether to advance object roll while player inside fxRadius 
-} WMvein_Setup;
 
 typedef struct {
     f32 fxRadius;

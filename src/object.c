@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/29_gplay.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/2_Sidekick.h"
 #include "sys/camera.h"
 #include "sys/pi.h"
 #include "sys/gfx/model.h"

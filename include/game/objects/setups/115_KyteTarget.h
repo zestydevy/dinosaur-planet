@@ -8,7 +8,7 @@ typedef struct {
 /*00*/ ObjSetup base;
     union {
         struct {
-        /*18*/ u8 commandRange; // find command range
+        /*18*/ u8 commandRange; // find/flame command range
         /*19*/ u8 redFood;
         /*1A*/ u16 flightGroup;
         /*1C*/ u8 setting; // use varies

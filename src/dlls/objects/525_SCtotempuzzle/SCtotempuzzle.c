@@ -1,6 +1,7 @@
 #include "dlls/objects/210_player.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dll.h"
+#include "game/objects/setups/103.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/objprint.h"
 #include "game/gamebits.h"
@@ -15,14 +16,6 @@ typedef struct {
 /*C*/ s32 unkC;
 } DLL525_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 _unk18;
-/*19*/ s8 _unk19;
-/*1A*/ s8 unk1A;
-/*1B*/ u8 unk1B;
-}DLL525_Setup;
-
 static s32 dll_525_func_684(Object* arg0, void* arg1);
 static int dll_525_func_81C(Object* arg0, Object* arg1, AnimObj_Data*arg2, s8 arg3);
 
@@ -33,12 +26,12 @@ void dll_525_ctor(void *dll) { }
 void dll_525_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_525_setup(Object* self, DLL525_Setup* setup, s32 arg2) {
+void dll_525_setup(Object* self, Ctrl103_Setup* setup, s32 arg2) {
     DLL525_Data* objdata;
     s16 temp_v1;
 
     objdata = self->data;
-    self->modelInstIdx = setup->unk1B;
+    self->modelInstIdx = setup->setting;
     if (self->modelInstIdx < 0 || self->modelInstIdx >= 6) {
         self->modelInstIdx = 0;
     }

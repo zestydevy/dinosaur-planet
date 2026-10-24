@@ -1,6 +1,7 @@
 #include "common.h"
 #include "unktypes.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/115_KyteTarget.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
 
@@ -25,7 +26,7 @@ void SCFlameGameFlame_ctor(void *dll) { }
 void SCFlameGameFlame_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCFlameGameFlame_obj_Setup(Object* self, SCFlameGameFlame_Setup* objSetup, s32 arg2) {
+void SCFlameGameFlame_obj_Setup(Object* self, KyteTarget_Setup* objSetup, s32 arg2) {
     SCFlameGameFlame_Data* objData;
     s32 i;
 
@@ -34,7 +35,7 @@ void SCFlameGameFlame_obj_Setup(Object* self, SCFlameGameFlame_Setup* objSetup, 
     objAddObjectType(self, OBJTYPE_KyteTarget);
 
     for (i = 0, objData->unk4 = 0; i < 4; i++) {
-        if (objSetup->kyteFlightCurveID == dKyteFlightCurveIDs[i]) {
+        if (objSetup->flightGroup == dKyteFlightCurveIDs[i]) {
             objData->gamebitActive = dActivateGamebits[i];
             objData->gamebitFinished = dFinishedGamebits[i];
 
@@ -47,11 +48,11 @@ void SCFlameGameFlame_obj_Setup(Object* self, SCFlameGameFlame_Setup* objSetup, 
 // offset: 0xE0 | func: 1 | export: 1
 void SCFlameGameFlame_obj_Control(Object* self) {
     SCFlameGameFlame_Data* objData;
-    SCFlameGameFlame_Setup* objSetup;
+    KyteTarget_Setup* objSetup;
     Object* sidekick;
 
     objData = self->data;
-    objSetup = (SCFlameGameFlame_Setup*)self->setup;
+    objSetup = (KyteTarget_Setup*)self->setup;
     sidekick = objGetSidekick();
     
     if (
@@ -60,7 +61,7 @@ void SCFlameGameFlame_obj_Control(Object* self) {
     ) {
         //Check if Kyte is nearby
         if (sidekick != NULL) {
-            if (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->flameRange)) {
+            if (vec3DistanceXZSquared(&sidekick->globalPosition, &self->globalPosition) <= SQ(objSetup->commandRange)) {
                 objData->flags |= SCFlameGameFlame_FLAG_Kyte_is_Nearby;
 
                 //Show Flame command option
@@ -72,7 +73,7 @@ void SCFlameGameFlame_obj_Control(Object* self) {
 
         //Check if the player issued the Flame command from the inventory
         if (gDLL_1_cmdmenu->vtbl->was_this_item_used(Sidekick_Command_INDEX_4_Flame)) {
-            mainSetBits(BIT_Kyte_Flight_Curve, objSetup->kyteFlightCurveID);
+            mainSetBits(BIT_Kyte_Flight_Curve, objSetup->flightGroup);
             objData->flags |= SCFlameGameFlame_FLAG_Player_Gave_Command;
         }
     }
