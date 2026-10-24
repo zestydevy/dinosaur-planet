@@ -1,14 +1,11 @@
 #include "PR/ultratypes.h"
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/menu.h"
 
 #define Y_UNDERGROUND 50.0f
 #define YAW_WIN 32500
 #define YAW_SPEED_MAX 80.0f
-
-typedef struct {
-    ObjSetup base;
-} DBSH_Symbol_Setup;
 
 typedef struct {
     Object* krystal;        //Phantom Krystal opponent
@@ -45,7 +42,7 @@ void DBSH_Symbol_ctor(void *dll) { }
 void DBSH_Symbol_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBSH_Symbol_setup(Object* self, DBSH_Symbol_Setup* objSetup, s32 arg2) {
+void DBSH_Symbol_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DBSH_Symbol_Data* objData = self->data;
     
     objData->unk4 = 0.0f;

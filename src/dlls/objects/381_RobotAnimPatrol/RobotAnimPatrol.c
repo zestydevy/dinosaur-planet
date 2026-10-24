@@ -4,7 +4,7 @@
 #include "dlls/objects/338_LFXEmitter.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/102_LFXEmitter.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/camera.h"
 #include "sys/dll.h"
 #include "sys/gfx/projgfx.h"
@@ -141,7 +141,7 @@ void RobotAnimPatrol_dtor(void* dll) {
 void RobotAnimPatrol_obj_Setup(Object* self, ObjSetup* setup, s32 reset);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/381_RobotAnimPatrol/RobotAnimPatrol_obj_Setup.s")
 #else
-void RobotAnimPatrol_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void RobotAnimPatrol_obj_Setup(Object* self, RobotAnimPatrol_Setup* setup, s32 reset) {
     RobotAnimPatrol_Data* objdata = self->data;
     ObjSetup* beamSetup;
     Object* beam;
@@ -151,7 +151,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     
     sp3B = 5;
     objdata->flags = 0;
-    if ((setup->robotAnimPatrol.destroyedBit != -1) && (mainGetBits(setup->robotAnimPatrol.destroyedBit) != 0)) {
+    if ((setup->destroyedBit != -1) && (mainGetBits(setup->destroyedBit) != 0)) {
         objdata->flags |= ROBOTANIMPATROL_FLAGS_Destroyed;
         return;
     }
@@ -196,8 +196,8 @@ void RobotAnimPatrol_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     objdata->spawnPos.x = setup->base.x;
     objdata->spawnPos.y = setup->base.y;
     objdata->spawnPos.z = setup->base.z;
-    objdata->spawnYaw = setup->robotAnimPatrol.yaw << 8;
-    objdata->unk38 = setup->robotAnimPatrol.unk1A;
+    objdata->spawnYaw = setup->yaw << 8;
+    objdata->unk38 = setup->unk1A;
     objdata->unk24 = 0.2f;
     objdata->unk3C = 0;
     objdata->gunDeployState = 0;
@@ -408,12 +408,12 @@ int RobotAnimPatrol_animCallback(Object* self, Object* animObj, AnimObj_Data* an
     Object* player;
     s32 ret;
     RobotAnimPatrol_Data* objdata;
-    Ctrl51_Setup* setup;
+    RobotAnimPatrol_Setup* setup;
 
     objdata = self->data;
     ret = 0;
     dist = 1000.0f;
-    setup = (Ctrl51_Setup*)self->setup;
+    setup = (RobotAnimPatrol_Setup*)self->setup;
     diPrintf(" ROBO overriden %x ", self);
     objdata->unk359 += gUpdateRate;
     if (objdata->unk359 > 20) {
@@ -471,7 +471,7 @@ int RobotAnimPatrol_animCallback(Object* self, Object* animObj, AnimObj_Data* an
         }
     }
 
-    if (mainGetBits(setup->robotAnimPatrol.crashBit) != 0) {
+    if (mainGetBits(setup->crashBit) != 0) {
         objdata->crashTick = 1;
         return 4;
     }
@@ -983,7 +983,7 @@ void RobotAnimPatrol_processObjMessages(Object* self, AnimObj_Data* animObjData)
 
 // offset: 0x2890 | func: 16
 static void RobotAnimPatrol_crashControl(Object* self, RobotAnimPatrol_Data* objdata, s32 arg2) {
-    Ctrl51_Setup* setup;
+    RobotAnimPatrol_Setup* setup;
 
     if (arg2 == 1) {
         objdata->crashTick = 2;
@@ -1002,9 +1002,9 @@ static void RobotAnimPatrol_crashControl(Object* self, RobotAnimPatrol_Data* obj
         // Explode
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_355, NULL, 0, -1, NULL);
         gDLL_17_partfx->vtbl->spawn(self, PARTICLE_352, NULL, 0, -1, NULL);
-        setup = (Ctrl51_Setup*)self->setup;
-        if (setup->robotAnimPatrol.destroyedBit != -1) {
-            mainSetBits(setup->robotAnimPatrol.destroyedBit, 1);
+        setup = (RobotAnimPatrol_Setup*)self->setup;
+        if (setup->destroyedBit != -1) {
+            mainSetBits(setup->destroyedBit, 1);
         }
         objDisable(self);
         objdata->flags |= ROBOTANIMPATROL_FLAGS_Destroyed;

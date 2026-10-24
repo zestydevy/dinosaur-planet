@@ -1,12 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 _unk18;
-    s16 unk1A;
-    s16 _unk1C;
-    s16 unk1E;    
-}DLL546_Setup;
 
 // offset: 0x0 | ctor
 void dll_546_ctor(void *dll) { }
@@ -15,9 +8,9 @@ void dll_546_ctor(void *dll) { }
 void dll_546_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_546_setup(Object* self, DLL546_Setup* setup, s32 arg2) {
-    if (mainGetBits(setup->unk1E) != 0) {
-        self->srt.pitch = ((setup->unk1A << 0xD) / 45);
+void dll_546_setup(Object* self, Generic_Setup* setup, s32 arg2) {
+    if (mainGetBits(setup->bitA) != 0) {
+        self->srt.pitch = ((setup->genericA << 0xD) / 45);
     }
     self->stateFlags |= (OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_CONTROL_DISABLED);
 }

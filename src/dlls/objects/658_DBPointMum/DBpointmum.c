@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
@@ -30,11 +31,6 @@ typedef struct {
     f32 unk30;
     f32 unk34;
 } DLL658_func19FC_arg2;
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-} PointBack_Setup;
 
 typedef struct {
     MoveLibData unk0;
@@ -405,7 +401,7 @@ s32 dll_658_func_1064(Object* self, s32 arg1, s32 arg2) {
 
 // offset: 0x1308 | func: 13
 s32 dll_658_func_1308(Object* self, AnimObj_Data* animData, s32 arg2) {
-    PointBack_Setup* objSetup;
+    Generic_Setup* objSetup;
     PointBack_Data* objData;
 
     if (animData != NULL) {
@@ -438,7 +434,7 @@ s32 dll_658_func_1308(Object* self, AnimObj_Data* animData, s32 arg2) {
         
         gDLL_28_ScreenFade->vtbl->fade_reversed(120, 1);
         
-        objSetup = (PointBack_Setup*)self->setup;
+        objSetup = (Generic_Setup*)self->setup;
         self->srt.transl.x = objSetup->base.x;
         self->srt.transl.y = objSetup->base.y;
         self->srt.transl.z = objSetup->base.z;

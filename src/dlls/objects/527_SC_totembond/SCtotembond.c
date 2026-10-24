@@ -7,11 +7,8 @@
 #include "dlls/objects/516_SC_lightfoot.h"
 #include "dlls/objects/519_SC_levelcontrol.h"
 #include "dlls/objects/725_SC_flamegameflame.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
-
-typedef struct {
-    ObjSetup base;
-} SCTotemBond_Setup;
 
 typedef struct {
     u8 flags;
@@ -57,7 +54,7 @@ void SCTotemBond_ctor(void *dll) { }
 void SCTotemBond_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SCTotemBond_setup(Object* self, SCTotemBond_Setup* objSetup, s32 arg2) {
+void SCTotemBond_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     SCTotemBond_Data* objData = self->data;
     
     objData->directionIndex = (u16)self->srt.yaw / M_90_DEGREES;
@@ -176,11 +173,11 @@ static void SCTotemBond_create_lightfoot_and_flame_targets(Object* self, SCTotem
     s8 i;
     SCFlameGameFlame_Setup* setupFlame;
     SCLightFoot_Setup* setupLF;
-    SCTotemBond_Setup* objSetup;
+    Generic_Setup* objSetup;
 
     //Create 4 LightFoot and 4 Flame targets
     for (i = 0, lfIndex = 1; i < 4; i++) {
-        objSetup = (SCTotemBond_Setup*)self->setup;
+        objSetup = (Generic_Setup*)self->setup;
         angle = i << 0xE; //degrees: 0, 90, 180, 270
         
         setupLF = objAllocSetup(sizeof(SCLightFoot_Setup), OBJ_SC_lightfootSpe);

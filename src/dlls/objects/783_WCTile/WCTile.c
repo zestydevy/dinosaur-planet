@@ -1,5 +1,6 @@
 #include "dlls/objects/779_WCLevelControl.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
@@ -13,13 +14,6 @@ typedef struct {
     s16 puzzlePieceID;
     s16 state;
 } WCTile_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 _unk18;
-/*19*/ s8 modelIdx;
-/*1A*/ s16 puzzlePieceID;
-} WCTile_Setup;
 
 typedef enum {
     WCTile_STATE_0_Initialising,

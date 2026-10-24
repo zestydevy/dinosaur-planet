@@ -45,11 +45,6 @@ typedef struct {
 } PlacedFood_Setup;
 
 typedef struct {
-    ObjSetup base;
-	u8 pad[0x24-0x18];
-} Foodbag_ObjSetup;
-
-typedef struct {
     struct DLL_56_Putdown *dllPutdown;  //Handles removing/updating food bag items
     FoodbagGamebits capacityGamebits;   //Bag size gamebits
     u16 capacity;                       //Current capacity

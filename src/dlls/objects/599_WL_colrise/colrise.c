@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/gfx/modgfx.h"
@@ -12,15 +13,6 @@ typedef struct {
     s8 unk8;
 } WLColrise_Data;
 
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E; 
-} WLColrise_Setup;
-
 static DLL_IModgfx* data_0 = NULL;
 
 static int WL_colrise_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
@@ -32,12 +24,12 @@ void WL_colrise_ctor(void* dll) { }
 void WL_colrise_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WL_colrise_setup(Object* self, WLColrise_Setup* setup, s32 reset) {
+void WL_colrise_setup(Object* self, Generic_Setup* setup, s32 reset) {
     WLColrise_Data* objdata = self->data;
 
     self->animCallback = WL_colrise_animCallback;
-    self->srt.yaw = setup->unk18 << 8;
-    objdata->unk0 = setup->unk1E;
+    self->srt.yaw = setup->yaw << 8;
+    objdata->unk0 = setup->bitA;
     if (data_0 == 0) {
         data_0 = dllLoad(DLL_ID_140, 1);
     }

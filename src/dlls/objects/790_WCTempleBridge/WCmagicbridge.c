@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     f32 minZ;                       //The position of the vertex furthest from the model's origin along Z (will be negative, and effectively bridge's length)
@@ -32,7 +32,7 @@ void WCTempleBridge_ctor(void* dll) { }
 void WCTempleBridge_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCTempleBridge_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
+void WCTempleBridge_obj_Setup(Object* self, WCMagicBridge_Setup* objSetup, s32 reset) {
     WCTempleBridge_Data* objData;
     ModelInstance* modelInst;
     Model* model;
@@ -43,8 +43,8 @@ void WCTempleBridge_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     s32 i;
     s32 j;
     
-    self->srt.yaw = objSetup->wcMagicBridge.yaw << 8;
-    self->modelInstIdx = objSetup->wcMagicBridge.type;
+    self->srt.yaw = objSetup->yaw << 8;
+    self->modelInstIdx = objSetup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = 0;
     }
@@ -103,7 +103,7 @@ void WCTempleBridge_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     objData->minZ = minZ;
 
     //Restore visibility state
-    if (mainGetBits(objSetup->wcMagicBridge.gamebitVisible)) {
+    if (mainGetBits(objSetup->gamebitVisible)) {
         objData->visible = TRUE;
         objData->flags |= WCTempleBridge_FLAG_Visibility_Gamebit_Set;
     }
@@ -125,17 +125,17 @@ void WCTempleBridge_obj_Control(Object* self) {
     WCTempleBridge_Data* objData;
     s32 opacity;
     s32 i;
-    Ctrl51_Setup* objSetup;
+    WCMagicBridge_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (WCMagicBridge_Setup*)self->setup;
     
     WCTempleBridge_advanceAnimation(self, objData);
 
     if (objData->visible) {
         if ((objData->flags & WCTempleBridge_FLAG_Visibility_Gamebit_Set) == FALSE) {
             objData->flags |= WCTempleBridge_FLAG_Visibility_Gamebit_Set;
-            mainSetBits(objSetup->wcMagicBridge.gamebitVisible, TRUE);
+            mainSetBits(objSetup->gamebitVisible, TRUE);
         }
 
         for (i = 0; i < objData->vertexZCount; i++) {
@@ -173,12 +173,12 @@ void WCTempleBridge_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x4B8 | func: 5 | export: 5
 u32 WCTempleBridge_obj_GetModelFlags(Object* self) {
-    Ctrl51_Setup* objSetup;
+    WCMagicBridge_Setup* objSetup;
     s8 modelIdx;
 
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (WCMagicBridge_Setup*)self->setup;
     
-    modelIdx = objSetup->wcMagicBridge.type;
+    modelIdx = objSetup->type;
     if (modelIdx >= self->def->numModels) {
         modelIdx = 0;
     }
@@ -196,9 +196,9 @@ int WCTempleBridge_animCallback(Object* self, Object* animObj, AnimObj_Data* ani
     WCTempleBridge_Data* objData;
     s32 i;
     s32 opacity;
-    Ctrl51_Setup* objSetup;
+    WCMagicBridge_Setup* objSetup;
 
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (WCMagicBridge_Setup*)self->setup;
     objData = self->data;
     
     animData->unk62 = 0;
@@ -214,7 +214,7 @@ int WCTempleBridge_animCallback(Object* self, Object* animObj, AnimObj_Data* ani
         //Store visibility state
         if ((objData->flags & WCTempleBridge_FLAG_Visibility_Gamebit_Set) == FALSE) {
             objData->flags |= WCTempleBridge_FLAG_Visibility_Gamebit_Set;
-            mainSetBits(objSetup->wcMagicBridge.gamebitVisible, TRUE);
+            mainSetBits(objSetup->gamebitVisible, TRUE);
         }
         
         //Fade in vertices

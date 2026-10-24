@@ -1,16 +1,12 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/map_enums.h"
 #include "game/gamebits.h"
 #include "sys/joypad.h"
 #include "sys/objprint.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw;
-} SHswaplift_Setup;
 
 // offset: 0x0 | ctor
 void SHswaplift_ctor(void *dll) { }
@@ -19,7 +15,7 @@ void SHswaplift_ctor(void *dll) { }
 void SHswaplift_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHswaplift_setup(Object *self, SHswaplift_Setup *setup, s32 arg2) {
+void SHswaplift_setup(Object *self, Generic_Setup *setup, s32 arg2) {
     self->srt.yaw = setup->yaw << 8;
     if (mapWorldXZToMapID(self->srt.transl.x, self->srt.transl.z) == MAP_SWAPSTONE_CIRCLE) {
         self->unkDC = MAP_SWAPSTONE_CIRCLE;

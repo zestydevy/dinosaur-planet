@@ -1,6 +1,6 @@
 #include "common.h"
 #include "dlls/engine/17_partfx.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"
 
@@ -22,15 +22,15 @@ void NWtreebridge_ctor(void *dll) { }
 void NWtreebridge_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void NWtreebridge_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
+void NWtreebridge_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     NWtreebridge_Data* objdata;
 
     objdata = self->data;
     objSetPriority(self, OBJPRIORITY_MOBILE_MAP);
     self->animCallback = (void*)&NWtreebridge_anim_callback;
-    self->srt.yaw = objSetup->generic.yaw << 8;
-    objdata->sequenceIndex = objSetup->generic.type;
-    objdata->gamebit = objSetup->generic.bitA;
+    self->srt.yaw = objSetup->yaw << 8;
+    objdata->sequenceIndex = objSetup->type;
+    objdata->gamebit = objSetup->bitA;
     if (mainGetBits(objdata->gamebit)) {
         objdata->seqValue = 380;
     }

@@ -1,17 +1,10 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/objects/common/sidekick.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unused1A;
-    s16 flameDistance;
-    s16 gamebitBurnt;
-} SHvines_Setup;
 
 typedef struct {
     s32 vertexCount;

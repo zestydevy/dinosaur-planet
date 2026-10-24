@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/objects/554_DIM2Conveyor.h"
 

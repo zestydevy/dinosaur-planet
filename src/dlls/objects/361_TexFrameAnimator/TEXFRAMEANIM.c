@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
 
 typedef struct {
@@ -10,16 +11,6 @@ typedef struct {
     u32 finished: 1;
     u32 playing: 1;
 } TexFrameAnimator_Data;
-
-typedef struct {
-    ObjSetup base;
-    s8 loopStartFrame;   //Frame to loop back to after reaching endFrame (only when looping)
-    s8 materialIndex;    //Index within object's local Blocks model's materials (the frame of the material's texture animation will be manipulated)
-    s16 endFrame;        //End frame of texture animation
-    s16 speed;           //Playback rate when advancing through the texture animation
-    s16 gamebitFinished; //GamebitID to set when end of animation reached (also prevents looping)
-    s16 gamebitPlay;     //GamebitID to query, starting animation
-} TexFrameAnimator_Setup;
 
 // offset: 0x0 | ctor
 void TexFrameAnimator_ctor(void *dll) { }

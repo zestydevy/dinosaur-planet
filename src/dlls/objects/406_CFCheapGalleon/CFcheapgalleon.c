@@ -1,16 +1,8 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 fullGalleonObjGroup;      //The map objectGroup for the full-detail Galleon and its objects
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitForceLowDetail;   //The cheap Galleon stays at max opacity and exits control early when this gamebit is set
-} CFCheapGalleon_Setup;
 
 typedef struct {
     u8 flags;

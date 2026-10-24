@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/map.h"
 #include "sys/gfx/modgfx.h"
@@ -19,14 +20,6 @@
 
 #define THRESHOLD_SNOW_EVAPORATE 60.0f
 #define THRESHOLD_END_FADEOUT 68.0f
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 tentIndex;     //An index (0-11 inclusive) for deciding which tent holds the bridge cog
-    u16 unused1C;
-    s16 gamebitBurnt;  //Set when the tent's been destroyed, prevents it reappearing
-} DIMTent_Setup;
 
 typedef struct {
     f32 maskY;      //Progress of the burn masking effect

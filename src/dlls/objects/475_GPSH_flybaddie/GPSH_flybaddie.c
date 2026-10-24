@@ -1,11 +1,11 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/475_GPSH_flybaddie.h"
 #include "PR/gbi.h"
 #include "PR/os.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -50,7 +50,7 @@ void GPSH_flybaddie_ctor(void *dll) { }
 void GPSH_flybaddie_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPSH_flybaddie_setup(Object* self, GPSH_flybaddie_Setup* setup, s32 arg2) {
+void GPSH_flybaddie_setup(Object* self, Flybaddie_Setup* setup, s32 arg2) {
     GPSH_flybaddie_Data* objdata;
     f32 pos[3];
 

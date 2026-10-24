@@ -1,13 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    s16 weedsNeeded;            //The total Tumbleweeds that must be damaged to fill the meter
-    s16 gamebitDeactivated;     //Meter deactivated while this Gamebit is set
-    s16 gamebitActivated;       //Meter deactivated while this Gamebit is unset
-    s16 gamebitMeterProgress;   //Gamebit tracking how many Tumbleweeds have been offered to the meter
-} SCMeterBlock_Setup;
 
 typedef struct {
     s32 unused0;

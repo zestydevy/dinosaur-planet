@@ -1,7 +1,7 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objtype.h"
-#include "dlls/objects/541_DIMexplosion.h"
 
 // offset: 0x0 | ctor
 void DFbarrelanim_ctor(void *dll) { }
@@ -92,7 +92,7 @@ void DFbarrelanim_control(Object* self) {
     
     for (i = 0; i < objData->messageCount; i++) {        
         if (objData->messages[i] == 1) {
-            explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explosion = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
             self->srt.transl.y += 12.0f;
             explosion->x = self->srt.transl.x;
             explosion->y = self->srt.transl.y + 8.0f;

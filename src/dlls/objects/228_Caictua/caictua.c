@@ -535,8 +535,10 @@ static void Caictua_shootThorn(Object* self, Baddie* baddie) {
     //Fire two thorns
     i = 2;
     while (i--) {
-        // @bug: OBJ_Caictua_Thorn is in the controlNo group 103 but the allocated setup here is too big
-        thornSetup = objAllocSetup(sizeof(Ctrl103_Setup) + 4, OBJ_Caictua_Thorn);
+        // @bug: OBJ_Caictua_Thorn is in the controlNo group 103 but the allocated setup here is too big.
+        //       This was probably using the baddie projectile setup by mistake (tho none of the setup
+        //       specific fields are actually used anyway).
+        thornSetup = objAllocSetup(sizeof(BaddieProjectile_Setup), OBJ_Caictua_Thorn);
         originX = objData->aim[i].origin.x;
         originY = objData->aim[i].origin.y;
         originZ = objData->aim[i].origin.z;

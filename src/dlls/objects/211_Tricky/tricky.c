@@ -2,9 +2,9 @@
 
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/278_flameblast.h"
 #include "dlls/objects/280_sidekicktoy.h"
 #include "game/objects/setups/118_FXEmit.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objexpr.h"
 #include "sys/objtype.h"
 #include "sys/objlib.h"

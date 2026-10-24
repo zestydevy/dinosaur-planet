@@ -7,14 +7,6 @@
 #include "types.h"
 
 typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18;                       //unused
-/*1A*/ s16 angularRange;                //maximum angular distance from desired travel angle
-/*1C*/ s16 windAngle;                   //desired direction the spore should travel in
-/*20*/ s32 unused20;					//unused
-} SHSpore_Setup;
-
-typedef struct {
 /*000*/ DLL27_Data terrainCollider;
 /*260*/ f32 lifetime;
 /*264*/ f32 lateralSpeed;

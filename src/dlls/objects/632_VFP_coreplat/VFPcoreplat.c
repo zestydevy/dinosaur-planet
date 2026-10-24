@@ -1,14 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-} VFPCorePlat_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s16 unk0;
@@ -24,11 +16,11 @@ void VFPCorePlat_ctor(void* dll) { }
 void VFPCorePlat_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFPCorePlat_obj_Setup(Object* self, VFPCorePlat_Setup* objSetup, s32 reset) {
+void VFPCorePlat_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     VFPCorePlat_Data* objData = self->data;
     
     self->srt.yaw = objSetup->yaw << 8;
-    objData->unk0 = objSetup->unk20;
+    objData->unk0 = objSetup->bitB;
     self->animCallback = VFPCorePlat_animCallback;
     
     if (self->id == OBJ_VFP_coreplathol) {

@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -24,14 +25,6 @@ typedef struct {
 /*2C*/ u16 unk2C;
 /*2E*/ u8 flags;
 } PirahnaBaddie_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*19*/ s8 unk19;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 respawnTime;
-} PirahnaBaddie_Setup;
 
 /*0x0*/ static s32 _data_0[] = {
     0x00000002, 0x00000003, 0x00000000, 0x00000000

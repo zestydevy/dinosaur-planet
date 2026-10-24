@@ -1,11 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-} WLSeqObject_Setup;
 
 typedef struct {
     u8 unk0;
@@ -20,24 +15,24 @@ void WLSeqObject_ctor(void* dll) { }
 void WLSeqObject_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLSeqObject_obj_Setup(Object* self, WLSeqObject_Setup* objSetup, s32 reset) {
-    self->srt.yaw = objSetup->unk18 << 8;
+void WLSeqObject_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
+    self->srt.yaw = objSetup->yaw << 8;
     self->animCallback = WLSeqObject_animCallback;
     self->unkE0 = 20;
 }
 
 // offset: 0x50 | func: 1 | export: 1
 void WLSeqObject_obj_Control(Object* self) {
-    WLSeqObject_Setup* objSetup;
+    Generic_Setup* objSetup;
     Object** objects;
     s32 count;
     s32 i;
     u8 found;
     Object* obj;
 
-    objSetup = (WLSeqObject_Setup*)self->setup;
+    objSetup = (Generic_Setup*)self->setup;
     
-    switch (objSetup->unk19) {
+    switch (objSetup->type) {
     case 0:
         if (self->unkDC || 
             mainGetBits(BIT_Galleon_Arrived_at_Warlock_Mountain) || 

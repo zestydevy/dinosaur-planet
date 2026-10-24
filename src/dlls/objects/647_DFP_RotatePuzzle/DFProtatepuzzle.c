@@ -3,17 +3,8 @@
 #include "game/objects/object.h"
 #include "macros.h"
 #include "game/objects/setups/118_FXEmit.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;               //Stored to objData->unkF during setup, but otherwise unused
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitUnused;
-    s16 gamebitSpin;        //Puzzle wheel rotates when this gamebit is set
-} DFP_RotatePuzzle_Setup;
 
 typedef struct {
     f32 initialY;           //Stores the wheel's initial Y during setup, but otherwise unused

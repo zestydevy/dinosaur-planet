@@ -3,19 +3,13 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/118_FXEmit.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/map_enums.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "dll.h"
 #include "macros.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 rotation;
-/*19*/ u8 _unk19[0x20 - 0x19];
-/*20*/ s16 gamebitEnabled;
-} DR_EarthCallPad_Setup;
 
 typedef struct {
     Object* fxemit;
@@ -30,9 +24,9 @@ void DR_EarthCallPad_ctor(void *dll) { }
 void DR_EarthCallPad_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DR_EarthCallPad_setup(Object* self, DR_EarthCallPad_Setup* setup, s32 reset) {
+void DR_EarthCallPad_setup(Object* self, Generic_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_DinoCallSpot);
-    self->srt.yaw = setup->rotation << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->stateFlags |= (OBJSTATE_CONTROL_DISABLED | OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED);
 }
 
@@ -66,12 +60,12 @@ u32 DR_EarthCallPad_get_data_size(Object *self, u32 offsetAddr) {
 
 // offset: 0x144 | func: 7 | export: 7
 s32 DR_EarthCallPad_call(Object* self) {
-    DR_EarthCallPad_Setup* setup = (DR_EarthCallPad_Setup*)self->setup;
+    Generic_Setup* setup = (Generic_Setup*)self->setup;
     DR_EarthCallPad_Data* objdata = self->data;
 
     STUBBED_PRINTF(" Playing Sequence for Calling Dino ");
 
-    if (mainGetBits(setup->gamebitEnabled) == 0) {
+    if (mainGetBits(setup->bitB) == 0) {
         return 1;
     } else {
         gDLL_29_Gplay->vtbl->set_obj_group_status(MAP_DRAGON_ROCK_BOTTOM, 2, 1);

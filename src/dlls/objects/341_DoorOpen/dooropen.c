@@ -1,15 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 pitch;       //Stored to objData but otherwise unused. Possibly pitch, based on surrounding fields.
-    s16 roll;
-    s16 scale;      //Stored to objData, but otherwise unused. Likely scale based on the `*0.01f` (typical of objSetup scale).
-    s16 unk1E;      
-    s16 gamebit;    //PartFX and modGfx are created when this gamebit is set. 
-} DoorOpen_Setup;
 
 typedef struct {
     f32 scale;      //Unused, but likely scale based on the `*0.01f` (typical of objSetup scale).

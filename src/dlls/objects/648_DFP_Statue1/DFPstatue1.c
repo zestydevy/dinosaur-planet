@@ -1,15 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 statueIdx;       //Which of the 4 statues this is (see note below)
-    u16 unk1A;
-    u16 unk1C;
-    s16 gamebitUnused;
-    s16 gamebitMove;    //The statue moves when this gamebit is set (by hitting the Projectile Switch underneath)
-} DFP_Statue1_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s16 gamebitUnused;

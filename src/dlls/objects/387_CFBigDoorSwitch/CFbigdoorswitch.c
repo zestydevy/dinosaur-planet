@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "macros.h"
 
 typedef struct {
@@ -20,30 +20,30 @@ void CFBigDoorSwitch_ctor(void* dll) { }
 void CFBigDoorSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFBigDoorSwitch_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
+void CFBigDoorSwitch_obj_Setup(Object* self, CFBigDoorSwitch_Setup* objSetup, s32 reset) {
     CFBigDoorSwitch_Data* objData;
 
-    self->srt.yaw = objSetup->cfBigDoorSwitch.yaw << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     
     if (self->objhitInfo != NULL) {
         self->objhitInfo->unk58 |= 1;
     }
     
     objData = self->data;
-    objData->unlocked = mainGetBits(objSetup->cfBigDoorSwitch.unlockedBit);
-    objData->state = mainGetBits(objSetup->cfBigDoorSwitch.stateBit);
+    objData->unlocked = mainGetBits(objSetup->unlockedBit);
+    objData->state = mainGetBits(objSetup->stateBit);
     objData->flags = CFBigDoorSwitch_FLAG_Preempt_Needed;
 }
 
 // offset: 0xB8 | func: 1 | export: 1
 void CFBigDoorSwitch_obj_Control(Object* self) {
-    Ctrl51_Setup* objSetup;
+    CFBigDoorSwitch_Setup* objSetup;
     CFBigDoorSwitch_Data* objData;
     s32 damageType;
     Object* hitBy;
 
     objData = self->data;
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (CFBigDoorSwitch_Setup*)self->setup;
     
     // Check for attacks
     // (unused, maybe a debug leftover similar to being able to shoot DFPT's perch switch?)
@@ -53,25 +53,25 @@ void CFBigDoorSwitch_obj_Control(Object* self) {
         // Let the player interact with the switch, if its unlock gamebit's set.
         // This is a bit surprising, since it's barely within reach for the player and
         // the perch object placed on the switch suggests Kyte was supposed to activate it!
-        if (mainGetBits(objSetup->cfBigDoorSwitch.unlockedBit)) {
+        if (mainGetBits(objSetup->unlockedBit)) {
             //Toggle state and play a sequence
             gDLL_3_Animation->vtbl->start_obj_sequence(objData->state ^ 1, self, -1);
             objData->state ^= 1;
-            mainSetBits(objSetup->cfBigDoorSwitch.stateBit, objData->state);
+            mainSetBits(objSetup->stateBit, objData->state);
             objData->flags &= ~CFBigDoorSwitch_FLAG_Preempt_Needed;
         }
     } else if (objData->flags & CFBigDoorSwitch_FLAG_Preempt_Needed) {
         //Handle quickly flipping up/down using an objSeq preempt, when flagged
-        STUBBED_PRINTF(" Preempt %i ", objSetup->cfBigDoorSwitch.preemptTime);
-        gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->cfBigDoorSwitch.preemptTime);
+        STUBBED_PRINTF(" Preempt %i ", objSetup->preemptTime);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, objSetup->preemptTime);
         gDLL_3_Animation->vtbl->start_obj_sequence(objData->state, self, -1);
         objData->flags &= ~CFBigDoorSwitch_FLAG_Preempt_Needed;
     }
     
     //Check if the state-restoring gamebit's value differs from the switch's current state
-    if (objData->state != mainGetBits(objSetup->cfBigDoorSwitch.stateBit)) {
+    if (objData->state != mainGetBits(objSetup->stateBit)) {
         //Sync state with the gamebit, and queue an objSeq preempt to quickly raise/lower the switch
-        objData->state = mainGetBits(objSetup->cfBigDoorSwitch.stateBit);
+        objData->state = mainGetBits(objSetup->stateBit);
         objData->flags |= CFBigDoorSwitch_FLAG_Preempt_Needed;
     }
 }

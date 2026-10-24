@@ -1,6 +1,7 @@
 #include "PR/ultratypes.h"
 #include "common.h"
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/objanim.h"
 #include "game/objects/interaction_arrow.h"
@@ -51,7 +52,7 @@ void WMWizard_ctor(void *dll) { }
 void WMWizard_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WMWizard_obj_Setup(Object* self, WMWizard_Setup* objSetup, s32 reset) {
+void WMWizard_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     WMWizard_Data* objData = self->data;
 
     self->unkDC = 0;

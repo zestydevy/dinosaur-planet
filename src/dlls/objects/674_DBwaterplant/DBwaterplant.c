@@ -1,13 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 timerThreshold;
-    s16 scale;
-    s16 gamebitRestoreState;
-    s16 gamebitDamaged;
-} DBWaterPlant_Setup;
 
 typedef struct {
     u8 state;

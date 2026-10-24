@@ -1,10 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} DIMDismountPoint_Setup;
 
 typedef struct {
     Vec3f direction;
@@ -18,7 +14,7 @@ void DIMDismountPoint_ctor(void* dll) { }
 void DIMDismountPoint_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DIMDismountPoint_obj_Setup(Object* self, DIMDismountPoint_Setup* objSetup, s32 reset) {
+void DIMDismountPoint_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     DIMDismountPoint_Data* objData;
 
     objAddObjectType(self, OBJTYPE_DismountPoint);

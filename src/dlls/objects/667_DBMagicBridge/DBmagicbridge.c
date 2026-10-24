@@ -1,15 +1,6 @@
 #include "common.h"
 #include "dlls/objects/210_player.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 modelIdx;                    //Which bridge model to use
-    s16 gamebit1A;
-    s16 unk1C;
-    s16 gamebitVisible;             //Stores the bridge's visibility state
-    s16 gamebit20;
-} DBMagicBridge_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     f32 minZ;                       //The position of the vertex furthest from the model's origin along Z (will be negative, and effectively bridge's length)

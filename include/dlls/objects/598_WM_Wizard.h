@@ -7,11 +7,6 @@
 #include "dlls/engine/6_amsfx.h"
 
 typedef struct {
-    ObjSetup base;
-    s8 yaw;
-} WMWizard_Setup;
-
-typedef struct {
     Vec3f home;             //Initial position
     f32 animSpeed;          //Animation delta when Randorn is walking around the hall at random
     f32 animSpeedFlinch;    //Animation delta when Randorn is reacting to being hit

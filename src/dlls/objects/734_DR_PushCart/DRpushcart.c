@@ -1,27 +1,11 @@
 #include "common.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/102_LFXEmitter.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
 #include "dlls/objects/338_LFXEmitter.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s32 unk1C;
-    s32 unk20;
-} CFBarrel_Setup; //0x24
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 unk20;
-} DRPushCart_Setup;
 
 typedef struct {
     UnkCurvesStruct unk0;
@@ -63,14 +47,14 @@ void dll_734_ctor(void *dll) { }
 void dll_734_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_734_setup(Object* self, DRPushCart_Setup* objSetup, s32 arg2) {
+void dll_734_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DRPushCart_Data* objData = self->data;
     
-    self->srt.yaw = objSetup->unk18 << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     
-    objData->unk114 = objSetup->unk1A;
+    objData->unk114 = objSetup->genericA;
     objData->unk10C = 0.0f;
-    objData->unk15C_29 = mainGetBits(objSetup->unk20);
+    objData->unk15C_29 = mainGetBits(objSetup->bitB);
     objData->unk15C_29 = 1;
     objData->unk15C_21 = 1;
     
@@ -373,11 +357,11 @@ void dll_734_func_1588(Object* self, s32 barrelCount) {
 
 // offset: 0x1624 | func: 13
 Object* dll_734_func_1624(Object* self, Vec3f* coord) {
-    CFBarrel_Setup* barrelSetup;
-    DRPushCart_Setup* objSetup;
+    Generic_Setup* barrelSetup;
+    Generic_Setup* objSetup;
 
-    objSetup = (DRPushCart_Setup*)self->setup;
-    barrelSetup = (CFBarrel_Setup*)objAllocSetup(sizeof(CFBarrel_Setup), OBJ_CFbarrel);
+    objSetup = (Generic_Setup*)self->setup;
+    barrelSetup = objAllocSetup(sizeof(Generic_Setup), OBJ_CFbarrel);
     barrelSetup->base.loadFlags = objSetup->base.loadFlags;
     barrelSetup->base.byte6 = objSetup->base.byte6;
     barrelSetup->base.byte5 = objSetup->base.byte5;
@@ -385,8 +369,8 @@ Object* dll_734_func_1624(Object* self, Vec3f* coord) {
     barrelSetup->base.x = coord->x;
     barrelSetup->base.y = coord->y;
     barrelSetup->base.z = coord->z;
-    barrelSetup->unk18 = self->srt.yaw;
-    barrelSetup->unk19 = 1;
+    barrelSetup->yaw = self->srt.yaw;
+    barrelSetup->type = 1;
     return objSetupObject(&barrelSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self);
 }
 

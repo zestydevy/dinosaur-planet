@@ -4,6 +4,7 @@
     "A walkthrough video a day keeps Dragon Rock at bay," says Dr. Youtube, MD.
 */
 
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
 
 /* Gamebits enabling texture animation at three stages along each tube:
@@ -29,12 +30,6 @@
 #define TEX_ANIM_ON_LENGTH 0x600
 #define TEX_ANIM_ON_END (TEX_ANIM_ON_START + TEX_ANIM_ON_LENGTH)
 #define TEX_ANIM_ON_SPEED 0x10
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 tubeIndex;           //The index of the tube instance (0: at CloudRunner side, 1: at HighTop side, 2: at quarry side)
-} DR_Tube_Setup;
 
 typedef struct {
     s16* animGamebits;      //An array of the 3 gamebits that store the activation state of the tube's sections
@@ -63,14 +58,14 @@ void DR_Tube_ctor(void *dll) { }
 void DR_Tube_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DR_Tube_setup(Object* self, DR_Tube_Setup* objSetup, s32 arg2) {
+void DR_Tube_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     DR_Tube_Data* objData;
     TextureAnimator* texAnim;
     s32 i;
 
     objData = self->data;
     
-    objData->tubeIndex = objSetup->tubeIndex;
+    objData->tubeIndex = objSetup->type;
     
     objData->animGamebits = &dAnimGamebits[objData->tubeIndex][0];
     objData->sectionsBitfield = DR_Tube_get_sections_bitfield(objData->animGamebits);

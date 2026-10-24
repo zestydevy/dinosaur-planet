@@ -1,6 +1,6 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -26,29 +26,29 @@ void BlastedObject_ctor(void* dll) { }
 void BlastedObject_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void BlastedObject_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void BlastedObject_obj_Setup(Object* self, BlastedObject_Setup* setup, s32 reset) {
     BlastedObject_Data* objdata = self->data;
     
     objdata->blockShapesUpdated = FALSE;
     objSetPriority(self, OBJPRIORITY_BLASTEDOBJ);
     self->objhitInfo->unk58 |= 1;
-    objdata->unk4 = (s8) setup->blastedObj.extraDamageStages;
-    if (setup->blastedObj.hitCountGamebit != -1) {
-        if ((objdata->hitCount = mainGetBits(setup->blastedObj.hitCountGamebit))) {
+    objdata->unk4 = (s8) setup->extraDamageStages;
+    if (setup->hitCountGamebit != -1) {
+        if ((objdata->hitCount = mainGetBits(setup->hitCountGamebit))) {
             objSetModel(self, objdata->hitCount);
         }
     }
     // @bug: Always re-enables hit count 0 bit
     mainSetBits(BIT_2DE, 1);
-    self->srt.yaw = setup->blastedObj.yaw << 8;
-    if (mainGetBits(setup->blastedObj.blastedGamebit) != 0) {
-        objdata->blockShapesUpdated = BlastedObject_hideBlockShapes(self, setup->blastedObj.shapeAnimatorID);
+    self->srt.yaw = setup->yaw << 8;
+    if (mainGetBits(setup->blastedGamebit) != 0) {
+        objdata->blockShapesUpdated = BlastedObject_hideBlockShapes(self, setup->shapeAnimatorID);
     }
 }
 
 // offset: 0x138 | func: 1 | export: 1
 void BlastedObject_obj_Control(Object* self) {
-    Ctrl51_Setup* setup;
+    BlastedObject_Setup* setup;
     s32 extraDamageStages;
     Object* hitBy;
     s32 alreadyHitBy;
@@ -58,13 +58,13 @@ void BlastedObject_obj_Control(Object* self) {
     BlastedObject_Data* objdata;
 
     objdata = self->data;
-    setup = (Ctrl51_Setup*)self->setup;
-    extraDamageStages = setup->blastedObj.extraDamageStages;
+    setup = (BlastedObject_Setup*)self->setup;
+    extraDamageStages = setup->extraDamageStages;
     if (objdata->blockShapesUpdated) {
         return;
     }
-    if (mainGetBits(setup->blastedObj.blastedGamebit) != 0) {
-        objdata->blockShapesUpdated = BlastedObject_hideBlockShapes(self, setup->blastedObj.shapeAnimatorID);
+    if (mainGetBits(setup->blastedGamebit) != 0) {
+        objdata->blockShapesUpdated = BlastedObject_hideBlockShapes(self, setup->shapeAnimatorID);
         return;
     }
     for (i = 0; i < self->objhitInfo->unk62; i++) {
@@ -76,7 +76,7 @@ void BlastedObject_obj_Control(Object* self) {
         }
         STUBBED_PRINTF(" Hit by barrels ");
         if (extraDamageStages == 0) {
-            mainSetBits(setup->blastedObj.blastedGamebit, 1);
+            mainSetBits(setup->blastedGamebit, 1);
             return;
         }
         if (damageType == Damage_Type_Explosion) {
@@ -94,16 +94,16 @@ void BlastedObject_obj_Control(Object* self) {
             sHitByList[objdata->hitCount] = hitBy;
             mainSetBits(objdata->hitCount + BIT_2DE, 0);
             mainSetBits(objdata->hitCount + BIT_2DE + 1, 1);
-            if (setup->blastedObj.hitCountGamebit != -1) {
-                mainSetBits(setup->blastedObj.hitCountGamebit, objdata->hitCount + 1);
+            if (setup->hitCountGamebit != -1) {
+                mainSetBits(setup->hitCountGamebit, objdata->hitCount + 1);
             }
             data_0 = 300;
             if (objdata->hitCount >= extraDamageStages) {
                 // Freed Kyte in CRF throne room
                 mainSetBits(objdata->hitCount + BIT_2DE + 1, 0);
                 STUBBED_PRINTF(" Hello My Friend ");
-                mainSetBits(setup->blastedObj.blastedGamebit, 1);
-                BlastedObject_hideBlockShapes(self, setup->blastedObj.shapeAnimatorID);
+                mainSetBits(setup->blastedGamebit, 1);
+                BlastedObject_hideBlockShapes(self, setup->shapeAnimatorID);
                 objSetModel(self, 2);
                 objdata->blockShapesUpdated = TRUE;
             } else {
@@ -120,10 +120,10 @@ void BlastedObject_obj_Update(Object* self) { }
 
 // offset: 0x3E4 | func: 3 | export: 3
 void BlastedObject_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
-    Ctrl51_Setup* setup = (Ctrl51_Setup*)self->setup;
+    BlastedObject_Setup* setup = (BlastedObject_Setup*)self->setup;
     BlastedObject_Data* objdata = self->data;
     
-    if ((visibility != 0) && (setup->blastedObj.extraDamageStages != 0) && !objdata->blockShapesUpdated) {
+    if ((visibility != 0) && (setup->extraDamageStages != 0) && !objdata->blockShapesUpdated) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }

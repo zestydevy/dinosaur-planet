@@ -1,10 +1,10 @@
 #include "common.h"
 #include "dlls/objects/357_ExplodeAnimator.h"
 #include "dlls/objects/358_debris.h"
-#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/103.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/55_Riverflow.h"
 #include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objhits.h"
@@ -209,7 +209,7 @@ void DFbarrel_handleMovement(Object* self) {
 // offset: 0x960 | func: 8
 void DFbarrel_handleDamage(Object* self) {
     DFBarrel_Data* objData;
-    DIMExplosion_Setup* explosion;
+    Generic_Setup* explosion;
     s32 hitDamage;
     Object* obj;
     f32 distance;
@@ -237,7 +237,7 @@ void DFbarrel_handleDamage(Object* self) {
         func_80026940(self, 40);
         func_80026128(self, Damage_Type_Explosion, 4, 0);
         
-        explosion = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+        explosion = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
         explosion->base.x = self->srt.transl.x;
         explosion->base.y = self->srt.transl.y;
         explosion->base.z = self->srt.transl.z;

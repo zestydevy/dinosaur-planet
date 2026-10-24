@@ -1,6 +1,7 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/math.h"
 #include "sys/gfx/model.h"
 #include "sys/objhits.h"
@@ -9,7 +10,6 @@
 #include "sys/objprint.h"
 #include "dlls/objects/210_player.h"
 #include "types.h"
-#include "dlls/objects/277_iceblast.h"
 
 typedef struct {
     s16 timer;

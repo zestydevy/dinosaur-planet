@@ -1,12 +1,6 @@
 #include "PR/ultratypes.h"
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 scaleMultiplier;
-    s8 orbitalRadius; //divided by 16
-    s16 modelIdx;
-} WMPlanets_Setup;
 
 typedef struct {
     s16 orbitSpeed;

@@ -14,6 +14,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/103.h"
+#include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -59,7 +60,7 @@ void Tumbleweed_dtor(void* dll) { }
 // offset: 0x18 | func: 0 | export: 0
 void Tumbleweed_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     Tumbleweed_Data* objData;
-    GoldenNugget_Setup* goldSetup;
+    Collectable_Setup* goldSetup;
     Object** objects;
     s32 index;
     s32 count;
@@ -102,8 +103,8 @@ void Tumbleweed_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
                 if (objects[index]->id == OBJ_SC_golden_nugge) {
                     
                     objData->goldenNugget = objects[index];
-                    goldSetup = (GoldenNugget_Setup*)objData->goldenNugget->setup;
-                    objData->goldDroppedGamebit = goldSetup->gamebitDropped;
+                    goldSetup = (Collectable_Setup*)objData->goldenNugget->setup;
+                    objData->goldDroppedGamebit = goldSetup->gamebitSecondary;
 
                     if (mainGetBits(objData->goldDroppedGamebit)) {
                         objData->goldenNugget = NULL;

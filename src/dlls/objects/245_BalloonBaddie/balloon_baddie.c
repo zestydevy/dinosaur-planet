@@ -1,4 +1,5 @@
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/memory.h"
@@ -30,14 +31,6 @@ typedef struct {
 /*28*/ u16 theta[3];
 /*2E*/ u8 flags;
 } BalloonBaddie_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*19*/ s8 attackRange;
-/*1A*/ s16 unk1A;
-/*1C*/ s16 respawnTimer;
-} BalloonBaddie_Setup;
 
 typedef enum {
     BALLOONBADDIE_1 = 0x1,

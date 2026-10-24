@@ -1,13 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebit;
-} VFP_Statue_Setup;
+#include "game/objects/setups/51_Generic.h"
 
 typedef struct {
     s16 gamebit;
@@ -21,20 +14,20 @@ void VFP_Statue_ctor(void* dll) { }
 void VFP_Statue_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_Statue_obj_Setup(Object* self, VFP_Statue_Setup* objSetup, s32 reset) {
+void VFP_Statue_obj_Setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     VFP_Statue_Data* objData = self->data;
     
     self->srt.yaw = objSetup->yaw << 8;
-    objData->gamebit = objSetup->gamebit;
+    objData->gamebit = objSetup->bitA;
     self->stateFlags |= OBJSTATE_PRINT_DISABLED | OBJSTATE_UPDATE_DISABLED;
 }
 
 // offset: 0x48 | func: 1 | export: 1
 void VFP_Statue_obj_Control(Object* self) {
-    VFP_Statue_Setup* objSetup;
+    Generic_Setup* objSetup;
     VFP_Statue_Data* objData;
 
-    objSetup = (VFP_Statue_Setup*)self->setup;
+    objSetup = (Generic_Setup*)self->setup;
     objData = self->data;
     
     switch (self->id) {

@@ -1,15 +1,7 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objhits.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitLocked;
-    s16 gamebitPulled;
-} DFP_PerchSwitch_Setup;
 
 typedef struct {
     u8 alreadyPulled;

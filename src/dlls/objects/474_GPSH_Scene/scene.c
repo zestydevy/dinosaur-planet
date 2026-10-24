@@ -1,14 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 index;
-    s16 dropoffRange;
-    s16 _unk1C;   //Gamebit field? Always -1
-    s16 gamebit; //Unused, but this the same gamebit that the DLL sets upon placing this item
-} GPSH_Scene_Setup;
 
 typedef struct {
     f32 dropoffRange;   //Range for placing the item

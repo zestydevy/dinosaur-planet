@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
 #include "macros.h"
 
@@ -38,10 +39,6 @@
 };
 
 typedef struct {
-    ObjSetup base;
-} DLL618_Setup;
-
-typedef struct {
     f32 maskY;
 } WM_TransTop_Data;
 
@@ -54,7 +51,7 @@ void WM_TransTop_ctor(void *dll) { }
 void WM_TransTop_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WM_TransTop_setup(Object* self, DLL618_Setup* objSetup, s32 arg2) {
+void WM_TransTop_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     WM_TransTop_Data* objData = self->data;
 
     if (mainGetBits(BIT_WM_Sabre_Transporter_Visible)) {

@@ -8,6 +8,7 @@
 #include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/texture.h"
 #include "sys/gfx/model.h"
 #include "sys/joypad.h"
@@ -54,7 +55,7 @@ void KrazoaText_ctor(void* dll){ }
 void KrazoaText_dtor(void* dll){ }
 
 // offset: 0x18 | func: 0 | export: 0
-void KrazoaText_obj_Setup(Object* self, s32 arg1, s32 reset) {  
+void KrazoaText_obj_Setup(Object* self, KrazoaText_Setup* setup, s32 reset) {  
     objInitMesgQueue(self, 2);
     KrazoaText_unloadAllGlyphTextures(self, self->data);
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;

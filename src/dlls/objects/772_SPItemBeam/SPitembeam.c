@@ -1,13 +1,8 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 
 #include "dlls/objects/768_SPshop.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unused18;
-    s16 itemIndex; //The kind of shop item being highlighted (see `ShopItemIndices`)
-} SPItemBeam_Setup;
 
 // offset: 0x0 | ctor
 void SPItemBeam_ctor(void* dll) { }

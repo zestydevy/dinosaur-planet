@@ -1,13 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 _unk19;
-    s16 _unk1A;
-    s16 _unk1C;
-    s16 gamebitDestroy; 
-} CCDockDoor_Setup;
 
 typedef struct {
     u8 destroyed;    

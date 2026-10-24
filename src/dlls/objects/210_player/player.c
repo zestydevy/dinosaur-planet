@@ -9,6 +9,7 @@
 #include "game/gamebits.h"
 #include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/38_Projectile.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/55_Riverflow.h"
 #include "sys/gfx/animseq.h"
 #include "sys/footsteps.h"
@@ -43,7 +44,6 @@
 #include "dlls/objects/common/weapon.h"
 #include "dlls/objects/common/dinocaller.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/277_iceblast.h"
 #include "dlls/objects/338_LFXEmitter.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/18_objfsa.h"
@@ -10462,7 +10462,7 @@ void dll_210_func_1DC48(Object* player) {
         objsetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
         objsetup->base.loadDistance = 0xFF;
         objsetup->base.fadeDistance = 0xFF;
-        objsetup->timer = i * 0xA;
+        objsetup->timer = i * 10;
         if (player->id != 0) {
             objsetup->unk1C = 0;
         } else {

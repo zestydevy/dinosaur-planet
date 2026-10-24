@@ -1,6 +1,6 @@
 #include "dlls/objects/210_player.h"
 #include "game/objects/object.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/vi.h"
 #include "sys/gfx/model.h"
@@ -47,19 +47,19 @@ void WCApertureSymbol_ctor(void* dll) { }
 void WCApertureSymbol_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCApertureSymbol_setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void WCApertureSymbol_setup(Object* self, WCApertureSymbol_Setup* setup, s32 reset) {
     WCApertureSymbol_Data* objdata = self->data;
 
-    self->srt.yaw = setup->apertureSymbol.yaw << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = WCApertureSymbol_animCallback;
 
-    self->modelInstIdx = setup->apertureSymbol.type;
+    self->modelInstIdx = setup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = WCApertureSymbol_MODELIDX_Sun;
     }
 
-    if (mainGetBits(setup->apertureSymbol.bitEnabled)) {
-        if (mainGetBits(setup->apertureSymbol.bitViewed)) {
+    if (mainGetBits(setup->bitEnabled)) {
+        if (mainGetBits(setup->bitViewed)) {
             objdata->state = STATE_Viewed;
         } else {
             objdata->state = STATE_Waiting_for_View;
@@ -72,13 +72,13 @@ void WCApertureSymbol_setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
 
 // offset: 0xFC | func: 1 | export: 1
 void WCApertureSymbol_control(Object* self) {
-    Ctrl51_Setup* setup;
+    WCApertureSymbol_Setup* setup;
     f32 time;
     WCApertureSymbol_Data* objdata;
     s32 opacity;
     Object* player;
 
-    setup = (Ctrl51_Setup*)self->setup;
+    setup = (WCApertureSymbol_Setup*)self->setup;
     objdata = self->data;
     
     player = objGetPlayer();
@@ -95,7 +95,7 @@ void WCApertureSymbol_control(Object* self) {
             if ((((DLL_210_Player*)player->dll)->vtbl->func70(player) == VIEWING_TERRAIN_TYPE) && (vec3Distance(&player->globalPosition, &self->globalPosition) < 200.0f)) {
                 gDLL_7_Newday->vtbl->func4(&time);
 
-                if (setup->apertureSymbol.type == WCApertureSymbol_MODELIDX_Sun) {
+                if (setup->type == WCApertureSymbol_MODELIDX_Sun) {
                     objdata->targetOpacity = WCApertureSymbol_getTargetOpacity(self, objdata, 
                         PEAK_SUN - VIEWING_DURATION_SUN/2, 
                         PEAK_SUN + VIEWING_DURATION_SUN/2, 
@@ -109,8 +109,8 @@ void WCApertureSymbol_control(Object* self) {
                     );
                 }
 
-                if (self->opacity > setup->apertureSymbol.opacityThreshold) {
-                    mainSetBits(setup->apertureSymbol.bitViewed, TRUE);
+                if (self->opacity > setup->opacityThreshold) {
+                    mainSetBits(setup->bitViewed, TRUE);
                     objdata->state = STATE_Viewed;
                     objdata->targetOpacity = OBJECT_OPACITY_MAX;
                 }
@@ -157,8 +157,8 @@ void WCApertureSymbol_free(Object* self, s32 onlySelf) { }
 
 // offset: 0x3F4 | func: 5 | export: 5
 u32 WCApertureSymbol_get_model_flags(Object* self) {
-    Ctrl51_Setup* setup = (Ctrl51_Setup*)self->setup;
-    s8 modelIdx = setup->apertureSymbol.type;
+    WCApertureSymbol_Setup* setup = (WCApertureSymbol_Setup*)self->setup;
+    s8 modelIdx = setup->type;
 
     if (modelIdx >= self->def->numModels) {
         modelIdx = 0;

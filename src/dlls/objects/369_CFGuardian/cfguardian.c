@@ -3,6 +3,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -16,11 +17,6 @@
 #include "macros.h"
 
 /** @file: official filename: cfguardian.c */
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 yaw8;
-} CFGuardian_Setup;
 
 typedef struct {
 /*000*/ MoveLibData movedata;
@@ -232,7 +228,7 @@ void CFGuardian_ctor(void* dll) { }
 void CFGuardian_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
+void CFGuardian_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     CFGuardian_Data* objdata;
     s32 _pad;
     s32 _pad2;
@@ -252,7 +248,7 @@ void CFGuardian_obj_Setup(Object* self, CFGuardian_Setup* setup, s32 reset) {
         self->srt.transl.z = setup->base.z;
         self->unkDC = 1;
         self->animCallback = (AnimationCallback)CFGuardian_animCallback;
-        self->srt.yaw = setup->yaw8 << 8;
+        self->srt.yaw = setup->yaw << 8;
         objdata->windLiftState = 0;
         objdata->unk908 = 6;
         objdata->flags = 0;

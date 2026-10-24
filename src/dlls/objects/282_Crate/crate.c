@@ -2,6 +2,7 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/objtype.h"
 #include "sys/gfx/model.h"
@@ -14,16 +15,6 @@
 
 static DLL_IModgfx* dModGfxDLLDestroyed = NULL; //Creates particles when damaged
 static DLL_IModgfx* dModGfxDLLDamaged = NULL;   //Creates debris when destroyed
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 useNearbyCollectable;    //When set: a nearby collectable is repositioned when the crate is destroyed (no Gplay timer).
-                                //When not set: crate drops an Energy Egg, and it reappears after a Gplay timer expires.
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebitDestroyed;       //Gamebit to set when destroyed. Doesn't affect crate reappearing!
-} Crate_Setup;
 
 typedef struct {
     f32 flash;                  //Opacity for red flash effect after being damaged

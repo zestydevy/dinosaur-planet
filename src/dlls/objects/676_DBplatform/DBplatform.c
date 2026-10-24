@@ -1,14 +1,5 @@
+#include "game/objects/setups/51_Generic.h"
 #include "common.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 yOffset;
-    s16 quarterVisRadius;
-    s16 transitionDuration;
-    s16 gamebitStandingOn;
-    s16 gamebitStateTransition;
-} DBPlatform_Setup;
 
 typedef struct {
     s32 timer;

@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/objects/304_LanternFireFly.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 
 typedef struct {

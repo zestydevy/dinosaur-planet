@@ -1,6 +1,7 @@
 #include "common.h"
 #include "macros.h"
 #include "game/objects/setups/115_KyteTarget.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/609_WMFireFly.h"

@@ -1,13 +1,6 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18;
-    s8 mode;
-    s16 unk1A;
-    s16 unk1C;
-} WLTorch_Setup;
 
 typedef struct {
     Object* unk0;
@@ -33,26 +26,26 @@ void WLTorch_ctor(void* dll) { }
 void WLTorch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WLTorch_obj_Setup(Object* self, WLTorch_Setup* setup, s32 reset) {
+void WLTorch_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     DLL_IModgfx* modGfxDLL;
     SRT fxTransform;
     WLTorch_Data* objdata;
 
     objdata = self->data;
 
-    if (setup->unk1A != 0) {
-        objdata->unk4 = setup->unk1A;
+    if (setup->genericA != 0) {
+        objdata->unk4 = setup->genericA;
     } else {
         objdata->unk4 = 75.0f;
     }
 
-    if (setup->unk1C != 0) {
-        objdata->unkE = setup->unk1C;
+    if (setup->genericB != 0) {
+        objdata->unkE = setup->genericB;
     } else {
         objdata->unkE = 140;
     }
 
-    objdata->mode = setup->mode;
+    objdata->mode = setup->type;
 
     fxTransform.transl.y = -2.0f;
     if (objdata->mode == WLTorch_MODE_0) {

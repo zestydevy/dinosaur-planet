@@ -1,6 +1,6 @@
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/main.h"
 #include "sys/objects.h"
@@ -24,11 +24,11 @@ void CFPowerBase_ctor(void* dll) { }
 void CFPowerBase_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFPowerBase_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void CFPowerBase_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     CFPowerBase_Data* objdata = self->data;
 
-    self->srt.yaw = setup->generic.yaw << 8;
-    objdata->gamebit = setup->generic.bitA;
+    self->srt.yaw = setup->yaw << 8;
+    objdata->gamebit = setup->bitA;
     switch (objdata->gamebit) {
     case BIT_CRF_Red_PowerBase:
         objdata->seqno = 0;

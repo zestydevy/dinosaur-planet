@@ -1,4 +1,5 @@
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
 
@@ -6,12 +7,6 @@ typedef struct {
 /*00*/ u32 soundHandle;
 /*04*/ s32 _unk4;
 } SB_ShipGunBroke_Data;
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ u8 unk18[0x1E - 0x18];
-/*1E*/ s16 gunDestroyedGamebit;
-} SB_ShipGunBroke_Setup;
 
 // offset: 0x0 | ctor
 void SB_ShipGunBroke_ctor(void *dll) { }

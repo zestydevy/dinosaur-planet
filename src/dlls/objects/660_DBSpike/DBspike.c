@@ -1,5 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
+#include "game/objects/setups/51_Generic.h"
 
 typedef enum {
     DBSpike_MODEL_Regular = 0,
@@ -15,15 +16,6 @@ typedef enum {
     DBSpike_FLAG_None = 0,
     DBSpike_FLAG_Moving = 1
 } DBSpike_Flags;
-
-typedef struct {
-    ObjSetup base;
-    s8 roll;
-    s8 unused19;
-    s16 yaw;
-    s16 unused1C;
-    s16 gamebit;
-} DBSpike_Setup;
 
 typedef struct {
     u32 soundHandle;

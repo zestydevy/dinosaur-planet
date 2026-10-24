@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/6_amsfx.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/gfx/modgfx.h"
@@ -9,14 +10,6 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 _unk18[2];
-    s16 unk1A;
-    u8 _unk1C[2];
-    s16 unk1E;
-} VFP_lavastar_Setup;
 
 typedef struct {
     f32 speed;
@@ -33,13 +26,13 @@ void VFP_lavastar_ctor(void *dll) { }
 void VFP_lavastar_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
+void VFP_lavastar_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     VFP_lavastar_Data* objdata;
 
     objdata = self->data;
-    objdata->unk4 = setup->unk1E;
+    objdata->unk4 = setup->bitA;
     objdata->speed = mathRnd(5, 20) * 0.1f;
-    self->srt.transl.y = setup->unk1A + setup->base.y;
+    self->srt.transl.y = setup->genericA + setup->base.y;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
     sDLL_182 = dllLoad(DLL_ID_182, 1);
     gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3A3, NULL, PARTFXFLAG_800 | PARTFXFLAG_2, -1, NULL);
@@ -48,11 +41,11 @@ void VFP_lavastar_setup(Object* self, VFP_lavastar_Setup* setup, s32 arg2) {
 
 // offset: 0x158 | func: 1 | export: 1
 void VFP_lavastar_control(Object* self) {
-    VFP_lavastar_Setup* setup;
+    Generic_Setup* setup;
     VFP_lavastar_Data* objdata;
 
     objdata = (VFP_lavastar_Data*)self->data;
-    setup = (VFP_lavastar_Setup*)self->setup;
+    setup = (Generic_Setup*)self->setup;
     self->srt.transl.y += gUpdateRateF * objdata->speed;
     if ((setup->base.y + 1200.0f) < self->srt.transl.y) {
         objdata->speed = mathRnd(5, 20) * 0.1f;

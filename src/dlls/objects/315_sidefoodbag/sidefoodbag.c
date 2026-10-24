@@ -1,6 +1,7 @@
 #include "common.h"
 
 #include "dlls/objects/315_sidefoodbag.h"
+#include "game/objects/setups/51_Generic.h"
 #include "macros.h"
 
 /*0x0*/ static FoodbagItem dino_foodbag_items[] = {
@@ -37,7 +38,7 @@ void SideFoodbag_ctor(void *dll) { }
 void SideFoodbag_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SideFoodbag_setup(Object* self, Foodbag_ObjSetup *objSetup, s32 arg2) {
+void SideFoodbag_setup(Object* self, Generic_Setup *objSetup, s32 arg2) {
     s32 pad[2];
     s32 playerNo;
     SideFoodbag_Data* objData;

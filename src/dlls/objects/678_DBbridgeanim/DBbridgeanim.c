@@ -1,15 +1,7 @@
 #include "common.h"
 #include "dlls/objects/677_DBlgtbeam.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objtype.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-    s16 gamebitStart;
-} DBbridgeanim_Setup;
 
 typedef struct {
     u8 state;
@@ -47,7 +39,7 @@ void DBbridgeanim_ctor(void* dll) { }
 void DBbridgeanim_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DBbridgeanim_setup(Object* self, DBbridgeanim_Setup* arg1, s32 reset) {
+void DBbridgeanim_setup(Object* self, Generic_Setup* arg1, s32 reset) {
     DBbridgeanim_Data* objData = self->data;
     
     objData->state = STATE_0_Bridge_Off;
@@ -57,25 +49,25 @@ void DBbridgeanim_setup(Object* self, DBbridgeanim_Setup* arg1, s32 reset) {
 
 // offset: 0x38 | func: 1 | export: 1
 void DBbridgeanim_control(Object* self) {
-    DBbridgeanim_Setup* objSetup;
+    Generic_Setup* objSetup;
     DBbridgeanim_Data* objData;
     s32 gamebitValue;
 
-    objSetup = (DBbridgeanim_Setup*)self->setup;
+    objSetup = (Generic_Setup*)self->setup;
     objData = self->data;
     
     if (joyGetPressed(0) & B_BUTTON) {
-        mainSetBits(objSetup->gamebitStart, TRUE);
+        mainSetBits(objSetup->bitB, TRUE);
     }
     
     switch (objData->state) {
     case STATE_0_Bridge_Off:
-        if (mainGetBits(objSetup->gamebitStart)) {
+        if (mainGetBits(objSetup->bitB)) {
             objData->state = STATE_1_Bridge_On;
             DBbridgeanim_create_step(1);
             objData->timer = 0;
             objData->stepNum = 1;
-            mainSetBits(objSetup->gamebitStart, FALSE);
+            mainSetBits(objSetup->bitB, FALSE);
             return;
         }
         return;

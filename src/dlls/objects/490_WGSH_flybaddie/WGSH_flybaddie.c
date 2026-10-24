@@ -7,6 +7,7 @@
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/38_Projectile.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -18,12 +19,6 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s16 unk18;
-/*1A*/ s16 unk1A;
-} WGSH_flybaddie_Setup;
 
 typedef struct {
 /*00*/ f32 xCurve[4];
@@ -57,7 +52,7 @@ void WGSH_flybaddie_ctor(void *dll) { }
 void WGSH_flybaddie_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WGSH_flybaddie_setup(Object* self, WGSH_flybaddie_Setup* setup, s32 arg2) {
+void WGSH_flybaddie_setup(Object* self, Flybaddie_Setup* setup, s32 arg2) {
     WGSH_flybaddie_Data* objdata;
     f32 pos[3];
     Object* player;

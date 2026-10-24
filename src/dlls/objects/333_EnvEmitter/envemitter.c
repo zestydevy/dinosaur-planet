@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/envfx.h"
 
 typedef struct {
@@ -19,16 +19,16 @@ void EnvEmitter_ctor(void* dll) { }
 void EnvEmitter_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void EnvEmitter_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
+void EnvEmitter_obj_Setup(Object* self, EnvEmitter_Setup* objSetup, s32 reset) {
     EnvEmitter_Data* objData = self->data;
     
     self->srt.yaw = 0;
     
-    objData->activateRange = objSetup->envEmitter.activateRange * 4;
-    objData->unk14 = objSetup->envEmitter.unk19;
-    objData->actionIdxBase = objSetup->envEmitter.actionIdxBase;
-    objData->gamebitActivate = objSetup->envEmitter.gamebitActivate;
-    objData->gamebitActionIdxOffset = objSetup->envEmitter.gamebitActionIdxOffset;
+    objData->activateRange = objSetup->activateRange * 4;
+    objData->unk14 = objSetup->unk19;
+    objData->actionIdxBase = objSetup->actionIdxBase;
+    objData->gamebitActivate = objSetup->gamebitActivate;
+    objData->gamebitActionIdxOffset = objSetup->gamebitActionIdxOffset;
     objData->prevActivated = -1;
     objData->prevActionIdxOffset = -1;
     

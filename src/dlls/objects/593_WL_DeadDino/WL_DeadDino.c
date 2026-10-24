@@ -4,18 +4,11 @@
 #include "dlls/objects/291_magicdust.h"
 #include "game/objects/interaction_arrow.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/objlib.h"
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 survived;        //The EarthWalker animates and can be talked to when this is set
-    s16 deadModAnimIdx; //This modAnimIdx is used when `objSetup->survived == FALSE`
-    s16 pitch;
-} DeadDino_Setup;
 
 typedef struct {
     s32 _unk0;

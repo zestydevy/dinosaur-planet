@@ -2,6 +2,7 @@
 #include "game/objects/object.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/setups/45_RocketMushroom.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/83_ExplodeAnimator.h"
 #include "sys/objtype.h"
 #include "dlls/engine/17_partfx.h"

@@ -1,6 +1,7 @@
 //"screenoverlay.c" seems to have been Rare's official filename
 
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/camera.h"
 
 typedef struct {
@@ -10,10 +11,6 @@ typedef struct {
     s16 soundIDOut;     //soundID to play when overlay disappears
     s16 soundIDLoop;    //soundID to loop while overlay is visibleS
 } SpellOverlay_Config;
-
-typedef struct {
-    ObjSetup base;
-} SpellOverlay_Setup;
 
 typedef struct {
     SpellOverlay_Config* config;
@@ -51,7 +48,7 @@ void SpellOverlay_dtor(void *dll) {
 }
 
 // offset: 0x7C | func: 0 | export: 0
-void SpellOverlay_setup(Object* self, SpellOverlay_Setup* objSetup, s32 arg2) {
+void SpellOverlay_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     SpellOverlay_Data* objData;
 
     objData = self->data;

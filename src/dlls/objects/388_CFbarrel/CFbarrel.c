@@ -2,11 +2,10 @@
 #include "dlls/engine/17_partfx.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/engine/54_pickup.h"
-#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
@@ -63,7 +62,7 @@ void CFbarrel_ctor(void *dll) { }
 void CFbarrel_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void CFbarrel_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void CFbarrel_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
     CFbarrel_Data* objdata = self->data;
     Pickup* pickup = self->data;
     
@@ -72,7 +71,7 @@ void CFbarrel_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     objAddObjectType(self, OBJTYPE_Barrel);
     objAddObjectType(self, OBJTYPE_WindLiftable);
     objInitMesgQueue(self, 4);
-    self->srt.yaw = setup->generic.yaw << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->unkE0 = 0;
     objdata->unk38 = 0;
     objdata->isHeld = FALSE;
@@ -84,7 +83,7 @@ void CFbarrel_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     objdata->flags = 0;
     objdata->unk28 = 0.0f;
     objdata->unk3A = objdata->unk38;
-    if (setup->generic.type > 0) {
+    if (setup->type > 0) {
         objdata->isLevelObj = FALSE;
     } else {
         objdata->isLevelObj = TRUE;
@@ -388,7 +387,7 @@ static void CFbarrel_doPhysics(Object* self) {
 static void CFbarrel_checkHit(Object* self) {
     CFbarrel_Data* objdata = self->data;
     Object* hitBy;
-    DIMExplosion_Setup* explSetup;
+    Generic_Setup* explSetup;
     u32 damageType;
 
     damageType = func_80025F40(self, &hitBy, NULL, NULL);
@@ -410,7 +409,7 @@ static void CFbarrel_checkHit(Object* self) {
             self->visRadius = 100.0f;
             dll_amSfx->Play(self, SOUND_860_Explosion_Mid, MAX_VOLUME, NULL, NULL, 0, NULL);
             self->srt.transl.y += 10.0f;
-            explSetup = objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+            explSetup = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
             explSetup->base.x = self->srt.transl.x;
             explSetup->base.y = self->srt.transl.y;
             explSetup->base.z = self->srt.transl.z;

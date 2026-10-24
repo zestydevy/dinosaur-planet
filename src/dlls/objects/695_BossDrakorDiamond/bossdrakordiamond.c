@@ -1,5 +1,6 @@
 #include "common.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/modgfx.h"
 #include "sys/math.h"
 
@@ -7,10 +8,6 @@
 /*0x4*/ static u8 dFlags = 0;
 
 /*0x0*/ static f32 sTimer;
-
-typedef struct {
-    ObjSetup base;
-} BossDrakorDiamond_Setup;
 
 typedef enum {
     FLAG_None = 0,
@@ -31,7 +28,7 @@ void BossDrakorDiamond_ctor(void* dll) { }
 void BossDrakorDiamond_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void BossDrakorDiamond_setup(Object* self, BossDrakorDiamond_Setup* objSetup, s32 reset) {
+void BossDrakorDiamond_setup(Object* self, Generic_Setup* objSetup, s32 reset) {
     dModGfxDLL = dllLoad(DLL_ID_158, 1);
     sTimer = 0.0f;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED | OBJSTATE_PRINT_DISABLED;

@@ -6,6 +6,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
 #include "sys/math.h"
@@ -27,7 +28,7 @@ void SHspore_ctor(void *dll) { }
 void SHspore_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void SHspore_setup(Object* self, s32 arg1, s32 arg2) {
+void SHspore_setup(Object* self, SHSpore_Setup* setup, s32 arg2) {
     SHSpore_Data* objData;
     s8 pad[4];
     u8 sp37;

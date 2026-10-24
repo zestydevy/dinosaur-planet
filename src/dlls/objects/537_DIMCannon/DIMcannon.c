@@ -2,10 +2,10 @@
 #include "common.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/541_DIMexplosion.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/125_DIMCannon.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/math.h"
 #include "sys/objanim.h"
@@ -690,14 +690,14 @@ void DIMCannon_freeCannonBall(Object* self) {
 // offset: 0x16AC | func: 13
 Object* DIMCannon_createCannonBallExplosion(Object* self) {
     DIMCannonBall_Setup* objSetup; 
-    DIMExplosion_Setup* boomSetup;
+    Generic_Setup* boomSetup;
 
     //@bug: accidentally reading from `self->data` instead of `self->setup` (causes explosions to become invisible)!
     // We know `DIMCannonBall_Data` is only 1 byte long, and the parent->child
     // inheritance pattern below suggests Rare expected to read from an ObjSetup:
     objSetup = (DIMCannonBall_Setup*)self->data; 
     
-    boomSetup = (DIMExplosion_Setup*)objAllocSetup(sizeof(DIMExplosion_Setup), OBJ_DIMExplosion);
+    boomSetup = objAllocSetup(sizeof(Generic_Setup), OBJ_DIMExplosion);
     boomSetup->base.loadFlags = objSetup->base.loadFlags;
     boomSetup->base.loadDistance = objSetup->base.loadDistance;
     boomSetup->base.fadeFlags = objSetup->base.fadeFlags;

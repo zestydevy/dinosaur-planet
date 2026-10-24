@@ -4,6 +4,7 @@
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
@@ -17,15 +18,6 @@
 
 #include "dlls/objects/297_scarab.h"
 #include "dlls/objects/615_crawler.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebit;
-} MediumCrate_Setup;
 
 typedef struct {
 /*00*/ s32 unk0;
@@ -372,7 +364,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 2: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Red_scarab);
-                scarabSetup->unk18 = mathRnd(-127, 126);
+                scarabSetup->yaw = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -405,7 +397,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 3: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Gold_scarab);
-                scarabSetup->unk18 = mathRnd(-127, 126);
+                scarabSetup->yaw = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;
@@ -438,7 +430,7 @@ s32 medium_crate_func_C50(Object *self, Object *player, MediumCrate_Data *objdat
             }
             case 4: {
                 scarabSetup = objAllocSetup(sizeof(Scarab_Setup), OBJ_Rain_scarab);
-                scarabSetup->unk18 = mathRnd(-127, 126);
+                scarabSetup->yaw = mathRnd(-127, 126);
                 scarabSetup->base.x = self->srt.transl.x;
                 scarabSetup->base.y = self->srt.transl.y;
                 scarabSetup->base.z = self->srt.transl.z;

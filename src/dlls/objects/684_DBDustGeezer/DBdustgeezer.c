@@ -1,6 +1,7 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
 #include "macros.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
 
@@ -17,16 +18,6 @@ typedef enum {
     DBDustGeezer_FLAG_None = 0,
     DBDustGeezer_FLAG_Dug_Up = 1
 } DBDustGeezer_Flags;
-
-typedef struct {
-    ObjSetup base;
-    s8 unused18;
-    s8 randomnessRange;     //Controls the random variance in launched gems' start position/speed
-    s16 cooldownDuration;   //Cooldown after launching all gems
-    s16 launchedGemCount;   //How many gems to launch after being dug up (max of 8)
-    s16 unused1E;
-    s16 gamebitHidden;      //Hides geyser during setup if it's already dug up
-} DBDustGeezer_Setup;
 
 typedef struct {
     Object* boneDust[8];    //DBBoneDust objects
@@ -297,14 +288,14 @@ int DBDustGeezer_launch_gem(Object* self) {
 
 // offset: 0xB8C | func: 11
 Object* DBDustGeezer_create_gem(Object* self, s32 objectID) {
-    DBBoneDust_Setup* dustSetup;
+    Generic_Setup* dustSetup;
 
-    dustSetup = (DBBoneDust_Setup*)objAllocSetup(sizeof(DBBoneDust_Setup), objectID);
-    dustSetup->unk1E = -1;
+    dustSetup = objAllocSetup(sizeof(Generic_Setup), objectID);
+    dustSetup->bitA = -1;
     dustSetup->base.x = self->srt.transl.x;
     dustSetup->base.y = self->srt.transl.y - 30.0f;
     dustSetup->base.z = self->srt.transl.z;
-    dustSetup->unk20 = -1;
+    dustSetup->bitB = -1;
     dustSetup->base.loadFlags = 2;
     dustSetup->base.byte5 = 1;
     dustSetup->base.loadDistance = 0xFF;

@@ -1,4 +1,5 @@
 #include "common.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/map.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
@@ -13,14 +14,6 @@
     MASK_TRI(0x40, 1, 3, 7), 
     MASK_TRI(0x40, 7, 5, 1)
 };
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 beamLength;
-    s16 mode;
-    s16 gamebit;
-} LaserBeam_Setup;
 
 typedef struct {
     s32 gamebit;

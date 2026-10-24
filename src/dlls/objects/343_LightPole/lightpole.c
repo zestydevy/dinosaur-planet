@@ -1,17 +1,8 @@
 #include "common.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "macros.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 endFrameNoGamebit;           //When no gamebitFinished is specified, the TextureAnimator will hold on this frame at the end of its animation
-    s8 halfYaw;                     //Yaw (shifted by 9 instead of the usual 8)
-    s16 endFrame;                   //The TextureAnimator will finish animating once it reaches this frame
-    s16 animSpeed;                  //Animation speed for the TextureAnimator
-    s16 gamebitFinished;            //GamebitID set when the TextureAnimator's animation is finished
-    s16 gamebitStart;               //The TextureAnimator's animation begins when this gamebit is set
-} LightPole_Setup;
 
 typedef struct {
     s32 animatorID;                 //Which model texture to animate

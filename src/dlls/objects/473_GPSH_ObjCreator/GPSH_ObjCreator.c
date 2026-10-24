@@ -1,8 +1,8 @@
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/475_GPSH_flybaddie.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/setups/57_ObjCreator.h"
 #include "sys/dll.h"
 #include "sys/gfx/modgfx.h"
@@ -60,7 +60,7 @@ void GPSH_ObjCreator_setup(Object* self, ObjCreator_Setup* setup, s32 reset) {
 void GPSH_ObjCreator_control(Object* self) {
     ObjCreator_Setup* setup;
     GPSH_PickObj_Setup* pickObjSetup;
-    GPSH_flybaddie_Setup* flybaddieSetup;
+    Flybaddie_Setup* flybaddieSetup;
     GPSH_ObjCreator_Data* objdata;
     s32 _pad;
     DLL_IModgfx* modgfx;
@@ -121,7 +121,7 @@ void GPSH_ObjCreator_control(Object* self) {
         } else {
             if (objdata->timer <= 0) {
                 // Spawn flybaddie
-                flybaddieSetup = objAllocSetup(sizeof(GPSH_flybaddie_Setup), OBJ_GPSH_flybaddie);
+                flybaddieSetup = objAllocSetup(sizeof(Flybaddie_Setup), OBJ_GPSH_flybaddie);
                 flybaddieSetup->base.x = setup->base.x;
                 flybaddieSetup->base.y = setup->base.y + 50.0f;
                 flybaddieSetup->base.z = setup->base.z;

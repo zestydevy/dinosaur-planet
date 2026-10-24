@@ -6,12 +6,6 @@
 #include "dll_def.h"
 #include "types.h"
 
-typedef struct {
- /*00*/ ObjSetup base;
- /*18*/ s16 unused18;
- /*1A*/ s16 stringID;
-} KrazoaText_Setup;
-
 DLL_INTERFACE(DLL_283_KrazoaText) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
     /*7*/ void (*PrintText)(Object* self, Gfx** gfx);

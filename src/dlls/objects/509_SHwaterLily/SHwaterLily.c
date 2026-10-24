@@ -1,3 +1,4 @@
+#include "game/objects/setups/51_Generic.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/objprint.h"
@@ -12,13 +13,6 @@ typedef struct {
 /*114*/ u8 _unk114[0x118 - 0x114];
 } WaterLily_Data;
 
-typedef struct {
-/*00*/ ObjSetup base;
-/*18*/ s8 unk18;
-/*19*/ s8 unk19;
-/*1A*/ s16 unk1A;
-} WaterLily_Setup;
-
 // offset: 0x0 | ctor
 void dll_509_ctor(void *dll) { }
 
@@ -26,51 +20,51 @@ void dll_509_ctor(void *dll) { }
 void dll_509_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_509_setup(Object* self, WaterLily_Setup* setup, s32 arg2) {
+void dll_509_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     s32 sp34 = 0x19;
-    WaterLily_Data* LilyData = self->data;
+    WaterLily_Data* objdata = self->data;
   
-    if (setup->unk19 == 1) {
-        gDLL_26_Curves->vtbl->func_4288(&LilyData->unk0, self, 1000.0f, &sp34, -1);
-        self->srt.transl.f[0] = LilyData->unk0.unk0.unk68.f[0];
-        self->srt.transl.f[2] = LilyData->unk0.unk0.unk68.f[2];
-        LilyData->unk108 = (setup->unk1A / 10.0f);
+    if (setup->type == 1) {
+        gDLL_26_Curves->vtbl->func_4288(&objdata->unk0, self, 1000.0f, &sp34, -1);
+        self->srt.transl.x = objdata->unk0.unk0.unk68.x;
+        self->srt.transl.z = objdata->unk0.unk0.unk68.z;
+        objdata->unk108 = (setup->genericA / 10.0f);
     }
     
-    self->srt.yaw = setup->unk18 << 8;
-    self->srt.transl.f[1] = setup->base.y - 1.5f;
-    LilyData->unk10C = self->srt.transl.f[1];
+    self->srt.yaw = setup->yaw << 8;
+    self->srt.transl.y = setup->base.y - 1.5f;
+    objdata->unk10C = self->srt.transl.y;
 }
 
 // offset: 0x110 | func: 1 | export: 1
 void dll_509_control(Object* self) {
-    WaterLily_Data* WLData = self->data ;
+    WaterLily_Data* objdata = self->data;
     s32 pad;
-    WaterLily_Setup *LilyData = (WaterLily_Setup*)self->setup;
+    Generic_Setup *setup = (Generic_Setup*)self->setup;
     f32 temp;
 
-    if (LilyData->unk19 == 1) {
-        if ((curves_func_800053B0(&WLData->unk0.unk0, WLData->unk108) != 0) || (WLData->unk0.unk0.unk10 != 0)) {
-            gDLL_26_Curves->vtbl->func_4704(&WLData->unk0);
+    if (setup->type == 1) {
+        if ((curves_func_800053B0(&objdata->unk0.unk0, objdata->unk108) != 0) || (objdata->unk0.unk0.unk10 != 0)) {
+            gDLL_26_Curves->vtbl->func_4704(&objdata->unk0);
         }
-        self->srt.transl.f[0] = WLData->unk0.unk0.unk68.f[0];
-        self->srt.transl.f[2] = WLData->unk0.unk0.unk68.f[2];
+        self->srt.transl.x = objdata->unk0.unk0.unk68.x;
+        self->srt.transl.z = objdata->unk0.unk0.unk68.z;
     }
-    if (WLData->unk110 > 0.0f) {
-        WLData->unk110 = (f32) (WLData->unk110 - gUpdateRateF);
-        if (WLData->unk110 <= 0.0f) {
-            self->velocity.f[1] = -0.25f;
+    if (objdata->unk110 > 0.0f) {
+        objdata->unk110 = (f32) (objdata->unk110 - gUpdateRateF);
+        if (objdata->unk110 <= 0.0f) {
+            self->velocity.y = -0.25f;
         }
     }
 
-    temp = LilyData->base.y - self->srt.transl.f[1];
-    self->velocity.f[1] += temp * 0.25f * 0.08f * gUpdateRateF;
-    self->velocity.f[1] -= 0.05f * gUpdateRateF;
-    self->velocity.f[1] *= 0.9f;
-    if (self->velocity.f[1] > 1.4f) {
-        self->velocity.f[1] = 1.4f;
+    temp = setup->base.y - self->srt.transl.y;
+    self->velocity.y += temp * 0.25f * 0.08f * gUpdateRateF;
+    self->velocity.y -= 0.05f * gUpdateRateF;
+    self->velocity.y *= 0.9f;
+    if (self->velocity.y > 1.4f) {
+        self->velocity.y = 1.4f;
     }
-    self->srt.transl.f[1] += self->velocity.f[1] * gUpdateRateF;
+    self->srt.transl.y += self->velocity.y * gUpdateRateF;
 }
 
 // offset: 0x2C8 | func: 2 | export: 2

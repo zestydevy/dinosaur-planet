@@ -3,6 +3,7 @@
 #include "dll.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/envfx.h"
 #include "sys/gfx/animseq.h"
@@ -19,12 +20,6 @@
 #include "sys/objtype.h"
 #include "sys/print.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 _unk18;
-    s16 testStartRadius;
-} GPSH_Shrine_Setup;
 
 typedef struct {
     s16 testStartRadius;
@@ -70,7 +65,7 @@ void GPSH_Shrine_ctor(void* dll) { }
 void GPSH_Shrine_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void GPSH_Shrine_obj_Setup(Object* self, GPSH_Shrine_Setup* setup, s32 reset) {
+void GPSH_Shrine_obj_Setup(Object* self, Shrine_Setup* setup, s32 reset) {
     GPSH_Shrine_Data* objdata;
     DLL_IModgfx* modgfxDLL;
 
@@ -78,8 +73,8 @@ void GPSH_Shrine_obj_Setup(Object* self, GPSH_Shrine_Setup* setup, s32 reset) {
     self->srt.yaw = 0;
 
     objdata->testStartRadius = 10;
-    if (setup->testStartRadius > 0) {
-        objdata->testStartRadius = setup->testStartRadius >> 8;
+    if (setup->testStartRange > 0) {
+        objdata->testStartRadius = setup->testStartRange >> 8;
     }
 
     objdata->state = GPSH_Shrine_STATE_Waiting;

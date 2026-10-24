@@ -1,6 +1,7 @@
 #include "common.h"
 #include "macros.h"
 #include "PR/os.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/joypad.h"
 #include "sys/objhits.h"
 #include "sys/objtype.h"
@@ -15,15 +16,6 @@ typedef struct {
     s16 soundID;
     s16 unk2;
 } TalkSounds;
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 characterType;    //0: SharpClaw, 1: GuardClaw
-    s16 unused1A;
-    s16 unused1C;
-    s16 gamebitFinished; //Gamebit set when the character's interactions are finished (SharpClaw fed, GuardClaw tricked)
-} DR_NPC_Setup;
 
 typedef struct {
     MoveLibData movedata;

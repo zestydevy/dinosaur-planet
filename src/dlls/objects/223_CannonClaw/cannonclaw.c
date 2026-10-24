@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 
-#include "dlls/objects/223_CannonClaw.h"
 #include "dlls/objects/common/sidekick.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"

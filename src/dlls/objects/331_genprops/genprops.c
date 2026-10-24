@@ -1,6 +1,6 @@
 #include "common.h"
 #include "game/gamebits.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/objmsg.h"
 #include "sys/lfx.h"
@@ -49,7 +49,7 @@ void dll_331_ctor(void *dll) { }
 void dll_331_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
+void dll_331_setup(Object* self, Generic_Setup* objSetup, s32 arg2) {
     s16 id;
     s16 temp;
     GenProps_Data* objData;
@@ -60,15 +60,15 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
     
     switch (id) {
     case OBJ_NWbigrock:
-        self->srt.pitch = objSetup->generic.genericA;
-        self->srt.roll = objSetup->generic.genericB;
+        self->srt.pitch = objSetup->genericA;
+        self->srt.roll = objSetup->genericB;
         self->srt.scale = 1.0f;
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
     case OBJ_WMfallencol:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
-        self->srt.roll = objSetup->generic.genericB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
+        self->srt.roll = objSetup->genericB;
         self->srt.scale = 1.0f;
         return;
     case OBJ_DFSHcol:
@@ -78,15 +78,15 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
     case OBJ_DBSHcol:
     case OBJ_WGSHcol:
     case OBJ_DFP_dish:
-        self->srt.yaw = objSetup->generic.yaw << 8;
+        self->srt.yaw = objSetup->yaw << 8;
         return;
     case OBJ_WM_Walkway1:
     case OBJ_WM_Walkway2:
     case OBJ_WM_Platform:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
-        objData->gamebitA = objSetup->generic.bitA;
-        objData->gamebitB = objSetup->generic.bitB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
+        objData->gamebitA = objSetup->bitA;
+        objData->gamebitB = objSetup->bitB;
         objData->tValue = 0.0f;
         objData->pStartX = objSetup->base.x;
         objData->pStartY = objSetup->base.y;
@@ -105,23 +105,23 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
     case OBJ_WM_MoonSeedMoun:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        objData->debugPrintDistance = objSetup->generic.genericA;
+        self->srt.yaw = objSetup->yaw << 8;
+        objData->debugPrintDistance = objSetup->genericA;
         return;
     case OBJ_WM_NoPassVine:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        objData->debugPrintDistance = objSetup->generic.genericA;
+        self->srt.yaw = objSetup->yaw << 8;
+        objData->debugPrintDistance = objSetup->genericA;
         objData->vineHealth = 2;
         return;
     case OBJ_WM_NoPassHorzVi:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        objData->debugPrintDistance = objSetup->generic.genericA;
+        self->srt.yaw = objSetup->yaw << 8;
+        objData->debugPrintDistance = objSetup->genericA;
         objData->vineHealth = 2;
-        objData->gamebitA = objSetup->generic.bitA;
+        objData->gamebitA = objSetup->bitA;
         return;
     case OBJ_NWSH_col:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
         return;
     case OBJ_NWSH_rock:
     case OBJ_WMrock:
@@ -136,36 +136,36 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
         self->modelInstIdx = mathRnd(0, 1);
         return;
     case OBJ_DFP_blockwall:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->modelInstIdx = objSetup->generic.type;
-        objData->gamebitA = objSetup->generic.bitB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->modelInstIdx = objSetup->type;
+        objData->gamebitA = objSetup->bitB;
         if (mainGetBits(objData->gamebitA)) {
             self->srt.transl.y = objSetup->base.y + 30.0f;
             return;
         }
         return;
     case OBJ_WMlargerock:
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
-        self->srt.roll = objSetup->generic.genericB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
+        self->srt.roll = objSetup->genericB;
         self->srt.scale = 1.0f;
         self->animCallback = (void*)&dll_331_func_1D34;
-        objData->gamebitB = objSetup->generic.bitB;
-        objData->gamebitA = objSetup->generic.bitA;
+        objData->gamebitB = objSetup->bitB;
+        objData->gamebitA = objSetup->bitA;
         return;
     case 133: //unknown deleted object
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
-        self->srt.roll = objSetup->generic.genericB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
+        self->srt.roll = objSetup->genericB;
         self->srt.scale = 0.05f;
         self->unkDC = 100;
         self->unkE0 = 0;
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
     case 134: //unknown deleted object
-        self->srt.yaw = objSetup->generic.yaw << 8;
-        self->srt.pitch = objSetup->generic.genericA;
-        self->srt.roll = objSetup->generic.genericB;
+        self->srt.yaw = objSetup->yaw << 8;
+        self->srt.pitch = objSetup->genericA;
+        self->srt.roll = objSetup->genericB;
         self->srt.scale = 0.5f;
         self->unkDC = 0;
         self->unkE0 = 0;
@@ -174,8 +174,8 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
     case OBJ_SB_Galleon:
         self->srt.yaw = 0;
         self->srt.pitch = 0;
-        if (objSetup->generic.genericB >= 1000) {
-            self->srt.scale = 1.0f / (objSetup->generic.genericB / 1000.0f);
+        if (objSetup->genericB >= 1000) {
+            self->srt.scale = 1.0f / (objSetup->genericB / 1000.0f);
         } else {
             self->srt.scale = 0.2f;
         }
@@ -193,7 +193,7 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
         self->animCallback = (void*)&dll_331_func_1D34;
         return;
     case OBJ_Krazcol:
-        self->srt.yaw = objSetup->generic.yaw << 8;
+        self->srt.yaw = objSetup->yaw << 8;
         self->srt.scale = 1.0f;
         objData->unk3E = 0;
         objData->pStartX = objSetup->base.x;
@@ -223,11 +223,11 @@ void dll_331_setup(Object* self, Ctrl51_Setup* objSetup, s32 arg2) {
         return;
     case OBJ_DIM2IceFloe2:
         self->objhitInfo = 0;
-        if (objSetup->generic.genericA == 0) {
+        if (objSetup->genericA == 0) {
             objData->soundIDs = _data_4;
             objData->lastSoundIndex = 4;
         }
-        temp = objSetup->generic.genericB ^ 0;
+        temp = objSetup->genericB ^ 0;
         objData->minCooldown = temp;
         objData->timer = temp;
         return;
@@ -251,7 +251,7 @@ void dll_331_control(Object* self) {
     ObjectPolyhits* temp_v0;
     s16 id;
     Object** collidedObject;
-    Ctrl51_Setup *objSetup;
+    Generic_Setup *objSetup;
     s32 temp_t3;
     GenProps_Data* objData;
     DLL_Unknown* tempDLL2;
@@ -268,7 +268,7 @@ void dll_331_control(Object* self) {
     player = objGetPlayer();
     objData = self->data;
     camera = camGet();
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (Generic_Setup*)self->setup;
     
     id = self->id;
     

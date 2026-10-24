@@ -1,6 +1,6 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/joypad.h"
 #include "sys/main.h"
@@ -30,34 +30,34 @@ void ToggleSwitch_ctor(void* dll) { }
 void ToggleSwitch_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void ToggleSwitch_obj_Setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void ToggleSwitch_obj_Setup(Object* self, ToggleSwitch_Setup* setup, s32 reset) {
     ToggleSwitch_Data* objdata;
 
-    self->srt.yaw = setup->toggleSwitch.yaw << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = ToggleSwitch_animCallback;
     objdata = self->data;
-    objdata->enabled = mainGetBits(setup->toggleSwitch.enabledGamebit);
-    objdata->state = mainGetBits(setup->toggleSwitch.stateGamebit);
+    objdata->enabled = mainGetBits(setup->enabledGamebit);
+    objdata->state = mainGetBits(setup->stateGamebit);
     objdata->flags = TOGGLESWITCH_Init;
 }
 
 // offset: 0xB4 | func: 1 | export: 1
 void ToggleSwitch_obj_Control(Object* self) {
     ToggleSwitch_Data* objdata;
-    Ctrl51_Setup* setup;
+    ToggleSwitch_Setup* setup;
     s32 damageType;
 
     damageType = 0;
     objdata = self->data;
-    setup = (Ctrl51_Setup*)self->setup;
+    setup = (ToggleSwitch_Setup*)self->setup;
     if (objdata->flags & TOGGLESWITCH_Moving) {
         objdata->flags &= ~TOGGLESWITCH_Moving;
         return;
     }
-    if (mainGetBits(setup->toggleSwitch.stateGamebit) != objdata->state) {
+    if (mainGetBits(setup->stateGamebit) != objdata->state) {
         objdata->state ^= 1;
-        if (mainGetBits(setup->toggleSwitch.enabledGamebit) != 0) {
-            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->toggleSwitch.preemptTime);
+        if (mainGetBits(setup->enabledGamebit) != 0) {
+            gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
         }
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->state, self, 1);
         objdata->flags |= TOGGLESWITCH_Moving;
@@ -78,7 +78,7 @@ void ToggleSwitch_obj_Control(Object* self) {
         joyDisableButtons(0, A_BUTTON);
     }
     if (objdata->flags & TOGGLESWITCH_Init) {
-        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->toggleSwitch.preemptTime);
+        gDLL_3_Animation->vtbl->preempt_sequence_time(self, setup->preemptTime);
         gDLL_3_Animation->vtbl->start_obj_sequence(objdata->state, self, 1);
         objdata->flags &= ~TOGGLESWITCH_Init;
     }
@@ -110,14 +110,14 @@ u32 ToggleSwitch_obj_GetDataSize(Object* self, u32 offsetAddr) {
 // offset: 0x38C | func: 7
 static int ToggleSwitch_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     ToggleSwitch_Data* objdata;
-    Ctrl51_Setup* setup;
+    ToggleSwitch_Setup* setup;
 
     objdata = self->data;
-    setup = (Ctrl51_Setup*)self->setup;
+    setup = (ToggleSwitch_Setup*)self->setup;
     if ((animObjData->lastMessage == 1) && (objdata->flags & TOGGLESWITCH_Moving)) {
-        if (mainGetBits(setup->toggleSwitch.enabledGamebit) != 0) {
-            objdata->state = mainGetBits(setup->toggleSwitch.stateGamebit) ^ 1;
-            mainSetBits(setup->toggleSwitch.stateGamebit, objdata->state);
+        if (mainGetBits(setup->enabledGamebit) != 0) {
+            objdata->state = mainGetBits(setup->stateGamebit) ^ 1;
+            mainSetBits(setup->stateGamebit, objdata->state);
         }
     }
     return 0;

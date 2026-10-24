@@ -1,4 +1,5 @@
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/dll.h"
 #include "sys/main.h"
 #include "sys/gfx/modgfx.h"
@@ -15,15 +16,6 @@ typedef struct {
     u8 _unk5;
 } VFP_DoorSwitch_Data;
 
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 unk1E;
-} VFP_DoorSwitch_Setup;
-
 static void VFP_DoorSwitch_func_23C(Object* self);
 static void VFP_DoorSwitch_func_3D4(Object* self);
 
@@ -38,10 +30,10 @@ void VFP_DoorSwitch_obj_Setup(Object* self, VFP_DoorSwitch_Setup* setup, s32 res
     VFP_DoorSwitch_Data* objdata;
 
     objdata = self->data;
-    self->srt.yaw = setup->unk18 << 8;
-    self->srt.roll = setup->unk19 << 8;
-    self->srt.pitch = setup->unk1C;
-    objdata->unk0 = (s16) setup->unk1E;
+    self->srt.yaw = setup->yaw << 8;
+    self->srt.roll = setup->roll << 8;
+    self->srt.pitch = setup->pitch;
+    objdata->unk0 = (s16) setup->bit;
     objdata->unk2 = (s16) setup->unk1A;
     if (mainGetBits(objdata->unk0) != 0) {
         objdata->unk4 = 1;

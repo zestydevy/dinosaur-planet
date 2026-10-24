@@ -1,5 +1,5 @@
 #include "common.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 #include "sys/objtype.h"
 #include "sys/gfx/modgfx.h"
@@ -11,7 +11,7 @@ void FirePole_ctor(void *dll) { }
 void FirePole_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void FirePole_setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
+void FirePole_setup(Object* self, Firepole_Setup* setup, s32 reset) {
     s32 objID;
     DLL_IModgfx* modGfxDLL;
     SRT fxTransform;
@@ -19,11 +19,11 @@ void FirePole_setup(Object* self, Ctrl51_Setup* setup, s32 reset) {
     objID = setup->base.objId;
     objAddObjectType(self, OBJTYPE_Torch);
     if (objID == OBJ_FirePole) {
-        self->srt.yaw = setup->firepole.yaw << 8;
+        self->srt.yaw = setup->yaw << 8;
         self->srt.pitch = 0;
-        self->srt.roll = setup->firepole.roll;
-        if (setup->firepole.scale > 0) {
-            self->srt.scale = setup->firepole.scale * (1.0f/0x2000);
+        self->srt.roll = setup->roll;
+        if (setup->scale > 0) {
+            self->srt.scale = setup->scale * (1.0f/0x2000);
         } else {
             self->srt.scale = 0.1f;
         }

@@ -2,6 +2,7 @@
 #include "PR/ultratypes.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -10,14 +11,6 @@
 #include "sys/objprint.h"
 #include "dll.h"
 #include "types.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 unk18;
-    u8 _unk19[4];
-    s16 gamebit;
-    s16 gamebit2;
-} VFP_PodiumPoint_Setup;
 
 // size:0x6
 typedef struct {
@@ -38,14 +31,14 @@ void VFP_PodiumPoint_ctor(void *dll) { }
 void VFP_PodiumPoint_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void VFP_PodiumPoint_setup(Object* self, VFP_PodiumPoint_Setup* setup, s32 arg2) {
+void VFP_PodiumPoint_setup(Object* self, Generic_Setup* setup, s32 arg2) {
     VFP_PodiumPoint_Data* objdata;
 
     objdata = (VFP_PodiumPoint_Data*)self->data;
-    self->srt.yaw = setup->unk18 << 8;
+    self->srt.yaw = setup->yaw << 8;
     self->animCallback = VFP_PodiumPoint_func_324;
-    objdata->setGamebit = setup->gamebit;
-    objdata->conditionGamebit = setup->gamebit2;
+    objdata->setGamebit = setup->bitA;
+    objdata->conditionGamebit = setup->bitB;
     self->unkAF |= 8;
 }
 

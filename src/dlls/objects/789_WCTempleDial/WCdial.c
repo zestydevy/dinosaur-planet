@@ -1,6 +1,6 @@
 #include "common.h"
 #include "dlls/engine/6_amsfx.h"
-#include "game/objects/setups/51.h"
+#include "game/objects/setups/51_Generic.h"
 #include "sys/gfx/model.h"
 
 typedef struct {
@@ -59,15 +59,15 @@ void WCTempleDial_ctor(void* dll) { }
 void WCTempleDial_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCTempleDial_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
+void WCTempleDial_obj_Setup(Object* self, WCDial_Setup* objSetup, s32 reset) {
     WCTempleDial_Data* objData;
     s32 i;
 
     objData = self->data;
-    self->srt.yaw = objSetup->wcDial.yaw << 8;
+    self->srt.yaw = objSetup->yaw << 8;
     
     //Set model
-    self->modelInstIdx = objSetup->wcDial.type;
+    self->modelInstIdx = objSetup->type;
     if (self->modelInstIdx >= self->def->numModels) {
         self->modelInstIdx = WCTempleDial_MODEL_Sun;
     }
@@ -89,7 +89,7 @@ void WCTempleDial_obj_Setup(Object* self, Ctrl51_Setup* objSetup, s32 reset) {
     }
     
     //Check if the dial puzzle is already finished
-    if (mainGetBits(objSetup->wcDial.gamebitFinished)) {
+    if (mainGetBits(objSetup->gamebitFinished)) {
         objData->switchFlags = ALL_THREE_SWITCHES;
         objData->dialFlags |= WCTempleDial_FLAG_Stopped;
     }
@@ -114,10 +114,10 @@ void WCTempleDial_obj_Control(Object* self) {
     s32 j;
     s32 wrongSwitchPressed;
     WCTempleDial_Data* objData;
-    Ctrl51_Setup* objSetup;
+    WCDial_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (WCDial_Setup*)self->setup;
     
     //When the puzzle's finished, update the sun/moon icons and return early
     if (objData->dialFlags & WCTempleDial_FLAG_Stopped) {
@@ -175,7 +175,7 @@ void WCTempleDial_obj_Control(Object* self) {
     
     //Check if the puzzle is finished
     if (objData->switchFlags == ALL_THREE_SWITCHES) {
-        mainSetBits(objSetup->wcDial.gamebitFinished, TRUE);
+        mainSetBits(objSetup->gamebitFinished, TRUE);
         objData->dialFlags |= WCTempleDial_FLAG_Stopped;
     }
 }
@@ -195,12 +195,12 @@ void WCTempleDial_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x4D4 | func: 5 | export: 5
 u32 WCTempleDial_obj_GetModelFlags(Object* self) {
-    Ctrl51_Setup* objSetup;
+    WCDial_Setup* objSetup;
     s8 modelIdx;
 
-    objSetup = (Ctrl51_Setup*)self->setup;
+    objSetup = (WCDial_Setup*)self->setup;
     
-    modelIdx = objSetup->wcDial.type;
+    modelIdx = objSetup->type;
     if (modelIdx >= self->def->numModels) {
         modelIdx = 0;
     }
