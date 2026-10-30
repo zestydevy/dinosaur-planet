@@ -137,7 +137,7 @@ void newlfx_DoAction(Object* arg0, Object* arg1, LightAction* action, s32 arg3, 
                     newlfx_allocLight(action, arg0->globalPosition.x, arg0->globalPosition.y, arg0->globalPosition.z, arg1, arg0);
                 }
                 if (action->type == 0) {
-                    plLightActions->unkE = action->id - 1;
+                    plLightActions->newlfx = action->id - 1;
                 }
             }
         } else {
@@ -150,7 +150,7 @@ void newlfx_DoAction(Object* arg0, Object* arg1, LightAction* action, s32 arg3, 
             } else if (action->flags & 2) {
                 newlfx_freeLight(action->slot);
                 if (action->type == 0) {
-                    plLightActions->unkE = action->id - 1;
+                    plLightActions->newlfx = action->id - 1;
                 }
             }
         }

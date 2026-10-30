@@ -149,7 +149,7 @@ void skylight_DoAction(LightAction* action) {
     light = &sLights[idx];
     light->tValue = 0.0f;
     light->rate = (f32) (1.0f / (f32) sTransitionTimer[action->slot]);
-    lactions->unk0[action->slot] = (s16) action->id - 1;
+    lactions->skylights[action->slot] = (s16) action->id - 1;
 }
 
 // offset: 0x8A4 | func: 2 | export: 2

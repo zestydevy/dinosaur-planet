@@ -28,14 +28,18 @@ typedef struct {
     /*0xE*/ u8 unkE[2];
 } PlayerLocation;
 
+enum PlayerLightActionsFlags {
+    PL_LIGHT_ACTION_FLAG_IS_INSIDE = 0x1
+};
+
 // size: 0x14
 typedef struct {
-    s16 unk0[4]; // DLL 58
-    s16 unk8[2]; // DLL 57
-    s16 unkC; // unused?
-    s16 unkE; // newlfx
-    s16 isInside;
-    s16 unk12; //cameraActionID?
+    s16 skylights[4];
+    s16 trklights[2];
+    s16 unkC; // unused
+    s16 newlfx;
+    s16 flags; // PlayerLightActionsFlags
+    s16 cam; // CAMACTIONS.BIN ID (1-indexed)
 } PlayerLightActions;
 
 // size: 0xB4

@@ -84,7 +84,7 @@ void trklight_DoAction(LightAction* laction) {
     lactions = gDLL_29_Gplay->vtbl->get_current_player_lactions();
     if (laction->slot >= 2) {
         // @bug: stores the action index out of bounds
-        lactions->unk8[laction->slot] = laction->id - 1;
+        lactions->trklights[laction->slot] = laction->id - 1;
         laction->slot = 1;
     }
     if (laction->flags & 1) {
@@ -98,7 +98,7 @@ void trklight_DoAction(LightAction* laction) {
     } else if (laction->flags & 2) {
         // Free light (doesn't reset the color?)
         sLights[laction->slot].inUse = FALSE;
-        lactions->unk8[laction->slot] = laction->id - 1;
+        lactions->trklights[laction->slot] = laction->id - 1;
     }
 }
 

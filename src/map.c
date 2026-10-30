@@ -2781,9 +2781,9 @@ void map_func_8004773C(void) {
     Object sp4C;
     GlobalMapCell *currentCell;
     s8 *currentT1;
-    PlayerLightActions* sp40;
-    PlayerEnvActions* sp3C;
-    s16* sp38;
+    PlayerLightActions* lactions;
+    PlayerEnvActions* envactions;
+    s16* musicactions;
 
     if (D_800B4A5E == NO_WARP_ID) {
         D_800B4A5E = FADE_IN_INITIAL;
@@ -2860,53 +2860,53 @@ void map_func_8004773C(void) {
 
     player = objGetPlayer();
     if ((D_800B4A5E == FADE_IN_INITIAL) && (player != NULL) && ((playerno == PLAYER_SABRE) || (playerno == PLAYER_KRYSTAL))) {
-        sp40 = gDLL_29_Gplay->vtbl->get_current_player_lactions();
-        sp3C = gDLL_29_Gplay->vtbl->get_current_player_envactions();
-        sp38 = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
+        lactions = gDLL_29_Gplay->vtbl->get_current_player_lactions();
+        envactions = gDLL_29_Gplay->vtbl->get_current_player_envactions();
+        musicactions = gDLL_29_Gplay->vtbl->get_current_player_musicactions()->actionNums;
         if (D_800B4A5E == FADE_IN_INITIAL) {
-            if (sp40->unk0[0] != -1) {
-                lfxRestoreAction(player, player, sp40->unk0[0], 0, 0, 0);
+            if (lactions->skylights[0] != -1) {
+                lfxRestoreAction(player, player, lactions->skylights[0], 0, 0, 0);
             }
-            if (sp40->unk0[1] != -1) {
-                lfxRestoreAction(player, player, sp40->unk0[1], 0, 0, 0);
+            if (lactions->skylights[1] != -1) {
+                lfxRestoreAction(player, player, lactions->skylights[1], 0, 0, 0);
             }
-            if (sp40->unk0[2] != -1) {
-                lfxRestoreAction(player, player, sp40->unk0[2], 0, 0, 0);
+            if (lactions->skylights[2] != -1) {
+                lfxRestoreAction(player, player, lactions->skylights[2], 0, 0, 0);
             }
-            if (sp40->unk0[3] != -1) {
-                lfxRestoreAction(player, player, sp40->unk0[3], 0, 0, 0);
+            if (lactions->skylights[3] != -1) {
+                lfxRestoreAction(player, player, lactions->skylights[3], 0, 0, 0);
             }
-            if (sp40->unk8[0] != -1) {
-                lfxRestoreAction(player, player, sp40->unk8[0], 0, 0, 0);
+            if (lactions->trklights[0] != -1) {
+                lfxRestoreAction(player, player, lactions->trklights[0], 0, 0, 0);
             }
-            if (sp40->unk8[1] != -1) {
-                lfxRestoreAction(player, player, sp40->unk8[1], 0, 0, 0);
+            if (lactions->trklights[1] != -1) {
+                lfxRestoreAction(player, player, lactions->trklights[1], 0, 0, 0);
             }
-            if (sp40->unkC != -1) {
-                lfxRestoreAction(player, player, sp40->unkC, 0, 0, 0);
+            if (lactions->unkC != -1) {
+                lfxRestoreAction(player, player, lactions->unkC, 0, 0, 0);
             }
-            if (sp40->unkE != -1) {
-                lfxRestoreAction(player, player, sp40->unkE, 0, 0, 0);
+            if (lactions->newlfx != -1) {
+                lfxRestoreAction(player, player, lactions->newlfx, 0, 0, 0);
             }
-            lightSetInside(sp40->isInside & 1);
-            if (sp3C->unk4 != -1) {
-                envfxRestoreAction(player, player, sp3C->unk4, 0);
+            lightSetInside(lactions->flags & PL_LIGHT_ACTION_FLAG_IS_INSIDE);
+            if (envactions->unk4 != -1) {
+                envfxRestoreAction(player, player, envactions->unk4, 0);
             }
-            if (sp3C->unk6 != -1) {
-                envfxRestoreAction(player, player, sp3C->unk6, 0);
+            if (envactions->unk6 != -1) {
+                envfxRestoreAction(player, player, envactions->unk6, 0);
             }
-            if (sp3C->unk8 != -1) {
-                envfxRestoreAction(player, player, sp3C->unk8, 0);
+            if (envactions->unk8 != -1) {
+                envfxRestoreAction(player, player, envactions->unk8, 0);
             }
-            gDLL_12_Minic->vtbl->func6(sp3C->unk3C & 1);
+            gDLL_12_Minic->vtbl->func6(envactions->unk3C & 1);
             for (i = 0; i < 4; i++) {
-                if (sp38[i] != -1) {
+                if (musicactions[i] != -1) {
                     // last 3 args: "track.c", 0x17b8, "plMusicactions->actions[i]" (default.dol)
-                    gDLL_5_AMSEQ2->vtbl->set(NULL, sp38[i], 0, 0, 0);
+                    gDLL_5_AMSEQ2->vtbl->set(NULL, musicactions[i], 0, 0, 0);
                 }
             }
-            if (sp40->unk12 != -1) {
-                gDLL_2_Camera->vtbl->change_mode(0, sp40->unk12);
+            if (lactions->cam != -1) {
+                gDLL_2_Camera->vtbl->change_mode(0, lactions->cam);
             }
             sp4C.parent = NULL;
             sp4C.srt.transl.x = 0.0f;
@@ -2915,25 +2915,25 @@ void map_func_8004773C(void) {
             sp4C.globalPosition.x = 0.0f;
             sp4C.globalPosition.y = 0.0f;
             sp4C.globalPosition.z = 0.0f;
-            if (sp3C->unkA != -1) {
-                sp4C.srt.transl.x = sp3C->unk10;
-                sp4C.srt.transl.y = sp3C->unk14;
-                sp4C.srt.transl.z = sp3C->unk18;
-                envfxAction(&sp4C, player, sp3C->unkA, 0);
+            if (envactions->unkA != -1) {
+                sp4C.srt.transl.x = envactions->unk10;
+                sp4C.srt.transl.y = envactions->unk14;
+                sp4C.srt.transl.z = envactions->unk18;
+                envfxAction(&sp4C, player, envactions->unkA, 0);
             }
-            if (sp3C->unkC != -1) {
-                sp4C.srt.transl.x = sp3C->unk1C;
-                sp4C.srt.transl.y = sp3C->unk20;
-                sp4C.srt.transl.z = sp3C->unk24;
-                envfxAction(&sp4C, player, sp3C->unkC, 0);
+            if (envactions->unkC != -1) {
+                sp4C.srt.transl.x = envactions->unk1C;
+                sp4C.srt.transl.y = envactions->unk20;
+                sp4C.srt.transl.z = envactions->unk24;
+                envfxAction(&sp4C, player, envactions->unkC, 0);
             }
-            if (sp3C->unkE != -1) {
-                sp4C.srt.transl.x = sp3C->unk28;
-                sp4C.srt.transl.y = sp3C->unk2C;
-                sp4C.srt.transl.z = sp3C->unk30;
-                envfxAction(&sp4C, player, sp3C->unkE, 0);
+            if (envactions->unkE != -1) {
+                sp4C.srt.transl.x = envactions->unk28;
+                sp4C.srt.transl.y = envactions->unk2C;
+                sp4C.srt.transl.z = envactions->unk30;
+                envfxAction(&sp4C, player, envactions->unkE, 0);
             }
-            gDLL_7_Newday->vtbl->func9(sp3C->unk0);
+            gDLL_7_Newday->vtbl->func9(envactions->unk0);
         }
     } else {
         gDLL_7_Newday->vtbl->func9(43000.0f);
