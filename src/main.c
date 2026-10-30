@@ -80,8 +80,8 @@ DLL_5_AMSEQ *gDLL_5_AMSEQ = NULL;
 DLL_5_AMSEQ *gDLL_5_AMSEQ2 = NULL;
 DLL_6_AMSFX *gDLL_6_AMSFX = NULL;
 DLL_11_newlfx *gDLL_11_Newlfx = NULL;
-DLL_57 *gDLL_57 = NULL;
-DLL_58 *gDLL_58 = NULL;
+DLL_57_trklight *gDLL_57_trklight = NULL;
+DLL_58_skylight *gDLL_58_skylight = NULL;
 DLL_13_expgfx *gDLL_13_Expgfx = NULL;
 DLL_14_modgfx *gDLL_14_Modgfx = NULL;
 DLL_15_projgfx *gDLL_15_Projgfx = NULL;
@@ -266,8 +266,8 @@ void mainInit(void) {
         gDLL_33_BaddieControl = dllLoad(DLL_ID_BADDIECONTROL, 22);         // 0x19 in SFA
         gDLL_59_Minimap = dllLoad(DLL_ID_MINIMAP, 2);
         gDLL_54_pickup = dllLoad(DLL_ID_PICKUP, 12); // 0x2F in SFA
-        gDLL_57 = dllLoad(DLL_ID_57, 4);
-        gDLL_58 = dllLoad(DLL_ID_58, 2);
+        gDLL_57_trklight = dllLoad(DLL_ID_57_TRKLIGHT, 4);
+        gDLL_58_skylight = dllLoad(DLL_ID_58_SKYLIGHT, 2);
         dll_task->LoadRecentlyCompleted();
     }
     mainInitBits();

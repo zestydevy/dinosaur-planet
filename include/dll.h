@@ -35,8 +35,8 @@
 #include "dlls/engine/33_BaddieControl.h"
 #include "dlls/engine/54_pickup.h"
 #include "dlls/engine/56.h"
-#include "dlls/engine/57.h"
-#include "dlls/engine/58.h"
+#include "dlls/engine/57_trklight.h"
+#include "dlls/engine/58_skylight.h"
 #include "dlls/engine/59_minimap.h"
 #include "dlls/engine/74_picmenu.h"
 #include "dlls/engine/75_frontend.h"
@@ -101,8 +101,8 @@ enum DLL_ID {
     DLL_ID_PICKUP = 54,
     DLL_ID_PROJLIB = 55,
     DLL_ID_PUTDOWN = 56,
-    DLL_ID_57 = 57,
-    DLL_ID_58 = 58,
+    DLL_ID_57_TRKLIGHT = 57,
+    DLL_ID_58_SKYLIGHT = 58,
     DLL_ID_MINIMAP = 59,
     DLL_ID_POST = 60, //Boot screen
     DLL_ID_RAREWARE = 61, //Boot credits
@@ -238,8 +238,8 @@ extern DLL_9_newclouds *gDLL_9_Newclouds;
 extern DLL_10_newstars *gDLL_10_Newstars;
 extern DLL_4_race *gDLL_4_Race;
 extern DLL_11_newlfx *gDLL_11_Newlfx;
-extern DLL_57 *gDLL_57;
-extern DLL_58 *gDLL_58;
+extern DLL_57_trklight *gDLL_57_trklight;
+extern DLL_58_skylight *gDLL_58_skylight;
 extern DLL_13_expgfx *gDLL_13_Expgfx;
 extern DLL_14_modgfx *gDLL_14_Modgfx;
 extern DLL_15_projgfx *gDLL_15_Projgfx;

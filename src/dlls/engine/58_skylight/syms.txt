@@ -1,0 +1,17 @@
+.text = 0x0:
+skylight_ctor = 0x0;
+skylight_dtor = 0xC;
+skylight_Init = 0x18;
+skylight_DoAction = 0x264;
+skylight_Tick = 0x8A4;
+skylight_Func3 = 0x14D4;
+skylight_Func4 = 0x14E0;
+
+.rodata = 0x1530:
+
+.data = 0x1530:
+sTransitionTimer = 0x0; // absolute:0x1530
+sMode = 0x10; // absolute:0x1540
+
+.bss = 0x1550:
+sLights = 0x0; // absolute:0x1550

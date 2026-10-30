@@ -5,6 +5,7 @@
 #include "game/objects/object.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
+#include "sys/lfx.h"
 #include "sys/objmsg.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
@@ -145,31 +146,31 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     //Setup light effects (TODO: update when lfxActions are better understood)
     if (self->def->unk87 & 0x10) {
         if (1){ }
-        lfxAction.unk12 = 25;
-        lfxAction.unke = 0;
-        lfxAction.unk15 = 0;
-        lfxAction.unk16 = 0;
-        lfxAction.unk17 = 0;
-        lfxAction.unk18 = *(u8*)((u32)self->def + 0x89); 
-        lfxAction.unk19 = *(u8*)((u32)self->def + 0x8A);
-        lfxAction.unk1a = *(u8*)((u32)self->def + 0x8B);
-        lfxAction.unk10 = 0xFFFE;
-        lfxAction.unk1b = 0;
+        lfxAction.flags = 25;
+        lfxAction.id = 0;
+        lfxAction.r1 = 0;
+        lfxAction.g1 = 0;
+        lfxAction.b1 = 0;
+        lfxAction.r2 = *(u8*)((u32)self->def + 0x89); 
+        lfxAction.g2 = *(u8*)((u32)self->def + 0x8A);
+        lfxAction.b2 = *(u8*)((u32)self->def + 0x8B);
+        lfxAction.slot = 0xFFFE;
+        lfxAction.type = LACTION_TYPE_NEWLFX;
         lfxAction.unk1c = 0;
-        lfxAction.unk0 = 0;
+        lfxAction.timer = 0;
         lfxAction.unk2 = 0;
-        lfxAction.unk8 = 0;
-        lfxAction.unk6 = 0;
-        lfxAction.unk4 = 0;
+        lfxAction.z = 0;
+        lfxAction.y = 0;
+        lfxAction.x = 0;
         lfxAction.unka = 0x54;
         lfxAction.unkC = 0x25;
-        lfxAction.unk1d = 0xFF;
-        lfxAction.unk1e = 0;
-        lfxAction.unk1f = self->def->lightIdx;
-        lfxAction.unk20 = self->def->nLights;
+        lfxAction.max = 255;
+        lfxAction.min = 0;
+        lfxAction.maxRange = self->def->lightIdx;
+        lfxAction.minRange = self->def->nLights;
         lfxAction.unk21 = 0;
         dll_newlfx->DoAction(self, self, &lfxAction, 0, 0, 0);
-        self->unkD6 = lfxAction.unk10;
+        self->unkD6 = lfxAction.slot;
     }
 
     //Setup shadow
@@ -655,10 +656,10 @@ void collectable_collect(Object* self) {
     self->srt.scale = objdef->scale;
     self->unkDC = 1;
     if (objdef->unk87 & 0x10) {
-        lfxAction.unk12 = 2;
-        lfxAction.unke = 0;
-        lfxAction.unk1b = 0;
-        lfxAction.unk10 = self->unkD6;
+        lfxAction.flags = 2;
+        lfxAction.id = 0;
+        lfxAction.type = LACTION_TYPE_NEWLFX;
+        lfxAction.slot = self->unkD6;
         dll_newlfx->DoAction(self, self, &lfxAction, 0, 0, 0);
     }
 }

@@ -260,10 +260,10 @@ typedef struct {
 /*80*/ s8 unk80; // voxmap related
 /*81*/ u8 pad81;
 /*82*/ s8 unk82; // voxmap related
-/*83*/ s8 unk83; // lighting related
-/*84*/ s8 unk84; // lighting related
-/*85*/ u8 unk85; // lighting related
-/*86*/ u8 unk86; // lighting related
+/*83*/ s8 unk83; // sky light: min something?
+/*84*/ s8 unk84; // sky light: max something?
+/*85*/ u8 unk85; // sky light: min light influence
+/*86*/ u8 unk86; // sky light: max light influence
 /*87*/ u8 unk87; // lighting flags
 /*88*/ float lagVar88; //causes lag at ~65536.0; GPU hang at much more; related to shadow; maybe causing excessive map loads? // TODO: confirm
 /*8c*/ u8 nLights; // lfx related // TODO: confirm

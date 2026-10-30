@@ -29,58 +29,73 @@ u8 D_80090C90 = 0;
 u8 D_80090C94 = 0;
 u8 D_80090C98 = 0;
 s8 D_80090C9C = 0;
-u8 D_80090CA0 = 0;
-u8 gAmbientAdditiveSet = 0;
-s32 D_80090CA8 = 0;
-f32 D_80090CAC = 1.0f;
+u8 gLastModLight = 0;
+u8 gSkyLightAdditiveSet = 0;
+s32 gDisableSkyLightUpdates = FALSE;
+f32 gSkyLightPower = 1.0f;
 u8 gInsideLighting = 0;
 f32 gInsideLightT = 0.0f;
 Struct80090CE8 D_80090CB8[16] = {0};
 Struct80090CE8 D_80090CE8[16] = {0};
-u8 D_80090D18 = 0;
-u8 D_80090D1C = 0;
-u8 D_80090D20 = 0;
-Vec3s32 D_80090D24 = {{0, 0, 0}};
 // func statics start here
 // -------- .data end -------- // 80090D50
 
 // -------- .bss start 800b1830 -------- //
-u8 gAmbientR;
-u8 gAmbientG;
-u8 gAmbientB;
-f32 D_800B1834;
-f32 D_800B1838;
-f32 D_800B183C;
+u8 gSkyLightR;
+u8 gSkyLightG;
+u8 gSkyLightB;
+f32 gSkyLightDirX;
+f32 gSkyLightDirY;
+f32 gSkyLightDirZ;
 s8 D_800B1840;
 s8 D_800B1841;
 u8 D_800B1842;
 u8 D_800B1843;
 u8 D_800B1844;
-u8 D_800B1845;
+u8 gNumModLights;
 s8 D_800B1846;
 u8 D_800B1847;
-Unk800B1848 *D_800B1848;
-Unk800B1848 *D_800B184C;
-s16 gAmbientAdditiveR;
-s16 gAmbientAdditiveG;
-s16 gAmbientAdditiveB;
-Unk800B1858 *D_800B1858;
-Object *D_800B1860[30];
+/**
+ * 17 palettes of 256 RGB pairs that represent a lerp from one color to another.
+ * There are 16 palettes used by different dynamic lights (newlfx, skylight, etc)
+ * and a single special palette (index 0) used for the standard skylight color (newday).
+ *
+ * Note that the base skylight palette is usually referred to as slot -1 with slot 0
+ * technically being at index 1. With that convention in mind, the slots are 
+ * allocated as follows:
+ *
+ * -1: newday DLL base skylight (can be overriden by newlfx DLL)
+ * 0, 1, 2, 3: unused
+ * 4, 5, 6, 7, 8, 9: newlfx DLL lights
+ * 10: initialized by skylight DLL but not used. normally used by newlfx DLL
+ * 11: conflict! used by skylight DLL and newlfx DLL
+ * 12, 13, 14: skylight DLL (note: newlfx can use 13, 14 but the code isn't wired up)
+ * 15: unused
+ */
+u8* gModLightPalettes;
+u8* gModLightSelectedPalette;
+s16 sSkyLightAdditiveR;
+s16 sSkyLightAdditiveG;
+s16 sSkyLightAdditiveB;
+ModelLight* gModLights;
+Object* gModLightParents[30];
 // -------- .bss end 800b18e0 -------- //
 
-void light_func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7);
+void lightSetModLightPalette2(u8 r1, u8 g1, u8 b1, u8 r2, u8 g2, u8 b2, s32 slot, u8 baseSkylightAmt);
 
 void lightInit(void) {
     s32 j;
     s32 i;
-    UNK_PTR* temp_v0;
+    void* ptr;
 
-    temp_v0 = mmAlloc(0x3648, 0x12, NULL);
+    // 30 gModLights slots
+    // 17 gModLightPalettes slots (256 RGB pairs each)
+    ptr = mmAlloc((sizeof(ModelLight) * 30) + (256 * 3 * 17), ALLOC_TAG_LFX_COL, NULL);
     D_800B1847 = 1;
-    D_800B1858 = temp_v0;
-    D_800B1848 = (Unk800B1848 *) ((u32)temp_v0 + 0x348);
+    gModLights = ptr;
+    gModLightPalettes = (u8 *) ((u32)ptr + (sizeof(ModelLight) * 30));
     for (i = -1, j = 0; i < 16; i++, j++) {
-        light_func_8001D548(
+        lightSetModLightPalette2(
             D_80090CE8[j].unk0,
             D_80090CE8[j].unk1,
             D_80090CE8[j].unk2,
@@ -93,25 +108,25 @@ void lightInit(void) {
     }
 
     for (i = 0; i < 30; i++) {
-        D_800B1860[i] = NULL;
+        gModLightParents[i] = NULL;
     }
 }
 
-void light_func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
+void light_func_8001CDE4(u8 r, u8 g, u8 b, u8 arg3, u8 arg4) {
     if (arg4 == 1) {
         D_80090C64 = 1.0f / arg3;
         D_80090C60 = 0.0f;
         if (D_80090C98 == 0) {
-            D_80090C80 = gAmbientR;
-            D_80090C84 = gAmbientG;
-            D_80090C88 = gAmbientB;
-            D_80090C68 = gAmbientR;
-            D_80090C6C = gAmbientG;
-            D_80090C70 = gAmbientB;
+            D_80090C80 = gSkyLightR;
+            D_80090C84 = gSkyLightG;
+            D_80090C88 = gSkyLightB;
+            D_80090C68 = gSkyLightR;
+            D_80090C6C = gSkyLightG;
+            D_80090C70 = gSkyLightB;
         }
-        D_80090C74 = arg0;
-        D_80090C78 = arg1;
-        D_80090C7C = arg2;
+        D_80090C74 = r;
+        D_80090C78 = g;
+        D_80090C7C = b;
         D_80090C98 = 1;
         return;
     }
@@ -148,81 +163,89 @@ void light_func_8001CDE4(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4) {
     }
 }
 
-void light_func_8001D2A8(u8 arg0, u8 arg1, u8 arg2, s32 arg3) {
-    s32 var_t1;
-    s32 var_t2;
-    u8 *temp;
+void lightSetModLightPalette1(u8 r, u8 g, u8 b, s32 slot) {
+    static u8 D_80090D18 = 0;
+    static u8 D_80090D1C = 0;
+    static u8 D_80090D20 = 0;
 
-    arg3++;
-    if (arg3 == 0) {
-        // @fake?
-        temp = &D_80090D18;
-        if (*temp == arg0 && D_80090D1C == arg1 && D_80090D20 == arg2) {
+    s32 ci;
+    s32 i;
+
+    slot++;
+    if (slot == 0) {
+        if (D_80090D18 == r && D_80090D1C == g && D_80090D20 == b) {
             return;
         }
 
-        *temp = arg0;
-        D_80090D1C = arg1;
-        D_80090D20 = arg2;
+        D_80090D18 = r;
+        D_80090D1C = g;
+        D_80090D20 = b;
         D_800B1847 = 1;
     }
 
-    var_t1 = arg3 * 0x300;
-    for (var_t2 = 0; var_t2 < 0x100; var_t2++) {
-        D_800B1848->unk0[var_t1++] = (arg0 * var_t2) / 0x100;
-        D_800B1848->unk0[var_t1++] = (arg1 * var_t2) / 0x100;
-        D_800B1848->unk0[var_t1++] = (arg2 * var_t2) / 0x100;
+    ci = slot * (256 * 3);
+    for (i = 0; i < 256; i++) {
+        gModLightPalettes[ci++] = (r * i) / 256;
+        gModLightPalettes[ci++] = (g * i) / 256;
+        gModLightPalettes[ci++] = (b * i) / 256;
     }
 }
 
-void light_func_8001D548(u8 arg0, u8 arg1, u8 arg2, u8 arg3, u8 arg4, u8 arg5, s32 arg6, u8 arg7) {
-    f32 temp_fv1;
-    f32 var_fv0;
+void lightSetModLightPalette2(
+        u8 r1, u8 g1, u8 b1, 
+        u8 r2, u8 g2, u8 b2, 
+        s32 slot, u8 baseSkylightAmt) {
+    f32 skylightPct;
+    f32 tValue;
+    s32 v;
+    s32 ci; // component index
     s32 i;
-    s32 var_v1;
 
-    // @fake
-    i = 0;
-    arg6++;
-    var_fv0 = 0.00390625f;
-    var_v1 = arg6 * 0x300;
-    if (arg7 != 0) {
-        temp_fv1 =  arg7 / 255.0f;
-        i = (D_800B1848->unk0[0] * arg0) >> 8;
-        if (i < 0) { i = 0; }
-        arg0 += temp_fv1 * (i - arg0);
+    // Precompute lerp from color 1 to 2
+    v = 0;
+    tValue = 0.00390625f; // (1.0f / 256.0f)
+    slot++;
+    ci = slot * (256 * 3);
+    if (baseSkylightAmt != 0) {
+        skylightPct = baseSkylightAmt / 255.0f;
+        v = (gModLightPalettes[0] * r1) >> 8;
+        if (v < 0) { v = 0; }
+        r1 += skylightPct * (v - r1);
 
-        i = (D_800B1848->unk0[1] * arg1) >> 8;
-        if (i < 0) { i = 0; }
-        arg0 += temp_fv1 * (i - arg0);
+        v = (gModLightPalettes[1] * g1) >> 8;
+        if (v < 0) { v = 0; }
+        // @bug? shouldn't this be using g1?
+        r1 += skylightPct * (v - r1);
 
-        i = (D_800B1848->unk0[2] * arg2) >> 8;
-        if (i < 0) { i = 0; }
-        arg0 += temp_fv1 * (i - arg0);
+        v = (gModLightPalettes[2] * b1) >> 8;
+        if (v < 0) { v = 0; }
+        // @bug? shouldn't this be using b1?
+        r1 += skylightPct * (v - r1);
 
-        i = (D_800B1848->unk0[0x2FD] * arg3) >> 8;
-        if (i < 0) { i = 0; }
-        arg3 += temp_fv1 * (i - arg3);
+        v = (gModLightPalettes[(256 * 3) - 3] * r2) >> 8;
+        if (v < 0) { v = 0; }
+        r2 += skylightPct * (v - r2);
 
-        i = (D_800B1848->unk0[0x2FE] * arg4) >> 8;
-        if (i < 0) { i = 0; }
-        arg4 += temp_fv1 * (i - arg4);
+        v = (gModLightPalettes[(256 * 3) - 2] * g2) >> 8;
+        if (v < 0) { v = 0; }
+        g2 += skylightPct * (v - g2);
 
-        i = (D_800B1848->unk0[0x2FF] * arg5) >> 8;
-        if (i < 0) { i = 0; }
-        arg5 += temp_fv1 * (i - arg5);
+        v = (gModLightPalettes[(256 * 3) - 1] * b2) >> 8;
+        if (v < 0) { v = 0; }
+        b2 += skylightPct * (v - b2);
     }
-    for (i = 0; i < 0x100; i++) {
-        D_800B1848->unk0[var_v1++] = arg0 + (var_fv0 * (arg3 - arg0));
-        D_800B1848->unk0[var_v1++] = arg1 + (var_fv0 * (arg4 - arg1));
-        D_800B1848->unk0[var_v1++] = arg2 + (var_fv0 * (arg5 - arg2));
-        var_fv0 += 0.0039025f;
+    for (i = 0; i < 256; i++) {
+        gModLightPalettes[ci++] = r1 + (tValue * (r2 - r1));
+        gModLightPalettes[ci++] = g1 + (tValue * (g2 - g1));
+        gModLightPalettes[ci++] = b1 + (tValue * (b2 - b1));
+        tValue += 0.0039025f; // (1.0f / 256.0f)
     }
 }
 
+Vec3s32 D_80090D24 = {{0, 0, 0}};
 void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
     s32 pad;
-    s32 spA8;
+    s32 jointCount;
     s32 i;
     u8 spA3;
     u8 spA2;
@@ -231,88 +254,91 @@ void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
     s8 sp9F;
     u8 sp9E;
     u8 sp9D;
-    f32 sp98;
-    f32 sp94;
-    f32 sp90;
-    f32 sp8C;
+    f32 skylightPower;
+    Vec3f pos;
     Vec3s32 sp80 = D_80090D24;
-    SRT sp68;
+    SRT srt;
 
-    sp98 = D_80090CAC;
-    if (sp98 < 0.5f) {
-        sp98 = 0.5f;
+    skylightPower = gSkyLightPower;
+    if (skylightPower < 0.5f) {
+        skylightPower = 0.5f;
     }
     // @fake
     if (modelInst->model) {}
-    spA8 = modelInst->model->jointCount;
-    if (spA8 == 0) {
-        spA8 = 1;
+    jointCount = modelInst->model->jointCount;
+    if (jointCount == 0) {
+        jointCount = 1;
     }
     // @fake
     if (1) {}
     obj->srt.transl.x -= gWorldX;
     obj->srt.transl.z -= gWorldZ;
-    for (i = 0; i < D_800B1845; i++) {
+    for (i = 0; i < gNumModLights; i++) {
         if (obj->parent != NULL) {
-            if (D_800B1860[i] != 0) {
-                sp8C = D_800B1858[i].pos.x - D_800B1860[i]->srt.transl.x;
-                sp90 = D_800B1858[i].pos.y - D_800B1860[i]->srt.transl.y;
-                sp94 = D_800B1858[i].pos.z - D_800B1860[i]->srt.transl.z;
-                sp68.transl.x = 0.0f;
-                sp68.transl.y = 0.0f;
-                sp68.transl.z = 0.0f;
-                sp68.roll = 0;
-                sp68.pitch = 0;
-                sp68.scale = 1.0f;
-                sp68.yaw = -D_800B1860[i]->srt.yaw;
-                mathRotateRPY(&sp68, &sp8C);
-                sp80.x = sp8C;
-                sp80.y = sp90;
-                sp80.z = sp94;
-                D_800B1858[i].x = sp80.x;
-                D_800B1858[i].y = sp80.y;
-                D_800B1858[i].z = sp80.z;
+            if (gModLightParents[i] != NULL) {
+                pos.x = gModLights[i].pos.x - gModLightParents[i]->srt.transl.x;
+                pos.y = gModLights[i].pos.y - gModLightParents[i]->srt.transl.y;
+                pos.z = gModLights[i].pos.z - gModLightParents[i]->srt.transl.z;
+                srt.transl.x = 0.0f;
+                srt.transl.y = 0.0f;
+                srt.transl.z = 0.0f;
+                srt.roll = 0;
+                srt.pitch = 0;
+                srt.scale = 1.0f;
+                srt.yaw = -gModLightParents[i]->srt.yaw;
+                mathRotateRPY(&srt, pos.f);
+                sp80.x = pos.x;
+                sp80.y = pos.y;
+                sp80.z = pos.z;
+                gModLights[i].x = sp80.x;
+                gModLights[i].y = sp80.y;
+                gModLights[i].z = sp80.z;
             } else {
-                camInverseTransformPointByObject(D_800B1858[i].pos.x, D_800B1858[i].pos.y, D_800B1858[i].pos.z, &sp8C, &sp90, &sp94, obj->parent);
-                D_800B1858[i].x = sp8C;
-                D_800B1858[i].y = sp90;
-                D_800B1858[i].z = sp94;
+                camInverseTransformPointByObject(
+                    gModLights[i].pos.x, gModLights[i].pos.y, gModLights[i].pos.z, 
+                    &pos.x, &pos.y, &pos.z, 
+                    obj->parent);
+                gModLights[i].x = pos.x;
+                gModLights[i].y = pos.y;
+                gModLights[i].z = pos.z;
             }
-        } else if (D_800B1860[i] != 0) {
-            sp8C = D_800B1858[i].pos.x;
-            sp90 = D_800B1858[i].pos.y;
-            sp94 = D_800B1858[i].pos.z;
-            sp80.x = sp8C;
-            sp80.y = sp90;
-            sp80.z = sp94;
+        } else if (gModLightParents[i] != NULL) {
+            pos.x = gModLights[i].pos.x;
+            pos.y = gModLights[i].pos.y;
+            pos.z = gModLights[i].pos.z;
+            sp80.x = pos.x;
+            sp80.y = pos.y;
+            sp80.z = pos.z;
             sp80.x -= gWorldX;
             sp80.z -= gWorldZ;
-            D_800B1858[i].x = sp80.x;
-            D_800B1858[i].y = sp80.y;
-            D_800B1858[i].z = sp80.z;
+            gModLights[i].x = sp80.x;
+            gModLights[i].y = sp80.y;
+            gModLights[i].z = sp80.z;
         } else {
-            D_800B1858[i].x = D_800B1858[i].pos.x - gWorldX;
-            D_800B1858[i].y = D_800B1858[i].pos.y;
-            D_800B1858[i].z = D_800B1858[i].pos.z - gWorldZ;
+            gModLights[i].x = gModLights[i].pos.x - gWorldX;
+            gModLights[i].y = gModLights[i].pos.y;
+            gModLights[i].z = gModLights[i].pos.z - gWorldZ;
         }
     }
     D_800B1846 = 0;\
     if (1) {}
     // ^ @fake
-    D_800B184C = D_800B1848;
+    gModLightSelectedPalette = gModLightPalettes;
     if (obj->def->unk87 & 0xF) {
+        // @bug: As far as I can tell, these are supposed to be indexing elements 15, 14, 13, and 12 but
+        //       are indexing slightly too low. This is nearly impossible to notice in practice.
         if (obj->def->unk87 & 1) {
-            // wtf is this
-            D_800B184C = (Unk800B1848*)&D_800B184C->unk0[0x2CD3];
+            // use slot 14 (skylight, 1-indexed)
+            gModLightSelectedPalette += (14 * (256 * 3)) + (241 * 3); // colors[14][241] (should be colors[15][0])
         } else if (obj->def->unk87 & 2) {
-            // wtf is this
-            D_800B184C = (Unk800B1848*)&D_800B184C->unk0[0x29D6];
+            // use slot 13 (skylight, 1-indexed)
+            gModLightSelectedPalette += (13 * (256 * 3)) + (242 * 3); // colors[13][242] (should be colors[14][0])
         } else if (obj->def->unk87 & 4) {
-            // wtf is this
-            D_800B184C = (Unk800B1848*)&D_800B184C->unk0[0x26D9];
+            // use slot 12 (skylight, 1-indexed)
+            gModLightSelectedPalette += (12 * (256 * 3)) + (243 * 3); // colors[12][243] (should be colors[13][0])
         } else if (obj->def->unk87 & 8) {
-            // wtf is this
-            D_800B184C = (Unk800B1848*)&D_800B184C->unk0[0x23DC];
+            // use slot 11 (skylight, 1-indexed)
+            gModLightSelectedPalette += (11 * (256 * 3)) + (244 * 3); // colors[11][244] (should be colors[12][0])
         }
         spA1 = D_800B1844;
         spA0 = D_800B1841;
@@ -321,33 +347,33 @@ void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
         sp9E = D_800B1842;
         sp9D = D_800B1843;
         if (gInsideLightT != 0.0f) {
-            sp98 = ((1.0f - sp98) * gInsideLightT) + sp98;
+            skylightPower = ((1.0f - skylightPower) * gInsideLightT) + skylightPower;
         }
 
-        D_800B1843 = obj->def->unk86 * sp98;
-        D_800B1842 = obj->def->unk85 * sp98;
+        D_800B1843 = obj->def->unk86 * skylightPower;
+        D_800B1842 = obj->def->unk85 * skylightPower;
         D_800B1840 = obj->def->unk84;
         D_800B1841 = obj->def->unk83;
     }
-    if (obj->unkD5[0] & 0x20) {
+    if (obj->unkD5 & 0x20) {
         spA3 = D_800B1842;
         spA2 = D_800B1843;
-        D_800B1843 = (D_800B1843 * obj->unkD7[0]) >> (0, 8);
+        D_800B1843 = (D_800B1843 * obj->unkD7) >> 8;
         if (!(obj->def->unk87 & 0xF)) {
-            D_800B1842 = (D_800B1842 * obj->unkD7[0]) >> (0, 8);
+            D_800B1842 = (D_800B1842 * obj->unkD7) >> 8;
         }
     } else {
-        if ((obj->unkD5[0] & 4) && (obj->unkD5[0] & 8)) {
+        if ((obj->unkD5 & 4) && (obj->unkD5 & 8)) {
             spA3 = D_800B1842;
             spA2 = D_800B1843;
-            D_800B1843 = (D_800B1843 * obj->unkD7[0]) >> (0, 8);
-            D_800B1842 = (D_800B1842 * obj->unkD7[0]) >> (0, 8);
-        } else if (obj->unkD5[0] & 4) {
+            D_800B1843 = (D_800B1843 * obj->unkD7) >> 8;
+            D_800B1842 = (D_800B1842 * obj->unkD7) >> 8;
+        } else if (obj->unkD5 & 4) {
             spA3 = D_800B1842;
             spA2 = D_800B1843;
-            D_800B1843 = (D_800B1843 * (0xFF - obj->unkD7[0])) >> (0, 8);
-            D_800B1842 = (D_800B1842 * (0xFF - obj->unkD7[0])) >> (0, 8);
-        } else if (obj->unkD5[0] & 8) {
+            D_800B1843 = (D_800B1843 * (255 - obj->unkD7)) >> 8;
+            D_800B1842 = (D_800B1842 * (255 - obj->unkD7)) >> 8;
+        } else if (obj->unkD5 & 8) {
             spA3 = D_800B1842;
             spA2 = D_800B1843;
             D_800B1843 = 0;
@@ -357,12 +383,12 @@ void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
     func_8001F890(
         modelInst->vertices[(modelInst->unk34 >> 1) & 1], 
         modelInst->model->vertexGroups, 
-        spA8, 
+        jointCount, 
         modelInst->matrices[modelInst->unk34 & 1], 
         D_800B1842, 
         D_800B1843, 
-        D_800B1848, 
-        D_800B1858, 
+        gModLightPalettes, 
+        gModLights, 
         obj->visRadius);
     if (obj->def->unk87 & 0xF) {
         D_800B1844 = spA1;
@@ -370,21 +396,21 @@ void lightDynamicModelLighting(Object* obj, ModelInstance* modelInst) {
         D_800B1842 = sp9E;
         D_800B1841 = spA0;
         D_800B1840 = sp9F;
-        D_800B184C = NULL;
+        gModLightSelectedPalette = NULL;
     }
     D_80090C9C = 0;
-    if (obj->unkD5[0] & 0x20) {
+    if (obj->unkD5 & 0x20) {
         D_800B1843 = spA2;
         D_800B1842 = spA3;
-    } else if (obj->unkD5[0] & 4) {
+    } else if (obj->unkD5 & 4) {
         D_800B1843 = spA2;
         D_800B1842 = spA3;
-    } else if (obj->unkD5[0] & 8) {
+    } else if (obj->unkD5 & 8) {
         D_800B1843 = spA2;
         D_800B1842 = spA3;
     }
-    obj->srt.transl.f[0] += gWorldX;
-    obj->srt.transl.f[2] += gWorldZ;
+    obj->srt.transl.x += gWorldX;
+    obj->srt.transl.z += gWorldZ;
 }
 
 typedef struct {
@@ -425,14 +451,14 @@ void light_func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
                 if (r == 0 && g == 0 && b == 0) {
                     continue;
                 }
-                temp = (gAmbientR + r) >> 1;
-                temp2 = (gAmbientG + g) >> 1;
-                temp3 = (gAmbientB + b) >> 1;
+                temp = (gSkyLightR + r) >> 1;
+                temp2 = (gSkyLightG + g) >> 1;
+                temp3 = (gSkyLightB + b) >> 1;
                 for (; fromVtxID < toVtxID; fromVtxID++) {
-                    if ((arg1->vertices[fromVtxID].n.a == 0) || (arg1->vertices[fromVtxID].n.a == 1)) {
+                    if ((arg1->vertices[fromVtxID].v.cn[3] == 0) || (arg1->vertices[fromVtxID].v.cn[3] == 1)) {
                         continue;
                     }
-                    if ((arg1->vertices[fromVtxID].n.a == 4) || (arg1->vertices[fromVtxID].n.a == 5)) {
+                    if ((arg1->vertices[fromVtxID].v.cn[3] == 4) || (arg1->vertices[fromVtxID].v.cn[3] == 5)) {
                         vtx[fromVtxID].v.cn[0] = (temp * arg1->vertices[fromVtxID].v.cn[0]) >> 8;
                         vtx[fromVtxID].v.cn[1] = (temp2 * arg1->vertices[fromVtxID].v.cn[1]) >> 8;
                         vtx[fromVtxID].v.cn[2] = (temp3 * arg1->vertices[fromVtxID].v.cn[2]) >> 8;
@@ -449,20 +475,20 @@ void light_func_8001E818(Object* arg0, Model* arg1, ModelInstance* arg2) {
     }
 }
 
-void lightDimAmbient(u8 r, u8 g, u8 b, f32 t) {
-    gAmbientAdditiveR = (s16) (s32) -((f32) r * t);
-    gAmbientAdditiveG = (s16) (s32) -((f32) g * t);
-    gAmbientAdditiveB = (s16) (s32) -((f32) b * t);
-    gAmbientAdditiveSet = 1;
+void lightDimSkyLight(u8 r, u8 g, u8 b, f32 t) {
+    sSkyLightAdditiveR = (s16) (s32) -((f32) r * t);
+    sSkyLightAdditiveG = (s16) (s32) -((f32) g * t);
+    sSkyLightAdditiveB = (s16) (s32) -((f32) b * t);
+    gSkyLightAdditiveSet = 1;
 }
 
 void lightClearEmitters(void) {
     s32 i;
 
-    D_800B1845 = 0;
+    gNumModLights = 0;
     D_800B1846 = 1;
     for (i = 0; i < 30; i++) {
-        D_800B1860[i] = NULL;
+        gModLightParents[i] = NULL;
     }
 }
 
@@ -485,7 +511,7 @@ void lightUpdateSkyLight(f32 dirX, f32 dirY, f32 dirZ, u8 arg3, u8 arg4, s8 arg5
     Vec3f insideLightDir = VEC3F(0.0f, 198.0f, 19.0f);
     f32 insideLightTransitionRate;
 
-    if (D_80090CA8 != 0) {
+    if (gDisableSkyLightUpdates) {
         return;
     }
     D_80090D3C += 600.0f;
@@ -509,78 +535,78 @@ void lightUpdateSkyLight(f32 dirX, f32 dirY, f32 dirZ, u8 arg3, u8 arg4, s8 arg5
         if (gInsideLightT > 1.0f) {
             gInsideLightT = 1.0f;
         }
-        D_800B1834 = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
-        D_800B1838 = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
-        D_800B183C = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
+        gSkyLightDirX = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
+        gSkyLightDirY = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
+        gSkyLightDirZ = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
     } else if (!gInsideLighting && (gInsideLightT != 0.0f)) {
         // Transition out of inside lighting
         gInsideLightT -= gUpdateRateF * insideLightTransitionRate;
         if (gInsideLightT < 0.0f) {
             gInsideLightT = 0.0f;
         }
-        D_800B1834 = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
-        D_800B1838 = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
-        D_800B183C = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
+        gSkyLightDirX = ((insideLightDir.x - dirX) * gInsideLightT) + dirX;
+        gSkyLightDirY = ((insideLightDir.y - dirY) * gInsideLightT) + dirY;
+        gSkyLightDirZ = ((insideLightDir.z - dirZ) * gInsideLightT) + dirZ;
     } else if (gInsideLighting) {
         // Fully in inside lighting
-        D_800B1834 = insideLightDir.x;
-        D_800B1838 = insideLightDir.y;
-        D_800B183C = insideLightDir.z;
+        gSkyLightDirX = insideLightDir.x;
+        gSkyLightDirY = insideLightDir.y;
+        gSkyLightDirZ = insideLightDir.z;
     } else {
         // Fully in outside lighting
-        D_800B1834 = dirX;
-        D_800B1838 = dirY;
-        D_800B183C = dirZ;
+        gSkyLightDirX = dirX;
+        gSkyLightDirY = dirY;
+        gSkyLightDirZ = dirZ;
     }
     D_800B1842 = arg3;
     D_800B1843 = arg4;
     D_800B1840 = arg5;
     D_800B1841 = arg6;
-    gAmbientR = r;
-    gAmbientG = g;
-    gAmbientB = b;
-    D_80090C8C = gAmbientR;
-    D_80090C90 = gAmbientG;
-    D_80090C94 = gAmbientB;
+    gSkyLightR = r;
+    gSkyLightG = g;
+    gSkyLightB = b;
+    D_80090C8C = gSkyLightR;
+    D_80090C90 = gSkyLightG;
+    D_80090C94 = gSkyLightB;
     light_func_8001CDE4(0, 0, 0, 0, 0);
     if (D_80090C98 != 0) {
-        gAmbientR = D_80090C68;
-        gAmbientG = D_80090C6C;
-        gAmbientB = D_80090C70;
+        gSkyLightR = D_80090C68;
+        gSkyLightG = D_80090C6C;
+        gSkyLightB = D_80090C70;
     } else {
-        gAmbientR = r;
-        gAmbientG = g;
-        gAmbientB = b;
+        gSkyLightR = r;
+        gSkyLightG = g;
+        gSkyLightB = b;
     }
-    if (gAmbientAdditiveSet != 0) {
-        sumR = gAmbientR + gAmbientAdditiveR;
-        sumG = gAmbientG + gAmbientAdditiveG;
-        sumB = gAmbientB + gAmbientAdditiveB;
-        sumR = MIN(0xFF, sumR);
-        sumG = MIN(0xFF, sumG);
-        sumB = MIN(0xFF, sumB);
+    if (gSkyLightAdditiveSet) {
+        sumR = gSkyLightR + sSkyLightAdditiveR;
+        sumG = gSkyLightG + sSkyLightAdditiveG;
+        sumB = gSkyLightB + sSkyLightAdditiveB;
+        sumR = MIN(255, sumR);
+        sumG = MIN(255, sumG);
+        sumB = MIN(255, sumB);
         sumR = MAX(0, sumR);
         sumG = MAX(0, sumG);
         sumB = MAX(0, sumB);
-        gAmbientR = sumR;
-        gAmbientG = sumG;
-        gAmbientB = sumB;
+        gSkyLightR = sumR;
+        gSkyLightG = sumG;
+        gSkyLightB = sumB;
     }
     // @fake?
-    if (gAmbientR) {}
-    if (gAmbientG) {}
-    temp = gAmbientB;
+    if (gSkyLightR) {}
+    if (gSkyLightG) {}
+    temp = gSkyLightB;
     if (temp) {}
-    if ((gAmbientR != 0xFF) || (gAmbientG != 0xFF) || (temp != 0xFF)) {
+    if ((gSkyLightR != 0xFF) || (gSkyLightG != 0xFF) || (temp != 0xFF)) {
         D_800B1844 = 1;
-        light_func_8001D2A8(gAmbientR, gAmbientG, temp, -1);
+        lightSetModLightPalette1(gSkyLightR, gSkyLightG, temp, -1);
     } else {
         D_800B1844 = 0;
     }
-    gAmbientAdditiveSet = 0;
-    gAmbientAdditiveR = 0;
-    gAmbientAdditiveG = 0;
-    gAmbientAdditiveB = 0;
+    gSkyLightAdditiveSet = 0;
+    sSkyLightAdditiveR = 0;
+    sSkyLightAdditiveG = 0;
+    sSkyLightAdditiveB = 0;
 }
 
 void lightModelSphereMapping(ModelInstance* arg0) {
@@ -683,8 +709,8 @@ void lightModelSphereMapping(ModelInstance* arg0) {
                 var_fv1 = 2.0f * ((spD8.f[0] * spD4) + (spD8.f[1] * spD0) + (spD8.f[2] * spCC));
                 temp_fa0 = ((spD8.f[0] * var_fv1) - spD4);
                 pad = ((spD8.f[1] * var_fv1) - spD0);
-                sp8C[var_s2].n.tc[0] = (temp_fa0 + 1.0f) * 256.0f;
-                sp8C[var_s2].n.tc[1] = (pad + 1.0f) * 256.0f;
+                sp8C[var_s2].v.tc[0] = (temp_fa0 + 1.0f) * 256.0f;
+                sp8C[var_s2].v.tc[1] = (pad + 1.0f) * 256.0f;
                 var_s2 += 1;
                 var_s7 += 1;
             }
@@ -781,12 +807,12 @@ void lightBlockSphereMapping(Block* block, s32 blockX, s32 blockZ) {
     }
 }
 
-void lightGetAmbient(u8 *r, u8 *g, u8 *b) {
-    *r = gAmbientR;
-    *g = gAmbientG;
-    *b = gAmbientB;
+void lightGetSkyLight(u8* r, u8* g, u8* b) {
+    *r = gSkyLightR;
+    *g = gSkyLightG;
+    *b = gSkyLightB;
 }
 
-void lightAmbientDL(Gfx **gdl) {
-    dlSetPrimColor(gdl, gAmbientR, gAmbientG, gAmbientB, 0xFF);
+void lightSkyLightDL(Gfx** gdl) {
+    dlSetPrimColor(gdl, gSkyLightR, gSkyLightG, gSkyLightB, 255);
 }

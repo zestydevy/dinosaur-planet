@@ -177,7 +177,7 @@ enum RenderFlags {
 /*19*/ RENDER_TEXANIM_REVERSE = 0x80000,
 /*20*/ RENDER_DECAL = 0x100000,
 /*21*/ RENDER_SHAPE_HIDE = 0x200000,
-/*22*/ RENDER_UNK400000 = 0x400000, //animated vertex colours
+/*22*/ RENDER_UNK400000 = 0x400000, //lighting - skylight slot 0
 /*23*/ RENDER_UNK800000 = 0x800000,
 /*24*/ RENDER_UNK1000000 = 0x1000000,
 /*25*/ RENDER_UNK2000000 = 0x2000000, //lighting - all vertices
@@ -185,7 +185,7 @@ enum RenderFlags {
 /*27*/ RENDER_UNK8000000 = 0x8000000, //render front?
 /*28*/ RENDER_SHAPE_VISIBLE = 0x10000000, //at runtime: shape passes all visibility checks (i.e. not hidden, passes bitstream test (unimplemented), inside camera frustum, passes CPU-based backface culling test)
 /*29*/ RENDER_UNK20000000 = 0x20000000,
-/*30*/ RENDER_UNK40000000 = 0x40000000,
+/*30*/ RENDER_UNK40000000 = 0x40000000, //lighting - skylight slot 1
 /*31*/ RENDER_NO_CULL = 0x80000000 //disables backface culling (for textures: G_CULL_BACK geometry mode off, for block shapes: CPU backface culling off)
 };
 

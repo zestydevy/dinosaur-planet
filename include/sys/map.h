@@ -91,10 +91,9 @@ typedef struct {
 /*10*/    s8 unk10;
 /*11*/    s8 unk11;
 /*12*/    u8 materialIndex;
-/*13*/    u8 envColourMode; // 00 = use ambient envFX colour
-                            // FE = ignore ambient envFX colour
-                            // FF = use flickering vertices' colour
-                            //     (used very rarely, in blocks 327 & 0843)
+/*13*/    u8 envColourMode; // 00 = use skylight colour
+                            // FE = ignore skylight colour
+                            // FF = use track light colour (slot depends on render flags)
 /*14*/    u8 animatorID; // Used to mark facebatches that can be removed/animated
 /*15*/    u8 blendMaterialIndex; // Used for multitextured water
 /*16*/    u8 texScrollerID; // texture scroll effect handler index (at runtime)

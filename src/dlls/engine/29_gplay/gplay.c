@@ -242,15 +242,15 @@ void gplay_init_save(s8 idx, char *filename) {
         sState.save.file.sidekicks[i].blueFood = 4;
         sState.save.file.sidekicks[i].redFood = 5;
 
-        sState.save.map.lightActions[i].unk0[0] = -1;
-        sState.save.map.lightActions[i].unk0[1] = -1;
-        sState.save.map.lightActions[i].unk4 = -1;
-        sState.save.map.lightActions[i].unk6 = -1;
-        sState.save.map.lightActions[i].unk8[0] = -1;
-        sState.save.map.lightActions[i].unk8[1] = -1;
-        sState.save.map.lightActions[i].unkC[0] = -1;
-        sState.save.map.lightActions[i].unkC[1] = -1;
-        sState.save.map.lightActions[i].unk12 = -1;
+        sState.save.map.lightActions[i].skylights[0] = -1;
+        sState.save.map.lightActions[i].skylights[1] = -1;
+        sState.save.map.lightActions[i].skylights[2] = -1;
+        sState.save.map.lightActions[i].skylights[3] = -1;
+        sState.save.map.lightActions[i].trklights[0] = -1;
+        sState.save.map.lightActions[i].trklights[1] = -1;
+        sState.save.map.lightActions[i].unkC = -1;
+        sState.save.map.lightActions[i].newlfx = -1;
+        sState.save.map.lightActions[i].cam = -1;
 
         sState.save.map.envActions[i].unk0 = 43000.0f;
         sState.save.map.envActions[i].unk4 = -1;
@@ -457,9 +457,9 @@ void gplay_savepoint(Vec3f *position, s16 yaw, s32 flags, s32 mapLayer) {
         bcopy(&sState.save.main, &sSavegame->asSave.main, sizeof(MainSaveData));
     } else {
         if (lightGetInside() != 0) {
-            sState.save.map.lightActions[sState.save.file.playerno].isInside |= 1;
+            sState.save.map.lightActions[sState.save.file.playerno].flags |= PL_LIGHT_ACTION_FLAG_IS_INSIDE;
         } else {
-            sState.save.map.lightActions[sState.save.file.playerno].isInside &= ~1;
+            sState.save.map.lightActions[sState.save.file.playerno].flags &= ~PL_LIGHT_ACTION_FLAG_IS_INSIDE;
         }
 
         sState.save.map.playerLocations[sState.save.file.playerno].vec.x = position->x;
@@ -497,9 +497,9 @@ void gplay_restart_set(Vec3f *position, s16 yaw, s32 mapLayer) {
     bcopy(&sState.save, sRestartSave, sizeof(Savegame));
 
     if (lightGetInside() != 0) {
-        sRestartSave->map.lightActions[sRestartSave->file.playerno].isInside |= 1;
+        sRestartSave->map.lightActions[sRestartSave->file.playerno].flags |= PL_LIGHT_ACTION_FLAG_IS_INSIDE;
     } else {
-        sRestartSave->map.lightActions[sRestartSave->file.playerno].isInside &= ~1;
+        sRestartSave->map.lightActions[sRestartSave->file.playerno].flags &= ~PL_LIGHT_ACTION_FLAG_IS_INSIDE;
     }
 
     sRestartSave->map.playerLocations[sRestartSave->file.playerno].vec.x = position->x;

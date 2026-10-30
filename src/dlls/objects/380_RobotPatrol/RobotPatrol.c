@@ -249,18 +249,18 @@ void RobotPatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTr
     u8 alertR;
     u8 alertG;
     u8 alertB;
-    u8 savedAmbientR;
-    u8 savedAmbientG;
-    u8 savedAmbientB;
+    u8 savedSkylightR;
+    u8 savedSkylightG;
+    u8 savedSkylightB;
     ObjectShadow* beamShadow;
     Vec3f sp48;
     s32 _pad2;
-    u8 ambientR;
-    u8 ambientG;
-    u8 ambientB;
+    u8 skylightR;
+    u8 skylightG;
+    u8 skylightB;
     Vec3f* beamDir;
 
-    lightGetAmbient(&ambientR, &ambientG, &ambientB);
+    lightGetSkyLight(&skylightR, &skylightG, &skylightB);
     objdata = self->data;
     modelInst = self->modelInsts[self->modelInstIdx];
     if (visibility != 0) {
@@ -342,17 +342,17 @@ void RobotPatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTr
             beam->opacityWithFade = 160;
         }
         // ? Was this originally trying to apply the shadow color to the beam model itself?
-        savedAmbientR = ambientR;
-        savedAmbientG = ambientG;
-        savedAmbientB = ambientB;
-        ambientR = beamShadowR;
-        ambientG = beamShadowG;
-        ambientB = beamShadowB;
+        savedSkylightR = skylightR;
+        savedSkylightG = skylightG;
+        savedSkylightB = skylightB;
+        skylightR = beamShadowR;
+        skylightG = beamShadowG;
+        skylightB = beamShadowB;
         // Draw beam
         objprintDrawModel(beam, gdl, mtxs, (Vertex**)vtxs, (Triangle**)pols, 1.0f);
-        ambientR = savedAmbientR;
-        ambientG = savedAmbientG;
-        ambientB = savedAmbientB;
+        skylightR = savedSkylightR;
+        skylightG = savedSkylightG;
+        skylightB = savedSkylightB;
         // Mark beam model matrices as no longer live (why?)
         beam->modelInsts[beam->modelInstIdx]->unk34 &= ~0x8;
     }
@@ -1049,7 +1049,7 @@ static void RobotPatrol_gunPrint(Object* self, ModelInstance* modelInst, Gfx** g
         gun->shouldShoot = 0;
     }
     texRenderReset();
-    lightAmbientDL(gdl);
+    lightSkyLightDL(gdl);
 }
 
 // offset: 0x2BCC | func: 20
@@ -1261,22 +1261,22 @@ static void RobotPatrol_initBeam(Object* self, RobotPatrol_Data* objdata, RobotP
     beam->obj = beamObj;
     // unused light action
     bzero(&laction, sizeof(LightAction));
-    laction.unk12 = 0x15;
-    laction.unk19 = 0xFF;
-    laction.unk18 = 0;
-    laction.unk1a = 0xFF;
-    laction.unk10 = 0xFFFE;
+    laction.flags = 0x15;
+    laction.g2 = 255;
+    laction.r2 = 0;
+    laction.b2 = 255;
+    laction.slot = 0xFFFE;
     laction.unk1c = 1;
-    laction.unk4 = 0;
-    laction.unk6 = -0xA;
-    laction.unk8 = 0;
+    laction.x = 0;
+    laction.y = -10;
+    laction.z = 0;
     laction.unka = 0x46;
     laction.unkC = 0xA;
-    laction.unk1d = 0xFF;
-    laction.unk22 = 2;
-    laction.unk1f = 0xF;
-    laction.unk20 = 8;
-    laction.unk0 = 0;
+    laction.max = 255;
+    laction.speed = 2;
+    laction.maxRange = 15;
+    laction.minRange = 8;
+    laction.timer = 0;
     beam->unk1A = self->unkD6;
     beam->yawTarget = 0;
     beam->yaw = 0;

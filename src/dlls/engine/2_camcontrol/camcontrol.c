@@ -353,7 +353,7 @@ void CamControl_change_mode(u32 cameraMode, s32 params) {
             camAction = CamControl_get_camera_action(params);
         }
         if (camAction != NULL) {
-            gDLL_29_Gplay->vtbl->get_current_player_lactions()->unk12 = params;
+            gDLL_29_Gplay->vtbl->get_current_player_lactions()->cam = params;
             if ((sActiveID == DLL_ID_CAMLOCKON) || (sActiveID == DLL_ID_CAMSEQ)) {
                 CamControl_get_camnormal_module()->dll->vtbl->func3(camAction, 16);
             } else {

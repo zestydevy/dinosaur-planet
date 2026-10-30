@@ -12,19 +12,19 @@ s32 lfxAction(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 arg4, SR
     assetRomLoadSection((void *)lAction, LACTIONS_BIN, actionIndex * sizeof(LightAction), sizeof(LightAction));
     if (lAction) {
         if (arg5) {
-            lAction->unk12 |= 0x40;
-            if (lAction->unk1b == 2) {
-                gDLL_57->vtbl->func1(lAction);
-            } else if (lAction->unk1b == 5) {
-                gDLL_58->vtbl->func1(lAction);
+            lAction->flags |= 0x40;
+            if (lAction->type == LACTION_TYPE_TRKLIGHT) {
+                dll_trklight->DoAction(lAction);
+            } else if (lAction->type == LACTION_TYPE_SKYLIGHT) {
+                dll_skylight->DoAction(lAction);
             } else {
                 dll_newlfx->DoAction(NULL, arg1, lAction, arg3, arg4, arg5);
             }
         } else {
-            if (lAction->unk1b == 2) {
-                gDLL_57->vtbl->func1(lAction);
-            } else if (lAction->unk1b == 5) {
-                gDLL_58->vtbl->func1(lAction);
+            if (lAction->type == LACTION_TYPE_TRKLIGHT) {
+                dll_trklight->DoAction(lAction);
+            } else if (lAction->type == LACTION_TYPE_SKYLIGHT) {
+                dll_skylight->DoAction(lAction);
             } else {
                 dll_newlfx->DoAction(arg0, arg1, lAction, arg3, arg4, NULL);
             }
@@ -40,21 +40,21 @@ s32 lfxRestoreAction(Object* arg0, Object* arg1, u16 actionIndex, s8 arg3, s32 a
     lAction = mmAlloc(sizeof(LightAction), -1, ALLOC_NAME("lfx:action1"));
     assetRomLoadSection((void *)lAction, LACTIONS_BIN, actionIndex * sizeof(LightAction), sizeof(LightAction));
     if (lAction != NULL) {
-        lAction->unk0 = 0xC;
+        lAction->timer = 12;
         if (arg5 != 0) {
-            lAction->unk12 |= 0x40;
-            if (lAction->unk1b == 2) {
-                gDLL_57->vtbl->func1(lAction);
-            } else if (lAction->unk1b == 5) {
-                gDLL_58->vtbl->func1(lAction);
+            lAction->flags |= 0x40;
+            if (lAction->type == LACTION_TYPE_TRKLIGHT) {
+                dll_trklight->DoAction(lAction);
+            } else if (lAction->type == LACTION_TYPE_SKYLIGHT) {
+                dll_skylight->DoAction(lAction);
             } else {
                 dll_newlfx->DoAction(NULL, arg1, lAction, arg3, arg4, arg5);
             }
         } else {
-            if (lAction->unk1b == 2) {
-                gDLL_57->vtbl->func1(lAction);
-            } else if (lAction->unk1b == 5) {
-                gDLL_58->vtbl->func1(lAction);
+            if (lAction->type == LACTION_TYPE_TRKLIGHT) {
+                dll_trklight->DoAction(lAction);
+            } else if (lAction->type == LACTION_TYPE_SKYLIGHT) {
+                dll_skylight->DoAction(lAction);
             } else {
                 dll_newlfx->DoAction(arg0, arg1, lAction, arg3, arg4, NULL);
             }
