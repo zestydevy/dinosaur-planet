@@ -4,6 +4,7 @@
 #include "game/objects/object.h"
 #include "game/objects/setups/111_FireCrystal.h"
 #include "sys/gfx/animseq.h"
+#include "sys/lfx.h"
 #include "sys/objmsg.h"
 #include "sys/objlib.h"
 
@@ -61,7 +62,7 @@ void CCfirecrystal_setup(Object* self, FireCrystal_Setup* objSetup, s32 arg2) {
         lightAction = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
         objData->lightAction = lightAction;
         assetRomLoadSection(lightAction, LACTIONS_BIN, 0x26F*sizeof(LightAction), sizeof(LightAction));
-        objData->lightAction->unk10 = ~1;
+        objData->lightAction->slot = ~1;
         dll_newlfx->DoAction(self, self, objData->lightAction, 0, 0, 0);
         objData->flameObjects[0] = CCfirecrystal_create_flame(self, 64, 0, 24);
         objData->flameObjects[1] = CCfirecrystal_create_flame(self, 64, 64, 24);
@@ -149,9 +150,9 @@ void CCfirecrystal_free(Object* self, s32 arg1) {
     lfxStruct = objData->lightAction;
     if (lfxStruct != NULL) {
         STUBBED_PRINTF("trying to kill fire crystal light\n");
-        lfxStruct->unk12 = 2;
-        objData->lightAction->unke = 0;
-        objData->lightAction->unk1b = 0;
+        lfxStruct->flags = 2;
+        objData->lightAction->id = 0;
+        objData->lightAction->type = LACTION_TYPE_NEWLFX;
         dll_newlfx->DoAction(self, self, objData->lightAction, 0, 0, 0);
         mmFree(objData->lightAction);
         objData->lightAction = NULL;

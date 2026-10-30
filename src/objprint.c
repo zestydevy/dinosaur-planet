@@ -97,9 +97,9 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     u8 blendR;
     u8 blendG;
     u8 blendB;
-    s32 var_v0;
-    s32 var_v1;
-    s32 var_a0;
+    s32 r;
+    s32 g;
+    s32 b;
     f32 spC4;
     f32 spC0;
     f32 spBC;
@@ -107,15 +107,15 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     MtxF sp78;
     s32 pad;
     MtxF* sp70;
-    u8 sp6F;
-    u8 sp6E;
-    u8 sp6D;
+    u8 skylightR;
+    u8 skylightG;
+    u8 skylightB;
     Gfx* tempGdl;
     Mtx* tempMtxs;
     Vertex* tempVtxs;
     Triangle* tempTris;
 
-    lightGetAmbient(&sp6F, &sp6E, &sp6D);
+    lightGetSkyLight(&skylightR, &skylightG, &skylightB);
     tempGdl = *gdl;
     tempMtxs = *mtxs;
     tempVtxs = *vtxs;
@@ -127,39 +127,39 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
 
     model = modelInst->model;
     opacity = obj->opacityWithFade;
-    if (opacity > 0xFF) {
-        opacity = 0xFF;
+    if (opacity > 255) {
+        opacity = 255;
     }
     if (obj->def->flags & OBJDEF_SKY_LIT) {
         if (lightGetInside() != 0) {
-            blendB = blendG = blendR = 0xFF;
+            blendB = blendG = blendR = 255;
         } else {
-            blendR = sp6F;
-            blendG = sp6E;
-            blendB = sp6D;
+            blendR = skylightR;
+            blendG = skylightG;
+            blendB = skylightB;
         }
     } else {
-        blendB = blendG = blendR = 0xFF;
+        blendB = blendG = blendR = 255;
     }
     if (obj->def->numAnimatedFrames > 0) {
         objprint_func_80036890(obj, 2);
     }
     if (BYTE_80091754 != 0) {
-        var_v0 = (blendR * SHORT_800b2e14) >> 8;
-        var_v1 = (blendG * SHORT_800b2e16) >> 8;
-        var_a0 = (blendB * SHORT_800b2e18) >> 8;
-        if (var_v0 > 0xFF) {
-            var_v0 = 0xFF;
+        r = (blendR * SHORT_800b2e14) >> 8;
+        g = (blendG * SHORT_800b2e16) >> 8;
+        b = (blendB * SHORT_800b2e18) >> 8;
+        if (r > 255) {
+            r = 255;
         }
-        if (var_v1 > 0xFF) {
-            var_v1 = 0xFF;
+        if (g > 255) {
+            g = 255;
         }
-        if (var_a0 > 0xFF) {
-            var_a0 = 0xFF;
+        if (b > 255) {
+            b = 255;
         }
-        blendR = var_v0;
-        blendG = var_v1;
-        blendB = var_a0;
+        blendR = r;
+        blendG = g;
+        blendB = b;
         BYTE_80091754 = 0;
     }
     if (BYTE_80091758 != 0) {
@@ -747,13 +747,13 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
     }
     if (arg0->def->flags & OBJDEF_FLAG1000) {
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
-            lightAmbientDL(arg1);
+            lightSkyLightDL(arg1);
         }
     } else {
         if (arg0->def->flags & OBJDEF_FLAG20) {
             dlSetPrimColor(arg1, 0xFFU, 0xFFU, 0xFFU, sp68);
         } else if (sp64 != 0) {
-            lightAmbientDL(arg1);
+            lightSkyLightDL(arg1);
         }
         temp_t0 = arg0->modelInsts[arg0->modelInstIdx];
         if (arg0->setup != NULL) {
@@ -780,7 +780,7 @@ void objprint_func_80036B78(Object* arg0, Gfx** arg1, Mtx** arg2, s32 arg3) {
             camCheckConvexHull(arg1, arg2, arg3, arg0, temp_t0, sp6C, 1);
         }
         if ((sp64 == 1) || (arg0->def->flags & OBJDEF_FLAG20)) {
-            lightAmbientDL(arg1);
+            lightSkyLightDL(arg1);
         }
     }
 }

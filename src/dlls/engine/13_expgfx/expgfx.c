@@ -491,18 +491,18 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
     s32 pad;
     Texture* spD4;
     s32 j;
-    u8 spCF;
-    u8 spCE;
-    u8 spCD;
+    u8 skylightR;
+    u8 skylightG;
+    u8 skylightB;
     u8 temp_v0_5;
     s16 spCA;
     s16 spC8;
     s16 spC6;
 
-    lightGetAmbient(&spCF, &spCE, &spCD);
-    spCA = (s16)((0xFF - spCF) / 3) + spCF;
-    spC8 = (s16)((0xFF - spCE) / 3) + spCE;
-    spC6 = (s16)((0xFF - spCD) / 3) + spCD;
+    lightGetSkyLight(&skylightR, &skylightG, &skylightB);
+    spCA = (s16)((255 - skylightR) / 3) + skylightR;
+    spC8 = (s16)((255 - skylightG) / 3) + skylightG;
+    spC6 = (s16)((255 - skylightB) / 3) + skylightB;
     if (func_80000824(-1) == 1) {
         return 0;
     }
@@ -514,7 +514,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
             continue;
         }
 
-        dlSetEnvColor(gdl, 0xFF, 0xFF, 0xFF, 0xFF);
+        dlSetEnvColor(gdl, 255, 255, 255, 255);
         var_s0 = _bss_0[i] - 1;
         for (j = 0; j < 30; j++) {
             var_s0 += 1;
@@ -671,7 +671,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
                         var_s2 = (temp_s3->opacity * var_s2) >> 8;
                     }
                     if (var_s0->unk80 & 0x01000000) {
-                        dlSetPrimColor(gdl, spCF, spCE, spCD, var_s2);
+                        dlSetPrimColor(gdl, skylightR, skylightG, skylightB, var_s2);
                     } else if (var_s0->unk80 & 0x01000000) {
                         dlSetPrimColor(gdl, spCA, spC8, spC6, var_s2);
                     } else {
@@ -747,7 +747,7 @@ s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 a
             }
         }
     }
-    lightAmbientDL(gdl);
+    lightSkyLightDL(gdl);
     if (_data_68 != 0) {
         dll_13_func_52B4(gdl);
         _data_68 = 0;

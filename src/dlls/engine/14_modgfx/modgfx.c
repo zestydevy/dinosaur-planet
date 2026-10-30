@@ -700,10 +700,10 @@ void modgfx_Func4(Object* arg0) {
     for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
         if (bss_0[i] != NULL && arg0 == bss_0[i]->unk4) {
             if (bss_0[i]->unkA0 != NULL) {
-                bss_0[i]->unkA0->unk12 = 2;
-                bss_0[i]->unkA0->unke = 0;
-                bss_0[i]->unkA0->unk1b = 0;
-                bss_0[i]->unkA0->unk10 = bss_0[i]->unk4->unkD6;
+                bss_0[i]->unkA0->flags = 2;
+                bss_0[i]->unkA0->id = 0;
+                bss_0[i]->unkA0->type = LACTION_TYPE_NEWLFX;
+                bss_0[i]->unkA0->slot = bss_0[i]->unk4->unkD6;
                 dll_newlfx->DoAction(bss_0[i]->unk4, bss_0[i]->unk4, bss_0[i]->unkA0, 0, 0, &sp5C);
                 mmFree(bss_0[i]->unkA0);
             }
@@ -795,11 +795,11 @@ s32 modgfx_Func6(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj) {
     s16 sp234[] = {
         0x0003, 0x0002, 0x0401, 0x0400, 0x0302, 0x0301, 0x0300, 0x0200, 0x0201
     };
-    u8 sp233;
-    u8 sp232;
-    u8 sp231;
+    u8 skylightR;
+    u8 skylightG;
+    u8 skylightB;
 
-    lightGetAmbient(&sp233, &sp232, &sp231);
+    lightGetSkyLight(&skylightR, &skylightG, &skylightB);
     if (func_80000824(-1) == 1) {
         return 1;
     }
@@ -937,7 +937,7 @@ s32 modgfx_Func6(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj) {
         gSPLoadGeometryMode(*gdl, G_ZBUFFER | G_SHADE | G_SHADING_SMOOTH);
         dlApplyGeometryMode(gdl);
         if (bss_0[idx]->unkA4 & 0x10000000) {
-            dlSetPrimColor(gdl, sp233, sp232, sp231, 255);
+            dlSetPrimColor(gdl, skylightR, skylightG, skylightB, 255);
         } else if ((bss_0[idx]->unk4 != NULL) && (bss_0[idx]->unkA4 & 0x4000)) {
             dlSetPrimColor(gdl, 255, 255, 255, bss_0[idx]->unk4->opacityWithFade);
         } else {
@@ -1422,9 +1422,9 @@ static void modgfx_func_4C0C(s16 arg0, s32 arg1) {
     for (i = 0; i < ARRAYCOUNT(bss_0); i++) {
         if ((bss_0[i] != NULL) && ((arg0 == bss_0[i]->unk10C) || (arg1 != 0))) {
             if (bss_0[i]->unkA0 != NULL) {
-                bss_0[i]->unkA0->unk12 = 2;
-                bss_0[i]->unkA0->unke = 0;
-                bss_0[i]->unkA0->unk1b = 0;
+                bss_0[i]->unkA0->flags = 2;
+                bss_0[i]->unkA0->id = 0;
+                bss_0[i]->unkA0->type = LACTION_TYPE_NEWLFX;
                 dll_newlfx->DoAction(bss_0[i]->unk4, bss_0[i]->unk4, bss_0[i]->unkA0, 0, 0, &sp5C);
                 mmFree(bss_0[i]->unkA0);
             }
@@ -1656,9 +1656,9 @@ static void modgfx_func_59B4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
     SRT sp28;
 
     if (arg2 == 1) {
-        arg0->unk120 = arg0->unkA0->unk4;
-        arg0->unk122 = arg0->unkA0->unk6;
-        arg0->unk124 = arg0->unkA0->unk8;
+        arg0->unk120 = arg0->unkA0->x;
+        arg0->unk122 = arg0->unkA0->y;
+        arg0->unk124 = arg0->unkA0->z;
         data_10 = 0.0f;
         if (arg0->unkFE != 0) {
             data_10 = 1.0f / arg0->unkFE;
@@ -1671,14 +1671,14 @@ static void modgfx_func_59B4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
         var_fa1 = 1.0f - ((f32) arg0->unkFE / (f32) arg0->unkEE[arg0->unkFC]);
     }
 
-    arg0->unkA0->unk4 = (((arg1->unk4.x - arg0->unk120) * var_fa1) + arg0->unk120);
-    arg0->unkA0->unk6 = (((arg1->unk4.y - arg0->unk122) * var_fa1) + arg0->unk122);
-    arg0->unkA0->unk8 = (((arg1->unk4.z - arg0->unk124) * var_fa1) + arg0->unk124);
+    arg0->unkA0->x = (((arg1->unk4.x - arg0->unk120) * var_fa1) + arg0->unk120);
+    arg0->unkA0->y = (((arg1->unk4.y - arg0->unk122) * var_fa1) + arg0->unk122);
+    arg0->unkA0->z = (((arg1->unk4.z - arg0->unk124) * var_fa1) + arg0->unk124);
     if (D_80092C3C > 0.0f && D_80092C3C <= 1.0f) {
         if (arg0->unkA4 & 4) {
-            sp40.x = arg0->unkA0->unk4;
-            sp40.y = arg0->unkA0->unk6;
-            sp40.z = arg0->unkA0->unk8;
+            sp40.x = arg0->unkA0->x;
+            sp40.y = arg0->unkA0->y;
+            sp40.z = arg0->unkA0->z;
             sp28.transl.x = 0.0f;
             sp28.transl.y = 0.0f;
             sp28.transl.z = 0.0f;
@@ -1687,22 +1687,22 @@ static void modgfx_func_59B4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
             sp28.scale = 1.0f;
             sp28.yaw = arg0->unk4->srt.yaw;
             mathRotateRPY(&sp28, sp40.f);
-            arg0->unkA0->unk4 = sp40.x;
-            arg0->unkA0->unk6 = sp40.y;
-            arg0->unkA0->unk8 = sp40.z;
+            arg0->unkA0->x = sp40.x;
+            arg0->unkA0->y = sp40.y;
+            arg0->unkA0->z = sp40.z;
         }
-        D_800BB198.x = arg0->unkA0->unk4 + arg0->unk4->globalPosition.x;
-        D_800BB198.y = arg0->unkA0->unk6 + arg0->unk4->globalPosition.y;
-        D_800BB198.z = arg0->unkA0->unk8 + arg0->unk4->globalPosition.z;
+        D_800BB198.x = arg0->unkA0->x + arg0->unk4->globalPosition.x;
+        D_800BB198.y = arg0->unkA0->y + arg0->unk4->globalPosition.y;
+        D_800BB198.z = arg0->unkA0->z + arg0->unk4->globalPosition.z;
         D_80092C3C = D_80092C3C - (data_10 * data_C);
         return;
     }
 
     if (D_80092C3C == 2.0f) {
         if (arg0->unkA4 & 4) {
-            sp40.x = arg0->unkA0->unk4;
-            sp40.y = arg0->unkA0->unk6;
-            sp40.z = arg0->unkA0->unk8;
+            sp40.x = arg0->unkA0->x;
+            sp40.y = arg0->unkA0->y;
+            sp40.z = arg0->unkA0->z;
             sp28.transl.x = 0.0f;
             sp28.transl.y = 0.0f;
             sp28.transl.z = 0.0f;
@@ -1711,13 +1711,13 @@ static void modgfx_func_59B4(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
             sp28.scale = 1.0f;
             sp28.yaw = arg0->unk4->srt.yaw;
             mathRotateRPY(&sp28, sp40.f);
-            arg0->unkA0->unk4 = sp40.x;
-            arg0->unkA0->unk6 = sp40.y;
-            arg0->unkA0->unk8 = sp40.z;
+            arg0->unkA0->x = sp40.x;
+            arg0->unkA0->y = sp40.y;
+            arg0->unkA0->z = sp40.z;
         }
-        D_800BB198.x = arg0->unkA0->unk4 + arg0->unk4->globalPosition.x;
-        D_800BB198.y = arg0->unkA0->unk6 + arg0->unk4->globalPosition.y;
-        D_800BB198.z = arg0->unkA0->unk8 + arg0->unk4->globalPosition.z;
+        D_800BB198.x = arg0->unkA0->x + arg0->unk4->globalPosition.x;
+        D_800BB198.y = arg0->unkA0->y + arg0->unk4->globalPosition.y;
+        D_800BB198.z = arg0->unkA0->z + arg0->unk4->globalPosition.z;
     }
 }
 
@@ -1954,40 +1954,40 @@ static void modgfx_func_6758(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
         arg0->unkA0 = mmAlloc(sizeof(LightAction), ALLOC_TAG_LFX_COL, NULL);
         if (arg0->unkA0 != NULL) {
             if (arg1->unk0 & 0x02000000) {
-                arg0->unkA0->unk12 = 0x19;
+                arg0->unkA0->flags = 0x19;
             } else {
-                arg0->unkA0->unk12 = 0x1D;
+                arg0->unkA0->flags = 0x1D;
             }
-            arg0->unkA0->unk13 = 0;
-            arg0->unkA0->unke = 0;
-            arg0->unkA0->unk15 = 0;
-            arg0->unkA0->unk16 = 0;
-            arg0->unkA0->unk17 = 0;
-            arg0->unkA0->unk18 = (s16) arg1->unk4.x;
-            arg0->unkA0->unk19 = (s16) arg1->unk4.y;
-            arg0->unkA0->unk1a = (s16) arg1->unk4.z;
+            arg0->unkA0->flags2 = 0;
+            arg0->unkA0->id = 0;
+            arg0->unkA0->r1 = 0;
+            arg0->unkA0->g1 = 0;
+            arg0->unkA0->b1 = 0;
+            arg0->unkA0->r2 = (s16) arg1->unk4.x;
+            arg0->unkA0->g2 = (s16) arg1->unk4.y;
+            arg0->unkA0->b2 = (s16) arg1->unk4.z;
             if (temp_v0->unkD6 == 0) {
-                arg0->unkA0->unk10 = ~1;
+                arg0->unkA0->slot = ~1;
             } else {
-                arg0->unkA0->unk10 = temp_v0->unkD6;
+                arg0->unkA0->slot = temp_v0->unkD6;
             }
-            arg0->unkA0->unk1b = 0;
+            arg0->unkA0->type = LACTION_TYPE_NEWLFX;
             arg0->unkA0->unk1c = 1;
-            arg0->unkA0->unk0 = 0;
+            arg0->unkA0->timer = 0;
             arg0->unkA0->unk2 = 0;
-            arg0->unkA0->unk4 = 0;
-            arg0->unkA0->unk6 = 0;
-            arg0->unkA0->unk8 = 0;
+            arg0->unkA0->x = 0;
+            arg0->unkA0->y = 0;
+            arg0->unkA0->z = 0;
             arg0->unkA0->unka = 0x51;
             arg0->unkA0->unkC = -0x15;
-            arg0->unkA0->unk1d = 0xFF;
-            arg0->unkA0->unk1e = 0x32;
-            arg0->unkA0->unk22 = 8;
-            arg0->unkA0->unk1f = 0xC;
-            arg0->unkA0->unk20 = 4;
+            arg0->unkA0->max = 255;
+            arg0->unkA0->min = 50;
+            arg0->unkA0->speed = 8;
+            arg0->unkA0->maxRange = 12;
+            arg0->unkA0->minRange = 4;
             arg0->unkA0->unk21 = 0;
             dll_newlfx->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
-            temp_v0->unkD6 = arg0->unkA0->unk10;
+            temp_v0->unkD6 = arg0->unkA0->slot;
             if (arg1->unk0 & 0x02000000) {
                 D_80092C3C = 1.0f;
             }
@@ -1998,11 +1998,11 @@ static void modgfx_func_6758(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
             if (1) {}
             if (arg0->unkA0 != NULL) {
                 modgfx_func_59B4(arg0, arg1, arg3, 0U);
-                arg0->unkA0->unk1b = 0;
-                arg0->unkA0->unk12 = 1;
-                arg0->unkA0->unk13 = 8;
+                arg0->unkA0->type = LACTION_TYPE_NEWLFX;
+                arg0->unkA0->flags = 1;
+                arg0->unkA0->flags2 = 8;
                 dll_newlfx->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
-                arg0->unkA0->unk13 ^= 8;
+                arg0->unkA0->flags2 ^= 8;
                 if (arg1->unk0 & 0x02000000) {
                     D_80092C3C = 2.0f;
                 }
@@ -2010,20 +2010,20 @@ static void modgfx_func_6758(ModgfxInstance* arg0, ModgfxStruct_0* arg1, s32 arg
         } else if (arg1->unk0 & 0x40000000) {
             if (arg0->unkA0 != NULL) {
                 modgfx_func_59B4(arg0, arg1, arg3, 0U);
-                arg0->unkA0->unk1b = 0;
-                arg0->unkA0->unk12 = 1;
-                arg0->unkA0->unk13 = 8;
+                arg0->unkA0->type = LACTION_TYPE_NEWLFX;
+                arg0->unkA0->flags = 1;
+                arg0->unkA0->flags2 = 8;
                 dll_newlfx->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
-                arg0->unkA0->unk13 ^= 8;
+                arg0->unkA0->flags2 ^= 8;
             }
         } else if ((arg2 == 0) && (arg3 != 0) && (arg1->unk0 & 0x8000)) {
             // FAKE
             if (1) {}
             if (arg0->unkA0 != NULL) {
-                arg0->unkA0->unk12 = 2;
-                arg0->unkA0->unke = 0;
-                arg0->unkA0->unk1b = 0;
-                arg0->unkA0->unk10 = (u16) temp_v0->unkD6;
+                arg0->unkA0->flags = 2;
+                arg0->unkA0->id = 0;
+                arg0->unkA0->type = LACTION_TYPE_NEWLFX;
+                arg0->unkA0->slot = (u16) temp_v0->unkD6;
                 dll_newlfx->DoAction(temp_v0, temp_v0, arg0->unkA0, 0, 0, &sp34);
                 mmFree(arg0->unkA0);
                 arg0->unkA0 = NULL;

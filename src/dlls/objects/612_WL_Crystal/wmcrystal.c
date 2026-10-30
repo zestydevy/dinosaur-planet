@@ -605,7 +605,7 @@ void WL_Crystal_handle_sun_flare_effects(Object* self) {
 
             //Tint the room when looking towards the sun
             if (distanceToCamera2D < 12450.0f) {
-                lightDimAmbient(0xFF, 0xFF, 0x9B, transform.scale);
+                lightDimSkyLight(0xFF, 0xFF, 0x9B, transform.scale);
             }
 
             gDLL_17_partfx->vtbl->spawn(self, PARTICLE_6D, &transform, 0x10000, -1, NULL);

@@ -197,14 +197,15 @@ void newday_func_18(Object* arg0, Object* arg1, EnvFxAction* arg2, s32 arg3) {
     temp_v0 = gDLL_29_Gplay->vtbl->get_current_player_envactions();
     // OSReport("doDayAction\n"); // default.dol
     if ((arg2 != NULL) && (arg2->unk26 < 2)) {
+        // @bug: if arg2->unk26 is 1, bss_30[0] will be allocated twice without the previous value being freed
         if (bss_30[arg2->unk26] == NULL) {
             if (!(arg2->unk58 & 0x20) && (arg2->unk58 & 2)) {
                 arg2->unk58 |= 0x40;
                 if (arg0 != NULL) {
                     newday_func_2464(arg2, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z);
-                    return;
+                } else {
+                    newday_func_2464(arg2, 0.0f, 0.0f, 0.0f);
                 }
-                newday_func_2464(arg2, 0.0f, 0.0f, 0.0f);
             }
         } else if (bss_30[arg2->unk26] != NULL) {
             if (arg2->unk58 & 2) {
@@ -1408,11 +1409,11 @@ static void newday_func_4484(void) {
             (u8) sp70, (u8) sp6C, (u8) sp68);
         shadows_func_8004D698(data_18.f[0], data_18.f[1], data_18.f[2], 0x64);
         gDLL_12_Minic->vtbl->func5(data_18.f[0], data_18.f[1], data_18.f[2], 1);
-        D_80090CAC = 1.0f;
+        gSkyLightPower = 1.0f;
         return;
     }
     temp_fv0_2 = (f32) data_68 / 255.0f;
-    D_80090CAC = 1.0f - temp_fv0_2;
+    gSkyLightPower = 1.0f - temp_fv0_2;
     if (temp_fv0_2 != 1.0f) {
         sp78 = data_18.f[0] + ((data_24.f[0] - data_18.f[0]) * temp_fv0_2);
         sp7C = data_18.f[1] + ((data_24.f[1] - data_18.f[1]) * temp_fv0_2);
@@ -1429,10 +1430,10 @@ static void newday_func_4484(void) {
         shadows_func_8004D698(data_24.f[0], data_24.f[1], data_24.f[2], 0x64);
         gDLL_12_Minic->vtbl->func5(data_24.f[0], data_24.f[1], data_24.f[2], 0);
     }
-    if (D_80090CAC < 0.0f) {
-        D_80090CAC = 0.0f;
-    } else if (D_80090CAC > 1.0f) {
-        D_80090CAC = 1.0f;
+    if (gSkyLightPower < 0.0f) {
+        gSkyLightPower = 0.0f;
+    } else if (gSkyLightPower > 1.0f) {
+        gSkyLightPower = 1.0f;
     }
 }
 
@@ -1604,14 +1605,14 @@ static void newday_func_5818(void) {
     }
     isNight = gDLL_7_Newday->vtbl->func8(&time);
     if ((isNight != bss_0.unk25) || (bss_0.unk27 & 0x10)) {
-        bss_0.unk24 = 0x3C;
+        bss_0.unk24 = 60;
         bss_0.unk27 &= ~0x10;
     }
     if (bss_0.unk24 > 0) {
         bss_0.unk24--;
         if (!isNight) {
             switch (bss_0.unk24) {
-            case 0x3B:
+            case 59:
                 bss_0.unk26++;
                 if (bss_0.unk26 >= 28) {
                     bss_0.unk26 = 0;
@@ -1621,28 +1622,28 @@ static void newday_func_5818(void) {
                 }
                 mainSetBits(BIT_SC_UNKNOWN_2BA, bss_0.unk26);
                 break;
-            case 0x31:
+            case 49:
                 if ((bss_0.unk27 & 1) && (bss_0.unk4[bss_0.unk26] != 0) && (lightGetInside() == 0)) {
                     player = objGetPlayer();
                     envfxAction(player, player, bss_0.unk4[bss_0.unk26], 0);
                 }
                 break;
-            case 0x27:
+            case 39:
                 if ((bss_0.unk27 & 1) && (lightGetInside() == 0)) {
                     envfxAction(NULL, NULL, bss_0.unk0[bss_0.unk26], 0);
                 }
                 break;
-            case 0x1D:
+            case 29:
                 if ((bss_0.unk27 & 1) && (lightGetInside() == 0)) {
                     envfxAction(NULL, NULL, bss_0.unk8[bss_0.unk26], 0);
                 }
                 break;
-            case 0x13:
+            case 19:
                 if ((bss_0.unk27 & 2) && (lightGetInside() == 0)) {
                     lfxAction(NULL, NULL, bss_0.unk10[bss_0.unk26], 0, 0, 0);
                 }
                 break;
-            case 0x9:
+            case 9:
                 if ((bss_0.unk27 & 2) && (lightGetInside() == 0)) {
                     lfxAction(NULL, NULL, bss_0.unk14[bss_0.unk26], 0, 0, 0);
                 }

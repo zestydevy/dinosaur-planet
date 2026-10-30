@@ -212,9 +212,9 @@ void newfog_Func_5AC(void) {
     s32 i;
     f32 spA0 = 0.0f;
     u8 sp9C[] = {0, 0, 0};
-    u8 ambientR;
-    u8 ambientG;
-    u8 ambientB;
+    u8 skylightR;
+    u8 skylightG;
+    u8 skylightB;
 
     r = 0.0f;
     g = 0.0f;
@@ -222,7 +222,7 @@ void newfog_Func_5AC(void) {
     min = 0.0f;
     max = 0.0f;
 
-    lightGetAmbient(&ambientR, &ambientG, &ambientB);
+    lightGetSkyLight(&skylightR, &skylightG, &skylightB);
     if (data_30 != 0) {
         // @decomp: must be on one line:
         bss_10[0].x = 0.0f;    bss_10[0].y = 0.0f; bss_10[0].z = 1.0f;
@@ -404,9 +404,9 @@ void newfog_Func_5AC(void) {
                 min = 100.0f;
             }
             if (!(bss_0[sel]->unk4 & 8)) {
-                r *= ((f32) (ambientR + ambientG + ambientB) / (255.0f * 3));
-                g *= ((f32) (ambientR + ambientG + ambientB) / (255.0f * 3));
-                b *= ((f32) (ambientR + ambientG + ambientB) / (255.0f * 3));
+                r *= ((f32) (skylightR + skylightG + skylightB) / (255.0f * 3));
+                g *= ((f32) (skylightR + skylightG + skylightB) / (255.0f * 3));
+                b *= ((f32) (skylightR + skylightG + skylightB) / (255.0f * 3));
             }
             if (bss_0[sel]->unk4 & 1) {
                 bss_0[sel]->fogR = (s32) r;

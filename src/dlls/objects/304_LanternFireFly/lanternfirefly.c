@@ -232,7 +232,7 @@ void LanternFireFly_control(Object* self) {
         if (objData->lfxEmitter != NULL) {
             if (objData->lifetime < 180) {
                 lfxData = objData->lfxEmitter->data;
-                dll_newlfx->Func_BB8(lfxData->unk108->unk10, 0, mathSinfInterp((objData->lifetime << 11)) * objData->lifetime);
+                dll_newlfx->Func_BB8(lfxData->unk108->slot, 0, mathSinfInterp((objData->lifetime << 11)) * objData->lifetime);
             }
         }
     }

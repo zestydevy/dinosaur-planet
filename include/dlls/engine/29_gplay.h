@@ -30,11 +30,10 @@ typedef struct {
 
 // size: 0x14
 typedef struct {
-    s16 unk0[2];
-    s16 unk4;
-    s16 unk6;
-    s16 unk8[2];
-    s16 unkC[2];
+    s16 unk0[4]; // DLL 58
+    s16 unk8[2]; // DLL 57
+    s16 unkC; // unused?
+    s16 unkE; // newlfx
     s16 isInside;
     s16 unk12; //cameraActionID?
 } PlayerLightActions;
@@ -113,24 +112,24 @@ typedef struct {
 
 // size: 0x40
 typedef struct {
-    f32 unk0;
-    s16 unk4;
-    s16 unk6;
-    s16 unk8;
-    s16 unkA;
-    s16 unkC;
-    s16 unkE;
-    /*0x10*/ s32 unk10;
-    /*0x14*/ s32 unk14;
-    /*0x18*/ s32 unk18;
-    /*0x1C*/ s32 unk1C;
-    /*0x20*/ s32 unk20;
-    /*0x24*/ s32 unk24;
-    /*0x28*/ s32 unk28;
-    /*0x2C*/ s32 unk2C;
-    /*0x30*/ s32 unk30;
+    f32 unk0; // time of day
+    s16 unk4; // envfx action id (newday)
+    s16 unk6; // envfx action id (minic)
+    s16 unk8; // envfx action id (newfog)
+    s16 unkA; // envfx action id
+    s16 unkC; // envfx action id
+    s16 unkE; // envfx action id
+    /*0x10*/ s32 unk10; // unkA x
+    /*0x14*/ s32 unk14; // unkA y
+    /*0x18*/ s32 unk18; // unkA z
+    /*0x1C*/ s32 unk1C; // unkC x
+    /*0x20*/ s32 unk20; // unkC y
+    /*0x24*/ s32 unk24; // unkC z
+    /*0x28*/ s32 unk28; // unkE x
+    /*0x2C*/ s32 unk2C; // unkE y
+    /*0x30*/ s32 unk30; // unkE z
     u8 _unk34[8];
-    u8 unk3C;
+    u8 unk3C; // bit 0: minic
     s8 unk3D;
     s8 unk3E;
     s8 unk3F;

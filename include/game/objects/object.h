@@ -503,9 +503,9 @@ typedef struct Object {
 /*00CC*/    ObjectMesgQueue *mesgQueue;
 /*00D0*/    u8 unkD0[0xd4 - 0xd0];
 /*00D4*/    u8 unkD4; // index into ObjDef.unk40
-/*00D5*/    u8 unkD5[0xd6 - 0xd5];
-/*00D6*/    u8 unkD6;
-/*00D5*/    u8 unkD7[0xd8 - 0xd7];
+/*00D5*/    u8 unkD5; // lighting related
+/*00D6*/    u8 unkD6; // lfx slot
+/*00D5*/    u8 unkD7; // lighting related
 /*00D8*/    u8 unkD8;
 /*00D9*/    u8 unkD9; // num touch callbacks
 /*00DA*/    u8 freeLock; // if set, object will not be freed even if attempted

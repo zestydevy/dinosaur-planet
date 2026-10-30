@@ -1582,10 +1582,10 @@ void objFreeObjectInternal(Object *obj, s32 onlySelf) {
     }
 
     if (obj->def->unk87 & 0x10) {
-        lAction.unk12 = 2;
-        lAction.unke = 0;
-        lAction.unk10 = obj->unkD6;
-        lAction.unk1b = 0;
+        lAction.flags = 2;
+        lAction.id = 0;
+        lAction.slot = obj->unkD6;
+        lAction.type = LACTION_TYPE_NEWLFX;
 
         dll_newlfx->DoAction(obj, obj, &lAction, 0, 0, 0);
     }
