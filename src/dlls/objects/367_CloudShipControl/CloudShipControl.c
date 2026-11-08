@@ -267,7 +267,7 @@ static void CloudShipControl_func_7F0(Object* self) {
 
 // offset: 0x9DC | func: 9
 static void CloudShipControl_func_9DC(Object* self) {
-    if (gDLL_26_Curves->vtbl->func_39C(bss_4) != NULL) {
+    if (gDLL_26_Curves->vtbl->FindByUID(bss_4) != NULL) {
         bss_130 = 1;
     }
 }
@@ -300,7 +300,7 @@ static void CloudShipControl_func_A3C(Object* self) {
                     objSendMesg(ptr->unk0, 0xF0003, self, NULL);
                     break;
                 case 0xF0001:
-                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(ptr->unk4);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->FindByUID(ptr->unk4);
                     if ((temp_v0_2 != NULL) && (temp_v0_2->curveType == 0x16) && (ptr->unk8 != -1)) {
                         ptr->unk8 = ptr->unk4;
                         if (self->parent != NULL) {
@@ -324,7 +324,7 @@ static void CloudShipControl_func_A3C(Object* self) {
                     break;
                 case 0xE0000:
                     ptr->unk0 = NULL;
-                    gDLL_26_Curves->vtbl->func_39C(bss_4);
+                    gDLL_26_Curves->vtbl->FindByUID(bss_4);
                     break;
                 }
             }
@@ -341,7 +341,7 @@ static void CloudShipControl_func_D64(BSS138* arg0, s32 arg1, s8 arg2) {
     s32 sp40;
     CurveSetup* temp_v0;
 
-    temp_v0 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+    temp_v0 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk4);
     if (temp_v0 == NULL) {
         return;
     }
@@ -350,7 +350,7 @@ static void CloudShipControl_func_D64(BSS138* arg0, s32 arg1, s8 arg2) {
         var_a3 = 0;
         while (var_a3 < 5) { // @bug: curves can only have 4 links, not 5
             if (temp_v0->links[var_a3] >= 0) {
-                temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_v0->links[var_a3]);
+                temp_v0_2 = gDLL_26_Curves->vtbl->FindByUID(temp_v0->links[var_a3]);
                 if ((arg2 == temp_v0_2->unk.unk31) || (arg2 == temp_v0_2->unk.unk32) || (arg2 == temp_v0_2->unk.unk33)) {
                     sp44[var_a2] = temp_v0->links[var_a3];
                     var_a2 += 1;

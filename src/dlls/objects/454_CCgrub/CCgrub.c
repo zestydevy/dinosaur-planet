@@ -70,9 +70,9 @@ void CCgrub_obj_Setup(Object* self, CCgrub_Setup* setup, s32 reset) {
     }
 
     objData = self->data;
-    curveSetupA = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, NULL, -1, -1));
-    curveSetupB = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(curveSetupA, -1));
-    gDLL_25->vtbl->func_1D30(&objData->curves, curveSetupA, curveSetupB, gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(curveSetupB, -1)));
+    curveSetupA = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, NULL, -1, -1));
+    curveSetupB = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_438(curveSetupA, -1));
+    gDLL_25->vtbl->func_1D30(&objData->curves, curveSetupA, curveSetupB, gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_438(curveSetupB, -1)));
     CCgrub_func_AB0(self, objData, 0.2f);
     curves_func_800053B0(&objData->curves.unk0, 0.1f);
 
@@ -145,7 +145,7 @@ void CCgrub_obj_Control(Object* self) {
     }
 
     if (sp60 >= 0) {
-        gDLL_25->vtbl->func_21F4(&objData->curves, gDLL_26_Curves->vtbl->func_39C(sp60));
+        gDLL_25->vtbl->func_21F4(&objData->curves, gDLL_26_Curves->vtbl->FindByUID(sp60));
     }
 
     switch (objData->state) {

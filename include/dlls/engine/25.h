@@ -41,10 +41,15 @@ typedef struct Dll25BssE0 {
     u8 pad26[0x28 - 0x26];
 } Dll25BssE0;
 
+typedef struct {
+    u8 unk0[2];
+    u16 unk2[4];
+} DLL25Func1158Struct;
+
 DLL_INTERFACE(DLL_25) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ void (*func_D8)(void);
-/*1*/ s32 (*func_1158)(Vec3f *arg0, Dll25BssDC *arg1);
+/*1*/ s32 (*func_1158)(Vec3f *arg0, DLL25Func1158Struct *arg1);
 /*2*/ s32 (*func_12FC)(Vec3f *arg0);
 /*3*/ s32 (*func_1474)(Vec3f *arg0, s32 arg1);
 /*4*/ s32 (*func_15B0)(Vec3f *arg0, s32 arg1, s32 arg2);

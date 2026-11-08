@@ -190,7 +190,7 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
     for (i = 0; i < 4; i++) {
         neighborCurveUID = base->links[i];
         if ((neighborCurveUID >= 0) && (var_fp & (1 << i))) {
-            neighbor = gDLL_26_Curves->vtbl->func_39C(neighborCurveUID);
+            neighbor = gDLL_26_Curves->vtbl->FindByUID(neighborCurveUID);
             if (neighbor != NULL) {
                 switch (neighbor->curveType) {
                 case 0x22: // Kyte

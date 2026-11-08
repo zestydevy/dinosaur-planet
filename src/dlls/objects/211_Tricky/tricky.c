@@ -112,6 +112,8 @@ typedef struct {
     /*60C*/ u8 unk60C;
 } Tricky_Data;
 
+typedef void (*TrickyStateCallback)(Object* self, Tricky_Data* objdata);
+
 enum TrickyState {
     TRICKY_STATE_0 = 0,
     TRICKY_STATE_1 = 1,
@@ -152,7 +154,7 @@ enum TrickyFlags {
 };
 
 static void tricky_func_1408(Object* self, Object* arg1);
-static s32 tricky_func_1624(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
+static int tricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3);
 static void tricky_state_0(Object* self, Tricky_Data* objData);
 static void tricky_state_1(Object* self, Tricky_Data* objData);
 static void tricky_state_2(Object* self, Tricky_Data* objData);
@@ -248,10 +250,8 @@ static s32 tricky_func_9668(DLL27_Data* objData);
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
 };
-/*0x164*/ static u16 _data_164 = 0x0102;
 
 /*0x0*/ static u8 _bss_0[0x8];
-typedef void (*TrickyStateCallback)(Object* self, Tricky_Data* objdata);
 /*0x8*/ static TrickyStateCallback sStateFuncs[18];
 
 // offset: 0x0 | ctor
@@ -284,24 +284,22 @@ void tricky_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
     f32 var_ft5;
     f32 var_fv0;
     f32 var_fv1;
-    Tricky_Data* objData;
+    Tricky_Data* objData = self->data;
     s32 pad;
     s32 pad2;
     s32 i;
     u8 pad3;
-    u16 sp50;
+    u8 sp50[] = {1, 2};
     s32 pad4;
     s32 temp_v1;
 
-    objData = self->data;
-    sp50 = _data_164;
     mainSetBits(BIT_4E3, 0xFF);
     if (mainGetBits(BIT_SW_Tricky_Ball_Collected) != 0) {
         mainSetBits(BIT_Tricky_Ball_Unlocked, 1);
     }
 
-    self->animCallback = (AnimationCallback ) tricky_func_1624;
-    objAddObjectType(self, 1);
+    self->animCallback = tricky_animCallback;
+    objAddObjectType(self, OBJTYPE_Sidekick);
     routeInit(&objData->unk4DC[0]);
     routeInit(&objData->unk4DC[1]);
     routeInit(&objData->unk4DC[2]);
@@ -317,9 +315,12 @@ void tricky_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
     objData->unk14 = temp_v1;
     objData->unk10 = temp_v1;
     objData->unkC = temp_v1;
-    gDLL_27->vtbl->init(&objData->unkCC, 0x02000000, 0xA7, 1);
+    gDLL_27->vtbl->init(&objData->unkCC, 
+        DLL27FLAG_2000000, 
+        DLL27FLAG_80 | DLL27FLAG_20 | DLL27FLAG_4 | DLL27FLAG_2 | DLL27FLAG_1, 
+        DLL27MODE_1);
     gDLL_27->vtbl->setup_hits_collider(&objData->unkCC, 1, _data_94, &_data_A0, 2);
-    gDLL_27->vtbl->setup_terrain_collider(&objData->unkCC, 2, _data_74, _data_8C, (u8* ) &sp50);
+    gDLL_27->vtbl->setup_terrain_collider(&objData->unkCC, 2, _data_74, _data_8C, sp50);
     gDLL_25->vtbl->func_D8();
     for (i = 0, var_ft5 = 0/*.0f*/; var_ft5 < 1.8f; i++, var_ft5 += 0.1f) {
         for (var_fv0 = var_ft5, var_fv1 = 0.0f; var_fv0 > 0.0f; var_fv0 -= 0.09f) {
@@ -349,7 +350,7 @@ void tricky_obj_Control(Object* self) {
     Object* temp_v0_3;
 
     // FAKE
-    if ((s32)self);
+    if ((s32)self){}
     sp90 = _data_EC[map_func_80045D58()];
     objData->unk14 = _data_EC[mapWorldXZToMapID(objData->player->globalPosition.x, objData->player->globalPosition.z)];
     if ((sp90 != objData->unkC) && (sp90 != objData->unk10)) {
@@ -849,7 +850,7 @@ void tricky_sidekick_Func23(Object* self) {
 }
 
 // offset: 0x1624 | func: 28
-static s32 tricky_func_1624(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
+static int tricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8 arg3) {
     Tricky_Data* objData;
     s32 i;
 
@@ -1107,9 +1108,9 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
     switch (objData->unk1A) {
     case 0:
         sp38 = gDLL_25->vtbl->func_1A2C(objData->unk2C, -1, 2);
-        objData->unk5E4[2] = (Object*) gDLL_26_Curves->vtbl->func_39C(sp38->links[0]);
+        objData->unk5E4[2] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[0]);
         objData->unk5E4[0] = (Object*) sp38;
-        objData->unk5E4[1] = (Object*) gDLL_26_Curves->vtbl->func_39C(sp38->links[1]);
+        objData->unk5E4[1] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[1]);
         if (((CurveSetup*)objData->unk5E4[1])->unk3 != 0) {
             objData->unk5E4[1] = (Object*)((s32)objData->unk5E4[2] ^ (s32)objData->unk5E4[1]);\
             objData->unk5E4[2] = (Object*)((s32)objData->unk5E4[1] ^ (s32)objData->unk5E4[2]);\
@@ -1158,7 +1159,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
             for (i = 0; i < 4; i++) {
                 if ((temp_t0->links[i] >= 0) && (((CurveSetup*)objData->unk5E4[0])->uID != temp_t0->links[i])) {
                     objData->unk5E4[0] = (Object* ) temp_t0;
-                    objData->unk5E4[1] = (Object* ) gDLL_26_Curves->vtbl->func_39C(temp_t0->links[i]);
+                    objData->unk5E4[1] = (Object* ) gDLL_26_Curves->vtbl->FindByUID(temp_t0->links[i]);
                     break;
                 }
             }
@@ -1172,7 +1173,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
             for (i = 0; i < 4; i++) {
                 if ((temp_t0->links[i] >= 0) && (((CurveSetup*)objData->unk5E4[0])->uID != temp_t0->links[i])) {
                     objData->unk5E4[0] = (Object* ) temp_t0;
-                    objData->unk5E4[1] = (Object* ) gDLL_26_Curves->vtbl->func_39C(temp_t0->links[i]);
+                    objData->unk5E4[1] = (Object* ) gDLL_26_Curves->vtbl->FindByUID(temp_t0->links[i]);
                     break;
                 }
             }
@@ -1205,7 +1206,7 @@ static void tricky_state_5(Object* self, Tricky_Data* objData) {
 
     switch (objData->unk1A) {
     case 0:
-        temp_v0 = gDLL_26_Curves->vtbl->func_39C(((s32*)objData->unk5E4[1])[7 /* unk1C */]);
+        temp_v0 = gDLL_26_Curves->vtbl->FindByUID(((s32*)objData->unk5E4[1])[7 /* unk1C */]);
         objData->unk5E4[2] = temp_v0;
         tricky_func_9024(objData, &temp_v0->pos);
         objData->unk1A = 1;
@@ -1284,11 +1285,11 @@ static void tricky_state_7(Object* self, Tricky_Data* objData) {
         if (objData->unk3C8.unk0.unk80 == 0) {
             if (objData->unk3C8.unk0.unk10 != 0) {
                 pad = gDLL_26_Curves->vtbl->func_438(objData->unk3C8.unkA4, 0);
-                gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
+                gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->FindByUID(pad));
             }
         } else if (objData->unk3C8.unk0.unk10 == 0) {
             pad = gDLL_26_Curves->vtbl->func_590(objData->unk3C8.unkA4, 0);
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->func_39C(pad));
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, gDLL_26_Curves->vtbl->FindByUID(pad));
         }
         tricky_func_8ED0(objData->unk20, 0.8f, &objData->unk20);
         tricky_func_8974(self, &objData->unk3C8, objData->unk20);
@@ -1303,18 +1304,19 @@ static void tricky_state_7(Object* self, Tricky_Data* objData) {
         }
     } else {
         tricky_func_53E4(self, 5.0f, objData);
+        // TODO: something very wrong with the 2nd func_1158 call
         if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == gDLL_25->vtbl->func_1158((Vec3f* ) &objData->unk5E4[1]->srt.scale, NULL)) {
             sp44 = (CurveSetup* ) objData->unk5E4[1];
             objData->flags |= TRICKY_FLAG_UNK10;
-            sp38 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp44, 0));
-            sp34 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590(sp44, 0));
+            sp38 = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_438(sp44, 0));
+            sp34 = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_590(sp44, 0));
             if (vec3DistanceXZSquared(&self->globalPosition, &sp38->pos) > vec3DistanceXZSquared(&self->globalPosition, &sp34->pos)) {
                 sp40 = sp38;
-                var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_438(sp38, 0));
+                var_a3 = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_438(sp38, 0));
                 objData->unk3C8.unk0.unk80 = 0;
             } else {
                 sp40 = sp34;
-                var_a3 = gDLL_26_Curves->vtbl->func_39C(gDLL_26_Curves->vtbl->func_590(sp34, 0));
+                var_a3 = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_590(sp34, 0));
                 objData->unk3C8.unk0.unk80 = 1;
             }
             gDLL_25->vtbl->func_1D30(&objData->unk3C8, sp44, sp40, var_a3);
@@ -1425,7 +1427,7 @@ static void tricky_state_10(Object* self, Tricky_Data* objData) {
             tricky_func_9024(objData, &objData->unk5F4->pos);
             objData->unk1A = 1;
         } else {
-            objData->unk5F8 = gDLL_26_Curves->vtbl->func_39C(objData->unk5F4->links[0]);
+            objData->unk5F8 = gDLL_26_Curves->vtbl->FindByUID(objData->unk5F4->links[0]);
             tricky_func_9024(objData, &objData->unk5F8->pos);
             objData->unk1A = 2;
         }
@@ -1954,7 +1956,7 @@ typedef struct {
     u16 padA;
     f32 unkC;
     f32 unk10;
-} UnkSp44;
+} UnkSp44; // TODO: this isn't right
 
 static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     s32 pad;
@@ -2277,7 +2279,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         sp60[0] = -self->srt.yaw;
         sp60[1] = 0;
         sp60[2] = 0;
-        mathRotateRPY(&sp60, sp74.f);
+        mathRotateRPY((SRT*)&sp60, sp74.f);
         if (sp74.z > 0.0f && objData->unk20 != 0.0f) {
             if (!(objData->flags & TRICKY_FLAG_UNK2) || (objData->unk64 != spB8) || (objData->unk68 != objData->unk2C) || (objData->unk66 != objData->unk3C8.unk0.unk80)) {
                 objData->flags |= TRICKY_FLAG_UNK2;
@@ -2732,7 +2734,7 @@ static void tricky_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg3
     Tricky_Data* objData;
 
     objData = self->data;
-    temp_a1 = gDLL_26_Curves->vtbl->func_1BC(&sp74);
+    temp_a1 = gDLL_26_Curves->vtbl->GetCurves(&sp74);
     for (i = 0; i < 4; i++) {
         sp7C[i] = M_INFINITY_F;
         arg3[i] = 0;   
@@ -2905,7 +2907,7 @@ static CurveSetup* tricky_func_7EFC(Tricky_Data* objData, CurveSetup* arg1, s32 
 
     for (var_s0 = 0, var_s2 = 0, var_s3 = 1; var_s0 < 4; var_s0++, var_s3 <<= 1, arg3 <<= 1) {
         if (arg1->links[var_s0] >= 0 && ((arg3^0) != (arg1->unk1B & var_s3)) == 0) {
-            sp68[var_s2] = gDLL_26_Curves->vtbl->func_39C(arg1->links[var_s0]);
+            sp68[var_s2] = gDLL_26_Curves->vtbl->FindByUID(arg1->links[var_s0]);
             // FAKE
             if (1) { }
             if (sp68[var_s2] != NULL) {
