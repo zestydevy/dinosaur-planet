@@ -321,7 +321,7 @@ void tricky_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
         DLL27MODE_1);
     gDLL_27->vtbl->setup_hits_collider(&objData->unkCC, 1, _data_94, &_data_A0, 2);
     gDLL_27->vtbl->setup_terrain_collider(&objData->unkCC, 2, _data_74, _data_8C, sp50);
-    gDLL_25->vtbl->func_D8();
+    gDLL_25->vtbl->LoadWalkGroups();
     for (i = 0, var_ft5 = 0/*.0f*/; var_ft5 < 1.8f; i++, var_ft5 += 0.1f) {
         for (var_fv0 = var_ft5, var_fv1 = 0.0f; var_fv0 > 0.0f; var_fv0 -= 0.09f) {
             var_fv1 += var_fv0 * 3.0f;
@@ -359,7 +359,7 @@ void tricky_obj_Control(Object* self) {
         } else {
             objData->unkC = sp90;
         }
-        gDLL_25->vtbl->func_D8();
+        gDLL_25->vtbl->LoadWalkGroups();
     }
     if (objData->flags & TRICKY_FLAG_UNK200) {
         if (!(objData->flags & TRICKY_FLAG_UNK4000)) {
@@ -693,6 +693,13 @@ int tricky_sidekick_Func26(Object* self, s32* arg1) {
     return TRUE;
 }
 
+/*0x0*/ static const char str_0[] = "%d %d %d %d\n";
+/*0x10*/ static const char str_10[] = "hits: %d %d %d %d %d %d %d %d";
+/*0x30*/ static const char str_30[] = "\nEnergy: %d, Skill %d\n";
+/*0x48*/ static const char str_48[] = "find command used on the wrong object\n";
+/*0x70*/ static const char str_70[] = "find command used on the wrong object\n";
+/*0x98*/ static const char str_98[] = "sideCommandEnable error, command number too high\n";
+
 /**
  * Enables a sidekick command (e.g. allowing Flame when near vines).
  */
@@ -769,7 +776,9 @@ void tricky_sidekick_Func22(Object* self, Object* arg1) {
     Tricky_Data* objData;
 
     objData = self->data;
+    STUBBED_PRINTF("sideFind 1\n");
     if (!(objData->flags & TRICKY_FLAG_UNK10)) {
+        STUBBED_PRINTF("sideFind 2\n");
         objData->unk28 = arg1;
         tricky_func_9024(objData, &arg1->globalPosition);
         objData->unk1A = 0;
@@ -782,7 +791,7 @@ static void tricky_func_1408(Object* self, Object* arg1) {
     Tricky_Data* objData;
 
     objData = self->data;
-    objData->unk5E4[1] = gDLL_25->vtbl->func_1864(&arg1->srt.transl, -1, 3);
+    objData->unk5E4[1] = gDLL_25->vtbl->FindNearestEnabledTrickyCurve(&arg1->srt.transl, -1, 3);
     if (objData->unk5E4[1] == NULL) {
         return;
     }
@@ -897,11 +906,11 @@ static int tricky_animCallback(Object* self, Object* animObj, AnimObj_Data* anim
 
 // offset: 0x183C | func: 29 | state: 0
 static void tricky_state_0(Object* self, Tricky_Data* objData) {
-    s32 temp_v0;
+    s32 walkGroup;
 
-    temp_v0 = gDLL_25->vtbl->func_1158(&self->srt.transl, NULL);
-    if (temp_v0 != 0) {
-        mainSetBits(BIT_Tricky_Talk_Sequence, temp_v0);
+    walkGroup = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
+    if (walkGroup != 0) {
+        mainSetBits(BIT_Tricky_Walk_Group, walkGroup);
         tricky_func_82B8(objData);
     }
 }
@@ -1028,7 +1037,7 @@ static void tricky_state_2(Object* self, Tricky_Data* objData) {
     sp34 = objData->unk28;
     switch (objData->unk1A) {
     case 0:
-        objData->unk5F4 = gDLL_25->vtbl->func_1864(&objData->unk28->srt.transl, -1, 2);
+        objData->unk5F4 = gDLL_25->vtbl->FindNearestEnabledTrickyCurve(&objData->unk28->srt.transl, -1, 2);
         objData->unk600 = 1.0f;
         if ((objData->unk5F4 != NULL) && (vec3DistanceXZSquared(&objData->unk28->globalPosition, &objData->unk5F4->pos) > 10000.0f)) {
             objData->unk5F4 = NULL;
@@ -1107,7 +1116,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
 
     switch (objData->unk1A) {
     case 0:
-        sp38 = gDLL_25->vtbl->func_1A2C(objData->unk2C, -1, 2);
+        sp38 = gDLL_25->vtbl->FindNearestTrickyCurve(objData->unk2C, -1, 2);
         objData->unk5E4[2] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[0]);
         objData->unk5E4[0] = (Object*) sp38;
         objData->unk5E4[1] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[1]);
@@ -1121,7 +1130,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
         /* fallthrough */
     case 1:
         tricky_func_53E4(self, 5.0f, objData);
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == ((u8*)objData->unk5E4[2])[3]) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == ((u8*)objData->unk5E4[2])[3]) {
             objData->unk19 = 1;
             objData->unk1A = 2;
             return;
@@ -1134,7 +1143,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
             tricky_func_8470(self, (Vec3f* ) &objData->unk5E4[0]->srt.scale);
             objData->flags |= TRICKY_FLAG_UNK10;
             objData->unk1A = 3;
-        } else if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == 0) {
+        } else if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == 0) {
             objData->flags |= (TRICKY_FLAG_UNK2000 | TRICKY_FLAG_UNK10);
         }
         return;
@@ -1188,8 +1197,8 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
         }
         return;
     case 7:
-        sp30 = gDLL_25->vtbl->func_1158(&self->srt.transl, NULL);
-        if (gDLL_25->vtbl->func_1158(&objData->player->srt.transl, NULL) == sp30) {
+        sp30 = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
+        if (gDLL_25->vtbl->FindWalkGroup(&objData->player->srt.transl, NULL) == sp30) {
             tricky_func_82B8(objData);
         }
         return;
@@ -1212,7 +1221,7 @@ static void tricky_state_5(Object* self, Tricky_Data* objData) {
         objData->unk1A = 1;
         /* fallthrough */
     case 1:
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == ((u8*)objData->unk5E4[2])[3]) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == ((u8*)objData->unk5E4[2])[3]) {
             objData->unk1A = 2;
         } else {
             tricky_func_53E4(self, 5.0f, objData);
@@ -1225,7 +1234,7 @@ static void tricky_state_5(Object* self, Tricky_Data* objData) {
             objData->unk1A = 3;
             ((f32*)&objData->unk5F0)[0] = 0.0f;
         } else {
-            if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == 0) {
+            if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == 0) {
                 objData->flags |= TRICKY_FLAG_UNK10;
             }
             return;
@@ -1239,7 +1248,7 @@ static void tricky_state_5(Object* self, Tricky_Data* objData) {
         return;
     case 4:
         tricky_func_4F3C(self, 2.5f, objData, (Vec3f* ) &objData->unk5E4[2]->srt.scale);
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) != 0) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) != 0) {
             tricky_func_82B8(objData);
         }
         return;
@@ -1294,7 +1303,7 @@ static void tricky_state_7(Object* self, Tricky_Data* objData) {
         tricky_func_8ED0(objData->unk20, 0.8f, &objData->unk20);
         tricky_func_8974(self, &objData->unk3C8, objData->unk20);
         tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
-        if ((((s16*)objData->unk5E4)[0] != 0) && (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) != 0)) {
+        if ((((s16*)objData->unk5E4)[0] != 0) && (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) != 0)) {
             tricky_func_82B8(objData);
         }
         ((f32*)&objData->unk5F0)[0] -= gUpdateRateF;
@@ -1304,8 +1313,8 @@ static void tricky_state_7(Object* self, Tricky_Data* objData) {
         }
     } else {
         tricky_func_53E4(self, 5.0f, objData);
-        // TODO: something very wrong with the 2nd func_1158 call
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == gDLL_25->vtbl->func_1158((Vec3f* ) &objData->unk5E4[1]->srt.scale, NULL)) {
+        // TODO: something very wrong with the 2nd FindWalkGroup call
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == gDLL_25->vtbl->FindWalkGroup((Vec3f* ) &objData->unk5E4[1]->srt.scale, NULL)) {
             sp44 = (CurveSetup* ) objData->unk5E4[1];
             objData->flags |= TRICKY_FLAG_UNK10;
             sp38 = gDLL_26_Curves->vtbl->FindByUID(gDLL_26_Curves->vtbl->func_438(sp44, 0));
@@ -1422,7 +1431,7 @@ static s32 tricky_func_3570(Object* self, Tricky_Data* objData) {
 static void tricky_state_10(Object* self, Tricky_Data* objData) {
     switch (objData->unk1A) {
     case 0:
-        objData->unk5F4 = gDLL_25->vtbl->func_1A2C(&objData->player->srt.transl, -1, 4);
+        objData->unk5F4 = gDLL_25->vtbl->FindNearestTrickyCurve(&objData->player->srt.transl, -1, 4);
         if (objData->unk5F4->unk3 != 0) {
             tricky_func_9024(objData, &objData->unk5F4->pos);
             objData->unk1A = 1;
@@ -1437,14 +1446,14 @@ static void tricky_state_10(Object* self, Tricky_Data* objData) {
         return;
     case 2:
         tricky_func_53E4(self, 5.0f, objData);
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == objData->unk5F8->unk3) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == objData->unk5F8->unk3) {
             objData->unk19 = 1;
             objData->unk1A = 3;
         }
         return;
     case 3:
         tricky_func_4F3C(self, 2.5f, objData, &objData->unk5F4->pos);
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == 0) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == 0) {
             objData->flags |= TRICKY_FLAG_UNK10;
             objData->unk1A = 4;
         }
@@ -1485,7 +1494,7 @@ static void tricky_state_10(Object* self, Tricky_Data* objData) {
         objData->unk600 -= gUpdateRateF;
         if (objData->unk600 <= 0.0f) {
             tricky_func_4F3C(self, 2.5f, objData, &objData->unk5F8->pos);
-            if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) != 0) {
+            if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) != 0) {
                 tricky_func_82B8(objData);
             }
         }
@@ -1507,11 +1516,11 @@ static s32 tricky_func_3A78(Tricky_Data* objData) {
     for (i = 0; i < count; i++) {
         temp_fs0 = vec3DistanceXZSquared(&temp_s5[i]->globalPosition, &objData->unk5F4_vec);
         if (var_s2 == NULL) {
-            if (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition, NULL) == objData->unk608) {
+            if (gDLL_25->vtbl->FindWalkGroup(&temp_s5[i]->globalPosition, NULL) == objData->unk608) {
                 sp58 = temp_fs0;
                 var_s2 = temp_s5[i];
             }
-        } else if ((temp_fs0 < sp58) && (gDLL_25->vtbl->func_1158(&temp_s5[i]->globalPosition, NULL) == objData->unk608)) {
+        } else if ((temp_fs0 < sp58) && (gDLL_25->vtbl->FindWalkGroup(&temp_s5[i]->globalPosition, NULL) == objData->unk608)) {
             sp58 = temp_fs0;
             var_s2 = temp_s5[i];
         }
@@ -1548,7 +1557,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
 
     switch (objData->unk1A) {
     case 0:
-        objData->unk608 = gDLL_25->vtbl->func_1158(objData->unk2C, NULL);
+        objData->unk608 = gDLL_25->vtbl->FindWalkGroup(objData->unk2C, NULL);
         objData->unk5F4_vec.x = objData->unk28->globalPosition.x - (mathSinfInterp(objData->unk28->srt.yaw) * 15.0f);
         objData->unk5F4_vec.y = objData->unk28->globalPosition.y;
         temp_ft0 = mathCosfInterp(objData->unk28->srt.yaw) * 15.0f;
@@ -1558,7 +1567,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
         return;
     case 1:
         tricky_func_53E4(self, 5.0f, objData);
-        if (gDLL_25->vtbl->func_1158(&self->srt.transl, NULL) == objData->unk608) {
+        if (gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL) == objData->unk608) {
             objData->unk1A = 2;
         }
         return;
@@ -1595,7 +1604,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
                 objData->unk1A = 6;
             }
         } else {
-            if (gDLL_25->vtbl->func_1158(objData->unk2C, NULL) != objData->unk608) {
+            if (gDLL_25->vtbl->FindWalkGroup(objData->unk2C, NULL) != objData->unk608) {
                 tricky_func_9024(objData, &objData->unk28->globalPosition);
                 objData->unk1A = 2;
             }
@@ -1948,7 +1957,59 @@ static void tricky_func_52B8(Object* self, Tricky_Data* objData) {
     tricky_func_95E0(self, objData, _data_0[mathRnd(7, 9)]);
 }
 
-// offset: 0x53E4 | func: 54
+/*0xE4*/ static const char str_E4[] = "Couldn't find a distract node\n";
+/*0x104*/ static const char str_104[] = "DISTRACT_SPOTFINDING (1)\n";
+/*0x120*/ static const char str_120[] = "DISTRACT_SPOTTOSPOT (1)\n";
+/*0x13C*/ static const char str_13C[] = "DISTRACT_SPOTDISTRACTING (1)\n";
+/*0x15C*/ static const char str_15C[] = "DISTRACT_SPOTRETURING (1)\n";
+/*0x178*/ static const char str_178[] = "DISTRACT_SPOTFINDING (2)\n";
+/*0x194*/ static const char str_194[] = "DISTRACT_SPOTDISTRACTING (2)\n";
+/*0x1B4*/ static const char str_1B4[] = "FLAME_NONE\n";
+/*0x1C0*/ static const char str_1C0[] = "FLAME_FINDING_OUT\n";
+/*0x1D4*/ static const char str_1D4[] = "FLAME_GOINGTOEDGE\n";
+/*0x1E8*/ static const char str_1E8[] = "FLAME_TOSTART\n";
+/*0x1F8*/ static const char str_1F8[] = "FLAME_OUT\n";
+/*0x204*/ static const char str_204[] = "FLAME_FINDING_IN\n";
+/*0x218*/ static const char str_218[] = "FLAME_IN\n";
+/*0x224*/ static const char str_224[] = "FLAME_TOEND\n";
+/*0x234*/ static const char str_234[] = "GUARD_INIT\n";
+/*0x240*/ static const char str_240[] = "GUARD_FINDING\n";
+/*0x250*/ static const char str_250[] = "GUARD_TOSPOT\n";
+/*0x260*/ static const char str_260[] = "GUARD_TOFRONT\n";
+/*0x270*/ static const char str_270[] = "GUARD_TOBADDIE\n";
+/*0x280*/ static const char str_280[] = "GUARD_FLAME\n";
+/*0x290*/ static const char str_290[] = "GUARD_DOWNTOGROWL\n";
+/*0x2A4*/ static const char str_2A4[] = "GUARD_GROWL\n";
+/*0x2B4*/ static const char str_2B4[] = "GUARD_UPFROMGROWL\n";
+/*0x2C8*/ static const char str_2C8[] = "error tricky should never stop when circling\n";
+/*0x2F8*/ static const char str_2F8[] = "BADDIEALERT_GOTO\n";
+/*0x30C*/ static const char str_30C[] = "BADDIEALERT_BARK %d %d\n";
+/*0x324*/ static const char str_324[] = "BADDIEALLERT_GOTOFLAME\n";
+/*0x33C*/ static const char str_33C[] = "BADDIEALLERT_FLAME\n";
+/*0x350*/ static const char str_350[] = "GROWLAT_GOTO\n";
+/*0x360*/ static const char str_360[] = "GROWLAT_GROWLING\n";
+/*0x374*/ static const char str_374[] = "GROWLAT_GOTOFLAME\n";
+/*0x388*/ static const char str_388[] = "GROWLAT_FLAME\n";
+/*0x398*/ static const char str_398[] = "tricky wg %d->%d target wg %d, dest wg %d\n";
+/*0x3C4*/ static const char str_3C4[] = "tricky last walk group is zero. Has he been loaded within a walk group? %f %f %f\n";
+/*0x418*/ static const char str_418[] = "target is within a walkGroup or its patch\n";
+/*0x444*/ static const char str_444[] = "target is not within a walkGroup or any patches\n";
+/*0x478*/ static const char str_478[] = "target is within patch group %d\n";
+/*0x49C*/ static const char str_49C[] = "Patch %d: Last xyz %f %f %f\n";
+/*0x4BC*/ static const char str_4BC[] = "Last Patch Point %f %f %f\n";
+/*0x4D8*/ static const char str_4D8[] = "tricky error, target patch %d, targetWalkGroup %d, trickyWalkGroup %d, tricky last walkGroup %d, tricky in patch %d\n";
+/*0x550*/ static const char str_550[] = "tricky error 2!!!!!\n";
+/*0x568*/ static const char str_568[] = "walk wait\n";
+/*0x574*/ static const char str_574[] = "walk free\n";
+/*0x580*/ static const char str_580[] = "walk start patch\n";
+/*0x594*/ static const char str_594[] = "walk patch exit\n";
+/*0x5A8*/ static const char str_5A8[] = "walk end patch\n";
+/*0x5B8*/ static const char str_5B8[] = "about to turn\n";
+/*0x5C8*/ static const char str_5C8[] = "large turn\n";
+/*0x5D4*/ static const char str_5D4[] = "large turn\n";
+/*0x5E0*/ static const char str_5E0[] = "standing\n";
+/*0x5EC*/ static const char str_5EC[] = "walk to node %d %d\n";
+
 typedef struct {
     u8 pad0;
     u8 unk1;
@@ -1958,6 +2019,7 @@ typedef struct {
     f32 unk10;
 } UnkSp44; // TODO: this isn't right
 
+// offset: 0x53E4 | func: 54
 static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     s32 pad;
     s32 spC0;
@@ -1987,17 +2049,17 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     UnkSp44 sp44;
 
     temp_s1 = objData->unk2C;
-    spC0 = gDLL_25->vtbl->func_1158(&self->srt.transl, NULL);
+    spC0 = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
     if (spC0 != 0 && spC0 != objData->unkA4) {
         objData->unkA4 = spC0;
         objData->flags &= ~TRICKY_FLAG_UNK400;
         for (var_a0 = 0; var_a0 < 4; var_a0++) { objData->unk6C[var_a0] = 0; }
     }
-    spBC = gDLL_25->vtbl->func_1158(temp_s1, &sp44);
-    spB8 = mainGetBits(BIT_Tricky_Talk_Sequence);
+    spBC = gDLL_25->vtbl->FindWalkGroup(temp_s1, &sp44);
+    spB8 = mainGetBits(BIT_Tricky_Walk_Group);
     if (spBC != 0 && spBC != spB8) {
         spB8 = spBC;
-        mainSetBits(BIT_Tricky_Talk_Sequence, spBC);
+        mainSetBits(BIT_Tricky_Walk_Group, spBC);
     }
     sp84 = objData->unk20;
     objData->unk20 += -0.03f * gUpdateRateF;
@@ -2046,8 +2108,8 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             }
         }
     }
-    gDLL_25->vtbl->func_12FC(temp_s1);
-    gDLL_25->vtbl->func_1474(temp_s1, objData->unkA4);
+    gDLL_25->vtbl->IsPointWithinAnyGroup(temp_s1);
+    gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);
     if (objData->flags & TRICKY_FLAG_UNK400) {
         // @the fakest of fakes (this is an empty loop in default.dol)
         for (var_a0 = 0; var_a0 < 4; var_a0++) {
@@ -2057,11 +2119,12 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             }
         }
     }
-    var_a3 = gDLL_25->vtbl->func_1474(temp_s1, objData->unkA4);
-    if (objData->unk19 != 0xF && ((spBC != 0 && spC0 == spBC) || (var_a3 != 0 && gDLL_25->vtbl->func_15B0(&self->srt.transl, objData->unkA4, var_a3) != 0))) {
+    var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);
+    if (objData->unk19 != 0xF && 
+            ((spBC != 0 && spC0 == spBC) || (var_a3 != 0 && gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3) != 0))) {
         objData->unk19 = 1;
     } else if (objData->unk19 < 5) {
-        var_a3 = gDLL_25->vtbl->func_1474(temp_s1, objData->unkA4);\
+        var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);\
         if (var_a3 != 0) {
             if (spBC == 0) {
                 for (var_a0 = 0; var_a0 < 4; var_a0++) {
@@ -2086,23 +2149,23 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
                     objData->unk19 = 5;
                 }
             } else {
-                if (spC0 == 0 && (var_a3 = gDLL_25->vtbl->func_1474(&self->srt.transl, objData->unkA4), (var_a3 != 0))) {
+                if (spC0 == 0 && (var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->unkA4), (var_a3 != 0))) {
                     if (var_a3 == objData->unkA6) {
                         objData->unk19 = 3;
                     } else {
-                        gDLL_25->vtbl->func_16D4(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
                         objData->unk19 = 4;
                     }
                 } else {
                     objData->unk19 = 0;
-                    gDLL_25->vtbl->func_15B0(&self->srt.transl, objData->unkA4, var_a3);
+                    gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3);
                 }
             }
         } else if (spBC == 0) {
             objData->unk19 = 0;
         } else if (spC0 != 0) {
             var_a3 = spBC * spC0;
-            if (gDLL_25->vtbl->func_15B0(&self->srt.transl, objData->unkA4, var_a3) != 0) {
+            if (gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3) != 0) {
                 if (var_a3 == objData->unkA6) {
                     objData->unk19 = 3;
                 } else {
@@ -2121,7 +2184,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
                 }
             }
         } else {
-            var_a3 = gDLL_25->vtbl->func_1474(&self->srt.transl, objData->unkA4);\
+            var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->unkA4);\
             if (var_a3 != 0) {
                 if (spBC == objData->unkA4) {
                     for (var_a0 = 0; var_a0 < 4; var_a0++) {
@@ -2132,13 +2195,13 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
                         }
                     }
                     if (var_a0 == 4) {
-                        gDLL_25->vtbl->func_16D4(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
                         objData->unk19 = 4;
                     }
                 } else if (var_a3 == objData->unkA6) {
                     objData->unk19 = 3;
                 } else {
-                    gDLL_25->vtbl->func_16D4(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                    gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
                     objData->unk19 = 4;
                 }
             } else {
@@ -2232,6 +2295,10 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             curves_func_800053B0(&objData->unk3C8.unk0, 0.1f);
             tricky_func_8974(self, &objData->unk3C8, objData->unk20);
             tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
+            if (setup != NULL && spA0 != NULL /*&& ? != NULL*/) {
+                // TODO: the third param should be using the result of the 2nd tricky_func_7A7C call, but i can't get it to match 
+                STUBBED_PRINTF("walk types are %d %d %d\n", setup->unk1A, spA0->unk1A, 0/*?->unk1A*/);
+            }
             switch (setup->unk1A) {
             case 1:
                 tricky_func_507C(self, objData);
@@ -2440,9 +2507,11 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         }
         break;
     case 11:
+        //STUBBED_PRINTF("i before %d\n", objData->unk3C8.unk0.unk10);
         tricky_func_8ED0(sp84, 1.5f, &objData->unk20);
         tricky_func_8974(self, &objData->unk3C8, objData->unk20);
         tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
+        //STUBBED_PRINTF("i now %d\n", objData->unk3C8.unk0.unk10);
         if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
             gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
             tricky_func_514C(self, objData);
@@ -2481,7 +2550,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         break;
     }
 
-    if (objData->unk19 < 5 && (gDLL_25->vtbl->func_12FC(&self->srt.transl) == 0)) {
+    if (objData->unk19 < 5 && (gDLL_25->vtbl->IsPointWithinAnyGroup(&self->srt.transl) == FALSE)) {
         self->srt.transl.x = objData->unkB4.x;
         self->srt.transl.y = objData->unkB4.y;
         self->srt.transl.z = objData->unkB4.z;
@@ -2549,67 +2618,6 @@ static void tricky_func_726C(Object* self) {
     }
 }
 
-/*0x0*/ static const char str_0[] = "%d %d %d %d\n";
-/*0x10*/ static const char str_10[] = "hits: %d %d %d %d %d %d %d %d";
-/*0x30*/ static const char str_30[] = "\nEnergy: %d, Skill %d\n";
-/*0x48*/ static const char str_48[] = "find command used on the wrong object\n";
-/*0x70*/ static const char str_70[] = "find command used on the wrong object\n";
-/*0x98*/ static const char str_98[] = "sideCommandEnable error, command number too high\n";
-/*0xCC*/ static const char str_CC[] = "sideFind 1\n";
-/*0xD8*/ static const char str_D8[] = "sideFind 2\n";
-/*0xE4*/ static const char str_E4[] = "Couldn't find a distract node\n";
-/*0x104*/ static const char str_104[] = "DISTRACT_SPOTFINDING (1)\n";
-/*0x120*/ static const char str_120[] = "DISTRACT_SPOTTOSPOT (1)\n";
-/*0x13C*/ static const char str_13C[] = "DISTRACT_SPOTDISTRACTING (1)\n";
-/*0x15C*/ static const char str_15C[] = "DISTRACT_SPOTRETURING (1)\n";
-/*0x178*/ static const char str_178[] = "DISTRACT_SPOTFINDING (2)\n";
-/*0x194*/ static const char str_194[] = "DISTRACT_SPOTDISTRACTING (2)\n";
-/*0x1B4*/ static const char str_1B4[] = "FLAME_NONE\n";
-/*0x1C0*/ static const char str_1C0[] = "FLAME_FINDING_OUT\n";
-/*0x1D4*/ static const char str_1D4[] = "FLAME_GOINGTOEDGE\n";
-/*0x1E8*/ static const char str_1E8[] = "FLAME_TOSTART\n";
-/*0x1F8*/ static const char str_1F8[] = "FLAME_OUT\n";
-/*0x204*/ static const char str_204[] = "FLAME_FINDING_IN\n";
-/*0x218*/ static const char str_218[] = "FLAME_IN\n";
-/*0x224*/ static const char str_224[] = "FLAME_TOEND\n";
-/*0x234*/ static const char str_234[] = "GUARD_INIT\n";
-/*0x240*/ static const char str_240[] = "GUARD_FINDING\n";
-/*0x250*/ static const char str_250[] = "GUARD_TOSPOT\n";
-/*0x260*/ static const char str_260[] = "GUARD_TOFRONT\n";
-/*0x270*/ static const char str_270[] = "GUARD_TOBADDIE\n";
-/*0x280*/ static const char str_280[] = "GUARD_FLAME\n";
-/*0x290*/ static const char str_290[] = "GUARD_DOWNTOGROWL\n";
-/*0x2A4*/ static const char str_2A4[] = "GUARD_GROWL\n";
-/*0x2B4*/ static const char str_2B4[] = "GUARD_UPFROMGROWL\n";
-/*0x2C8*/ static const char str_2C8[] = "error tricky should never stop when circling\n";
-/*0x2F8*/ static const char str_2F8[] = "BADDIEALERT_GOTO\n";
-/*0x30C*/ static const char str_30C[] = "BADDIEALERT_BARK %d %d\n";
-/*0x324*/ static const char str_324[] = "BADDIEALLERT_GOTOFLAME\n";
-/*0x33C*/ static const char str_33C[] = "BADDIEALLERT_FLAME\n";
-/*0x350*/ static const char str_350[] = "GROWLAT_GOTO\n";
-/*0x360*/ static const char str_360[] = "GROWLAT_GROWLING\n";
-/*0x374*/ static const char str_374[] = "GROWLAT_GOTOFLAME\n";
-/*0x388*/ static const char str_388[] = "GROWLAT_FLAME\n";
-/*0x398*/ static const char str_398[] = "tricky wg %d->%d target wg %d, dest wg %d\n";
-/*0x3C4*/ static const char str_3C4[] = "tricky last walk group is zero. Has he been loaded within a walk group? %f %f %f\n";
-/*0x418*/ static const char str_418[] = "target is within a walkGroup or its patch\n";
-/*0x444*/ static const char str_444[] = "target is not within a walkGroup or any patches\n";
-/*0x478*/ static const char str_478[] = "target is within patch group %d\n";
-/*0x49C*/ static const char str_49C[] = "Patch %d: Last xyz %f %f %f\n";
-/*0x4BC*/ static const char str_4BC[] = "Last Patch Point %f %f %f\n";
-/*0x4D8*/ static const char str_4D8[] = "tricky error, target patch %d, targetWalkGroup %d, trickyWalkGroup %d, tricky last walkGroup %d, tricky in patch %d\n";
-/*0x550*/ static const char str_550[] = "tricky error 2!!!!!\n";
-/*0x568*/ static const char str_568[] = "walk wait\n";
-/*0x574*/ static const char str_574[] = "walk free\n";
-/*0x580*/ static const char str_580[] = "walk start patch\n";
-/*0x594*/ static const char str_594[] = "walk patch exit\n";
-/*0x5A8*/ static const char str_5A8[] = "walk end patch\n";
-/*0x5B8*/ static const char str_5B8[] = "about to turn\n";
-/*0x5C8*/ static const char str_5C8[] = "large turn\n";
-/*0x5D4*/ static const char str_5D4[] = "large turn\n";
-/*0x5E0*/ static const char str_5E0[] = "standing\n";
-/*0x5EC*/ static const char str_5EC[] = "walk to node %d %d\n";
-/*0x600*/ static const char str_600[] = "walk types are %d %d %d\n";
 /*0x61C*/ static const char str_61C[] = "curve setup\n";
 /*0x62C*/ static const char str_62C[] = "walk nodes\n";
 /*0x638*/ static const char str_638[] = "No route exists in the forward direction\n";

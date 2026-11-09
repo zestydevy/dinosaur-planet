@@ -11,7 +11,7 @@ typedef void (*SplineConverterFunc)(f32* in, f32* out);
 typedef struct {
 /*00*/ s16 objId;
 /*02*/ u8 quarterSize;
-/*03*/ u8 unk3;
+/*03*/ u8 unk3; // tricky walk group (curve types 0x24, 0x26)
 /*04*/ union {
 	struct {
 	/*04*/ s8 unk4;
@@ -26,7 +26,7 @@ typedef struct {
 	/*07*/ u8 unk7;
 	} base_type24;
 	struct {
-	/*04*/ u16 unk4;
+	/*04*/ u16 unk4; // kyte flight group
 	/*06*/ s8 unk6;
 	/*07*/ s8 unk7;
 	} base_type22;
