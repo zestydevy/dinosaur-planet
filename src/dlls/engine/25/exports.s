@@ -8,14 +8,14 @@ _exports:
 .dword dll_25_dtor
 
 # export table
-.dword dll_25_func_D8
-.dword dll_25_func_1158
-.dword dll_25_func_12FC
-.dword dll_25_func_1474
-.dword dll_25_func_15B0
-.dword dll_25_func_1864
-.dword dll_25_func_1A2C
-.dword dll_25_func_16D4
+.dword dll_25_LoadWalkGroups
+.dword dll_25_FindWalkGroup
+.dword dll_25_IsPointWithinAnyGroup
+.dword dll_25_GetPatchGroupContainingPoint
+.dword dll_25_IsPointWithinPatchGroup
+.dword dll_25_FindNearestEnabledTrickyCurve
+.dword dll_25_FindNearestTrickyCurve
+.dword dll_25_GetClosestExitOfPatch
 .dword dll_25_func_1D30
 .dword dll_25_func_21F4
 .dword dll_25_func_27A8

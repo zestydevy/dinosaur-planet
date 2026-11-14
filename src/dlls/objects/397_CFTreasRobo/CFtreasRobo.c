@@ -456,7 +456,7 @@ void CFTreasRobo_func_13DC(Object* self, s32 arg1, Vec3f* pos, s32 arg3) {
     }
     uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveTypes, ARRAYCOUNT(curveTypes), arg1);
     if (uid >= 0) {
-        curve = gDLL_26_Curves->vtbl->func_39C(uid);
+        curve = gDLL_26_Curves->vtbl->FindByUID(uid);
         pos->x = curve->pos.x;
         pos->y = curve->pos.y;
         pos->z = curve->pos.z;
@@ -480,7 +480,7 @@ s32 CFTreasRobo_func_14AC(Object* self) {
     curveTypes[0] = 0;
     uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveTypes, ARRAYCOUNT(curveTypes), -1);
     if (uid >= 0) {
-        return gDLL_26_Curves->vtbl->func_39C(uid)->type0.unk31;
+        return gDLL_26_Curves->vtbl->FindByUID(uid)->type0.unk31;
     }
     STUBBED_PRINTF(" Error Could not find node ");
     return 0;

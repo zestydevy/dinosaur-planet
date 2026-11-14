@@ -46,7 +46,7 @@ void DFCradle_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     
     curveUID = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, dCurveTypes, ARRAYCOUNT(dCurveTypes), -1);
     if (curveUID != 0) {
-        curveSetup = gDLL_26_Curves->vtbl->func_39C(curveUID);
+        curveSetup = gDLL_26_Curves->vtbl->FindByUID(curveUID);
         
         stride = (gDLL_26_Curves->vtbl->func_D8C(curveSetup) - 1) << 2;
         

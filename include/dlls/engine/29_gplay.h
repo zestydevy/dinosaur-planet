@@ -60,7 +60,7 @@ typedef struct {
 typedef struct {
     u8 blueFood;
     u8 redFood;
-    u8 _unk2[1]; // max food?
+    u8 unk2;
 } SidekickStats;
 
 #define MAX_SCARABS 999

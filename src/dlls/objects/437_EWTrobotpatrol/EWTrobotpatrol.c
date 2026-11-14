@@ -1417,7 +1417,7 @@ static void EWTrobotpatrol_curveMove(Object* self, EWTrobotpatrol_Data* objdata,
     EWTrobotpatrol_Data* objdata2;
 
     objdata2 = self->data;
-    destNode = gDLL_26_Curves->vtbl->func_39C(objdata->destCurveUID);
+    destNode = gDLL_26_Curves->vtbl->FindByUID(objdata->destCurveUID);
     if (destNode != NULL) {
         objdata->destPos.x = destNode->pos.x;
         objdata->destPos.y = self->srt.transl.y;

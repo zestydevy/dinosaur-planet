@@ -596,7 +596,7 @@ s32 movelib_func_1C0C(s32 arg0, SRT* arg1) {
     }
     temp_v0 = gDLL_26_Curves->vtbl->func_218C(arg0);
     if (temp_v0 >= 0) {
-        temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_v0);
+        temp_v0_2 = gDLL_26_Curves->vtbl->FindByUID(temp_v0);
         arg1->transl.x = temp_v0_2->pos.x;
         arg1->transl.y = temp_v0_2->pos.y;
         arg1->transl.z = temp_v0_2->pos.z;
@@ -619,7 +619,7 @@ s32 movelib_func_1CC8(s32 arg0, SRT* arg1) {
     sp2C = 1000.0f;
     temp_v0 = gDLL_26_Curves->vtbl->func_218C(arg0);
     if (temp_v0 >= 0) {
-        sp30 = gDLL_26_Curves->vtbl->func_39C(temp_v0);
+        sp30 = gDLL_26_Curves->vtbl->FindByUID(temp_v0);
         arg1->transl.x = sp30->pos.x;
         arg1->transl.y = sp30->pos.y;
         arg1->transl.z = sp30->pos.z;

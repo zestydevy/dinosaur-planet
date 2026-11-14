@@ -245,7 +245,7 @@ static void dll_703_func_A7C(Object* self, s32 arg1) {
     objsetup = self->setup;
     curveUID = gDLL_26_Curves->vtbl->func_1E4(objsetup->x, objsetup->y, objsetup->z, _data_0, ARRAYCOUNT(_data_0), arg1);
     if (curveUID != -1) {
-        curve = gDLL_26_Curves->vtbl->func_39C(curveUID);
+        curve = gDLL_26_Curves->vtbl->FindByUID(curveUID);
         if (curve != NULL) {
             self->srt.transl.x = curve->pos.x;
             self->srt.transl.z = curve->pos.z;

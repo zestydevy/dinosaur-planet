@@ -1385,7 +1385,7 @@ static void RobotPatrol_curveMove(Object* self, RobotPatrol_Data* objdata, Robot
     RobotPatrol_Data* objdata2;
 
     objdata2 = self->data;
-    destNode = gDLL_26_Curves->vtbl->func_39C(objdata->destCurveUID);
+    destNode = gDLL_26_Curves->vtbl->FindByUID(objdata->destCurveUID);
     if (destNode != NULL) {
         objdata->destPos.x = destNode->pos.x;
         objdata->destPos.y = self->srt.transl.y;

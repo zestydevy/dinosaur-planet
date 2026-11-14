@@ -865,7 +865,7 @@ static CurveSetup* CFGuardian_findCurveNode(Object* self, s32 curveTag, Vec3f* p
         self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
         curveTypes, ARRAYCOUNT(curveTypes), curveTag);
     if (curveUID >= 0) {
-        curveNode = gDLL_26_Curves->vtbl->func_39C(curveUID);
+        curveNode = gDLL_26_Curves->vtbl->FindByUID(curveUID);
         if (pos != NULL) {
             pos->x = curveNode->pos.x;
             pos->y = curveNode->pos.y;

@@ -598,7 +598,7 @@ static CurveSetup* CFCloudBaby_findCloudBabyCurve(Object* self, s32 arg1, Vec3f*
     uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, 
         curveTypes, ARRAYCOUNT(curveTypes), arg1);
     if (uid >= 0) {
-        curve = gDLL_26_Curves->vtbl->func_39C(uid);
+        curve = gDLL_26_Curves->vtbl->FindByUID(uid);
         pos->x = curve->pos.x;
         pos->y = curve->pos.y;
         pos->z = curve->pos.z;

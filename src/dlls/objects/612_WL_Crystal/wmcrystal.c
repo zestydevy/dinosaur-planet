@@ -8,8 +8,6 @@
 #include "sys/envfx.h"
 #include "sys/lighting.h"
 
-#include "prevent_bss_reordering.h"
-
 typedef struct {
 /*00*/    s16 unused0;
 /*02*/    s16 yawSpeed;        //rotation speed for crystal and sun

@@ -1,439 +1,377 @@
 #include "dlls/engine/25.h"
 
-#include "PR/ultratypes.h"
 #include "PR/os.h"
+#include "PR/ultratypes.h"
+#include "libc/string.h"
 #include "dlls/engine/26_curves.h"
 #include "game/objects/object.h"
 #include "sys/curves.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/memory.h"
-#include "dll.h"
 #include "constants.h"
-#include "libc/string.h"
+#include "dll.h"
 #include "macros.h"
 
-/* 0x0 */ static const char errorMsg[] = "Error in isPointWithinPatchGroup\n";
+#define MAX_WALKGROUPS 217
+#define MAX_PATCHGROUPS 256
 
-/* 0x00 */ static u8 _bss_0[0xdc];
-/* 0xDC */ static Dll25BssDC *_bss_DC;
-/* 0xE0 */ static Dll25BssE0 *_bss_E0;
-/* 0xE4 */ static s32 _bss_E4;
+typedef struct {
+/*00*/ s8 dirs[8];
+/*08*/ f32 dots[4];
+/*18*/ s16 yMax;
+/*1A*/ s16 yMin;
+/*1C*/ u8 linkPatchIndices[4];
+} WalkGroup;
+
+typedef struct {
+/*00*/ s8 dirs[8];
+/*08*/ f32 dots[4];
+/*18*/ s16 yMax;
+/*1A*/ s16 yMin;
+/*1C*/ u16 id;
+/*1E*/ s16 exit0X;
+/*20*/ s16 exit0Z;
+/*22*/ s16 exit1X;
+/*24*/ s16 exit1Z;
+} PatchGroup;
+
+/* 0x00 */ static u8 sLoadedWalkGroups[MAX_WALKGROUPS];
+/* 0xDC */ static WalkGroup* sWalkGroups;
+/* 0xE0 */ static PatchGroup* sPatchGroups;
+/* 0xE4 */ static s32 sNextPatchIdx;
 /* 0xE8 */ static u8 _bss_E8[0x8];
 
-static s32 dll_25_func_DF8(Dll25BssDC *arg0, f32 arg1, f32 arg2);
-static void dll_25_func_D00(Vec3f *arg0, Vec3f *arg1, s8 *arg2, f32 *arg3);
+static s32 dll_25_isPointWithinWalkGroupXZ(WalkGroup* arg0, f32 arg1, f32 arg2);
+static void dll_25_calcPlane(Vec3f* p1, Vec3f* p2, s8* dir, f32* dot);
 
 // offset: 0x0 | ctor
-void dll_25_ctor(s32 arg0)
-{
-    bzero(_bss_0, 0xD9);
-    _bss_DC = (void *)mmAlloc(sizeof(Dll25BssDC) * 217, ALLOC_TAG_TRACK_COL, 0);
-    _bss_E0 = (void *)mmAlloc(sizeof(Dll25BssE0) * 256, ALLOC_TAG_TRACK_COL, 0);
+void dll_25_ctor(s32 arg0) {
+    bzero(sLoadedWalkGroups, MAX_WALKGROUPS);
+    sWalkGroups = mmAlloc(sizeof(WalkGroup) * MAX_WALKGROUPS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("walkGroup:planes"));
+    sPatchGroups = mmAlloc(sizeof(PatchGroup) * MAX_PATCHGROUPS, ALLOC_TAG_TRACK_COL, ALLOC_NAME("patchGroup:planes"));
 }
 
 // offset: 0x84 | dtor
-void dll_25_dtor(s32 arg0)
-{
-    mmFree(_bss_DC);
-    mmFree(_bss_E0);
+void dll_25_dtor(s32 arg0) {
+    mmFree(sWalkGroups);
+    mmFree(sPatchGroups);
 }
 
 // offset: 0xD8 | func: 0 | export: 0
-void dll_25_func_D8(void)
-{
-    Dll25BssDC *var_s3;
-    u32 *sp274[256] = {0};
-    s32 sp270;
-    Dll25BssDC *temp_s0;
-    Dll25BssDC *temp_s1_2;
-    s32 curvesCount; // sp264
-    s32 otherCount;
-    Dll25BssDC *temp_s2_2;
-    Dll25BssE0 *var_v1_3;
-    Vec3f sp24C;
-    Vec3f sp240;
-    CurveNode *curvesResult;
-    CurveSetup *temp_s4;
-    CurveSetup *var_s7;
-    f32 temp_ft1;
-    f32 temp_ft3;
-    f32 temp_ft5;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    s32 temp_t7;
-    s32 var_s1;
-    s32 var_s0;
-    s8 *temp_t4;
-    s32 temp_v0;
-    s32 _pad;
-    CurveSetup *temp_v0_2;
-    u8 sp80[388]; // unknown size, variable used for padding
-    s32 temp_t1;
-    s32 var_v1_2;
-    f32 sp70[2];
+void dll_25_LoadWalkGroups(void) {
+    WalkGroup* walkGroup;
+    UNUSED u32 sp274[256] = {0};
+    s32 i;
+    WalkGroup* g1;
+    WalkGroup* g2;
+    s32 curveListCount;
+    CurveNode* curveList;
+    CurveSetup* curve;
+    s32 walkGroupNo;
+    Vec3f p1;
+    Vec3f p2;
+    f32 y1;
+    f32 y2;
+    s32 k;
+    CurveSetup* linkCurve;
+    // @bug? the size of this array should probably be (MAX_PATCHGROUPS * 2)
+    u8 walkGroupConnections[216 * 2]; // TODO: exact size is unclear
+    s32 patchGroupID;
+    s32 linkno;
+    f32 dir[2];
 
-    curvesResult = gDLL_26_Curves->vtbl->func_1BC(&curvesCount);
-    bzero(_bss_0, 0xD9);
-    for (sp270 = 0; sp270 < 256; sp270++)
-    {
-        _bss_E0[sp270].unk1C = 0;
+    curveList = gDLL_26_Curves->vtbl->GetCurves(&curveListCount);
+    bzero(sLoadedWalkGroups, MAX_WALKGROUPS);
+    for (i = 0; i < MAX_PATCHGROUPS; i++) {
+        sPatchGroups[i].id = 0;
     }
-    _bss_E4 = 1;
-    for (sp270 = 0; sp270 < curvesCount; sp270++)
-    {
-        temp_s4 = curvesResult[sp270].setup;
-        if (temp_s4->curveType == 0x26)
-        {
-            temp_v0 = temp_s4->unk3;
-            temp_s0 = &_bss_DC[temp_v0];
-            _bss_0[temp_v0] = 1;
-            sp24C.f[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
-            sp24C.f[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
-            sp240.f[0] = (temp_s4->base_type26.unk6 * 5.7f) + temp_s4->pos.x;
-            sp240.f[2] = (temp_s4->base_type26.unk7 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(&sp24C, &sp240, &temp_s0->unk0[0], &temp_s0->unk8[0]);
-            sp24C.f[0] = (temp_s4->type26.unk30 * 5.7f) + temp_s4->pos.x;
-            sp24C.f[2] = (temp_s4->type26.unk31 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(&sp240, &sp24C, &temp_s0->unk0[2], &temp_s0->unk8[1]);
-            sp240.f[0] = (temp_s4->type26.unk32 * 5.7f) + temp_s4->pos.x;
-            sp240.f[2] = (temp_s4->type26.unk33 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(&sp24C, &sp240, &temp_s0->unk0[4], &temp_s0->unk8[2]);
-            sp24C.f[0] = (temp_s4->base_type26.unk4 * 5.7f) + temp_s4->pos.x;
-            sp24C.f[2] = (temp_s4->base_type26.unk5 * 5.7f) + temp_s4->pos.z;
-            dll_25_func_D00(&sp240, &sp24C, &temp_s0->unk0[6], &temp_s0->unk8[3]);
+    sNextPatchIdx = 1;
+    for (i = 0; i < curveListCount; i++) {
+        curve = curveList[i].setup;
+        if (curve->curveType == 0x26) {
+            /* default.dol
+            if (curve->unk3 >= MAX_WALKGROUPS) {
+                STUBBED_PRINTF("Maximum walk group error (increase MAX_WALKGROUPS)\n");
+                *((volatile int*)NULL) = 0; // kaboom
+            }
+            if (sLoadedWalkGroups[curve->unk3] != 0) {
+                STUBBED_PRINTF("Walk group number %d enterd twice at %f %f %f\n",
+                    curve->unk3, curve->pos.x, curve->pos.y, curve->pos.z);
+                return;
+            }
+            */
+            walkGroupNo = curve->unk3;
+            walkGroup = &sWalkGroups[walkGroupNo];
+            sLoadedWalkGroups[walkGroupNo] = 1;
+            // Precalculate plane info for the walk group's walls (for later bounds checks)
+            p1.f[0] = (curve->base_type26.unk4 * 5.7f) + curve->pos.x;
+            p1.f[2] = (curve->base_type26.unk5 * 5.7f) + curve->pos.z;
+            p2.f[0] = (curve->base_type26.unk6 * 5.7f) + curve->pos.x;
+            p2.f[2] = (curve->base_type26.unk7 * 5.7f) + curve->pos.z;
+            dll_25_calcPlane(&p1, &p2, &walkGroup->dirs[0], &walkGroup->dots[0]);
+            p1.f[0] = (curve->type26.unk30 * 5.7f) + curve->pos.x;
+            p1.f[2] = (curve->type26.unk31 * 5.7f) + curve->pos.z;
+            dll_25_calcPlane(&p2, &p1, &walkGroup->dirs[2], &walkGroup->dots[1]);
+            p2.f[0] = (curve->type26.unk32 * 5.7f) + curve->pos.x;
+            p2.f[2] = (curve->type26.unk33 * 5.7f) + curve->pos.z;
+            dll_25_calcPlane(&p1, &p2, &walkGroup->dirs[4], &walkGroup->dots[2]);
+            p1.f[0] = (curve->base_type26.unk4 * 5.7f) + curve->pos.x;
+            p1.f[2] = (curve->base_type26.unk5 * 5.7f) + curve->pos.z;
+            dll_25_calcPlane(&p2, &p1, &walkGroup->dirs[6], &walkGroup->dots[3]);
 
-            temp_s0->unk18 = temp_s4->pos.y + (2.0f * temp_s4->unk18);
-            temp_s0->unk1A.word = temp_s4->pos.y - (2.0f * temp_s4->unk1A);
-            for (var_v1_2 = 0; var_v1_2 < 4; var_v1_2++)
-            {
-                temp_s0->unk1C[var_v1_2] = 0;
-                if (temp_s4->links[var_v1_2] >= 0)
-                {
-                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_s4->links[var_v1_2]);
-                    temp_t1 = temp_s4->unk3 * temp_v0_2->unk3;
-                    for (var_s0 = 1; var_s0 < _bss_E4; var_s0++)
-                    {
-                        if (temp_t1 == _bss_E0[var_s0].unk1C)
-                        {
-                            temp_s0->unk1C[var_v1_2] = var_s0;
+            walkGroup->yMax = curve->pos.y + (2.0f * curve->unk18);
+            walkGroup->yMin = curve->pos.y - (2.0f * curve->unk1A);
+
+            for (linkno = 0; linkno < 4; linkno++) {
+                walkGroup->linkPatchIndices[linkno] = 0;
+                if (curve->links[linkno] >= 0) {
+                    linkCurve = gDLL_26_Curves->vtbl->FindByUID(curve->links[linkno]);
+                    patchGroupID = curve->unk3 * linkCurve->unk3;
+                    for (k = 1; k < sNextPatchIdx; k++) {
+                        if (patchGroupID == sPatchGroups[k].id) {
+                            walkGroup->linkPatchIndices[linkno] = k;
                             break;
                         }
                     }
-                    if (temp_s0->unk1C[var_v1_2] == 0)
-                    {
-                        for (var_s0 = 0; var_s0 < 4; var_s0++)
-                        {
-                            if ((s32)temp_s4->uID == temp_v0_2->links[var_s0])
-                            {
+                    if (walkGroup->linkPatchIndices[linkno] == 0) {
+                        for (k = 0; k < 4; k++) {
+                            if ((s32)curve->uID == linkCurve->links[k]) {
                                 break;
                             }
                         }
-                        temp_s0->unk1C[var_v1_2] = _bss_E4;
-                        _bss_E0[_bss_E4].unk1C = temp_t1;
-                        sp80[_bss_E4 * 2 + 0] = temp_s4->unk3;
-                        sp80[_bss_E4 * 2 + 1] = temp_v0_2->unk3;
-                        sp24C.f[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
-                        sp24C.f[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
-                        sp240.f[0] = (temp_s4->type26.unk34[var_v1_2][2] * 5.7f) + temp_s4->pos.x;
-                        sp240.f[2] = (temp_s4->type26.unk34[var_v1_2][3] * 5.7f) + temp_s4->pos.z;
-                        _bss_E0[_bss_E4].unk1E = (sp24C.f[0] + sp240.f[0]) / 2; // use 2 instead of 2.0f to force a div.s
-                        _bss_E0[_bss_E4].unk20 = (sp24C.f[2] + sp240.f[2]) / 2; // use 2 instead of 2.0f to force a div.s
-                        dll_25_func_D00(&sp24C, &sp240, &_bss_E0[_bss_E4].unk0[0], &_bss_E0[_bss_E4].unk8[0]);
-                        sp24C.f[0] = (temp_v0_2->type26.unk34[var_s0][0] * 5.7f) + temp_v0_2->pos.x;
-                        sp24C.f[2] = (temp_v0_2->type26.unk34[var_s0][1] * 5.7f) + temp_v0_2->pos.z;
-                        dll_25_func_D00(&sp240, &sp24C, &_bss_E0[_bss_E4].unk0[2], &_bss_E0[_bss_E4].unk8[1]);
-                        sp240.f[0] = (temp_v0_2->type26.unk34[var_s0][2] * 5.7f) + temp_v0_2->pos.x;
-                        sp240.f[2] = (temp_v0_2->type26.unk34[var_s0][3] * 5.7f) + temp_v0_2->pos.z;
-                        _bss_E0[_bss_E4].unk22 = (sp24C.f[0] + sp240.f[0]) / 2; // use 2 instead of 2.0f to force a div.s
-                        _bss_E0[_bss_E4].unk24 = (sp24C.f[2] + sp240.f[2]) / 2; // use 2 instead of 2.0f to force a div.s
-                        dll_25_func_D00(&sp24C, &sp240, &_bss_E0[_bss_E4].unk0[4], &_bss_E0[_bss_E4].unk8[2]);
-                        sp24C.f[0] = (temp_s4->type26.unk34[var_v1_2][0] * 5.7f) + temp_s4->pos.x;
-                        sp24C.f[2] = (temp_s4->type26.unk34[var_v1_2][1] * 5.7f) + temp_s4->pos.z;
-                        dll_25_func_D00(&sp240, &sp24C, &_bss_E0[_bss_E4].unk0[6], &_bss_E0[_bss_E4].unk8[3]);
-                        temp_fv0 = temp_s4->pos.y + (2.0f * temp_s4->unk18);
-                        temp_fv1 = temp_v0_2->pos.y + (2.0f * temp_v0_2->unk18);
-                        if (temp_fv1 < temp_fv0)
-                        {
-                            _bss_E0[_bss_E4].unk18 = temp_fv0;
+                        walkGroup->linkPatchIndices[linkno] = sNextPatchIdx;
+                        sPatchGroups[sNextPatchIdx].id = patchGroupID;
+                        walkGroupConnections[sNextPatchIdx * 2 + 0] = curve->unk3;
+                        walkGroupConnections[sNextPatchIdx * 2 + 1] = linkCurve->unk3;
+                        // Precalculate plane info for the patch group's walls (for later bounds checks)
+                        p1.f[0] = (curve->type26.unk34[linkno][0] * 5.7f) + curve->pos.x;
+                        p1.f[2] = (curve->type26.unk34[linkno][1] * 5.7f) + curve->pos.z;
+                        p2.f[0] = (curve->type26.unk34[linkno][2] * 5.7f) + curve->pos.x;
+                        p2.f[2] = (curve->type26.unk34[linkno][3] * 5.7f) + curve->pos.z;
+                        sPatchGroups[sNextPatchIdx].exit0X = (p1.f[0] + p2.f[0]) / 2;
+                        sPatchGroups[sNextPatchIdx].exit0Z = (p1.f[2] + p2.f[2]) / 2;
+                        dll_25_calcPlane(&p1, &p2, &sPatchGroups[sNextPatchIdx].dirs[0], &sPatchGroups[sNextPatchIdx].dots[0]);
+                        p1.f[0] = (linkCurve->type26.unk34[k][0] * 5.7f) + linkCurve->pos.x;
+                        p1.f[2] = (linkCurve->type26.unk34[k][1] * 5.7f) + linkCurve->pos.z;
+                        dll_25_calcPlane(&p2, &p1, &sPatchGroups[sNextPatchIdx].dirs[2], &sPatchGroups[sNextPatchIdx].dots[1]);
+                        p2.f[0] = (linkCurve->type26.unk34[k][2] * 5.7f) + linkCurve->pos.x;
+                        p2.f[2] = (linkCurve->type26.unk34[k][3] * 5.7f) + linkCurve->pos.z;
+                        sPatchGroups[sNextPatchIdx].exit1X = (p1.f[0] + p2.f[0]) / 2;
+                        sPatchGroups[sNextPatchIdx].exit1Z = (p1.f[2] + p2.f[2]) / 2;
+                        dll_25_calcPlane(&p1, &p2, &sPatchGroups[sNextPatchIdx].dirs[4], &sPatchGroups[sNextPatchIdx].dots[2]);
+                        p1.f[0] = (curve->type26.unk34[linkno][0] * 5.7f) + curve->pos.x;
+                        p1.f[2] = (curve->type26.unk34[linkno][1] * 5.7f) + curve->pos.z;
+                        dll_25_calcPlane(&p2, &p1, &sPatchGroups[sNextPatchIdx].dirs[6], &sPatchGroups[sNextPatchIdx].dots[3]);
+                        y1 = curve->pos.y + (2.0f * curve->unk18);
+                        y2 = linkCurve->pos.y + (2.0f * linkCurve->unk18);
+                        if (y2 < y1) {
+                            sPatchGroups[sNextPatchIdx].yMax = y1;
+                        } else {
+                            sPatchGroups[sNextPatchIdx].yMax = y2;
                         }
-                        else
-                        {
-                            _bss_E0[_bss_E4].unk18 = temp_fv1;
+                        y1 = curve->pos.y - (2.0f * curve->unk1A);
+                        y2 = linkCurve->pos.y - (2.0f * linkCurve->unk1A);
+                        if (y1 < y2) {
+                            sPatchGroups[sNextPatchIdx].yMin = y1;
+                        } else {
+                            sPatchGroups[sNextPatchIdx].yMin = y2;
                         }
-                        temp_fv0 = temp_s4->pos.y - (2.0f * temp_s4->unk1A);
-                        temp_fv1 = temp_v0_2->pos.y - (2.0f * temp_v0_2->unk1A);
-                        if (temp_fv0 < temp_fv1)
-                        {
-                            _bss_E0[_bss_E4].unk1A.word = temp_fv0;
-                        }
-                        else
-                        {
-                            _bss_E0[_bss_E4].unk1A.word = temp_fv1;
-                        }
-                        _bss_E4 += 1;
+                        sNextPatchIdx += 1;
                     }
                 }
             }
         }
     }
-    for (sp270 = 1; sp270 < _bss_E4; sp270++)
-    {
-        temp_s1_2 = &_bss_DC[sp80[sp270 * 2]];
-        temp_s2_2 = &_bss_DC[sp80[sp270 * 2 + 1]];
-        sp70[0] = _bss_E0[sp270].unk22 - _bss_E0[sp270].unk1E;
-        sp70[1] = _bss_E0[sp270].unk24 - _bss_E0[sp270].unk20;
-        while (
-            dll_25_func_DF8(temp_s1_2, _bss_E0[sp270].unk1E, _bss_E0[sp270].unk20) == 0 &&
-            dll_25_func_DF8(temp_s2_2, _bss_E0[sp270].unk1E, _bss_E0[sp270].unk20) == 0)
-        {
-            _bss_E0[sp270].unk1E += sp70[0] / 20.0f;
-            _bss_E0[sp270].unk20 += sp70[1] / 20.0f;
+    for (i = 1; i < sNextPatchIdx; i++) {
+        g1 = &sWalkGroups[walkGroupConnections[i * 2]];
+        g2 = &sWalkGroups[walkGroupConnections[i * 2 + 1]];
+        dir[0] = sPatchGroups[i].exit1X - sPatchGroups[i].exit0X;
+        dir[1] = sPatchGroups[i].exit1Z - sPatchGroups[i].exit0Z;
+        while (dll_25_isPointWithinWalkGroupXZ(g1, sPatchGroups[i].exit0X, sPatchGroups[i].exit0Z) == 0 && 
+               dll_25_isPointWithinWalkGroupXZ(g2, sPatchGroups[i].exit0X, sPatchGroups[i].exit0Z) == 0) {
+            sPatchGroups[i].exit0X += dir[0] / 20.0f;
+            sPatchGroups[i].exit0Z += dir[1] / 20.0f;
         }
-        while (
-            dll_25_func_DF8(temp_s1_2, _bss_E0[sp270].unk22, _bss_E0[sp270].unk24) == 0 &&
-            dll_25_func_DF8(temp_s2_2, _bss_E0[sp270].unk22, _bss_E0[sp270].unk24) == 0)
-        {
-            _bss_E0[sp270].unk22 -= sp70[0] / 20.0f;
-            _bss_E0[sp270].unk24 -= sp70[1] / 20.0f;
+        while (dll_25_isPointWithinWalkGroupXZ(g1, sPatchGroups[i].exit1X, sPatchGroups[i].exit1Z) == 0 && 
+               dll_25_isPointWithinWalkGroupXZ(g2, sPatchGroups[i].exit1X, sPatchGroups[i].exit1Z) == 0) {
+            sPatchGroups[i].exit1X -= dir[0] / 20.0f;
+            sPatchGroups[i].exit1Z -= dir[1] / 20.0f;
         }
     }
 }
 
 // offset: 0xD00 | func: 1
-static void dll_25_func_D00(Vec3f *arg0, Vec3f *arg1, s8 *arg2, f32 *arg3)
-{
-    f32 noramlized;
+static void dll_25_calcPlane(Vec3f* p1, Vec3f* p2, s8* dir, f32* dot) {
+    f32 magnitude;
     f32 z;
     f32 x;
 
-    z = arg1->z - arg0->z;
-    x = arg0->x - arg1->x;
-    noramlized = sqrtf((z * z) + (x * x));
-    if (noramlized != 0.0f)
-    {
-        z /= noramlized;
-        x /= noramlized;
+    z = p2->z - p1->z;
+    x = p1->x - p2->x;
+    magnitude = sqrtf((z * z) + (x * x));
+    if (magnitude != 0.0f) {
+        z /= magnitude;
+        x /= magnitude;
     }
-    arg2[0] = z * 127.0f;
-    arg2[1] = x * 127.0f;
-    arg3[0] = -((arg2[0] * arg0->f[0]) + (arg2[1] * arg0->f[2]));
+    dir[0] = z * 127.0f;
+    dir[1] = x * 127.0f;
+    dot[0] = -((dir[0] * p1->f[0]) + (dir[1] * p1->f[2])); // negated dot product
 }
 
 // offset: 0xDF8 | func: 2
-static s32 dll_25_func_DF8(Dll25BssDC *arg0, f32 arg1, f32 arg2)
-{
-    u8 var_v0;
-    u8 var_v1;
-    s8 *temp1;
+static s32 dll_25_isPointWithinWalkGroupXZ(WalkGroup* group, f32 x, f32 z) {
+    u8 j;
+    u8 k;
 
-    for (var_v0 = 0, var_v1 = 0; var_v0 < 4; var_v0++, var_v1 += 2)
-    {
-        temp1 = &((s8 *)arg0)[var_v1];
-        if (((temp1[0] * arg1) + (((s8 *)arg0)[var_v1 + 1] * arg2) + ((f32 *)arg0)[(u32)var_v0 + 2]) > 0.0f)
-        {
+    for (j = 0, k = 0; j < 4; j++, k += 2) {
+        if (((group->dirs[k] * x) + (group->dirs[k + 1] * z) + group->dots[j]) > 0.0f) {
             break;
         }
     }
-    if (var_v0 == 4)
-    {
+    if (j == 4) {
         return 1;
     }
     return 0;
 }
 
-/*0x400*/ static u32 _data_400[] = {0, 0, 0, 0};
 // offset: 0xEAC | func: 3
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_EAC.s")
-#else
-static s32 dll_25_func_EAC(Vec3f *arg0)
-{
-    s16 var_s0;
-    s16 var_s1;
-    u32 v1;
-    Dll25BssDC *temp_a0;
+static s32 dll_25_findWalkGroupFast(Vec3f* pos) {
+    /*0x400*/ static u32 sLastFoundWalkGroup = 0;
+    s16 g2;
+    s16 g1;
+    WalkGroup* group;
 
-    v1 = _data_400[0];
-    var_s1 = v1;
-    if (_data_400[0] == 0xD8)
-    {
-        var_s0 = 0;
+    /*
+        I think the idea behind this function is to bias the search toward walk groups near the previously
+        found group so that repeated searches don't take as long (assuming that nearby groups have IDs that
+        are numerically close to each other, if the curves are sorted that way in the map object list).
+    */
+
+    g1 = sLastFoundWalkGroup;
+    if (sLastFoundWalkGroup == (MAX_WALKGROUPS - 1)) {
+        g2 = 0;
+    } else {
+        g2 = sLastFoundWalkGroup + 1;
     }
-    else
-    {
-        var_s0 = v1 + 1;
-    }
-    while (var_s1 != var_s0)
-    {
-        if (_bss_0[var_s1] != 0)
-        {
-            temp_a0 = &_bss_DC[var_s1];
-            if ((arg0->y < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
-            {
-                _data_400[0] = var_s1;
-                return var_s1;
+    while (g1 != g2) {
+        if (sLoadedWalkGroups[g1] != 0) {
+            group = &sWalkGroups[g1];
+            if ((pos->y < group->yMax) && (group->yMin < pos->y) && (dll_25_isPointWithinWalkGroupXZ(group, pos->x, pos->z) != 0)) {
+                sLastFoundWalkGroup = g1;
+                return g1;
             }
         }
-        if (_bss_0[var_s0] != 0)
-        {
-            temp_a0 = &_bss_DC[var_s0];
-            if ((arg0->y < temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
-            {
-                _data_400[0] = var_s0;
-                return var_s0;
+        if (sLoadedWalkGroups[g2] != 0) {
+            group = &sWalkGroups[g2];
+            if ((pos->y < group->yMax) && (group->yMin < pos->y) && (dll_25_isPointWithinWalkGroupXZ(group, pos->x, pos->z) != 0)) {
+                sLastFoundWalkGroup = g2;
+                return g2;
             }
         }
-        var_s1--;
-        if (var_s1 == -1)
-        {
-            var_s1 = 0xD8;
+        g1--;
+        if (g1 == -1) {
+            g1 = MAX_WALKGROUPS - 1;
         }
-        var_s0++;
-        if (var_s0 == 0xD9)
-        {
-            var_s0 = 0;
+        g2++;
+        if (g2 == MAX_WALKGROUPS) {
+            g2 = 0;
         }
     }
 
-    if (_bss_0[var_s1] != 0)
-    {
-        temp_a0 = &_bss_DC[var_s1];
-        if ((arg0->y < (f32)temp_a0->unk18) && (temp_a0->unk1A.bytes.unk1A < arg0->y) && (dll_25_func_DF8(temp_a0, arg0->x, arg0->z) != 0))
-        {
-            _data_400[0] = var_s1;
-            return var_s1;
+    if (sLoadedWalkGroups[g1] != 0) {
+        group = &sWalkGroups[g1];
+        if ((pos->y < group->yMax) && (group->yMin < pos->y) && (dll_25_isPointWithinWalkGroupXZ(group, pos->x, pos->z) != 0)) {
+            sLastFoundWalkGroup = g1;
+            return g1;
         }
     }
     return 0;
 }
-#endif
 
 // offset: 0x1158 | func: 4 | export: 1
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1158.s")
-#else
-// Matches on dll_25_func_EAC is static
-s32 dll_25_func_1158(Vec3f *arg0, Dll25BssDC *arg1)
-{
-    u8 temp_v0;
-    u8 var_a0;
-    u8 var_a3;
-    u8 var_t0;
-    u8 temp_a1;
-    u8 var_v0;
-    Dll25BssE0 *temp_v1;
+s32 dll_25_FindWalkGroup(Vec3f* pos, WalkGroupInfo* info) {
+    u8 walkGroup;
+    u8 j;
+    u8 linkno;
+    u8 flag;
+    u8 patchIdx;
+    u8 k;
+    PatchGroup* patch;
 
-    temp_v0 = dll_25_func_EAC(arg0);
-    if (arg1 != NULL && temp_v0 != 0)
-    {
-        arg1->unk0[0] = temp_v0;
-        arg1->unk0[1] = 0;
-        for (var_a3 = 0, var_t0 = 1; var_a3 < 4; var_a3++, var_t0 <<= 1)
-        {
-            temp_a1 = _bss_DC[temp_v0].unk1C[var_a3];
-            if (temp_a1 != 0)
-            {
-                temp_v1 = &_bss_E0[temp_a1];
-                arg1->unk0[var_a3 + 2] = temp_v1->unk1C;
-                for (var_v0 = 0, var_a0 = 0; var_v0 < 4; var_v0++, var_a0 += 2)
-                {
-                    if (((temp_v1->unk0[var_a0] * arg0->x) + (temp_v1->unk0[var_a0 + 1] * arg0->z) + ((f32 *)temp_v1)[(u32)var_v0 + 2]) > 0.0f)
-                    {
+    walkGroup = dll_25_findWalkGroupFast(pos);
+    if (info != NULL && walkGroup != 0) {
+        info->id = walkGroup;
+        info->patchFlags = 0;
+        for (linkno = 0, flag = 1; linkno < 4; linkno++, flag <<= 1) {
+            patchIdx = sWalkGroups[walkGroup].linkPatchIndices[linkno];
+            if (patchIdx != 0) {
+                patch = &sPatchGroups[patchIdx];
+                info->patchIDs[linkno] = patch->id;
+                for (k = 0, j = 0; k < 4; k++, j += 2) {
+                    if (((patch->dirs[j] * pos->x) + (patch->dirs[j + 1] * pos->z) + patch->dots[k]) > 0.0f) {
                         break;
                     }
                 }
-                if (var_v0 == 4)
-                {
-                    arg1->unk0[1] |= var_t0;
+                if (k == 4) {
+                    info->patchFlags |= flag;
                 }
-            }
-            else
-            {
-                arg1->unk0[var_a3 + 2] = 0;
+            } else {
+                info->patchIDs[linkno] = 0;
             }
         }
     }
-    return temp_v0;
+    return walkGroup;
 }
-#endif
 
 // offset: 0x12FC | func: 5 | export: 2
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_12FC.s")
-#else
-// Matching if dll_25_func_EAC is static
-s32 dll_25_func_12FC(Vec3f *arg0)
-{
-    Dll25BssE0 *temp_a1;
-    s16 var_a0;
-    s32 temp;
-    s16 var_a2;
-    s16 var_v1;
-    s8 *temp_v0;
+s32 dll_25_IsPointWithinAnyGroup(Vec3f* pos) {
+    PatchGroup* patch;
+    s16 k;
+    s16 patchIdx;
+    s16 j;
 
-    if (dll_25_func_EAC(arg0) != 0)
-    {
+    if (dll_25_findWalkGroupFast(pos) != 0) {
         return 1;
     }
-    var_a2 = 1;
-    while (var_a2 < _bss_E4)
-    {
-        temp_a1 = &_bss_E0[var_a2];
-        if (arg0->y < temp_a1->unk18)
-        {
-            if (temp_a1->unk1A.bytes.unk1A < arg0->y)
-            {
-                for (var_a0 = 0, var_v1 = 0; var_a0 < 4;)
-                {
-                    temp_v0 = &temp_a1->unk0[var_v1];
-                    if (((((temp_v0[0] * arg0->x) + (temp_v0[1] * arg0->z)) + ((f32 *)temp_a1)[var_a0 + 2]) > 0.0f))
-                    {
-                        break;
-                    }
-
-                    var_a0 += 1;
-                    var_v1 += 2;
-                }
-                if (var_a0 == 4)
-                {
-                    return 1;
+    patchIdx = 1;
+    while (patchIdx < sNextPatchIdx) {
+        patch = &sPatchGroups[patchIdx];
+        if (pos->y < patch->yMax && patch->yMin < pos->y) {
+            for (k = 0, j = 0; k < 4; k++, j += 2) {
+                if (((patch->dirs[j] * pos->x) + (patch->dirs[j + 1] * pos->z) + patch->dots[k]) > 0.0f) {
+                    break;
                 }
             }
+            if (k == 4) {
+                return 1;
+            }
         }
-        var_a2++;
+        patchIdx++;
     }
     return 0;
 }
-#endif
 
 // offset: 0x1474 | func: 6 | export: 3
-s32 dll_25_func_1474(Vec3f *arg0, s32 arg1)
-{
-    Dll25BssE0 *temp_a2;
-    u8 var_a3;
-    u8 var_t0;
-    u8 var_v0;
-    u8 temp_a0;
+s32 dll_25_GetPatchGroupContainingPoint(Vec3f* pos, s32 walkGroupID) {
+    PatchGroup* patch;
+    u8 k;
+    u8 j;
+    u8 linkno;
+    u8 patchIdx;
 
-    for (var_v0 = 0; var_v0 < 4; var_v0++)
-    {
-        if (_bss_0[arg1] != 0)
-        {
-            temp_a0 = _bss_DC[arg1].unk1C[var_v0];
-            if (temp_a0 != 0)
-            {
-                temp_a2 = &_bss_E0[temp_a0];
-                for (var_a3 = 0, var_t0 = 0; var_a3 < 4; var_a3++, var_t0 += 2)
-                {
-                    if ((((temp_a2->unk0[var_t0] * arg0->x) + (temp_a2->unk0[var_t0 + 1] * arg0->z)) + ((f32 *)temp_a2)[(u32)var_a3 + 2]) > 0.0f)
-                    {
+    for (linkno = 0; linkno < 4; linkno++) {
+        if (sLoadedWalkGroups[walkGroupID] != 0) {
+            patchIdx = sWalkGroups[walkGroupID].linkPatchIndices[linkno];
+            if (patchIdx != 0) {
+                patch = &sPatchGroups[patchIdx];
+                for (k = 0, j = 0; k < 4; k++, j += 2) {
+                    if (((patch->dirs[j] * pos->x) + (patch->dirs[j + 1] * pos->z) + patch->dots[k]) > 0.0f) {
                         break;
                     }
                 }
-                if (var_a3 == 4)
-                {
-                    return temp_a2->unk1C;
+                if (k == 4) {
+                    return patch->id;
                 }
             }
         }
@@ -443,33 +381,24 @@ s32 dll_25_func_1474(Vec3f *arg0, s32 arg1)
 }
 
 // offset: 0x15B0 | func: 7 | export: 4
-s32 dll_25_func_15B0(Vec3f *arg0, s32 arg1, s32 arg2)
-{
-    Dll25BssE0 *temp_a0;
-    u8 var_v0;
-    u8 var_v0_2;
-    u8 var_v1;
-    u8 temp_v1;
-    s8 *temp;
+s32 dll_25_IsPointWithinPatchGroup(Vec3f* pos, s32 walkGroupID, s32 patchGroupID) {
+    PatchGroup* patch;
+    u8 linkno;
+    u8 k;
+    u8 j;
+    u8 patchIdx;
 
-    for (var_v0 = 0; var_v0 < 4; var_v0++)
-    {
-        temp_v1 = _bss_DC[arg1].unk1C[var_v0];
-        if (temp_v1 != 0)
-        {
-            temp_a0 = &_bss_E0[temp_v1];
-            if (arg2 == temp_a0->unk1C)
-            {
-                for (var_v0_2 = 0, var_v1 = 0; var_v0_2 < 4; var_v0_2++, var_v1 += 2)
-                {
-                    temp = &temp_a0->unk0[var_v1];
-                    if (((temp[0] * arg0->x) + (temp_a0->unk0[var_v1 + 1] * arg0->z) + ((f32 *)temp_a0)[(u32)var_v0_2 + 2]) > 0.0f)
-                    {
+    for (linkno = 0; linkno < 4; linkno++) {
+        patchIdx = sWalkGroups[walkGroupID].linkPatchIndices[linkno];
+        if (patchIdx != 0) {
+            patch = &sPatchGroups[patchIdx];
+            if (patchGroupID == patch->id) {
+                for (k = 0, j = 0; k < 4; k++, j += 2) {
+                    if (((patch->dirs[j] * pos->x) + (patch->dirs[j + 1] * pos->z) + patch->dots[k]) > 0.0f) {
                         break;
                     }
                 }
-                if (var_v0_2 == 4)
-                {
+                if (k == 4) {
                     return 1;
                 }
                 return 0;
@@ -477,76 +406,78 @@ s32 dll_25_func_15B0(Vec3f *arg0, s32 arg1, s32 arg2)
         }
     }
 
+    STUBBED_PRINTF("Error in isPointWithinPatchGroup\n");
     return 0;
 }
 
 // offset: 0x16D4 | func: 8 | export: 7
-s32 dll_25_func_16D4(Vec3f *arg0, Vec3f *arg1, s32 arg2)
-{
+s32 dll_25_GetClosestExitOfPatch(Vec3f* pos, Vec3f* exitPos, s32 patchGroupID) {
+#ifdef AVOID_UB
+    s32 i;
+#else
     u8 i;
+#endif
     f32 tempDistance;
     s32 pad;
     PRAGMA_IGNORE_PUSH("-Wtype-limits");
-    for (i = 0; i < 256; i++) // @bug: This condition is always true!
-    {
-        if (arg2 == _bss_E0[i].unk1C)
-        {
+    for (i = 0; i < MAX_PATCHGROUPS; i++) { // @bug: This condition is always true!
+        if (patchGroupID == sPatchGroups[i].id) {
             break;
         }
     }
     PRAGMA_IGNORE_POP()
-    arg1->x = _bss_E0[i].unk1E;
-    arg1->y = arg0->y;
-    arg1->z = _bss_E0[i].unk20;
-    tempDistance = vec3DistanceSquared(arg0, arg1);
-    arg1->x = _bss_E0[i].unk22;
-    arg1->z = _bss_E0[i].unk24;
-    if (vec3DistanceSquared(arg0, arg1) < tempDistance)
-    {
+#ifdef AVOID_UB
+    if (i == MAX_PATCHGROUPS) {
+        return 0;
+    }
+#endif
+    exitPos->x = sPatchGroups[i].exit0X;
+    exitPos->y = pos->y;
+    exitPos->z = sPatchGroups[i].exit0Z;
+    tempDistance = vec3DistanceSquared(pos, exitPos);
+    exitPos->x = sPatchGroups[i].exit1X;
+    exitPos->z = sPatchGroups[i].exit1Z;
+    if (vec3DistanceSquared(pos, exitPos) < tempDistance) {
         return 1;
     }
 
-    arg1->x = _bss_E0[i].unk1E;
-    arg1->z = _bss_E0[i].unk20;
+    exitPos->x = sPatchGroups[i].exit0X;
+    exitPos->z = sPatchGroups[i].exit0Z;
     return 1;
 }
 
 // offset: 0x1864 | func: 9 | export: 5
-CurveSetup *dll_25_func_1864(Vec3f *arg0, s32 arg1, s32 arg2)
-{
-    f32 temp_fa0;
-    f32 temp_fa1;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    f32 var_fs0;
+CurveSetup* dll_25_FindNearestEnabledTrickyCurve(Vec3f* pos, s32 arg1, s32 arg2) {
+    f32 zDiff;
+    f32 dist;
+    f32 xDiff;
+    f32 yDiff;
+    f32 bestDist;
     s32 i;
-    s32 count;
-    CurveSetup *temp_s0;
-    CurveNode *result;
-    CurveSetup *out;
+    s32 curveListCount;
+    CurveSetup* curve;
+    CurveNode* curveList;
+    CurveSetup* out;
 
-    result = gDLL_26_Curves->vtbl->func_1BC(&count);
+    curveList = gDLL_26_Curves->vtbl->GetCurves(&curveListCount);
     out = NULL;
-    var_fs0 = F32_MAX;
-    for (i = 0; i < count; i++)
-    {
-        temp_s0 = result[i].setup;
-        if ((temp_s0 != NULL) && 
-            (temp_s0->curveType == 0x24) && 
-            ((arg1 == -1) || (arg1 == temp_s0->unk3)) &&
-            ((arg2 == -1) || (arg2 == temp_s0->unk1A)) &&
-            ((temp_s0->links[0] != -1) || (temp_s0->unk2F == -1)) &&
-            ((temp_s0->type24.activeBit == -1) || (mainGetBits(temp_s0->type24.activeBit) != 0)) &&
-            ((temp_s0->type24.usedBit == -1) || (mainGetBits(temp_s0->type24.usedBit) == 0)))
-        {
-            temp_fv0 = arg0->f[0] - temp_s0->pos.x;
-            temp_fv1 = arg0->f[1] - temp_s0->pos.y;
-            temp_fa0 = arg0->f[2] - temp_s0->pos.z;
-            temp_fa1 = (temp_fv0 * temp_fv0) + (temp_fv1 * temp_fv1) + (temp_fa0 * temp_fa0);
-            if (temp_fa1 < var_fs0)
-            {
-                var_fs0 = temp_fa1;
-                out = temp_s0;
+    bestDist = F32_MAX;
+    for (i = 0; i < curveListCount; i++) {
+        curve = curveList[i].setup;
+        if ((curve != NULL) && 
+                (curve->curveType == 0x24) && 
+                ((arg1 == -1) || (arg1 == curve->unk3)) && 
+                ((arg2 == -1) || (arg2 == curve->unk1A)) && 
+                ((curve->links[0] != -1) || (curve->unk2F == -1)) && 
+                ((curve->type24.activeBit == -1) || (mainGetBits(curve->type24.activeBit) != 0)) && 
+                ((curve->type24.usedBit == -1) || (mainGetBits(curve->type24.usedBit) == 0))) {
+            xDiff = pos->f[0] - curve->pos.x;
+            yDiff = pos->f[1] - curve->pos.y;
+            zDiff = pos->f[2] - curve->pos.z;
+            dist = (xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff);
+            if (dist < bestDist) {
+                bestDist = dist;
+                out = curve;
             }
         }
     }
@@ -554,39 +485,33 @@ CurveSetup *dll_25_func_1864(Vec3f *arg0, s32 arg1, s32 arg2)
 }
 
 // offset: 0x1A2C | func: 10 | export: 6
-CurveSetup *dll_25_func_1A2C(Vec3f *arg0, s32 arg1, s32 arg2)
-{
-    CurveNode *result;
-    CurveSetup *temp_v1;
-    CurveSetup *out;
-    f32 temp_fa1;
-    f32 temp_ft4;
-    f32 temp_ft5;
-    s32 count;
-    f32 var_fs0;
-    s32 var_t0;
-    s32 var_v1;
+CurveSetup* dll_25_FindNearestTrickyCurve(Vec3f* pos, s32 arg1, s32 arg2) {
+    CurveNode* curveList;
+    CurveSetup* curve;
+    CurveSetup* out;
+    f32 xDiff;
+    f32 yDiff;
+    f32 zDiff;
+    s32 curveListCount;
+    f32 bestDist;
+    s32 i;
 
-    result = gDLL_26_Curves->vtbl->func_1BC(&count);
+    curveList = gDLL_26_Curves->vtbl->GetCurves(&curveListCount);
     out = NULL;
-    var_v1 = 0;
-    var_fs0 = F32_MAX;
-    for (var_v1 = 0; var_v1 < count; var_v1++)
-    {
-        temp_v1 = result[var_v1].setup;
-        if ((temp_v1 != NULL) &&
-            (temp_v1->curveType == 0x24) &&
-            ((arg1 == -1) || (arg1 == temp_v1->unk3)) &&
-            ((arg2 == -1) || (arg2 == temp_v1->unk1A)) &&
-            ((temp_v1->links[0] != -1) || (temp_v1->unk2F == -1)))
-        {
-            temp_fa1 = arg0->f[0] - temp_v1->pos.x;
-            temp_ft4 = arg0->f[1] - temp_v1->pos.y;
-            temp_ft5 = arg0->f[2] - temp_v1->pos.z;
-            if (((temp_fa1 * temp_fa1) + (temp_ft4 * temp_ft4) + (temp_ft5 * temp_ft5)) < var_fs0)
-            {
-                out = temp_v1;
-                var_fs0 = (temp_fa1 * temp_fa1) + (temp_ft4 * temp_ft4) + (temp_ft5 * temp_ft5);
+    bestDist = F32_MAX;
+    for (i = 0; i < curveListCount; i++) {
+        curve = curveList[i].setup;
+        if ((curve != NULL) && 
+                (curve->curveType == 0x24) && 
+                ((arg1 == -1) || (arg1 == curve->unk3)) && 
+                ((arg2 == -1) || (arg2 == curve->unk1A)) && 
+                ((curve->links[0] != -1) || (curve->unk2F == -1))) {
+            xDiff = pos->f[0] - curve->pos.x;
+            yDiff = pos->f[1] - curve->pos.y;
+            zDiff = pos->f[2] - curve->pos.z;
+            if (((xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff)) < bestDist) {
+                out = curve;
+                bestDist = (xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff);
             }
         }
     }
@@ -594,13 +519,8 @@ CurveSetup *dll_25_func_1A2C(Vec3f *arg0, s32 arg1, s32 arg2)
 }
 
 // offset: 0x1D30 | func: 11 | export: 8
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/25/dll_25_func_1D30.s")
-#else
-s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, CurveSetup *arg3)
-{
-    if (arg0->unk0.unk80 != 0)
-    {
+s32 dll_25_func_1D30(UnkCurvesStruct* arg0, CurveSetup* arg1, CurveSetup* arg2, CurveSetup* arg3) {
+    if (arg0->unk0.unk80 != 0) {
         arg0->unkA0 = arg1;
         arg0->unkA4 = arg2;
         arg0->unkA8[0] = arg2->pos.x;
@@ -615,9 +535,7 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
         arg0->unkE8[1] = arg0->unkA0->pos.z;
         arg0->unkE8[2] = 2.0f * (mathCosfInterp(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
         arg0->unkE8[3] = 2.0f * (mathCosfInterp(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
-    }
-    else
-    {
+    } else {
         arg0->unkA0 = arg1;
         arg0->unkA4 = arg2;
         arg0->unkB8[0] = arg1->pos.x;
@@ -633,31 +551,26 @@ s32 dll_25_func_1D30(UnkCurvesStruct *arg0, CurveSetup *arg1, CurveSetup *arg2, 
         arg0->unkF8[2] = 2.0f * (mathCosfInterp(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (mathCosfInterp(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
     }
-    if (gDLL_25->vtbl->func_21F4(arg0, arg3) != 0)
-    {
+    if (gDLL_25->vtbl->func_21F4(arg0, arg3) != 0) {
         return 1;
     }
+    arg0->unk0.splineFunc = curvesHermite;
+    arg0->unk0.splineConverterFunc = curvesHermiteConverter;
     arg0->unk0.unk84 = arg0->unkA8;
     arg0->unk0.unk88 = arg0->unkC8;
     arg0->unk0.unk8C = arg0->unkE8;
     arg0->unk0.numControlPoints = 8;
-    arg0->unk0.splineFunc = curvesHermite;
-    arg0->unk0.splineConverterFunc = curvesHermiteConverter;
     curvesMove(&arg0->unk0);
     return 0;
 }
-#endif
 
 // offset: 0x21F4 | func: 12 | export: 9
-s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
-{
-    if ((arg0->unkA0 == NULL) || (arg0->unkA4 == NULL) || (arg1 == NULL))
-    {
+s32 dll_25_func_21F4(UnkCurvesStruct* arg0, CurveSetup* arg1) {
+    if ((arg0->unkA0 == NULL) || (arg0->unkA4 == NULL) || (arg1 == NULL)) {
         return 1;
     }
 
-    if (arg0->unk0.unk80 != 0)
-    {
+    if (arg0->unk0.unk80 != 0) {
         arg0->unk9C = arg0->unkA0;
         arg0->unkA0 = arg0->unkA4;
         arg0->unkA4 = arg1;
@@ -676,23 +589,19 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkE8[1] = arg0->unkA0->pos.z;
         arg0->unkE8[2] = 2.0f * (mathCosfInterp(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
         arg0->unkE8[3] = 2.0f * (mathCosfInterp(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
-        if (arg0->unk0.numControlPoints != 0)
-        {
+        if (arg0->unk0.numControlPoints != 0) {
             curvesSetupMoveNetworkCurve(&arg0->unk0);
-            if (arg0->unk0.unk0 <= 0.0f)
-            {
+            if (arg0->unk0.unk0 <= 0.0f) {
                 arg0->unk0.unk0 = 0.01f;
             }
         }
-    }
-    else
-    {
+    } else {
         arg0->unk9C = arg0->unkA0;
         arg0->unkA0 = arg0->unkA4;
         arg0->unkA4 = arg1;
-        memcpy(arg0->unkA8, arg0->unkB8, 0x10U);
-        memcpy(arg0->unkC8, arg0->unkD8, 0x10U);
-        memcpy(arg0->unkE8, arg0->unkF8, 0x10U);
+        memcpy(arg0->unkA8, arg0->unkB8, sizeof(arg0->unkA8));
+        memcpy(arg0->unkC8, arg0->unkD8, sizeof(arg0->unkC8));
+        memcpy(arg0->unkE8, arg0->unkF8, sizeof(arg0->unkE8));
         arg0->unkB8[0] = arg0->unkA0->pos.x;
         arg0->unkB8[1] = arg0->unkA4->pos.x;
         arg0->unkB8[2] = 2.0f * (mathSinfInterp(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
@@ -705,11 +614,9 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
         arg0->unkF8[1] = arg0->unkA4->pos.z;
         arg0->unkF8[2] = 2.0f * (mathCosfInterp(arg0->unkA0->unk2C << 8) * arg0->unkA0->unk2E);
         arg0->unkF8[3] = 2.0f * (mathCosfInterp(arg0->unkA4->unk2C << 8) * arg0->unkA4->unk2E);
-        if (arg0->unk0.numControlPoints != 0)
-        {
+        if (arg0->unk0.numControlPoints != 0) {
             curvesSetupMoveNetworkCurve(&arg0->unk0);
-            if (arg0->unk0.unk0 >= 1.0f)
-            {
+            if (arg0->unk0.unk0 >= 1.0f) {
                 arg0->unk0.unk0 = 0.99f;
             }
         }
@@ -718,24 +625,19 @@ s32 dll_25_func_21F4(UnkCurvesStruct *arg0, CurveSetup *arg1)
 }
 
 // offset: 0x27A8 | func: 13 | export: 10
-s32 dll_25_func_27A8(UnkCurvesStruct *arg0, CurveSetup *arg1)
-{
-    if ((arg0->unkA0 == 0) || (arg0->unkA4 == NULL) || (arg1 == NULL))
-    {
+s32 dll_25_func_27A8(UnkCurvesStruct* arg0, CurveSetup* arg1) {
+    if ((arg0->unkA0 == 0) || (arg0->unkA4 == NULL) || (arg1 == NULL)) {
         return 1;
     }
     arg0->unkA4 = arg1;
-    if (arg0->unk0.unk80 != 0)
-    {
+    if (arg0->unk0.unk80 != 0) {
         arg0->unkA8[0] = arg1->pos.x;
         arg0->unkA8[2] = 2.0f * (mathSinfInterp(arg1->unk2C << 8) * arg1->unk2E);
         arg0->unkC8[0] = arg1->pos.y;
         arg0->unkC8[2] = 2.0f * (mathSinfInterp(arg1->unk2D << 8) * arg1->unk2E);
         arg0->unkE8[0] = arg1->pos.z;
         arg0->unkE8[2] = 2.0f * (mathCosfInterp(arg1->unk2C << 8) * arg1->unk2E);
-    }
-    else
-    {
+    } else {
         arg0->unkB8[1] = arg1->pos.x;
         arg0->unkB8[3] = 2.0f * (mathSinfInterp(arg1->unk2C << 8) * arg1->unk2E);
         arg0->unkD8[1] = arg1->pos.y;
@@ -748,9 +650,9 @@ s32 dll_25_func_27A8(UnkCurvesStruct *arg0, CurveSetup *arg1)
 
 // offset: 0x29FC | func: 14 | export: 11
 void dll_25_func_29FC(UnkCurvesStruct* arg0) {
-    arg0->unk9C = (CurveSetup *)((s32)arg0->unk9C ^ (s32)arg0->unkA4);\
-    arg0->unkA4 = (CurveSetup *)((s32)arg0->unkA4 ^ (s32)arg0->unk9C);\
-    arg0->unk9C = (CurveSetup *)((s32)arg0->unk9C ^ (s32)arg0->unkA4);
+    arg0->unk9C = (CurveSetup*)((s32)arg0->unk9C ^ (s32)arg0->unkA4);\
+    arg0->unkA4 = (CurveSetup*)((s32)arg0->unkA4 ^ (s32)arg0->unk9C);\
+    arg0->unk9C = (CurveSetup*)((s32)arg0->unk9C ^ (s32)arg0->unkA4);
     if (arg0->unk0.unk0 >= 1.0f) {
         arg0->unk0.unk0 = 0.99f;
     }
@@ -758,33 +660,28 @@ void dll_25_func_29FC(UnkCurvesStruct* arg0) {
 
 // offset: 0x2A50 | func: 15 | export: 12
 // returns a CurveSetup of type 0x22
-CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
-{
-    CurveNode *result;
-    CurveSetup *temp_s0;
-    CurveSetup *out;
+CurveSetup* dll_25_func_2A50(Object* obj, s32 flightGroup) {
+    CurveNode* result;
+    CurveSetup* curve;
+    CurveSetup* out;
     s32 count;
-    f32 temp_fv0;
-    f32 var_fs0;
+    f32 dist;
+    f32 bestDist;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->func_1BC(&count);
+    result = gDLL_26_Curves->vtbl->GetCurves(&count);
     out = NULL;
-    var_fs0 = 1e12f;
-    for (i = 0; i < count; i++)
-    {
-        temp_s0 = result[i].setup;
-        if ((temp_s0->curveType == 0x22) &&
-            ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) &&
-                                                    (arg1 == -1))) &&
-            ((temp_s0->type22.activeBit == -1) || (mainGetBits(temp_s0->type22.activeBit) != 0)) &&
-            ((temp_s0->type22.usedBit == -1) || (mainGetBits(temp_s0->type22.usedBit) == 0)))
-        {
-            temp_fv0 = vec3DistanceSquared(&obj->globalPosition, &temp_s0->pos);
-            if (temp_fv0 < var_fs0)
-            {
-                var_fs0 = temp_fv0;
-                out = temp_s0;
+    bestDist = 1e12f;
+    for (i = 0; i < count; i++) {
+        curve = result[i].setup;
+        if ((curve->curveType == 0x22) && 
+                ((flightGroup == curve->base_type22.unk4) || ((curve->unk1A < 3) && (flightGroup == -1))) && 
+                ((curve->type22.activeBit == -1) || (mainGetBits(curve->type22.activeBit) != 0)) && 
+                ((curve->type22.usedBit == -1) || (mainGetBits(curve->type22.usedBit) == 0))) {
+            dist = vec3DistanceSquared(&obj->globalPosition, &curve->pos);
+            if (dist < bestDist) {
+                bestDist = dist;
+                out = curve;
             }
         }
     }
@@ -793,32 +690,26 @@ CurveSetup *dll_25_func_2A50(Object *obj, s32 arg1)
 
 // offset: 0x2BC4 | func: 16 | export: 13
 // returns a CurveSetup of type 0x22
-CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
-{
-    CurveNode *result;
-    CurveSetup *temp_s0;
-    CurveSetup *out;
+CurveSetup* dll_25_func_2BC4(Object* obj, s32 flightGroup) {
+    CurveNode* result;
+    CurveSetup* curve;
+    CurveSetup* out;
     s32 count;
-    f32 temp_fv0;
-    f32 var_fs0;
+    f32 dist;
+    f32 bestDist;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->func_1BC(&count);
+    result = gDLL_26_Curves->vtbl->GetCurves(&count);
     out = NULL;
     i = 0;
-    var_fs0 = 1e12f;
-    for (i = 0; i < count; i++)
-    {
-        temp_s0 = result[i].setup;
-        if (
-            (temp_s0->curveType == 0x22) &&
-            ((arg1 == temp_s0->base_type22.unk4) || ((temp_s0->unk1A < 3) && (arg1 == -1))))
-        {
-            temp_fv0 = vec3DistanceSquared(&obj->globalPosition, &temp_s0->pos);
-            if (temp_fv0 < var_fs0)
-            {
-                var_fs0 = temp_fv0;
-                out = temp_s0;
+    bestDist = 1e12f;
+    for (i = 0; i < count; i++) {
+        curve = result[i].setup;
+        if ((curve->curveType == 0x22) && ((flightGroup == curve->base_type22.unk4) || ((curve->unk1A < 3) && (flightGroup == -1)))) {
+            dist = vec3DistanceSquared(&obj->globalPosition, &curve->pos);
+            if (dist < bestDist) {
+                bestDist = dist;
+                out = curve;
             }
         }
     }
@@ -826,33 +717,29 @@ CurveSetup *dll_25_func_2BC4(Object *obj, s32 arg1)
 }
 
 // offset: 0x2CF8 | func: 17 | export: 14
-CurveSetup *dll_25_func_2CF8(Object *obj, s32 arg1)
-{
-    CurveNode *result;
+CurveSetup* dll_25_func_2CF8(Object* obj, s32 arg1) {
+    CurveNode* result;
     s32 _pad;
-    CurveSetup *temp_s0;
+    CurveSetup* curve;
     s32 count;
-    CurveSetup *out;
-    f32 temp_fv0;
-    f32 var_fs0;
+    CurveSetup* out;
+    f32 dist;
+    f32 bestDist;
     s32 i;
 
-    result = gDLL_26_Curves->vtbl->func_1BC(&count);
+    result = gDLL_26_Curves->vtbl->GetCurves(&count);
     out = NULL;
-    var_fs0 = 1e12f;
-    for (i = 0; i < count; i++)
-    {
-        temp_s0 = result[i].setup;
-        if ((temp_s0->curveType == 0x22) &&
-            (arg1 == temp_s0->unk1A) &&
-            ((temp_s0->type22.activeBit == -1) || (mainGetBits(temp_s0->type22.activeBit) != 0)) &&
-            ((temp_s0->type22.usedBit == -1) || (mainGetBits(temp_s0->type22.usedBit) == 0)))
-        {
-            temp_fv0 = vec3DistanceSquared(&obj->globalPosition, &temp_s0->pos);
-            if (temp_fv0 < var_fs0)
-            {
-                var_fs0 = temp_fv0;
-                out = temp_s0;
+    bestDist = 1e12f;
+    for (i = 0; i < count; i++) {
+        curve = result[i].setup;
+        if ((curve->curveType == 0x22) && 
+                (arg1 == curve->unk1A) && 
+                ((curve->type22.activeBit == -1) || (mainGetBits(curve->type22.activeBit) != 0)) && 
+                ((curve->type22.usedBit == -1) || (mainGetBits(curve->type22.usedBit) == 0))) {
+            dist = vec3DistanceSquared(&obj->globalPosition, &curve->pos);
+            if (dist < bestDist) {
+                bestDist = dist;
+                out = curve;
             }
         }
     }

@@ -4,34 +4,34 @@
 _exports:
 
 # ctor/dtor
-.dword dll_211_ctor
-.dword dll_211_dtor
+.dword tricky_ctor
+.dword tricky_dtor
 
 # export table
-/*0*/ .dword dll_211_setup
-/*1*/ .dword dll_211_control
-/*2*/ .dword dll_211_update
-/*3*/ .dword dll_211_print
-/*4*/ .dword dll_211_free
-/*5*/ .dword dll_211_get_model_flags
-/*6*/ .dword dll_211_get_data_size
-/*7*/ .dword dll_211_func_1064
-/*8*/ .dword dll_211_func_1074
-/*9*/ .dword dll_211_func_108C
-/*10*/ .dword dll_211_func_109C
-/*11*/ .dword dll_211_func_10B4
-/*12*/ .dword dll_211_func_10C4
-/*13*/ .dword dll_211_func_10D4
-/*14*/ .dword dll_211_func_1248
-/*15*/ .dword dll_211_func_1270
-/*16*/ .dword dll_211_func_1284
-/*17*/ .dword dll_211_func_1298
-/*18*/ .dword dll_211_func_12B4
-/*19*/ .dword dll_211_func_12C8
-/*20*/ .dword dll_211_func_12D8
-/*21*/ .dword dll_211_func_12F0
-/*22*/ .dword dll_211_func_1398
-/*23*/ .dword dll_211_func_1578
-/*24*/ .dword dll_211_func_14E8
-/*25*/ .dword dll_211_func_1550
-/*26*/ .dword dll_211_func_1230
+/*0*/ .dword tricky_obj_Setup
+/*1*/ .dword tricky_obj_Control
+/*2*/ .dword tricky_obj_Update
+/*3*/ .dword tricky_obj_Print
+/*4*/ .dword tricky_obj_Free
+/*5*/ .dword tricky_obj_GetModelFlags
+/*6*/ .dword tricky_obj_GetDataSize
+/*7*/ .dword tricky_sidekick_Func7
+/*8*/ .dword tricky_sidekick_Func8
+/*9*/ .dword tricky_sidekick_Func9
+/*10*/ .dword tricky_sidekick_Func10
+/*11*/ .dword tricky_sidekick_Func11
+/*12*/ .dword tricky_sidekick_Func12
+/*13*/ .dword tricky_sidekick_GetAvailableCommands
+/*14*/ .dword tricky_sidekick_EnableCommand
+/*15*/ .dword tricky_sidekick_GetBlueFoodCount
+/*16*/ .dword tricky_sidekick_GetRedFoodCount
+/*17*/ .dword tricky_sidekick_GetBlueAndRedFoodCount
+/*18*/ .dword tricky_sidekick_SetRedFoodCount
+/*19*/ .dword tricky_sidekick_Func19
+/*20*/ .dword tricky_sidekick_Func20
+/*21*/ .dword tricky_sidekick_Func21
+/*22*/ .dword tricky_sidekick_Func22
+/*23*/ .dword tricky_sidekick_Func23
+/*24*/ .dword tricky_sidekick_Func24
+/*25*/ .dword tricky_sidekick_Func25
+/*26*/ .dword tricky_sidekick_Func26

@@ -280,7 +280,7 @@ void EWTrobotpatrolB_initCurveNetwork(Object* self) {
     }
     // Get nearest 0x1E type curve node
     uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, nodeTypes, 1, -1);
-    objdata->nodes[0] = gDLL_26_Curves->vtbl->func_39C(uid);
+    objdata->nodes[0] = gDLL_26_Curves->vtbl->FindByUID(uid);
     if (uid == -1) {
         STUBBED_PRINTF(" Could Not find a nearest node ");
         return;
@@ -315,7 +315,7 @@ static void EWTrobotpatrolB_initCurveNetworkSearchLink(CurveSetup** nodes, u8* c
     CurveSetup* linkNode;
     s32 i;
 
-    linkNode = gDLL_26_Curves->vtbl->func_39C(linkUID);
+    linkNode = gDLL_26_Curves->vtbl->FindByUID(linkUID);
     for (i = 0; i < MAX_NODES; i++) {
         if (linkNode == nodes[i]) {
             // Path loops back on itself

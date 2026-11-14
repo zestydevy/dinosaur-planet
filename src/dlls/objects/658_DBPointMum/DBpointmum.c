@@ -465,7 +465,7 @@ CurveSetup* dll_658_func_153C(Object* self, s32 arg1, Vec3f* arg2, s32 arg3) {
     
     curveUID = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, sp2C, 2, arg1);
     if (curveUID >= 0) {
-        curveSetup = gDLL_26_Curves->vtbl->func_39C(curveUID);
+        curveSetup = gDLL_26_Curves->vtbl->FindByUID(curveUID);
         arg2->x = curveSetup->pos.x;
         arg2->y = curveSetup->pos.y;
         arg2->z = curveSetup->pos.z;

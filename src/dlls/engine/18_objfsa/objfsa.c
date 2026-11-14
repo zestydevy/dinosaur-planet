@@ -521,7 +521,7 @@ void objfsa_func_12F4(Object *obj, ObjFSA_Data *data, f32 arg2, f32 arg3) {
         data->unk2B4 = 0.0f;
         return;
     }
-    temp_v0 = gDLL_26_Curves->vtbl->func_39C(data->unk330);
+    temp_v0 = gDLL_26_Curves->vtbl->FindByUID(data->unk330);
     if (temp_v0 == NULL) {
         data->unk2B4 = 0.0f;
         return;

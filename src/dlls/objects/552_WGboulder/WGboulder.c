@@ -42,7 +42,7 @@ void WGboulder_control(Object* self) {
         curveType = 2;
         curveUID = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.f[1], self->srt.transl.f[2], &curveType, 1, 0);
         if (curveUID != -1) {
-            curveSetup = gDLL_26_Curves->vtbl->func_39C(curveUID);
+            curveSetup = gDLL_26_Curves->vtbl->FindByUID(curveUID);
             self->srt.transl.x = curveSetup->pos.x;
             self->srt.transl.z = curveSetup->pos.z;
         }

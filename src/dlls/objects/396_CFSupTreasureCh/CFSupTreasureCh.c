@@ -312,7 +312,7 @@ s32 CFSupTreasureCh_func_BD8(s32 arg0, SRT *transform) {
 
     uID = gDLL_26_Curves->vtbl->func_218C(arg0);
     if (uID >= 0) {
-        curveSetup = gDLL_26_Curves->vtbl->func_39C(uID);
+        curveSetup = gDLL_26_Curves->vtbl->FindByUID(uID);
         transform->transl.x = curveSetup->pos.x;
         transform->transl.y = curveSetup->pos.y;
         transform->transl.z = curveSetup->pos.z;

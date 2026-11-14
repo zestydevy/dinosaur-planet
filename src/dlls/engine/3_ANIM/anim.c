@@ -2111,7 +2111,7 @@ static void anim_func_4FC4(Object* animObj, AnimObj_Data* st) {
         return;
     }
     
-    curveSetup = gDLL_26_Curves->vtbl->func_39C(st->unk28);
+    curveSetup = gDLL_26_Curves->vtbl->FindByUID(st->unk28);
     if (curveSetup == NULL) {
         return;
     }
@@ -2166,11 +2166,11 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
 
     sp80 = arg1->f[2];
     anim_func_57A4(arg0, sp80);
-    var_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk0);
+    var_s1 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk0);
     
     if (var_s1 != NULL) {
         if (arg0->unk4 >= 0) {
-            sp84 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+            sp84 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk4);
             for (var_v1 = 0; var_v1 < 9 && arg0->unk8[var_v1] <= sp80; var_v1++) {}
             var_v1--;
             sp7C = var_v1;
@@ -2213,7 +2213,7 @@ static s32 anim_func_51E0(UnkAnimStruct* arg0, Vec3f* arg1, Vec3f* arg2, s16* ar
         }
     }
     if (var_s1 == NULL) {
-        var_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+        var_s1 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk4);
     }
     
     if (var_s1 != NULL) {
@@ -2245,7 +2245,7 @@ static void anim_func_5698(UnkAnimStruct* arg0, s32 arg1) {
 
     arg0->unk0 = arg1;
     arg0->unk4 = -1;
-    temp_v0 = gDLL_26_Curves->vtbl->func_39C(arg1);
+    temp_v0 = gDLL_26_Curves->vtbl->FindByUID(arg1);
 
     for (var_a0 = 1, index = 0; index < 4; index++, var_a0 *= 2){
         if ((temp_v0->links[index] >= 0) && !(temp_v0->unk1B & var_a0)) {
@@ -2260,7 +2260,7 @@ static void anim_func_5698(UnkAnimStruct* arg0, s32 arg1) {
     }
     
     arg0->unk4 = var_a2;
-    anim_func_5A48(arg0, temp_v0, gDLL_26_Curves->vtbl->func_39C(var_a2), 0, 0);
+    anim_func_5A48(arg0, temp_v0, gDLL_26_Curves->vtbl->FindByUID(var_a2), 0, 0);
 }
 
 // offset: 0x57A4 | func: 28
@@ -2273,7 +2273,7 @@ void anim_func_57A4(UnkAnimStruct* arg0, f32 arg1) {
 
     var_s0 = NULL;
     if (arg1 < arg0->unk8[0]) {
-        var_s0 = gDLL_26_Curves->vtbl->func_39C(arg0->unk0);
+        var_s0 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk0);
     }
     if (var_s0 != NULL) {
         while (arg1 < arg0->unk8[0]) {
@@ -2294,11 +2294,11 @@ void anim_func_57A4(UnkAnimStruct* arg0, f32 arg1) {
             arg0->unk4 = arg0->unk0;
             arg0->unk0 = sp4C;
             temp_s1 = var_s0;
-            var_s0 = gDLL_26_Curves->vtbl->func_39C(sp4C);
+            var_s0 = gDLL_26_Curves->vtbl->FindByUID(sp4C);
             anim_func_5A48(arg0, var_s0, temp_s1, arg0->unk8[0], 1);
         }
     }
-    temp_s1 = gDLL_26_Curves->vtbl->func_39C(arg0->unk4);
+    temp_s1 = gDLL_26_Curves->vtbl->FindByUID(arg0->unk4);
     if (temp_s1 != NULL) {
         while (arg0->unk28 <= arg1) {
             var_v1 = 1;
@@ -2318,7 +2318,7 @@ void anim_func_57A4(UnkAnimStruct* arg0, f32 arg1) {
             arg0->unk0 = arg0->unk4;
             arg0->unk4 = sp4C;
             var_s0 = temp_s1;
-            temp_s1 = gDLL_26_Curves->vtbl->func_39C(sp4C);
+            temp_s1 = gDLL_26_Curves->vtbl->FindByUID(sp4C);
             anim_func_5A48(arg0, var_s0, temp_s1, arg0->unk28, 0);
         }
     }

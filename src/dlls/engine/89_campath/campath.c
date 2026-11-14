@@ -107,8 +107,8 @@ void campath_func_18(Cam* cam, s32 arg1, CamPath_Params* data) {
     }
     */
     campath_func_1F9C(&sState->controlPath, &sState->movePath, player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, sState->pathID);
-    movePathSetup = gDLL_26_Curves->vtbl->func_39C(sState->movePath);
-    controlPathSetup = gDLL_26_Curves->vtbl->func_39C(sState->controlPath);
+    movePathSetup = gDLL_26_Curves->vtbl->FindByUID(sState->movePath);
+    controlPathSetup = gDLL_26_Curves->vtbl->FindByUID(sState->controlPath);
     campath_findPathLinks(movePathSetup, movePathLinkIDs, sState->pathID);
     campath_findPathLinks(controlPathSetup, controlPathLinkIDs, sState->pathID);
     campath_prepareSplines(movePathLinkIDs, splineX, splineY, splineZ, splineYaw, splinePitch, splineRoll, splineFOV);
@@ -199,8 +199,8 @@ void campath_func_588(Cam* cam) {
 
     player = cam->player;
     btns = joyGetPressed(0);
-    setup = gDLL_26_Curves->vtbl->func_39C(sState->controlPath);
-    campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(sState->movePath), movePathLinkIDs, sState->pathID);
+    setup = gDLL_26_Curves->vtbl->FindByUID(sState->controlPath);
+    campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(sState->movePath), movePathLinkIDs, sState->pathID);
     campath_findPathLinks(setup, spE8, sState->pathID);
     campath_prepareSplines(movePathLinkIDs, splineX, splineY, splineZ, splineYaw, splinePitch, splineRoll, splineFov);
     
@@ -208,10 +208,10 @@ void campath_func_588(Cam* cam) {
     if (tValue < 0.0f) {
         if (spE8[0] >= 0) {
             sState->controlPath = spE8[0];
-            campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(sState->controlPath), spE8, sState->pathID);
+            campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(sState->controlPath), spE8, sState->pathID);
             if (movePathLinkIDs[0] >= 0) {
                 sState->movePath = movePathLinkIDs[0];
-                campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(sState->movePath), movePathLinkIDs, sState->pathID);
+                campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(sState->movePath), movePathLinkIDs, sState->pathID);
                 campath_prepareSplines(movePathLinkIDs, splineX, splineY, splineZ, splineYaw, splinePitch, splineRoll, splineFov);
                 tValue = campath_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
                 sState->tValueEase += 1.0f;
@@ -224,10 +224,10 @@ void campath_func_588(Cam* cam) {
     } else if (tValue > 1.0f) {
         if ((spE8[2] >= 0) && (spE8[3] >= 0)) {
             sState->controlPath = spE8[2];
-            campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(sState->controlPath), spE8, sState->pathID);
+            campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(sState->controlPath), spE8, sState->pathID);
             if ((movePathLinkIDs[2] >= 0) && (movePathLinkIDs[3] >= 0)) {
                 sState->movePath = movePathLinkIDs[2];
-                campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(sState->movePath), movePathLinkIDs, sState->pathID);
+                campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(sState->movePath), movePathLinkIDs, sState->pathID);
                 campath_prepareSplines(movePathLinkIDs, splineX, splineY, splineZ, splineYaw, splinePitch, splineRoll, splineFov);
                 tValue = campath_func_14D8(player->srt.transl.x, player->srt.transl.y, player->srt.transl.z, spE8);
                 sState->tValueEase -= 1.0f;
@@ -245,7 +245,7 @@ void campath_func_588(Cam* cam) {
     cam->srt.transl.y = curvesBSpline(splineY, tValue, NULL);
     cam->srt.transl.z = curvesBSpline(splineZ, tValue, NULL);
 
-    flags = gDLL_26_Curves->vtbl->func_39C(sState->movePath)->campath.unk3B;
+    flags = gDLL_26_Curves->vtbl->FindByUID(sState->movePath)->campath.unk3B;
     if ((flags & CamPath_FLAG_Aim_Yaw_at_Player) == FALSE) {
         cam->srt.yaw = (s16) curvesCatmullRom(splineYaw, tValue, NULL) + M_180_DEGREES;
     }
@@ -441,7 +441,7 @@ static f32 campath_func_14D8(f32 x, f32 y, f32 z, s32* linkIDs) {
     CurveSetup* setups[4];
     f32 temp;
 
-    for (i = 0; i < 4; i++) setups[i] = gDLL_26_Curves->vtbl->func_39C(linkIDs[i]);
+    for (i = 0; i < 4; i++) setups[i] = gDLL_26_Curves->vtbl->FindByUID(linkIDs[i]);
 
     sp7C = var_f18 = setups[2]->pos.x - setups[1]->pos.x;
     sp78 = var_f16 = setups[2]->pos.z - setups[1]->pos.z;
@@ -505,7 +505,7 @@ static void campath_findPathLinks(CurveSetup* curveSetup, s32* linkUIDs, s32 pat
 
         for (i = 0; i < 5; i++) {
             if (curveSetup->links[i] >= 0) {
-                linkA = gDLL_26_Curves->vtbl->func_39C(curveSetup->links[i]);
+                linkA = gDLL_26_Curves->vtbl->FindByUID(curveSetup->links[i]);
                 if ((linkA != NULL) && ((pathID == linkA->campath.unk31) || (pathID == linkA->campath.unk32) || (pathID == linkA->campath.unk33))) {
                     if ((curveSetup->unk1B & (1 << i)) != 0) {
                         linkUIDs[0] = curveSetup->links[i];
@@ -517,12 +517,12 @@ static void campath_findPathLinks(CurveSetup* curveSetup, s32* linkUIDs, s32 pat
         }
 
         if (linkUIDs[2] > -1) {
-            linkB = gDLL_26_Curves->vtbl->func_39C(linkUIDs[2]);
+            linkB = gDLL_26_Curves->vtbl->FindByUID(linkUIDs[2]);
             if (linkB != NULL) {
                 if ((pathID == linkB->campath.unk31) || (pathID == linkB->campath.unk32) || (pathID == linkB->campath.unk33)) {
                     for (i = 0; i < 5; i++) {
                         if ((linkB->links[i] >= 0) && !(linkB->unk1B & (1 << i))) {
-                            linkA = gDLL_26_Curves->vtbl->func_39C(linkB->links[i]);
+                            linkA = gDLL_26_Curves->vtbl->FindByUID(linkB->links[i]);
                             if ((linkA != NULL) && ((pathID == linkA->campath.unk31) || (pathID == linkA->campath.unk32) || (pathID == linkA->campath.unk33))) {
                                 linkUIDs[3] = linkB->links[i];
                             }
@@ -547,7 +547,7 @@ static void campath_prepareSplines(s32* pathLinkIDs, f32* splineX, f32* splineY,
     CurveSetup* link[4];
 
     for (i = 0; i < 4; i++) {
-        link[i] = gDLL_26_Curves->vtbl->func_39C(pathLinkIDs[i]);
+        link[i] = gDLL_26_Curves->vtbl->FindByUID(pathLinkIDs[i]);
         if (link[i] != NULL) {
             splineX[i] = link[i]->pos.x;
             splineY[i] = link[i]->pos.y;
@@ -621,7 +621,7 @@ static CurveSetup* campath_func_1E5C(CurveSetup* arg0, s32* arg1, s32 arg2) {
             while (var_s0 < 5) {
                 temp_a0 = arg0->links[var_s0];
                 if ((temp_a0 >= 0) && (arg0->unk1B & (1 << var_s0))) {
-                    temp_v0_2 = gDLL_26_Curves->vtbl->func_39C(temp_a0);
+                    temp_v0_2 = gDLL_26_Curves->vtbl->FindByUID(temp_a0);
                     if ((temp_v0_2 != NULL) && ((arg2 == temp_v0_2->campath.unk31) || (arg2 == temp_v0_2->campath.unk32) || (arg2 == temp_v0_2->campath.unk33))) {
                         arg0 = temp_v0_2;
                         var_s3 = 0;
@@ -652,13 +652,13 @@ static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4
     s32 var_s0_3;
     s32 var_s4;
 
-    temp_s1 = gDLL_26_Curves->vtbl->func_39C(*arg0);
+    temp_s1 = gDLL_26_Curves->vtbl->FindByUID(*arg0);
     var_s0 = 1;
     var_s4 = 0;
     while (var_s4 < 5) {
         temp_a0 = temp_s1->links[var_s4];
         if ((temp_a0 >= 0) && !(temp_s1->unk1B & (1 << var_s4))) {
-            temp_v0 = gDLL_26_Curves->vtbl->func_39C(temp_a0);
+            temp_v0 = gDLL_26_Curves->vtbl->FindByUID(temp_a0);
             if ((temp_v0 != NULL) && ((arg5 == temp_v0->campath.unk31) || (arg5 == temp_v0->campath.unk32) || (arg5 == temp_v0->campath.unk33))) {
                 var_s0 = 0;
                 var_s4 = 5; // break
@@ -671,7 +671,7 @@ static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4
         while (var_s4 < 5) {
             temp_a0 = temp_s1->links[var_s4];
             if ((temp_a0 >= 0) && (temp_s1->unk1B & (1 << var_s4))) {
-                temp_v0 = gDLL_26_Curves->vtbl->func_39C(temp_a0);
+                temp_v0 = gDLL_26_Curves->vtbl->FindByUID(temp_a0);
                 if ((temp_v0 != NULL) && ((arg5 == temp_v0->campath.unk31) || (arg5 == temp_v0->campath.unk32) || (arg5 == temp_v0->campath.unk33))) {
                     *arg0 = temp_s1->links[var_s4];
                     var_s4 = 5; // break
@@ -682,7 +682,7 @@ static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4
     }
     do {
         var_s0 = 1;
-        campath_findPathLinks(gDLL_26_Curves->vtbl->func_39C(*arg0), sp50, arg5);
+        campath_findPathLinks(gDLL_26_Curves->vtbl->FindByUID(*arg0), sp50, arg5);
         temp_fv0 = campath_func_14D8(arg2, arg3, arg4, sp50);
         if (temp_fv0 < 0.0f) {
             if (sp50[0] >= 0) {
@@ -696,16 +696,16 @@ static void campath_func_1F9C(s32* arg0, s32* arg1, f32 arg2, f32 arg3, f32 arg4
             }
         }
     } while (var_s0 == 0);
-    campath_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg0), &sp68, arg5);
-    *arg1 = campath_func_1E5C(gDLL_26_Curves->vtbl->func_39C(*arg1), &sp64, arg5)->uID;
+    campath_func_1E5C(gDLL_26_Curves->vtbl->FindByUID(*arg0), &sp68, arg5);
+    *arg1 = campath_func_1E5C(gDLL_26_Curves->vtbl->FindByUID(*arg1), &sp64, arg5)->uID;
     var_s4 = 0;
     while (var_s4 < sp68) {
-        temp_s2 = gDLL_26_Curves->vtbl->func_39C(*arg1);
+        temp_s2 = gDLL_26_Curves->vtbl->FindByUID(*arg1);
         var_s0_3 = 0;
         while (var_s0_3 < 5) {
             temp_a0 = temp_s2->links[var_s0_3];
             if ((temp_a0 >= 0) && !(temp_s2->unk1B & (1 << var_s0_3))) {
-                temp_v0 = gDLL_26_Curves->vtbl->func_39C(temp_a0);
+                temp_v0 = gDLL_26_Curves->vtbl->FindByUID(temp_a0);
                 if ((temp_v0 != NULL) && ((arg5 == temp_v0->campath.unk31) || (arg5 == temp_v0->campath.unk32) || (arg5 == temp_v0->campath.unk33))) {
                     *arg1 = temp_s2->links[var_s0_3];
                     var_s0_3 = 5; // break

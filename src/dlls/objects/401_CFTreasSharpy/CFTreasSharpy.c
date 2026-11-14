@@ -429,7 +429,7 @@ static void CFTreasSharpy_func_1460(Object* self, s32 arg1, Vec3f* arg2, s32 arg
     }
     uid = gDLL_26_Curves->vtbl->func_1E4(self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, curveTypes, ARRAYCOUNT(curveTypes), arg1);
     if (uid >= 0) {
-        setup = gDLL_26_Curves->vtbl->func_39C(uid);
+        setup = gDLL_26_Curves->vtbl->FindByUID(uid);
         arg2->x = setup->pos.x;
         arg2->y = setup->pos.y;
         arg2->z = setup->pos.z;
