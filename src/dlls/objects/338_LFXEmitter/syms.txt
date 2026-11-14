@@ -1,0 +1,21 @@
+.text = 0x0:
+LFXEmitter_ctor = 0x0;
+LFXEmitter_dtor = 0x24;
+LFXEmitter_obj_Setup = 0x30;
+LFXEmitter_obj_Control = 0x180;
+LFXEmitter_obj_Update = 0x4A8;
+LFXEmitter_obj_Print = 0x4B4;
+LFXEmitter_obj_Free = 0x4CC;
+LFXEmitter_obj_GetModelFlags = 0x588;
+LFXEmitter_obj_GetDataSize = 0x598;
+LFXEmitter_copyLightAction = 0x5AC;
+LFXEmitter_GetActionSlot = 0x6B8;
+LFXEmitter_Func_6DC = 0x6DC;
+
+.rodata = 0x7C4:
+
+.data = 0x7D4:
+data_0 = 0x0; // absolute:0x7D4
+
+.bss = 0x7E4:
+sLastAction = 0x0; // absolute:0x7E4

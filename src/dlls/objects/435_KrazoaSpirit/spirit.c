@@ -1,5 +1,6 @@
 #include "dll.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/gamebits.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/102_LFXEmitter.h"
 #include "sys/gfx/animseq.h"
@@ -125,19 +126,19 @@ void Spirit_control(Object* self) {
         lfxSetup->base.x = self->srt.transl.x;
         lfxSetup->base.y = self->srt.transl.y;
         lfxSetup->base.z = self->srt.transl.z;
-        lfxSetup->unk20 = 0;
+        lfxSetup->lifetime = 0;
         
         if (objData->lastMessage == 1) {
-            lfxSetup->unk1E = 0x1CB;
+            lfxSetup->actionIndex = 0x1CB;
         } else {
-            lfxSetup->unk1E = 0x1CF;
+            lfxSetup->actionIndex = 0x1CF;
         }
         
-        lfxSetup->unk22 = -1;
-        lfxSetup->unk18 = 0;
-        lfxSetup->unk1A = 0;
-        lfxSetup->unk1C = 0;
-        lfxSetup->unk24 = 0;
+        lfxSetup->enableBit = NO_GAMEBIT;
+        lfxSetup->rollRate = 0;
+        lfxSetup->pitchRate = 0;
+        lfxSetup->yawRate = 0;
+        lfxSetup->followCurve = FALSE;
         data_lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         objData->lastMessage = 0;
     } else if (objData->lastMessage == 2) {

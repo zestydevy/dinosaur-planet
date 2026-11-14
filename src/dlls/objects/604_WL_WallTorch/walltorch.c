@@ -108,8 +108,8 @@ void WL_WallTorch_obj_Control(Object* self) {
             lfxSetup->base.x = self->srt.transl.x;
             lfxSetup->base.y = self->srt.transl.y;
             lfxSetup->base.z = self->srt.transl.z;
-            lfxSetup->unk1E = 140;
-            lfxSetup->unk22 = -1;
+            lfxSetup->actionIndex = 140;
+            lfxSetup->enableBit = NO_GAMEBIT;
             objData->lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         } else if (playerDistance >= 95.0f) {
             if (objData->lfxEmitter != NULL) {
@@ -159,8 +159,8 @@ void WL_WallTorch_obj_Control(Object* self) {
                 lfxSetup->base.x = self->srt.transl.x;
                 lfxSetup->base.y = self->srt.transl.y;
                 lfxSetup->base.z = self->srt.transl.z;
-                lfxSetup->unk1E = 0x12A;
-                lfxSetup->unk22 = -1;
+                lfxSetup->actionIndex = 0x12A;
+                lfxSetup->enableBit = NO_GAMEBIT;
                 objData->lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
                 return;
             }

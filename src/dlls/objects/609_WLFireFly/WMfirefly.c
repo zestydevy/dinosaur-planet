@@ -134,8 +134,8 @@ void WMFireFly_control(Object* self) {
                 lfxSetup->base.x = self->srt.transl.x;
                 lfxSetup->base.y = self->srt.transl.y;
                 lfxSetup->base.z = self->srt.transl.z;
-                lfxSetup->unk1E = mathRnd(0, 1) + 0x1AA;
-                lfxSetup->unk22 = -1;
+                lfxSetup->actionIndex = mathRnd(0, 1) + 0x1AA;
+                lfxSetup->enableBit = NO_GAMEBIT;
                 objData->lfxEmitter = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
             }
 

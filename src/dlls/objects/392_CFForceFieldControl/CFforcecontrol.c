@@ -272,12 +272,12 @@ Object* CFForceControl_func_CF0(Object* self, f32 arg1, f32 arg2, f32 arg3) {
     emitter->base.x = self->srt.transl.x + (arg1 * 100.0f);
     emitter->base.y = self->srt.transl.y + (arg2 * 100.0f);
     emitter->base.z = self->srt.transl.z + (arg3 * 100.0f);
-    emitter->unk20 = 0x3C;
-    emitter->unk1E = 0x19C;
-    emitter->unk18 = mathRnd(-4000, 4000);
-    emitter->unk1A = 0;
-    emitter->unk1C = mathRnd(-4000, 4000);
-    emitter->unk24 = 0;
-    emitter->unk22 = 0x95;
+    emitter->lifetime = 0x3C;
+    emitter->actionIndex = 0x19C;
+    emitter->rollRate = mathRnd(-4000, 4000);
+    emitter->pitchRate = 0;
+    emitter->yawRate = mathRnd(-4000, 4000);
+    emitter->followCurve = FALSE;
+    emitter->enableBit = BIT_ALWAYS_1;
     return objSetupObject(&emitter->base, OBJINIT_STANDALONE, self->mapID, -1, self->parent);
 }

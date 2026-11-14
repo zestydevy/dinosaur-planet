@@ -189,16 +189,16 @@ Object* DRLavaControl_createLight(Object* self, s32 lfxSetupUnk1E) {
     setup->base.x = self->srt.transl.x;
     setup->base.y = self->srt.transl.y + 30.0f;
     setup->base.z = self->srt.transl.z;
-    setup->unk20 = 0;
-    setup->unk1E = lfxSetupUnk1E;
-    setup->unk22 = -1;
-    setup->unk18 = 0;
+    setup->lifetime = 0;
+    setup->actionIndex = lfxSetupUnk1E;
+    setup->enableBit = NO_GAMEBIT;
+    setup->rollRate = 0;
     mathRnd(-500, 500);
-    setup->unk1A = 0;
-    setup->unk1C = 0;
+    setup->pitchRate = 0;
+    setup->yawRate = 0;
     mathRnd(-500, 500);
-    setup->unk24 = 1;
-    setup->unk25 = 50;
+    setup->followCurve = 1;
+    setup->curveSpeed = 50;
     
     return objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

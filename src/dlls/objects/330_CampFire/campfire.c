@@ -155,14 +155,14 @@ void campfire_control(Object* self) {
             lfxSetup->base.x = self->srt.transl.x;
             lfxSetup->base.y = self->srt.transl.y + mathRnd(0, 30);
             lfxSetup->base.z = self->srt.transl.z;
-            lfxSetup->unk1E = objSetup->lfxIdx;
-            if (lfxSetup->unk1E == 0) {
-                lfxSetup->unk1E = 0x59;
+            lfxSetup->actionIndex = objSetup->lfxIdx;
+            if (lfxSetup->actionIndex == 0) {
+                lfxSetup->actionIndex = 0x59;
             }
-            lfxSetup->unk22 = -1;
-            lfxSetup->unk18 = 2400;
-            lfxSetup->unk1A = 2400;
-            lfxSetup->unk1C = 200;
+            lfxSetup->enableBit = NO_GAMEBIT;
+            lfxSetup->rollRate = 2400;
+            lfxSetup->pitchRate = 2400;
+            lfxSetup->yawRate = 200;
             objData->light = objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
         }
     }

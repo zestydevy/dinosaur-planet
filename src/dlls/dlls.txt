@@ -251,6 +251,7 @@
 333 = objects/333_EnvEmitter
 334 = objects/334_Transporter
 336 = objects/336_FirePole
+338 = objects/338_LFXEmitter
 339 = objects/339_SeqProp
 341 = objects/341_DoorOpen
 343 = objects/343_LightPole
