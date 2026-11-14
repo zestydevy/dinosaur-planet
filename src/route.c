@@ -40,7 +40,7 @@ void routeFree(Route *route) {
 }
 
 // public
-s32 routeSetup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void *goal, s32 arg5) {
+s32 routeSetup(Route* route, CurveSetup* startCurve, Vec3f* goalPos, void* goal, s32 arg5) {
     RoutePoint* startPoint;
 
     routeClear(route);
@@ -178,18 +178,18 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
     CurveSetup* neighbor;
     s32 neighborCurveUID;
     s32 i;
-    u8 var_fp;
+    u8 incomingLinkMask;
 
     base = basePoint->curve;
     if (route->unk28 != 0) {
-        var_fp = base->unk1B;
+        incomingLinkMask = base->unk1B;
     } else {
-        var_fp = ~base->unk1B;
+        incomingLinkMask = ~base->unk1B;
     }
     
     for (i = 0; i < 4; i++) {
         neighborCurveUID = base->links[i];
-        if ((neighborCurveUID >= 0) && (var_fp & (1 << i))) {
+        if ((neighborCurveUID >= 0) && (incomingLinkMask & (1 << i))) {
             neighbor = gDLL_26_Curves->vtbl->FindByUID(neighborCurveUID);
             if (neighbor != NULL) {
                 switch (neighbor->curveType) {
@@ -393,12 +393,12 @@ s32 routeFindPoint(Route* route, CurveSetup* curve, s32* outVisited) {
 }
 
 s32 routeIsGoal(Route* route, RoutePoint* point) {
-    UnkVoxmap2Struct *new_var;
+    UnkVoxmap2Struct* new_var;
     CurveSetup* temp_a1;
-    void *temp_v0;
-    s32 temp3;
+    void* goal;
+    s32 walkGroup;
 
-    temp_v0 = route->goal;
+    goal = route->goal;
     switch (point->curve->curveType) {
     case 0x22: // Kyte
         new_var = (UnkVoxmap2Struct*)route->goal;
@@ -408,31 +408,32 @@ s32 routeIsGoal(Route* route, RoutePoint* point) {
         return new_var->unk2 == point->curve->base_type22.unk4;
     case 0x24: // Tricky
         if (!(point->prevPointIdx & 0x80)) {
-            temp3 = point->curve->unk3;
-            if (temp3 != 0) {
-                return (s32)temp_v0 == point->curve->unk3;
+            walkGroup = point->curve->unk3;
+            if (walkGroup != 0) {
+                // found exact goal
+                return (s32)goal == point->curve->unk3;
             }
 
             if (route->routePoints[point->prevPointIdx].curve) {}
 
             temp_a1 = route->routePoints[point->prevPointIdx].curve;
             if (point->curve->uID == (u32)temp_a1->links[0]) {
-                return (s32)temp_v0 == temp_a1->base_type24.unk4;
+                return (s32)goal == temp_a1->base_type24.linkWalkGroups[0];
             }
             if (point->curve->uID == (u32)temp_a1->links[1]) {
-                return (s32)temp_v0 == temp_a1->base_type24.unk5;
+                return (s32)goal == temp_a1->base_type24.linkWalkGroups[1];
             }
             if (point->curve->uID == (u32)temp_a1->links[2]) {
-                return (s32)temp_v0 == temp_a1->base_type24.unk6;
+                return (s32)goal == temp_a1->base_type24.linkWalkGroups[2];
             }
             if (point->curve->uID == (u32)temp_a1->links[3]) {
-                return (s32)temp_v0 == temp_a1->base_type24.unk7;
+                return (s32)goal == temp_a1->base_type24.linkWalkGroups[3];
             }
 
             // "isEndNode for tricky failed!\n" (default.dol)
         }
         return 0;
     default:
-      return ((CurveSetup*)temp_v0) == (point->curve);
+      return ((CurveSetup*)goal) == (point->curve);
     }
 }

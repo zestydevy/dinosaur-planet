@@ -34,7 +34,7 @@ typedef struct {
     /*020*/ f32 unk20;
     /*024*/ f32 unk24;
     /*028*/ Object* unk28;
-    /*02C*/ Vec3f *unk2C;
+    /*02C*/ Vec3f *pathGoalPos;
     /*030*/ f32 unk30[2];
     /*038*/ f32 unk38;
     /*03C*/ f32 unk3C;
@@ -52,7 +52,7 @@ typedef struct {
     /*068*/ Vec3f *unk68;
     /*06C*/ s16 unk6C[4];
     /*074*/ Vec3f unk74[4];
-    /*0A4*/ u16 unkA4;
+    /*0A4*/ u16 currWalkGroup;
     /*0A6*/ s16 unkA6;
     /*0A8*/ Vec3f unkA8;
     /*0B4*/ Vec3f unkB4;
@@ -74,7 +74,7 @@ typedef struct {
     /*4D8*/ u16 unk4D8;
     /*4DA*/ u8 unk4DA;
     /*4DB*/ u8 pad4DB;
-    /*4DC*/ Route unk4DC[4];
+    /*4DC*/ Route routes[4];
     /*59C*/ Route unk59C;
     /*5CC*/ CurveSetup *unk5CC;
     /*5D0*/ void *unk5D0;
@@ -180,9 +180,9 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* arg2);
 static void tricky_func_7188(Object* self);
 static void tricky_func_726C(Object* self);
 static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, Triangle** pols);
-static void tricky_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg3);
+static void tricky_findRouteStarts(Object* self, u8* routeFlags, s16 currWalkGroup, CurveSetup** startCurves);
 static CurveSetup* tricky_func_7A7C(Tricky_Data* objData, CurveSetup* arg1, s32 arg2, u8 arg3);
-static s8 tricky_func_7BAC(Tricky_Data* objData, CurveSetup** arg1, u8 *arg2, void* arg3);
+static s8 tricky_func_7BAC(Tricky_Data* objData, CurveSetup** arg1, u8 *arg2, s32 goalWalkGroup);
 static CurveSetup* tricky_func_7DB8(Tricky_Data* objData, CurveSetup* arg1, void* arg2);
 static CurveSetup* tricky_func_7EFC(Tricky_Data* objData, CurveSetup* arg1, s32 arg2, s32 arg3);
 static CurveSetup* tricky_func_8114(CurveSetup* setup);
@@ -300,10 +300,10 @@ void tricky_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
 
     self->animCallback = tricky_animCallback;
     objAddObjectType(self, OBJTYPE_Sidekick);
-    routeInit(&objData->unk4DC[0]);
-    routeInit(&objData->unk4DC[1]);
-    routeInit(&objData->unk4DC[2]);
-    routeInit(&objData->unk4DC[3]);
+    routeInit(&objData->routes[0]);
+    routeInit(&objData->routes[1]);
+    routeInit(&objData->routes[2]);
+    routeInit(&objData->routes[3]);
     routeInit(&objData->unk59C);
     objData->stats = gDLL_29_Gplay->vtbl->get_sidekick_stats();
     objData->player = objGetPlayer();
@@ -311,7 +311,7 @@ void tricky_obj_Setup(Object* self, ObjSetup* setup, s32 arg2) {
     objData->state = TRICKY_STATE_0;
     objData->unk1B = 0;
     objData->unk5D4 = 0;
-    objData->unkA4 = 0;
+    objData->currWalkGroup = 0;
     objData->unk14 = temp_v1;
     objData->unk10 = temp_v1;
     objData->unkC = temp_v1;
@@ -589,10 +589,10 @@ void tricky_obj_Free(Object* self, s32 a1) {
     Tricky_Data* temp_s0;
 
     temp_s0 = self->data;
-    routeFree(&temp_s0->unk4DC[0]);
-    routeFree(&temp_s0->unk4DC[1]);
-    routeFree(&temp_s0->unk4DC[2]);
-    routeFree(&temp_s0->unk4DC[3]);
+    routeFree(&temp_s0->routes[0]);
+    routeFree(&temp_s0->routes[1]);
+    routeFree(&temp_s0->routes[2]);
+    routeFree(&temp_s0->routes[3]);
     routeFree(&temp_s0->unk59C);
     objFreeObjectType(self, 1);
     gDLL_13_Expgfx->vtbl->func4(self);
@@ -1116,7 +1116,7 @@ static void tricky_state_3(Object* self, Tricky_Data* objData) {
 
     switch (objData->unk1A) {
     case 0:
-        sp38 = gDLL_25->vtbl->FindNearestTrickyCurve(objData->unk2C, -1, 2);
+        sp38 = gDLL_25->vtbl->FindNearestTrickyCurve(objData->pathGoalPos, -1, 2);
         objData->unk5E4[2] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[0]);
         objData->unk5E4[0] = (Object*) sp38;
         objData->unk5E4[1] = (Object*) gDLL_26_Curves->vtbl->FindByUID(sp38->links[1]);
@@ -1557,7 +1557,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
 
     switch (objData->unk1A) {
     case 0:
-        objData->unk608 = gDLL_25->vtbl->FindWalkGroup(objData->unk2C, NULL);
+        objData->unk608 = gDLL_25->vtbl->FindWalkGroup(objData->pathGoalPos, NULL);
         objData->unk5F4_vec.x = objData->unk28->globalPosition.x - (mathSinfInterp(objData->unk28->srt.yaw) * 15.0f);
         objData->unk5F4_vec.y = objData->unk28->globalPosition.y;
         temp_ft0 = mathCosfInterp(objData->unk28->srt.yaw) * 15.0f;
@@ -1604,7 +1604,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
                 objData->unk1A = 6;
             }
         } else {
-            if (gDLL_25->vtbl->FindWalkGroup(objData->unk2C, NULL) != objData->unk608) {
+            if (gDLL_25->vtbl->FindWalkGroup(objData->pathGoalPos, NULL) != objData->unk608) {
                 tricky_func_9024(objData, &objData->unk28->globalPosition);
                 objData->unk1A = 2;
             }
@@ -1639,7 +1639,7 @@ static void tricky_state_11(Object* self, Tricky_Data* objData) {
             tricky_func_95E0(self, objData, _data_0[mathRnd(10, 12)]);
         }
         objData->unk600 += gUpdateRateF;
-        if (((objData->unk600 >= 150.0f) && (vec3DistanceXZSquared(objData->unk2C, &self->srt.transl) >= 2500.0f)) || (tricky_func_3C1C(objData->unk604) == 0)) {
+        if (((objData->unk600 >= 150.0f) && (vec3DistanceXZSquared(objData->pathGoalPos, &self->srt.transl) >= 2500.0f)) || (tricky_func_3C1C(objData->unk604) == 0)) {
             objAnimSet(self, 0x105, 1.0f, 0);
             objData->unk38 = -0.01f;
             objData->unk1A = 8;
@@ -1803,7 +1803,7 @@ static void tricky_state_16(Object* self, Tricky_Data* objData) {
         return;
     case 1:
         tricky_func_885C(self);
-        if (vec3DistanceXZSquared(&self->srt.transl, objData->unk2C) > 5625.0f) {
+        if (vec3DistanceXZSquared(&self->srt.transl, objData->pathGoalPos) > 5625.0f) {
             objData->unk1A = 0;
             return;
         }
@@ -2013,19 +2013,19 @@ static void tricky_func_52B8(Object* self, Tricky_Data* objData) {
 // offset: 0x53E4 | func: 54
 static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     s32 pad;
-    s32 spC0;
-    s32 spBC;
-    u32 spB8;
-    Vec3f* temp_s1;
-    f32 temp_fv0;
+    s32 currWalkGroup;
+    s32 goalWalkGroup;
+    s32 bitWalkGroup;
+    Vec3f* goalPos;
+    f32 xzDist;
     f32 var_fv1;
-    u8 spA8[4];
-    s16 var_a3;
+    u8 routeFlags[4];
+    s16 patchGroupID;
     s16 var_s1;
     CurveSetup* spA0;
     s32 var_v1;
-    s32 var_a0;
-    CurveSetup* sp88[4];
+    s32 i;
+    CurveSetup* routeStarts[4];
     f32 sp84; // fv0?
     CurveSetup* setup;
     Vec3f sp74;
@@ -2035,166 +2035,172 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     CurveSetup* setup2;
     u8 sp5B;
     u8 temp_s1_4;
-    u8 temp_v1_3;
+    u8 mask;
+#ifdef AVOID_UB
+    s32 temp_v1_4;
+#else
     u8 temp_v1_4;
+#endif
     f32 sp54;
     f32 sp50;
-    WalkGroupInfo sp44;
+    WalkGroupInfo goalWalkGroupInfo;
 
-    temp_s1 = objData->unk2C;
-    spC0 = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
-    if (spC0 != 0 && spC0 != objData->unkA4) {
-        objData->unkA4 = spC0;
+    goalPos = objData->pathGoalPos;
+    currWalkGroup = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
+    if (currWalkGroup != 0 && currWalkGroup != objData->currWalkGroup) {
+        objData->currWalkGroup = currWalkGroup;
         objData->flags &= ~TRICKY_FLAG_UNK400;
-        for (var_a0 = 0; var_a0 < 4; var_a0++) { objData->unk6C[var_a0] = 0; }
+        for (i = 0; i < 4; i++) { objData->unk6C[i] = 0; }
     }
-    spBC = gDLL_25->vtbl->FindWalkGroup(temp_s1, &sp44);
-    spB8 = mainGetBits(BIT_Tricky_Walk_Group);
-    if (spBC != 0 && spBC != spB8) {
-        spB8 = spBC;
-        mainSetBits(BIT_Tricky_Walk_Group, spBC);
+    goalWalkGroup = gDLL_25->vtbl->FindWalkGroup(goalPos, &goalWalkGroupInfo);
+    bitWalkGroup = mainGetBits(BIT_Tricky_Walk_Group);
+    if (goalWalkGroup != 0 && goalWalkGroup != bitWalkGroup) {
+        bitWalkGroup = goalWalkGroup;
+        mainSetBits(BIT_Tricky_Walk_Group, goalWalkGroup);
     }
     sp84 = objData->unk20;
     objData->unk20 += -0.03f * gUpdateRateF;
     if (objData->unk20 < 0.0f) {
         objData->unk20 = 0.0f;
     }
-    temp_fv0 = vec3DistanceXZSquared(temp_s1, &self->srt.transl);
-    var_a0 = objData->unk20 * 10.0f;
-    if (var_a0 >= 0x12) {
+    xzDist = vec3DistanceXZSquared(goalPos, &self->srt.transl);
+    i = objData->unk20 * 10.0f;
+    if (i >= 18) {
         var_fv1 = 100.0f;
     } else {
-        var_fv1 = _data_A4[var_a0] + arg1;
+        var_fv1 = _data_A4[i] + arg1;
         var_fv1 *= var_fv1;
     }
-    if (var_fv1 < temp_fv0) {
+    if (var_fv1 < xzDist) {
         tricky_func_8ED0(sp84, 1.5f, &objData->unk20);
-    } else if (temp_fv0 > 400.0f) {
-        temp_fv0 = tricky_func_81D8(self);
-        if (objData->unk20 < temp_fv0 && temp_fv0 < sp84) {
-            objData->unk20 = temp_fv0;
+    } else if (xzDist > 400.0f) {
+        xzDist = tricky_func_81D8(self);
+        if (objData->unk20 < xzDist && xzDist < sp84) {
+            objData->unk20 = xzDist;
         }
     }
-    if (spBC == objData->unkA4) {
+    if (goalWalkGroup == objData->currWalkGroup) {
         objData->flags |= TRICKY_FLAG_UNK400;
-        for (var_a0 = 0, temp_v1_3 = 1; var_a0 < 4; var_a0++, temp_v1_3 <<= 1) {
-            if (sp44.patchFlags & temp_v1_3) {
-                objData->unk6C[var_a0] = sp44.patchIDs[var_a0];
-                objData->unk74[var_a0].x = temp_s1->x;
-                objData->unk74[var_a0].y = temp_s1->y;
-                objData->unk74[var_a0].z = temp_s1->z;
+        for (i = 0, mask = 1; i < 4; i++, mask <<= 1) {
+            if (goalWalkGroupInfo.patchFlags & mask) {
+                objData->unk6C[i] = goalWalkGroupInfo.patchIDs[i];
+                objData->unk74[i].x = goalPos->x;
+                objData->unk74[i].y = goalPos->y;
+                objData->unk74[i].z = goalPos->z;
             }
         }
     }
-    if (spBC != 0 && spBC == objData->unkA4) {
+    if (goalWalkGroup != 0 && goalWalkGroup == objData->currWalkGroup) {
         objData->unkA6 = 0;
     } else {
-        var_a3 = objData->unkA4 * spBC;
-        if (var_a3 != 0) {
-            for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                if ((var_a3 == sp44.patchIDs[var_a0]) && (sp44.patchFlags & (1 << var_a0))) {
-                    objData->unkA6 = var_a3;
-                    objData->unkA8.x = temp_s1->x;
-                    objData->unkA8.y = temp_s1->y;
-                    objData->unkA8.z = temp_s1->z;
+        patchGroupID = objData->currWalkGroup * goalWalkGroup;
+        if (patchGroupID != 0) {
+            for (i = 0; i < 4; i++) {
+                if ((patchGroupID == goalWalkGroupInfo.patchIDs[i]) && (goalWalkGroupInfo.patchFlags & (1 << i))) {
+                    objData->unkA6 = patchGroupID;
+                    objData->unkA8.x = goalPos->x;
+                    objData->unkA8.y = goalPos->y;
+                    objData->unkA8.z = goalPos->z;
                 }
             }
         }
     }
-    gDLL_25->vtbl->IsPointWithinAnyGroup(temp_s1);
-    gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);
+    gDLL_25->vtbl->IsPointWithinAnyGroup(goalPos);
+    gDLL_25->vtbl->GetPatchGroupContainingPoint(goalPos, objData->currWalkGroup);
     if (objData->flags & TRICKY_FLAG_UNK400) {
         // @the fakest of fakes (this is an empty loop in default.dol)
-        for (var_a0 = 0; var_a0 < 4; var_a0++) {
+        for (i = 0; i < 4; i++) {
             // FAKE
             do { } while (0);
-            if (sp44.patchFlags & (1 << var_a0)) {
+            if (goalWalkGroupInfo.patchFlags & (1 << i)) {
             }
         }
     }
-    var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);
+    patchGroupID = gDLL_25->vtbl->GetPatchGroupContainingPoint(goalPos, objData->currWalkGroup);
     if (objData->unk19 != 0xF && 
-            ((spBC != 0 && spC0 == spBC) || (var_a3 != 0 && gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3) != 0))) {
+            ((goalWalkGroup != 0 && currWalkGroup == goalWalkGroup) || 
+                (patchGroupID != 0 && gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->currWalkGroup, patchGroupID) != 0))) {
         objData->unk19 = 1;
     } else if (objData->unk19 < 5) {
-        var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(temp_s1, objData->unkA4);\
-        if (var_a3 != 0) {
-            if (spBC == 0) {
-                for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                    if (var_a3 == objData->unk6C[var_a0]) {
-                        sp5B = var_a0;
+        patchGroupID = gDLL_25->vtbl->GetPatchGroupContainingPoint(goalPos, objData->currWalkGroup);\
+        if (patchGroupID != 0) {
+            if (goalWalkGroup == 0) {
+                for (i = 0; i < 4; i++) {
+                    if (patchGroupID == objData->unk6C[i]) {
+                        sp5B = i;
                         objData->unk19 = 2;
                         break;
                     }
                 }
-                if (var_a0 == 4) {
+                if (i == 4) {
                     objData->unk19 = 0;
                 }
-            } else if (spC0 != 0) {
-                for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                    if (var_a3 == objData->unk6C[var_a0]) {
-                        sp5B = var_a0;
+            } else if (currWalkGroup != 0) {
+                for (i = 0; i < 4; i++) {
+                    if (patchGroupID == objData->unk6C[i]) {
+                        sp5B = i;
                         objData->unk19 = 2;
                         break;
                     }
                 }
-                if (var_a0 == 4) {
+                if (i == 4) {
                     objData->unk19 = 5;
                 }
             } else {
-                if (spC0 == 0 && (var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->unkA4), (var_a3 != 0))) {
-                    if (var_a3 == objData->unkA6) {
+                if (currWalkGroup == 0 && 
+                        (patchGroupID = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->currWalkGroup), (patchGroupID != 0))) {
+                    if (patchGroupID == objData->unkA6) {
                         objData->unk19 = 3;
                     } else {
-                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, patchGroupID);
                         objData->unk19 = 4;
                     }
                 } else {
                     objData->unk19 = 0;
-                    gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3);
+                    gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->currWalkGroup, patchGroupID);
                 }
             }
-        } else if (spBC == 0) {
+        } else if (goalWalkGroup == 0) {
             objData->unk19 = 0;
-        } else if (spC0 != 0) {
-            var_a3 = spBC * spC0;
-            if (gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->unkA4, var_a3) != 0) {
-                if (var_a3 == objData->unkA6) {
+        } else if (currWalkGroup != 0) {
+            patchGroupID = goalWalkGroup * currWalkGroup;
+            if (gDLL_25->vtbl->IsPointWithinPatchGroup(&self->srt.transl, objData->currWalkGroup, patchGroupID) != 0) {
+                if (patchGroupID == objData->unkA6) {
                     objData->unk19 = 3;
                 } else {
                     objData->unk19 = 5;
                 }
             } else {
-                for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                    if (var_a3 == objData->unk6C[var_a0]) {
-                        sp5B = var_a0;
+                for (i = 0; i < 4; i++) {
+                    if (patchGroupID == objData->unk6C[i]) {
+                        sp5B = i;
                         objData->unk19 = 2;
                         break;
                     }
                 }
-                if (var_a0 == 4 || var_a3 != objData->unkA6) {
+                if (i == 4 || patchGroupID != objData->unkA6) {
                     objData->unk19 = 5;
                 }
             }
         } else {
-            var_a3 = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->unkA4);\
-            if (var_a3 != 0) {
-                if (spBC == objData->unkA4) {
-                    for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                        if (var_a3 == objData->unk6C[var_a0]) {
-                            sp5B = var_a0;
+            patchGroupID = gDLL_25->vtbl->GetPatchGroupContainingPoint(&self->srt.transl, objData->currWalkGroup);\
+            if (patchGroupID != 0) {
+                if (goalWalkGroup == objData->currWalkGroup) {
+                    for (i = 0; i < 4; i++) {
+                        if (patchGroupID == objData->unk6C[i]) {
+                            sp5B = i;
                             objData->unk19 = 2;
                             break;
                         }
                     }
-                    if (var_a0 == 4) {
-                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                    if (i == 4) {
+                        gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, patchGroupID);
                         objData->unk19 = 4;
                     }
-                } else if (var_a3 == objData->unkA6) {
+                } else if (patchGroupID == objData->unkA6) {
                     objData->unk19 = 3;
                 } else {
-                    gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, var_a3);
+                    gDLL_25->vtbl->GetClosestExitOfPatch(&objData->player->srt.transl, &objData->unkC0, patchGroupID);
                     objData->unk19 = 4;
                 }
             } else {
@@ -2208,13 +2214,13 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         if (objData->unk20 < 0.0f) {
             objData->unk20 = 0.0f;
         }
-        tricky_func_8470(self, temp_s1);
+        tricky_func_8470(self, goalPos);
         break;
     default:
         break;
     case 1:
         if (sp84 != 0.0f) {
-            tricky_func_8470(self, temp_s1);
+            tricky_func_8470(self, goalPos);
             break;
         }
         /* fallthrough */
@@ -2228,7 +2234,6 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         if (sp84 != 0.0f) {
             tricky_func_8470(self, &objData->unkC0);
         }
-        /* fallthrough */
         break;
     case 3:
         if (sp84 != 0.0f) {
@@ -2237,8 +2242,8 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         }
 
         if (tricky_func_9668(&objData->unkCC) == 0) {
-            sp68[0] = objData->unk2C->x - self->srt.transl.x;
-            sp68[1] = objData->unk2C->z - self->srt.transl.z;
+            sp68[0] = objData->pathGoalPos->x - self->srt.transl.x;
+            sp68[1] = objData->pathGoalPos->z - self->srt.transl.z;
             var_s1 = (u16)mathAtan2f(-sp68[0], -sp68[1]);
             var_s1 = self->srt.yaw - (var_s1 & 0xFFFF);
             CIRCLE_WRAP(var_s1);
@@ -2283,8 +2288,8 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         if (vec3DistanceXZSquared(&objData->unk3C0->pos, &self->srt.transl) < 60.0f) {
             setup = objData->unk3C0;
             objData->unk3C8.unk0.unk80 = objData->unk3C4;
-            spA0 = tricky_func_7A7C(objData, setup, spB8, objData->unk3C4);
-            gDLL_25->vtbl->func_1D30(&objData->unk3C8, setup, spA0, tricky_func_7A7C(objData, spA0, spB8, objData->unk3C4));
+            spA0 = tricky_func_7A7C(objData, setup, bitWalkGroup, objData->unk3C4);
+            gDLL_25->vtbl->func_1D30(&objData->unk3C8, setup, spA0, tricky_func_7A7C(objData, spA0, bitWalkGroup, objData->unk3C4));
             curves_func_800053B0(&objData->unk3C8.unk0, 0.1f);
             tricky_func_8974(self, &objData->unk3C8, objData->unk20);
             tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
@@ -2315,16 +2320,15 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         }
         break;
     case 5:
-        tricky_func_7794(self, spA8, spC0, sp88);
+        tricky_findRouteStarts(self, routeFlags, currWalkGroup, routeStarts);
         
-        // NOTE: the return value here is var_a0 (the iterator var) in default.dol
-        var_a0 = tricky_func_7BAC(objData, sp88, spA8, spB8);
-        if (var_a0 == -1) {
+        i = tricky_func_7BAC(objData, routeStarts, routeFlags, bitWalkGroup);
+        if (i == -1) {
             objData->unk20 = sp84;
             return 2;
         }
-        objData->unk3C4 = spA8[var_a0];
-        objData->unk3C0 = sp88[var_a0];
+        objData->unk3C4 = routeFlags[i];
+        objData->unk3C0 = routeStarts[i];
 
         // FAKE
         if (1) {
@@ -2333,25 +2337,25 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         objData->unk19 = 6;
         break;
     case 7:
-        sp74.x = objData->unk2C->x - self->srt.transl.x;
-        sp74.y = objData->unk2C->y - self->srt.transl.y;
-        sp74.z = objData->unk2C->z - self->srt.transl.z;
+        sp74.x = objData->pathGoalPos->x - self->srt.transl.x;
+        sp74.y = objData->pathGoalPos->y - self->srt.transl.y;
+        sp74.z = objData->pathGoalPos->z - self->srt.transl.z;
         sp60[0] = -self->srt.yaw;
         sp60[1] = 0;
         sp60[2] = 0;
         mathRotateRPY((SRT*)&sp60, sp74.f);
         if (sp74.z > 0.0f && objData->unk20 != 0.0f) {
-            if (!(objData->flags & TRICKY_FLAG_UNK2) || (objData->unk64 != spB8) || (objData->unk68 != objData->unk2C) || (objData->unk66 != objData->unk3C8.unk0.unk80)) {
+            if (!(objData->flags & TRICKY_FLAG_UNK2) || (objData->unk64 != bitWalkGroup) || (objData->unk68 != objData->pathGoalPos) || (objData->unk66 != objData->unk3C8.unk0.unk80)) {
                 objData->flags |= TRICKY_FLAG_UNK2;
                 objData->flags &= ~TRICKY_FLAG_UNK4;
-                objData->unk64 = spB8;
-                objData->unk68 = objData->unk2C;
+                objData->unk64 = bitWalkGroup;
+                objData->unk68 = objData->pathGoalPos;
                 objData->unk66 = objData->unk3C8.unk0.unk80;
-                routeSetup(objData->unk4DC, objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80 ^ 1);
-                routeSetup(&objData->unk4DC[1], objData->unk3C8.unkA0, objData->unk2C, (void* ) spB8, objData->unk3C8.unk0.unk80);
+                routeSetup(&objData->routes[0], objData->unk3C8.unkA0, objData->pathGoalPos, (void* ) bitWalkGroup, objData->unk3C8.unk0.unk80 ^ 1);
+                routeSetup(&objData->routes[1], objData->unk3C8.unkA0, objData->pathGoalPos, (void* ) bitWalkGroup, objData->unk3C8.unk0.unk80);
             }
             if (!(objData->flags & TRICKY_FLAG_UNK4)) {
-                temp_v1_4 = routeFind(&objData->unk4DC[1], 10);
+                temp_v1_4 = routeFind(&objData->routes[1], 10);
                 switch (temp_v1_4) {
                 case 1:
                     objData->flags &= ~TRICKY_FLAG_UNK2;
@@ -2360,7 +2364,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
                     objData->flags |= TRICKY_FLAG_UNK4;
                     break;
                 default:
-                    temp_v1_4 = routeFind(objData->unk4DC, 10);
+                    temp_v1_4 = routeFind(&objData->routes[0], 10);
                     if (temp_v1_4 != -1) {
                         if (temp_v1_4 == 1) {
                             objData->flags |= TRICKY_FLAG_UNK4;
@@ -2388,7 +2392,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             objData->flags &= ~TRICKY_FLAG_UNK2;
         }
         if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
-            setup2 = tricky_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80);
+            setup2 = tricky_func_7A7C(objData, objData->unk3C8.unkA4, bitWalkGroup, objData->unk3C8.unk0.unk80);
             if (setup2 != NULL) {
                 dummy:
                 gDLL_25->vtbl->func_21F4(&objData->unk3C8, setup2);
@@ -2410,7 +2414,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
                 objData->unk3C8.unk9C = (CurveSetup *)((s32)objData->unk3C8.unk9C ^ (s32)objData->unk3C8.unkA4);
             }
         } else {
-            setup2 = tricky_func_7A7C(objData, objData->unk3C8.unkA0, spB8, objData->unk3C8.unk0.unk80);
+            setup2 = tricky_func_7A7C(objData, objData->unk3C8.unkA0, bitWalkGroup, objData->unk3C8.unk0.unk80);
             if (setup2 != objData->unk3C8.unkA4) {
                 dummy2:
                 gDLL_25->vtbl->func_27A8(&objData->unk3C8, setup2);
@@ -2435,7 +2439,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         tricky_func_8974(self, &objData->unk3C8, objData->unk20);
         tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
         if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, bitWalkGroup, objData->unk3C8.unk0.unk80));
             tricky_func_507C(self, objData);
         }
         break;
@@ -2455,10 +2459,10 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         }
         if (objAnimAdvance(self, sp54, gUpdateRateF, NULL) != 0) {
             setup = objData->unk3C8.unkA0;
-            temp_fv0 = setup->pos.x - self->srt.transl.x;
+            xzDist = setup->pos.x - self->srt.transl.x;
             var_fv1 = setup->pos.z - self->srt.transl.z;
-            temp_fv0 = sqrtf(SQ(temp_fv0) + SQ(var_fv1));
-            objData->unk54 = temp_fv0 / 2.3f;
+            xzDist = sqrtf(SQ(xzDist) + SQ(var_fv1));
+            objData->unk54 = xzDist / 2.3f;
             objData->unk58 = 0.0f;
             objData->unk60 = self->srt.transl.y;
             objData->unk5C = (((setup->pos.y - self->srt.transl.y) - (-0.017f * objData->unk54 * objData->unk54)) / objData->unk54);
@@ -2506,7 +2510,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
         //STUBBED_PRINTF("i now %d\n", objData->unk3C8.unk0.unk10);
         if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, bitWalkGroup, objData->unk3C8.unk0.unk80));
             tricky_func_514C(self, objData);
         }
         break;
@@ -2526,7 +2530,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         tricky_func_8974(self, &objData->unk3C8, objData->unk20);
         tricky_func_8470(self, &objData->unk3C8.unk0.unk68);
         if ((objData->unk3C8.unk0.unk80 == 0 && objData->unk3C8.unk0.unk10 != 0) || (objData->unk3C8.unk0.unk80 != 0 && objData->unk3C8.unk0.unk10 == 0)) {
-            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, spB8, objData->unk3C8.unk0.unk80));
+            gDLL_25->vtbl->func_21F4(&objData->unk3C8, tricky_func_7A7C(objData, objData->unk3C8.unkA4, bitWalkGroup, objData->unk3C8.unk0.unk80));
             tricky_func_52B8(self, objData);
         }
         break;
@@ -2536,7 +2540,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             objData->flags &= ~TRICKY_FLAG_UNK40;
             objData->flags &= ~TRICKY_FLAG_UNK100;
             objData->unk20 = 0.0f;
-            tricky_func_8F84(self, temp_s1, objData->unk30);
+            tricky_func_8F84(self, goalPos, objData->unk30);
             objData->unk19 = 1;
             return 1;
         }
@@ -2559,7 +2563,6 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     }
     return 1;
 }
-
 
 // offset: 0x7188 | func: 55
 static void tricky_func_7188(Object* self) {
@@ -2722,60 +2725,64 @@ static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, T
 }
 
 // offset: 0x7794 | func: 58
-static void tricky_func_7794(Object* self, u8 *arg1, s16 arg2, CurveSetup** arg3) {
+static void tricky_findRouteStarts(Object* self, u8* routeFlags, s16 currWalkGroup, CurveSetup** startCurves) {
     s32 i;
-    f32 sp7C[4];
-    CurveNode* temp_a1;
-    s32 sp74;
-    CurveSetup* temp_s1;
-    f32 temp_fs0;
-    u8 var_a1;
+    f32 weights[4];
+    CurveNode* curveList;
+    s32 curveListCount;
+    CurveSetup* curve;
+    f32 distWeight;
+    u8 linkno;
     u8 sp6A;
-    u8 var_a2;
+    u8 k;
     Tricky_Data* objData;
 
     objData = self->data;
-    temp_a1 = gDLL_26_Curves->vtbl->GetCurves(&sp74);
+    curveList = gDLL_26_Curves->vtbl->GetCurves(&curveListCount);
     for (i = 0; i < 4; i++) {
-        sp7C[i] = M_INFINITY_F;
-        arg3[i] = 0;   
+        weights[i] = M_INFINITY_F;
+        startCurves[i] = NULL;   
     }
 
-    if (arg2 == 0) {
+    if (currWalkGroup == 0) {
         return;
     }
 
-    for (i = 0; i < sp74; i++) {
-        temp_s1 = temp_a1[i].setup;
-        if (temp_s1->curveType == 0x24 && temp_s1->unk3 == 0) {
+    for (i = 0; i < curveListCount; i++) {
+        curve = curveList[i].setup;
+        if (curve->curveType == 0x24 && curve->unk3 == 0) {
             if (
-                (temp_s1->type24.activeBit == -1 || mainGetBits(temp_s1->type24.activeBit) != 0) &&
-                (temp_s1->type24.usedBit == -1 || mainGetBits(temp_s1->type24.usedBit) == 0)
+                (curve->type24.activeBit == -1 || mainGetBits(curve->type24.activeBit) != 0) &&
+                (curve->type24.usedBit == -1 || mainGetBits(curve->type24.usedBit) == 0)
             ) {
-                temp_fs0 = 
-                    SQ(objData->unk2C->z - temp_s1->pos.z) + (
-                        (SQ(self->globalPosition.x - temp_s1->pos.x) + SQ(self->globalPosition.z - temp_s1->pos.z)) +
-                        SQ(objData->unk2C->x - temp_s1->pos.x)
+                // dist to goal + dist to self
+                distWeight = 
+                    SQ(objData->pathGoalPos->z - curve->pos.z) + (
+                        SQ(self->globalPosition.x - curve->pos.x) + 
+                        SQ(self->globalPosition.z - curve->pos.z) +
+                        SQ(objData->pathGoalPos->x - curve->pos.x)
                     );
-                if (temp_fs0 < sp7C[3]) {
-                    for (var_a1 = 0; var_a1 < 4; var_a1++) {
-                        if ((temp_s1->links[var_a1] >= 0) && (arg2 == temp_s1->unk4_u8[var_a1])) {
-                            sp6A = temp_s1->unk1B >> var_a1;
+                if (distWeight < weights[3]) { // is this weight better than our current worst weight?
+                    for (linkno = 0; linkno < 4; linkno++) {
+                        if ((curve->links[linkno] >= 0) && (currWalkGroup == curve->base_type24.linkWalkGroups[linkno])) {
+                            // this curve connects to our current walk group via this link
+                            sp6A = curve->unk1B >> linkno;
                             break;
                         }
                     }
 
-                    if (var_a1 != 4) {
-                        for (var_a1 = 0; var_a1 < 4; var_a1++) {
-                            if (temp_fs0 < sp7C[var_a1]) {
-                                for (var_a2 = 3; var_a2 > var_a1; var_a2--) {
-                                    arg1[var_a2] = arg1[var_a2 - 1];
-                                    arg3[var_a2] = arg3[var_a2 - 1];
-                                    sp7C[var_a2] = sp7C[var_a2 - 1];
+                    if (linkno != 4) {
+                        for (linkno = 0; linkno < 4; linkno++) {
+                            if (distWeight < weights[linkno]) {
+                                // shift entries to make room for the new entry
+                                for (k = 3; k > linkno; k--) {
+                                    routeFlags[k] = routeFlags[k - 1];
+                                    startCurves[k] = startCurves[k - 1];
+                                    weights[k] = weights[k - 1];
                                 }
-                                arg1[var_a1] = (sp6A & 1) ^ 1;
-                                arg3[var_a1] = temp_s1;
-                                sp7C[var_a1] = temp_fs0;
+                                routeFlags[linkno] = (sp6A & 1) ^ 1;
+                                startCurves[linkno] = curve;
+                                weights[linkno] = distWeight;
                                 break;
                             }    
                         }
@@ -2814,45 +2821,45 @@ static CurveSetup* tricky_func_7A7C(Tricky_Data* objData, CurveSetup* arg1, s32 
 }
 
 // offset: 0x7BAC | func: 60
-static s8 tricky_func_7BAC(Tricky_Data* objData, CurveSetup** arg1, u8 *arg2, void* arg3) {
-    s8 sp5C[4];
-    s8 sp5B;
-    s8 temp_v0;
-    s8 var_s0;
-    s8 var_s2;
+static s8 tricky_func_7BAC(Tricky_Data* objData, CurveSetup** startCurves, u8* routeFlags, s32 goalWalkGroup) {
+    s8 routeResults[4];
+    s8 i;
+    s8 result;
+    s8 routeIdx;
+    s8 failedCount;
 
-    for (sp5B = 0; sp5B < 4; sp5B++) {
-        if (arg1[sp5B] != NULL) {
-            routeSetup(&objData->unk4DC[sp5B], arg1[sp5B], objData->unk2C, arg3, arg2[sp5B]);
+    for (i = 0; i < 4; i++) {
+        if (startCurves[i] != NULL) {
+            routeSetup(&objData->routes[i], startCurves[i], objData->pathGoalPos, (void*)goalWalkGroup, routeFlags[i]);
         }
     }
 
-    for (sp5B = 0; sp5B < 0x64; sp5B++) {
-        var_s2 = 0;
-        for (var_s0 = 0; var_s0 < 4; var_s0++) {
-            if (arg1[var_s0] != NULL) {
-                sp5C[var_s0] = routeFind(&objData->unk4DC[var_s0], 5);
+    for (i = 0; i < 100; i++) {
+        failedCount = 0;
+        for (routeIdx = 0; routeIdx < 4; routeIdx++) {
+            if (startCurves[routeIdx] != NULL) {
+                routeResults[routeIdx] = routeFind(&objData->routes[routeIdx], 5);
             } else {
-                sp5C[var_s0] = -1;
+                routeResults[routeIdx] = -1;
             }
-            temp_v0 = sp5C[var_s0];
-            if (temp_v0 != -1) {
-                if (temp_v0 == 1) {
-                    return var_s0;
+            result = routeResults[routeIdx];
+            if (result != -1) {
+                if (result == 1) { // route found
+                    return routeIdx;
                 }
-            } else {
-                arg1[var_s0] = NULL;
-                var_s2++;
+            } else { // no route found
+                startCurves[routeIdx] = NULL;
+                failedCount++;
             } 
         }
 
-        switch (var_s2) {
+        switch (failedCount) {
             case 3:
-                if (*arg1 != NULL) {
-                    sp5C[0] = routeFind(objData->unk4DC, 500);
+                if (startCurves[0] != NULL) {
+                    routeResults[0] = routeFind(&objData->routes[0], 500); // try really damn hard
                 }
             
-                if (sp5C[0] == 1) {
+                if (routeResults[0] == 1) {
                     return 0;
                 }
             
@@ -2885,7 +2892,7 @@ static CurveSetup* tricky_func_7DB8(Tricky_Data* objData, CurveSetup* arg1, void
         }
     }
 
-    routeSetup(&objData->unk59C, arg1, objData->unk2C, arg2, objData->unk3C8.unk0.unk80);
+    routeSetup(&objData->unk59C, arg1, objData->pathGoalPos, arg2, objData->unk3C8.unk0.unk80);
     if (routeFind(&objData->unk59C, 500) != 1) {
         return NULL;
     }
@@ -2956,7 +2963,7 @@ static void tricky_func_81A8(Object* self) {
     Vec3f* temp_v1;
 
     temp_v0 = self->data;
-    temp_v1 = temp_v0->unk2C;
+    temp_v1 = temp_v0->pathGoalPos;
     temp_v0->unk5D4 = temp_v1;
     if (temp_v1 != NULL) {
         temp_v0->unk5D8.x = temp_v1->x;
@@ -2974,7 +2981,7 @@ static f32 tricky_func_81D8(Object* self) {
     f32 temp_fv1;
 
     objData = self->data;
-    sp28 = objData->unk2C;
+    sp28 = objData->pathGoalPos;
     if (sp28 == objData->unk5D4) {
         temp_fv1 = objData->unk5D8.x - self->srt.transl.x;
         temp_fa1 = objData->unk5D8.z - self->srt.transl.z;
@@ -3121,8 +3128,8 @@ static void tricky_func_885C(Object* self) {
     f32 sp24[2];
 
     objData = self->data;
-    sp24[0] = objData->unk2C->x - self->srt.transl.x;
-    sp24[1] = objData->unk2C->z - self->srt.transl.z;
+    sp24[0] = objData->pathGoalPos->x - self->srt.transl.x;
+    sp24[1] = objData->pathGoalPos->z - self->srt.transl.z;
     tricky_func_88F4(self, mathAtan2f(-sp24[0], -sp24[1]));
 }
 
@@ -3294,8 +3301,8 @@ static void tricky_func_8F84(Object* self, Vec3f* arg1, f32* arg2) {
 
 // offset: 0x9024 | func: 81
 static void tricky_func_9024(Tricky_Data* objData, Vec3f *arg1) {
-    if (arg1 != objData->unk2C) {
-        objData->unk2C = arg1;
+    if (arg1 != objData->pathGoalPos) {
+        objData->pathGoalPos = arg1;
         objData->unkA6 = 0;
         objData->flags &= ~TRICKY_FLAG_UNK400;
     }
