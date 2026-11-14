@@ -2,6 +2,7 @@
 #include "game/objects/object.h"
 #include "dlls/engine/14_modgfx.h"
 #include "sys/gfx/textable.h"
+#include "sys/rand.h"
 #include "dll.h"
 
 /*0x0*/ static s16 data_0[] = {
