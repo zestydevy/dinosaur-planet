@@ -190,7 +190,7 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
     for (i = 0; i < 4; i++) {
         neighborCurveUID = base->links[i];
         if ((neighborCurveUID >= 0) && (var_fp & (1 << i))) {
-            neighbor = gDLL_26_Curves->vtbl->func_39C(neighborCurveUID);
+            neighbor = gDLL_26_Curves->vtbl->FindByUID(neighborCurveUID);
             if (neighbor != NULL) {
                 switch (neighbor->curveType) {
                 case 0x22: // Kyte
@@ -201,7 +201,7 @@ void routeScanNeighbors(Route* route, RoutePoint* basePoint, s32 baseCurveIdx) {
                     }
                     break;
                 case 0x24: // Tricky
-                    mainGetBits(BIT_Tricky_Talk_Sequence);
+                    mainGetBits(BIT_Tricky_Walk_Group);
                     if ((neighbor->type24.activeBit == -1 || mainGetBits(neighbor->type24.activeBit) != 0) &&
                            (neighbor->type24.usedBit == -1 || mainGetBits(neighbor->type24.usedBit) == 0)) {
                         routeAddNeighbor(route, basePoint, baseCurveIdx, 

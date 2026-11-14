@@ -11,8 +11,8 @@
 
 /*0x0*/ static CurveSetup *_bss_0;
 /*0x4*/ static CurveSetup *_bss_4;
-/*0x8*/ static CurveNode _bss_8[MAX_ROMCURVES];
-/*0x28A8*/ static s32 _bss_28A8;
+/*0x8*/ static CurveNode sCurves[MAX_ROMCURVES];
+/*0x28A8*/ static s32 sTotalCurves;
 
 s32 curves_func_1880(CurveSetup* arg0);
 s32 curves_func_1924(CurveSetup* setup);
@@ -29,7 +29,7 @@ void curves_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void curves_func_18(void) {
-    _bss_28A8 = 0;
+    sTotalCurves = 0;
 }
 
 // offset: 0x34 | func: 1 | export: 1
@@ -38,29 +38,29 @@ void curves_add_curve_def(CurveSetup* def) {
     s32 var_v1;
     s32 temp;
 
-    if (_bss_28A8 == MAX_ROMCURVES) {
+    if (sTotalCurves == MAX_ROMCURVES) {
         STUBBED_PRINTF("curves.c: MAX_ROMCURVES exceeded!!\n");
         return;
     }
     
     var_v1 = 0;
-    while (var_v1 < _bss_28A8 && _bss_8[var_v1].uID < def->uID) {
+    while (var_v1 < sTotalCurves && sCurves[var_v1].uID < def->uID) {
         var_v1++;
     }
     
-    temp = _bss_28A8;
+    temp = sTotalCurves;
     while (temp > var_v1) {
-        _bss_8[temp].setup = _bss_8[temp - 1].setup;
-        _bss_8[temp].uID = _bss_8[temp - 1].uID;
+        sCurves[temp].setup = sCurves[temp - 1].setup;
+        sCurves[temp].uID = sCurves[temp - 1].uID;
         temp--;
     }
 
-    _bss_28A8 += 1;
-    if (_bss_28A8 == MAX_ROMCURVES) {
-        STUBBED_PRINTF("addCurveDef: max curves reached %d/%d\n", _bss_28A8, MAX_ROMCURVES);
+    sTotalCurves += 1;
+    if (sTotalCurves == MAX_ROMCURVES) {
+        STUBBED_PRINTF("addCurveDef: max curves reached %d/%d\n", sTotalCurves, MAX_ROMCURVES);
     }
-    _bss_8[var_v1].setup = def;
-    _bss_8[var_v1].uID = def->uID;
+    sCurves[var_v1].setup = def;
+    sCurves[var_v1].uID = def->uID;
 }
 
 // offset: 0x10C | func: 2 | export: 2
@@ -68,25 +68,25 @@ void curves_func_10C(CurveSetup* setup) {
     s32 i;
     
     i = 0;
-    while (i < _bss_28A8 && setup->uID != _bss_8[i].uID) {
+    while (i < sTotalCurves && setup->uID != sCurves[i].uID) {
         i++;
     }
 
-    if (i < _bss_28A8) {
-        _bss_28A8--;
+    if (i < sTotalCurves) {
+        sTotalCurves--;
 
-        while (i < _bss_28A8) {
+        while (i < sTotalCurves) {
             i++;
-            _bss_8[i - 1].setup = _bss_8[i].setup;
-            _bss_8[i - 1].uID = _bss_8[i].uID;
+            sCurves[i - 1].setup = sCurves[i].setup;
+            sCurves[i - 1].uID = sCurves[i].uID;
         }
     }
 }
 
 // offset: 0x1BC | func: 3 | export: 3
-CurveNode *curves_func_1BC(s32 *count) {
-    *count = _bss_28A8;
-    return _bss_8;
+CurveNode *curves_GetCurves(s32* count) {
+    *count = sTotalCurves;
+    return sCurves;
 }
 
 // offset: 0x1E4 | func: 4 | export: 4
@@ -113,8 +113,8 @@ s32 curves_func_1E4(f32 x, f32 y, f32 z, s32 *curveTypes, s32 curveTypeCount, s3
     minDistanceTagged = 5000000.0f;
     closestCurveSetupTagged = NULL;
     
-    for (i = 0; i < _bss_28A8; i++)  {
-        curveSetup =_bss_8[i].setup;
+    for (i = 0; i < sTotalCurves; i++)  {
+        curveSetup =sCurves[i].setup;
         k = 0;
 
         do {
@@ -153,8 +153,8 @@ s32 curves_func_1E4(f32 x, f32 y, f32 z, s32 *curveTypes, s32 curveTypeCount, s3
 }
 
 // offset: 0x39C | func: 5 | export: 6
-CurveSetup* curves_func_39C(s32 curveUID) {
-    s32 temp_t6;
+CurveSetup* curves_FindByUID(s32 curveUID) {
+    s32 idx;
     s32 max;
     s32 min;
 
@@ -162,18 +162,18 @@ CurveSetup* curves_func_39C(s32 curveUID) {
         return NULL;
     }
 
-    max = _bss_28A8 - 1;
+    max = sTotalCurves - 1;
     min = 0;
 
     while (min <= max) {
-        temp_t6 = (max + min) >> 1;
+        idx = (max + min) >> 1;
 
-        if (_bss_8[temp_t6].uID < (u32)curveUID) {
-            min = temp_t6 + 1;
-        } else if (_bss_8[temp_t6].uID > (u32)curveUID) {
-            max = temp_t6 - 1;
+        if (sCurves[idx].uID < (u32)curveUID) {
+            min = idx + 1;
+        } else if (sCurves[idx].uID > (u32)curveUID) {
+            max = idx - 1;
         } else {
-            return _bss_8[temp_t6].setup;
+            return sCurves[idx].setup;
         }
     }
 
@@ -314,7 +314,7 @@ s32 curves_func_854(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->links[var_s1] >= 0) {
-            temp_v0 = curves_func_39C(arg0->links[var_s1]);
+            temp_v0 = curves_FindByUID(arg0->links[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->links[var_s1];
                 sp6C[1].x = temp_v0->pos.x;
@@ -366,7 +366,7 @@ void curves_func_A34(CurveSetup* arg0, s32* arg1) {
         }
 
         if (arg1[2] >= 0) {
-            temp_v0_2 = curves_func_39C(arg1[2]);
+            temp_v0_2 = curves_FindByUID(arg1[2]);
             if (temp_v0_2 != NULL) {
                 for (var_a0 = 0; var_a0 < 4; var_a0++) {
                     if ((temp_v0_2->links[var_a0] != -1) && !(temp_v0_2->unk1B & (1 << var_a0))) {
@@ -386,7 +386,7 @@ s32 curves_func_B8C(s32* arg0, f32 *arg1, f32 *arg2, f32 *arg3) {
 
     var_s3 = 0;
     for (i = 0; i < 4; i++) {
-        sp50[i] = curves_func_39C(arg0[i]);
+        sp50[i] = curves_FindByUID(arg0[i]);
         if (sp50[i] != NULL) {
             arg1[i] = sp50[i]->pos.x;
             arg2[i] = sp50[i]->pos.y;
@@ -421,7 +421,7 @@ s32 curves_func_D8C(CurveSetup* setup) {
 
     nodeCount = 1;
     while ((setup != NULL) && (curves_func_1924(setup) == 0)) {
-        setup = curves_func_39C(curves_func_438(setup, 0));
+        setup = curves_FindByUID(curves_func_438(setup, 0));
         if (setup != NULL) {
             nodeCount++;
         }
@@ -443,7 +443,7 @@ s32 curves_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
     var_s5 = 0;
     if (var_v0 == 0) {
         while ((arg0 != NULL) && (curves_func_1924(arg0) == 0)) {
-            temp_v0 = curves_func_39C(curves_func_438(arg0, 0));
+            temp_v0 = curves_FindByUID(curves_func_438(arg0, 0));
             if (temp_v0 != NULL) {
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->curveType;
@@ -469,7 +469,7 @@ s32 curves_func_E40(CurveSetup* arg0, f32* arg1, f32* arg2, f32* arg3, s8* arg4)
         }
     } else {
         while ((arg0 != NULL) && (curves_func_1880(arg0) == 0)) {
-            temp_v0 = curves_func_39C(curves_func_590(arg0, 0));
+            temp_v0 = curves_FindByUID(curves_func_590(arg0, 0));
             if (temp_v0 != NULL) {
                 if (arg4 != NULL) {
                     arg4[var_s5 >> 2] = arg0->curveType;
@@ -509,19 +509,19 @@ static CurveSetup* curves_func_1420(s32 curveUID, s32* arg1) {
         return NULL;
     }
 
-    max = _bss_28A8 - 1;
+    max = sTotalCurves - 1;
     min = 0;
 
     while (min <= max) {
         temp_t6 = (max + min) >> 1;
 
-        if (_bss_8[temp_t6].uID < (u32)curveUID) {
+        if (sCurves[temp_t6].uID < (u32)curveUID) {
             min = temp_t6 + 1;
-        } else if (_bss_8[temp_t6].uID > (u32)curveUID) {
+        } else if (sCurves[temp_t6].uID > (u32)curveUID) {
             max = temp_t6 - 1;
         } else {
             *arg1 = temp_t6;
-            return _bss_8[temp_t6].setup;
+            return sCurves[temp_t6].setup;
         }
     }
 
@@ -550,15 +550,15 @@ f32 curves_func_14F4(s32 arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4, f32* arg5
     *arg6 = 0.0f;
     *arg5 = 0.0f;
     var_fs0 = 5000000.0f;
-    for (spAC = 0; spAC < _bss_28A8; spAC++) {
-        temp_s2 = _bss_8[spAC].setup;
+    for (spAC = 0; spAC < sTotalCurves; spAC++) {
+        temp_s2 = sCurves[spAC].setup;
         if ((arg1 == temp_s2->unk18) && (arg0 == temp_s2->curveType)) {
             sp7C[0].x = temp_s2->pos.x;
             sp7C[0].y = temp_s2->pos.y;
             sp7C[0].z = temp_s2->pos.z;
             for (var_s1 = 0; var_s1 < 4; var_s1++) {
                 if (!(temp_s2->unk1B & (1 << var_s1))) {
-                    temp_v0 = curves_func_39C(temp_s2->links[var_s1]);
+                    temp_v0 = curves_FindByUID(temp_s2->links[var_s1]);
                     if (temp_v0 != NULL) {
                         sp7C[1].x = temp_v0->pos.x;
                         sp7C[1].y = temp_v0->pos.y;
@@ -597,7 +597,7 @@ f32 curves_func_174C(Object* arg0, s32 arg1) {
     f32 temp_fv0;
     f32 temp_fv1;
 
-    temp_v0 = curves_func_39C(arg1);
+    temp_v0 = curves_FindByUID(arg1);
     if ((temp_v0 != NULL) && (arg0 != NULL)) {
         temp_fv0 = temp_v0->pos.x - arg0->srt.transl.x;
         temp_fv1 = temp_v0->pos.y - arg0->srt.transl.y;
@@ -613,7 +613,7 @@ f32 curves_func_17F4(f32 arg0, f32 arg1, s32 arg2) {
     f32 temp_fv0;
     f32 temp_fv1;
 
-    temp_v0 = curves_func_39C(arg2);
+    temp_v0 = curves_FindByUID(arg2);
     if (temp_v0 != NULL) {
         temp_fv0 = temp_v0->pos.x - arg0;
         temp_fv1 = temp_v0->pos.z - arg1;
@@ -665,7 +665,7 @@ s32 curves_func_19C8(CurveSetup* arg0, s32 *arg1, s32 arg2, s32* arg3) {
     
     for (var_s6 = 0; var_s6 < 4; var_s6++) {
         if (arg0->links[var_s6] >= 0) {
-            temp_v0 = curves_func_39C(arg0->links[var_s6]);
+            temp_v0 = curves_FindByUID(arg0->links[var_s6]);
             for (var_s0 = 0; var_s0 < arg2; var_s0++) {
                 if (temp_v0->curveType == arg1[var_s0]) {
                     sp50[var_s2] = arg0->links[var_s6];
@@ -749,7 +749,7 @@ s32 curves_func_1B90(CurveSetup* arg0, s32 arg1, s32 arg2, s32* arg3) {
                 if (var_r28 > 0) {
                     var_r28 -= 1;
                     sp680 = spB8[var_r28];
-                    temp_r30 = _bss_8[sp680].setup;
+                    temp_r30 = sCurves[sp680].setup;
                     temp_f31 = sp18[var_r28];
                     if ((temp_r30->curveType == arg1) && ((arg2 == -1) || (arg2 == temp_r30->unk18))) {
                         var_r21 = 1;
@@ -832,8 +832,8 @@ s32 curves_func_218C(s32 id) {
     s32 i;
 
     STUBBED_PRINTF(" Curve Id %i ", id);
-    for (i = 0; i < _bss_28A8; i++) {
-        curve = _bss_8[i].setup;
+    for (i = 0; i < sTotalCurves; i++) {
+        curve = sCurves[i].setup;
         if (curve->curveType == 0x15) {
             STUBBED_PRINTF(" CI %i ", curve->type15.unk34);
             if (id == curve->type15.unk34) {
@@ -895,7 +895,7 @@ s32 curves_func_21FC(s32 arg0, s32 arg1, s32 arg2, s32* arg3) {
                 if (var_r29 > 0) {
                     var_r29 -= 1;
                     sp684 = spBC[var_r29];
-                    temp_r31 = _bss_8[sp684].setup;
+                    temp_r31 = sCurves[sp684].setup;
                     temp_f31 = sp1C[var_r29];
                     if (((temp_r31->curveType == arg1) || (arg1 == -1)) 
                             && ((temp_r31->unk.unk31 == arg2) || (temp_r31->unk.unk32 == arg2) || (temp_r31->unk.unk33 == arg2))) {
@@ -1010,7 +1010,7 @@ s32 curves_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
     s32 var_v0;
 
     sp64 = arg0;
-    var_s1 = curves_func_39C(sp64);
+    var_s1 = curves_FindByUID(sp64);
     var_s5 = 0;
     arg4[0] = 200000.0f;
 
@@ -1025,7 +1025,7 @@ s32 curves_func_291C(s32 arg0, f32 arg1, f32 arg2, f32 arg3, f32* arg4) {
         }
 
         if (var_s0 != -1) {
-            temp_v0 = curves_func_39C(var_s0);
+            temp_v0 = curves_FindByUID(var_s0);
             if (curves_func_2AE8(arg1, arg2, arg3, var_s1, temp_v0, 1000.0f) != 0) {
                 temp_fv0 = var_s1->pos.x - arg1;
                 temp_fv1 = var_s1->pos.y - arg2;
@@ -1092,7 +1092,7 @@ s32 curves_func_2C20(s32* arg0, f32 farg0, f32 farg1, f32 farg2, f32* arg4, f32*
 
     var_r31 = 0;
     while (var_r31 < 4) {
-        sp34[var_r31] = curves_func_39C(arg0[var_r31]);
+        sp34[var_r31] = curves_FindByUID(arg0[var_r31]);
         var_r31 += 1;
     }
     temp_f27 = sp34[2]->pos.x - sp34[1]->pos.x;
@@ -1176,7 +1176,7 @@ CurveSetup *curves_func_3018(CurveSetup *arg0, f32 arg1, f32 arg2, f32 arg3, f32
             *arg4 = sp84;
             return arg0;
         }
-        arg0 = curves_func_39C(curves_func_438(arg0, 0));
+        arg0 = curves_FindByUID(curves_func_438(arg0, 0));
     }
     *arg4 = 0.0f;
     return arg0;
@@ -1187,7 +1187,7 @@ void curves_func_31E0(CurveSetup *arg0, f32 *arg1, f32 *arg2, f32 *arg3, f32 arg
     CurveSetup *temp_v0;
     f32 xDiff, yDiff, zDiff;
 
-    temp_v0 = curves_func_39C(curves_func_438(arg0, 0));
+    temp_v0 = curves_FindByUID(curves_func_438(arg0, 0));
     if (temp_v0 == NULL) {
         *arg1 = arg0->pos.x;
         *arg2 = arg0->pos.y;
@@ -1233,7 +1233,7 @@ f32 curves_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
                 var_s2 = 1;
                 var_s5 = 0;
             } else {
-                var_s1 = curves_func_39C(curves_func_438(var_s1, 0));
+                var_s1 = curves_FindByUID(curves_func_438(var_s1, 0));
                 if (var_s1 == arg1) {
                     var_s2 = 1;
                     var_s5 = 1;
@@ -1250,7 +1250,7 @@ f32 curves_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
             arg1 = var_s1;
             arg3 = temp_v0_2;
         }
-        arg0 = curves_func_39C(curves_func_438(arg0, 0));
+        arg0 = curves_FindByUID(curves_func_438(arg0, 0));
         xDiff = arg0->pos.x - arg2[0];
         yDiff = arg0->pos.y - arg2[1];
         zDiff = arg0->pos.z - arg2[2];
@@ -1263,7 +1263,7 @@ f32 curves_func_32D8(CurveSetup *arg0, CurveSetup *arg1, f32 *arg2, f32 *arg3, f
                 var_s2 = 1;
                 magnitude += sqrtf(SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
             } else {
-                temp_v0_4 = curves_func_39C(curves_func_438(arg0, 0));
+                temp_v0_4 = curves_FindByUID(curves_func_438(arg0, 0));
                 xDiff = temp_v0_4->pos.x - arg0->pos.x;
                 yDiff = temp_v0_4->pos.y - arg0->pos.y;
                 zDiff = temp_v0_4->pos.z - arg0->pos.z;
@@ -1288,8 +1288,8 @@ s32 curves_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
     f32 sp5C;
 
     var_s1 = 0;
-    for (var_v0 = 0; var_v0 < _bss_28A8 && var_s1 < 0x14; var_v0++) {
-        temp_v1 = _bss_8[var_v0].setup;
+    for (var_v0 = 0; var_v0 < sTotalCurves && var_s1 < 0x14; var_v0++) {
+        temp_v1 = sCurves[var_v0].setup;
         if (temp_v1->curveType == 0x17) {
             sp6C[var_s1] = temp_v1->uID;
             var_s1 += 1;
@@ -1300,10 +1300,10 @@ s32 curves_func_35AC(f32 arg0, f32 arg1, f32 arg2) {
         if (curves_func_291C(sp6C[0], arg0, arg1, arg2, &sp5C) != 0) {
             return sp6C[0];
         }
-        temp_s2 = curves_func_39C(sp6C[0])->unk18;
+        temp_s2 = curves_FindByUID(sp6C[0])->unk18;
         var_v0 = 0;
         while (var_v0 < var_s1) {
-            if (temp_s2 == curves_func_39C(sp6C[var_v0])->unk18) {
+            if (temp_s2 == curves_FindByUID(sp6C[var_v0])->unk18) {
                 var_s1 -= 1;
                 sp6C[var_v0] = sp6C[var_s1];
             } else {
@@ -1334,7 +1334,7 @@ s32 curves_func_374C(CurveSetup* arg0, s32 arg1, f32 arg2, f32 arg3, f32 arg4) {
     sp6C[0].z = arg0->pos.z;
     for (var_s1 = 0, s3 = 1; var_s1 < 4; var_s1++, s3 <<= 1) {
         if (arg0->links[var_s1] >= 0) {
-            temp_v0 = curves_func_39C(arg0->links[var_s1]);
+            temp_v0 = curves_FindByUID(arg0->links[var_s1]);
             if (temp_v0 != NULL) {
                 temp_s2 = arg1 == arg0->links[var_s1];
                 sp6C[1].x = temp_v0->pos.x;
@@ -1411,7 +1411,7 @@ s32 curves_func_3930(CurveSetup* arg0, f32 arg1, f32 arg2, s32* arg3) {
                 if (var_r27 > 0) {
                     var_r27 -= 1;
                     sp680 = spB8[var_r27];
-                    temp_r30 = _bss_8[sp680].setup;
+                    temp_r30 = sCurves[sp680].setup;
                     temp_f31 = sp18[var_r27];
                     temp = temp_r30;
                     if (temp->unk.unk34 == 1) {
@@ -1518,8 +1518,8 @@ s32 curves_func_3F00(Object *arg0, s32 *arg1, s32 arg2, s32 arg3, s32 arg4) {
     spF0.y = arg0->srt.transl.f[1] + 10.0f;
     spF0.z = arg0->srt.transl.f[2];
     vox_func_80007EE0(&spF0, &spFC);
-    for (spEC = 0; spEC < _bss_28A8; spEC++) {
-        temp_s0 = _bss_8[spEC].setup;
+    for (spEC = 0; spEC < sTotalCurves; spEC++) {
+        temp_s0 = sCurves[spEC].setup;
         var_v0_2 = 0;
         do {
             if ((temp_s0->curveType == arg1[var_v0_2]) || (arg2 <= 0)) {
@@ -1582,14 +1582,14 @@ u8 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s3
     var_a0 = curves_func_3F00(arg1, arg3, 1, arg4, 0xC);
     if (var_a0 != -1) {
         if (arg0->unk0.unk80 != 0) {
-            arg0->unkA0 = curves_func_39C(var_a0);
+            arg0->unkA0 = curves_FindByUID(var_a0);
             var_a0 = curves_func_438(arg0->unkA0, -1);
             if (var_a0 == -1) {
                 return 1;
             }
         }
         
-        arg0->unkA0 = curves_func_39C(var_a0);
+        arg0->unkA0 = curves_FindByUID(var_a0);
         if (arg0->unkA0 == NULL) {
             arg0->unkA0 = NULL;
             return 1;
@@ -1603,7 +1603,7 @@ u8 curves_func_4288(UnkCurvesStruct* arg0, Object* arg1, f32 arg2, s32 *arg3, s3
             return 1;
         }
         
-        arg0->unkA4 = curves_func_39C(var_v0);
+        arg0->unkA4 = curves_FindByUID(var_v0);
         if (arg0->unkA4 == NULL) {
             arg0->unkA4 = NULL;
             return 1;
@@ -1677,7 +1677,7 @@ s32 curves_func_4704(UnkCurvesStruct* arg0) {
         var_v0 = curves_func_438(arg0->unkA0, -1);
     }
     if (var_v0 != -1) {
-        arg0->unkA4 = curves_func_39C(var_v0);
+        arg0->unkA4 = curves_FindByUID(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk0.unk80 != 0) {
                 arg0->unkB8[0] = arg0->unkA0->pos.x;
@@ -1816,7 +1816,7 @@ s32 curves_func_50E4(UnkCurvesStruct* arg0, s32 arg1) {
         var_v0 = curves_func_5698(arg0->unkA0, -1, arg1);
     }
     if (var_v0 != -1) {
-        arg0->unkA4 = curves_func_39C(var_v0);
+        arg0->unkA4 = curves_FindByUID(var_v0);
         if (arg0->unkA4 != NULL) {
             if (arg0->unk0.unk80 != 0) {
                 arg0->unkB8[0] = arg0->unkA0->pos.x;
@@ -1942,13 +1942,13 @@ s32 curves_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
     
     if (arg2 != -1) {
         if (arg0->unk0.unk80 != 0) {
-            arg0->unkA0 = curves_func_39C(arg2);
+            arg0->unkA0 = curves_FindByUID(arg2);
             arg2 = curves_func_438(arg0->unkA0, -1);
             if (arg2 == -1) {
                 return 1;
             }
         }
-        arg0->unkA0 = curves_func_39C(arg2);
+        arg0->unkA0 = curves_FindByUID(arg2);
         if (arg0->unkA0 == NULL) {
             arg0->unkA0 = NULL;
             return 1;
@@ -1961,7 +1961,7 @@ s32 curves_func_5860(UnkCurvesStruct* arg0, s32 arg1, s32 arg2) {
         if (var_v0_2 == -1) {
             return 1;
         }
-        arg0->unkA4 = curves_func_39C(var_v0_2);
+        arg0->unkA4 = curves_FindByUID(var_v0_2);
         if (arg0->unkA4 == NULL) {
             arg0->unkA4 = NULL;
             return 1;

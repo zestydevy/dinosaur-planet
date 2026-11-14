@@ -366,20 +366,20 @@ void dll_702_setup(Object* self, KTrex_Setup* setup, s32 arg2) {
     ktdata->stateStack = genericStackNew(4, sizeof(s32));
 
     for (i = 0; i < 4; i++) {
-        curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCW[i]);
+        curve = gDLL_26_Curves->vtbl->FindByUID(sSegStartCurvesCW[i]);
         if (curve != NULL) {
             ktdata->segStartCW_X[i] = curve->pos.x;
             ktdata->segStartCW_Y[i] = curve->pos.y;
             ktdata->segStartCW_Z[i] = curve->pos.z;
-            curve = gDLL_26_Curves->vtbl->func_39C(sSegEndCurvesCW[i]);
+            curve = gDLL_26_Curves->vtbl->FindByUID(sSegEndCurvesCW[i]);
             ktdata->segEndCW_X[i] = curve->pos.x;
             ktdata->segEndCW_Y[i] = curve->pos.y;
             ktdata->segEndCW_Z[i] = curve->pos.z;
-            curve = gDLL_26_Curves->vtbl->func_39C(sSegEndCurvesCCW[i]);
+            curve = gDLL_26_Curves->vtbl->FindByUID(sSegEndCurvesCCW[i]);
             ktdata->segEndCCW_X[i] = curve->pos.x;
             ktdata->segEndCCW_Y[i] = curve->pos.y;
             ktdata->segEndCCW_Z[i] = curve->pos.z;
-            curve = gDLL_26_Curves->vtbl->func_39C(sSegStartCurvesCCW[i]);
+            curve = gDLL_26_Curves->vtbl->FindByUID(sSegStartCurvesCCW[i]);
             ktdata->segStartCCW_X[i] = curve->pos.x;
             ktdata->segStartCCW_Y[i] = curve->pos.y;
             ktdata->segStartCCW_Z[i] = curve->pos.z;

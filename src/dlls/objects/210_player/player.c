@@ -7442,7 +7442,7 @@ s32 dll_210_func_151A0(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         sp5C = 0x1F;
         temp_v0_3 = gDLL_26_Curves->vtbl->func_1E4(player->srt.transl.f[0], player->srt.transl.f[1], player->srt.transl.f[2], &sp5C, 1, 0);
         if (temp_v0_3 != -1) {
-            sp64 = gDLL_26_Curves->vtbl->func_39C(temp_v0_3);
+            sp64 = gDLL_26_Curves->vtbl->FindByUID(temp_v0_3);
             player->srt.transl.f[0] = sp64->pos.x;
             player->srt.transl.f[1] = sp64->pos.y;
             player->srt.transl.f[2] = sp64->pos.z;

@@ -369,7 +369,7 @@ static CurveSetup* SHthorntail_findClosestCurve(f32 x, f32 y, f32 z, s32 curveSu
     f32 dz;
     s32 numNodes;
 
-    nodes = gDLL_26_Curves->vtbl->func_1BC(&numNodes);
+    nodes = gDLL_26_Curves->vtbl->GetCurves(&numNodes);
     closestCurve = NULL;
     closestDist = 2.5e9f;
     for (i = 0; i < numNodes; i++) {
@@ -497,7 +497,7 @@ static void SHthorntail_commonControl(Object* self, SHthorntail_Data* objdata, T
         numBranches = gDLL_26_Curves->vtbl->func_4F0(objdata->currentCurve, ignoreUID, branches);
         numNodeOptions = 0;
         for (i = 0; i < numBranches; i++) {
-            branch = gDLL_26_Curves->vtbl->func_39C(branches[i]);
+            branch = gDLL_26_Curves->vtbl->FindByUID(branches[i]);
             if (branch != NULL) {
                 allowBranch = FALSE;
                 switch (objdata->unk4E0) {

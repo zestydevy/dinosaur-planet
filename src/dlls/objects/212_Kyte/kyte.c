@@ -669,7 +669,7 @@ static CurveSetup* Kyte_func_1134(Object* self, u8 arg1, u8 arg2) {
     s8 var_v0;
 
 
-    var_s4 = gDLL_26_Curves->vtbl->func_1BC(&spB8);
+    var_s4 = gDLL_26_Curves->vtbl->GetCurves(&spB8);
     var_s7 = NULL;
     var_fs2 = 1e12f;
     for (var_s3 = 0; var_s3 < spB8; var_s3++) {
@@ -852,7 +852,7 @@ static CurveSetup* Kyte_func_18F8(DLL212_Data* objData, CurveSetup* setup, s32 a
     sp86 = 1;
     for (linkIdx = 0, setupIdx = 0; linkIdx < 4; linkIdx++, sp86 <<= 1, sp6B <<= 1) {
         if (setup->links[linkIdx] >= 0 && (setup->unk1B & sp86) - sp6B == 0) {
-            setups[setupIdx] = gDLL_26_Curves->vtbl->func_39C(setup->links[linkIdx]);
+            setups[setupIdx] = gDLL_26_Curves->vtbl->FindByUID(setup->links[linkIdx]);
             if (setups[setupIdx] != NULL) {
                 if (
                     (setups[setupIdx]->type22.activeBit == -1 || mainGetBits(setups[setupIdx]->type22.activeBit) != 0) &&
@@ -861,7 +861,7 @@ static CurveSetup* Kyte_func_18F8(DLL212_Data* objData, CurveSetup* setup, s32 a
                 ) {
                     for (subLinkIdx = 0, var_s2 = arg3, subSetupIdx = setupIdx + 1, var_s4 = 1; subLinkIdx < 4; subLinkIdx++, var_s4 <<= 1, var_s2 <<= 1) {
                         if (setups[setupIdx]->links[subLinkIdx] >= 0 && (setups[setupIdx]->unk1B & var_s4) - var_s2 == 0) {
-                            setups[subSetupIdx] = gDLL_26_Curves->vtbl->func_39C(setups[setupIdx]->links[subLinkIdx]);
+                            setups[subSetupIdx] = gDLL_26_Curves->vtbl->FindByUID(setups[setupIdx]->links[subLinkIdx]);
                             if (setups[subSetupIdx] != NULL) {
                                 if ((setups[subSetupIdx]->type22.activeBit == -1 || mainGetBits(setups[subSetupIdx]->type22.activeBit) != 0) &&
                                     (setups[subSetupIdx]->type22.usedBit == -1 || mainGetBits(setups[subSetupIdx]->type22.usedBit) == 0) &&
@@ -917,7 +917,7 @@ static CurveSetup* Kyte_func_1D2C(DLL212_Data* objData, CurveSetup* setup, s32 a
         if (lowestLinkIdx && lowestLinkIdx && lowestLinkIdx){}
 
         if (setup->links[linkIdx] >= 0 && ((setup->unk1B & lowestLinkIdx) - arg3) == 0) {
-            setups[setupIdx] = gDLL_26_Curves->vtbl->func_39C(setup->links[linkIdx]);
+            setups[setupIdx] = gDLL_26_Curves->vtbl->FindByUID(setup->links[linkIdx]);
             if (setups[setupIdx] != NULL && (arg2 == -1 || setup->base_type22.unk4 == setups[setupIdx]->base_type22.unk4)) {
                 setupIdx++;
             }

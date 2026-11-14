@@ -1254,7 +1254,7 @@ typedef enum {
     BIT_4DF = 0x4DF, // len:1 group:1
     BIT_Play_Seq_0057_CF_PowerRoom_WindLifts_Activating = 0x4E0, // len:1 group:1
     BIT_4E1 = 0x4E1, // len:1 group:1
-    BIT_Tricky_Talk_Sequence = 0x4E2, // len:16 group:3 [SIDEKICK] (sequenceID for talking to Tricky, set via Trigger objects)
+    BIT_Tricky_Walk_Group = 0x4E2, // len:16 group:3
     BIT_4E3 = 0x4E3, // len:8 group:1
     BIT_Tricky_Unlocked_Sidekick_Commands = 0x4E4, // len:1 group:2 [SIDEKICK COMMAND] Unlocks Tricky's sidekick commands menu (set during his tutorial chat in SnowHorn Wastes' geyser area)
     BIT_Tricky_Spawns = 0x4E5, // len:1 group:2

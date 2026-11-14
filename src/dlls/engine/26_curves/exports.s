@@ -11,10 +11,10 @@ _exports:
 /*0*/ .dword curves_func_18
 /*1*/ .dword curves_add_curve_def
 /*2*/ .dword curves_func_10C
-/*3*/ .dword curves_func_1BC
+/*3*/ .dword curves_GetCurves
 /*4*/ .dword curves_func_1E4
 /*5*/ .dword curves_func_3F00
-/*6*/ .dword curves_func_39C
+/*6*/ .dword curves_FindByUID
 /*7*/ .dword curves_func_14F4
 /*8*/ .dword curves_func_174C
 /*9*/ .dword curves_func_17F4
