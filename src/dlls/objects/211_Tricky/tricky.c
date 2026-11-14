@@ -2010,15 +2010,6 @@ static void tricky_func_52B8(Object* self, Tricky_Data* objData) {
 /*0x5E0*/ static const char str_5E0[] = "standing\n";
 /*0x5EC*/ static const char str_5EC[] = "walk to node %d %d\n";
 
-typedef struct {
-    u8 pad0;
-    u8 unk1;
-    u16 unk2[4];
-    u16 padA;
-    f32 unkC;
-    f32 unk10;
-} UnkSp44; // TODO: this isn't right
-
 // offset: 0x53E4 | func: 54
 static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     s32 pad;
@@ -2046,7 +2037,9 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     u8 temp_s1_4;
     u8 temp_v1_3;
     u8 temp_v1_4;
-    UnkSp44 sp44;
+    f32 sp54;
+    f32 sp50;
+    WalkGroupInfo sp44;
 
     temp_s1 = objData->unk2C;
     spC0 = gDLL_25->vtbl->FindWalkGroup(&self->srt.transl, NULL);
@@ -2085,8 +2078,8 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
     if (spBC == objData->unkA4) {
         objData->flags |= TRICKY_FLAG_UNK400;
         for (var_a0 = 0, temp_v1_3 = 1; var_a0 < 4; var_a0++, temp_v1_3 <<= 1) {
-            if (sp44.unk1 & temp_v1_3) {
-                objData->unk6C[var_a0] = sp44.unk2[var_a0];
+            if (sp44.patchFlags & temp_v1_3) {
+                objData->unk6C[var_a0] = sp44.patchIDs[var_a0];
                 objData->unk74[var_a0].x = temp_s1->x;
                 objData->unk74[var_a0].y = temp_s1->y;
                 objData->unk74[var_a0].z = temp_s1->z;
@@ -2099,7 +2092,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         var_a3 = objData->unkA4 * spBC;
         if (var_a3 != 0) {
             for (var_a0 = 0; var_a0 < 4; var_a0++) {
-                if ((var_a3 == sp44.unk2[var_a0]) && (sp44.unk1 & (1 << var_a0))) {
+                if ((var_a3 == sp44.patchIDs[var_a0]) && (sp44.patchFlags & (1 << var_a0))) {
                     objData->unkA6 = var_a3;
                     objData->unkA8.x = temp_s1->x;
                     objData->unkA8.y = temp_s1->y;
@@ -2115,7 +2108,7 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         for (var_a0 = 0; var_a0 < 4; var_a0++) {
             // FAKE
             do { } while (0);
-            if (sp44.unk1 & (1 << var_a0)) {
+            if (sp44.patchFlags & (1 << var_a0)) {
             }
         }
     }
@@ -2450,17 +2443,17 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
         tricky_func_8ED0(sp84, 2.3f, &objData->unk20);
         tricky_func_87E4(self);
         if (self->animProgress < 0.5f) {
-            objGetAnimChange(self, objData->unk20, &sp44.unk10);
+            objGetAnimChange(self, objData->unk20, &sp54);
             self->srt.transl.x += objData->unk30[0] * objData->unk20 * gUpdateRateF;
             self->srt.transl.z += objData->unk30[1] * objData->unk20 * gUpdateRateF;
         } else {
-            objGetAnimChange(self, objData->unk20 * 0.25f, &sp44.unk10);
+            objGetAnimChange(self, objData->unk20 * 0.25f, &sp54);
             self->srt.transl.x += objData->unk30[0] * (objData->unk20 * 0.25f) * gUpdateRateF;
             // FAKE
             if (var_v1) {}
             self->srt.transl.z += objData->unk30[1] * (objData->unk20 * 0.25f) * gUpdateRateF;
         }
-        if (objAnimAdvance(self, sp44.unk10, gUpdateRateF, NULL) != 0) {
+        if (objAnimAdvance(self, sp54, gUpdateRateF, NULL) != 0) {
             setup = objData->unk3C8.unkA0;
             temp_fv0 = setup->pos.x - self->srt.transl.x;
             var_fv1 = setup->pos.z - self->srt.transl.z;
@@ -2490,20 +2483,20 @@ static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* objData) {
             if (var_fv1 <= 24.0f) {
                 objAnimSetProgress(self, objData->unk58 / var_fv1);
             } else {
-                sp44.unkC = 1.0f;
+                sp50 = 1.0f;
                 if (objData->unk58 <= 6.0f) {
                     objAnimSetProgress(self, objData->unk58 / 24.0f);
                 } else if ((var_fv1 - 6.0f) <= objData->unk58) {
                     objAnimSetProgress(self, ((24.0f - var_fv1) + objData->unk58) / 24.0f);
-                    sp44.unkC = (((objData->unk54 - objData->unk58) / 6.0f) * 0.75f) + 0.25f;
+                    sp50 = (((objData->unk54 - objData->unk58) / 6.0f) * 0.75f) + 0.25f;
                 } else {
                     objAnimSetProgress(self, (((objData->unk58 - 6.0f) / (var_fv1 - 12.0f)) * 0.5f) + 0.25f);
                 }
             }
             objData->unkCC.mode = 0;
             objData->unk38 = 0.0f;
-            self->srt.transl.x += objData->unk30[0] * 2.3f * gUpdateRateF * sp44.unkC;
-            self->srt.transl.z += objData->unk30[1] * 2.3f * gUpdateRateF * sp44.unkC;
+            self->srt.transl.x += objData->unk30[0] * 2.3f * gUpdateRateF * sp50;
+            self->srt.transl.z += objData->unk30[1] * 2.3f * gUpdateRateF * sp50;
         }
         break;
     case 11:
