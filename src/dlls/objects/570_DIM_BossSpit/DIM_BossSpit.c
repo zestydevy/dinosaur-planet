@@ -1,3 +1,4 @@
+#include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "dll.h"
@@ -105,8 +106,8 @@ void DIM_BossSpit_createLfxEmitter(Object* self) {
     lfxemitterSetup->base.x = self->srt.transl.x;
     lfxemitterSetup->base.y = self->srt.transl.y;
     lfxemitterSetup->base.z = self->srt.transl.z;
-    lfxemitterSetup->unk1E = 0x145;
-    lfxemitterSetup->unk22 = -1;
+    lfxemitterSetup->actionIndex = 0x145;
+    lfxemitterSetup->enableBit = NO_GAMEBIT;
     lfxemitterSetup->base.loadFlags = OBJSETUP_LOAD_LEVEL;
     lfxemitterSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     lfxemitterSetup->base.loadDistance = 0xFF;
@@ -182,7 +183,7 @@ void DIM_BossSpit_func_53C(Object* self) {
         lfxEmitter = objdata->lfxEmitter;
         if (lfxEmitter) {
             lfxEmitterData = lfxEmitter->data;
-            dll_newlfx->Func_BB8(lfxEmitterData->unk108->slot, 0, i);
+            dll_newlfx->Func_BB8(lfxEmitterData->action->slot, 0, i);
         }
     } else {
         lfxEmitter = objdata->lfxEmitter;

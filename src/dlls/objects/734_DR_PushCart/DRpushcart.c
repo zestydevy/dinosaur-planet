@@ -148,8 +148,8 @@ void dll_734_func_D30(Object* self, s32 arg1) {
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;
     lfxSetup->base.z = self->srt.transl.z;
-    lfxSetup->unk1E = arg1;
-    lfxSetup->unk22 = -1;
+    lfxSetup->actionIndex = arg1;
+    lfxSetup->enableBit = NO_GAMEBIT;
     objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }
 

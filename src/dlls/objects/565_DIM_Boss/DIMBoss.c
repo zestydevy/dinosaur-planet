@@ -761,8 +761,8 @@ void dll_565_func_1C84(Object* self, Baddie* baddie) {
             objData->unk8->srt.transl.y = objData->unk54.transl.y;
             objData->unk8->srt.transl.z = objData->unk54.transl.z;
             lfxData = objData->unk8->data;
-            if (lfxData->unk108 != NULL) {
-                dll_newlfx->Func_BB8(lfxData->unk108->slot, 0, texAnim->frame >> 1);
+            if (lfxData->action != NULL) {
+                dll_newlfx->Func_BB8(lfxData->action->slot, 0, texAnim->frame >> 1);
             }
         }
         
@@ -942,10 +942,10 @@ void dll_565_func_2AE4(Object* self, f32 x, f32 y, f32 z) {
     lfxSetup->base.x = x;
     lfxSetup->base.y = y;
     lfxSetup->base.z = z;
-    lfxSetup->unk1E = 0x141;
-    lfxSetup->unk22 = -1;
-    lfxSetup->unk18 = mathRnd(-500, 500) + 1500;
-    lfxSetup->unk1C = mathRnd(-500, 500) + 1500;
+    lfxSetup->actionIndex = 0x141;
+    lfxSetup->enableBit = NO_GAMEBIT;
+    lfxSetup->rollRate = mathRnd(-500, 500) + 1500;
+    lfxSetup->yawRate = mathRnd(-500, 500) + 1500;
     lfxSetup->base.loadFlags = 1;
     lfxSetup->base.loadDistance = 0xFF;
     lfxSetup->base.fadeDistance = 0xFF;

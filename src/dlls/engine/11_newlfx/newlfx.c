@@ -92,45 +92,40 @@ void newlfx_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
 void newlfx_DoAction(Object* arg0, Object* arg1, LightAction* action, s32 arg3, s32 arg4, SRT* arg5) {
-    s32 sp34;
-    PlayerLightActions* plLightActions;
-
-    sp34 = -1;
-    plLightActions = gDLL_29_Gplay->vtbl->get_current_player_lactions();
-    if (action != NULL) {
-        if (action->slot != 0xFFFE) {
-            sp34 = newlfx_findLight(action->slot);
-        }
-        if (sp34 == -1) {
-            if (!(action->flags & 2) && (action->flags & 1)) {
-                if (!(action->flags & 0x40) && (arg0->def->unk87 & 0x10)) {
-                    action->slot = data_18 + 11;
-                    data_18++;
-                    if (data_18 >= 16) {
-                        data_18 = 0;
-                    }
+    s32 existingLight = -1;
+    PlayerLightActions* plLightActions = dll_gplay->get_current_player_lactions();
+    
+    if (action == NULL) {
+        return;
+    }
+    if (action->slot != 0xFFFE) {
+        existingLight = newlfx_findLight(action->slot);
+    }
+    if (existingLight == -1) {
+        if (!(action->flags & 2) && (action->flags & 1)) {
+            if (!(action->flags & 0x40) && (arg0->def->unk87 & 0x10)) {
+                action->slot = data_18 + 11;
+                data_18++;
+                if (data_18 >= 16) {
+                    data_18 = 0;
+                }
+                arg0->unkD6 = (u8) action->slot;
+                newlfx_allocLight(action, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, arg1, arg0);
+            } else if (action->slot == 0xFFFE) {
+                action->slot = data_18 + 11;
+                data_18++;
+                if (data_18 >= 16) {
+                    data_18 = 0;
+                }
+                if (!(action->flags & 0x40)) {
                     arg0->unkD6 = (u8) action->slot;
                     newlfx_allocLight(action, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, arg1, arg0);
-                    return;
-                }
-                if (action->slot == 0xFFFE) {
-                    action->slot = data_18 + 11;
-                    data_18++;
-                    if (data_18 >= 16) {
-                        data_18 = 0;
-                    }
-                    if (!(action->flags & 0x40)) {
-                        arg0->unkD6 = (u8) action->slot;
-                        newlfx_allocLight(action, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, arg1, arg0);
-                        return;
-                    }
+                } else {
                     newlfx_allocLight(action, arg5->transl.x, arg5->transl.y, arg5->transl.z, arg1, arg0);
-                    return;
                 }
-                if ((arg5 != NULL) && (action->flags & 0x40)) {
-                    newlfx_allocLight(action, arg5->transl.x, arg5->transl.y, arg5->transl.z, arg1, arg0);
-                    return;
-                }
+            } else if ((arg5 != NULL) && (action->flags & 0x40)) {
+                newlfx_allocLight(action, arg5->transl.x, arg5->transl.y, arg5->transl.z, arg1, arg0);
+            } else {
                 if (arg0->parent != NULL) {
                     newlfx_allocLight(action, arg0->srt.transl.x, arg0->srt.transl.y, arg0->srt.transl.z, arg1, arg0);
                 } else {
@@ -140,18 +135,18 @@ void newlfx_DoAction(Object* arg0, Object* arg1, LightAction* action, s32 arg3, 
                     plLightActions->newlfx = action->id - 1;
                 }
             }
-        } else {
-            if (action->flags & 1) {
-                if (action->flags2 & 8) {
-                    sLights[sp34]->velX = (f32) action->x;
-                    sLights[sp34]->velY = (f32) action->y;
-                    sLights[sp34]->velZ = (f32) action->z;
-                }
-            } else if (action->flags & 2) {
-                newlfx_freeLight(action->slot);
-                if (action->type == 0) {
-                    plLightActions->newlfx = action->id - 1;
-                }
+        }
+    } else {
+        if (action->flags & 1) {
+            if (action->flags2 & 8) {
+                sLights[existingLight]->velX = (f32) action->x;
+                sLights[existingLight]->velY = (f32) action->y;
+                sLights[existingLight]->velZ = (f32) action->z;
+            }
+        } else if (action->flags & 2) {
+            newlfx_freeLight(action->slot);
+            if (action->type == 0) {
+                plLightActions->newlfx = action->id - 1;
             }
         }
     }

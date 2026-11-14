@@ -284,7 +284,7 @@ s32 DRbullet_tick_impact(Object* self) {
 
         lfxEmitter = objData->lfxEmitter;
         if (lfxEmitter != NULL) {
-            ((DLL_338_LFXEmitter*)lfxEmitter->dll)->vtbl->func8(lfxEmitter, opacity);
+            ((DLL_338_LFXEmitter*)lfxEmitter->dll)->vtbl->Func_6DC(lfxEmitter, opacity);
         }
     } else {
         if (objData->lfxEmitter != NULL) {
@@ -306,7 +306,7 @@ Object* DRbullet_create_lfxEmitter(Object* self, s32 arg1) {
     lfxSetup->base.x = self->srt.transl.x;
     lfxSetup->base.y = self->srt.transl.y;
     lfxSetup->base.z = self->srt.transl.z;
-    lfxSetup->unk1E = arg1;
-    lfxSetup->unk22 = -1;
+    lfxSetup->actionIndex = arg1;
+    lfxSetup->enableBit = -1;
     return objSetupObject(&lfxSetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

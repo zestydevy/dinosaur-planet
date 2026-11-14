@@ -2,6 +2,7 @@
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/338_LFXEmitter.h"
+#include "game/gamebits.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/102_LFXEmitter.h"
 #include "game/objects/setups/51_Generic.h"
@@ -114,7 +115,7 @@ static void RobotAnimPatrol_stun(Object*, RobotAnimPatrol_StunState*, f32, f32, 
 static s32 RobotAnimPatrol_updateStunState(Object*, RobotAnimPatrol_StunState*);
 static void RobotAnimPatrol_func_334C(f32 arg0, f32 arg1, f32 arg2, s16* arg3, s16* arg4);
 static void RobotAnimPatrol_func_33E8(s16 arg0, s16 arg1, Vec3f* arg2, f32 arg3);
-Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 arg1, s32 arg2, f32 velX, f32 velY, f32 velZ);
+Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 actionIndex, s32 lifetime, f32 velX, f32 velY, f32 velZ);
 void RobotAnimPatrol_updateLfxEmitter(Vec3f* pos, Object* emitter, Vec3f* velocity);
 
 // offset: 0x0 | ctor
@@ -1133,7 +1134,7 @@ static void RobotAnimPatrol_func_33E8(s16 arg0, s16 arg1, Vec3f* arg2, f32 arg3)
 }
 
 // offset: 0x34D4 | func: 22
-Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 arg1, s32 arg2, f32 velX, f32 velY, f32 velZ) {
+Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 actionIndex, s32 lifetime, f32 velX, f32 velY, f32 velZ) {
     LFXEmitter_Setup* emitterSetup;
     Object* emitter;
 
@@ -1145,9 +1146,9 @@ Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 arg1, s32 arg2, f32 vel
     emitterSetup->base.fadeFlags = OBJSETUP_FADE_MANUAL;
     emitterSetup->base.loadDistance = 255;
     emitterSetup->base.fadeDistance = 255;
-    emitterSetup->unk20 = (s16) arg2;
-    emitterSetup->unk1E = (s16) arg1;
-    emitterSetup->unk22 = 0x95;
+    emitterSetup->lifetime = (s16) lifetime;
+    emitterSetup->actionIndex = (s16) actionIndex;
+    emitterSetup->enableBit = BIT_ALWAYS_1;
     emitter = objSetupObject(&emitterSetup->base, OBJINIT_STANDALONE, self->mapID, -1, self->parent);
     emitter->velocity.x = velX;
     emitter->velocity.y = velY;

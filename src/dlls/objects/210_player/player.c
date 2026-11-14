@@ -10484,9 +10484,9 @@ Object *dll_210_func_1DD94(Object* player, s32 arg1) {
     objsetup->base.x = player->srt.transl.x;
     objsetup->base.y = player->srt.transl.y;
     objsetup->base.z = player->srt.transl.z;
-    objsetup->unk20 = 0;
-    objsetup->unk1E = arg1;
-    objsetup->unk22 = -1;
+    objsetup->lifetime = 0;
+    objsetup->actionIndex = arg1;
+    objsetup->enableBit = NO_GAMEBIT;
     return objSetupObject(&objsetup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, player->mapID, -1, player->parent);
 }
 
