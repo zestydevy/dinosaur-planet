@@ -177,6 +177,7 @@ void RobotAnimPatrol_obj_Setup(Object* self, RobotAnimPatrol_Setup* setup, s32 r
         beamSetup->loadFlags = OBJSETUP_LOAD_MANUAL;
         beamSetup->fadeFlags = OBJSETUP_FADE_CAMERA;
         beamSetup->fadeDistance = 255;
+        // @bug: setup struct is never freed
         beam = objSetupObject(beamSetup, 0, -1, -1, self->parent);
         objdata->beam = beam;
         beam->srt.scale = 0.35f;
@@ -1149,6 +1150,7 @@ Object* RobotAnimPatrol_fireLfxEmitter(Object* self, s32 actionIndex, s32 lifeti
     emitterSetup->lifetime = (s16) lifetime;
     emitterSetup->actionIndex = (s16) actionIndex;
     emitterSetup->enableBit = BIT_ALWAYS_1;
+    // @bug: setup struct is never freed
     emitter = objSetupObject(&emitterSetup->base, OBJINIT_STANDALONE, self->mapID, -1, self->parent);
     emitter->velocity.x = velX;
     emitter->velocity.y = velY;
