@@ -1,6 +1,7 @@
 #ifndef _SYS_GAME_OBJECTS_SETUPS_GENERIC_H
 #define _SYS_GAME_OBJECTS_SETUPS_GENERIC_H
 
+#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "macros.h"
 
@@ -497,6 +498,15 @@ GENERIC_SETUP(DeadDino_Setup,
 /*1E*/ s16 unused1;
 /*20*/ s16 unused2;
 )
+
+typedef struct {
+/*18*/ ObjSetup base;
+/*19*/ s8 yaw;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 gamebitCollected;
+/*20*/ s16 gamebitPlaySeq;
+} WL_podiumgem_Setup;
 
 GENERIC_SETUP(WLWorm_Setup, 
 /*18*/ s8 unk18;

@@ -1,5 +1,6 @@
 #include "dll.h"
 #include "game/gamebits.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
@@ -7,15 +8,6 @@
 #include "sys/objmsg.h"
 #include "sys/gfx/animseq.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    u16 unk1A;
-    u16 unk1C;
-    s16 gamebitCollected;
-    s16 gamebitPlaySeq;
-} WL_podiumgem_Setup;
 
 typedef struct {
     s16 gamebitCollected;
