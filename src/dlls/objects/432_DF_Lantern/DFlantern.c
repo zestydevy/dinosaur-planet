@@ -1,23 +1,11 @@
 #include "dll.h"
 #include "dlls/engine/17_partfx.h"
 #include "game/objects/object.h"
+#include "game/objects/setups/117.h"
 #include "sys/camera.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/vi.h"
-
-typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 useOtherLFXConfig;  //Boolean, affects which lightAction indices are used
-    f32 scale;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-    u8 flags;              //See `DF_Lantern_Flags`, used so indoor lanterns are always lit (instead of just at night), or to use fadeDistance for camera range
-} DF_Lantern_Setup;
 
 typedef struct {
     u16 lfxActionIdxOn;    //LightAction to use when the player is near the lantern
@@ -30,15 +18,6 @@ typedef struct {
     u8 prevFlags;          //Used to handle when flags change
     u32 soundHandle;       //For the crackling sound loop
 } DF_Lantern_Data;
-
-typedef enum {
-    DF_Lantern_FLAG_1_Player_Collision = 1,     //Toggle objHits during setup (doesn't seem to work, but probably meant to decide whether the lantern burns you?)
-    DF_Lantern_FLAG_2_Emit_Light = 2,           //Apply a lightAction
-    DF_Lantern_FLAG_4_Show_PartFX_Glow = 4,     //Draw the partFX
-    DF_Lantern_FLAG_8_Play_Sound = 8,           //Play a crackling sound loop when near the lantern
-    DF_Lantern_FLAG_10_Always_Lit = 0x10,       //For indoor lanterns - always lit, instead of only at night-time
-    DF_Lantern_FLAG_20_Use_Fade_Distance = 0x20 //Use the objSetup fadeDistance as the camera range for the partFX glow
-} DF_Lantern_Flags;
 
 // offset: 0x0 | ctor
 void DF_Lantern_ctor(void* dll) { }
