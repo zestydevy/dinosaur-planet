@@ -66,7 +66,7 @@ void FindKyteObject_obj_Control(Object* self) {
             break;
         }
 
-        //If Kyte's around the the player's near the object, enable the Find command option
+        //If Kyte's around and the player's near the object, enable the Find command option
         kyte = objGetSidekick();
         if (kyte) {
             player = objGetPlayer();
