@@ -54,6 +54,8 @@ enum ParticleID {
     /* --- DLL 38 START --- */
     PARTICLE_C8 = 0xC8,
     PARTICLE_C9 = 0xC9,
+    PARTICLE_CA = 0xCA,
+    PARTICLE_CB = 0xCB,
     PARTICLE_12B = 0x12B,
     /* --- DLL 38 END --- */
     /* --- DLL 44 START --- */
@@ -157,6 +159,8 @@ enum ParticleID {
     PARTICLE_399 = 0x399,
     PARTICLE_3A3 = 0x3A3,
     PARTICLE_3A4 = 0x3A4,
+    PARTICLE_3A5 = 0x3A5,
+    PARTICLE_3A6 = 0x3A6,
     PARTICLE_3B4 = 0x3B4,
     /* --- DLL 34 END --- */
     PARTICLE_3B5 = 0x3B5,
@@ -186,6 +190,7 @@ enum ParticleID {
     PARTICLE_425 = 0x425, //smoke
     PARTICLE_426 = 0x426, //embers
     PARTICLE_427 = 0x427,
+    PARTICLE_42B = 0x42B, //dockpoint beacons, DF torches
     PARTICLE_44B = 0x44B,
     /* --- DLL 39 END --- */
     /* --- DLL 46 START --- */
