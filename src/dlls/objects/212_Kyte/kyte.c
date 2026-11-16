@@ -376,16 +376,16 @@ u32 Kyte_obj_GetDataSize(Object* self, u32 offsetAddr) {
 static int Kyte_func_8E8(Object *self, Object *animObj, AnimObj_Data *animObjData, s8 arg3) {
     static s32 data_168 = -1;
     DLL212_Data* objData;
-    SeqJoint* temp_v0;
+    SeqJoint* head;
     s32 i;
 
     objData = self->data;
     objData->unk4 = 0;
     func_800267A4(self);
     if (animObjData->unk62 == 4) {
-        temp_v0 = objExpr_func_80034804(self, 0);
-        animObjData->unk120 = temp_v0->yaw;
-        animObjData->unk122 = temp_v0->pitch;
+        head = objExpr_func_80034804(self, 0);
+        animObjData->headBaseYaw = head->yaw;
+        animObjData->headBasePitch = head->pitch;
         animObjData->unk62 = 0;
     }
     if ((self->seqSlot != -1) && (objData->unk194.unk34 & 0x3000)) {

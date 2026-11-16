@@ -317,42 +317,45 @@ void movelib_func_CDC(Object* arg0, MoveLibData* arg1, s32 arg2) {
 }
 
 // offset: 0xE9C | func: 7 | export: 4
-s32 movelib_func_E9C(Object* arg0, AnimObj_Data* arg1, MoveLibData* arg2, s16 arg3, s16 arg4) {
-    Object* temp_v0;
+s32 movelib_func_E9C(Object* obj, AnimObj_Data* animData, MoveLibData* arg2, s16 arg3, s16 arg4) {
+    Object* player;
     s16 sp38[2];
     SeqJoint* seqJoint;
 
-    temp_v0 = objGetPlayer();
+    player = objGetPlayer();
     sp38[0] = arg3;
     sp38[1] = arg4;
-    arg0->objhitInfo->unk58 |= 1;
-    if (arg1->unk62 == 4) {
+    obj->objhitInfo->unk58 |= 1;
+
+    if (animData->unk62 == 4) {
         arg2->unk490 = 0x50;
-        arg1->unk7A &= ~0x8;
-        arg1->unk7A &= ~0x2;
+        animData->unk7A &= ~8;
+        animData->unk7A &= ~2;
         arg2->unk498 = 3;
-        arg1->unk62 = 5;
-        arg1->unk7A &= ~0x4;
-        arg1->unkF4 = movelib_func_106C;
+        animData->unk62 = 5;
+        animData->unk7A &= ~4;
+        animData->unkF4 = movelib_func_106C;
         return 1;
     }
-    if (arg1->unk62 == 5) {
+
+    if (animData->unk62 == 5) {
         if ((arg2->unk498 >= 2) && (arg2->unk498 < 8)) {
-            movelib_func_3B4(arg0, temp_v0, arg2, sp38);
-            objAnimAdvance(arg0, arg2->unk0, (f32) gUpdateRate, NULL);
+            movelib_func_3B4(obj, player, arg2, sp38);
+            objAnimAdvance(obj, arg2->unk0, gUpdateRate, NULL);
             if (arg2->unk498 == 7) {
-                arg1->unk7A |= 8;
-                seqJoint = objExpr_func_80034804(arg0, 0);
-                arg1->unk120 = seqJoint->yaw;
-                arg1->unk122 = seqJoint->pitch;
+                animData->unk7A |= 8;
+                seqJoint = objExpr_func_80034804(obj, 0);
+                animData->headBaseYaw = seqJoint->yaw;
+                animData->headBasePitch = seqJoint->pitch;
                 arg2->unk498 = 0;
-                arg1->unk62 = 0;
-                arg1->unk7A |= 4;
+                animData->unk62 = 0;
+                animData->unk7A |= 4;
                 return 0;
             }
             return 1;
         }
     }
+
     return 0;
 }
 

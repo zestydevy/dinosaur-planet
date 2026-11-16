@@ -85,13 +85,9 @@ typedef enum {
 
 typedef struct AnimObj_Data {
 /*000*/ Object* actor; // the target of the anim obj (e.g. the target of an Override object)
-/*004*/ f32 unk4;
-/*008*/ f32 unk8;
-/*00C*/ f32 unkC;
+/*004*/ Vec3f positionOffset;
 /*010*/ f32 unk10;
-/*014*/ s16 unk14;
-/*016*/ s16 unk16;
-/*018*/ s16 unk18;
+/*014*/ Vec3s16 rotationOffset;
 /*01A*/ s16 seqYaw; // base yaw of the whole object sequence?
 /*004*/ s8 unk1C[0x20 - 0x1C];
 /*020*/ f32 unk20;
@@ -150,8 +146,8 @@ typedef struct AnimObj_Data {
 /*0FC*/ UnkFunc_80024108Struct unkFC;
 /*118*/ s32 actorUID;
 /*11C*/ Object* overrideTarget; // same as actor, but only set if override was enabled
-/*120*/ s16 unk120;
-/*122*/ s16 unk122;
+/*120*/ s16 headBaseYaw;   //seqJoint rotation, used as a base value for the head rotation keyframes
+/*122*/ s16 headBasePitch; //seqJoint rotation, used as a base value for the head rotation keyframes
 /*124*/ s16 decisionTimes[MAX_DECISION]; // timestamp of decision target
 /*138*/ u8 decisionConditions[MAX_DECISION]; // condition of decision
 /*142*/ u8 unk142_4: 4;
