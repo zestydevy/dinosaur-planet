@@ -1,12 +1,13 @@
 #include "dlls/engine/2_camcontrol.h"
 #include "dlls/objects/210_player.h"
+#include "sys/math.h"
 
-/*0x0*/ static f32 data_0 = 37.0f;
+/*0x0*/ static f32 dPlayerOffsetY = 37.0f;
 
-/*0x0*/ static f32 bss_0;
-/*0x4*/ static f32 bss_4;
+/*0x0*/ static f32 sOrbitDistanceInitial;
+/*0x4*/ static f32 sOrbitDistance;
 
-static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2);
+static void camspellaim_calculateIntersectDistance(Cam* cam, Object* player, f32* orbitDistance);
 
 // offset: 0x0 | ctor
 void camspellaim_ctor(void* dll) { }
@@ -15,90 +16,97 @@ void camspellaim_ctor(void* dll) { }
 void camspellaim_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void camspellaim_func_18(Cam* cam, s32 arg1, void* data) {
-    camspellaim_func_2E4(cam, cam->player, &bss_0);
+void camspellaim_Setup(Cam* cam, s32 arg1, void* data) {
+    camspellaim_calculateIntersectDistance(cam, cam->player, &sOrbitDistanceInitial);
 }
 
 // offset: 0x64 | func: 1 | export: 1
-void camspellaim_func_64(Cam* cam) {
-    Object* sp4C;
-    f32 temp_ft5;
-    f32 temp_fv1;
-    f32 var_f12;
-    f32 sp3C;
-    f32 sp38;
-    f32 sp34;
-    f32 temp;
-    s16 sp2E;
-    s16 sp2C;
-    f32 sp20[3];
+void camspellaim_Control(Cam* cam) {
+    Object* player;
+    f32 pad;
+    f32 distanceLateral;
+    f32 distanceVertical;
+    f32 sinYaw;
+    f32 cosYaw;
+    f32 cosPitch;
+    f32 sinPitch;
+    s16 yawSpeed;
+    s16 pitchSpeed;
+    f32 orbitOrigin[3];
 
-    sp4C = cam->player;
-    var_f12 = bss_0;
+    player = cam->player;
+
+    distanceVertical = sOrbitDistanceInitial;
     cam->highlightFlags |= 2;
-    bss_4 = var_f12;
-    ((DLL_210_Player*)sp4C->dll)->vtbl->func62(sp4C, &sp2E, &sp2C);
-    sp2E = ((sp2E >> 1) - sp4C->srt.yaw) + 0x8000;
-    sp2C = (s16) (sp2C >> 1);
-    sp20[2] = sp4C->srt.transl.x;
-    sp20[1] = sp4C->srt.transl.y + data_0;
-    sp20[0] = sp4C->srt.transl.z;
-    sp2E -= (cam->srt.yaw & 0xFFFF);
-    CIRCLE_WRAP(sp2E);
-    cam->srt.yaw += (s32) (sp2E * gUpdateRate) >> 3;
-    sp2C -= (cam->srt.pitch & 0xFFFF);
-    CIRCLE_WRAP(sp2C);
-    cam->srt.pitch += (s32) (sp2C * gUpdateRate) >> 3;
-    sp3C = mathSinfInterp((s16) (cam->srt.yaw - 0x4000));
-    sp38 = mathCosfInterp((s16) (cam->srt.yaw - 0x4000));
-    sp34 = mathCosfInterp(cam->srt.pitch);
-    temp = mathSinfInterp(cam->srt.pitch);
-    var_f12 = bss_4;
-    temp_fv1 = var_f12 * sp34;
-    cam->srt.transl.x = sp20[2] + (temp_fv1 * sp38);
-    cam->srt.transl.y = sp20[1] + (var_f12 * temp);
-    cam->srt.transl.z = sp20[0] + (temp_fv1 * sp3C);
+    sOrbitDistance = distanceVertical;
+
+    ((DLL_210_Player*)player->dll)->vtbl->func62(player, &yawSpeed, &pitchSpeed);
+    yawSpeed = ((yawSpeed >> 1) - player->srt.yaw) + M_180_DEGREES;
+    pitchSpeed >>= 1;
+    orbitOrigin[2] = player->srt.transl.x;
+    orbitOrigin[1] = player->srt.transl.y + dPlayerOffsetY;
+    orbitOrigin[0] = player->srt.transl.z;
+    
+    yawSpeed -= (cam->srt.yaw & 0xFFFF);
+    CIRCLE_WRAP(yawSpeed);
+    cam->srt.yaw += (yawSpeed * gUpdateRate) >> 3;
+
+    pitchSpeed -= (cam->srt.pitch & 0xFFFF);
+    CIRCLE_WRAP(pitchSpeed);
+    cam->srt.pitch += (pitchSpeed * gUpdateRate) >> 3;
+
+    sinYaw = mathSinfInterp((cam->srt.yaw - M_90_DEGREES));
+    cosYaw = mathCosfInterp((cam->srt.yaw - M_90_DEGREES));
+    cosPitch = mathCosfInterp(cam->srt.pitch);
+    sinPitch = mathSinfInterp(cam->srt.pitch);
+
+    distanceVertical = sOrbitDistance;
+    distanceLateral = distanceVertical * cosPitch;
+
+    cam->srt.transl.x = orbitOrigin[2] + (distanceLateral * cosYaw);
+    cam->srt.transl.y = orbitOrigin[1] + (distanceVertical * sinPitch);
+    cam->srt.transl.z = orbitOrigin[0] + (distanceLateral * sinYaw);
 }
 
 // offset: 0x2C8 | func: 2 | export: 2
-void camspellaim_func_2C8(Cam* cam) {
+void camspellaim_Free(Cam* cam) {
 
 }
 
 // offset: 0x2D4 | func: 3 | export: 3
-void camspellaim_func_2D4(void* arg0, s32 arg1) {
+void camspellaim_Func_2D4(void* arg0, s32 arg1) {
 
 }
 
 // offset: 0x2E4 | func: 4
-static void camspellaim_func_2E4(Cam* cam, Object* arg1, f32* arg2) {
-    f32 spD4;
-    f32 temp_ft2;
-    f32 temp_fv0;
-    f32 temp_fv1;
-    Vec3f spBC;
-    Vec3f spB0;
-    AABBs32 sp98;
-    TrackIntersectResult sp2C;
+static void camspellaim_calculateIntersectDistance(Cam* cam, Object* player, f32* distance) {
+    f32 sin;
+    f32 cos;
+    f32 dx;
+    f32 dz;
+    Vec3f initial;
+    Vec3f goal;
+    AABBs32 aabb;
+    TrackIntersectResult result;
 
-    spD4 = mathSinfInterp(arg1->srt.yaw);
-    temp_ft2 = mathCosfInterp(arg1->srt.yaw) * 60.0f;
-    spB0.x = arg1->globalPosition.x + (spD4 * 60.0f);
-    spB0.y = arg1->globalPosition.y + 37.0f;
-    spB0.z = arg1->globalPosition.z + temp_ft2;
-    spBC.x = arg1->globalPosition.x;
-    spBC.y = spB0.y;
-    spBC.z = arg1->globalPosition.z;
-    sp2C.unk50[0] = -1;
-    sp2C.unk54[0] = 4;
-    sp2C.unk40[0] = 4.5f;
-    trackIntersectBuildAABB(&sp98, &spBC, &spB0, &sp2C.unk40[0], 1);
-    trackIntersectBroadphase(arg1, &sp98, 1);
-    if (trackGetIntersect(arg1, spBC.f, spB0.f, 1, &sp2C, 0) != 0) {
-        temp_fv0 = spB0.x - spBC.x;
-        temp_fv1 = spB0.z - spBC.z;
-        *arg2 = sqrtf(SQ(temp_fv0) + SQ(temp_fv1));
-        return;
+    sin = mathSinfInterp(player->srt.yaw);
+    cos = mathCosfInterp(player->srt.yaw);
+    goal.x = player->globalPosition.x + (sin * 60.0f);
+    goal.y = player->globalPosition.y + 37.0f;
+    goal.z = player->globalPosition.z + (cos * 60.0f);
+    initial.x = player->globalPosition.x;
+    initial.y = goal.y;
+    initial.z = player->globalPosition.z;
+    result.unk50[0] = -1;
+    result.unk54[0] = 4;
+    result.unk40[0] = 4.5f;
+    trackIntersectBuildAABB(&aabb, &initial, &goal, &result.unk40[0], 1);
+    trackIntersectBroadphase(player, &aabb, 1);
+    if (trackGetIntersect(player, initial.f, goal.f, 1, &result, 0)) {
+        dx = goal.x - initial.x;
+        dz = goal.z - initial.z;
+        *distance = sqrtf(SQ(dx) + SQ(dz));
+    } else {
+        *distance = 60.0f;
     }
-    *arg2 = 60.0f;
 }
