@@ -151,9 +151,9 @@ void GroundAnimator_obj_Control(Object* self) {
         if (collectable != NULL) {
             //Pause the collectable if digging hasn't finished yet
             if ((objData->flags & GroundAnimator_FLAG_2_Dig_Finished) == FALSE) {
-                ((DLL_272_Collectable*)collectable->dll)->vtbl->set_pause_state(collectable, 1);
+                dll_collectable(collectable)->SetPauseState(collectable, 1);
             }
-            ((DLL_272_Collectable*)collectable->dll)->vtbl->save_position(collectable, 
+            dll_collectable(collectable)->SavePosition(collectable, 
                 self->srt.transl.x, self->srt.transl.y - objData->collectableDepth, self->srt.transl.z
             );
         }
@@ -185,7 +185,7 @@ void GroundAnimator_obj_Control(Object* self) {
                 
                 //Unpause the collectable
                 if ((objData->collectable != NULL) && (objData->collectable->data != NULL)) {
-                    ((DLL_272_Collectable*)objData->collectable->dll)->vtbl->set_pause_state(objData->collectable, 0);
+                    dll_collectable(objData->collectable)->SetPauseState(objData->collectable, 0);
                 }
                 
                 mainSetBits(objSetup->gamebitDug, TRUE);
@@ -376,7 +376,7 @@ f32 GroundAnimator_TickDig(Object* self, Object* sidekick) {
     if (objData->digDepth == 0) {
         collectable = objData->collectable;
         if (collectable != NULL) {
-            ((DLL_272_Collectable*)collectable->dll)->vtbl->set_pause_state(collectable, 0);
+            dll_collectable(collectable)->SetPauseState(collectable, 0);
         }
     }
     
