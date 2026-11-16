@@ -1,0 +1,13 @@
+.text = 0x0:
+VFP_Block1_ctor = 0x0;
+VFP_Block1_dtor = 0xC;
+VFP_Block1_obj_Setup = 0x18;
+VFP_Block1_obj_Control = 0x48;
+VFP_Block1_obj_Update = 0x2A0;
+VFP_Block1_obj_Print = 0x2AC;
+VFP_Block1_obj_Free = 0x2C4;
+VFP_Block1_obj_GetModelFlags = 0x30C;
+VFP_Block1_obj_GetDataSize = 0x31C;
+
+.rodata = 0x374:
+_oob_rodata_0 = 0x0; // absolute:0x374

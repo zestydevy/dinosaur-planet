@@ -494,6 +494,7 @@
 618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
 622 = objects/622_VFP_Statue
+627 = objects/627_VFP_Block1
 629 = objects/629_doorswitch
 632 = objects/632_VFP_coreplat
 633 = objects/633_VFP_PodiumPoint
