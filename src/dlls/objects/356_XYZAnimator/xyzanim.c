@@ -1,26 +1,9 @@
 #include "game/gamebits.h"
+#include "game/objects/setups/81_XYZAnimator.h"
 #include "sys/main.h"
 #include "sys/map.h"
 #include "sys/memory.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 gamebitActivate;    //Gamebit to begin the animation
-    s16 gamebitFinished;    //Gamebit to set once the animation's finished
-    s16 initDisplacementX;  //Initial position
-    s16 initDisplacementY;  //Initial position
-    s16 initDisplacementZ;  //Initial position
-    s16 endDisplacementX;   //Goal position
-    s16 endDisplacementY;   //Goal position
-    s16 endDisplacementZ;   //Goal position
-    s8 animatorID;          //Shape animator tag
-    s8 speedX;              //Interpolation speed (in tenths of a worldSpace unit)
-    s8 speedY;              //Interpolation speed (in tenths of a worldSpace unit)
-    s8 speedZ;              //Interpolation speed (in tenths of a worldSpace unit)
-    u8 mode;                //`XYZAnimator_Modes`
-    u16 goalRadius;         //For `XYZAnimator_MODE_3_Radial_Falloff_Set_Gamebit`
-} XYZAnimator_Setup;
 
 typedef struct {
     s32 animShapeCount;     //The number of animated shapes
