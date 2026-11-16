@@ -9,10 +9,11 @@
 typedef enum {
     OBJFSA_FLAG_4000 = 0x4000,
     OBJFSA_FLAG_8000 = 0x8000, // Set after first iteration?
-    OBJFSA_FLAG_200000 = 0x200000,
+    OBJFSA_FLAG_10000 = 0x10000, // Affect velocityY when updating velocity
+    OBJFSA_FLAG_200000 = 0x200000, // No gravity?
     OBJFSA_FLAG_400000 = 0x400000,
     OBJFSA_FLAG_1000000 = 0x1000000,
-    OBJFSA_FLAG_2000000 = 0x2000000
+    OBJFSA_FLAG_2000000 = 0x2000000 // No velocity update?
 } ObjFSAFlags;
 
 struct ObjFSA_Data;
@@ -54,10 +55,10 @@ typedef struct ObjFSA_Data {
         // Whether the current logic state was just entered 
         // (only true for the first call since transitioning to the state)
 /*273*/ s8 enteredLogicState;
-/*274*/ Vec3f *unk274;
-/*278*/ f32 unk278; // rate of turning (yaw only)?
-/*27C*/ f32 unk27C; // rate of turning (yaw only)?
-/*280*/ f32 unk280;
+/*274*/ Vec3f* unk274;
+/*278*/ f32 unk278; // rate of turning (yaw only)? (forward lateral velocity?)
+/*27C*/ f32 unk27C; // rate of turning (yaw only)? (sideways lateral velocity?)
+/*280*/ f32 unk280; // (vertical velocity?)
 /*284*/ f32 yAnalogInput; // y-axis analog input (-backward/+forward) [-65, 65] (player overflows to [-70, 70])
 /*288*/ f32 xAnalogInput; // x-axis analog input (-left/+right) [-65, 65] (player overflows to [-70, 70])
 /*28C*/ f32 speed;
@@ -73,7 +74,7 @@ typedef struct ObjFSA_Data {
 /*2B4*/ f32 unk2B4;
 /*2B8*/ f32 targetDist; // distance to target (2D lateral)
 /*2BC*/ u8 _unk2BC[0x2C8 - 0x2BC];
-/*2C8*/ Object *target;
+/*2C8*/ Object* target;
 /*2CC*/ u8 _unk2CC[0x2EC - 0x2CC];
 /*2EC*/ Vec3f unk2EC;
 /*2F8*/ f32 unk2F8;
