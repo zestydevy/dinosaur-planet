@@ -7,10 +7,10 @@
  */
 
 typedef enum {
-    ObjHitInfo_FLAG_1 = 1, //collision toggle
-    ObjHitInfo_FLAG_2 = 2, //ignore player but allow projectiles etc. to collide?
+    ObjHitInfo_FLAG_1 = 1, //Collision enabled
+    ObjHitInfo_FLAG_2 = 2, //Ignore player but allow projectiles etc. to collide?
     ObjHitInfo_FLAG_4 = 4,
-    ObjHitInfo_FLAG_8 = 8, //currently colliding with something?
+    ObjHitInfo_FLAG_8 = 8, //Currently colliding with something
     ObjHitInfo_FLAG_10 = 0x10,
     ObjHitInfo_FLAG_20 = 0x20,
     ObjHitInfo_FLAG_40 = 0x40,
