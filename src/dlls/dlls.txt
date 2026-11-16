@@ -473,6 +473,7 @@
 597 = objects/597_WL_Column
 598 = objects/598_WM_Wizard
 599 = objects/599_WL_colrise
+600 = objects/600_WL_podiumgem
 602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 604 = objects/604_WL_WallTorch
