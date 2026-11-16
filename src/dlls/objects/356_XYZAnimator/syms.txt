@@ -1,0 +1,15 @@
+.text = 0x0:
+XYZAnimator_ctor = 0x0;
+XYZAnimator_dtor = 0xC;
+XYZAnimator_obj_Setup = 0x18;
+XYZAnimator_obj_Control = 0x34;
+XYZAnimator_updateShapesAndVertices = 0x1174;
+XYZAnimator_obj_Update = 0x15DC;
+XYZAnimator_obj_Print = 0x15E8;
+XYZAnimator_obj_Free = 0x163C;
+XYZAnimator_obj_GetModelFlags = 0x17C8;
+XYZAnimator_obj_GetDataSize = 0x17D8;
+XYZAnimator_calculateAnimatedVertexDistances = 0x17EC;
+XYZAnimator_getInitialValues = 0x1A04;
+
+.rodata = 0x1C70:

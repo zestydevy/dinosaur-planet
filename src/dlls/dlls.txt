@@ -286,6 +286,7 @@
 353 = objects/353_HitAnimator
 354 = objects/354_VisAnimator
 355 = objects/355_WallAnimator
+356 = objects/356_XYZAnimator
 357 = objects/357_ExplodeAnimator
 361 = objects/361_TexFrameAnimator
 362 = objects/362_PortalTexAnimator
