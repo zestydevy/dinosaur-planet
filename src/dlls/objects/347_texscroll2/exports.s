@@ -15,4 +15,4 @@ _exports:
 /*4*/ .dword TexScroll2_obj_Free
 /*5*/ .dword TexScroll2_obj_GetModelFlags
 /*6*/ .dword TexScroll2_obj_GetDataSize
-/*7*/ .dword TexScroll2_changeScrollSpeed
+/*7*/ .dword TexScroll2_ChangeScrollSpeed
