@@ -1,16 +1,11 @@
 #include "dll.h"
 #include "game/gamebits.h"
 #include "game/objects/object_id.h"
+#include "game/objects/setups/103.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/objlib.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s16 unk18;
-    u8 yaw;
-} KamColumn_Setup;
 
 typedef struct {
     s16 yPhaseAngle;
@@ -25,7 +20,7 @@ void KamColumn_ctor(void* dll) { }
 void KamColumn_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void KamColumn_obj_Setup(Object* self, KamColumn_Setup* objSetup, s32 reset) {
+void KamColumn_obj_Setup(Object* self, Ctrl103_Setup* objSetup, s32 reset) {
     KamColumn_Data* objData = self->data;
 
     self->srt.yaw = objSetup->yaw << 8;

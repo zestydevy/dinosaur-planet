@@ -64,6 +64,11 @@ typedef struct {
         /*1C*/ f32 interactRadius; //Distance at which player can interact with tumbleweed
         } tumbleweed;
         struct {
+        /*18*/ u8 unused1;
+        /*19*/ u8 unused2;
+        /*1A*/ u8 yaw;
+        } kamColumn;
+        struct {
         /*18*/ u8 speedX;
         /*19*/ u8 speedY;
         /*1A*/ u8 speedZ;
