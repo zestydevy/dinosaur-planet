@@ -499,14 +499,22 @@ GENERIC_SETUP(DeadDino_Setup,
 /*20*/ s16 unused2;
 )
 
-typedef struct {
-/*18*/ ObjSetup base;
-/*19*/ s8 yaw;
+GENERIC_SETUP(WL_podiumgem_Setup,
+/*18*/ s8 yaw;
 /*1A*/ s16 unk1A;
 /*1C*/ s16 unk1C;
 /*1E*/ s16 gamebitCollected;
 /*20*/ s16 gamebitPlaySeq;
-} WL_podiumgem_Setup;
+)
+
+GENERIC_SETUP(WL_podium_Setup,
+/*18*/ s8 yaw;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 gamebitCrystal;
+/*20*/ s16 gamebitPlaced;
+)
 
 GENERIC_SETUP(WLWorm_Setup, 
 /*18*/ s8 unk18;

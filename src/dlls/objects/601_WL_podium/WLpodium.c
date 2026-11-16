@@ -1,4 +1,5 @@
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "dlls/objects/607_WL_LevelControl.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
@@ -6,16 +7,6 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s8 unk19;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebitCrystal;
-    s16 gamebitPlaced;
-} WL_podium_Setup;
 
 typedef struct {
     u32 soundHandle;
