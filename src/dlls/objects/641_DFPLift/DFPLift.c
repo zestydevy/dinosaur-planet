@@ -40,21 +40,21 @@ typedef enum {
 #define PLAYER_ACTIVATE_RANGE 50.0f
 #define PLAYER_INIT_ACTIVATE_RANGE 230.0f
 
-static int DFPLift_func_91C(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3);
+static int DFPLift_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
-void DFPLift_ctor(void *dll) { }
+void DFPLift_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void DFPLift_dtor(void *dll) { }
+void DFPLift_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
-    DFPLift_Data *objdata;
+void DFPLift_obj_Setup(Object* self, DFPLift_Setup* setup, s32 reset) {
+    DFPLift_Data* objdata = self->data;
 
     objdata = (DFPLift_Data*)self->data;
 
-    self->animCallback = DFPLift_func_91C;
+    self->animCallback = DFPLift_animCallback;
     self->srt.yaw = setup->yaw * 256;
 
     objdata->state = LIFT_STATE_INIT;
@@ -68,7 +68,7 @@ void DFPLift_setup(Object *self, DFPLift_Setup *setup, s32 a2) {
 }
 
 // offset: 0x9C | func: 1 | export: 1
-void DFPLift_control(Object* self) {
+void DFPLift_obj_Control(Object* self) {
     DFPLift_Setup* setup;
     DFPLift_Data* objdata;
     Object* player;
@@ -83,13 +83,13 @@ void DFPLift_control(Object* self) {
     
     switch (objdata->state) {
     case LIFT_STATE_INIT:
-        if ((mainGetBits(objdata->gamebitActivated) != 0) && (objdata->alreadyEnabled != TRUE) && 
+        if (mainGetBits(objdata->gamebitActivated) && (objdata->alreadyEnabled != TRUE) && 
                 (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_INIT_ACTIVATE_RANGE)) {
             // go up with sound
             if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
                 if (objdata->soundHandle == 0) {
                     dll_amSfx->Play(self, SOUND_6EC_Mechanical_Hum_Loop, 0x75, &objdata->soundHandle, NULL, 0, NULL);
-                    objdata->playerOnLift = 1;
+                    objdata->playerOnLift = TRUE;
                 }
                 self->srt.transl.y += gUpdateRateF;
                 if ((setup->base.y + LIFT_UP) <= self->srt.transl.y) {
@@ -101,9 +101,11 @@ void DFPLift_control(Object* self) {
                         objdata->soundHandle = 0;
                     }
                 }
-                return;
             }
-        } else if (objdata->alreadyEnabled == TRUE) {
+            break;
+        } 
+        
+        if (objdata->alreadyEnabled == TRUE) {
             if (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_INIT_ACTIVATE_RANGE) {
                 // go up without sound
                 if (self->srt.transl.y < (setup->base.y + LIFT_UP)) {
@@ -127,36 +129,37 @@ void DFPLift_control(Object* self) {
             if (objdata->cooldown <= 0) {
                 objdata->cooldown = 0;
             }
-        } else {
-            if (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) {
-                // player is on lift, start moving
-                if (self->srt.transl.y == (setup->base.y + LIFT_UP)) {
-                    // at top, start going down
-                    objdata->state = LIFT_STATE_GO_DOWN;
-                    if (objdata->soundHandle == 0) {
-                        dll_amSfx->Play(self, SOUND_6EC_Mechanical_Hum_Loop, 0x6B, &objdata->soundHandle, NULL, 0, NULL);
-                        objdata->playerOnLift = TRUE;
-                    }
-                } else if (self->srt.transl.y == (setup->base.y - LIFT_DOWN)) {
-                    // at bottom, start going up
-                    objdata->state = LIFT_STATE_GO_UP;
-                    if (objdata->soundHandle == 0) {
-                        dll_amSfx->Play(self, SOUND_6EC_Mechanical_Hum_Loop, 0x43, &objdata->soundHandle, NULL, 0, NULL);
-                        objdata->playerOnLift = TRUE;
-                    }
+            break;
+        }
+
+        if (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) {
+            // player is on lift, start moving
+            if (self->srt.transl.y == (setup->base.y + LIFT_UP)) {
+                // at top, start going down
+                objdata->state = LIFT_STATE_GO_DOWN;
+                if (objdata->soundHandle == 0) {
+                    dll_amSfx->Play(self, SOUND_6EC_Mechanical_Hum_Loop, 0x6B, &objdata->soundHandle, NULL, 0, NULL);
+                    objdata->playerOnLift = TRUE;
                 }
-            } else {
-                // player is not on the lift, move to where they are
-                if (player->srt.transl.y < setup->base.y) {
-                    objdata->state = LIFT_STATE_GO_DOWN;
-                    if (objdata->playerOnLift == TRUE) {
-                        objdata->playerOnLift = FALSE;
-                    }
-                } else if (setup->base.y < player->srt.transl.y) {
-                    objdata->state = LIFT_STATE_GO_UP;
-                    if (objdata->playerOnLift == TRUE) {
-                        objdata->playerOnLift = FALSE;
-                    }
+            } else if (self->srt.transl.y == (setup->base.y - LIFT_DOWN)) {
+                // at bottom, start going up
+                objdata->state = LIFT_STATE_GO_UP;
+                if (objdata->soundHandle == 0) {
+                    dll_amSfx->Play(self, SOUND_6EC_Mechanical_Hum_Loop, 0x43, &objdata->soundHandle, NULL, 0, NULL);
+                    objdata->playerOnLift = TRUE;
+                }
+            }
+        } else {
+            // player is not on the lift, move to where they are
+            if (player->srt.transl.y < setup->base.y) {
+                objdata->state = LIFT_STATE_GO_DOWN;
+                if (objdata->playerOnLift == TRUE) {
+                    objdata->playerOnLift = FALSE;
+                }
+            } else if (setup->base.y < player->srt.transl.y) {
+                objdata->state = LIFT_STATE_GO_UP;
+                if (objdata->playerOnLift == TRUE) {
+                    objdata->playerOnLift = FALSE;
                 }
             }
         }
@@ -175,7 +178,8 @@ void DFPLift_control(Object* self) {
                 }
                 objdata->cooldown = LIFT_COOLDOWN;
             }
-            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
+
+            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == TRUE)) {
                 
             }
         } else {
@@ -184,7 +188,11 @@ void DFPLift_control(Object* self) {
                 dll_amSfx->Stop(objdata->soundHandle);
                 objdata->soundHandle = 0;
             }
-            vec3DistanceXZ(&self->globalPosition, &player->globalPosition);
+
+            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == TRUE)) {
+
+            }
+
             objdata->state = LIFT_STATE_STOPPED;
             objdata->cooldown = LIFT_COOLDOWN;
         }
@@ -203,7 +211,8 @@ void DFPLift_control(Object* self) {
                     objdata->soundHandle = 0;
                 }
             }
-            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
+
+            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == TRUE)) {
                 
             }
         } else {
@@ -214,7 +223,8 @@ void DFPLift_control(Object* self) {
                 dll_amSfx->Stop(objdata->soundHandle);
                 objdata->soundHandle = 0;
             }
-            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == 1)) {
+            
+            if ((vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < PLAYER_ACTIVATE_RANGE) && (objdata->playerOnLift == TRUE)) {
 
             }
         }
@@ -225,18 +235,18 @@ void DFPLift_control(Object* self) {
 }
 
 // offset: 0x7EC | func: 2 | export: 2
-void DFPLift_update(Object *self) { }
+void DFPLift_obj_Update(Object* self) { }
 
 // offset: 0x7F8 | func: 3 | export: 3
-void DFPLift_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DFPLift_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
 
 // offset: 0x84C | func: 4 | export: 4
-void DFPLift_free(Object *self, s32 a1) {
-    DFPLift_Data *objdata;
+void DFPLift_obj_Free(Object* self, s32 onlySelf) {
+    DFPLift_Data* objdata = self->data;
 
     objdata = (DFPLift_Data*)self->data;
 
@@ -251,16 +261,16 @@ void DFPLift_free(Object *self, s32 a1) {
 }
 
 // offset: 0x8F8 | func: 5 | export: 5
-u32 DFPLift_get_model_flags(Object *self) {
+u32 DFPLift_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0x908 | func: 6 | export: 6
-u32 DFPLift_get_data_size(Object *self, u32 a1) {
+u32 DFPLift_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(DFPLift_Data);
 }
 
 // offset: 0x91C | func: 7
-static int DFPLift_func_91C(Object *a0, Object *a1, AnimObj_Data *a2, s8 a3) {
+static int DFPLift_animCallback(Object* self, Object* animObj, AnimObj_Data* animData, s8 prevAnimCallback) {
     return 0;
 }
