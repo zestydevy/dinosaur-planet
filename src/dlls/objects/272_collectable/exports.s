@@ -8,17 +8,17 @@ _exports:
 .dword collectable_dtor
 
 # export table
-/*0*/ .dword collectable_setup
-/*1*/ .dword collectable_control
-/*2*/ .dword collectable_update
-/*3*/ .dword collectable_print
-/*4*/ .dword collectable_free
-/*5*/ .dword collectable_get_model_flags
-/*6*/ .dword collectable_get_data_size
-/*7*/ .dword collectable_is_collected
-/*8*/ .dword collectable_set_pause_state
-/*9*/ .dword collectable_get_area_value
-/*10*/ .dword collectable_set_speed
-/*11*/ .dword collectable_set_visibility
-/*12*/ .dword collectable_get_visibility
-/*13*/ .dword collectable_save_position
+/*0*/ .dword collectable_obj_Setup
+/*1*/ .dword collectable_obj_Control
+/*2*/ .dword collectable_obj_Update
+/*3*/ .dword collectable_obj_Print
+/*4*/ .dword collectable_obj_Free
+/*5*/ .dword collectable_obj_GetModelFlags
+/*6*/ .dword collectable_obj_GetDataSize
+/*7*/ .dword collectable_IsCollected
+/*8*/ .dword collectable_SetPauseState
+/*9*/ .dword collectable_GetAreaValue
+/*10*/ .dword collectable_SetVelocity
+/*11*/ .dword collectable_SetVisibility
+/*12*/ .dword collectable_GetVisibility
+/*13*/ .dword collectable_SavePosition

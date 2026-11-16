@@ -1,19 +1,22 @@
-#include "common.h"
+#include "dll.h"
+#include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/17_partfx.h"
+#include "dlls/objects/common/foodbag.h"
+#include "dlls/objects/210_player.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object.h"
 #include "game/objects/setups/6_Collectable.h"
+#include "game/objects/object_id.h"
+#include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/lfx.h"
+#include "sys/objects.h"
 #include "sys/objmsg.h"
+#include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
 #include "sys/objlib.h"
-#include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/210_player.h"
-#include "dlls/objects/common/foodbag.h"
-#include "dlls/objects/common/foodbag.h"
 #include "types.h"
 
 typedef struct {
@@ -33,7 +36,7 @@ typedef struct {
     u8 unused1B;
     s32 areaValue;              //Received from Area object, if the collectable is inside one
     s8 delayCollect;            //Timer, can only collect object once at 0
-    u8 moving;
+    u8 stoppingTimer;
     u8 isHidden;
     u32 uID;
     Vec3f savedPosition;
@@ -53,20 +56,20 @@ typedef enum {
     Collectable_FLAG_Interaction_Off = 1
 } Collectable_Flags;
 
-static int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData);
-static void collectable_handle_animation_and_fx(Object* self);
-static void collectable_handle_motion(Object* self);
+static int collectable_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData);
+static void collectable_handleAnimationAndFX(Object* self);
+static void collectable_handleMotion(Object* self);
 static void collectable_collect(Object* self);
-void collectable_set_speed(Object* self, f32 speedX, f32 speedY, f32 speedZ);
+void collectable_SetVelocity(Object* self, f32 speedX, f32 speedY, f32 speedZ);
 
 // offset: 0x0 | ctor
-void collectable_ctor(void *dll) { }
+void collectable_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void collectable_dtor(void *dll) { }
+void collectable_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
+void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 reset) {
     s32 pad1;
     CollectableDef* collectableDef;
     LightAction lfxAction;
@@ -83,7 +86,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     self->srt.roll = objSetup->roll8 << 8;
     self->srt.scale = self->def->scale;
 
-    self->animCallback = (void*)&collectable_anim_callback;
+    self->animCallback = (void*)&collectable_animCallback;
     self->modelInstIdx = objSetup->modelIdx;
     self->stateFlags |= OBJSTATE_UPDATE_DISABLED;
 
@@ -92,7 +95,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     objData->unk11 = objSetup->scale;
     objData->pause = 0;
     objData->areaValue = -2;
-    objData->moving = 0;
+    objData->stoppingTimer = 0;
     objData->delayCollect = 60;
     objData->gamebitShow = objSetup->gamebitSecondary;
     objData->uID = objSetup->base.uID;
@@ -121,7 +124,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
     //Create particles for Magic collectables
     collectableDef = self->def->collectableDef;
     if (collectableDef && collectableDef->type == Collectable_Type_Magic) {
-        if (arg2 == 0) {
+        if (reset == FALSE) {
             dll_amSfx->Play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         }
 
@@ -191,7 +194,7 @@ void collectable_setup(Object* self, Collectable_Setup* objSetup, s32 arg2) {
 }
 
 // offset: 0x430 | func: 1 | export: 1
-void collectable_control(Object* self) {
+void collectable_obj_Control(Object* self) {
     Collectable_Data* objdata;
     Collectable_Setup* objsetup;
     Object* messageSender;
@@ -290,9 +293,9 @@ void collectable_control(Object* self) {
     self->unkAF &= ~ARROW_FLAG_8_No_Targetting;
 
     //Update animation/motion
-    collectable_handle_animation_and_fx(self);
-    if (objdata->moving) {
-        collectable_handle_motion(self);
+    collectable_handleAnimationAndFX(self);
+    if (objdata->stoppingTimer) {
+        collectable_handleMotion(self);
     }
 
     //Return early if no player interaction can happen
@@ -359,10 +362,10 @@ void collectable_control(Object* self) {
 }
 
 // offset: 0x994 | func: 2 | export: 2
-void collectable_update(Object *self) { }
+void collectable_obj_Update(Object* self) { }
 
 // offset: 0x9A0 | func: 3 | export: 3
-void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void collectable_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     Collectable_Data* objdata = self->data;
 
     if (0) {}
@@ -378,9 +381,11 @@ void collectable_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Trian
 }
 
 // offset: 0xA88 | func: 4 | export: 4
-void collectable_free(Object* self, s32 arg1) {
+void collectable_obj_Free(Object* self, s32 onlySelf) {
     Collectable_Data* objdata = self->data;
+
     objFreeObjectType(self, OBJTYPE_Collectable);
+    
     if (objdata->soundHandle) {
         dll_amSfx->Stop(objdata->soundHandle);
         objdata->soundHandle = 0;
@@ -388,34 +393,36 @@ void collectable_free(Object* self, s32 arg1) {
 }
 
 // offset: 0xB00 | func: 5 | export: 5
-s32 collectable_get_model_flags(Object *self) {
+s32 collectable_obj_GetModelFlags(Object* self) {
     return MODFLAGS_10 | MODFLAGS_SHADOW | MODFLAGS_1;
 }
 
 // offset: 0xB10 | func: 6 | export: 6
-u32 collectable_get_data_size(Object *self, u32 a1) {
+u32 collectable_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(Collectable_Data);
 }
 
 // offset: 0xB24 | func: 7
-int collectable_anim_callback(Object* self, Object* animObj, AnimObj_Data* animObjData) { //NOTE: no arg3?
+int collectable_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData) { //NOTE: no arg3?
     f32 cos;
     f32 sin;
 
     animObjData->unk62 = 0;
+
     if (animObjData->lastMessage == 1) {
         sin = mathSinfInterp(0x6900);
         cos = mathCosfInterp(0x6900);
-        collectable_set_speed(self, sin * 8.0f, 2, cos * 8.0f);
-        collectable_set_speed(self, 4.0f, 2, 0.0f);
+        collectable_SetVelocity(self, sin * 8.0f, 2, cos * 8.0f);
+        collectable_SetVelocity(self, 4.0f, 2, 0.0f);
         animObjData->lastMessage = 0;
     }
+
     return 0;
 }
 
 // offset: 0xBF8 | func: 8
 /** Handles objectID-specific animation/particle/sound-effect behaviours */
-void collectable_handle_animation_and_fx(Object* self) {
+void collectable_handleAnimationAndFX(Object* self) {
     s16 id;
     Collectable_Data* objdata;
     ObjectShadow* shadow;
@@ -520,10 +527,9 @@ void collectable_handle_animation_and_fx(Object* self) {
 }
 
 // offset: 0x10C8 | func: 9
-void collectable_handle_motion(Object* self) {
+void collectable_handleMotion(Object* self) {
     Collectable_Data* objdata;
-    TrackHeightResult** sp50;
-    f32 dt;
+    TrackHeightResult** result;
     f32 maxFound;
     f32 sampleValue;
     s32 count;
@@ -531,11 +537,11 @@ void collectable_handle_motion(Object* self) {
 
     objdata = self->data;
 
-    count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &sp50, 0, 0);
+    count = trackGetHeight(self, self->srt.transl.x, self->srt.transl.y, self->srt.transl.z, &result, 0, 0);
 
     maxFound = -10000.0f;
     for (i = 0; i < count; i++){
-        sampleValue = sp50[i]->y;
+        sampleValue = result[i]->y;
         if ((sampleValue < (self->srt.transl.y + 30.0f)) && (maxFound < sampleValue)) {
             maxFound = sampleValue;
         }
@@ -548,10 +554,10 @@ void collectable_handle_motion(Object* self) {
         self->velocity.x *= 0.7f;
         self->velocity.z *= 0.7f;
         if (sqrtf(SQ(self->velocity.x) + SQ(self->velocity.z)) < 0.03f) {
-            objdata->moving--;
+            objdata->stoppingTimer--; //@framerate-dependent
             self->velocity.y *= 0.5f;
-            if (objdata->moving <= 0) {
-                objdata->moving = 0;
+            if (objdata->stoppingTimer <= 0) {
+                objdata->stoppingTimer = 0;
                 self->velocity.y = 0.0f;
             }
         }
@@ -560,8 +566,7 @@ void collectable_handle_motion(Object* self) {
         self->velocity.y -= 0.07f;
     }
 
-    dt = (f32) gUpdateRate;
-    objMove(self, self->velocity.x * dt, self->velocity.y * dt, self->velocity.z * dt);
+    objMove(self, self->velocity.x * gUpdateRate, self->velocity.y * gUpdateRate, self->velocity.z * gUpdateRate);
 }
 
 // offset: 0x1304 | func: 10
@@ -666,21 +671,21 @@ void collectable_collect(Object* self) {
 
 // offset: 0x1780 | func: 11 | export: 7
 /** Queries whether collectable is collected */
-int collectable_is_collected(Object* self) {
+int collectable_IsCollected(Object* self) {
     return self->unkDC;
 }
 
 // offset: 0x178C | func: 12 | export: 8
-void collectable_set_pause_state(Object* self, s32 state) {
-    Collectable_Data *objdata = self->data;
+void collectable_SetPauseState(Object* self, s32 state) {
+    Collectable_Data* objdata = self->data;
     objdata->pause = state;
 }
 
 // offset: 0x179C | func: 13 | export: 9
 /** Checks if the collectable is inside the bounds of any "Area" object, 
   * and if so takes a value from the object's Area_Setup */
-s32 collectable_get_area_value(Object* self) {
-    Collectable_Data *objdata;
+s32 collectable_GetAreaValue(Object* self) {
+    Collectable_Data* objdata;
 
     objdata = self->data;
     if (objdata->areaValue == -2) {
@@ -694,41 +699,42 @@ s32 collectable_get_area_value(Object* self) {
 }
 
 // offset: 0x1804 | func: 14 | export: 11
-void collectable_set_visibility(Object* self, s32 visibility) {
-    Collectable_Data *objdata = self->data;
+void collectable_SetVisibility(Object* self, s32 visibility) {
+    Collectable_Data* objdata = self->data;
     objdata->isHidden = visibility;
 }
 
 // offset: 0x1814 | func: 15 | export: 12
-u8 collectable_get_visibility(Object* self) {
-    Collectable_Data *objdata = self->data;
+u8 collectable_GetVisibility(Object* self) {
+    Collectable_Data* objdata = self->data;
     return objdata->isHidden;
 }
 
 // offset: 0x1824 | func: 16 | export: 10
-void collectable_set_speed(Object* self, f32 speedX, f32 speedY, f32 speedZ) {
-    Collectable_Data *objdata = self->data;
-    objdata->moving = 8;
-    self->velocity.x = speedX;
-    self->velocity.y = speedY;
-    self->velocity.z = speedZ;
+void collectable_SetVelocity(Object* self, f32 Vx, f32 Vy, f32 Vz) {
+    Collectable_Data* objdata = self->data;
+    objdata->stoppingTimer = 8;
+    self->velocity.x = Vx;
+    self->velocity.y = Vy;
+    self->velocity.z = Vz;
 }
 
 // offset: 0x1854 | func: 17 | export: 13
-void collectable_save_position(Object* self, f32 x, f32 y, f32 z) {
+void collectable_SavePosition(Object* self, f32 x, f32 y, f32 z) {
     Collectable_Data* objdata = self->data;
-    if (self->setup) {
-        self->srt.transl.x = x;
-        objdata->savedPosition.x = x;
-        self->srt.transl.y = y;
-        objdata->savedPosition.y = y;
-        self->srt.transl.z = z;
-        objdata->savedPosition.z = z;
-        mapSaveObject(
-            self->setup, self->mapID, 
-            self->srt.transl.x,
-            self->srt.transl.y,
-            self->srt.transl.z
-        );
+
+    if (self->setup == NULL) {
+        return;
     }
+
+    objdata->savedPosition.x = self->srt.transl.x = x;
+    objdata->savedPosition.y = self->srt.transl.y = y;
+    objdata->savedPosition.z = self->srt.transl.z = z;
+    
+    mapSaveObject(
+        self->setup, self->mapID, 
+        self->srt.transl.x,
+        self->srt.transl.y,
+        self->srt.transl.z
+    );
 }
