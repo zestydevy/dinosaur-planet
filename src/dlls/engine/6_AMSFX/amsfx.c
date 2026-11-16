@@ -777,8 +777,6 @@ static s32 amSfx_waterFallsFindSprays(void) {
 
 // offset: 0x1D58 | func: 22
 static s32 amSfx_makeHandle(s32 handle, char *filename, s32 lineNo) {
-    SoundSlot* var_v0;
-    s32 temp_a0;
     s32 i;
 
     if (handle == 0) {
@@ -787,6 +785,7 @@ static s32 amSfx_makeHandle(s32 handle, char *filename, s32 lineNo) {
                 break;
             }
         }
+
         if (i == (sSndSlotsLen + 1)) {
             sSndSlotsLen++;
             if (sSndSlotsLen == MAX_SOUND_SLOTS) {
@@ -794,12 +793,15 @@ static s32 amSfx_makeHandle(s32 handle, char *filename, s32 lineNo) {
                 i = 1;
             }
         }
+
         handle = i;
     } else if ((u32) sSndSlotsLen < (u32) handle) {
         handle = 0;
     }
+
     bzero(&sSndSlots[handle], sizeof(SoundSlot));
     sSndSlots[handle].flags |= SOUNDSLOT_IN_USE;
+
     return handle;
 }
 
