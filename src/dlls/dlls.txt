@@ -351,6 +351,7 @@
 429 = objects/429_DFSH_door1Special
 430 = objects/430_DFSH_door2Special
 431 = objects/431_DFwhirlpool
+432 = objects/432_DF_Lantern
 433 = objects/433_DFSH_Shrine
 434 = objects/434_DFSH_ObjCreator
 435 = objects/435_KrazoaSpirit
