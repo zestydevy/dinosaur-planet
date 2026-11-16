@@ -618,9 +618,9 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = mathRnd(-0x2710, 0x2710);
+            srt.yaw = mathRnd(-10000, 10000);
             mathRotateRPY((SRT* ) &srt, obj->velocity.f);
-            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
+            yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
             CIRCLE_WRAP(yaw)
             obj->srt.yaw = yaw;
@@ -659,7 +659,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = mathRnd(-0x2710, 0x2710);
+            srt.yaw = mathRnd(-10000, 10000);
             mathRotateRPY((SRT* ) &srt, obj->velocity.f);
             yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
@@ -701,7 +701,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = mathRnd(-0x2710, 0x2710);
+            srt.yaw = mathRnd(-10000, 10000);
             mathRotateRPY((SRT* ) &srt, obj->velocity.f);
             yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
@@ -743,7 +743,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = mathRnd(-0x2710, 0x2710);
+            srt.yaw = mathRnd(-10000, 10000);
             mathRotateRPY((SRT* ) &srt, obj->velocity.f);
             yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
             yaw = obj->srt.yaw - (yaw & 0xFFFF);
@@ -795,7 +795,7 @@ s32 smallbasket_create_items(Object* self, Object* player, SmallBasket_Data* obj
             srt.scale = 1.0f;
             srt.roll = 0;
             srt.pitch = 0;
-            srt.yaw = mathRnd(-0x2710, 0x2710);
+            srt.yaw = mathRnd(-10000, 10000);
             mathRotateRPY((SRT*) &srt, obj->velocity.f);
 
             yaw = mathAtan2f(obj->velocity.x, -obj->velocity.z) << 0x10 >> 0x10 ;
