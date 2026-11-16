@@ -540,6 +540,7 @@
 704 = objects/704_KT_Lazerwall
 706 = objects/706_KT_Fallingrocks
 707 = objects/707_KamerianBoss
+709 = objects/709_KamColumn
 710 = objects/710_AnimTest
 711 = objects/711_IMSnowBike
 712 = objects/712_DIMSnowHorn1
