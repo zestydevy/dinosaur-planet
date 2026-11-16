@@ -1,13 +1,13 @@
 .text = 0x0:
 WCApertureSymbol_ctor = 0x0;
 WCApertureSymbol_dtor = 0xC;
-WCApertureSymbol_setup = 0x18;
-WCApertureSymbol_control = 0xFC;
-WCApertureSymbol_update = 0x358;
-WCApertureSymbol_print = 0x364;
-WCApertureSymbol_free = 0x3E4;
-WCApertureSymbol_get_model_flags = 0x3F4;
-WCApertureSymbol_get_data_size = 0x428;
+WCApertureSymbol_obj_Setup = 0x18;
+WCApertureSymbol_obj_Control = 0xFC;
+WCApertureSymbol_obj_Update = 0x358;
+WCApertureSymbol_obj_Print = 0x364;
+WCApertureSymbol_obj_Free = 0x3E4;
+WCApertureSymbol_obj_GetModelFlags = 0x3F4;
+WCApertureSymbol_obj_GetDataSize = 0x428;
 WCApertureSymbol_animCallback = 0x43C;
 WCApertureSymbol_getTargetOpacity = 0x490;
 

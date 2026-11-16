@@ -8,10 +8,10 @@ _exports:
 .dword WCApertureSymbol_dtor
 
 # export table
-/*0*/ .dword WCApertureSymbol_setup
-/*1*/ .dword WCApertureSymbol_control
-/*2*/ .dword WCApertureSymbol_update
-/*3*/ .dword WCApertureSymbol_print
-/*4*/ .dword WCApertureSymbol_free
-/*5*/ .dword WCApertureSymbol_get_model_flags
-/*6*/ .dword WCApertureSymbol_get_data_size
+/*0*/ .dword WCApertureSymbol_obj_Setup
+/*1*/ .dword WCApertureSymbol_obj_Control
+/*2*/ .dword WCApertureSymbol_obj_Update
+/*3*/ .dword WCApertureSymbol_obj_Print
+/*4*/ .dword WCApertureSymbol_obj_Free
+/*5*/ .dword WCApertureSymbol_obj_GetModelFlags
+/*6*/ .dword WCApertureSymbol_obj_GetDataSize

@@ -47,7 +47,7 @@ void WCApertureSymbol_ctor(void* dll) { }
 void WCApertureSymbol_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void WCApertureSymbol_setup(Object* self, WCApertureSymbol_Setup* setup, s32 reset) {
+void WCApertureSymbol_obj_Setup(Object* self, WCApertureSymbol_Setup* setup, s32 reset) {
     WCApertureSymbol_Data* objdata = self->data;
 
     self->srt.yaw = setup->yaw << 8;
@@ -71,7 +71,7 @@ void WCApertureSymbol_setup(Object* self, WCApertureSymbol_Setup* setup, s32 res
 }
 
 // offset: 0xFC | func: 1 | export: 1
-void WCApertureSymbol_control(Object* self) {
+void WCApertureSymbol_obj_Control(Object* self) {
     WCApertureSymbol_Setup* setup;
     f32 time;
     WCApertureSymbol_Data* objdata;
@@ -135,10 +135,10 @@ void WCApertureSymbol_control(Object* self) {
 }
 
 // offset: 0x358 | func: 2 | export: 2
-void WCApertureSymbol_update(Object* self) { }
+void WCApertureSymbol_obj_Update(Object* self) { }
 
 // offset: 0x364 | func: 3 | export: 3
-void WCApertureSymbol_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCApertureSymbol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     WCApertureSymbol_Data* objdata = self->data;
 
     if (visibility) {
@@ -153,10 +153,10 @@ void WCApertureSymbol_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, 
 }
 
 // offset: 0x3E4 | func: 4 | export: 4
-void WCApertureSymbol_free(Object* self, s32 onlySelf) { }
+void WCApertureSymbol_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x3F4 | func: 5 | export: 5
-u32 WCApertureSymbol_get_model_flags(Object* self) {
+u32 WCApertureSymbol_obj_GetModelFlags(Object* self) {
     WCApertureSymbol_Setup* setup = (WCApertureSymbol_Setup*)self->setup;
     s8 modelIdx = setup->type;
 
@@ -168,7 +168,7 @@ u32 WCApertureSymbol_get_model_flags(Object* self) {
 
 
 // offset: 0x428 | func: 6 | export: 6
-u32 WCApertureSymbol_get_data_size(Object* self, u32 offsetAddr) {
+u32 WCApertureSymbol_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(WCApertureSymbol_Data);
 }
 
