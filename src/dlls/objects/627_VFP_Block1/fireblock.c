@@ -1,17 +1,10 @@
 #include "dll.h"
+#include "game/objects/setups/51_Generic.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
-
-typedef struct {
-    ObjSetup base;
-    s8 yaw;
-    s16 unk1A;
-    s16 unk1C;
-    s16 gamebit;
-} VFP_Block1_Setup;
 
 typedef struct {
     s16 gamebit;

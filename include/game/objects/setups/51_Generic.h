@@ -588,6 +588,14 @@ GENERIC_SETUP(WM_MovePlatform_Setup,
 /*20*/ s16 unused4;
 )
 
+GENERIC_SETUP(VFP_Block1_Setup,
+/*18*/ s8 yaw;
+/*1A*/ s16 unused1;
+/*1C*/ s16 unused2;
+/*1E*/ s16 gamebit;
+/*20*/ s16 unused3;
+)
+
 GENERIC_SETUP(VFP_DoorSwitch_Setup, 
 /*18*/ s8 yaw;
 /*19*/ s8 roll;
