@@ -1,7 +1,7 @@
 #include "PR/ultratypes.h"
 
 
-/*0x0*/ static s32 _bss_0[4];
+/*0x0*/ static s32 _bss_0;
 
 // offset: 0x0 | ctor
 void dll_23_ctor(s32 arg0) {
@@ -44,7 +44,7 @@ void dll_23_func_60(s32 arg0) {
 
 // offset: 0x6C | func: 6 | export: 6
 void dll_23_func_6C(void) {
-    _bss_0[0] = 3;
+    _bss_0 = 3;
 }
 
 // offset: 0x8C | func: 7 | export: 7
