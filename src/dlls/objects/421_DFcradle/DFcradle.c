@@ -244,7 +244,7 @@ void DFCradle_obj_Control(Object* self) {
         for (i = 0; i < 4; i++) {
             texscroll = objGetObjectByUID(dTexscrollUIDs[i]);
             if (texscroll != NULL) {
-                dll_TexScroll2(texscroll)->changeScrollSpeed(texscroll, scrollSpeed);
+                dll_TexScroll2(texscroll)->ChangeScrollSpeed(texscroll, scrollSpeed);
             }
         }
         return;
