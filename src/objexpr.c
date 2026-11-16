@@ -53,7 +53,7 @@ void objExpr_func_800328F0(Object* obj, HeadAnimation* headAnim, f32 arg2) {
 /** Manages character models' randomised blinks, by changing the frame of the eyelids' animated textures.
   * @bug: animation is framerate dependent
   */
-void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
+void objExprEyeIdle(Object* obj, HeadAnimation* headAnim) {
     TextureAnimator* eyelidR;
     TextureAnimator* eyelidL;
     s32 eyelidValue;
@@ -67,25 +67,25 @@ void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
 
     eyelidValue = eyelidL->frame;
 
-    switch (arg1->blinkState & 0xF) {
+    switch (headAnim->blinkState & 0xF) {
     case BLINK_Wait:
-        if (arg1->blinkDelayTimer > 0) {
+        if (headAnim->blinkDelayTimer > 0) {
             //Wait for timer to run out
-            arg1->blinkDelayTimer -= gUpdateRate;
+            headAnim->blinkDelayTimer -= gUpdateRate;
         } else if (mathRnd(0, 1000) > 985) {
             //1.5% chance of going into a blink
-            arg1->blinkState = BLINK_Animate;
-            arg1->blinkDelayTimer = 0;
+            headAnim->blinkState = BLINK_Animate;
+            headAnim->blinkDelayTimer = 0;
         }
         break;
     case BLINK_Animate:
-        if (arg1->blinkState & BLINK_Eyelid_Close_Finished) {
+        if (headAnim->blinkState & BLINK_Eyelid_Close_Finished) {
             //Animate eyelid opening
             eyelidValue -= 0x100;
             if (eyelidValue < 0) {
                 eyelidValue = 0;
-                arg1->blinkState = BLINK_Wait;
-                arg1->blinkDelayTimer = 0;
+                headAnim->blinkState = BLINK_Wait;
+                headAnim->blinkDelayTimer = 0;
             }
         } else {
             //Animate eyelid closing
@@ -94,11 +94,11 @@ void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
                 eyelidValue -= 0x200;
                 if (eyelidValue < 0) {
                     eyelidValue = 0;
-                    arg1->blinkState = BLINK_Wait;
+                    headAnim->blinkState = BLINK_Wait;
                 } else {
-                    arg1->blinkState = (s8)(BLINK_Eyelid_Close_Finished + BLINK_Animate);
+                    headAnim->blinkState = (s8)(BLINK_Eyelid_Close_Finished + BLINK_Animate);
                 }
-                arg1->blinkDelayTimer = 0;
+                headAnim->blinkDelayTimer = 0;
             }
         }
         eyelidR->frame = eyelidValue;
@@ -106,7 +106,7 @@ void objExprEyeIdle(Object* obj, HeadAnimation* arg1) {
         break;
     }
 
-    objExprEyeDart(obj, arg1, 0);
+    objExprEyeDart(obj, headAnim, 0);
 }
 
 void objExpr_func_80032B44(Object *obj, u32 arg1) {
@@ -519,81 +519,81 @@ void objExpr_func_80033B68(Object* obj, HeadAnimation* headAnim, f32 arg2) {
 }
 
 /** Manages character models' randomised head turn animation (by rotating jointIDs specially marked in OBJECTS.bin) */
-void objExpr_func_80033C54(Object* obj, HeadAnimation* arg1, f32 arg2, SeqJoint* neckJoint) {
+void objExpr_func_80033C54(Object* obj, HeadAnimation* headAnim, f32 arg2, SeqJoint* neckJoint) {
     s32 temp_v0;
     s32 pad2;
     s32 pad;
     s32 sp28;
     s32 currentAngle;
 
-    temp_v0 = (u8)(arg1->headTurnState >> 8);
+    temp_v0 = (u8)(headAnim->headTurnState >> 8);
     sp28 = arg2 > 0.1f ? 1 : 0;
     if (temp_v0 != sp28) {
-        arg1->headTurnState = sp28 << 8;
+        headAnim->headTurnState = sp28 << 8;
     }
 
-    switch (arg1->headTurnState & 0xFF) {
+    switch (headAnim->headTurnState & 0xFF) {
     case HEAD_TURN_Goal_Reached:
-        if (arg1->aimIsActive != 0) {
-            arg1->headTurnState = (sp28 << 8) | 3;
-            arg1->headStartAngle = neckJoint->yaw;
-            arg1->headAimUnk = 1.0f;
+        if (headAnim->aimIsActive != 0) {
+            headAnim->headTurnState = (sp28 << 8) | 3;
+            headAnim->headStartAngle = neckJoint->yaw;
+            headAnim->headAimUnk = 1.0f;
         } else {
-            arg1->headTurnState = (sp28 << 8) | 1;
-            arg1->headTurnDelay = mathRnd(100, 400);
-            arg1->headGoalAngle = neckJoint->yaw;
+            headAnim->headTurnState = (sp28 << 8) | 1;
+            headAnim->headTurnDelay = mathRnd(100, 400);
+            headAnim->headGoalAngle = neckJoint->yaw;
         }
         break;
     case HEAD_TURN_Wait:
-        arg1->headTurnDelay -= gUpdateRate;
+        headAnim->headTurnDelay -= gUpdateRate;
         //Set up next head turn
-        if (arg1->headTurnDelay < 0) {
-            currentAngle = arg1->headGoalAngle;
-            arg1->headGoalAngle = mathRnd(0, HEAD_TURN_LIMIT);
+        if (headAnim->headTurnDelay < 0) {
+            currentAngle = headAnim->headGoalAngle;
+            headAnim->headGoalAngle = mathRnd(0, HEAD_TURN_LIMIT);
             if (currentAngle > 0) {
-                if ((currentAngle - arg1->headGoalAngle) < M_20_DEGREES) {
-                    arg1->headGoalAngle += M_20_DEGREES;
+                if ((currentAngle - headAnim->headGoalAngle) < M_20_DEGREES) {
+                    headAnim->headGoalAngle += M_20_DEGREES;
                 }
                 //Left turn limit
-                if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
-                    arg1->headGoalAngle = HEAD_TURN_LIMIT;
+                if (headAnim->headGoalAngle > HEAD_TURN_LIMIT) {
+                    headAnim->headGoalAngle = HEAD_TURN_LIMIT;
                 }
-                arg1->headGoalAngle = -arg1->headGoalAngle;
+                headAnim->headGoalAngle = -headAnim->headGoalAngle;
             } else {
-                if ((arg1->headGoalAngle - currentAngle) < M_20_DEGREES) {
-                    arg1->headGoalAngle += M_20_DEGREES;
+                if ((headAnim->headGoalAngle - currentAngle) < M_20_DEGREES) {
+                    headAnim->headGoalAngle += M_20_DEGREES;
                 }
-                if (arg1->headGoalAngle > HEAD_TURN_LIMIT) {
-                    arg1->headGoalAngle = HEAD_TURN_LIMIT;
+                if (headAnim->headGoalAngle > HEAD_TURN_LIMIT) {
+                    headAnim->headGoalAngle = HEAD_TURN_LIMIT;
                 }
             }
-            arg1->headTurnState = (sp28 << 8) | 2;
-            arg1->headTurnDelay = 0;
-            arg1->headStartAngle = neckJoint->yaw;
+            headAnim->headTurnState = (sp28 << 8) | 2;
+            headAnim->headTurnDelay = 0;
+            headAnim->headStartAngle = neckJoint->yaw;
         }
         break;
     case HEAD_TURN_Animate:
-        if (arg1->aimIsActive || objExpr_func_80034250(arg1, neckJoint)) {
-            arg1->headTurnState = sp28 << 8;
+        if (headAnim->aimIsActive || objExpr_func_80034250(headAnim, neckJoint)) {
+            headAnim->headTurnState = sp28 << 8;
         }
         break;
     case 3:
-        if (arg1->aimIsActive == 0) {
-            arg1->headTurnState = sp28 << 8;
+        if (headAnim->aimIsActive == 0) {
+            headAnim->headTurnState = sp28 << 8;
         } else {
-            arg1->headGoalAngle = mathAtan2f(obj->srt.transl.x - arg1->headAimX, obj->srt.transl.z - arg1->headAimZ) - (obj->srt.yaw & 0xFFFF);
-            CIRCLE_WRAP(arg1->headGoalAngle)
-            if ((arg1->headGoalAngle > HEAD_TURN_LIMIT) || (arg1->headGoalAngle < -HEAD_TURN_LIMIT)) {
-                arg1->headTurnState = sp28 << 8;
+            headAnim->headGoalAngle = mathAtan2f(obj->srt.transl.x - headAnim->headAimX, obj->srt.transl.z - headAnim->headAimZ) - (obj->srt.yaw & 0xFFFF);
+            CIRCLE_WRAP(headAnim->headGoalAngle)
+            if ((headAnim->headGoalAngle > HEAD_TURN_LIMIT) || (headAnim->headGoalAngle < -HEAD_TURN_LIMIT)) {
+                headAnim->headTurnState = sp28 << 8;
             } else {
-                if (arg1->headAimUnk > 0.0f) {
-                    neckJoint->yaw = arg1->headGoalAngle + ((arg1->headStartAngle - arg1->headGoalAngle) * arg1->headAimUnk);
-                    arg1->headAimUnk -= 0.01f * gUpdateRateF;
-                    if (arg1->headAimUnk < 0.0f) {
-                        arg1->headAimUnk = 0.0f;
+                if (headAnim->headAimUnk > 0.0f) {
+                    neckJoint->yaw = headAnim->headGoalAngle + ((headAnim->headStartAngle - headAnim->headGoalAngle) * headAnim->headAimUnk);
+                    headAnim->headAimUnk -= 0.01f * gUpdateRateF;
+                    if (headAnim->headAimUnk < 0.0f) {
+                        headAnim->headAimUnk = 0.0f;
                     }
                 } else {
-                    neckJoint->yaw = arg1->headGoalAngle;
+                    neckJoint->yaw = headAnim->headGoalAngle;
                 }
             }
         }
@@ -795,13 +795,13 @@ s32 objExpr_func_80034518(HeadAnimation* headAnim, SeqJoint* seqJoint, f32 arg2,
 }
 
 /** Manages character models' randomised eye dart animations (by adjusting the pupil textures' UVs) */
-/*static*/ void objExprEyeDart(Object* arg0, HeadAnimation* arg1, f32 arg2) {
+/*static*/ void objExprEyeDart(Object* obj, HeadAnimation* headAnim, f32 arg2) {
     TextureAnimator* pupilL;
     TextureAnimator* pupilR;
     s32 animationFinished;
 
-    pupilL = objExprGetTexAnimator(arg0, HEAD_ANIMATION_TAG_Pupil_R, 0);
-    pupilR = objExprGetTexAnimator(arg0, HEAD_ANIMATION_TAG_Pupil_L, 0);
+    pupilL = objExprGetTexAnimator(obj, HEAD_ANIMATION_TAG_Pupil_R, 0);
+    pupilR = objExprGetTexAnimator(obj, HEAD_ANIMATION_TAG_Pupil_L, 0);
 
     if ((pupilL == NULL) || (pupilR == NULL)) {
         return;
@@ -809,35 +809,35 @@ s32 objExpr_func_80034518(HeadAnimation* headAnim, SeqJoint* seqJoint, f32 arg2,
 
     //Check if the current eye dart is already finished
     animationFinished = FALSE;
-    if (arg1->eyeSpeed == 0) {
+    if (headAnim->eyeSpeed == 0) {
         animationFinished = TRUE;
     }
-    if ((arg1->eyeSpeed > 0) && (pupilL->positionU >= arg1->eyeGoal)) {
+    if ((headAnim->eyeSpeed > 0) && (pupilL->positionU >= headAnim->eyeGoal)) {
         animationFinished = TRUE;
     }
-    if ((arg1->eyeSpeed < 0) && (arg1->eyeGoal >= pupilL->positionU)) {
+    if ((headAnim->eyeSpeed < 0) && (pupilL->positionU <= headAnim->eyeGoal)) {
         animationFinished = TRUE;
     }
 
     //Set up the next eye dart animation
     if (animationFinished) {
-        arg1->eyeGoal = mathRnd(-100, 10);
-        if (arg1->eyeGoal < pupilL->positionU) {
-            arg1->eyeSpeed = -5;
+        headAnim->eyeGoal = mathRnd(-100, 10);
+        if (headAnim->eyeGoal < pupilL->positionU) {
+            headAnim->eyeSpeed = -5;
         } else {
-            arg1->eyeSpeed = 5;
+            headAnim->eyeSpeed = 5;
         }
-        arg1->eyeDelayTimer = mathRnd(30, 100);
+        headAnim->eyeDelayTimer = mathRnd(30, 100);
     }
 
     //Wait a random amount of time between darts
-    if (arg1->eyeDelayTimer > 0) {
-        arg1->eyeDelayTimer -= gUpdateRate;
+    if (headAnim->eyeDelayTimer > 0) {
+        headAnim->eyeDelayTimer -= gUpdateRate;
         return;
     }
 
     //Animate eye dart
-    pupilL->positionU += arg1->eyeSpeed * gUpdateRate;
+    pupilL->positionU += headAnim->eyeSpeed * gUpdateRate;
     pupilL->positionV = 0;
     pupilR->positionU = -100 - pupilL->positionU;
     pupilR->positionV = 0;
