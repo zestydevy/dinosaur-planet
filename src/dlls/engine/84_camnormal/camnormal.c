@@ -314,60 +314,63 @@ void camnormal_func_BD4(CamNormal_Params* arg0, s32 arg1) {
 }
 
 // offset: 0xED4 | func: 4 | export: 4
-void camnormal_func_ED4(Cam* cam, Object* arg1) {
-    f32 temp_fv0_3;
-    f32 var_fv1;
+void camnormal_func_ED4(Cam* cam, Object* player) {
+    f32 divisor;
+    f32 newDist;
     f32 temp;
-    f32 sp40;
-    f32 sp3C;
-    f32 sp38;
-    f32 sp34;
+    f32 dx;
+    f32 dy;
+    f32 dz;
+    f32 dist;
     f32 sp30;
 
     sp30 = bss_4;
-    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp40, &sp3C, &sp38, &sp34, sState->unk8C);
-    sp34 = SQ(sp40) + SQ(sp3C) + SQ(sp38);
-    if (sp34 > 0.0f) {
-        sp34 = sqrtf(sp34);
+    gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &dx, &dy, &dz, &dist, sState->unk8C);
+    dist = SQ(dx) + SQ(dy) + SQ(dz);
+    if (dist > 0.0f) {
+        dist = sqrtf(dist);
     }
-    if (sp34 < 5.0f) {
-        sp34 = 5.0f;
+    if (dist < 5.0f) {
+        dist = 5.0f;
     }
-    if ((2.0f * sState->unk4) < sp34) {
-        camnormal_func_2A5C(cam, arg1);
+
+    if (dist > (2.0f * sState->unk4)) {
+        camnormal_func_2A5C(cam, player);
         cam->positionMirror.x = cam->srt.transl.x;
         cam->positionMirror.y = cam->srt.transl.y;
         cam->positionMirror.z = cam->srt.transl.z;
-        gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &sp40, &sp3C, &sp38, &sp34, sState->unk8C);
-        sp34 = SQ(sp40) + SQ(sp3C) + SQ(sp38);
-        if (sp34 > 0.0f) {
-            sp34 = sqrtf(sp34);
+        gDLL_2_Camera->vtbl->get_player_to_camera_distances(cam, &dx, &dy, &dz, &dist, sState->unk8C);
+        dist = SQ(dx) + SQ(dy) + SQ(dz);
+        if (dist > 0.0f) {
+            dist = sqrtf(dist);
         }
-        if (sp34 < 5.0f) {
-            sp34 = 5.0f;
+        if (dist < 5.0f) {
+            dist = 5.0f;
         }
     }
-    if (sState->unk4 < sp34) {
-        var_fv1 = sState->unk4;
-    } else if (sp34 < sState->unk0) {
-        var_fv1 = sState->unk0;
+
+    if (dist > sState->unk4) {
+        newDist = sState->unk4;
+    } else if (dist < sState->unk0) {
+        newDist = sState->unk0;
     } else {
-        var_fv1 = sp34;
+        newDist = dist;
     }
-    if ((var_fv1 != sp34) && (sState->unk10 != 0.0f)) {
-        if (sp34 < 1.0f) {
-            sp34 = 1.0f;
+
+    if ((newDist != dist) && (sState->unk10 != 0.0f)) {
+        if (dist < 1.0f) {
+            dist = 1.0f;
         }
-        var_fv1 = (sp34 - var_fv1);
+        newDist = dist - newDist;
         sp30 *= sState->unk10;
         if (sp30 > 1.0f) {
             sp30 = 1.0f;
         }
-        var_fv1 = var_fv1 * sp30;
-        temp_fv0_3 = ((sp34 + var_fv1) / sp34);
-        if (temp_fv0_3 > 0.0f) {
-            cam->srt.transl.x = (sp40 / temp_fv0_3) + arg1->srt.transl.x;
-            cam->srt.transl.z = (sp38 / temp_fv0_3) + arg1->srt.transl.z;
+        newDist = newDist * sp30;
+        divisor = (dist + newDist) / dist;
+        if (divisor > 0.0f) {
+            cam->srt.transl.x = (dx / divisor) + player->srt.transl.x;
+            cam->srt.transl.z = (dz / divisor) + player->srt.transl.z;
         }
     }
 }
