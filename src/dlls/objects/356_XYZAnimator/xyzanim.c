@@ -26,19 +26,6 @@ typedef struct {
     s8 prevGoal;            //`XYZAnimator_Goals`
 } XYZAnimator_Data;
 
-typedef enum {
-    XYZAnimator_MODE_0_Oneshot_and_Set_Gamebit,     //Interpolate to the goal, and set gamebitFinished
-    XYZAnimator_MODE_1_Oneshot,                     //Interpolate to the goal
-    XYZAnimator_MODE_2_Reversible_Set_Gamebit,      //Interpolate to/from the goal, and set gamebitFinished
-    XYZAnimator_MODE_3_Radial_Falloff_Set_Gamebit,  //Animate vertices within an expanding radius, and set gamebitFinished
-    XYZAnimator_MODE_4_Oneshot_and_Set_Gamebit_No_Initial_Update //Interpolate to the goal, and set gamebitFinished (without updating the vertices during initialisation)
-} XYZAnimator_Modes;
-
-typedef enum {
-    XYZAnimator_POSITION_Initial,
-    XYZAnimator_POSITION_Goal
-} XYZAnimator_Goals;
-
 static void XYZAnimator_updateShapesAndVertices(XYZAnimator_Data* objData, XYZAnimator_Setup* objSetup, Block* block);
 static void XYZAnimator_calculateAnimatedVertexDistances(Object* self, XYZAnimator_Data* objData);
 static void XYZAnimator_getInitialValues(Object* self, XYZAnimator_Data* objData);
