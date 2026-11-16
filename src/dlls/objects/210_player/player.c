@@ -5037,9 +5037,9 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             objAnimSet(player, _data_564[12], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
-            sp44.unk0.unk0 = 0;
-            sp44.unk0.unk2 = 0;
-            sp44.unk0.unk3 = 1;
+            sp44.unk0.endThresholdDegrees = 0;
+            sp44.unk0.playWhooshSound = FALSE;
+            sp44.unk0.doIntersectCheck = TRUE;
         }
         break;
     case 0x22:
@@ -5048,9 +5048,9 @@ s32 dll_210_func_D788(Object* player, ObjFSA_Data* fsa, f32 arg2) {
         if (fsa->unk33A != 0) {
             objAnimSet(player, _data_564[13], 0.0f, 0U);
             fsa->animTickDelta = 0.021f;
-            sp44.unk0.unk0 = 0;
-            sp44.unk0.unk2 = 0;
-            sp44.unk0.unk3 = 1;
+            sp44.unk0.endThresholdDegrees = 0;
+            sp44.unk0.playWhooshSound = FALSE;
+            sp44.unk0.doIntersectCheck = TRUE;
         }
         break;
     case 0x4F:
@@ -7535,9 +7535,9 @@ s32 dll_210_func_158E0(Object* player, ObjFSA_Data* arg1, f32 arg2) {
     objdata->unk8BD |= 4;
     if (arg1->enteredAnimState != 0) {
         objdata->unk8A9 = 1;
-        sp44.unk0 = 0;
-        sp44.unk2 = 1;
-        sp44.unk3 = 1;
+        sp44.endThresholdDegrees = 0;
+        sp44.playWhooshSound = TRUE;
+        sp44.doIntersectCheck = TRUE;
         gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, TRUE, 0, sizeof(sp44), &sp44, 0, Cam_Ease_All);
         arg1->flags |= 0x4000;
         arg1->animExitAction = dll_210_func_16204;

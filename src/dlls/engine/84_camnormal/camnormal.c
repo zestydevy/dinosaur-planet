@@ -800,9 +800,9 @@ static void camnormal_func_26E4(Cam* cam, Object* arg1) {
             cam1stPerson.unk8 = (s16) (u32) sState->unk8C;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_CAM1STPERSON, TRUE, 0, sizeof(cam1stPerson), &cam1stPerson, 0, Cam_Ease_All);
         } else if ((btns & Z_TRIG) && !(cam->srt.flags & OBJFLAG_UNK_4)) {
-            attentionCam.unk0 = 5;
-            attentionCam.unk2 = 1;
-            attentionCam.unk3 = 1;
+            attentionCam.endThresholdDegrees = 5;
+            attentionCam.playWhooshSound = TRUE;
+            attentionCam.doIntersectCheck = TRUE;
             gDLL_2_Camera->vtbl->change_camera_module(DLL_ID_ATTENTIONCAM, TRUE, 0, sizeof(attentionCam), &attentionCam, 0, Cam_Ease_All);
         }
     }

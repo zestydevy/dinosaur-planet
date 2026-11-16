@@ -1,16 +1,16 @@
 .text = 0x0:
 attentioncam_ctor = 0x0;
 attentioncam_dtor = 0xC;
-attentioncam_func_18 = 0x18;
-attentioncam_func_848 = 0x848;
-attentioncam_func_AC4 = 0xAC4;
-attentioncam_func_B04 = 0xB04;
-attentioncam_func_B14 = 0xB14;
-attentioncam_func_D70 = 0xD70;
-attentioncam_func_F84 = 0xF84;
-attentioncam_func_109C = 0x109C;
-attentioncam_func_112C = 0x112C;
-attentioncam_func_1374 = 0x1374;
+attentioncam_Setup = 0x18;
+attentioncam_Control = 0x848;
+attentioncam_Free = 0xAC4;
+attentioncam_Func_B04 = 0xB04;
+attentioncam_handleButtons = 0xB14;
+attentioncam_calculateControlPoints = 0xD70;
+attentioncam_calculateAngleSteps = 0xF84;
+attentioncam_aimYawAtPlayer = 0x109C;
+attentioncam_advanceEase = 0x112C;
+attentioncam_skipToBehindPlayer = 0x1374;
 
 .rodata = 0x159C:
 str_0 = 0x0; // absolute:0x159C
