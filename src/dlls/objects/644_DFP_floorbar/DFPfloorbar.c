@@ -1,7 +1,7 @@
 #include "common.h"
 
 #include "dlls/engine/6_amsfx.h"
-#include "dlls/objects/638_DFPlevcontrol.h"
+#include "dlls/objects/638_DFP_LevelControl.h"
 #include "game/objects/setups/51_Generic.h"
 
 typedef struct {
@@ -113,8 +113,7 @@ void DFPfloorbar_control(Object* self) {
     }
 
     //Get the index of the safe/unelectrified tile on this floorbar's row
-    ((DLL_638_DFPLevcontrol*)dLevelControl->dll)->vtbl->export_safe_floor_tiles(
-        dLevelControl, dFloorTiles);
+    dll_DFP_LevelControl(dLevelControl)->GetSafeFloorTiles(dLevelControl, dFloorTiles);
     objData->safeTileIndex = dFloorTiles[objData->rowIndex];
 
     //Check if downward motion not yet complete

@@ -8,11 +8,11 @@ _exports:
 .dword DFP_LevelControl_dtor
 
 # export table
-.dword DFP_LevelControl_setup
-.dword DFP_LevelControl_control
-.dword DFP_LevelControl_update
-.dword DFP_LevelControl_print
-.dword DFP_LevelControl_free
-.dword DFP_LevelControl_get_model_flags
-.dword DFP_LevelControl_get_data_size
-.dword DFP_LevelControl_export_safe_floor_tiles
+.dword DFP_LevelControl_obj_Setup
+.dword DFP_LevelControl_obj_Control
+.dword DFP_LevelControl_obj_Update
+.dword DFP_LevelControl_obj_Print
+.dword DFP_LevelControl_obj_Free
+.dword DFP_LevelControl_obj_GetModelFlags
+.dword DFP_LevelControl_obj_GetDataSize
+.dword DFP_LevelControl_GetSafeFloorTiles
