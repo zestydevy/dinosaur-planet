@@ -560,21 +560,21 @@ typedef struct {
 
 /* Food Bag actions (Krystal)
  * 0x4A0*/ static InventoryItem dPage2FoodActionsKrystal[] = {
-    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
-    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
-    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_4_Food_Krystal,            CMDMENU_SOUND_PAGE}}, //Give food from foodbag
-    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_2_Food_Actions_Krystal,    CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, GAMETEXT_UI_1F_Eat,           CMDMENU_PAGE_4_Food_Krystal,         CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
+    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, GAMETEXT_UI_20_Place,         CMDMENU_PAGE_4_Food_Krystal,         CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, GAMETEXT_UI_21_Give,          CMDMENU_PAGE_4_Food_Krystal,         CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, GAMETEXT_UI_39_Take_All_Food, CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, GAMETEXT_UI_3A_Eat_First,     CMDMENU_PAGE_2_Food_Actions_Krystal, CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     {END}
 };
 
 /* Food Bag actions (Sabre)
  * 0x4E8*/ static InventoryItem dPage3FoodActionsSabre[] = {
-    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, 0x1f, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
-    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, 0x20, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
-    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, 0x21, CMDMENU_PAGE_5_Food_Sabre,              CMDMENU_SOUND_PAGE}}, //Give food from foodbag
-    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, 0x39, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
-    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, 0x3a, CMDMENU_PAGE_3_Food_Actions_Sabre,      CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
+    {{BIT_Foodbag_Eat,               NONE, TEXTABLE_2C7, NONE, GAMETEXT_UI_1F_Eat,           CMDMENU_PAGE_5_Food_Sabre,           CMDMENU_SOUND_PAGE}}, //Eat food in foodbag
+    {{BIT_Foodbag_Place,             NONE, TEXTABLE_2C8, NONE, GAMETEXT_UI_20_Place,         CMDMENU_PAGE_5_Food_Sabre,           CMDMENU_SOUND_PAGE}}, //Place food down from foodbag
+    {{BIT_Foodbag_Give,              NONE, TEXTABLE_2EF, NONE, GAMETEXT_UI_21_Give,          CMDMENU_PAGE_5_Food_Sabre,           CMDMENU_SOUND_PAGE}}, //Give food from foodbag
+    {{BIT_Foodbag_Setting_Eat_First, NONE, TEXTABLE_265, NONE, GAMETEXT_UI_39_Take_All_Food, CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}}, //Eat later (NOTE: option to switch shown when "Eat First" enabled)
+    {{BIT_Foodbag_Setting_Eat_Later, NONE, TEXTABLE_529, NONE, GAMETEXT_UI_3A_Eat_First,     CMDMENU_PAGE_3_Food_Actions_Sabre,   CMDMENU_SOUND_PAGE}}, //Eat first (NOTE: option to switch shown when "Eat Later" enabled)
     {END}
 };
 
