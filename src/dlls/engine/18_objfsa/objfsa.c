@@ -695,35 +695,35 @@ static void objfsa_func_1AC4(Object *obj, ObjFSA_Data *data) {
 }
 
 // offset: 0x1C70 | func: 24
-static void objfsa_func_1C70(Object *obj, ObjFSA_Data *data, f32 updateRate) {
-    SRT sp88;
-    MtxF sp48;
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
+static void objfsa_func_1C70(Object* obj, ObjFSA_Data* data, f32 updateRate) {
+    SRT velocityXfm;
+    MtxF mtx;
+    f32 velocityY;
+    f32 velocityX;
+    f32 velocityZ;
 
-    if (!(data->flags & 0x02000000)) {
-        if (!(data->flags & 0x200000)) {
+    if (!(data->flags & OBJFSA_FLAG_2000000)) {
+        if (!(data->flags & OBJFSA_FLAG_200000)) {
             obj->velocity.y *= 0.97f;
             obj->velocity.y -= data->unk29C * updateRate;
         }
         
         if (!(data->unk340 & 1) || (data->unk340 & 4)) {
-            sp88.yaw = obj->srt.yaw;
-            sp88.pitch = obj->srt.pitch;
-            sp88.roll = 0;
-            sp88.transl.x = 0;
-            sp88.transl.y = 0;
-            sp88.transl.z = 0;
-            sp88.scale = 1.0f;
-            mathYprXyzMtx(&sp48, &sp88);
-            if (data->flags & 0x10000) {
-                mathMtxXFMF(&sp48, data->unk27C, data->unk280, -data->unk278, &sp40, &obj->velocity.y, &sp3C);
+            velocityXfm.yaw = obj->srt.yaw;
+            velocityXfm.pitch = obj->srt.pitch;
+            velocityXfm.roll = 0;
+            velocityXfm.transl.x = 0;
+            velocityXfm.transl.y = 0;
+            velocityXfm.transl.z = 0;
+            velocityXfm.scale = 1.0f;
+            mathYprXyzMtx(&mtx, &velocityXfm);
+            if (data->flags & OBJFSA_FLAG_10000) {
+                mathMtxXFMF(&mtx, data->unk27C, data->unk280, -data->unk278, &velocityX, &obj->velocity.y, &velocityZ);
             } else {
-                mathMtxXFMF(&sp48, data->unk27C, 0.0f, -data->unk278, &sp40, &sp44, &sp3C);
+                mathMtxXFMF(&mtx, data->unk27C, 0.0f, -data->unk278, &velocityX, &velocityY, &velocityZ);
             }
-            obj->velocity.x = sp40;
-            obj->velocity.z = sp3C;
+            obj->velocity.x = velocityX;
+            obj->velocity.z = velocityZ;
         }
         objMove(obj, obj->velocity.x * updateRate, obj->velocity.y * updateRate, obj->velocity.z * updateRate);
     }
