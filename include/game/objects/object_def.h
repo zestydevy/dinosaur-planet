@@ -169,6 +169,7 @@ union {
 
 //TO-DO: maybe move TrackLine (HitsLine/ModLine) realted structs/enums to a different header (intersect.h/map.h?)
 typedef enum {
+    TrackLine_SETTINGA_Unk10 = 0x10, //Used sometimes on barrier collision, beside steep terrain?
     TrackLine_SETTINGA_Unified_Height = 0x80 //The line's height is read as a single s16 value, instead of separate s8 heights above pointA/pointB
 } TrackLineSettingsA;
 
