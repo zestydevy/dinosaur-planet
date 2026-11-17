@@ -566,6 +566,7 @@
 767 = objects/767_SPItem
 768 = objects/768_SPShop
 772 = objects/772_SPItemBeam
+773 = objects/773_WCQueenEarthWalker
 774 = objects/774_WCKingEarthWalker
 775 = objects/775_WCTrex
 776 = objects/776_WCBouncyCrate

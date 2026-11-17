@@ -1,0 +1,25 @@
+.text = 0x0:
+WCqueenearthwalker_setupFSACallbacks = 0x0;
+WCqueenearthwalker_ctor = 0x60;
+WCqueenearthwalker_dtor = 0xA0;
+WCqueenearthwalker_obj_Setup = 0xAC;
+WCqueenearthwalker_obj_Control = 0x188;
+WCqueenearthwalker_obj_Update = 0x290;
+WCqueenearthwalker_obj_Print = 0x29C;
+WCqueenearthwalker_obj_Free = 0x324;
+WCqueenearthwalker_obj_GetModelFlags = 0x334;
+WCqueenearthwalker_obj_GetDataSize = 0x344;
+WCqueenearthwalker_updateShadow = 0x358;
+WCqueenearthwalker_animState0 = 0x434;
+WCqueenearthwalker_animState1 = 0x44C;
+WCqueenearthwalker_logicState0 = 0x4B8;
+WCqueenearthwalker_logicState1 = 0x4D0;
+WCqueenearthwalker_logicState2 = 0x564;
+
+.rodata = 0x5FC:
+
+.data = 0x60C:
+
+.bss = 0x61C:
+sAnimStateCallbacks = 0x0; // absolute:0x61C
+sLogicStateCallbacks = 0x8; // absolute:0x624

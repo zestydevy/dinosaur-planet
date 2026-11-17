@@ -12,10 +12,10 @@
 #include "macros.h"
 
 /*0x0*/ static s16 data_0[] = {
-    0x0023, 0x0023, 0x0023, 0x0023, 
-    0x0023, 0x0023, 0x0023, 0x0023, 
-    0x0023, 0x0023, 0x0000, 0x0000, 
-    0x0000, 0x0000, 0x0000, 0x0000
+    35, 35, 35, 35, 
+    35, 35, 35, 35, 
+    35, 35, 0,  0, 
+    0,  0,  0,  0
 };
 
 static void movelib_func_106C(Object* actor, Object* animObj, AnimObj_Data* animObjData);

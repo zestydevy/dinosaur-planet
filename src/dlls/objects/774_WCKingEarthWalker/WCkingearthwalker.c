@@ -95,7 +95,9 @@ void WCKingEarthWalker_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** v
 }
 
 // offset: 0x2E4 | func: 4 | export: 4
-void WCKingEarthWalker_obj_Free(Object* self, s32 onlySelf) { }
+void WCKingEarthWalker_obj_Free(Object* self, s32 onlySelf) {
+    // @bug: missing mainRemoveTempDLL(DLL_ID_MOVELIB);
+}
 
 // offset: 0x2F4 | func: 5 | export: 5
 u32 WCKingEarthWalker_obj_GetModelFlags(Object* self) {
