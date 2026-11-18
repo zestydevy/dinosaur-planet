@@ -8,10 +8,10 @@ _exports:
 .dword DFPLift_dtor
 
 # export table
-.dword DFPLift_setup
-.dword DFPLift_control
-.dword DFPLift_update
-.dword DFPLift_print
-.dword DFPLift_free
-.dword DFPLift_get_model_flags
-.dword DFPLift_get_data_size
+.dword DFPLift_obj_Setup
+.dword DFPLift_obj_Control
+.dword DFPLift_obj_Update
+.dword DFPLift_obj_Print
+.dword DFPLift_obj_Free
+.dword DFPLift_obj_GetModelFlags
+.dword DFPLift_obj_GetDataSize

@@ -1,6 +1,7 @@
 #ifndef _SYS_GAME_OBJECTS_SETUPS_GENERIC_H
 #define _SYS_GAME_OBJECTS_SETUPS_GENERIC_H
 
+#include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "macros.h"
 
@@ -498,6 +499,23 @@ GENERIC_SETUP(DeadDino_Setup,
 /*20*/ s16 unused2;
 )
 
+GENERIC_SETUP(WL_podiumgem_Setup,
+/*18*/ s8 yaw;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 gamebitCollected;
+/*20*/ s16 gamebitPlaySeq;
+)
+
+GENERIC_SETUP(WL_podium_Setup,
+/*18*/ s8 yaw;
+/*19*/ s8 unk19;
+/*1A*/ s16 unk1A;
+/*1C*/ s16 unk1C;
+/*1E*/ s16 gamebitCrystal;
+/*20*/ s16 gamebitPlaced;
+)
+
 GENERIC_SETUP(WLWorm_Setup, 
 /*18*/ s8 unk18;
 /*19*/ s8 unused1;
@@ -568,6 +586,14 @@ GENERIC_SETUP(WM_MovePlatform_Setup,
 /*1C*/ s16 unused2;
 /*1E*/ s16 unused3;
 /*20*/ s16 unused4;
+)
+
+GENERIC_SETUP(VFP_Block1_Setup,
+/*18*/ s8 yaw;
+/*1A*/ s16 unused1;
+/*1C*/ s16 unused2;
+/*1E*/ s16 gamebit;
+/*20*/ s16 unused3;
 )
 
 GENERIC_SETUP(VFP_DoorSwitch_Setup, 

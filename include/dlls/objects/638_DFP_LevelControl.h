@@ -26,9 +26,11 @@ typedef struct {
     u8 previousPadState; //Used to track when the player steps onto/off the DFP_PuzzlePad switch
 } DFPTLevelControl_Data;
 
-DLL_INTERFACE(DLL_638_DFPLevcontrol) {
+DLL_INTERFACE(DLL_638_DFP_LevelControl) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);
-    /*7*/ void (*export_safe_floor_tiles)(Object* self, u8* floorTileIndices);
+    /*7*/ void (*GetSafeFloorTiles)(Object* self, u8* oFloorTileIndices);
 };
+
+#define dll_DFP_LevelControl(obj) (((DLL_638_DFP_LevelControl*)obj->dll)->vtbl)
 
 #endif // _DLLS_638_H

@@ -8,7 +8,7 @@ _exports:
 .dword camspellaim_dtor
 
 # export table
-/*0*/ .dword camspellaim_func_18
-/*1*/ .dword camspellaim_func_64
-/*2*/ .dword camspellaim_func_2C8
-/*3*/ .dword camspellaim_func_2D4
+/*0*/ .dword camspellaim_Setup
+/*1*/ .dword camspellaim_Control
+/*2*/ .dword camspellaim_Free
+/*3*/ .dword camspellaim_Func_2D4

@@ -15,8 +15,8 @@ typedef struct {
 /*268*/ f32 timer;                  //Self-deletion timer, also used for scale-up speed when growing
 /*26C*/ f32 twigSqueakTimer;        //Random interval between twigs' squeaks
 /*270*/ u8 state;                   //State machine phase
-/*271*/ u8 carryingGold;            //Bitfield flags: carrying a Shiny Nugget when bit0 is set
-/*272*/ u8 flags;                   //Flags for creating leaf/dust particles, or starting deletion timer
+/*271*/ u8 bushFlags;               //`TumbleweedBush_Flags`: tumbleweed carries a Shiny Nugget when bit0 is set
+/*272*/ u8 flags;                   //`Tumbleweed_Flags`: for creating leaf/dust particles, or starting deletion timer
 /*273*/ s8 pad273;
 /*274*/ s16 rollSpeed;              //Rotation speed
 /*276*/ s16 pitchSpeed;             //Rotation speed
@@ -46,7 +46,6 @@ typedef enum {
 } Tumbleweed_States;
 
 typedef enum {
-    Tumbleweed_FLAG_None = 0,
     Tumbleweed_FLAG_Create_Leaves = 1,
     Tumbleweed_FLAG_Create_Dust = 2,
     Tumbleweed_FLAG_Expire = 4

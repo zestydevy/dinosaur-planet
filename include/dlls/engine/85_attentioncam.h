@@ -4,9 +4,9 @@
 #include "PR/ultratypes.h"
 
 typedef struct {
-    s16 unk0;
-    u8 unk2;
-    u8 unk3;
+    s16 endThresholdDegrees;
+    u8 playWhooshSound;
+    u8 doIntersectCheck;
 } AttentionCam_Params;
 
 #endif

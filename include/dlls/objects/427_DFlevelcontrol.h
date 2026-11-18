@@ -1,5 +1,5 @@
-#ifndef _DLLS_420_H
-#define _DLLS_420_H
+#ifndef _DLLS_427_H
+#define _DLLS_427_H
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
@@ -25,4 +25,4 @@ typedef enum {
     DF_ObjGroup17_Shrine_Exterior_Whirlpool_Cave_Waterfall //Texscroll for the Whirlpool Cave's exterior waterfall (once blown up) (never loaded, since there's already a waterfall texscroll2 in objGroup3?)
 } DF_ObjectGroups;
 
-#endif // _DLLS_420_H
+#endif // _DLLS_427_H

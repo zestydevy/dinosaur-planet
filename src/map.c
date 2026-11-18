@@ -211,7 +211,7 @@ void blockFree(s32 blockIndex);
 s32 blockTexanimAdd(Texture* tex, u32 renderFlags, s32 animatorID);
 s32 mapShouldObjUnload(Object*);
 void map_func_8004B548(MapHeader*, s32, s32, Object*);
-s32 mapShouldStreamLoadObject(ObjSetup*, s8, s32);
+s32 mapShouldStreamLoadObject(ObjSetup* setup, s8 arg1, s32 mapno);
 s32 mapGetObjLoaded(s32, u32);
 void mapSetObjLoaded(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
@@ -4344,7 +4344,7 @@ s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-s32 mapShouldStreamLoadObject(ObjSetup* arg0, s8 arg1, s32 arg2) {
+s32 mapShouldStreamLoadObject(ObjSetup* setup, s8 arg1, s32 mapno) {
     s32 scaledX;
     Object* player;
     s32 scaledZOrFlag;
@@ -4352,56 +4352,56 @@ s32 mapShouldStreamLoadObject(ObjSetup* arg0, s8 arg1, s32 arg2) {
     f32 xDiff;
     f32 scaledLoadDistance;
     f32 yDiff;
-    f32 sp20;
-    f32 sp1C;
-    f32 sp18;
-    s8 stop;
+    f32 x;
+    f32 y;
+    f32 z;
+    s8 blockFound;
     s8 i;
-    s8 *currentBlockIndices;
+    s8* currentBlockIndices;
 
-    if (mapCheckObjLoadMapAct(arg0, arg2) == 0) {
-        return 0;
+    if (mapCheckObjLoadMapAct(setup, mapno) == 0) {
+        return FALSE;
     }
 
-    if (arg0->loadFlags & OBJSETUP_LOAD_LEVEL) {
-        return 1;
+    if (setup->loadFlags & OBJSETUP_LOAD_LEVEL) {
+        return TRUE;
     }
 
-    if (arg0->loadFlags & OBJSETUP_LOAD_MANUAL) {
-        return 0;
+    if (setup->loadFlags & OBJSETUP_LOAD_MANUAL) {
+        return FALSE;
     }
 
     if (arg1 == 0) {
-        scaledX = floorf((arg0->x - gWorldX) / BLOCKS_GRID_UNIT_F);
-        scaledZOrFlag = floorf((arg0->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
+        scaledX = floorf((setup->x - gWorldX) / BLOCKS_GRID_UNIT_F);
+        scaledZOrFlag = floorf((setup->z - gWorldZ) / BLOCKS_GRID_UNIT_F);
         if (scaledX < 0 || scaledZOrFlag < 0 || scaledX >= BLOCKS_GRID_SPAN || scaledZOrFlag >= BLOCKS_GRID_SPAN) {
-            return 0;
+            return FALSE;
         }
 
-        stop = 0;
+        blockFound = FALSE;
         scaledX = GRID_INDEX(scaledZOrFlag, scaledX);
         for (i = 0; i < MAP_LAYER_COUNT; i++) {
             currentBlockIndices = gBlockIndices[i];
             if (currentBlockIndices[scaledX] >= 0) {
-                stop = 1;
+                blockFound = TRUE;
             }
         }
-        if (stop == 0) {
-            return 0;
+        if (blockFound == FALSE) {
+            return FALSE;
         }
     }
 
-    if (arg0->loadFlags & OBJSETUP_LOAD_FLAG20) {
-        return 1;
+    if (setup->loadFlags & OBJSETUP_LOAD_FLAG20) {
+        return TRUE;
     }
 
     scaledZOrFlag = 0;
-    if ((arg0->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
+    if ((setup->loadFlags & OBJSETUP_LOAD_MAIN) && (arg1 == 0)) {
         player = objGetPlayer();
         if (player != NULL) {
-            sp20 = player->globalPosition.x;
-            sp1C = player->globalPosition.y;
-            sp18 = player->globalPosition.z;
+            x = player->globalPosition.x;
+            y = player->globalPosition.y;
+            z = player->globalPosition.z;
         } else {
             scaledZOrFlag = 1;
         }
@@ -4410,24 +4410,24 @@ s32 mapShouldStreamLoadObject(ObjSetup* arg0, s8 arg1, s32 arg2) {
     }
 
     if (scaledZOrFlag != 0) {
-        sp20 = Vec3_Int_array[arg1].f.x;
-        sp1C = Vec3_Int_array[arg1].f.y;
-        sp18 = Vec3_Int_array[arg1].f.z;
+        x = Vec3_Int_array[arg1].f.x;
+        y = Vec3_Int_array[arg1].f.y;
+        z = Vec3_Int_array[arg1].f.z;
     }
 
-    scaledLoadDistance = arg0->loadDistance * 8;
-    xDiff = sp20 - arg0->x;
-    yDiff = sp1C - arg0->y;
-    zDiff = sp18 - arg0->z;
-    xDiff = ((xDiff * xDiff) + (yDiff * yDiff) + (zDiff * zDiff));
-    if (xDiff < (scaledLoadDistance * scaledLoadDistance)) {
-        return 1;
+    scaledLoadDistance = setup->loadDistance * 8;
+    xDiff = x - setup->x;
+    yDiff = y - setup->y;
+    zDiff = z - setup->z;
+    xDiff = (SQ(xDiff) + SQ(yDiff) + SQ(zDiff));
+    if (xDiff < SQ(scaledLoadDistance)) {
+        return TRUE;
     }
 
     return 0;
 }
 
-s32 mapShouldObjUnload(Object *obj) {
+s32 mapShouldObjUnload(Object* obj) {
     s32 gridX;
     s32 pad[6];
     f32 loadDist;
@@ -4444,7 +4444,7 @@ s32 mapShouldObjUnload(Object *obj) {
     f32 dx;
     s32 mtxIdx;
     s32 hasLocalBlock;
-    s8 *currentBlockIndices;
+    s8* currentBlockIndices;
     s32 i;
 
     objSetup = obj->setup;
@@ -4475,6 +4475,8 @@ s32 mapShouldObjUnload(Object *obj) {
     if (objSetup->loadFlags & OBJSETUP_LOAD_MANUAL) {
         return FALSE;
     }
+
+    //Check if the object's currently used by a sequence
     if ((obj->animObj != NULL) && (obj->seqSlot < 0)) {
         return FALSE;
     }

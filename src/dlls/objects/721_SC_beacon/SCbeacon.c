@@ -15,8 +15,8 @@
 #include "dlls/objects/519_SC_levelcontrol.h"
 #include "dlls/objects/721_SCbeacon.h"
 
-static void SCbeacon_attempt_to_light(Object* self);
-static int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animData, s8 arg3);
+static void SCbeacon_attemptToLight(Object* self);
+static int SCbeacon_animCallback(Object* self, Object* override, AnimObj_Data* animData, s8 prevCallbackValue);
 
 // offset: 0x0 | ctor
 void SCbeacon_ctor(void *dll) { }
@@ -28,7 +28,7 @@ void SCbeacon_dtor(void *dll) { }
 void SCbeacon_obj_Setup(Object* self, KyteTarget_Setup* objSetup, s32 arg2) {
     SCbeacon_Data* objData = self->data;
 
-    self->animCallback = SCbeacon_anim_callback;
+    self->animCallback = SCbeacon_animCallback;
     self->srt.yaw = objSetup->yaw << 8;
     objData->state = SCbeacon_STATE_Initial;
     objAddObjectType(self, OBJTYPE_KyteTarget);
@@ -95,7 +95,7 @@ void SCbeacon_obj_Control(Object* self) {
         }
 
         if (mainGetBits(objData->gamebitLit)) {
-            SCbeacon_attempt_to_light(self); //will only be successful here if twigs gamebit also set
+            SCbeacon_attemptToLight(self); //will only be successful here if twigs gamebit also set
         }
         break;
     case SCbeacon_STATE_Bowl_Empty:
@@ -197,7 +197,7 @@ s32 SCbeacon_KyteTarget_Interact(Object* self, s32 finishLighting) {
         //Finish lighting the beacon
         if (mainGetBits(objData->gamebitTwigs) && (mainGetBits(objData->gamebitLit) == FALSE)) {
             //Advance to "lit" state
-            SCbeacon_attempt_to_light(self); //will always be successful here
+            SCbeacon_attemptToLight(self); //will always be successful here
 
             //Warp to Discovery Falls' entrance when all beacons are lit, and play pool-draining sequence
             if (mainGetBits(BIT_SC_Beacon_Lit_1) && 
@@ -241,7 +241,7 @@ s32 SCbeacon_KyteTarget_Func_804(Object* self) {
 /**
   * Lights the beacon if it has Tumbleweed twigs.
   */
-void SCbeacon_attempt_to_light(Object* self) {
+void SCbeacon_attemptToLight(Object* self) {
     s32 pad;
     KyteTarget_Setup* objSetup;
     DLL_IModgfx* modGfxDLL;
@@ -276,7 +276,7 @@ void SCbeacon_attempt_to_light(Object* self) {
 }
 
 // offset: 0x9E0 | func: 12
-int SCbeacon_anim_callback(Object* self, Object* override, AnimObj_Data* animData, s8 arg3) {
+int SCbeacon_animCallback(Object* self, Object* override, AnimObj_Data* animData, s8 arg3) {
     SCbeacon_Data* objData;
     u8 playerIsNearby;
     Object* player;

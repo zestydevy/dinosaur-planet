@@ -586,12 +586,12 @@ void dll_32_func_2DC(Object* obj, s32 particleID, void* partFxConfig) {
 #ifndef NON_MATCHING
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_1314.s")
 #else
-/*static*/ s32 dll_32_func_1D3C(f32* a0, f32* a1, f32* a2);
+/*static*/ s32 dll_32_func_1D3C(Vec3f* A, Vec3f* B, f32* arg2);
 
 // https://decomp.me/scratch/ocR7s
 void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
     s32 temp_t0;
-    s32 temp_v0_3;
+    s32 direction;
     SRT spD8;
     s32 var_s2;
     s32 var_v1;
@@ -641,13 +641,13 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
         mathRotateRPY(&spD8, sp9C.f);
         spD8.yaw = 0;
     }
-    temp_v0_3 = dll_32_func_1D3C(spA8.f, sp9C.f, &spB4);
-    if (temp_v0_3 != -1) {
+    direction = dll_32_func_1D3C(&spA8, &sp9C, &spB4);
+    if (direction != -1) {
         return;
     }
 
     if (((DLL_210_Player*)player->dll)->vtbl->func44(player) == 0) {
-        if (temp_v0_3 == -1) {
+        if (direction == -1) {
             for (var_s2 = 0x13; var_s2 < sp90; var_s2++) {
                 if ((a2->id != 0) || (var_s2 != 0x2A)) {
                     temp_s0 = &temp_s3->model->faces[var_s2];
@@ -721,30 +721,30 @@ void dll_32_func_1314(Gfx** gdl, Mtx** mtxs, Object* a2) {
 #endif
 
 // offset: 0x1D3C | func: 6
-#ifndef NON_MATCHING
-#pragma GLOBAL_ASM("asm/nonmatchings/dlls/engine/32_modelfx/dll_32_func_1D3C.s")
-#else
-// https://decomp.me/scratch/os9k5
-s32 dll_32_func_1D3C(f32* a0, f32* a1, f32* a2) {
-    f32 sp44;
-    f32 sp40;
-    f32 sp3C;
-    s32 var_v1;
+s32 dll_32_func_1D3C(Vec3f* A, Vec3f* B, f32* arg2) {
+    f32 dotProduct;
+    f32 v1MagnitudeSq;
+    f32 v2MagnitudeSq;
+    s32 direction;
 
-    var_v1 = 1;
-    sp44 = (a0[0] * a1[0]) + (a0[1] * a1[1]) + (a0[2] * a1[2]);
-    if (sp44 < 0.0f) {
-        var_v1 = 1;
-        sp3C = sqrtf((SQ(a1[0]) + SQ(a1[1]) + SQ(a1[2])) * (SQ(a0[0]) + SQ(a0[1]) + SQ(a0[2])));
-        sp40 = sp44 / sp3C;
-        *a2 = sp40;
-        if (sp40 < -0.2f) {
-            var_v1 = -1;
+    direction = 1;
+    dotProduct = (A->f[0] * B->f[0]) + (A->f[1] * B->f[1]) + (A->f[2] * B->f[2]);
+
+    if (dotProduct < 0.0f) {
+        direction = 1;
+        v1MagnitudeSq = SQ(A->f[0]) + SQ(A->f[1]) + SQ(A->f[2]);
+        v2MagnitudeSq = SQ(B->f[0]) + SQ(B->f[1]) + SQ(B->f[2]);
+        
+        v1MagnitudeSq *= v2MagnitudeSq;
+        v2MagnitudeSq = sqrtf(v1MagnitudeSq);
+        *arg2 = dotProduct / v2MagnitudeSq;
+        if (*arg2 < -0.2f) {
+            direction = -1;
         }
     }
-    return var_v1;
+
+    return direction;
 }
-#endif
 
 /*0x0*/ static const char str_0[] = "static float scal[]={";
 /*0x18*/ static const char str_18[] = "%fF,\n";

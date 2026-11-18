@@ -164,7 +164,7 @@ void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
             if (objData->blendMaterialIndex == -1 || 
                 objData->blendMaterialIndex == block->shapes[shapeIndex].blendMaterialIndex) {
 
-                //@bug: it seems like this can sometimes target the wrong texScroller when using TexScroll2_changeScrollSpeed
+                //@bug: it seems like this can sometimes target the wrong texScroller when using TexScroll2_ChangeScrollSpeed
                 //The texScroll2 objects for Discovery Falls' cradle ropes can start to target nearby waterfalls instead, for example
                 if (block->shapes[shapeIndex].texScrollerID != 0xFF) {
                     blockTexscrollSet(block->shapes[shapeIndex].texScrollerID, 
@@ -181,7 +181,7 @@ void TexScroll2_setupTextureScrolling(Object* self, TexScroll2_Data* objData) {
 }
 
 // offset: 0x468 | func: 8 | export: 7
-void TexScroll2_changeScrollSpeed(Object* self, s8 vSpeedA) {
+void TexScroll2_ChangeScrollSpeed(Object* self, s8 vSpeedA) {
     TexScroll2_Data* objData = self->data;
 
     if (vSpeedA != objData->vSpeedA) {

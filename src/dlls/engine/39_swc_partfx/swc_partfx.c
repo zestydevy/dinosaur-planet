@@ -1,4 +1,5 @@
 #include "dlls/engine/13_expgfx.h"
+#include "sys/gfx/textable.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/rand.h"
@@ -264,16 +265,16 @@ s32 swcPartfx_Spawn(Object* obj, s32 id, SRT* transform, s32 flags, s8 arg4, voi
         sp3C.unk44 = 0x100200;
         sp3C.unk42 = 0x63;
         break;
-    case 0x42B:
+    case PARTICLE_42B:
         if (data == NULL) {
             return 0;
         }
         sp3C.unk3C = 0.013f;
-        sp3C.unk8 = mathRnd(0xA, 0xD);
+        sp3C.unk8 = mathRnd(10, 13);
         sp3C.unk60 = (u8) *(u16*)data;
         sp3C.unk44 = 0x80100;
         sp3C.unk44 = 0x80100;
-        sp3C.unk42 = 0x17D;
+        sp3C.unk42 = TEXTABLE_17D;
         sp3C.unk61 = 0x1E;
         break;
     case 0x42C:

@@ -12,8 +12,8 @@ SCbeacon_KyteTarget_Interact = 0x5FC;
 SCbeacon_KyteTarget_Func_7D4 = 0x7D4;
 SCbeacon_KyteTarget_Approach = 0x7EC;
 SCbeacon_KyteTarget_Func_804 = 0x804;
-SCbeacon_attempt_to_light = 0x814;
-SCbeacon_anim_callback = 0x9E0;
+SCbeacon_attemptToLight = 0x814;
+SCbeacon_animCallback = 0x9E0;
 
 .rodata = 0xCD8:
 str_0 = 0x0; // absolute:0xCD8

@@ -1,0 +1,13 @@
+.text = 0x0:
+WL_podiumgem_ctor = 0x0;
+WL_podiumgem_dtor = 0xC;
+WL_podiumgem_obj_Setup = 0x18;
+WL_podiumgem_obj_Control = 0x10C;
+WL_podiumgem_obj_Update = 0x2A8;
+WL_podiumgem_obj_Print = 0x2B4;
+WL_podiumgem_obj_Free = 0x314;
+WL_podiumgem_obj_GetModelFlags = 0x324;
+WL_podiumgem_obj_GetDataSize = 0x334;
+WL_podiumgem_animCallback = 0x348;
+
+.rodata = 0x3B8:

@@ -8,10 +8,10 @@ _exports:
 .dword sideload_dtor
 
 # export table
-/*0*/ .dword sideload_setup
-/*1*/ .dword sideload_control
-/*2*/ .dword sideload_update
-/*3*/ .dword sideload_print
-/*4*/ .dword sideload_free
-/*5*/ .dword sideload_get_model_flags
-/*6*/ .dword sideload_get_data_size
+/*0*/ .dword sideload_obj_Setup
+/*1*/ .dword sideload_obj_Control
+/*2*/ .dword sideload_obj_Update
+/*3*/ .dword sideload_obj_Print
+/*4*/ .dword sideload_obj_Free
+/*5*/ .dword sideload_obj_GetModelFlags
+/*6*/ .dword sideload_obj_GetDataSize

@@ -71,23 +71,23 @@ typedef enum {
 #define FADE_IN_DURATION 60.0f
 
 static void fish_initialise(Object* self);
-static s32 fish_is_jump_possible(Object* self);
-static void fish_random_turn_swim(Object* self);
-static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount);
-static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* eulerRotation);
-static s32 fish_jump_handle_flight(Object* self);
-static s32 fish_jump_handle_anticipation(Object* self);
-static void fish_caught_by_net(Object* self);
+static s32 fish_isJumpPossible(Object* self);
+static void fish_randomTurnSwim(Object* self);
+static void fish_swim(Object* self, s16 turnImpulse, u8 delerateAmount);
+static s32 fish_handleApproachingWall(Object* self, Vec3f* vFuture, Vec3s16* eulerRotation);
+static s32 fish_jumpHandleFlight(Object* self);
+static s32 fish_jumpHandleAnticipation(Object* self);
+static void fish_caughtByNet(Object* self);
 
 // offset: 0x0 | ctor
-void fish_ctor(void *dll) { }
+void fish_ctor(void* dll) { }
 
 // offset: 0xC | dtor
-void fish_dtor(void *dll) { }
+void fish_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void fish_setup(Object *self, Fish_Setup *setup, s32 reset) {
-    fish_Data *objdata = self->data;
+void fish_obj_Setup(Object* self, Fish_Setup* setup, s32 reset) {
+    fish_Data* objdata = self->data;
 
     if (setup->surfaceOffsetY == 0) {
         setup->surfaceOffsetY = 1;
@@ -113,7 +113,7 @@ static void fish_initialise(Object* self) {
 
     objdata->timer = 0.0f;
     objdata->bubbleTimer = 0.0f;
-    objdata->bubbleRate = (setup->bubbleRate / SQ(SQ(SQ((f32) setup->swimDurationAfterPeek))));
+    objdata->bubbleRate = (setup->bubbleRate / SQ(SQ(SQ((f32)setup->swimDurationAfterPeek))));
     objdata->state = Fish_STATE_1_Fade_In;
     objdata->turn = 0;
     objdata->randomTurnsPaused = FALSE;
@@ -166,7 +166,7 @@ static void fish_initialise(Object* self) {
 }
 
 // offset: 0x630 | func: 2 | export: 1
-void fish_control(Object* self) {
+void fish_obj_Control(Object* self) {
     s32 damageType;
     Fish_Setup* setup;
     f32 bubblesPerSecond;
@@ -202,7 +202,7 @@ void fish_control(Object* self) {
     //Handle fishing net collision
     damageType = func_80025F40(self, NULL, NULL, NULL);
     if (damageType && (damageType == Damage_Type_Fishing_Net)) {
-        fish_caught_by_net(self);
+        fish_caughtByNet(self);
         return;
     }
 
@@ -231,7 +231,7 @@ void fish_control(Object* self) {
         break;
     case Fish_STATE_2_Swim_before_Peek:
         if (objdata->timer <= setup->swimDurationBeforePeek) {
-            fish_random_turn_swim(self);
+            fish_randomTurnSwim(self);
         } else {
             self->srt.transl.y = setup->base.y;
             objdata->state = Fish_STATE_3_Peek_Up;
@@ -244,7 +244,7 @@ void fish_control(Object* self) {
     case Fish_STATE_3_Peek_Up:
         if (objdata->timer <= setup->peekDuration) {
             self->srt.transl.y = setup->base.y + (((objdata->surfaceY - setup->base.y) * objdata->timer) / setup->peekDuration);
-            fish_random_turn_swim(self);
+            fish_randomTurnSwim(self);
         } else {
             self->srt.transl.y = objdata->surfaceY;
             objdata->state = Fish_STATE_4_Swim_after_Peek;
@@ -256,7 +256,7 @@ void fish_control(Object* self) {
         break;
     case Fish_STATE_4_Swim_after_Peek:
         if (objdata->timer >= setup->swimDurationAfterPeek) {
-            if (fish_is_jump_possible(self)) {
+            if (fish_isJumpPossible(self)) {
                 objdata->timer = gUpdateRateF;
                 objdata->state = Fish_STATE_5_Jump;
                 objdata->jumpedFromX = self->srt.transl.x;
@@ -266,18 +266,18 @@ void fish_control(Object* self) {
                 
                 objAnimSet(self, Fish_MODANIM_1_Jump, 0.0f, 0);
                 objAnim_func_80024D74(self, 30);
-                fish_jump_handle_anticipation(self);
+                fish_jumpHandleAnticipation(self);
             } else {
                 fish_swim(self, 0, 0);
             }
         } else {
-            fish_random_turn_swim(self);
+            fish_randomTurnSwim(self);
         }
 
         //Create bubble particles when the player's nearby
         {
             timerSq = SQ(objdata->timer);
-            timerPow4 = SQ(SQ(objdata->timer));
+            timerPow4 = SQ(timerSq);
             objdata->bubbleTimer += gUpdateRateF;
 
             bubblesPerSecond = SQ(timerPow4) * objdata->bubbleRate;
@@ -295,16 +295,16 @@ void fish_control(Object* self) {
         break;
     case Fish_STATE_5_Jump:
         //Anticipate downwards before bursting up through the water
-        if (fish_jump_handle_anticipation(self) == FALSE) {
+        if (fish_jumpHandleAnticipation(self) == FALSE) {
             //Store position and advance state when leaving the water
             objdata->jumpedFromX = self->srt.transl.x;
             objdata->jumpedFromY = self->srt.transl.y;
             objdata->jumpedFromZ = self->srt.transl.z;
-            fish_jump_handle_flight(self);
+            fish_jumpHandleFlight(self);
         }
         break;
     case Fish_STATE_6_Jump_Flight:
-        if (fish_jump_handle_flight(self) == FALSE) {
+        if (fish_jumpHandleFlight(self) == FALSE) {
             fish_swim(self, 0, 0);
         }
         break;
@@ -312,7 +312,7 @@ void fish_control(Object* self) {
         //Settling back into regular swimming, after the end of a jump
         if (objdata->timer <= setup->jumpRecoveryDuration) {
             self->srt.transl.y = objdata->surfaceY - (((objdata->surfaceY - setup->base.y) * objdata->timer) /setup->jumpRecoveryDuration);
-            fish_random_turn_swim(self);
+            fish_randomTurnSwim(self);
         } else {
             self->srt.transl.y = setup->base.y;
             objdata->state = Fish_STATE_2_Swim_before_Peek;
@@ -328,10 +328,10 @@ void fish_control(Object* self) {
 }
 
 // offset: 0xEA8 | func: 3 | export: 2
-void fish_update(Object *self) { }
+void fish_obj_Update(Object* self) { }
 
 // offset: 0xEB4 | func: 4 | export: 3
-void fish_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void fish_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
     fish_Data* objdata = self->data;
 
     if ((objdata->state != Fish_STATE_0_Hidden) && visibility) {
@@ -342,20 +342,20 @@ void fish_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **p
 }
 
 // offset: 0xF40 | func: 5 | export: 4
-void fish_free(Object *self, s32 onlySelf) { }
+void fish_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0xF50 | func: 6 | export: 5
-u32 fish_get_model_flags(Object *self) {
+u32 fish_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0xF60 | func: 7 | export: 6
-u32 fish_get_data_size(Object *self, u32 offsetAddr) {
+u32 fish_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(fish_Data);
 }
 
 // offset: 0xF74 | func: 8
-static s32 fish_is_jump_possible(Object *self) {
+static s32 fish_isJumpPossible(Object* self) {
     fish_Data* objdata;
     Vec3s16 eulerRotation;
     s32 _pad[3];
@@ -378,7 +378,7 @@ static s32 fish_is_jump_possible(Object *self) {
     vFuture.x = objdata->jumpAnticipationDistance + objdata->jumpDistanceLateral + 10.0f;
     vFuture.y = 0.0f;
     vFuture.z = 0.0f;
-    mathRotateRPY((const SRT *)&eulerRotation, vFuture.f);
+    mathRotateRPY((const SRT*)&eulerRotation, vFuture.f);
     vFuture.x += self->srt.transl.x;
     vFuture.y += self->srt.transl.y;
     vFuture.z += self->srt.transl.z;
@@ -395,8 +395,8 @@ static s32 fish_is_jump_possible(Object *self) {
 }
 
 // offset: 0x10BC | func: 9
-static void fish_random_turn_swim(Object *self) {
-    fish_Data *objdata = self->data;
+static void fish_randomTurnSwim(Object* self) {
+    fish_Data* objdata = self->data;
 
     if (objdata->randomTurnsPaused == FALSE) {
         if (mathRnd(0, 99) == 0) {
@@ -410,8 +410,8 @@ static void fish_random_turn_swim(Object *self) {
 }
 
 // offset: 0x11C8 | func: 10
-static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
-    fish_Data *objdata;
+static void fish_swim(Object* self, s16 turnImpulse, u8 delerateAmount) {
+    fish_Data* objdata;
     Vec3s16 eulerRotation;
     Vec3f delta;
     Vec3f vFuture;
@@ -471,7 +471,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         delta.x = gUpdateRateF * 10.0f;
         delta.y = 0.0f;
         delta.z = 0.0f;
-        mathRotateRPY((const SRT *)&eulerRotation, delta.f);
+        mathRotateRPY((const SRT*)&eulerRotation, delta.f);
         delta.x += self->srt.transl.x;
         delta.y += self->srt.transl.y;
         delta.z += self->srt.transl.z;
@@ -506,7 +506,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         vFuture.x = gUpdateRateF * 30.0f * 5.0f;
         vFuture.y = 0.0f;
         vFuture.z = 0.0f;
-        mathRotateRPY((const SRT *)&eulerRotation, vFuture.f);
+        mathRotateRPY((const SRT*)&eulerRotation, vFuture.f);
         vFuture.x += self->srt.transl.x;
         vFuture.y += self->srt.transl.y;
         vFuture.z += self->srt.transl.z;
@@ -515,13 +515,13 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
         delta.x = objdata->lateralSpeed * gUpdateRateF;
         delta.y = 0.0f;
         delta.z = 0.0f;
-        mathRotateRPY((const SRT *)&eulerRotation, delta.f);
+        mathRotateRPY((const SRT*)&eulerRotation, delta.f);
         self->srt.transl.x += delta.x;
         self->srt.transl.y += delta.y;
         self->srt.transl.z += delta.z;
 
         if (trackGetLineIntersect(&self->srt.transl, &vFuture, 1.0f, 0, NULL, self, 4, -1, 0xFF, 0)) {
-            fish_handle_approaching_wall(self, &vFuture, &eulerRotation);
+            fish_handleApproachingWall(self, &vFuture, &eulerRotation);
 
             if (objdata->lateralSpeed < objdata->maxSpeedApproachingWall) {
                 objdata->lateralSpeed += ((objdata->maxLateralSpeed / 100.0f) * gUpdateRateF);
@@ -542,7 +542,7 @@ static void fish_swim(Object *self, s16 turnImpulse, u8 delerateAmount) {
 }
 
 // offset: 0x1880 | func: 11
-static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* eulerRotation) {
+static s32 fish_handleApproachingWall(Object* self, Vec3f* vFuture, Vec3s16* eulerRotation) {
     fish_Data* objdata;
 
     objdata = self->data;
@@ -552,7 +552,7 @@ static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* e
         vFuture->y -= self->srt.transl.y;
         vFuture->z -= self->srt.transl.z;
         eulerRotation->x = -self->srt.yaw;
-        mathRotateRPY((const SRT *)eulerRotation, vFuture->f);
+        mathRotateRPY((const SRT*)eulerRotation, vFuture->f);
         objdata->randomTurnsPaused = TRUE;
         if (vFuture->z > 0.0f) {
             objdata->turn = -0x100;
@@ -569,7 +569,7 @@ static s32 fish_handle_approaching_wall(Object *self, Vec3f* vFuture, Vec3s16* e
 }
 
 // offset: 0x1978 | func: 12
-static s32 fish_jump_handle_flight(Object *self) {
+static s32 fish_jumpHandleFlight(Object* self) {
     fish_Data* objdata;
     Fish_Setup* setup;
     Vec3f vJump;
@@ -591,7 +591,7 @@ static s32 fish_jump_handle_flight(Object *self) {
             vSplash.f[0] = objdata->jumpFlightDuration * objdata->jumpSpeedLateral;
             vSplash.f[1] = 0.0f;
             vSplash.f[2] = 0.0f;
-            mathRotateRPY((const SRT *)&eulerRotation, vSplash.f);
+            mathRotateRPY((const SRT*)&eulerRotation, vSplash.f);
             vSplash.f[0] += objdata->jumpedFromX;
             vSplash.f[1] = setup->surfaceOffsetY + objdata->surfaceY;
             vSplash.f[2] += objdata->jumpedFromZ;
@@ -653,7 +653,7 @@ static s32 fish_jump_handle_flight(Object *self) {
 }
 
 // offset: 0x1EF4 | func: 13
-static s32 fish_jump_handle_anticipation(Object* self) {
+static s32 fish_jumpHandleAnticipation(Object* self) {
     fish_Data* objdata;
     Fish_Setup* setup;
     Vec3f vAntic;
@@ -696,7 +696,7 @@ static s32 fish_jump_handle_anticipation(Object* self) {
         objdata->animSpeed = 0.12f;
     }
 
-    mathRotateRPY((const SRT *)&eulerRotation, vAntic.f);
+    mathRotateRPY((const SRT*)&eulerRotation, vAntic.f);
     self->srt.transl.x = objdata->jumpedFromX + vAntic.f[0];
     self->srt.transl.y = objdata->jumpedFromY - vAntic.f[1];
     self->srt.transl.z = objdata->jumpedFromZ + vAntic.f[2];
@@ -705,11 +705,11 @@ static s32 fish_jump_handle_anticipation(Object* self) {
 }
 
 // offset: 0x2150 | func: 14
-static void fish_caught_by_net(Object *self) {
-    fish_Data *objdata;
+static void fish_caughtByNet(Object* self) {
+    fish_Data* objdata;
     s32 _pad;
     Object* player;
-    ObjSetup *setup;
+    ObjSetup* setup;
     Object* foodbag;
 
     objdata = self->data;

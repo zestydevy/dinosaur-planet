@@ -1,0 +1,27 @@
+.text = 0x0:
+DFP_LevelControl_ctor = 0x0;
+DFP_LevelControl_dtor = 0xC;
+DFP_LevelControl_obj_Setup = 0x18;
+DFP_LevelControl_obj_Control = 0x260;
+DFP_LevelControl_obj_Update = 0x51C;
+DFP_LevelControl_obj_Print = 0x528;
+DFP_LevelControl_obj_Free = 0x540;
+DFP_LevelControl_obj_GetModelFlags = 0x5C0;
+DFP_LevelControl_obj_GetDataSize = 0x5D0;
+DFP_LevelControl_GetSafeFloorTiles = 0x5E4;
+DFP_LevelControl_animCallback = 0x62C;
+DFP_LevelControl_handleAct1 = 0x6C4;
+DFP_LevelControl_handleAct2 = 0xB2C;
+DFP_LevelControl_handleAct3 = 0xECC;
+
+.rodata = 0x1368:
+
+.data = 0x1368:
+dTexElectricity = 0x0; // absolute:0x1368
+dFloorTiles = 0x4; // absolute:0x136C
+dLitVisit1 = 0x10; // absolute:0x1378
+dTimerControl = 0x14; // absolute:0x137C
+dMagicRefillTimer = 0x18; // absolute:0x1380
+dInitialiseVisit1 = 0x1C; // absolute:0x1384
+dInitialiseVisit2 = 0x20; // absolute:0x1388
+dInitialiseVisit3 = 0x24; // absolute:0x138C

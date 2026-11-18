@@ -286,6 +286,7 @@
 353 = objects/353_HitAnimator
 354 = objects/354_VisAnimator
 355 = objects/355_WallAnimator
+356 = objects/356_XYZAnimator
 357 = objects/357_ExplodeAnimator
 361 = objects/361_TexFrameAnimator
 362 = objects/362_PortalTexAnimator
@@ -350,6 +351,7 @@
 429 = objects/429_DFSH_door1Special
 430 = objects/430_DFSH_door2Special
 431 = objects/431_DFwhirlpool
+432 = objects/432_DF_Lantern
 433 = objects/433_DFSH_Shrine
 434 = objects/434_DFSH_ObjCreator
 435 = objects/435_KrazoaSpirit
@@ -471,6 +473,8 @@
 597 = objects/597_WL_Column
 598 = objects/598_WM_Wizard
 599 = objects/599_WL_colrise
+600 = objects/600_WL_podiumgem
+601 = objects/601_WL_podium
 602 = objects/602_WLTorch
 603 = objects/603_WL_Vein
 604 = objects/604_WL_WallTorch
@@ -490,13 +494,14 @@
 618 = objects/618_WM_TransTop
 619 = objects/619_VFP_LevelControl
 622 = objects/622_VFP_Statue
+627 = objects/627_VFP_Block1
 629 = objects/629_doorswitch
 632 = objects/632_VFP_coreplat
 633 = objects/633_VFP_PodiumPoint
 634 = objects/634_VFP_flamepoint
 636 = objects/636_VFP_lavastar
 637 = objects/637_VFP_SpellPlace
-638 = objects/638_DFPlevcontrol
+638 = objects/638_DFP_LevelControl
 641 = objects/641_DFPLift
 644 = objects/644_DFP_floorbar
 646 = objects/646_DFP_ForceAway
@@ -535,6 +540,7 @@
 704 = objects/704_KT_Lazerwall
 706 = objects/706_KT_Fallingrocks
 707 = objects/707_KamerianBoss
+709 = objects/709_KamColumn
 710 = objects/710_AnimTest
 711 = objects/711_IMSnowBike
 712 = objects/712_DIMSnowHorn1

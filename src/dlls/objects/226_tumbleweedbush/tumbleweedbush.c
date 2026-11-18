@@ -48,8 +48,8 @@ void TumbleweedBush_obj_Setup(Object* self, Ctrl117_Setup* objSetup, s32 reset) 
 
     objData = self->data;
     objData->unk0 = 0.0f;
-    objData->growWeedsRadius = objSetup->growWeedsRadius * 2;
-    objData->carryingGold = objSetup->carryingGold;
+    objData->growWeedsRadius = objSetup->setting * 2;
+    objData->flags = objSetup->flags;
     
     self->srt.roll = (objSetup->roll - 0x7F) << 7;
     self->srt.pitch = (objSetup->pitch - 0x7F) << 7;
@@ -143,7 +143,7 @@ void TumbleweedBush_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs
     
     if (visibility) {
         //Tint the tree using a colour multiplier
-        objprintSetMultiplierColor(objSetup->multiplyColourR, objSetup->multiplyColourG, objSetup->multiplyColourB);
+        objprintSetMultiplierColor(objSetup->colourR, objSetup->colourG, objSetup->colourB);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }
 }
@@ -253,10 +253,10 @@ s8 TumbleweedBush_createTumbleweed(Object* self) {
     weedSetup->tumbleweed.interactRadius = 64.0f;
 
     //Check if the Tumbleweed should be carrying a Shiny Nugget
-    if (objData->carryingGold & 1) {
+    if (objData->flags & TumbleweedBush_FLAG_1_Carrying_Gold) {
         objSetup = (Ctrl117_Setup*)self->setup;
         if ((objSetup->base.uID == 0x292C) && (objData->tumbleweedsGrown == 6)) {
-            weedSetup->tumbleweed.carryingGold = 1;
+            weedSetup->tumbleweed.bushFlags = TumbleweedBush_FLAG_1_Carrying_Gold;
 
             for (objects = objGetObjects(&i, &objCount); i < objCount; i++) {
                 if (objects[i]->id == OBJ_SC_golden_nugge) {

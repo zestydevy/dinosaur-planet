@@ -1,0 +1,12 @@
+.text = 0x0:
+DF_Lantern_ctor = 0x0;
+DF_Lantern_dtor = 0xC;
+DF_Lantern_obj_Setup = 0x18;
+DF_Lantern_obj_Control = 0x1C0;
+DF_Lantern_obj_Update = 0x738;
+DF_Lantern_obj_Print = 0x744;
+DF_Lantern_obj_Free = 0x8C8;
+DF_Lantern_obj_GetModelFlags = 0x94C;
+DF_Lantern_obj_GetDataSize = 0x95C;
+
+.rodata = 0x9E0:

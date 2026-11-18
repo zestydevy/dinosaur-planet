@@ -8,10 +8,10 @@ _exports:
 .dword fish_dtor
 
 # export table
-/*0*/ .dword fish_setup
-/*1*/ .dword fish_control
-/*2*/ .dword fish_update
-/*3*/ .dword fish_print
-/*4*/ .dword fish_free
-/*5*/ .dword fish_get_model_flags
-/*6*/ .dword fish_get_data_size
+/*0*/ .dword fish_obj_Setup
+/*1*/ .dword fish_obj_Control
+/*2*/ .dword fish_obj_Update
+/*3*/ .dword fish_obj_Print
+/*4*/ .dword fish_obj_Free
+/*5*/ .dword fish_obj_GetModelFlags
+/*6*/ .dword fish_obj_GetDataSize

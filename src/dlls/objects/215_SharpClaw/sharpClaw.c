@@ -31,51 +31,6 @@ typedef struct {
     SharpClaw_DataActual objData;
 } SharpClaw_Data;
 
-typedef enum {
-    SharpClaw_ASTATE_0_Idle,
-    SharpClaw_ASTATE_1_Walk,
-    SharpClaw_ASTATE_2, //Approach?
-    SharpClaw_ASTATE_3, //Chase?
-    SharpClaw_ASTATE_4_Hop_Forward,
-    SharpClaw_ASTATE_5_Hop_Backward,
-    SharpClaw_ASTATE_6_Hop_Left,
-    SharpClaw_ASTATE_7_Hop_Right,
-    SharpClaw_ASTATE_8_Turn_90_Right,
-    SharpClaw_ASTATE_9_Turn_90_Left,
-    SharpClaw_ASTATE_10_Strafe_Left,
-    SharpClaw_ASTATE_11_Strafe_Right,
-    SharpClaw_ASTATE_12_Taunt1,
-    SharpClaw_ASTATE_13_Taunt2,
-    SharpClaw_ASTATE_14_Taunt3,
-    SharpClaw_ASTATE_15_Battle_Idle,
-    SharpClaw_ASTATE_16_Attack_Anticlockwise,
-    SharpClaw_ASTATE_17_Attack_Clockwise,
-    SharpClaw_ASTATE_18_Attack_Overhead,
-    SharpClaw_ASTATE_19_Hit,
-    SharpClaw_ASTATE_20, //Entered through case 23 in dHitAnimStateMap?
-    SharpClaw_ASTATE_21_Knocked_Down, //via Projectile Spell hit etc.
-    SharpClaw_ASTATE_22_Getting_Up,
-    SharpClaw_ASTATE_23_Dying,
-    SharpClaw_ASTATE_24_Dead
-} SharpClaw_AnimStates;
-
-typedef enum {
-    SharpClaw_LSTATE_0_Top,
-    SharpClaw_LSTATE_1_Respawn,
-    SharpClaw_LSTATE_2, //Idle/searching?
-    SharpClaw_LSTATE_3, //Taunting?
-    SharpClaw_LSTATE_4,
-    SharpClaw_LSTATE_5,
-    SharpClaw_LSTATE_6,
-    SharpClaw_LSTATE_7_Hit,
-    SharpClaw_LSTATE_8_Dodge,
-    SharpClaw_LSTATE_9_Dying,
-    SharpClaw_LSTATE_10_Dead,
-    SharpClaw_LSTATE_11, //Engage/approach?
-    SharpClaw_LSTATE_12_Attack,
-    SharpClaw_LSTATE_13
-} SharpClaw_LogicStates;
-
 /*0x0*/ static s32 dHitAnimStateMap[] = {
     SharpClaw_ASTATE_19_Hit,
     SharpClaw_ASTATE_19_Hit,

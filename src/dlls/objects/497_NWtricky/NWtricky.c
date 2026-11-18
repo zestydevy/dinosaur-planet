@@ -201,8 +201,9 @@ int NWtricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animData,
         case NWtricky_DEMO_STATE_Initial:
             STUBBED_PRINTF("menu start\n");
             for (i = 0; i < animData->messageCount; i++) {
-                if (animData->messages[i] == 3)
+                if (animData->messages[i] == 3) {
                     objdata->demoState = NWtricky_DEMO_STATE_Show_Inventory;
+                }
             }
             break;
 
@@ -212,8 +213,9 @@ int NWtricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animData,
                 if (animData->messages[i] == 4) {
                     objdata->demoState = NWtricky_DEMO_STATE_Close_Inventory;
                     break;
-                } else if (animData->messages[i] == 1)
+                } else if (animData->messages[i] == 1) {
                     buttonMask = D_CBUTTONS; // simulate C-Down press
+                }
             }
 
             //Get player's C-button presses as well
@@ -223,8 +225,9 @@ int NWtricky_animCallback(Object* self, Object* animObj, AnimObj_Data* animData,
         case NWtricky_DEMO_STATE_Close_Inventory:
             STUBBED_PRINTF("menu a button\n");
             for (i = 0; i < animData->messageCount; i++) {
-                if (animData->messages[i] == 2)
+                if (animData->messages[i] == 2) {
                     buttonMask = A_BUTTON; // simulate A press
+                }
             }
 
             //Get player's A presses as well

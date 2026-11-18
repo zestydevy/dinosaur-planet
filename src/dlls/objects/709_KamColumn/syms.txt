@@ -1,0 +1,12 @@
+.text = 0x0:
+KamColumn_ctor = 0x0;
+KamColumn_dtor = 0xC;
+KamColumn_obj_Setup = 0x18;
+KamColumn_obj_Control = 0x70;
+KamColumn_obj_Update = 0x2D0;
+KamColumn_obj_Print = 0x2DC;
+KamColumn_obj_Free = 0x330;
+KamColumn_obj_GetModelFlags = 0x340;
+KamColumn_obj_GetDataSize = 0x350;
+
+.rodata = 0x3B0:

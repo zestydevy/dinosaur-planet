@@ -166,6 +166,8 @@ enum SoundID {
     SOUND_B0_Put_Back_Staff = 0xB0,
 
     SOUND_B6_Weapon_Whoosh = 0xB6,
+    SOUND_B7_Weapon_Whish = 0xB7,
+    SOUND_B8_Weapon_Whiff = 0xB8,
 
     SOUND_C2_CloudRunner_Chirp_Double = 0xC2,  
     SOUND_C3_CloudRunner_Chirp = 0xC3,  
@@ -315,7 +317,7 @@ enum SoundID {
     SOUND_222_NW_Tricky_Sharpclaw_Help = 0x222,
 
     SOUND_226_Fall_Impact = 0x226,
-
+    SOUND_227_Thud = 0x227,
     SOUND_228_Laser_Zap = 0x228,
 
     SOUND_236_SharpClaw_Argh = 0x236, //DR_NiceSharpy
@@ -560,6 +562,7 @@ enum SoundID {
     SOUND_601_Worm_Croak = 0x601, //SnowWormSmall
     SOUND_602_Emerge_Snowy = 0x602, //SnowWormSmall
     
+    SOUND_612_Lantern_Crackle_Loop = 0x612,  // DF_Lantern
     SOUND_613_Gold_Bounce = 0x613,  // used in SCcollectables
     SOUND_614_Tumbleweed_Squeak_1 = 0x614, // used in DLL 227
     SOUND_615_Tumbleweed_Squeak_2 = 0x615, // used in DLL 227
@@ -799,6 +802,8 @@ enum SoundID {
     SOUND_9A1 = 0x9A1,
 
     SOUND_9A3_Magic_Reverse_Cymbal = 0x9A3,
+
+    SOUND_9A7 = 0x9A7,
 
     SOUND_9AA = 0x9AA,
     SOUND_9AB = 0x9AB,

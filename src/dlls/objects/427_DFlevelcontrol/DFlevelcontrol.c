@@ -6,7 +6,7 @@
 #include "sys/envfx.h"
 #include "game/gamebits.h"
 #include "dlls/objects/210_player.h"
-#include "dlls/objects/420_DFlevelcontrol.h"
+#include "dlls/objects/427_DFlevelcontrol.h"
 
 typedef struct {
 /*00*/ u8 state;
