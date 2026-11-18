@@ -523,18 +523,18 @@ void Tumbleweed_obj_Free(Object* self, s32 onlySelf) {
     objData = self->data;
       
     switch (self->id) {
-        case OBJ_Tumbleweed1:
-        case OBJ_Tumbleweed1twig:
-            id = OBJ_TumbleWeedBush1;
-            break;
-        case OBJ_Tumbleweed2:
-        case OBJ_Tumbleweed2twig:
-            id = OBJ_TumbleWeedBush2;
-            break;
-        case OBJ_Tumbleweed3:
-        case OBJ_Tumbleweed3twig:
-            id = OBJ_TumbleWeedBush3;
-            break;
+    case OBJ_Tumbleweed1:
+    case OBJ_Tumbleweed1twig:
+        id = OBJ_TumbleWeedBush1;
+        break;
+    case OBJ_Tumbleweed2:
+    case OBJ_Tumbleweed2twig:
+        id = OBJ_TumbleWeedBush2;
+        break;
+    case OBJ_Tumbleweed3:
+    case OBJ_Tumbleweed3twig:
+        id = OBJ_TumbleWeedBush3;
+        break;
     }
     
     //Find parent tree object
@@ -814,15 +814,15 @@ void Tumbleweed_createTwigs(Object* self) {
     Ctrl103_Setup* setup;
 
     switch (self->id) {
-        case OBJ_Tumbleweed1:
-            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed1twig);
-            break;
-        case OBJ_Tumbleweed2:
-            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed2twig);
-            break;
-        case OBJ_Tumbleweed3:
-            setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed3twig);
-            break;
+    case OBJ_Tumbleweed1:
+        setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed1twig);
+        break;
+    case OBJ_Tumbleweed2:
+        setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed2twig);
+        break;
+    case OBJ_Tumbleweed3:
+        setup = objAllocSetup(sizeof(Ctrl103_Setup), OBJ_Tumbleweed3twig);
+        break;
     }
     
     setup->base.x = self->srt.transl.x;
