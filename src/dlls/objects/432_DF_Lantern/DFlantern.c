@@ -26,10 +26,10 @@ void DF_Lantern_ctor(void* dll) { }
 void DF_Lantern_dtor(void* dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void DF_Lantern_obj_Setup(Object* self, DF_Lantern_Setup* objSetup, s32 reset) {
+void DF_Lantern_obj_Setup(Object* self, Ctrl117_Setup* objSetup, s32 reset) {
     DF_Lantern_Data* objData = self->data;
 
-    objData->useOtherLFXConfig = objSetup->useOtherLFXConfig;
+    objData->useOtherLFXConfig = objSetup->setting;
     objData->flags = 0;
 
     if (objData->useOtherLFXConfig == FALSE) {
@@ -80,10 +80,10 @@ void DF_Lantern_obj_Control(Object* self) {
     s32 zDepthOcclude;
     Camera* cam;
     Object* player;
-    DF_Lantern_Setup* objSetup;
+    Ctrl117_Setup* objSetup;
 
     objData = self->data;
-    objSetup = (DF_Lantern_Setup*)self->setup;
+    objSetup = (Ctrl117_Setup*)self->setup;
 
     objData->flags &= ~(DF_Lantern_FLAG_2_Emit_Light | DF_Lantern_FLAG_4_Show_PartFX_Glow | DF_Lantern_FLAG_8_Play_Sound);
 

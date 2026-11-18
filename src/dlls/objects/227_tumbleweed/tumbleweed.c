@@ -14,6 +14,7 @@
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
 #include "game/objects/setups/103.h"
+#include "game/objects/setups/117.h"
 #include "game/objects/setups/6_Collectable.h"
 #include "sys/gfx/model.h"
 #include "sys/main.h"
@@ -70,8 +71,8 @@ void Tumbleweed_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
     objData->homeX = self->srt.transl.x;
     objData->homeZ = self->srt.transl.z;
     objData->interactRadius = 2.0f * setup->tumbleweed.interactRadius;
-    objData->carryingGold = setup->tumbleweed.carryingGold;
-    objData->flags = Tumbleweed_FLAG_None;
+    objData->bushFlags = setup->tumbleweed.bushFlags;
+    objData->flags = 0;
     objData->baseScale = self->srt.scale;
     objData->timer = objData->baseScale / mathRnd(200, 500);
     objData->player = 0;
@@ -98,7 +99,7 @@ void Tumbleweed_obj_Setup(Object* self, Ctrl103_Setup* setup, s32 reset) {
         objData->state = Tumbleweed_STATE_Growing_on_Tree;
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         
-        if (objData->carryingGold & 1) {
+        if (objData->bushFlags & TumbleweedBush_FLAG_1_Carrying_Gold) {
             for (objects = objGetObjects(&index, &count); index < count; index++) {
                 if (objects[index]->id == OBJ_SC_golden_nugge) {
                     
@@ -192,7 +193,7 @@ void Tumbleweed_handleFlags(Object* self) {
         objData->timer = 120.0f;
     }
     
-    objData->flags = Tumbleweed_FLAG_None;
+    objData->flags = 0;
 }
 
 // offset: 0x658 | func: 3
@@ -833,7 +834,7 @@ void Tumbleweed_createTwigs(Object* self) {
     setup->tumbleweed.roll = self->srt.roll;
     setup->tumbleweed.pitch = self->srt.pitch;
     setup->tumbleweed.yaw = self->srt.yaw;
-    setup->tumbleweed.carryingGold = 0;
+    setup->tumbleweed.bushFlags = 0;
     setup->tumbleweed.interactRadius = 64.0f;
     objSetupObject(&setup->base, OBJINIT_STANDALONE | OBJINIT_FLAG4, self->mapID, -1, self->parent);
 }

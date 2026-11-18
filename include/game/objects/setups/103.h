@@ -60,7 +60,7 @@ typedef struct {
         /*18*/ u8 roll;
         /*19*/ u8 pitch;
         /*1A*/ u8 yaw;
-        /*1B*/ u8 carryingGold; //Bitfield flags: carrying a Shiny Nugget when bit0 is set
+        /*1B*/ u8 bushFlags; //`TumbleweedBush_Flags`: tumbleweed carries a Shiny Nugget when bit0 is set
         /*1C*/ f32 interactRadius; //Distance at which player can interact with tumbleweed
         } tumbleweed;
         struct {

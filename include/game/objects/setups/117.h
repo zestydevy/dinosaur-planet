@@ -3,21 +3,27 @@
 
 #include "game/objects/object.h"
 
-// TODO: this is more than tumbleweed bushes
-
 // ctrl: 117 | size: 0x24
 typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 growWeedsRadius;             //Tumbleweeds grow on tree when player inside this radius (stored halved)
-    f32 scale;
-    u8 multiplyColourR;             //Colour multiplier for the tree
-    u8 multiplyColourG;             //Colour multiplier for the tree
-    u8 multiplyColourB;             //Colour multiplier for the tree
-    u8 carryingGold;                //Bitfield flags: carrying a Shiny Nugget when bit0 is set
+/*00*/ ObjSetup base;
+/*18*/ u8 roll;
+/*19*/ u8 pitch;
+/*1A*/ u8 yaw;
+/*
+- TumbleweedBush: Tumbleweeds grow when player is inside this radius (stored halved)
+- DF_Lantern:     Boolean, affects which lightAction indices are used
+*/
+/*1B*/ u8 setting;
+/*1C*/ f32 scale;
+/*20*/ u8 colourR; //TumbleweedBush: Colour multiplier for the tree
+/*21*/ u8 colourG; //TumbleweedBush: Colour multiplier for the tree
+/*22*/ u8 colourB; //TumbleweedBush: Colour multiplier for the tree
+/*23*/ u8 flags;
 } Ctrl117_Setup;
+
+typedef enum {
+    TumbleweedBush_FLAG_1_Carrying_Gold = 1     //A Shiny Nugget is held in the tree's branches
+} TumbleweedBush_Flags;
 
 typedef enum {
     DF_Lantern_FLAG_1_Player_Collision = 1,     //Toggle objHits during setup (doesn't seem to work, but probably meant to decide whether the lantern burns you?)
@@ -27,19 +33,5 @@ typedef enum {
     DF_Lantern_FLAG_10_Always_Lit = 0x10,       //For indoor lanterns - always lit, instead of only at night-time
     DF_Lantern_FLAG_20_Use_Fade_Distance = 0x20 //Use the objSetup fadeDistance as the camera range for the partFX glow
 } DF_Lantern_Flags;
-
-// ctrl: 117 | size: 0x24
-typedef struct {
-    ObjSetup base;
-    u8 roll;
-    u8 pitch;
-    u8 yaw;
-    u8 useOtherLFXConfig;  //Boolean, affects which lightAction indices are used
-    f32 scale;
-    u8 unk20;
-    u8 unk21;
-    u8 unk22;
-    u8 flags;              //See `DF_Lantern_Flags`, used so indoor lanterns are always lit (instead of just at night), or to use fadeDistance for camera range
-} DF_Lantern_Setup;
 
 #endif
