@@ -211,7 +211,7 @@ void blockFree(s32 blockIndex);
 s32 blockTexanimAdd(Texture* tex, u32 renderFlags, s32 animatorID);
 s32 mapShouldObjUnload(Object*);
 void map_func_8004B548(MapHeader*, s32, s32, Object*);
-s32 mapShouldStreamLoadObject(ObjSetup*, s8, MapIDs);
+s32 mapShouldStreamLoadObject(ObjSetup* setup, s8 arg1, s32 mapno);
 s32 mapGetObjLoaded(s32, u32);
 void mapSetObjLoaded(s32 cellIndex_plusBitToCheck, u32 mapIndex, u32 arg2);
 s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit);
@@ -4344,7 +4344,7 @@ s32 map_func_8004AEFC(s32 mapID, s16 *arg1, s16 searchLimit) {
     return 0;
 }
 
-s32 mapShouldStreamLoadObject(ObjSetup* setup, s8 arg1, MapIDs mapno) {
+s32 mapShouldStreamLoadObject(ObjSetup* setup, s8 arg1, s32 mapno) {
     s32 scaledX;
     Object* player;
     s32 scaledZOrFlag;
