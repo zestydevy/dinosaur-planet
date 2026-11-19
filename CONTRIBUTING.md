@@ -3,6 +3,8 @@ Welcome to the Dinosaur Planet Decompilation and thanks for taking the time to c
 
 Please read on to learn about what the decompilation involves and how you can help.
 
+> **Note:** We do not accept AI/LLM generated or assisted contributions.
+
 
 ### Discord
 https://discord.gg/H6WGkznZBc
