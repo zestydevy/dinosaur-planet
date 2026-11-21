@@ -655,10 +655,10 @@ class DLLSplitter:
                     c_file.write(f'void {func.getName()}(Object* self);\n')
             elif export_idx == 3:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_PRINT):
-                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {{ }}\n')
+                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {{ }}\n')
                     return True
                 else:
-                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);\n')
+                    c_file.write(f'void {func.getName()}(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility);\n')
             elif export_idx == 4:
                 if self.__instructions_equal(func, self.DEFAULT_OBJ_FREE):
                     c_file.write(f'void {func.getName()}(Object* self, s32 onlySelf) {{ }}\n')
