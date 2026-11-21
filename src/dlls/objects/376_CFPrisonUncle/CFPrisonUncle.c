@@ -166,7 +166,7 @@ void CFPrisonUncle_obj_Control(Object* self) {
 void CFPrisonUncle_obj_Update(Object *self) { }
 
 // offset: 0x59C | func: 3 | export: 3
-void CFPrisonUncle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFPrisonUncle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     s32 boneIdx;
     ModelInstance* modelInstance;
     MtxF* mtx;

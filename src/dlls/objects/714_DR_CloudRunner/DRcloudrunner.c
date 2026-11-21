@@ -8,7 +8,7 @@
 #include "sys/main.h"
 #include "dll.h"
 #include "dlls/objects/745_DR_Cage.h"
-#include "types.h"
+
 #include "prevent_bss_reordering.h"
 
 typedef struct {
@@ -138,7 +138,7 @@ void dll_714_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_update.s")
 
 // offset: 0xC8C | func: 7 | export: 3
-void dll_714_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+void dll_714_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/714_DR_CloudRunner/dll_714_print.s")
 
 // offset: 0xE60 | func: 8 | export: 4

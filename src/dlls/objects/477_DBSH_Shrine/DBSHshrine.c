@@ -278,7 +278,7 @@ void DBSHshrine_control(Object* self) {
 void DBSHshrine_update(Object *self) { }
 
 // offset: 0xC18 | func: 3 | export: 3
-void DBSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBSHshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     //@bug? Doesn't check visibility
     objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 }

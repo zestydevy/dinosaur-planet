@@ -10,7 +10,6 @@
 #include "sys/math.h"
 #include "sys/voxmap.h"
 #include "dll_def.h"
-#include "types.h"
 
 enum BaddieWeapon {
     BADDIE_WEAPON_NONE,

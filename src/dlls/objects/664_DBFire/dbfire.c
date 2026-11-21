@@ -106,7 +106,7 @@ void DBfire_obj_Control(Object* self) {
 void DBfire_obj_Update(Object* self) { }
 
 // offset: 0x4A8 | func: 3 | export: 3
-void DBfire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void DBfire_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x4C0 | func: 4 | export: 4
 void DBfire_obj_Free(Object* self, s32 onlySelf) {

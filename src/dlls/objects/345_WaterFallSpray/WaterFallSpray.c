@@ -7,7 +7,6 @@
 #include "sys/rand.h"
 #include "dll.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 // offset: 0x0 | ctor
 void WaterFallSpray_ctor(void *dll) { }
@@ -76,7 +75,7 @@ void WaterFallSpray_control(Object *self) {
 void WaterFallSpray_update(Object *self) { }
 
 // offset: 0x30C | func: 3 | export: 3
-void WaterFallSpray_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void WaterFallSpray_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x324 | func: 4 | export: 4
 void WaterFallSpray_free(Object *self, s32 arg1) {

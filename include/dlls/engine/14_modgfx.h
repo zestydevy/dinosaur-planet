@@ -1,10 +1,9 @@
 #ifndef _DLL_14_H
 #define _DLL_14_H
 
-#include "dll_def.h"
-#include "types.h"
-#include "game/objects/object.h"
 #include "PR/gbi.h"
+#include "game/objects/object.h"
+#include "dll_def.h"
 
 // size: 0x18
 typedef struct {
@@ -49,7 +48,7 @@ DLL_INTERFACE(DLL_14_modgfx) {
 /*3*/ void (*Func3)(void);
 /*4*/ void (*Func4)(Object* arg0);
 /*5*/ void (*Func5)(Object* arg0);
-/*6*/ s32 (*Func6)(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj);
+/*6*/ s32 (*Func6)(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, u8 arg3, Object* obj);
 /*7*/ void (*Func7)(s16* arg0);
 /*8*/ void (*Func8)(void);
 /*9*/ void (*Func9)(Object* arg0, u8 arg1);

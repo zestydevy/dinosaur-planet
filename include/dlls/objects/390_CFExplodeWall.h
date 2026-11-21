@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef enum {
     CFExplodeWall_STATE_0_Waiting,

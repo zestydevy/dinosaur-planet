@@ -3,7 +3,6 @@
 #include "game/objects/object.h"
 #include "game/objects/setups/4_SetupPoint.h"
 #include "sys/objprint.h"
-#include "types.h"
 #include "sys/gfx/model.h"
 
 // offset: 0x0 | ctor
@@ -33,7 +32,7 @@ void setuppoint_update(Object *self){
 }
 
 // offset: 0x70 | func: 3 | export: 3
-void setuppoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void setuppoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

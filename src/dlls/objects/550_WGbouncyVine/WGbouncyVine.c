@@ -122,7 +122,7 @@ void WGBouncyVine_control(Object* self) {
 void WGBouncyVine_update(Object *self) { }
 
 // offset: 0x3FC | func: 3 | export: 3
-void WGBouncyVine_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WGBouncyVine_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WGBouncyVine_Data* objData = self->data;
     
     if ((objData->state != WGBouncyVine_STATE_3_Gone) && visibility) {

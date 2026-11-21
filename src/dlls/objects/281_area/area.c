@@ -1,7 +1,6 @@
 #include "PR/gbi.h"
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "types.h"
 #include "game/objects/setups/68_Area.h"
 #include "sys/gfx/model.h"
 
@@ -25,7 +24,7 @@ void area_update(Object *self){
 }
 
 // offset: 0x48 | func: 3 | export: 3
-void area_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void area_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x60 | func: 4 | export: 4
 void area_free(Object *self, s32 arg1){  

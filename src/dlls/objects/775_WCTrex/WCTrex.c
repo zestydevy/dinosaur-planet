@@ -97,7 +97,7 @@ void WCTrex_control(Object* self) {
 void WCTrex_update(Object *self) { }
 
 // offset: 0x3BC | func: 4 | export: 3
-void WCTrex_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCTrex_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WCTrex_Data* objdata = self->data;
 
     if (visibility != 0) {

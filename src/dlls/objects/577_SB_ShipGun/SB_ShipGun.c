@@ -293,7 +293,7 @@ void SB_ShipGun_update(Object *self) {
 }
 
 // offset: 0xB8C | func: 3 | export: 3
-void SB_ShipGun_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SB_ShipGun_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     SB_ShipGun_Data *objdata;
 
     objdata = self->data;

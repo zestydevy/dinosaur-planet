@@ -140,7 +140,7 @@ void WLTorch_obj_Control(Object* self) {
 void WLTorch_obj_Update(Object* self) { }
 
 // offset: 0x5A0 | func: 3 | export: 3
-void WLTorch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void WLTorch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x5B8 | func: 4 | export: 4
 void WLTorch_obj_Free(Object* self, s32 onlySelf) {

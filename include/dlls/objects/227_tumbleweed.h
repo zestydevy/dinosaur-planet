@@ -5,7 +5,6 @@
 #include "dlls/engine/27.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef struct {
 /*000*/ DLL27_Data collision;       //Terrain/HITS data

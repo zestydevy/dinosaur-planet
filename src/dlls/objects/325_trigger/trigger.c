@@ -21,7 +21,6 @@
 #include "sys/envfx.h"
 #include "dll.h"
 #include "dll_def.h"
-#include "types.h"
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/210_player.h"
 #include "dlls/objects/325_trigger.h"
@@ -349,7 +348,7 @@ void trigger_control(Object* self) {
 
 void trigger_update(Object *self) { }
 
-void trigger_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void trigger_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 void trigger_free(Object *self, s32 param2) {
     Trigger_Setup *setup;

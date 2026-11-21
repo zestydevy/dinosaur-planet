@@ -13,7 +13,6 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 typedef struct {
 /*00*/ u32 soundHandle;
@@ -165,7 +164,7 @@ void WLPressureSwitch_obj_Control(Object* self) {
 void WLPressureSwitch_obj_Update(Object* self) { }
 
 // offset: 0x5A4 | func: 3 | export: 3
-void WLPressureSwitch_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void WLPressureSwitch_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }

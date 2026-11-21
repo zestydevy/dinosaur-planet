@@ -242,8 +242,8 @@ void LaserBeam_obj_Control(Object* self) {
 void LaserBeam_obj_Update(Object* self) { }
 
 // offset: 0x6B8 | func: 3 | export: 3
-void LaserBeam_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, DLTri** pols, s32 visibility) {
-    Vtx_t* vtx;
+void LaserBeam_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s32 visibility) {
+    Vtx* vtx;
     LaserBeam_Data* objData;
     s16 y1;
     s16 y2;
@@ -273,7 +273,7 @@ void LaserBeam_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, DLT
     
     texDPTextures(gdl, NULL, NULL, 0x10 | 4 | 2 | 1, 0, 0, 1);
     
-    vtx = (Vtx_t*)*vtxs;
+    vtx = (Vtx*)*vtxs;
     bcopy(dLaserTris, *pols, sizeof(dLaserTris));
     
     colourR = objData->colourR;
@@ -292,79 +292,79 @@ void LaserBeam_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, DLT
     y2 = objData->y2;
     z2 = objData->z2;
     
-    vtx->ob[0] = x1 + objData->beamHalfWidth;
-    vtx->ob[1] = y1 + objData->beamHalfWidth;
-    vtx->ob[2] = z1;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x1 + objData->beamHalfWidth;
+    vtx->v.ob[1] = y1 + objData->beamHalfWidth;
+    vtx->v.ob[2] = z1;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x1 - objData->beamHalfWidth;
-    vtx->ob[1] = y1 + objData->beamHalfWidth;
-    vtx->ob[2] = z1;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x1 - objData->beamHalfWidth;
+    vtx->v.ob[1] = y1 + objData->beamHalfWidth;
+    vtx->v.ob[2] = z1;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x1 + objData->beamHalfWidth;
-    vtx->ob[1] = y1 - objData->beamHalfWidth;
-    vtx->ob[2] = z1;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x1 + objData->beamHalfWidth;
+    vtx->v.ob[1] = y1 - objData->beamHalfWidth;
+    vtx->v.ob[2] = z1;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x1 - objData->beamHalfWidth;
-    vtx->ob[1] = y1 - objData->beamHalfWidth;
-    vtx->ob[2] = z1;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x1 - objData->beamHalfWidth;
+    vtx->v.ob[1] = y1 - objData->beamHalfWidth;
+    vtx->v.ob[2] = z1;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x2 + objData->beamHalfWidth;
-    vtx->ob[1] = y2 + objData->beamHalfWidth;
-    vtx->ob[2] = z2;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x2 + objData->beamHalfWidth;
+    vtx->v.ob[1] = y2 + objData->beamHalfWidth;
+    vtx->v.ob[2] = z2;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x2 - objData->beamHalfWidth;
-    vtx->ob[1] = y2 + objData->beamHalfWidth;
-    vtx->ob[2] = z2;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x2 - objData->beamHalfWidth;
+    vtx->v.ob[1] = y2 + objData->beamHalfWidth;
+    vtx->v.ob[2] = z2;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x2 + objData->beamHalfWidth;
-    vtx->ob[1] = y2 - objData->beamHalfWidth;
-    vtx->ob[2] = z2;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x2 + objData->beamHalfWidth;
+    vtx->v.ob[1] = y2 - objData->beamHalfWidth;
+    vtx->v.ob[2] = z2;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
     
-    vtx->ob[0] = x2 - objData->beamHalfWidth;
-    vtx->ob[1] = y2 - objData->beamHalfWidth;
-    vtx->ob[2] = z2;
-    vtx->cn[0] = colourR;\
-    vtx->cn[1] = colourG;\
-    vtx->cn[2] = colourB;\
-    vtx->cn[3] = 0x50;
+    vtx->v.ob[0] = x2 - objData->beamHalfWidth;
+    vtx->v.ob[1] = y2 - objData->beamHalfWidth;
+    vtx->v.ob[2] = z2;
+    vtx->v.cn[0] = colourR;\
+    vtx->v.cn[1] = colourG;\
+    vtx->v.cn[2] = colourB;\
+    vtx->v.cn[3] = 0x50;
     vtx++;
 
-    *vtxs = (Vertex*)vtx;
+    *vtxs = vtx;
 }
 
 // offset: 0xA04 | func: 4 | export: 4

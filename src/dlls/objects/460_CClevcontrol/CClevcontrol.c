@@ -58,7 +58,7 @@ void CClevcontrol_control(Object *self) {
 void CClevcontrol_update(Object *self) { }
 
 // offset: 0x27C | func: 3 | export: 3
-void CClevcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void CClevcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x294 | func: 4 | export: 4
 void CClevcontrol_free(Object *self, s32 arg1) { }

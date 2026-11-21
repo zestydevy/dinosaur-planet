@@ -391,7 +391,7 @@ void SHkillermushroom_control(Object* self) {
 void SHkillermushroom_update(Object *self) { }
 
 // offset: 0xCE8 | func: 3 | export: 3
-void SHkillermushroom_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHkillermushroom_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     SHkillermushroom_Data* objData = self->data;
 
     if (visibility) {

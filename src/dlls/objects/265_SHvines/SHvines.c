@@ -85,7 +85,7 @@ void SHvines_update(Object* self) {
 }
 
 // offset: 0x2A4 | func: 3 | export: 3
-void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHvines_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     SHvines_Data* objData;
     SRT srt;
     Vec3f *transl;

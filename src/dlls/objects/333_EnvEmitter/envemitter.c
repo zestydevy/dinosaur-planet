@@ -86,7 +86,7 @@ void EnvEmitter_obj_Control(Object* self) {
 void EnvEmitter_obj_Update(Object* self) { }
 
 // offset: 0x300 | func: 3 | export: 3
-void EnvEmitter_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void EnvEmitter_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x318 | func: 4 | export: 4
 void EnvEmitter_obj_Free(Object* self, s32 onlySelf) { }

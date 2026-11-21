@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef struct {
     f32 unk0;                       //Set to 0.0f in setup, but otherwise unused

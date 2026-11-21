@@ -794,7 +794,7 @@ void options_update2(void) {
 }
 
 // offset: 0xB8C | func: 2 | export: 2
-void options_draw(Gfx** gdl, Mtx **mtxs, Vertex **vtxs) {
+void options_draw(Gfx** gdl, Mtx **mtxs, Vtx **vtxs) {
     s32 i;
     s32 i2;
     s32 uly;

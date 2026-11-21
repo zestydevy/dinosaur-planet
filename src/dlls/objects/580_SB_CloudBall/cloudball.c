@@ -47,7 +47,7 @@ void CloudBall_Update(Object* self) {
 }
 
 // offset: 0x644 | func: 3 | export: 3
-void CloudBall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void CloudBall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x65C | func: 4 | export: 4
 void CloudBall_free(Object* self, s32 onlySelf) {

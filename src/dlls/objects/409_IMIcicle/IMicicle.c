@@ -211,7 +211,7 @@ void IMIcicle_obj_Control(Object* self) {
 void IMIcicle_obj_Update(Object* self) { }
 
 // offset: 0x758 | func: 3 | export: 3
-void IMIcicle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void IMIcicle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     IMIcicle_Data* objData = self->data;
     
     if ((objData->state != IMIcicle_STATE_3_Destroyed) && visibility) {

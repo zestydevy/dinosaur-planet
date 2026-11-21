@@ -138,7 +138,7 @@ void TumbleweedBush_obj_Control(Object* self) {
 void TumbleweedBush_obj_Update(Object* self) { }
 
 // offset: 0x518 | func: 3 | export: 3
-void TumbleweedBush_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void TumbleweedBush_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Ctrl117_Setup* objSetup = (Ctrl117_Setup*)self->setup;
     
     if (visibility) {

@@ -45,6 +45,6 @@ void dll_72_update2(void) {
 }
 
 // offset: 0x114 | func: 2 | export: 2
-void dll_72_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void dll_72_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {
     rcpTileWrite(gdl, dTexTiles, 160, 160, 0xFF, 0xFF, 0xFF, 0xFF);
 }

@@ -8,7 +8,6 @@
 #include "sys/rcp.h"
 #include "dll.h"
 #include "dlls/engine/28_screen_fade.h"
-#include "types.h"
 
 #define KEYFRAME_40 40      //Logo fade-in start
 #define KEYFRAME_50 50      //Logo faded in
@@ -112,7 +111,7 @@ s32 rareware_update1(void) {
 
 void rareware_update2(void) { }
 
-void rareware_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void rareware_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     f32 A;
     s32 pad;
 

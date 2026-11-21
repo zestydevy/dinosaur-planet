@@ -1,7 +1,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll.h"
-#include "types.h"
 #include "game/gamebits.h"
 #include "game/objects/interaction_arrow.h"
 #include "game/objects/object_id.h"
@@ -362,7 +361,7 @@ void smallbasket_control(Object* self) {
 void smallbasket_update(Object *self) { }
 
 // offset: 0xC18 | func: 3 | export: 3
-void smallbasket_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void smallbasket_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     SmallBasket_Data* objData = self->data;
     SmallBasket_Setup *setup = (SmallBasket_Setup*)self->setup;
     

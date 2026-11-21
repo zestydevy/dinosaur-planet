@@ -16,7 +16,6 @@
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/rcp.h"
-#include "types.h"
 
 #define KRAZOA_ALPHABET_ICONS 0x187
 #define KRAZOA_ALPHABET_LENGTH 26
@@ -118,7 +117,7 @@ void KrazoaText_obj_Control(Object* self) {
 void KrazoaText_obj_Update(Object* self){ }
 
 // offset: 0x330 | func: 3 | export: 3
-void KrazoaText_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void KrazoaText_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     if (visibility) {
         self->srt.scale = 0.001f;
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);

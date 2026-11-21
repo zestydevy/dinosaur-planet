@@ -60,7 +60,7 @@ typedef struct {
     -MASK_SPEED
 };
 
-static void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols);
+static void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols);
 
 // offset: 0x0 | ctor
 void DIMTent_ctor(void* dll) { }
@@ -176,7 +176,7 @@ void DIMTent_obj_Control(Object* self) {
 void DIMTent_obj_Update(Object* self) { }
 
 // offset: 0x388 | func: 3 | export: 3
-void DIMTent_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DIMTent_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DIMTent_Data* objData = self->data;
 
     if (visibility) {
@@ -205,7 +205,7 @@ u32 DIMTent_obj_GetDataSize(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x4A4 | func: 7
-void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
+void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols) {
     Vtx_t* initVtx;
     DIMTent_Data* objData;
     s32 index;
@@ -276,7 +276,7 @@ void DIMTent_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangl
     camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, sMaskTris, ARRAYCOUNT(sMaskTris));
 
     //Set transform for particles
     srt.transl.x = (30.0f * maskProgress) + 2.0f;

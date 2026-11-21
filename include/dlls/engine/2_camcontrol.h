@@ -7,7 +7,6 @@
 #include "sys/camera.h"
 #include "sys/intersect.h"
 #include "sys/objhits.h"
-#include "types.h"
 #include "unktypes.h"
 
 typedef enum {
@@ -113,7 +112,7 @@ DLL_INTERFACE(DLL_2_camera) {
 /*17*/ Object *(*set_target_object)(Object* target); 		//Makes the LockIcon target a specific Object
 /*18*/ int *(*has_interpolation_finished)(void);			//Returns whether or not the camera is still interpolating between different modes
 /*19*/ void (*lock_icon_tick)(void); 						//Updates the OBJ_LockIcon that appears above highlighted/targeted Objects
-/*20*/ void (*lock_icon_print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols); //Prints OBJ_LockIcon (while not on the Title Screen)
+/*20*/ void (*lock_icon_print)(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols); //Prints OBJ_LockIcon (while not on the Title Screen)
 /*21*/ void (*set_letterbox_goal)(s32 height, s32 startAtGoal);    //Sets a new goal height for the camera's letterboxing to ease towards. The `startAtGoal` arg can force the camera to use the new letterbox height immediately.
 /*22*/ void (*func22)(void*, s32); 							//Calls export 3 from the current camera module. TODO: unsure of type for arg0 - sometimes seems to be CameraAction*, other times f32*? Also, figure out what to call this!
 /*23*/ s16 (*get_target_gametextID)(void); 					//Returns the gametextID to display while the LockIcon is highlighting something (when holding the R button)

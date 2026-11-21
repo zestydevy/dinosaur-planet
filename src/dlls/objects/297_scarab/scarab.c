@@ -13,7 +13,6 @@
 #include "sys/objprint.h"
 #include "sys/rand.h"
 #include "sys/intersect.h"
-#include "types.h"
 
 #include "dlls/objects/210_player.h"
 
@@ -413,7 +412,7 @@ void scarab_control(Object* self) {
 void scarab_update(Object *self) { }
 
 // offset: 0x1170 | func: 3 | export: 3
-void scarab_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void scarab_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     Scarab_Data* objData = self->data;
 
     if (objData->destructDelayTimer) {

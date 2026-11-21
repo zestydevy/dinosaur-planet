@@ -227,7 +227,7 @@ void Caictua_obj_Control(Object* self) {
 void Caictua_obj_Update(Object* self) { }
 
 // offset: 0x448 | func: 4 | export: 3
-void Caictua_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void Caictua_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie;
     Caictua_DataActual* objData;
 

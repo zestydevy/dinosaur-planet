@@ -91,7 +91,7 @@ void WMvein_control(Object* self) {
 void WMvein_update(Object *self) { }
 
 // offset: 0x2B0 | func: 3 | export: 3
-void WMvein_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void WMvein_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x2C8 | func: 4 | export: 4
 void WMvein_free(Object* self, s32 arg1) {

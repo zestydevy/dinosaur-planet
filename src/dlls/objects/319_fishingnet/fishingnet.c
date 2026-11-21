@@ -51,7 +51,7 @@ void fishingnet_control(Object* self) { }
 void fishingnet_update(Object* self) { }
 
 // offset: 0x74 | func: 3 | export: 3
-void fishingnet_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void fishingnet_print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x8C | func: 4 | export: 4
 void fishingnet_free(Object* self, s32 onlySelf) { }
@@ -73,7 +73,7 @@ void fishingnet_set_visibility(Object* self, u8 enable) {
 }
 
 // offset: 0xDC | func: 8 | export: 8
-void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vec3f* heldPosition, Vec3f* endPosition) {
+void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Vec3f* heldPosition, Vec3f* endPosition) {
     fishingnet_Data* objdata;
     Object* caught;
     ObjectHitInfo* objhitInfo;

@@ -190,7 +190,7 @@ void dll_243_control(Object *self) {
 void dll_243_update(Object *self) { }
 
 // offset: 0x458 | func: 4 | export: 3
-void dll_243_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_243_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     Baddie *baddie;
 
     baddie = self->data;

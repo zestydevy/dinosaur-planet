@@ -178,7 +178,7 @@ void BalloonBaddie_control(Object* self) {
 void BalloonBaddie_update(Object *self) { }
 
 // offset: 0x814 | func: 3 | export: 3
-void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void BalloonBaddie_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     BalloonBaddie_Data* objdata;
 
     objdata = self->data;

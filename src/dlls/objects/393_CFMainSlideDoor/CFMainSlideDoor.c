@@ -9,7 +9,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "dll.h"
-#include "types.h"
 
 typedef struct {
     u8 unk0;
@@ -58,7 +57,7 @@ void CFMainSlideDoor_control(Object* self) {
 void CFMainSlideDoor_update(Object *self) { }
 
 // offset: 0x1E0 | func: 3 | export: 3
-void CFMainSlideDoor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFMainSlideDoor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility != 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

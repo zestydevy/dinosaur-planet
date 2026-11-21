@@ -314,7 +314,7 @@ void CFTreasRobo_obj_Update(Object* self) {
 }
 
 // offset: 0xD04 | func: 3 | export: 3
-void CFTreasRobo_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFTreasRobo_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CFTreasRobo_Data* objdata;
     TextureAnimator* temp_v0_3;
     Vec3f sp54;

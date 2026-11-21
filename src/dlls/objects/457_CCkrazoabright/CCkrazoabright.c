@@ -389,7 +389,7 @@ void CCkrazoabright_handle_lever_puzzle_2(Object* self, CCkrazoabright_Data* obj
 void CCkrazoabright_update(Object *self) { }
 
 // offset: 0xDF0 | func: 9 | export: 3
-void CCkrazoabright_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void CCkrazoabright_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0xE08 | func: 10 | export: 4
 void CCkrazoabright_free(Object *self, s32 a1) { }

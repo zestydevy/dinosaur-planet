@@ -23,7 +23,7 @@ void CCfloor_control(Object *self) { }
 void CCfloor_update(Object *self) { }
 
 // offset: 0x7C | func: 3 | export: 3
-void CCfloor_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CCfloor_print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     Cam* cam;
     Ctrl103_Setup* objSetup;
 

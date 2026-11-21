@@ -128,7 +128,7 @@ void dll_658_control(Object* self) {
 void dll_658_update(Object *self) { }
 
 // offset: 0x43C | func: 3 | export: 3
-void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_658_print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     PointBack_Data* objData;
     SRT fxTransform;
     s32 i;

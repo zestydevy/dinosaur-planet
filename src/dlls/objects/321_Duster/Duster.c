@@ -14,7 +14,6 @@
 #include "dll.h"
 #include "sys/rand.h"
 #include "game/gamebits.h"
-#include "types.h"
 
 /*0x0*/ static const char str_0[] = "hit wall\n";
 
@@ -203,7 +202,7 @@ void Duster_update(Object *self) {
 }
 
 // offset: 0x7FC | func: 3 | export: 3
-void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void Duster_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     Duster_Data *objdata = self->data;
 
     if (visibility && objdata->discovered && !objdata->collected) {

@@ -222,7 +222,7 @@ void waterfx_init(void) {
         var_a2 = 0;
 
         tempTri = &sWaterSplashTris[i * 12];
-        tri = (DLTri *) tempTri;
+        tri = tempTri;
         targetU = (u32)&sWaterSplashTris[i * 12 + 12];
         while ((u32)tri < targetU) {
             temp_var = var_a2 + 1;

@@ -10,7 +10,6 @@
 #include "sys/gfx/model.h"
 #include "sys/objexpr.h"
 #include "sys/print.h"
-#include "types.h"
 
 typedef struct {
     u8 state;
@@ -94,7 +93,7 @@ static const char str_1[] = " PREMPT %i seqtime %i \n\n";
 void GP_ShrinePillar_update(Object *self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void GP_ShrinePillar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void GP_ShrinePillar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

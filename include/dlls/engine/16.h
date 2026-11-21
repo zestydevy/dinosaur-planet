@@ -3,7 +3,6 @@
 
 #include "PR/ultratypes.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_16) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

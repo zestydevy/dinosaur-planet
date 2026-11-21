@@ -126,7 +126,7 @@ void FindKyteObject_obj_Control(Object* self) {
 void FindKyteObject_obj_Update(Object* self) { }
 
 // offset: 0x3B8 | func: 3 | export: 3
-void FindKyteObject_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void FindKyteObject_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x3D0 | func: 4 | export: 7
 s32 FindKyteObject_kyteTarget_Interact(Object* self, s32 arg1) {

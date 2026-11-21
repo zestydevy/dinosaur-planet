@@ -768,7 +768,7 @@ void modgfx_Func5(Object* arg0) {
 }
 
 // offset: 0x2618 | func: 6 | export: 6
-s32 modgfx_Func6(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, u8 arg3, Object* obj) {
+s32 modgfx_Func6(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, u8 arg3, Object* obj) {
     s32 idx;
     s32 i;
     DLTri* var_s6;

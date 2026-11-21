@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "dlls/engine/27.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 typedef struct {
 /*000*/ DLL27_Data terrainCollider;

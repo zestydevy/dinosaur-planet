@@ -146,7 +146,7 @@ void old_levelselect_update2(void) {
 }
 
 // offset: 0x2C | func: 2 | export: 2
-void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void old_levelselect_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {
     /*0xD40*/ static s32 dSelectedPrintIdx = 0;         //Selected index within 9 strings currently shown
     /*0xD44*/ static s32 dSelectedListIdx = 0;          //Selected index within full list of strings
     /*0xD48*/ static s32 dShowLevelUnavailable = FALSE; //Shows a "LEVEL NOT AVAILABLE" message instead of the level list

@@ -7,7 +7,6 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "dll.h"
-#include "types.h"
 
 typedef struct {
     u8 unk0;
@@ -66,7 +65,7 @@ void SHtricky_control(Object *self) {
 void SHtricky_update(Object *self) { }
 
 // offset: 0x1B4 | func: 3 | export: 3
-void SHtricky_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void SHtricky_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x1CC | func: 4 | export: 4
 void SHtricky_free(Object *self, s32 a1) { }

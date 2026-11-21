@@ -155,7 +155,7 @@ void DBDustGeezer_control(Object* self) {
 void DBDustGeezer_update(Object *self) { }
 
 // offset: 0x5F8 | func: 3 | export: 3
-void DBDustGeezer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBDustGeezer_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     DBDustGeezer_Data* objData = self->data;
     if (visibility && (objData->state != DBDustGeezer_STATE_Hidden)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

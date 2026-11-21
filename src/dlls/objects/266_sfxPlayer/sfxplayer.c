@@ -11,7 +11,6 @@
 #include "sys/rand.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 typedef struct {
 /*00*/ f32 innerDistanceSq;
@@ -137,7 +136,7 @@ void sfxPlayer_obj_Control(Object* self) {
 void sfxPlayer_obj_Update(Object* self) { }
 
 // offset: 0x464 | func: 3 | export: 3
-void sfxPlayer_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void sfxPlayer_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Object** obj = &self; //fake?
     
     if (visibility) {

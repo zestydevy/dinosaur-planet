@@ -124,7 +124,7 @@ void CFPrisonGuard_obj_Update(Object* self) {
 }
 
 // offset: 0x2D0 | func: 3 | export: 3
-void CFPrisonGuard_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFPrisonGuard_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CFPrisonGuard_Data* objData = self->data;
     
     if (visibility) {

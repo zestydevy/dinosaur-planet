@@ -5,7 +5,6 @@
 #include "ultra64.h"
 #include "PR/gbi.h"
 
-#include "types.h"
 #include "game/objects/object.h"
 #include "sys/map.h"
 #include "sys/intersect.h"
@@ -92,7 +91,7 @@ void shadowsUpdateObjBox(Object* arg0);
 s32 shadows_func_80051D68(Object* arg0, s16 arg1, s16 arg2, UnkFunc80051D68Arg3* arg3, s32 arg4, Vec4f* arg5);
 void shadowsSetCustomObjPos(Object *obj, f32 x, f32 y, f32 z);
 void shadowsClearCustomObjPos(Object *arg0);
-void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
+void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols);
 u32 shadowsInitObjShadow(Object *obj, u32 addr, s32);
 f32 shadows_func_800528AC(Vec3f* arg0, Vec3f* arg1, Vec3f* arg2, Vec4f* arg3);
 s32 shadowsCalcOpacity(Object *obj, ObjectShadow *shadow);

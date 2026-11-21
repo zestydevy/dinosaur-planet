@@ -196,7 +196,7 @@ void SCcollectables_control(Object* self) {
 void SCcollectables_update(Object *self) { }
 
 // offset: 0x554 | func: 3 | export: 3
-void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void SCcollectables_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility){
     SCCollectables_Data* objdata;
 
     objdata = self->data;

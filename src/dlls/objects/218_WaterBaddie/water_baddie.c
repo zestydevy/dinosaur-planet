@@ -220,7 +220,7 @@ void WaterBaddie_obj_Update(Object* self) {
 }
 
 // offset: 0x698 | func: 4 | export: 3
-void WaterBaddie_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WaterBaddie_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if (visibility && (self->unkDC == 0)) {

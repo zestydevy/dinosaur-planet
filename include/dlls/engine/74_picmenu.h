@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "sys/gfx/texture.h"
 #include "dll_def.h"
-#include "types.h"
 #include "dlls/engine/6_amsfx.h"
 
 typedef struct

@@ -5,7 +5,6 @@
 #include "dlls/engine/26_curves.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef struct {
 	UnkCurvesStruct curves;		//Curve-following data (e.g. for the lily pond White Mushroom in SwapStone Hollow's well)

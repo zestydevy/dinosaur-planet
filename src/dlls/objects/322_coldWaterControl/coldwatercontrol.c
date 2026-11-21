@@ -68,7 +68,7 @@ void ColdWaterControl_control(Object* self) {
 void ColdWaterControl_update(Object *self) { }
 
 // offset: 0x1EC | func: 3 | export: 3
-void ColdWaterControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void ColdWaterControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x204 | func: 4 | export: 4
 void ColdWaterControl_free(Object *self, s32 a1) { }

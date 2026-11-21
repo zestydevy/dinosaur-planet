@@ -5,6 +5,7 @@
 #include "dlls/engine/74_picmenu.h"
 #include "dlls/engine/6_amsfx.h"
 #include "dlls/engine/21_gametext.h"
+#include "dlls/engine/66_pausemenu.h"
 #include "game/gametexts.h"
 #include "macros.h"
 #include "sys/camera.h"
@@ -16,10 +17,8 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/menu.h"
-
-#include "dlls/engine/66_pausemenu.h"
 #include "sys/rcp.h"
-#include "types.h"
+
 #include "prevent_bss_reordering.h"
 
 
@@ -168,7 +167,7 @@ s32 pausemenu_Update1(void) {
 void pausemenu_Update2(void){ }
 
 // offset: 0x52C | func: 2 | export: 2
-void pausemenu_Draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+void pausemenu_Draw(Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     s32 ulx;
     s32 uly;
     s32 lrx;

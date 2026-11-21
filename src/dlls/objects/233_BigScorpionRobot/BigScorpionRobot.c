@@ -196,7 +196,7 @@ void BigScorpionRobot_control(Object* self) {
 void BigScorpionRobot_update(Object *self) { }
 
 // offset: 0x7BC | func: 4 | export: 3
-void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void BigScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     s32 bone;
     BigScorpionRobot_Data* objdata = baddie->objdata;

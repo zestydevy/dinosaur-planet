@@ -637,7 +637,7 @@ s32 dll_331_func_1D34(Object* self, Object* animObj, AnimObj_Data* animObjData, 
 }
 
 // offset: 0x1F2C | func: 4 | export: 3
-void dll_331_print(Object* self, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 visibility) {
+void dll_331_print(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri** arg4, s8 visibility) {
     if (!visibility || self->id == OBJ_DFP_PowerBolt){
         return;
     }

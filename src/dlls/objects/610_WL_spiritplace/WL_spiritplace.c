@@ -12,7 +12,6 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "types.h"
 #include "sys/gfx/model.h"
 
 /*0x0*/ static DLL_IModgfx* _data_0 = NULL;
@@ -101,7 +100,7 @@ void WL_spiritplace_control(Object *self) {
 void WL_spiritplace_update(Object *self) { }
 
 // offset: 0x4C8 | func: 3 | export: 3
-void WL_spiritplace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void WL_spiritplace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

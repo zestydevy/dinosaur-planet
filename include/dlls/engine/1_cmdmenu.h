@@ -5,7 +5,6 @@
 #include "dll_def.h"
 #include "game/objects/object.h"
 #include "sys/rcp.h"
-#include "types.h"
 
 /** Data for a particular inventory page */
 typedef struct {
@@ -159,7 +158,7 @@ DLL_INTERFACE(DLL_1_cmdmenu) {
 /*:*/ DLL_INTERFACE_BASE(DLL);
 /*0*/ s32 (*update1)(void);
 /*1*/ void (*update2)(void);
-/*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+/*2*/ void (*print)(Gfx **gdl, Mtx **mtxs, Vtx **vtxs);
 /*3*/ void (*pages_clear_last_selected_index)(void); //Zeroes the selected item index on all the inventory pages (i.e. forgets user's last selection).
 /*4*/ void (*request_new_player_stats_snapshot)(void); //Flags that a snapshot of the player's current tracked stats should be taken. (Used to show UI when player health changes, etc.)
 /*5*/ s32 (*get_target_objects)(Object **targetObjects, s32 maxObjects, u8 lockFlag, s32 arg3, f32 range); //Gets an array (`targetObjects`) of nearby Objects that can be targetted (i.e. have lock-on data and are fully opaque), sorted by their address. Returns the number of Objects in the array.

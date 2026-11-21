@@ -17,7 +17,6 @@
 #include "sys/objprint.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
-#include "types.h"
 
 typedef struct {
     u8 _unk0[0xC - 0x0];
@@ -133,7 +132,7 @@ void dll_274_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/274_pushpull/dll_274_update.s")
 
 // offset: 0xEE4 | func: 3 | export: 3
-void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_274_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DLL274_Data* objData;
     ModelInstance* modelInst;
     Model* model;

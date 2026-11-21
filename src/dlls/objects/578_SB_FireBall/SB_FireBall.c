@@ -82,7 +82,7 @@ void SB_FireBall_control(Object *self) {
 void SB_FireBall_update(Object *self) { }
 
 // offset: 0x2D8 | func: 3 | export: 3
-void SB_FireBall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SB_FireBall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         texDisableModes(RENDER_FOG_ACTIVE);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

@@ -41,7 +41,7 @@ typedef struct {
 };
 
 static int CRSnowClaw_animCallback(Object* self, Object* animObj, AnimObj_Data* animObjData, s8);
-static void CRSnowClaw_printVehicle(Object* self, Object* vehicle, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility, s32 opacity, s32 doPrint);
+static void CRSnowClaw_printVehicle(Object* self, Object* vehicle, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility, s32 opacity, s32 doPrint);
 static void CRSnowClaw_vehicleRiderAnim(Object* self, Object* vehicle);
 static void CRSnowClaw_func_EC8(Object* self, CRSnowClaw_Data* objdata);
 
@@ -189,7 +189,7 @@ void CRSnowClaw_obj_Update(Object* self) {
 }
 
 // offset: 0x674 | func: 3 | export: 3
-void CRSnowClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CRSnowClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CRSnowClaw_Data* objdata;
     Object* vehicle;
     Object* spellstone;
@@ -326,7 +326,7 @@ static int CRSnowClaw_animCallback(Object* self, Object* animObj, AnimObj_Data* 
 }
 
 // offset: 0xBF0 | func: 8
-static void CRSnowClaw_printVehicle(Object* self, Object* vehicle, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility, s32 opacity, s32 doPrint) {
+static void CRSnowClaw_printVehicle(Object* self, Object* vehicle, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility, s32 opacity, s32 doPrint) {
     s32 prevOpacity;
     f32 x;
     f32 y;

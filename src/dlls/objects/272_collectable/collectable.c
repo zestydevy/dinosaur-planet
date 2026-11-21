@@ -17,7 +17,6 @@
 #include "sys/objtype.h"
 #include "sys/newshadows.h"
 #include "sys/objlib.h"
-#include "types.h"
 
 typedef struct {
     u32 soundHandle;            //Cleared on free, but not used for any sound calls
@@ -365,7 +364,7 @@ void collectable_obj_Control(Object* self) {
 void collectable_obj_Update(Object* self) { }
 
 // offset: 0x9A0 | func: 3 | export: 3
-void collectable_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void collectable_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Collectable_Data* objdata = self->data;
 
     if (0) {}

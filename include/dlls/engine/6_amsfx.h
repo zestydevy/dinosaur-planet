@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef struct {
     u16 bankAndClipID; //bankID (1 bit), clipID (15 bit)

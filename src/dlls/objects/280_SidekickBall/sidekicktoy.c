@@ -201,7 +201,7 @@ void SidekickToy_control(Object* self) {
 void SidekickToy_update(Object *self) { }
 
 // offset: 0x960 | func: 5 | export: 3
-void SidekickToy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void SidekickToy_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility){
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

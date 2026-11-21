@@ -6,7 +6,6 @@
 #include "game/objects/object.h"
 #include "dll_def.h"
 #include "sys/main.h"
-#include "types.h"
 #include "game/gamebits.h"
 
 #define GAMETEXT_BASE 63 //lineID of first shop string in inventory Gametext file

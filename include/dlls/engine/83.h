@@ -2,7 +2,7 @@
 #define _DLLS_83_H
 
 #include "dll_def.h"
-#include "types.h"
+#include "unktypes.h"
 
 DLL_INTERFACE(DLL_83) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

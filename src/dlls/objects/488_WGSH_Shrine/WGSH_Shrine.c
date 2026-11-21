@@ -247,7 +247,7 @@ void dll_488_control(Object *self) {
 void dll_488_update(Object *self) { }
 
 // offset: 0xBD0 | func: 3 | export: 3
-void dll_488_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_488_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

@@ -12,7 +12,6 @@
 #include "dll.h"
 #include "macros.h"
 #include "sys/rcp.h"
-#include "types.h"
 #include "prevent_bss_reordering.h"
 
 #define NAME_ENTRY_PICMENU_ITEM(textX, textY, itemX, itemY, flags, upLink, downLink, leftLink, rightLink) \
@@ -140,7 +139,7 @@ s32 dll_64_update1() {
 
 void dll_64_update2() { }
 
-void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void dll_64_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     s32 ulx;
     s32 lrx;
     s32 uly;

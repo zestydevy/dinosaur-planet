@@ -5,7 +5,6 @@
 #include "sys/objmsg.h"
 #include "sys/objanim.h"
 #include "sys/objtype.h"
-#include "types.h"
 
 typedef struct {
     Vec3f home;
@@ -274,7 +273,7 @@ void VampireBat_obj_Control(Object* self) {
 void VampireBat_obj_Update(Object *self) { }
 
 // offset: 0x834 | func: 4 | export: 3
-void VampireBat_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void VampireBat_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

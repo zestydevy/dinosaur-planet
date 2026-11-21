@@ -14,7 +14,6 @@
 #include "sys/objprint.h"
 #include "sys/math.h"
 #include "sys/rand.h"
-#include "types.h"
 
 #include "dlls/objects/297_scarab.h"
 
@@ -242,7 +241,7 @@ void medium_crate_control(Object *self) {
 void medium_crate_update(Object *self) { }
 
 // export 3
-void medium_crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void medium_crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     MediumCrate_Data *objdata;
     MediumCrate_Setup *setup;
 

@@ -160,7 +160,7 @@ void menuUpdate2(void) {
     menuDoMenuSwap();
 }
 
-void menuDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void menuDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols) {
     if (gActiveMenuDLL != NULL) {
         gActiveMenuDLL->vtbl->draw(gdl, mtxs, vtxs);
     }

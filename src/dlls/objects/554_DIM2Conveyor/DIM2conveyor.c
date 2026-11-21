@@ -46,7 +46,7 @@ void DIM2Conveyor_obj_Control(Object* self) {
 void DIM2Conveyor_obj_Update(Object* self) { }
 
 // offset: 0x164 | func: 3 | export: 3
-void DIM2Conveyor_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DIM2Conveyor_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

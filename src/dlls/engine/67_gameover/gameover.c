@@ -335,7 +335,7 @@ void gameover_Update2(void) {
 }
 
 // offset: 0x870 | func: 2 | export: 2
-void gameover_Draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+void gameover_Draw(Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     s32 ulx;
     s32 uly;
     s32 lrx;

@@ -16,5 +16,5 @@ void dll_80_update2(void) {
 }
 
 // offset: 0x2C | func: 2 | export: 2
-void dll_80_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void dll_80_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {
 }

@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_222_SnowWormSmall) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);

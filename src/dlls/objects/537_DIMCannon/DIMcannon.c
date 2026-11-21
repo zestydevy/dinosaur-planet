@@ -279,7 +279,7 @@ void DIMCannon_obj_Control(Object* self) {
 void DIMCannon_obj_Update(Object *self) { }
 
 // offset: 0x8FC | func: 3 | export: 3
-void DIMCannon_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DIMCannon_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DIMCannon_Data* objData;
 
     if (self->id != OBJ_DIMCannonBall) {

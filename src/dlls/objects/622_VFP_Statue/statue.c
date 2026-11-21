@@ -54,7 +54,7 @@ void VFP_Statue_obj_Control(Object* self) {
 void VFP_Statue_obj_Update(Object* self) { }
 
 // offset: 0x19C | func: 3 | export: 3
-void VFP_Statue_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void VFP_Statue_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x1B4 | func: 4 | export: 4
 void VFP_Statue_obj_Free(Object* self, s32 onlySelf) {

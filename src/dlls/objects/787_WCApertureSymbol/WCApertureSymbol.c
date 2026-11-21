@@ -138,7 +138,7 @@ void WCApertureSymbol_obj_Control(Object* self) {
 void WCApertureSymbol_obj_Update(Object* self) { }
 
 // offset: 0x364 | func: 3 | export: 3
-void WCApertureSymbol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCApertureSymbol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WCApertureSymbol_Data* objdata = self->data;
 
     if (visibility) {

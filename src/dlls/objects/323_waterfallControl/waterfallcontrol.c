@@ -21,7 +21,7 @@ void WaterfallControl_control(Object* self) {
 void WaterfallControl_update(Object *self) { }
 
 // offset: 0x88 | func: 3 | export: 3
-void WaterfallControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void WaterfallControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0xA0 | func: 4 | export: 4
 void WaterfallControl_free(Object *self, s32 a1) { }

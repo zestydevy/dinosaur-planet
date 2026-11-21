@@ -123,7 +123,7 @@ void DBlevelControl_control(Object *self) {
 void DBlevelControl_update(Object *self) { }
 
 // offset: 0x36C | func: 3 | export: 3
-void DBlevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void DBlevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x384 | func: 4 | export: 4
 void DBlevelControl_free(Object *self, s32 arg1) {

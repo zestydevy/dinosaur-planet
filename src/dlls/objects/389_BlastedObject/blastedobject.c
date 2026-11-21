@@ -119,7 +119,7 @@ void BlastedObject_obj_Control(Object* self) {
 void BlastedObject_obj_Update(Object* self) { }
 
 // offset: 0x3E4 | func: 3 | export: 3
-void BlastedObject_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void BlastedObject_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     BlastedObject_Setup* setup = (BlastedObject_Setup*)self->setup;
     BlastedObject_Data* objdata = self->data;
     

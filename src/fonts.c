@@ -1088,7 +1088,7 @@ void fontWindowDisableVerts(s32 windowID) {
     gFontWindows[windowID].flags &= ~FONT_WINDOW_VERTS;
 }
 
-void fontWindowsDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void fontWindowsDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     s32 i;
 
     for (i = 1; i < FONT_WINDOW_COUNT; i++) {
@@ -1159,7 +1159,7 @@ void fontRenderFillRect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry) {
     }
 }
 
-void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID) {
+void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, s32 windowID) {
     FontWindow *window;
     FontString *string;
     s32 vidMode;

@@ -5,7 +5,6 @@
 #include "game/objects/object.h"
 #include "sys/envfx.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_12_minic) {
     /*:*/ DLL_INTERFACE_BASE(DLL);

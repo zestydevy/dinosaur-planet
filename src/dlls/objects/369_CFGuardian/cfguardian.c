@@ -289,7 +289,7 @@ void CFGuardian_obj_Update(Object* self) {
 }
 
 // offset: 0x348 | func: 3 | export: 3
-void CFGuardian_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFGuardian_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CFGuardian_Data* objdata = self->data;
 
     if (visibility != 0) {

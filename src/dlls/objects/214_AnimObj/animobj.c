@@ -7,7 +7,6 @@
 #include "sys/main.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 // offset: 0x0 | ctor
 void AnimObj_ctor(void* dll) { }
@@ -100,7 +99,7 @@ void AnimObj_obj_Control(Object* self) {
 void AnimObj_obj_Update(Object* self) { }
 
 // offset: 0x324 | func: 3 | export: 3
-void AnimObj_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void AnimObj_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

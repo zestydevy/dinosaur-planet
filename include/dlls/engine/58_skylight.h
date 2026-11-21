@@ -3,7 +3,6 @@
 
 #include "sys/lfx.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_58_skylight) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

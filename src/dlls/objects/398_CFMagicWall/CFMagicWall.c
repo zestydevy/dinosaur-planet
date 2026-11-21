@@ -9,7 +9,6 @@
 #include "sys/objects.h"
 #include "sys/objtype.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 static void CFMagicWall_func_384(Object* self, u8 opacity, s32 animatorID);
 
@@ -61,7 +60,7 @@ void CFMagicWall_control(Object* self) {
 void CFMagicWall_update(Object *self) { }
 
 // offset: 0x2CC | func: 3 | export: 3
-void CFMagicWall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFMagicWall_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility != 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

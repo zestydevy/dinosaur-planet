@@ -195,7 +195,7 @@ void ProjBall_obj_Update(Object* self) {
 }
 
 // offset: 0x8F8 | func: 3 | export: 3
-void ProjBall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void ProjBall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x910 | func: 4 | export: 4
 void ProjBall_obj_Free(Object* self, s32 onlySelf) {

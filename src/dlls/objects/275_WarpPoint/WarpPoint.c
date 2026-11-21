@@ -193,7 +193,7 @@ void WarpPoint_obj_Control(Object* self) {
 void WarpPoint_obj_Update(Object* self) { }
 
 // offset: 0x848 | func: 3 | export: 3
-void WarpPoint_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WarpPoint_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         if (self) { }
     }

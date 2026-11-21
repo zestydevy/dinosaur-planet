@@ -27,7 +27,7 @@ void dll_566_control(Object *self) { }
 void dll_566_update(Object *self) { }
 
 // offset: 0xCC | func: 3 | export: 3
-void dll_566_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_566_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility != 0) {
         objAnimAdvance(self, 0.005f, gUpdateRateF, NULL);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

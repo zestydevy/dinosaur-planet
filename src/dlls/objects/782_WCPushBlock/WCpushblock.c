@@ -12,7 +12,6 @@
 #include "sys/objtype.h"
 #include "sys/objprint.h"
 #include "sys/main.h"
-#include "types.h"
 
 typedef struct {
 /*000*/    DLL27_Data unk0;   //Unused: probably DLL27_Data
@@ -321,7 +320,7 @@ void WCPushBlock_obj_Control(Object* self) {
 void WCPushBlock_obj_Update(Object* self) { }
 
 // offset: 0xF44 | func: 3 | export: 3
-void WCPushBlock_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCPushBlock_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

@@ -557,7 +557,7 @@ static void CCsandwormBoss_create_particles(Object* self, CCsandwormBoss_Data* o
 void CCsandwormBoss_update(Object *self) { }
 
 // offset: 0x1640 | func: 13 | export: 3
-void CCsandwormBoss_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CCsandwormBoss_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CCsandwormBoss_Data* objData = self->data;
     u8 alpha;
 /*0x1C*/ u8 dFXColour[] = {0xff, 0xc0, 0x96}; //Sandy orange colour

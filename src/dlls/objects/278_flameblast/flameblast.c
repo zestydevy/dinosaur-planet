@@ -8,7 +8,6 @@
 #include "sys/objhits.h"
 #include "sys/main.h"
 #include "sys/objects.h"
-#include "types.h"
 
 typedef struct {
     s16 timer;
@@ -82,7 +81,7 @@ void flameblast_control(Object* self) {
 void flameblast_update(void){ }
 
 // offset: 0x27C | func: 3 | export: 3
-void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) { }
+void flameblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s32 visibility) { }
 
 // offset: 0x294 | func: 4 | export: 4
 void flameblast_free(Object* self, s32 arg1) {

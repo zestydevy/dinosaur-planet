@@ -136,7 +136,7 @@ static int dll_405_func_FC(Object* self, Object* arg1, AnimObj_Data* arg2, s8 ar
 
 
 // offset: 0x534 | func: 4 | export: 3
-void dll_405_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_405_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility != 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

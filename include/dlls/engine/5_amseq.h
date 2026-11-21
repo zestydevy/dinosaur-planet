@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 // For seq debug strings that we know from default.dol.
 // Should be given as the last parameter of AMSEQ->set

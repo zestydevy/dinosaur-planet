@@ -3,7 +3,6 @@
 
 #include "dll_def.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 enum ParticleID {
     PARTICLE_2 = 0x2, //cannon blast

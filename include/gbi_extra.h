@@ -3,6 +3,15 @@
 
 #include "PR/ultratypes.h"
 
+// gbi.h Tri struct but padded to 16-bytes.
+typedef struct {
+/*0000*/    u8 unk0;
+/*0001*/    u8 v0;
+/*0002*/    u8 v1;
+/*0003*/    u8 v2;
+/*0004*/    u8 unk4[0x10 - 0x4];
+} DLTri;
+
 // modified from https://github.com/glankk/n64
 // helps with compiling gfxdis output
 

@@ -78,7 +78,7 @@ static void CamControl_restore_player_coords(Object* obj);
 static void CamControl_average_player_speed(Cam* cam, Object* arg1);
 static Object* CamControl_find_highlight_object(Cam* cam, Object* arg1);
 static void CamControl_create_LockIcon(void);
-static void CamControl_print(Object* arg0, s32 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
+static void CamControl_print(Object* arg0, s32 arg1, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols);
 
 // offset: 0x0 | ctor
 void CamControl_ctor(void* dll) {
@@ -627,7 +627,7 @@ void CamControl_lock_icon_tick(void) {
 }
 
 // offset: 0x1408 | func: 21 | export: 20
-void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void CamControl_lock_icon_print(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols) {
     if (menuGetCurrent() != MENU_TITLE_SCREEN) {
         _data_0[0] = -1;
         CamControl_print(sCam->highlight, sActiveID == DLL_ID_CAMLOCKON, gdl, mtxs, vtxs, pols);
@@ -1005,7 +1005,7 @@ void CamControl_create_LockIcon(void) {
 
 // offset: 0x23D0 | func: 36
 /** Draws the `OBJ_LockIcon` over the highlighted Object */
-void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void CamControl_print(Object* obj, s32 isCamShipBattle, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols) {
     Object *lockIcon;
     s32 modelIndex;
     u8 colourIndex;

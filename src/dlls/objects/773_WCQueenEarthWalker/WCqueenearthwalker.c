@@ -68,7 +68,7 @@ void WCqueenearthwalker_obj_Control(Object* self) {
 void WCqueenearthwalker_obj_Update(Object* self) { }
 
 // offset: 0x29C | func: 4 | export: 3
-void WCqueenearthwalker_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCqueenearthwalker_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WCqueenearthwalker_Data* objdata = self->data;
     
     if (visibility != 0) {

@@ -195,7 +195,7 @@ void WMFireFly_control(Object* self) {
 void WMFireFly_update(Object* self) { }
 
 // offset: 0x7C4 | func: 3 | export: 3
-void WMFireFly_print(Object* self, Gfx** gfl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WMFireFly_print(Object* self, Gfx** gfl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gfl, mtxs, vtxs, pols, 1.0f);
     }

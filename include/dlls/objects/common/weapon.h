@@ -2,9 +2,11 @@
 #define _DLLS_COMMON_WEAPON_H
 
 #include "PR/ultratypes.h"
+#include "PR/gbi.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "PR/gbi.h"
+#include "gbi_extra.h"
+#include "types.h"
 
 typedef struct {
     u8 pad0[0x18];
@@ -24,7 +26,7 @@ DLL_INTERFACE(DLL_IWeapon) {
 	/*7*/ void (*func7)(Object *, f32);
 	/*8*/ void (*func8)(Object *);
 	/*9*/ void (*func9)(Object *, Object *, Vec3f *);
-	/*10*/ void (*func10)(Object *, Gfx **, Mtx **, Vertex **, Triangle **);
+	/*10*/ void (*func10)(Object *, Gfx **, Mtx **, Vtx **, DLTri **);
 	/*11*/ void (*func11)(Object *);
 	/*12*/ void (*func12)(Object *, s32);
 	/*13*/ void (*func13)(Object *, u8); // second arg might be a different type

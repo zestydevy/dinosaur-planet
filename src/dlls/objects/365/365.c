@@ -2,7 +2,6 @@
 #include "PR/ultratypes.h"
 
 #include "game/objects/object.h"
-#include "types.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
 #include "sys/objprint.h"
@@ -29,7 +28,7 @@ void dll_365_control(Object *self) { }
 void dll_365_update(Object *self) { }
 
 // offset: 0x5C | func: 3 | export: 3
-void dll_365_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility)
+void dll_365_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility)
 {
 	if (visibility != 0) {
 		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

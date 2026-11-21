@@ -453,7 +453,7 @@ static void XYZAnimator_updateShapesAndVertices(XYZAnimator_Data* objData, XYZAn
 void XYZAnimator_obj_Update(Object* self) { }
 
 // offset: 0x15E8 | func: 4 | export: 3
-void XYZAnimator_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void XYZAnimator_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

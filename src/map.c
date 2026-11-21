@@ -81,8 +81,8 @@ Block *gBlocksToDraw[MAX_BLOCKS];
 s16 gBlocksToDrawIdx;
 Gfx* gMainDL;
 Mtx* gWorldRSPMatrices;
-Vertex* D_800B51D4;
-Triangle* D_800B51D8;
+Vtx* D_800B51D4;
+DLTri* D_800B51D8;
 s16 SHORT_800b51dc;
 s32 UINT_800b51e0;
 Camera* D_800B51E4;
@@ -648,7 +648,7 @@ void trackTick(s32 arg0) {
     lightClearEmitters();
 }
 
-void trackDraw(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Vertex** vtxs2, Triangle** pols2) {
+void trackDraw(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Vtx** vtxs2, DLTri** pols2) {
     Mtx* mtx;
 
     gMainDL = *gdl;

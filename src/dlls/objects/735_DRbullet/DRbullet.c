@@ -107,7 +107,7 @@ void DRbullet_control(Object* self) {
 void DRbullet_update(Object *self) { }
 
 // offset: 0x2EC | func: 3 | export: 3
-void DRbullet_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DRbullet_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DRbullet_Data* objData = self->data;
     if (visibility && (objData->state != BULLET_STATE_INACTIVE)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

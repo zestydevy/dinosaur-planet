@@ -18,7 +18,7 @@ typedef struct {
     u8 guardClawDisabled : 1;
 } CFTreasureChestKey_Data;
 
-static void CFTreasureChestKey_guardClawPrintCallback(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Object* self, Object* guardClaw);
+static void CFTreasureChestKey_guardClawPrintCallback(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Object* self, Object* guardClaw);
 
 // offset: 0x0 | ctor
 void CFTreasureChestKey_ctor(void* dll) { }
@@ -106,7 +106,7 @@ void CFTreasureChestKey_obj_Control(Object* self) {
 void CFTreasureChestKey_obj_Update(Object* self) { }
 
 // offset: 0x3CC | func: 3 | export: 3
-void CFTreasureChestKey_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFTreasureChestKey_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CFTreasureChestKey_Data* objdata;
     Collectable_Setup* setup;
     Object* guardClaw;
@@ -132,7 +132,7 @@ void CFTreasureChestKey_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** 
 }
 
 // offset: 0x4E0 | func: 4
-static void CFTreasureChestKey_guardClawPrintCallback(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Object* self, Object* guardClaw) {
+static void CFTreasureChestKey_guardClawPrintCallback(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Object* self, Object* guardClaw) {
     objGetAttachPointWorldSpace(guardClaw, 2, &self->srt.transl.x, &self->srt.transl.y, &self->srt.transl.z, 0);
     self->srt.yaw = guardClaw->srt.yaw + 0x4000;
     objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

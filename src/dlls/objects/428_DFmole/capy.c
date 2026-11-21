@@ -157,7 +157,7 @@ void capy_obj_Update(Object* self) {
 }
 
 // offset: 0x324 | func: 4 | export: 3
-void capy_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void capy_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

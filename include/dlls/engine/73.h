@@ -1,8 +1,8 @@
 #ifndef _DLL_73_H
 #define _DLL_73_H
 
+#include "PR/ultratypes.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef enum {
     DLL73_ACTION_None = -1

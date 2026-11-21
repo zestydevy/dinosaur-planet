@@ -230,7 +230,7 @@ void MMP_Bridge_obj_Control(Object* self) {
 void MMP_Bridge_obj_Update(Object* self) { }
 
 // offset: 0x61C | func: 3 | export: 3
-void MMP_Bridge_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void MMP_Bridge_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     MMP_Bridge_Data* objData = self->data;
     if (visibility && (objData->flags & MMP_Bridge_FLAG_Visible)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

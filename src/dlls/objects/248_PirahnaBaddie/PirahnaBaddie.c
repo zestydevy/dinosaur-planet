@@ -159,7 +159,7 @@ void dll_248_control(Object* self) {
 void dll_248_update(Object *self) { }
 
 // offset: 0x814 | func: 3 | export: 3
-void dll_248_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_248_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     PirahnaBaddie_Data *objdata = self->data;
 
     if ((visibility != 0) && (self->unkDC == 0)) {

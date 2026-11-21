@@ -231,7 +231,7 @@ void GuardClaw_update(Object* self) {
 }
 
 // offset: 0x5A0 | func: 4 | export: 3
-void GuardClaw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void GuardClaw_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     GuardClaw_Data* objdata;
     s32 _pad;

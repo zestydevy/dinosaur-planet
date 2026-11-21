@@ -16,7 +16,6 @@
 #include "sys/math.h"
 #include "sys/objtype.h"
 #include "sys/rand.h"
-#include "types.h"
 
 typedef struct {
     u8 state;
@@ -240,7 +239,7 @@ void MoonSeedReceptacle_obj_Control(Object* self) {
 void MoonSeedReceptacle_obj_Update(Object *self) { }
 
 // offset: 0x9A4 | func: 3 | export: 3
-void MoonSeedReceptacle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void MoonSeedReceptacle_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     MoonSeedReceptacle_Data* objData;
     u8 otherColourR;
     u8 colourR;

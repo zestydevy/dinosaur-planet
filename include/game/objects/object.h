@@ -8,7 +8,7 @@
 #include "dll_def.h"
 #include "object_def.h"
 #include "hitbox.h"
-#include "types.h"
+#include "gbi_extra.h"
 #include "unktypes.h"
 
 /** Game Object system
@@ -431,7 +431,7 @@ DLL_INTERFACE(DLL_IObject) {
     /*1*/ void (*Control)(struct Object *obj);
     /*2*/ void (*Update)(struct Object *obj);
           // visibility: true if the object passed distance fade and frustum culling checks
-    /*3*/ void (*Print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+    /*3*/ void (*Print)(struct Object *obj, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility);
           // onlySelf: true if the object should only free itself and not child/associated objects (not including linked objects)
     /*4*/ void (*Free)(struct Object *obj, s32 onlySelf);
     /*5*/ u32 (*GetModelFlags)(struct Object *obj);

@@ -58,7 +58,7 @@ void DFriverflow_control(Object* self) {
 void DFriverflow_update(Object *self) { }
 
 // offset: 0x1CC | func: 3 | export: 3
-void DFriverflow_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void DFriverflow_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x1E4 | func: 4 | export: 4
 void DFriverflow_free(Object* self, s32 arg1) {

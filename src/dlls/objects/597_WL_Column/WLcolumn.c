@@ -128,7 +128,7 @@ void WL_Column_obj_Control(Object* self) {
 void WL_Column_obj_Update(Object* self) { }
 
 // offset: 0x320 | func: 3 | export: 3
-void WL_Column_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_Column_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (self->unkE0) {
         if (visibility != -1) {
             return;

@@ -107,7 +107,7 @@ void WL_colrise_control(Object* self) {
 void WL_colrise_update(Object* self) { }
 
 // offset: 0x390 | func: 3 | export: 3
-void WL_colrise_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_colrise_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility != 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

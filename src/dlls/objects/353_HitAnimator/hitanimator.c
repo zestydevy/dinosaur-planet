@@ -119,7 +119,7 @@ void HitAnimator_obj_Control(Object* self) {
 void HitAnimator_obj_Update(Object* self) { }
 
 // offset: 0x360 | func: 3 | export: 3
-void HitAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void HitAnimator_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

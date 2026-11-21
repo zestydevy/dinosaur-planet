@@ -473,7 +473,7 @@ void dll_13_func_1048(Object *obj) {
 }
 
 // offset: 0x1080 | func: 6 | export: 6
-s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vertices, u8 arg4, s32 arg5, s32 arg6) {
+s32 dll_13_func_1080(Object* obj, Gfx** gdl, Mtx** mtxs, Vtx** vertices, u8 arg4, s32 arg5, s32 arg6) {
     Camera* camera;
     Object* temp_s3;
     s32 i; // sp12C

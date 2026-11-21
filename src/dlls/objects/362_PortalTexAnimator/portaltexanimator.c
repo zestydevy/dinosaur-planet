@@ -10,7 +10,6 @@
 #include "sys/memory.h"
 #include "sys/objects.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 typedef struct {
 /*00*/ s32 animatedVertexCount;
@@ -153,7 +152,7 @@ void PortalTexAnimator_animateVertices(PortalTexAnimator_Data* objdata, AlphaAni
 void PortalTexAnimator_obj_Update(Object *self) { }
 
 // offset: 0x420 | func: 4 | export: 3
-void PortalTexAnimator_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void PortalTexAnimator_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }

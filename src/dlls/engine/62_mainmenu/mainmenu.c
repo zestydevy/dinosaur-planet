@@ -14,7 +14,6 @@
 #include "sys/menu.h"
 #include "sys/memory.h"
 #include "sys/rcp.h"
-#include "types.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -283,7 +282,7 @@ s32 mainmenu_update1(void) {
 void mainmenu_update2(void){ }
 
 // offset: 0x76C | func: 2 | export: 2
-void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vertex** vtx) {
+void mainmenu_draw(Gfx** gfx, Mtx** mtx, Vtx** vtx) {
     if (!nextMenuID || sExitTransitionTimer >= (MENU_TRANSITION_THRESHOLD - 1)) {
         fontWindowSetCoords(1, 0, 0, GET_VIDEO_WIDTH(viGetCurrentSize()), GET_VIDEO_HEIGHT(viGetCurrentSize()));
         fontWindowFlushStrings(1);

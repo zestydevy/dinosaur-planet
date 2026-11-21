@@ -1,6 +1,7 @@
 #ifndef _DLL_59_H
 #define _DLL_59_H
 
+#include "PR/gbi.h"
 #include "dll_def.h"
 #include "types.h"
 

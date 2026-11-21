@@ -123,7 +123,7 @@ void CCfirecrystal_control(Object* self) {
 void CCfirecrystal_update(Object *self) { }
 
 // offset: 0x3B4 | func: 3 | export: 3
-void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CCfirecrystal_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CCfirecrystal_Data* objData = self->data;
     if (visibility && (objData->state != FireCrystal_State_1_Finished)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

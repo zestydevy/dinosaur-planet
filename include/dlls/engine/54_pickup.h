@@ -1,11 +1,8 @@
 #ifndef _DLL_54_H
 #define _DLL_54_H
 
-#include "dll_def.h"
-#include "types.h"
-
 #include "game/objects/object.h"
-#include "unktypes.h"
+#include "dll_def.h"
 
 enum PickupState {
     PICKUP_NotHeld = 0,

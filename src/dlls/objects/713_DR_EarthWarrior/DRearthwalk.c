@@ -489,7 +489,7 @@ void DRearthwalk_update(Object* self) {
 }
 
 // offset: 0x138C | func: 6 | export: 3
-void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DRearthwalk_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DRearthwalk_Data* objdata = self->data;
     s32 numObjs;
     Object** objs;

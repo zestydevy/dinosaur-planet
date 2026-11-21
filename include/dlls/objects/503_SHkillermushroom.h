@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 #define INHALE_RADIUS_SPEED 2.5f
 #define INHALE_RADIUS_MAX 40.0f

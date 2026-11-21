@@ -21,7 +21,6 @@
 #include "sys/objprint.h"
 #include "sys/lfx.h"
 #include "dll.h"
-#include "types.h"
 
 typedef struct {
 /*00*/ u8 stateIndex;
@@ -237,7 +236,7 @@ void GPbonfire_obj_Control(Object* self) {
 void GPbonfire_obj_Update(Object* self){ }
 
 // offset: 0x800 | func: 3 | export: 3
-void GPbonfire_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void GPbonfire_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     if (visibility && self->modelInstIdx == 1) {
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }

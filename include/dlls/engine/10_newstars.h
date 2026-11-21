@@ -3,7 +3,6 @@
 
 #include "dll_def.h"
 #include "PR/gbi.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_10_newstars) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

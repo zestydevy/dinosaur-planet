@@ -331,7 +331,7 @@ void fish_obj_Control(Object* self) {
 void fish_obj_Update(Object* self) { }
 
 // offset: 0xEB4 | func: 4 | export: 3
-void fish_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void fish_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     fish_Data* objdata = self->data;
 
     if ((objdata->state != Fish_STATE_0_Hidden) && visibility) {

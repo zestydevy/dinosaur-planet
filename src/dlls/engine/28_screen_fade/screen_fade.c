@@ -4,7 +4,6 @@
 #include "sys/main.h"
 #include "dll.h"
 #include "sys/objects.h"
-#include "types.h"
 #include "dlls/engine/28_screen_fade.h"
 
 static f32 sFadeAlpha; // 0-255
@@ -16,9 +15,9 @@ static u8 sIsComplete;
 static u8 sDelayTimer;
 
 void screen_fade_fade_reversed(s32 duration, s32 type);
-static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
-static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue);
-static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red, u8 green, u8 blue);
+static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vtx **vtxs);
+static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, s32 red, s32 green, s32 blue);
+static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, u8 red, u8 green, u8 blue);
 
 // offset: 0x0 | ctor
 void screen_fade_ctor(void *self) {
@@ -34,7 +33,7 @@ void screen_fade_ctor(void *self) {
 void screen_fade_dtor(void *self) { }
 
 // offset: 0x58 | func: 0 | export: 0
-void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void screen_fade_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     Object *player;
 
     if (sDelayTimer != 0) {
@@ -124,7 +123,7 @@ s32 screen_fade_is_complete(void) {
 }
 
 // offset: 0x454 | func: 6
-static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -152,7 +151,7 @@ static void screen_fade_draw_simple_black(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) 
 }
 
 // offset: 0x6DC | func: 7
-static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 red, s32 green, s32 blue) {
+static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, s32 red, s32 green, s32 blue) {
     s32 ulx;
     s32 uly;
     s32 lrx;
@@ -179,7 +178,7 @@ static void screen_fade_draw_simple(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 re
 }
 
 // offset: 0x968 | func: 8
-static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, u8 red, u8 green, u8 blue) {
+static void screen_fade_draw_radial(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, u8 red, u8 green, u8 blue) {
     s32 ulx;
     s32 uly;
     s32 lrx;

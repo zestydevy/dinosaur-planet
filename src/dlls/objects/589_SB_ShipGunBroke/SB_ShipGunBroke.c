@@ -33,7 +33,7 @@ void SB_ShipGunBroke_control(Object *self) {
 void SB_ShipGunBroke_update(Object *self) { }
 
 // offset: 0xCC | func: 3 | export: 3
-void SB_ShipGunBroke_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SB_ShipGunBroke_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     SB_ShipGunBroke_Setup *setup;
 
     setup = (SB_ShipGunBroke_Setup*)self->setup;

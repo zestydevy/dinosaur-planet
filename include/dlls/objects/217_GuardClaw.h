@@ -4,9 +4,9 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
+#include "gbi_extra.h"
 
-typedef void (*GuardClawItemPrintCallback)(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, Object* item, Object* guardClaw);
+typedef void (*GuardClawItemPrintCallback)(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Object* item, Object* guardClaw);
 
 DLL_INTERFACE(DLL_217_GuardClaw) {
     /*:*/ DLL_INTERFACE_BASE(DLL_IObject);

@@ -3,7 +3,6 @@
 
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 // Note: This is a race checkpoint-specific version of the base ObjSetup struct, with additions
 typedef struct {

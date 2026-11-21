@@ -97,7 +97,7 @@ void GPSH_Scene_obj_Control(Object* self) {
 void GPSH_Scene_obj_Update(Object* self) { }
 
 // offset: 0x24C | func: 3 | export: 3
-void GPSH_Scene_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void GPSH_Scene_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x264 | func: 4 | export: 4
 void GPSH_Scene_obj_Free(Object* self, s32 onlySelf) { }

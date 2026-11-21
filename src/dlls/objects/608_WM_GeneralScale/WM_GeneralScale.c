@@ -17,7 +17,7 @@ typedef struct {
 };
 
 static int WMGeneralScale_animCallback(Object* actor, Object* animObj, AnimObj_Data* animObjData, s8);
-static void WMGeneralScale_printMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, Triangle** pols);
+static void WMGeneralScale_printMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols);
 
 // offset: 0x0 | ctor
 void WMGeneralScale_ctor(void* dll) { }
@@ -41,7 +41,7 @@ void WMGeneralScale_obj_Control(Object* self) { }
 void WMGeneralScale_obj_Update(Object* self) { }
 
 // offset: 0x6C | func: 3 | export: 3
-void WMGeneralScale_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, Triangle** pols, s8 visibility) {
+void WMGeneralScale_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WMGeneralScale_Data* objdata = self->data;
 
     if (objdata->state != 1) {
@@ -49,7 +49,7 @@ void WMGeneralScale_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, T
             WMGeneralScale_printMask(self, gdl, mtxs, vtxs, pols);
         }
         if (visibility != 0) {
-            objprintDrawModel(self, gdl, mtxs, (Vertex**)vtxs, pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
 }
@@ -131,7 +131,7 @@ static int WMGeneralScale_animCallback(Object* actor, Object* animObj, AnimObj_D
 };
 
 // offset: 0x3B4 | func: 8
-static void WMGeneralScale_printMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, Triangle** pols) {
+static void WMGeneralScale_printMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols) {
     Vtx* vtxStart;
     WMGeneralScale_Data* objdata;
     Vtx* vtx;

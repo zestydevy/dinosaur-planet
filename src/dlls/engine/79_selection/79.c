@@ -147,7 +147,7 @@ void selection_update2(void) {
 }
 
 // offset: 0x238 | func: 2 | export: 2
-void selection_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void selection_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {
     /*0x0*/ static s32 dFrameButtonA = 0;
     /*0x4*/ static s32 dFrameButtonB = 0;
     /*0x8*/ static s32 dFrameControlStick = 0;

@@ -4,7 +4,6 @@
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef enum {
     SeqDoor_SEQCMD_1_Finished_Closing = 1,

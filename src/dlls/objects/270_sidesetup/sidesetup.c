@@ -3,7 +3,6 @@
 #include "game/objects/object.h"
 #include "game/objects/setups/31_SideSetup.h"
 #include "sys/gfx/model.h"
-#include "types.h"
 
 void sidesetup_ctor(void *dll) { }
 
@@ -18,7 +17,7 @@ void sidesetup_control(Object *self) { }
 
 void sidesetup_update(Object *self) { }
 
-void sidesetup_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void sidesetup_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 void sidesetup_free(Object *self, s32 arg1) { }
 

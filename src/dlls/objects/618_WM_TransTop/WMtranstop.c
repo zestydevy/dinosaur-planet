@@ -42,7 +42,7 @@ typedef struct {
     f32 maskY;
 } WM_TransTop_Data;
 
-static void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols);
+static void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols);
 
 // offset: 0x0 | ctor
 void WM_TransTop_ctor(void *dll) { }
@@ -68,7 +68,7 @@ void WM_TransTop_control(Object *self) { }
 void WM_TransTop_update(Object *self) { }
 
 // offset: 0xA8 | func: 3 | export: 3
-void WM_TransTop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** triangles, s8 visibility) {
+void WM_TransTop_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** triangles, s8 visibility) {
     WM_TransTop_Data* objData = self->data;
 
     if (mainGetBits(BIT_WM_Sabre_Transporter_Visible)) {
@@ -101,7 +101,7 @@ u32 WM_TransTop_get_data_size(Object *self, u32 a1) {
   * Creates and animates an invisible cube that masks away the transporter's mesh.
   * Used for a special effect where the transporter gradually assembles itself, built from the ground up!
   */
-void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
+void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols) {
     Vtx_t* initVtx;
     WM_TransTop_Data* objData;
     Vtx_t* vtx;
@@ -160,7 +160,7 @@ void WM_TransTop_draw_mask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Tr
     camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, sMaskTris, ARRAYCOUNT(sMaskTris));
 
     //Unmask the transporter by moving the base vertices of the cube upwards
     objData->maskY += MASK_SPEED * gUpdateRateF;

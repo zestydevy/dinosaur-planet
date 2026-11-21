@@ -1,8 +1,9 @@
 #ifndef _DLL_75_H
 #define _DLL_75_H
 
+#include "PR/gbi.h"
+#include "PR/ultratypes.h"
 #include "dll_def.h"
-#include "types.h"
 
 typedef enum {
     FRONTEND_CONTROL_Slider,

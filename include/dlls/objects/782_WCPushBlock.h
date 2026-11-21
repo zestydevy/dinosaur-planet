@@ -3,7 +3,6 @@
 
 #include "PR/ultratypes.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 typedef enum {
     WCPushBlock_MODELIDX_Moon,

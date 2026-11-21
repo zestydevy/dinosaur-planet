@@ -1,6 +1,7 @@
 #ifndef _DLL_15_H
 #define _DLL_15_H
 
+#include "PR/gbi.h"
 #include "dll_def.h"
 #include "types.h"
 
@@ -11,7 +12,7 @@ DLL_INTERFACE(DLL_15_projgfx) {
 /*2*/ void (*func2)(s32 updateRate, struct Object*);
 /*3*/ UnknownDLLFunc func3;
 /*4*/ void (*func4)(struct Object*);
-/*5*/ void (*func5)(Gfx **, Mtx **, Vertex **, s32);
+/*5*/ void (*func5)(Gfx **, Mtx **, Vtx **, s32);
 /*6*/ UnknownDLLFunc func6;
 /*7*/ UnknownDLLFunc func7;
 /*8*/ UnknownDLLFunc func8;

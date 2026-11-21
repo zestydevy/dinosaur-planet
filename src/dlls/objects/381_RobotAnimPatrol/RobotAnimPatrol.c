@@ -306,7 +306,7 @@ void RobotAnimPatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, 
     if (!(objdata->flags & ROBOTANIMPATROL_FLAGS_Destroyed)) {
         modelInst = self->modelInsts[self->modelInstIdx];
         if (visibility != 0) {
-            objprintDrawModel(self, gdl, mtxs, (Vertex** ) vtxs, (Triangle** ) pols, 1.0f);
+            objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         } else if (!(modelInst->unk34 & 8)) {
             mod_func_8001943C(self, &sp48, 1.0f, 0.0f);
             mod_func_80019730(modelInst, modelInst->model, self, &sp48);
@@ -350,7 +350,7 @@ void RobotAnimPatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, 
                 beamShadow->tr.x = beam->srt.transl.x - (temp_a1[0] * 20.0f);
                 beamShadow->tr.y = beam->srt.transl.y - (temp_a1[1] * 20.0f);
                 beamShadow->tr.z = beam->srt.transl.z - (temp_a1[2] * 20.0f);
-                objprintDrawModel(beam, gdl, mtxs, (Vertex** ) vtxs, (Triangle** ) pols, 1.0f);
+                objprintDrawModel(beam, gdl, mtxs, vtxs, pols, 1.0f);
                 objdata->beam->modelInsts[0]->unk34 &= ~0x8;
             }
             RobotAnimPatrol_gunPrint(self, modelInst, gdl, mtxs, vtxs, pols);

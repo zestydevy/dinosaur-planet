@@ -13,7 +13,6 @@
 #include "sys/map_enums.h"
 #include "sys/objanim.h"
 #include "sys/objprint.h"
-#include "types.h"
 #include "dll.h"
 
 typedef struct {
@@ -151,7 +150,7 @@ void SHqueenearthwalker_obj_Control(Object* self) {
 void SHqueenearthwalker_obj_Update(Object *self) { }
 
 // offset: 0x470 | func: 3 | export: 3
-void SHqueenearthwalker_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHqueenearthwalker_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

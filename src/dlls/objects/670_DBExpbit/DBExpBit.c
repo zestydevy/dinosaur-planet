@@ -37,7 +37,7 @@ void DBExpBit_control(Object* self) {
 void DBExpBit_update(Object *self) { }
 
 // offset: 0xB4 | func: 3 | export: 3
-void DBExpBit_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DBExpBit_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DBExpBit_Data* objData;
     DBExpBit_Setup* objSetup;
 

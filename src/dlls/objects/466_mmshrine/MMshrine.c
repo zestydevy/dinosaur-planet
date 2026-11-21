@@ -19,7 +19,6 @@
 #include "sys/objmsg.h"
 #include "sys/objprint.h"
 #include "sys/envfx.h"
-#include "types.h"
 #include "dll.h"
 
 typedef struct {
@@ -247,7 +246,7 @@ void MMshrine_control(Object *self) {
 void MMshrine_update(Object *self) { }
 
 // offset: 0xB48 | func: 3 | export: 3
-void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void MMshrine_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

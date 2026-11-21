@@ -23,7 +23,7 @@
 #include "sys/objlib.h"
 #include "sys/objprint.h"
 #include "sys/objtype.h"
-#include "types.h"
+
 #include "prevent_bss_reordering.h"
 
 typedef enum {
@@ -395,7 +395,7 @@ void DIMSnowHorn_tickVehicle(Object* self, s32 updateRate, s32 iterationNumber) 
 void DIMSnowHorn_obj_Update(Object *self) { }
 
 // offset: 0xAE0 | func: 6 | export: 3
-void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DIMSnowHorn_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DIMSnowHorn_Data *objData;
     s32 pad1;
     Gfx *dl;

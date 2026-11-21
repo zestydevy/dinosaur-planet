@@ -9,7 +9,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "dlls/objects/210_player.h"
-#include "types.h"
 
 typedef struct {
     s16 timer;
@@ -89,7 +88,7 @@ void iceblast_control(Object* self) {
 void iceblast_update(void){ }
 
 // offset: 0x274 | func: 3 | export: 3
-void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s32 visibility) {
+void iceblast_print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s32 visibility) {
     //@recomp: may want to hide these debug cubes
     objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
 }

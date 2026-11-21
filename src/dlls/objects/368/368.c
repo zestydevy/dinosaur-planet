@@ -100,7 +100,7 @@ void dll_368_obj_Control(Object* self) {
 void dll_368_obj_Update(Object* self) { }
 
 // offset: 0x39C | func: 3 | export: 3
-void dll_368_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_368_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility != 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

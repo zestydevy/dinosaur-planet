@@ -249,7 +249,7 @@ void GroundAnimator_obj_Control(Object* self) {
 void GroundAnimator_obj_Update(Object* self) { }
 
 // offset: 0x95C | func: 3 | export: 3
-void GroundAnimator_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void GroundAnimator_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x974 | func: 4 | export: 4
 void GroundAnimator_obj_Free(Object* self, s32 onlySelf) {

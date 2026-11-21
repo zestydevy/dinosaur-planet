@@ -32,7 +32,7 @@ void dll_382_control(Object* self) {
 void dll_382_update(Object *self) { }
 
 // offset: 0x100 | func: 3 | export: 3
-void dll_382_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void dll_382_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x118 | func: 4 | export: 4
 void dll_382_free(Object *self, s32 a1) { }

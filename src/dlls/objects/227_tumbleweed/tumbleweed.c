@@ -27,7 +27,6 @@
 #include "sys/joypad.h"
 #include "sys/intersect.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/523_SCcollectables.h"
@@ -505,7 +504,7 @@ void Tumbleweed_fleeFromPlayer(Object* self) {
 void Tumbleweed_obj_Update(Object* self) { }
 
 // offset: 0x1524 | func: 6 | export: 3
-void Tumbleweed_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void Tumbleweed_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility > 0) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

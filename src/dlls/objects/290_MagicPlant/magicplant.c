@@ -112,7 +112,7 @@ void MagicPlant_obj_Control(Object* self) {
 void MagicPlant_obj_Update(Object *self) { }
 
 // offset: 0x30C | func: 3 | export: 3
-void MagicPlant_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void MagicPlant_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     MtxF* jointMtx;
     f32 x;
     f32 y;

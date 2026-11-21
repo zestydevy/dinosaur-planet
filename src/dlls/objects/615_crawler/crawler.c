@@ -36,7 +36,7 @@ void dll_615_update(Object *self);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/615_crawler/dll_615_update.s")
 
 // offset: 0x1888 | func: 3 | export: 3
-void dll_615_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+void dll_615_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/615_crawler/dll_615_print.s")
 
 // offset: 0x194C | func: 4 | export: 4

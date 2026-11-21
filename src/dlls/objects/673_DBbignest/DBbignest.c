@@ -90,7 +90,7 @@ void DBBigNest_control(Object* self) {
 void DBBigNest_update(Object* self) { }
 
 // offset: 0x244 | func: 3 | export: 3
-void DBBigNest_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DBBigNest_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

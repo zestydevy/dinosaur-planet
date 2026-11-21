@@ -47,7 +47,7 @@ void dll_71_update2(void) {
 }
 
 // offset: 0x48 | func: 2 | export: 2
-void dll_71_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {
+void dll_71_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {
     s32 warpID;
     s32 playerNumber;
 

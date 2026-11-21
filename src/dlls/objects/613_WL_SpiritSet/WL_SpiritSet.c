@@ -34,7 +34,7 @@ void WL_SpiritSet_control(Object *self) { }
 void WL_SpiritSet_update(Object *self) { }
 
 // offset: 0x78 | func: 3 | export: 3
-void WL_SpiritSet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void WL_SpiritSet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     WL_SpiritSet_Data *objdata;
 
     objdata = self->data;

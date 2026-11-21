@@ -3,7 +3,6 @@
 
 #include "PR/ultratypes.h"
 #include "dll_def.h"
-#include "types.h"
 #include "game/objects/object.h"
 #include "sys/curves.h"
 

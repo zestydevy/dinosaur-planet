@@ -303,7 +303,7 @@ void EWTrobotpatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, D
     objdata = self->data;
     modelInst = self->modelInsts[self->modelInstIdx];
     if (visibility != 0) {
-        objprintDrawModel(self, gdl, mtxs, (Vertex**)vtxs, (Triangle**)pols, 1.0f);
+        objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     } else if (!(modelInst->unk34 & 8)) {
         // Not drawing self but we still need the model matrices to be live
         mod_func_8001943C(self, &sp64, 1.0f, 0.0f);
@@ -390,7 +390,7 @@ void EWTrobotpatrol_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, D
         skylightG = beamShadowG;
         skylightB = beamShadowB;
         // Draw beam
-        objprintDrawModel(beam, gdl, mtxs, (Vertex**)vtxs, (Triangle**)pols, 1.0f);
+        objprintDrawModel(beam, gdl, mtxs, vtxs, pols, 1.0f);
         skylightR = savedSkylightR;
         skylightG = savedSkylightG;
         skylightB = savedSkylightB;

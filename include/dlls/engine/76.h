@@ -4,8 +4,6 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "dll_def.h"
-#include "types.h"
-#include "unktypes.h"
 
 DLL_INTERFACE(DLL_76) {
     /*:*/ DLL_INTERFACE_BASE(DLL);

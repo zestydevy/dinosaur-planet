@@ -17,7 +17,6 @@
 #include "sys/objhits.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "types.h"
 
 typedef struct {
 /*00*/ f32 xCurve[4];
@@ -148,7 +147,7 @@ void GPSH_flybaddie_control(Object* self) {
 void GPSH_flybaddie_update(Object *self) { }
 
 // offset: 0x5CC | func: 3 | export: 3
-void GPSH_flybaddie_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void GPSH_flybaddie_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

@@ -47,7 +47,7 @@ void DBFakeHorizon_control(Object *self) { }
 void DBFakeHorizon_update(Object *self) { }
 
 // offset: 0xB8 | func: 3 | export: 3
-void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBFakeHorizon_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     MtxF mtx;
     f32 dy;
     f32 scaleY;

@@ -275,7 +275,7 @@ static void CCgrub_func_AB0(Object* self, CCgrub_Data* objdata, f32 a2) {
 void CCgrub_obj_Update(Object* self) { }
 
 // offset: 0xB60 | func: 4 | export: 3
-void CCgrub_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CCgrub_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

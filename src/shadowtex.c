@@ -92,7 +92,7 @@ void shadowtex_func_8005BC58(Object *obj, s32 arg1, s32 slot) {
     obj->shadow->bufferIdx ^= 1;
 }
 
-void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot) {
+void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s32 arg6, f32 arg7, s32 slot) {
     Camera* temp_v0_2;
     s32 _pad;
     f32 spC4;

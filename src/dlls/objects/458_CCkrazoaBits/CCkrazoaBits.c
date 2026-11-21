@@ -57,7 +57,7 @@ void CCkrazoaBits_control(Object *self) {
 void CCkrazoaBits_update(Object *self) { }
 
 // offset: 0x26C | func: 3 | export: 3
-void CCkrazoaBits_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void CCkrazoaBits_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x284 | func: 4 | export: 4
 void CCkrazoaBits_free(Object *self, s32 arg1) { }

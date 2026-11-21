@@ -233,7 +233,7 @@ void CFbarrel_obj_Update(Object* self) {
 }
 
 // offset: 0x92C | func: 3 | export: 3
-void CFbarrel_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFbarrel_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CFbarrel_Data* objdata = self->data;
     if (objdata->explodedTime == 0) {
         if (objdata->isHeld) {

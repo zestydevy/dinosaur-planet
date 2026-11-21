@@ -141,7 +141,7 @@ void DFlog_obj_Control(Object* self) {
 void DFlog_obj_Update(Object* self) { }
 
 // offset: 0x2E4 | func: 3 | export: 3
-void DFlog_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFlog_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

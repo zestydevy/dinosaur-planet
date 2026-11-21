@@ -120,7 +120,7 @@ void WMwallpower_control(Object* self) {
 void WMwallpower_update(Object *self) { }
 
 // offset: 0x42C | func: 3 | export: 3
-void WMwallpower_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void WMwallpower_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x444 | func: 4 | export: 4
 void WMwallpower_free(Object* self, s32 arg1) {

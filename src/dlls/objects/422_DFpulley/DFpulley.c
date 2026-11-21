@@ -123,7 +123,7 @@ void DFPulley_control(Object* self) {
 void DFPulley_update(Object* self) { }
 
 // offset: 0x4BC | func: 3 | export: 3
-void DFPulley_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFPulley_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

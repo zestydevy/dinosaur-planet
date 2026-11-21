@@ -95,7 +95,7 @@ void Barrel_control(Object* self) {
 void Barrel_update(Object *self) { }
 
 // offset: 0x3B4 | func: 3 | export: 3
-void Barrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void Barrel_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Barrel_Data* objData = self->data;
     
     if ((objData->state == Barrel_STATE_0_Main) && (gDLL_54_pickup->vtbl->should_print(self, visibility))) {

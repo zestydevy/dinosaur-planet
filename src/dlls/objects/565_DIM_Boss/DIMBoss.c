@@ -293,7 +293,7 @@ void dll_565_obj_Update(Object* self) {
 }
 
 // offset: 0x790 | func: 4 | export: 3
-void dll_565_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+void dll_565_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility);
 #if 1
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/565_DIM_Boss/dll_565_obj_Print.s")
 #else
@@ -301,7 +301,7 @@ void dll_565_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Trian
 static void dll_565_func_2550(Object* self, Baddie* baddie);
 
 //Matched, but needs dll_565_func_2550 static
-void dll_565_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_565_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if ((visibility != 0) && (self->unkDC == 0) && (baddie->unk3B6 != 3)) {

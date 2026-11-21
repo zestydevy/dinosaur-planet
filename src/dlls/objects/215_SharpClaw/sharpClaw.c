@@ -443,7 +443,7 @@ void SharpClaw_obj_Update(Object* self) {
 }
 
 // offset: 0x68C | func: 4 | export: 3
-void SharpClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SharpClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie;
     SharpClaw_DataActual* objData;
 

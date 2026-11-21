@@ -236,7 +236,7 @@ void curveFish_control(Object* self) {
 void curveFish_update(Object *self) { }
 
 // offset: 0x8D4 | func: 4 | export: 3
-void curveFish_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void curveFish_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     curveFish_Data* curvefishdata = self->data;
     
     if ((curvefishdata->state != CurveFish_STATE_0_Hidden) && visibility) {

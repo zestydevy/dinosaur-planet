@@ -32,7 +32,7 @@ static ModelMask sVanishMask; //Used for Scales' belt teleport effect
 #define MASK_DEPTH 150
 
 static void GeneralScales_handleMaskMessages(Object* self);
-static void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols);
+static void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols);
 
 // offset: 0x0 | ctor
 void GeneralScales_ctor(void* dll) { }
@@ -127,7 +127,7 @@ void GeneralScales_obj_Control(Object* self) {
 void GeneralScales_obj_Update(Object* self) { }
 
 // offset: 0x34C | func: 3 | export: 3
-void GeneralScales_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void GeneralScales_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if ((visibility == FALSE) || (sVanishMask.state == ModelMask_STATE_1_Fully_Masked)) {
         return;
     }
@@ -211,7 +211,7 @@ void GeneralScales_handleMaskMessages(Object* self) {
 /**
   * Creates and animates an invisible cube that masks away Scales's mesh.
   */
-void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, Triangle** pols) {
+void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, DLTri** pols) {
     /*0x0*/ static const DLTri sMaskTris[] = {
         MASK_TRI(TRI_FLAG, 2, 0, 1), 
         MASK_TRI(TRI_FLAG, 3, 2, 1),
@@ -296,7 +296,7 @@ void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, T
     camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1, 0, NULL);
     
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, sMaskTris, ARRAYCOUNT(sMaskTris));
     
     srt.transl.x = self->globalPosition.x;
     srt.transl.y = self->globalPosition.y + 30.0f;
@@ -308,7 +308,7 @@ void GeneralScales_drawMask(Object* self, Gfx** gdl, Mtx** mtxs, Vtx_t** vtxs, T
     camSetupObjectSRTMatrix(gdl, mtxs, &srt, 1.0f, 0.0f, NULL);
 
     gSPVertex((*gdl)++, OS_PHYSICAL_TO_K0(initVtx), 8, 0);
-    dlTriangles(gdl, (DLTri*)sMaskTris, ARRAYCOUNT(sMaskTris));
+    dlTriangles(gdl, sMaskTris, ARRAYCOUNT(sMaskTris));
     
     //Create particles at the mask's edge
     {

@@ -24,7 +24,7 @@ void SB_ShipFlag_control(Object *self) {
 void SB_ShipFlag_update(Object *self) { }
 
 // offset: 0xEC | func: 3 | export: 3
-void SB_ShipFlag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SB_ShipFlag_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

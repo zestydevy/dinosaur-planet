@@ -11,7 +11,6 @@
 #include "sys/objanim.h"
 #include "sys/objhits.h"
 #include "sys/objprint.h"
-#include "types.h"
 
 static void CannonClaw_die(Object* self);
 
@@ -84,7 +83,7 @@ static void CannonClaw_die(Object* self) {
 void CannonClaw_obj_Update(Object* self) { }
 
 // offset: 0x20C | func: 4 | export: 3
-void CannonClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CannonClaw_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility && self->unkDC == 0) {
 		objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 	}

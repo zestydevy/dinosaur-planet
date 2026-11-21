@@ -230,7 +230,7 @@ void CCcage_control(Object* self) {
 void CCcage_update(Object *self) { }
 
 // offset: 0x8B0 | func: 3 | export: 3
-void CCcage_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CCcage_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

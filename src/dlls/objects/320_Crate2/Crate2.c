@@ -103,7 +103,7 @@ void dll_320_update(Object *self) { }
 
 // offset: 0x3E0 | func: 3 | export: 3
 
-void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_320_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Crate2_Setup* objsetup;
     DLL320_Data* objdata = self->data;
 

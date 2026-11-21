@@ -161,7 +161,7 @@ void WCTempleBridge_obj_Control(Object* self) {
 void WCTempleBridge_obj_Update(Object* self) { }
 
 // offset: 0x444 | func: 3 | export: 3
-void WCTempleBridge_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WCTempleBridge_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WCTempleBridge_Data* objData = self->data;
     if (visibility && objData->visible) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

@@ -77,7 +77,7 @@ void old_mainmenu_update2(void) {
 }
 
 // offset: 0xD8 | func: 2 | export: 2
-void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vertex** vtx) {   
+void old_mainmenu_draw(Gfx** gdl, Mtx** mtx, Vtx** vtx) {   
     D_8008C8B4 = 1;
     
     sTimer += gUpdateRate;    

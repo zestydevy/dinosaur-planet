@@ -189,7 +189,7 @@ void FXEmit_control(Object* self) {
 void FXEmit_update(Object *self) { }
 
 // offset: 0x614 | func: 3 | export: 3
-void FXEmit_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void FXEmit_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x62C | func: 4 | export: 4
 void FXEmit_free(Object *self, s32 a1) {

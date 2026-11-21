@@ -84,7 +84,7 @@ void dll_734_update(Object* self) {
 }
 
 // offset: 0x8B8 | func: 3 | export: 3
-void dll_734_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility);
+void dll_734_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/734_DR_PushCart/dll_734_print.s")
 
 // offset: 0xB8C | func: 4 | export: 4

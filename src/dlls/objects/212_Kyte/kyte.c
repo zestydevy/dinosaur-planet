@@ -324,7 +324,7 @@ void Kyte_obj_Control(Object* self) {
 void Kyte_obj_Update(Object* self) { }
 
 // offset: 0x6C4 | func: 3 | export: 3
-void Kyte_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void Kyte_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DLL212_Data* objData = self->data;
     Vec3f* var_s1;
     s32 pad;

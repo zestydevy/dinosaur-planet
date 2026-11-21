@@ -141,7 +141,7 @@ void DF_Lantern_obj_Control(Object* self) {
 void DF_Lantern_obj_Update(Object* self) { }
 
 // offset: 0x744 | func: 3 | export: 3
-void DF_Lantern_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DF_Lantern_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DF_Lantern_Data* objData;
     u16 opacity;
 

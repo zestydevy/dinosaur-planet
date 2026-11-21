@@ -98,7 +98,7 @@ void LightPole_control(Object* self) {
 void LightPole_update(Object* self) { }
 
 // offset: 0x24C | func: 3 | export: 3
-void LightPole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) { }
+void LightPole_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) { }
 
 // offset: 0x264 | func: 4 | export: 4
 void LightPole_free(Object* self, s32 onlySelf) { }

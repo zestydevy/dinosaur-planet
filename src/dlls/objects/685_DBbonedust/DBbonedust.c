@@ -122,7 +122,7 @@ void DBBoneDust_control(Object* self) {
 void DBBoneDust_update(Object *self) { }
 
 // offset: 0x494 | func: 3 | export: 3
-void DBBoneDust_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBBoneDust_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     DBBoneDust_Data *objData = self->data;
     
     if (visibility && objData->state != DBBoneDust_STATE_Hidden) {

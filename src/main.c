@@ -129,13 +129,13 @@ Mtx *gMainMtx[2];
 // official name: mtx
 Mtx *gCurMtx;
 // official name: vtxBase
-Vertex *gMainVtx[2];
+Vtx *gMainVtx[2];
 // official name: vtx
-Vertex *gCurVtx;
+Vtx *gCurVtx;
 // official name: polBase
-Triangle *gMainPol[2];
+DLTri *gMainPol[2];
 // official name: pol
-Triangle *gCurPol;
+DLTri *gCurPol;
 OSSched osscheduler_;
 u64 ossceduler_stack[STACKSIZE(OS_SC_STACKSIZE)];
 s8 gMainDoMapChange;
@@ -609,8 +609,8 @@ void mainSetPauseState(s32 state) {
 
 #define MAIN_GFX_BUF_SIZE (sizeof(Gfx) * 4500)
 #define MAIN_MTX_BUF_SIZE (sizeof(Mtx) * 1100)
-#define MAIN_POL_BUF_SIZE (sizeof(Triangle) * 50)
-#define MAIN_VTX_BUF_SIZE (sizeof(Vertex) * 480)
+#define MAIN_POL_BUF_SIZE (sizeof(DLTri) * 50)
+#define MAIN_VTX_BUF_SIZE (sizeof(Vtx) * 300)
 
 void mainAllocFrameBuffers(void) {
     // in default.dol these have names as well.
@@ -622,13 +622,13 @@ void mainAllocFrameBuffers(void) {
     gMainMtx[0] = mmAlloc(MAIN_MTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
     gMainMtx[1] = (Mtx *)((u32)gMainMtx[0] + MAIN_MTX_BUF_SIZE);
 
-    // polygon buffers? ("main:pol")
+    // polygon buffers ("main:pol")
     gMainPol[0] = mmAlloc(MAIN_POL_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainPol[1] = (Triangle *)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
+    gMainPol[1] = (DLTri *)((u32)gMainPol[0] + MAIN_POL_BUF_SIZE);
 
     // vertex buffers ("main:vtx")
     gMainVtx[0] = mmAlloc(MAIN_VTX_BUF_SIZE * 2, ALLOC_TAG_LISTS_COL, NULL);
-    gMainVtx[1] = (Vertex *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
+    gMainVtx[1] = (Vtx *)((u32)gMainVtx[0] + MAIN_VTX_BUF_SIZE);
 }
 
 void main_func_80014508(s8 arg0) {

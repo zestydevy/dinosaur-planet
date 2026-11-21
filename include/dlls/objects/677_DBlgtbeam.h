@@ -2,7 +2,6 @@
 #define _DLLS_677_H
 
 #include "PR/ultratypes.h"
-#include "types.h"
 #include "game/objects/object.h"
 
 DLL_INTERFACE(DLL_677_DBlgtbeam) {

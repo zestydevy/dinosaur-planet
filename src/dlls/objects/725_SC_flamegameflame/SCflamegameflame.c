@@ -92,7 +92,7 @@ void SCFlameGameFlame_obj_Control(Object* self) {
 void SCFlameGameFlame_obj_Update(Object *self) { }
 
 // offset: 0x2B0 | func: 3 | export: 3
-void SCFlameGameFlame_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SCFlameGameFlame_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     SCFlameGameFlame_Data* objData = self->data;
     
     objData->flags &= ~SCFlameGameFlame_FLAG_Target_in_View;

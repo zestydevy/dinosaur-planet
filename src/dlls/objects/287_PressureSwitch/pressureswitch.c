@@ -151,7 +151,7 @@ void PressureSwitch_obj_Control(Object* self) {
 void PressureSwitch_obj_Update(Object* dll) { }
 
 // offset: 0x530 | func: 3 | export: 3
-void PressureSwitch_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void PressureSwitch_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gfx, mtx, vtx, pols, 1.0f);
     }

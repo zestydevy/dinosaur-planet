@@ -64,7 +64,7 @@ void CRFuelTank_update(Object *self) {
 }
 
 // offset: 0x258 | func: 3 | export: 3
-void CRFuelTank_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void CRFuelTank_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x270 | func: 4 | export: 4
 void CRFuelTank_free(Object *self, s32 a1) { }

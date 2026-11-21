@@ -186,7 +186,7 @@ void DFPfloorbar_update(Object* arg0) {
 }
 
 // offset: 0x5A0 | func: 3 | export: 3
-void DFPfloorbar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void DFPfloorbar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility){
     if (mainGetBits(BIT_DFPT_Puzzle_Pad_Pressed)) {
         mainSetBits(BIT_DFPT_Puzzle_Pad_Pressed, 0);
     }

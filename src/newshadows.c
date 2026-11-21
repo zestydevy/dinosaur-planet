@@ -523,7 +523,7 @@ s32 shadowsCalcOpacity(Object *obj, ObjectShadow *shadow) {
     return sp1C >> 8;
 }
 
-void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+void shadowsUpdateDynamicTex(Object *obj, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols) {
     ObjectShadow* shadow;
     Vec3f sp50;
     Vec3f sp44;

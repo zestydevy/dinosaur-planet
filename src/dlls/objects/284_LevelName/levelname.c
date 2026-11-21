@@ -136,7 +136,7 @@ void LevelName_obj_Control(Object* self) {
 void LevelName_obj_Update(Object* self) { }
 
 // offset: 0x310 | func: 3 | export: 3
-void LevelName_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vertex** vtx, Triangle** pols, s8 visibility) {
+void LevelName_obj_Print(Object* self, Gfx** gfx, Mtx** mtx, Vtx** vtx, DLTri** pols, s8 visibility) {
     s32 index;
     s32 yCoord;
     LevelName_Data* objdata;

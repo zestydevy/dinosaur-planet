@@ -13,7 +13,6 @@
 #include "sys/objects.h"
 #include "sys/objhits.h"
 #include "sys/rand.h"
-#include "types.h"
 
 static void SHspore_change_flight_direction(Object* self, SHSpore_Data* objData);
 static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData);
@@ -242,7 +241,7 @@ static void SHspore_jitter_flight_direction(Object* self, SHSpore_Data* objData)
 void SHspore_update(Object *self) { }
 
 // offset: 0xB94 | func: 5 | export: 3
-void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void SHspore_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0xBAC | func: 6 | export: 4
 void SHspore_free(Object* self, s32 arg1) {

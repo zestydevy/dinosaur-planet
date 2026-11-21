@@ -16,7 +16,6 @@
 #include "sys/menu.h"
 #include "dll.h"
 #include "sys/rcp.h"
-#include "types.h"
 
 #include "prevent_bss_reordering.h"
 
@@ -121,7 +120,7 @@ s32 dll_60_update1(void) {
 
 void dll_60_update2(void) { }
 
-void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void dll_60_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     u8 dColourTint[4] = {0xe4, 0x9c, 0x44, 0xff}; //Colour multiplier for the greyscale background
     u8 _stackPad[4];
     f32 var5;

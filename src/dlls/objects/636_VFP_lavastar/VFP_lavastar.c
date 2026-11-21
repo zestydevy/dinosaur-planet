@@ -9,7 +9,6 @@
 #include "sys/main.h"
 #include "sys/rand.h"
 #include "dll.h"
-#include "types.h"
 
 typedef struct {
     f32 speed;
@@ -63,7 +62,7 @@ void VFP_lavastar_control(Object* self) {
 void VFP_lavastar_update(Object *self) { }
 
 // offset: 0x2C8 | func: 3 | export: 3
-void VFP_lavastar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_lavastar_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x2E0 | func: 4 | export: 4
 void VFP_lavastar_free(Object* self, s32 arg1) {

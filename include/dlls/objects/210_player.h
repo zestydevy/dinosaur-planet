@@ -11,7 +11,6 @@
 #include "sys/objexpr.h"
 #include "sys/rand.h"
 #include "sys/main.h"
-#include "types.h"
 
 // size: 0x3C
 typedef struct Player_Data3B4 {

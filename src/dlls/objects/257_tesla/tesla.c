@@ -205,7 +205,7 @@ void dll_257_control(Object* self) {
 void dll_257_update(Object *self) { }
 
 // offset: 0x1024 | func: 3 | export: 3
-void dll_257_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_257_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Tesla_Data* objdata;
 
     objdata = self->data;

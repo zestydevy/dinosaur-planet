@@ -191,7 +191,7 @@ typedef struct {
 
 static s32 CRSnowBike_sharpclaw_update_race_pathing(Object* self, CRSnowBike_Data* objData, f32 arg2);
 void CRSnowBike_sharpclaw_start_race(Object* self);
-static void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols);
+static void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols);
 static void CRSnowBike_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision);
 static void CRSnowBike_init_motion_data(Object* self, CRSnowBike_MotionData* motion);
 static void CRSnowBike_sharpclaw_update_motion(Object* self, CRSnowBike_Data* objData, CRSnowBike_MotionData* motion, f32 updateRate, s32 applyTerrainCollision);
@@ -705,7 +705,7 @@ void CRSnowBike_update(Object* self) {
 }
 
 // offset: 0x1534 | func: 4 | export: 3
-void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CRSnowBike_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     CRSnowBike_Data* objData;
     s32 sp38;
 
@@ -994,11 +994,11 @@ void CRSnowBike_func_1DB8(Object* self, UNK_TYPE_32 arg1) {
 
 
 // offset: 0x1DC8 | func: 21
-void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols) {
+void CRSnowBike_handle_partfx_and_impact_sounds(Object* self, CRSnowBike_Data* objData, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols) {
 /*0x28*/ static u32 sImpactSoundHandle;
-    Vertex* vertex;
+    Vtx* vertex;
     Gfx* gfx;
-    Triangle* tri;
+    DLTri* tri;
     s32 pad1[6];
     SRT fxTransform;
     s32 i;

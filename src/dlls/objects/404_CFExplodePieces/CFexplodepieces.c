@@ -179,7 +179,7 @@ s32 CFExplodePieces_move(Object* self, CFExplodePieces_Data* objData) {
 void CFExplodePieces_obj_Update(Object* self) { }
 
 // offset: 0x4C4 | func: 5 | export: 3
-void CFExplodePieces_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void CFExplodePieces_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

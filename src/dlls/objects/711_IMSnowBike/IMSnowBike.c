@@ -128,7 +128,7 @@ enum IMSnowBikeFlags {
 /*0x8*/ static SRT _bss_8;
 
 void dll_711_func_1760(Object *self);
-static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
+static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols);
 static void dll_711_func_1ED0(Object *self, IMSnowBike_Data_2AC *a1);
 static void dll_711_func_1F54(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4);
 static void dll_711_func_2BA0(Object *self, IMSnowBike_Data *objdata, IMSnowBike_Data_2AC *arg2, f32 updateRate, s32 arg4);
@@ -475,7 +475,7 @@ void dll_711_update(Object *self) {
 }
 
 // offset: 0x10D4 | func: 3 | export: 3
-void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void dll_711_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     IMSnowBike_Data *objdata = self->data;
     s8 sp3B;
     
@@ -681,11 +681,11 @@ void dll_711_func_1760(Object *self) {
 void dll_711_func_1860(Object *self, f32 scale) { }
 
 // offset: 0x1870 | func: 20
-static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols) {
+static void dll_711_func_1870(Object *self, IMSnowBike_Data *objdata, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols) {
     static u32 soundHandle; // bss+0x20
-    Vertex *spA4;
+    Vtx *spA4;
     Gfx *spA0;
-    Triangle *sp9C;
+    DLTri *sp9C;
     f32 var_fv0;
     s32 pad[5];
     SRT sp6C;

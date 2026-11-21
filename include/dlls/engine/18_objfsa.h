@@ -4,7 +4,6 @@
 #include "dll_def.h"
 #include "dlls/engine/27.h"
 #include "game/objects/object.h"
-#include "types.h"
 
 typedef enum {
     OBJFSA_FLAG_4000 = 0x4000,

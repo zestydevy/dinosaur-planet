@@ -29,7 +29,6 @@
 #include "sys/objtype.h"
 #include "sys/print.h"
 #include "sys/rand.h"
-#include "types.h"
 
 #ifdef DEBUG
 #define FROSTWEED_QUEST_CHEAT 1  
@@ -497,7 +496,7 @@ void SnowHorn_obj_Control(Object* self) {
 void SnowHorn_obj_Update(Object* self){ }
 
 // offset: 0x77C | func: 3 | export: 3
-void SnowHorn_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SnowHorn_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     SnowHorn_Data* objData = self->data;
 
     if (visibility) {

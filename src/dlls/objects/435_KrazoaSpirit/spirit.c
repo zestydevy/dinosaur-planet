@@ -174,7 +174,7 @@ void Spirit_control(Object* self) {
 void Spirit_update(Object *self) { }
 
 // offset: 0x5AC | func: 3 | export: 3
-void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void Spirit_print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     s16 id;
     Camera *camera;
 

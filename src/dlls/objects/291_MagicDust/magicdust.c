@@ -375,7 +375,7 @@ void MagicDust_obj_Control(Object* self) {
 void MagicDust_obj_Update(Object *self) { }
 
 // offset: 0xF08 | func: 3 | export: 3
-void MagicDust_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void MagicDust_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     //When the MagicDust gem is attached to a MagicPlant, the plant handles drawing the gem instead
     if (visibility && (self->unkC4 == NULL)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);

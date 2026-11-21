@@ -304,7 +304,7 @@ void SnowWorm_obj_Update(Object* self) {
 }
 
 // offset: 0x5A4 | func: 4 | export: 3
-void SnowWorm_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SnowWorm_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if ((visibility == FALSE) || self->unkDC || (baddie->unk3B6 == 0)) {

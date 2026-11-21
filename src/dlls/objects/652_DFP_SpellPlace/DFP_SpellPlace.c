@@ -9,7 +9,6 @@
 #include "sys/math.h"
 #include "sys/gfx/model.h"
 #include "sys/objects.h"
-#include "types.h"
 #include "game/gamebits.h"
 
 typedef struct {
@@ -68,7 +67,7 @@ void dll_652_control(Object* self) {
 void dll_652_update(Object *self) { }
 
 // offset: 0x1D0 | func: 3 | export: 3
-void dll_652_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void dll_652_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x1E8 | func: 4 | export: 4
 void dll_652_free(Object* self, s32 a1) {

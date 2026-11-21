@@ -247,7 +247,7 @@ void SnowWormSmall_obj_Control(Object* self) {
 void SnowWormSmall_obj_Update(Object* self) { }
 
 // offset: 0x4FC | func: 4 | export: 3
-void SnowWormSmall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SnowWormSmall_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     
     if (!visibility) {

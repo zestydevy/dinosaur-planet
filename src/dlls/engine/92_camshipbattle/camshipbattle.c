@@ -2,6 +2,7 @@
 #include "sys/main.h"
 #include "sys/memory.h"
 #include "sys/envfx.h"
+#include "types.h"
 
 // Active camera during intro Galleon fight while riding the CloudRunner
 

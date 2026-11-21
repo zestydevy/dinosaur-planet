@@ -22,7 +22,7 @@ void dll_513_control(Object *self) { }
 void dll_513_update(Object *self) { }
 
 // offset: 0x8C | func: 3 | export: 3
-void dll_513_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_513_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     SRT sp30;
    
     if (visibility != 0) {

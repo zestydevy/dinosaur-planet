@@ -4,7 +4,6 @@
 #include "game/objects/setups/89_SeqObj.h"
 #include "sys/gfx/animseq.h"
 #include "sys/gfx/model.h"
-#include "types.h"
 #include "dll.h"
 #include "sys/objects.h"
 #include "sys/objtype.h"
@@ -109,7 +108,7 @@ void DBPlaceHolder_control(Object *self) {
 void DBPlaceHolder_update(Object *self) { }
 
 // offset: 0x344 | func: 3 | export: 3
-void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DBPlaceHolder_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DBPlaceHolder_Data *objdata = self->data;
 
     if (visibility) {

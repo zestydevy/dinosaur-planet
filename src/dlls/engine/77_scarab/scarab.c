@@ -32,7 +32,7 @@ s32 dll_77_update1(void) {
 void dll_77_update2(void) { }
 
 // offset: 0x98 | func: 2 | export: 2
-void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void dll_77_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     char scarabCountString[3];
     f32 distance;
     Object* shop;

@@ -73,7 +73,7 @@ void DFbarrel_obj_Control(Object* self) {
 void DFbarrel_obj_Update(Object* self) { }
 
 // offset: 0x1DC | func: 3 | export: 3
-void DFbarrel_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFbarrel_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DFBarrel_Data* objData = self->data;
     
     if ((objData->framesSinceDetonation == 0) && gDLL_54_pickup->vtbl->should_print(self, visibility)) {

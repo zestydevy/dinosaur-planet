@@ -19,7 +19,6 @@
 #include "sys/memory.h"
 #include "dll.h"
 #include "sys/rcp.h"
-#include "types.h"
 #include "macros.h"
 
 #include "prevent_bss_reordering.h"
@@ -442,7 +441,7 @@ s32 dll_63_update1() {
 void dll_63_update2() { }
 
 // func 2 export 2
-void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs) {
+void dll_63_draw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs) {
     s32 numRecentTasks;
     s32 uly;
     s32 lry;

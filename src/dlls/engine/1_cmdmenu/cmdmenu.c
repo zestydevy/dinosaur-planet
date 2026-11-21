@@ -837,9 +837,9 @@ typedef struct {
 /*0xC88*/ static CmdmenuInfoPopup sInfoPopup;   //Item info pop-up that appears after collecting certain items (e.g. Kyte's grubs)
 
 static void cmdmenu_tick_tutorial_textbox(void);
-static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vtx** vtxs);
 static void cmdmenu_tick_inventory_page(void);
-static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vtx** vtxs);
 static s32 cmdmenu_page_load_items(InventoryItem* items, s8 isSidekickMenu);
 static s32 cmdmenu_page_count_shown_items(InventoryItem* menuItems, s8 isSidekickMenu);
 static void cmdmenu_store_loaded_item_metadata(InventoryItem* items, s32 loadedItemIndex, s32 itemIndex);
@@ -849,16 +849,16 @@ static int cmdmenu_is_inventory_closed(void);
 static void cmdmenu_close_inventory(void);
 static void cmdmenu_open_inventory(void);
 static void cmdmenu_inventory_animate(void);
-static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vtx** vtxs);
 static void cmdmenu_gfx_set_scroll_scissor(Gfx** gdl);
 static void cmdmenu_gfx_set_screen_scissor(Gfx** gdl);
 static int cmdmenu_is_info_scroll_closed(void);
 static void cmdmenu_close_info_scroll(void);
 static void cmdmenu_open_info_scroll(void);
 static void cmdmenu_info_scroll_animate(void);
-static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vtx** vtxs);
 static void cmdmenu_update_stats(void);
-static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs);
+static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vtx** vtxs);
 static void cmdmenu_info_hide(CmdmenuInfoPopup* info);
 static void cmdmenu_info_draw(Gfx** gdl, CmdmenuInfoPopup* box);
 static void cmdmenu_draw_energy_bar(Gfx** gdl);
@@ -1147,7 +1147,7 @@ void cmdmenu_update2(void) {
 }
 
 // offset: 0xBB8 | func: 4 | export: 2
-void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void cmdmenu_print(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     Object* player;
     s32 viSize;
     s32 screenX;
@@ -1456,7 +1456,7 @@ static void cmdmenu_tick_tutorial_textbox(void) {
 /** 
   * Draws the tutorial textbox that appears upon seeing/collecting items for the first time.
   */
-static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_tutorial_textbox(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     s32 x;
     s32 y;
     s32 halfWidth;
@@ -1935,7 +1935,7 @@ static s16 cmdmenu_get_spell_textable(s32 spellGamebit) {
   * (NOTE: The top/bottom parts of the scroll aren't drawn here, 
   *        for some reason they're in `cmdmenu_draw_c_buttons_and_sidekick_meter`!)
   */
-static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_main(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     s16 commandTexTableID;
     Object* player;
     s32 activeSpellGamebit;
@@ -2633,7 +2633,7 @@ static void cmdmenu_inventory_animate(void) {
   *
   * The top/bottom of the inventory scroll is also drawn here for some reason!
   */
-static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_c_buttons_and_sidekick_meter(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     Gfx* dl;
     Object* sidekick;
     Object* player;
@@ -3015,7 +3015,7 @@ static void cmdmenu_info_scroll_animate(void) {
   * The info scroll can also be shown automatically (e.g. during Forcefield Spell 
   * collection cutscene) at custom screen coordinates.
   */
-static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_info_scroll(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     s32 x;
     s32 y;
     s32 halfWidth;
@@ -3416,7 +3416,7 @@ static void cmdmenu_update_stats(void) {
 /** 
   * Draws the player's character icon, health, magic, and Scarab counter
   */
-static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+static void cmdmenu_draw_player_stats(Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     f32 goalOpacity;
     u32 pad;
     u8 i;

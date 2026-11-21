@@ -1582,7 +1582,7 @@ void mod_func_8001B100(ModelInstance* modelInst) {
             if (sp68[0] == 0 && sp68[1] == 0) {
                 var_a1 = temp_s2->vertices;
             } else {
-                var_a1 = (Vtx*) modelInst->vertices[(modelInst->unk34 >> 1) & 1];
+                var_a1 = modelInst->vertices[(modelInst->unk34 >> 1) & 1];
             }
         } else {
             var_a1 = temp_s2->vertices;

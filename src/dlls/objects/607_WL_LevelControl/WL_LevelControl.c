@@ -18,7 +18,6 @@
 #include "sys/lfx.h"
 #include "sys/envfx.h"
 #include "dll.h"
-#include "types.h"
 #include "sys/rand.h"
 
 #include "dlls/objects/607_WL_LevelControl.h"
@@ -117,7 +116,7 @@ void WL_LevelControl_obj_Control(Object* self) {
 void WL_LevelControl_obj_Update(Object* self) { }
 
 // offset: 0x3A0 | func: 3 | export: 3
-void WL_LevelControl_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_LevelControl_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

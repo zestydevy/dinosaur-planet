@@ -57,7 +57,7 @@ void VFP_DoorSwitch_obj_Control(Object* self) {
 void VFP_DoorSwitch_obj_Update(Object* self) { }
 
 // offset: 0x14C | func: 3 | export: 3
-void VFP_DoorSwitch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void VFP_DoorSwitch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     VFP_DoorSwitch_Data* objdata = self->data;
 
     if (self->id != OBJ_VFP_LiftIndicat) {

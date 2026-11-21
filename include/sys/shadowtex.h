@@ -4,13 +4,14 @@
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
 #include "game/objects/object.h"
+#include "gbi_extra.h"
 
 /** The number of shadow texture slots. Each slot is double buffered. The player uses slot 0. */
 #define SHADOWTEX_NUM_SLOTS 2
 
 void shadowtexInit(void);
 s32 shadowtexGetStatus(s32 *outTexWidth);
-void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s32 arg6, f32 arg7, s32 slot);
+void shadowtexDraw(Object *obj, s16 arg1, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s32 arg6, f32 arg7, s32 slot);
 void shadowtexGetTextures(s32 bufferIdx, void **arg1, void **arg2, s32 slot);
 
 #endif

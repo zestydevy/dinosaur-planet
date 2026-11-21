@@ -38,7 +38,6 @@
 #include "sys/intersect.h"
 #include "sys/objlib.h"
 #include "dll.h"
-#include "types.h"
 #include "dlls/objects/common/vehicle.h"
 #include "dlls/objects/common/foodbag.h"
 #include "dlls/objects/common/weapon.h"
@@ -61,7 +60,7 @@ static void dll_210_func_7B98(Object* player, TrackLineIntersectResult* arg1, Ve
 static void dll_210_func_7CF8(ObjFSA_Data* fsa, Vec3f* arg1);
 static void dll_210_func_7DA0(Object* player, ObjFSA_Data* fsa, Vec3f* arg2);
 static s32 dll_210_func_7E6C(Object* player, Player_Data* arg1, ObjFSA_Data* fsa, Player_Data3B4* arg3, f32 arg4, s32 arg5);
-static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7);
+static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vtx** arg5, DLTri** arg6, s32 arg7);
 static void dll_210_func_9F1C(Object* player, s32 arg1);
 static void dll_210_func_A024(Object* player, ObjFSA_Data* fsa);
 static s32 dll_210_func_BA38(Object* player, ObjFSA_Data* fsa, f32 arg2);
@@ -85,8 +84,8 @@ static void dll_210_func_1DAB0(Object *player);
 /* static */ void dll_210_func_1D8EC(Object* player, Player_Data* arg1, s32 arg2);
 /* static */ void dll_210_func_41F4(Object* player, Player_Data* arg1);
 /* static */ void dll_210_func_9E00(Object* player);
-/* static */ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4);
-/* static */ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4);
+/* static */ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vtx** arg4);
+/* static */ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri** arg4);
 /* static */ void dll_210_func_1DB6C(Object* player, f32 arg1);
 /* static */ f32 dll_210_func_63F0(Player_Data* player, f32 updateRate);
 /* static */ void dll_210_func_60A8(Object* player, Object* animObj, AnimObj_Data* animData);
@@ -1365,7 +1364,7 @@ void dll_210_update(Object* player) {
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_print.s")
 #else
 // https://decomp.me/scratch/cPQdS
-void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle** arg4, s8 arg5) {
+void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri** arg4, s8 arg5) {
     Object* sp8C;
     s32 pad;
     Player_Data* data;
@@ -1447,7 +1446,7 @@ void dll_210_print(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triang
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_363C.s")
 #else
 // Matches but has weird bss issues
-void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vertex** arg4) {
+void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3, Vtx** arg4) {
     static SRT _bss_40;
     s32 i;
 
@@ -1513,8 +1512,8 @@ void dll_210_func_363C(Object* player, Player_Data* arg1, Gfx** arg2, Mtx** arg3
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/210_player/dll_210_func_3B40.s")
 #else
 // https://decomp.me/scratch/oPG0g
-void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Triangle **arg4) {
-    Vertex* sp74;
+void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri **arg4) {
+    Vtx* sp74;
     Vtx_t *curVtx;
     Vtx_t* sp70;
     s32 var_v0_2;
@@ -1579,7 +1578,7 @@ void dll_210_func_3B40(Object* player, Gfx** arg1, Mtx** arg2, Vertex** arg3, Tr
     sp48.roll = 0;
     camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp74), 8, 0);
-    dlTriangles(arg1, (DLTri* ) _rodata_0, 0xC);
+    dlTriangles(arg1, _rodata_0, 0xC);
     if (sp44->unk844 >= 68.0f) {
         var_v0_2 = player->opacity - (gUpdateRate * 4);
         if (var_v0_2 < 0) {
@@ -3467,7 +3466,7 @@ static s32 dll_210_func_8AE0(Object* player, s32 arg1, s32 arg2, Vec3f* arg3, Ve
 }
 
 // offset: 0x8EA4 | func: 47
-static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vertex** arg5, Triangle** arg6, s32 arg7) {
+static void dll_210_func_8EA4(Object* player, Player_Data* arg1, Object* vehicle, Gfx** arg3, Mtx** arg4, Vtx** arg5, DLTri** arg6, s32 arg7) {
     f32 riderX;
     f32 riderY;
     f32 riderZ;

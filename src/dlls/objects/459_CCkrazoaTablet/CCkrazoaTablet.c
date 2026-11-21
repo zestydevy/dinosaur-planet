@@ -64,7 +64,7 @@ void CCkrazoaTablet_control(Object *self) {
 void CCkrazoaTablet_update(Object *self) { }
 
 // offset: 0x1C8 | func: 3 | export: 3
-void CCkrazoaTablet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void CCkrazoaTablet_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x1E0 | func: 4 | export: 4
 void CCkrazoaTablet_free(Object *self, s32 arg1) { }

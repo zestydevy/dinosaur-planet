@@ -7,7 +7,7 @@
 #include "game/objects/object.h"
 #include "sys/gfx/texture.h"
 #include "sys/math.h"
-#include "types.h"
+#include "gbi_extra.h"
 
 
 #define RGBA8(r, g, b, a) (((u32)(r) << 24) | ((u32)(g) << 16) | ((u32)(b) << 8) | (u32)(a))
@@ -38,14 +38,6 @@ typedef struct {
 /*0028*/    u8 needsPipeSync;
 /*0029*/    u8 dirtyFlags;
 } DLBuilder;
-
-typedef struct {
-/*0000*/    u8 unk0;
-/*0001*/    u8 v0;
-/*0002*/    u8 v1;
-/*0003*/    u8 v2;
-/*0004*/    u8 unk4[0x10 - 0x4];
-} DLTri;
 
 #define MASK_TRI(flag, v0, v1, v2) {(flag), (v0), (v1), (v2), {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0}}
 
@@ -525,7 +517,7 @@ s32 trackGetSunGlareOn(void);
 
 void trackInit(void);
 void trackTick(s32);
-void trackDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, Vertex **vtxs2, Triangle **pols2);
+void trackDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, Vtx **vtxs2, DLTri **pols2);
 ObjSetup* mapFindObjSetup(s32 searchUID, s32* outIndexInMap, s32* outMapID, s32* arg3, s32* outIsMobileMap);
 s32 mapWorldCoordsToBlockIndex(f32 x, f32 y, f32 z);
 /** Floor world coords to interval of block world coords. */

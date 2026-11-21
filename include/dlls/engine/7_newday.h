@@ -6,7 +6,6 @@
 #include "game/objects/object.h"
 #include "sys/envfx.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_7_newday) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

@@ -11,7 +11,6 @@
 #include "sys/objprint.h"
 #include "sys/lfx.h"
 #include "dll.h"
-#include "types.h"
 
 // Note: This file appears to be called "lift1.c" in the original game.
 
@@ -238,7 +237,7 @@ void DFPLift_obj_Control(Object* self) {
 void DFPLift_obj_Update(Object* self) { }
 
 // offset: 0x7F8 | func: 3 | export: 3
-void DFPLift_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void DFPLift_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

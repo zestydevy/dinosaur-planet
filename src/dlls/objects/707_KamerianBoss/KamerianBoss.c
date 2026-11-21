@@ -694,7 +694,7 @@ void KamerianBoss_control(Object *self) {
 void KamerianBoss_update(Object *self) { }
 
 // offset: 0x1E20 | func: 12 | export: 3
-void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void KamerianBoss_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     KamerianBoss_Data *objdata;
     s32 hpBarWidth;
     s32 i;

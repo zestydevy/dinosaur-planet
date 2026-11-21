@@ -110,7 +110,7 @@ void CFSupTreasureCh_control(Object *self) {
 void CFSupTreasureCh_update(Object *self) { }
 
 // offset: 0x320 | func: 3 | export: 3
-void CFSupTreasureCh_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void CFSupTreasureCh_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

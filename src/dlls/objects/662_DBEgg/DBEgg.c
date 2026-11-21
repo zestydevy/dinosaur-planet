@@ -64,7 +64,7 @@ void dll_662_update(Object* self) {
 }
 
 // offset: 0xED0 | func: 3 | export: 3
-void dll_662_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_662_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     DBEgg_Data* objdata = self->data;
 
     if (visibility) {

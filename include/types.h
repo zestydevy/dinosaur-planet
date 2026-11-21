@@ -62,47 +62,6 @@ DLL_INTERFACE(DLL_Unknown) {
     /*0*/ UnknownDLLFunc func[1]; // length varies
 };
 
-// TODO: copied from DKR, might be wrong
-/* Size: 10 bytes */
-typedef struct Vertex {
-/* 0x00 */ s16 x;
-/* 0x02 */ s16 y;
-/* 0x04 */ s16 z;
-/* 0x06 */ u8  r;
-/* 0x07 */ u8  g;
-/* 0x08 */ u8  b;
-/* 0x09 */ u8  a;
-} Vertex;
-
-// TODO: copied from DKR, might be wrong
-/* Size: 4 bytes */
-typedef struct TexCoords {
-    union {
-      struct {
-        s16 u, v;
-      };
-      u32 texCoords; // For convenience?
-    };
-} TexCoords;
-
-// TODO: copied from DKR, might be wrong
-/* Size: 0x10 bytes */
-typedef struct Triangle {
-    union {
-        struct {
-            /* 0x00 */ u8 flags; // 0x40 = Draw backface, 0x00 = Cull backface
-            /* 0x01 */ u8 vi0;          // First vertex index
-            /* 0x02 */ u8 vi1;          // Second vertex index
-            /* 0x03 */ u8 vi2;          // Third vertex index
-        };
-    /* 0x00 */ u32 vertices; // For convenience?
-               u8 verticesArray[4];
-    };
-/* 0x04 */ TexCoords uv0;   // Texture coordinates for the first vertex
-/* 0x08 */ TexCoords uv1;   // Texture coordinates for the second vertex
-/* 0x0C */ TexCoords uv2;   // Texture coordinates for the third vertex
-} Triangle;
-
 //used for PlayerPosBuffer and something else
 struct Vec3_Int{
     Vec3f f;

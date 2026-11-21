@@ -213,7 +213,7 @@ void ScorpionRobot_control(Object* self) {
 void ScorpionRobot_update(Object *self) { }
 
 // offset: 0x868 | func: 4 | export: 3
-void ScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void ScorpionRobot_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Baddie* baddie = self->data;
     s32 _pad;
     ScorpionRobot_Data* objdata = baddie->objdata;

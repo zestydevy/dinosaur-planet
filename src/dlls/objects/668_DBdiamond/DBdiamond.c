@@ -67,7 +67,7 @@ void DBdiamond_control(Object* self) {
 void DBdiamond_update(Object *self) { }
 
 // offset: 0x210 | func: 3 | export: 3
-void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void DBdiamond_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     DBDiamond_Data *objdata = self->data;
     
     if (!visibility)

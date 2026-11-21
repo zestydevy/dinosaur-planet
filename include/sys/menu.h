@@ -4,14 +4,14 @@
 #include "PR/ultratypes.h"
 #include "sys/vi.h"
 #include "dll_def.h"
-#include "types.h"
+#include "gbi_extra.h"
 
 // Common interface of menu DLLs
 DLL_INTERFACE(DLL_IMenu) {
     /*:*/ DLL_INTERFACE_BASE(DLL);
     /*0*/ s32 (*update1)(void);
     /*1*/ void (*update2)(void);
-    /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+    /*2*/ void (*draw)(Gfx **gdl, Mtx **mtxs, Vtx **vtxs);
 };
 
 /** States for Menu 16 (DLL 79) */
@@ -60,7 +60,7 @@ s32 menuGetPrevious(void);
 void menuDoMenuSwap(void);
 s32 menuUpdate1(void);
 void menuUpdate2(void);
-void menuDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols);
+void menuDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols);
 void menu_func_8000F64C(s8 param1, s32 param2);
 void menu_func_8000F6CC(void);
 void menu_func_8000F9DC(void);

@@ -323,7 +323,7 @@ void SHrocketmushroom_set_state(SHrocketmushroom_Data* objData, s32 state) {
 void SHrocketmushroom_update(Object *self) { }
 
 // offset: 0xB2C | func: 9 | export: 3
-void SHrocketmushroom_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void SHrocketmushroom_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0xB44 | func: 10 | export: 4
 void SHrocketmushroom_free(Object *self, s32 onlySelf) { }

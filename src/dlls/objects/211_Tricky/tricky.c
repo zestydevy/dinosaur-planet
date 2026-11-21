@@ -179,7 +179,7 @@ static void tricky_func_52B8(Object* self, Tricky_Data* objData);
 static s32 tricky_func_53E4(Object* self, f32 arg1, Tricky_Data* arg2);
 static void tricky_func_7188(Object* self);
 static void tricky_func_726C(Object* self);
-static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, Triangle** pols);
+static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri** pols);
 static void tricky_findRouteStarts(Object* self, u8* routeFlags, s16 currWalkGroup, CurveSetup** startCurves);
 static CurveSetup* tricky_func_7A7C(Tricky_Data* objData, CurveSetup* arg1, s32 arg2, u8 arg3);
 static s8 tricky_func_7BAC(Tricky_Data* objData, CurveSetup** arg1, u8 *arg2, s32 goalWalkGroup);
@@ -538,7 +538,7 @@ void tricky_obj_Control(Object* self) {
 void tricky_obj_Update(Object* self) { }
 
 // offset: 0xD28 | func: 3 | export: 3
-void tricky_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void tricky_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Tricky_Data* objData;
 
     if (visibility == 0) {
@@ -560,7 +560,7 @@ void tricky_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
             break;
         case TRICKY_STATE_8:
             if ((objData->unk1A == 3) || (objData->unk1A == 2)) {
-                tricky_func_74C4(self, gdl, mtxs, (Vtx** ) vtxs, pols);
+                tricky_func_74C4(self, gdl, mtxs, vtxs, pols);
                 break;
             }
             if (objData->unk1A != 4) {
@@ -2665,7 +2665,7 @@ static void tricky_func_726C(Object* self) {
 /*0x914*/ static const char str_914[] = "out of water\n";
 
 // offset: 0x74C4 | func: 57
-static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, Triangle** pols) {
+static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, DLTri** pols) {
     Vtx* sp6C;
     Tricky_Data* objData;
     s32 i;
@@ -2720,7 +2720,7 @@ static void tricky_func_74C4(Object* self, Gfx** arg1, Mtx** arg2, Vtx** arg3, T
     sp48.scale = 0.05f;
     camSetupObjectSRTMatrix(arg1, arg2, &sp48, 1.0f, 0.0f, NULL);
     gSPVertex((*arg1)++, OS_PHYSICAL_TO_K0(sp6C), 8, 0);
-    dlTriangles(arg1, (DLTri*)_rodata_778, 12);
+    dlTriangles(arg1, _rodata_778, 12);
     *arg3 = var_s0;
 }
 

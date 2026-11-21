@@ -96,7 +96,7 @@ void kyteCage_control(Object* self) {
 void kyteCage_update(Object *self) { }
 
 // offset: 0x2A4 | func: 3 | export: 3
-void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void kyteCage_print(Object* self, Gfx** gfx, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     KyteCage_Data* objData;
     Object* kyte;
     u32 dYaw;

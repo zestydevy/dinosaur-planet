@@ -94,7 +94,7 @@ void dll_517_control(Object* self) {
 void dll_517_update(Object *self) { }
 
 // offset: 0x208 | func: 4 | export: 3
-void dll_517_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_517_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if ((visibility != 0) && (self->unkDC == 0)) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

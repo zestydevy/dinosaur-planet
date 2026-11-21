@@ -37,7 +37,7 @@ void DR_EarthCallPad_control(Object *self) { }
 void DR_EarthCallPad_update(Object *self) { }
 
 // offset: 0x94 | func: 3 | export: 3
-void DR_EarthCallPad_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void DR_EarthCallPad_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0xAC | func: 4 | export: 4
 void DR_EarthCallPad_free(Object* self, s32 onlySelf) {

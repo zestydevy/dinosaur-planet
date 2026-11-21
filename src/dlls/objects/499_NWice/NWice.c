@@ -70,7 +70,7 @@ void dll_499_control(Object* self) {
 void dll_499_update(Object *self) { }
 
 // offset: 0x228 | func: 3 | export: 3
-void dll_499_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void dll_499_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x240 | func: 4 | export: 4
 void dll_499_free(Object* self, s32 a1) {

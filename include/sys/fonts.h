@@ -3,7 +3,6 @@
 
 #include "PR/ultratypes.h"
 #include "PR/gbi.h"
-#include "types.h"
 #include "sys/gfx/texture.h"
 
 /* Size: 8 bytes */
@@ -165,10 +164,10 @@ void fontWindowEnableWordwrap(s32 windowID);
 void fontWindowDisableWordwrap(s32 windowID);
 void fontWindowEnableVerts(s32 windowID);
 void fontWindowDisableVerts(s32 windowID);
-void fontWindowsDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs);
+void fontWindowsDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs);
 void fontNumberToString(char **outString, s32 number);
 void fontRenderFillRect(Gfx **gdl, s32 ulx, s32 uly, s32 lrx, s32 lry);
-void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vertex **vtxs, s32 windowID);
+void fontWindowDraw(Gfx **gdl, Mtx **mtxs, Vtx **vtxs, s32 windowID);
 void fontStringFormat(char *input, char *output, s32 number);
 
 #endif

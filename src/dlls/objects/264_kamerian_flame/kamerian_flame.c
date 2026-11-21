@@ -10,7 +10,6 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "sys/objhits.h"
-#include "types.h"
 
 /*0x0*/ static s32 impactSoundID;
 /*0x4*/ static u32 _bss_4;
@@ -141,7 +140,7 @@ void kamerian_flame_update(Object* self) {
 }
 
 // offset: 0x59C | func: 4 | export: 3
-void kamerian_flame_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility){
+void kamerian_flame_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility){
     //no 3D model since it uses billboard particles
 }
 

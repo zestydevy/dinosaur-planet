@@ -14,7 +14,6 @@
 #include "sys/objprint.h"
 #include "sys/lfx.h"
 #include "sys/envfx.h"
-#include "types.h"
 #include "sys/rand.h"
 
 #include "dlls/objects/519_SC_levelcontrol.h"
@@ -189,7 +188,7 @@ void SC_levelcontrol_control(Object *self) {
 void SC_levelcontrol_update(Object *self) { }
 
 // offset: 0x42C | func: 3 | export: 3
-void SC_levelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SC_levelcontrol_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     if (visibility) {
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
     }

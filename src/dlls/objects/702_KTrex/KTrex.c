@@ -438,7 +438,7 @@ void dll_702_control(Object* self) {
 void dll_702_update(Object *self) { }
 
 // offset: 0x738 | func: 4 | export: 3
-void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void dll_702_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     MtxF sp48;
     s32 _pad;
  

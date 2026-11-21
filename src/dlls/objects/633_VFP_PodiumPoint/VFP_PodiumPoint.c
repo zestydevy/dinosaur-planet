@@ -10,7 +10,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "dll.h"
-#include "types.h"
 
 // size:0x6
 typedef struct {
@@ -72,7 +71,7 @@ void VFP_PodiumPoint_update(Object *self) {
 }
 
 // offset: 0x16C | func: 3 | export: 3
-void VFP_PodiumPoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_PodiumPoint_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x184 | func: 4 | export: 4
 void VFP_PodiumPoint_free(Object *self, s32 a1) { }

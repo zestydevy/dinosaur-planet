@@ -193,7 +193,7 @@ void crate_control(Object* self) {
 void crate_update(Object *self) { }
 
 // offset: 0x5E4 | func: 3 | export: 3
-void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void crate_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     Crate_Data* objData = self->data;
     
     if ((objData->isDestroyed == 0) && visibility) {

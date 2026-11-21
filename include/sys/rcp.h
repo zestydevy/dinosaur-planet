@@ -4,7 +4,6 @@
 #include "PR/sched.h"
 #include "PR/ultratypes.h"
 #include "sys/gfx/texture.h"
-#include "types.h"
 
 // Size: 0xC
 typedef struct TextureTile {

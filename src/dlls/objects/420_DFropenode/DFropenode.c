@@ -106,7 +106,7 @@ void dll_420_control(Object* self);
 void dll_420_update(Object* self) { }
 
 // offset: 0x584 | func: 3 | export: 3
-void dll_420_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility);
+void dll_420_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility);
 #pragma GLOBAL_ASM("asm/nonmatchings/dlls/objects/420_DFropenode/dll_420_print.s")
 
 // offset: 0x984 | func: 4 | export: 4

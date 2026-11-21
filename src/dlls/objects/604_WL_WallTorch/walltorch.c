@@ -190,7 +190,7 @@ void WL_WallTorch_obj_Control(Object* self) {
 void WL_WallTorch_obj_Update(Object* self) { }
 
 // offset: 0x6C8 | func: 3 | export: 3
-void WL_WallTorch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WL_WallTorch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     WLWallTorch_Data* objData;
     f32 pointX;
     f32 pointY;

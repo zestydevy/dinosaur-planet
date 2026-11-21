@@ -11,7 +11,6 @@
 #include "sys/objects.h"
 #include "sys/objprint.h"
 #include "sys/intersect.h"
-#include "types.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
 #include "sys/lfx.h"
@@ -143,7 +142,7 @@ void WLgalleon_control(Object* self) {
 void WLgalleon_update(Object *self) { }
 
 // offset: 0x4FC | func: 3 | export: 3
-void WLgalleon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void WLgalleon_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     if (mainGetBits(BIT_Play_Seq_00EF_Scales_Escapes_With_Kyte) || !visibility){
         return;
     }

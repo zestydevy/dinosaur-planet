@@ -82,7 +82,7 @@ void SB_Debris_control(Object *self) {
 void SB_Debris_update(Object *self) { }
 
 // offset: 0x3CC | func: 3 | export: 3
-void SB_Debris_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void SB_Debris_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     SB_Debris_Data *objdata;
     s16 opacity;
 

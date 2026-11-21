@@ -17,7 +17,6 @@
 #include "sys/menu.h"
 #include "sys/objlib.h"
 #include "dll.h"
-#include "types.h"
 
 typedef enum {
     SWAPSTONE_PLAYER_HAS_SPIRIT = 0x1,
@@ -118,7 +117,7 @@ void SHswapstone_control(Object* self) {
 void SHswapstone_update(Object *self) { }
 
 // offset: 0x284 | func: 3 | export: 3
-void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** pols, s8 visibility) {
+void SHswapstone_print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, s8 visibility) {
     Object* player;
     f32 x;
     f32 y;

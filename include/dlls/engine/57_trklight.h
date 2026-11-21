@@ -3,7 +3,6 @@
 
 #include "sys/lfx.h"
 #include "dll_def.h"
-#include "types.h"
 
 DLL_INTERFACE(DLL_57_trklight) {
 /*:*/ DLL_INTERFACE_BASE(DLL);

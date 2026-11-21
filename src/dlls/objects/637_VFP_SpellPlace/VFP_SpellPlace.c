@@ -8,7 +8,6 @@
 #include "sys/math.h"
 #include "sys/objects.h"
 #include "dll.h"
-#include "types.h"
 
 // size:0x6
 typedef struct {
@@ -68,7 +67,7 @@ void VFP_SpellPlace_control(Object* self) {
 void VFP_SpellPlace_update(Object *self) { }
 
 // offset: 0x1B8 | func: 3 | export: 3
-void VFP_SpellPlace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_SpellPlace_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x1D0 | func: 4 | export: 4
 void VFP_SpellPlace_free(Object *self, s32 a1) { }

@@ -40,11 +40,11 @@ u8 BYTE_800b2e23;
 // -------- .bss end 800b2e30 -------- //
 
 void objprint_func_800357B4(Object*, ModelInstance*, Model*);
-ModelInstance *objprintDrawChildModel(Gfx**, Mtx**, Vertex**, Triangle**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
+ModelInstance *objprintDrawChildModel(Gfx**, Mtx**, Vtx**, DLTri**, Object*, ModelInstance*, MtxF*, MtxF*, Object*, s32, s32);
 s32 objprint_func_80036890(Object*, s32);
-void objprint_func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vertex**);
+void objprint_func_80036058(Object*, Object*, ModelInstance*, Gfx**, Mtx**, Vtx**);
 
-void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, Object* obj, s8 visibility) {
+void objprintDrawObject(Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** tris, Object* obj, s8 visibility) {
     if (obj->stateFlags & OBJSTATE_DESTROYED) {
         return;
     }
@@ -88,7 +88,7 @@ void objprintSetModelMatrixOverride(MtxF* arg0) {
     PTR_DAT_800b2e1c = arg0;
 }
 
-void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triangle** tris, f32 yPrescale) {
+void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** tris, f32 yPrescale) {
     s32 opacity;
     ModelInstance* modelInst;
     Model* model;
@@ -112,8 +112,8 @@ void objprintDrawModel(Object* obj, Gfx** gdl, Mtx** mtxs, Vertex** vtxs, Triang
     u8 skylightB;
     Gfx* tempGdl;
     Mtx* tempMtxs;
-    Vertex* tempVtxs;
-    Triangle* tempTris;
+    Vtx* tempVtxs;
+    DLTri* tempTris;
 
     lightGetSkyLight(&skylightR, &skylightG, &skylightB);
     tempGdl = *gdl;
@@ -328,7 +328,7 @@ void objprint_func_800357B4(Object* arg0, ModelInstance* arg1, Model* arg2) {
     }
 }
 
-void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtxs, Triangle **pols, u32 param_6) {
+void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vtx **vtxs, DLTri **pols, u32 param_6) {
     Gfx *mygdl;
     Mtx *outRspMtxs;
     void *d;
@@ -362,7 +362,7 @@ void objprintDrawShadowModel(Object *obj, Gfx **gdl, Mtx **rspMtxs, Vertex **vtx
     *rspMtxs = outRspMtxs;
 }
 
-ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Triangle** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
+ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vtx** arg2, DLTri** arg3, Object* arg4, ModelInstance* arg5, MtxF* arg6, MtxF* arg7, Object* arg8, s32 arg9, s32 arg10) {
     MtxF* sp74;
     s32 sp70;
     ModelInstance* modelInst;
@@ -465,7 +465,7 @@ ModelInstance *objprintDrawChildModel(Gfx** arg0, Mtx** arg1, Vertex** arg2, Tri
     return modelInst;
 }
 
-void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vertex** vtxs) {
+void objprint_func_80036058(Object* obj, Object* otherObj, ModelInstance* modelInst, Gfx** gdl, Mtx** mtxs, Vtx** vtxs) {
     MtxF* tempMtx;
     s32 j;
     s32 boneId;

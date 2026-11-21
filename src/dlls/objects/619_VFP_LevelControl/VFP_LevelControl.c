@@ -11,7 +11,6 @@
 #include "sys/lfx.h"
 #include "sys/envfx.h"
 #include "dll.h"
-#include "types.h"
 
 // size:0x3
 typedef struct {
@@ -138,7 +137,7 @@ void VFP_LevelControl_control(Object* self) {
 void VFP_LevelControl_update(Object *self) { }
 
 // offset: 0x870 | func: 3 | export: 3
-void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) { }
+void VFP_LevelControl_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x888 | func: 4 | export: 4
 void VFP_LevelControl_free(Object *obj, s32 a1) {

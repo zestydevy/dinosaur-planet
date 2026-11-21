@@ -131,7 +131,7 @@ void BossDrakor_control(Object *self) {
 void BossDrakor_update(Object *self) { }
 
 // offset: 0x258 | func: 4 | export: 3
-void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vertex **vtxs, Triangle **pols, s8 visibility) {
+void BossDrakor_print(Object *self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) {
     Baddie *baddie;
     BossDrakor_ActualData *objdata;
     f32 sp4C;
