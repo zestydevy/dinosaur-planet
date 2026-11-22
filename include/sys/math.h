@@ -40,6 +40,7 @@
 #define CLAMP_EXPR(x, low, high) ((x) < (low) ? (low) : ((x) > (high) ? (high) : (x)))
 
 #define ABS_EXPR(x) ((x) >= 0 ? (x) : -(x))
+#define FABS_EXPR(x) ((x) >= 0.0f ? (x) : -(x))
 
 /**
  * Allows an arbitrary range the number can wrap around.

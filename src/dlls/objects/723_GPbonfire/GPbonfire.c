@@ -6,6 +6,7 @@
 #include "dlls/objects/common/sidekick.h"
 #include "dlls/objects/common/kyte_target.h"
 #include "dlls/objects/210_player.h"
+#include "dlls/objects/227_tumbleweed.h"
 #include "game/gamebits.h"
 #include "game/objects/object.h"
 #include "game/objects/object_id.h"
@@ -13,6 +14,7 @@
 #include "sys/gfx/animseq.h"
 #include "sys/dll.h"
 #include "sys/gfx/model.h"
+#include "sys/gfx/modgfx.h"
 #include "sys/main.h"
 #include "sys/math.h"
 #include "sys/menu.h"
@@ -97,7 +99,7 @@ void GPbonfire_obj_Control(Object* self) {
     f32 distanceToTumbleweed;
     s32 weedIndex;
     s32 count;
-    void** dll;
+    DLL_IModgfx* dll;
     u8 index;
     u8 playerIsNearby;
     Object** tumbleweeds;
@@ -119,8 +121,8 @@ void GPbonfire_obj_Control(Object* self) {
     if (objdata->updateFireEffect) {
         self->srt.scale = bonfireScaleData[objdata->weedsDeposited];
         dll_modgfx->Func10(self);
-        dll = dllLoad(0x104B, 1);
-        ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, modgfxScaleData[objdata->weedsDeposited], 0, 0x10004, -1, 0);
+        dll = dllLoad(DLL_ID_179, 1);
+        dll->vtbl->Spawn(self, modgfxScaleData[objdata->weedsDeposited], NULL, 0x10004, -1, NULL);
         dllFree(dll);
         objdata->updateFireEffect = FALSE;
     }
@@ -197,7 +199,7 @@ void GPbonfire_obj_Control(Object* self) {
                             objdata->timer = BONFIRE_DWINDLING_TIMER;
                         }
                     } else if (distanceToTumbleweed < 100.0f) {
-                        ((DLL_Unknown*)tumbleweeds[weedIndex]->dll)->vtbl->func[12].withTwoArgs((s32)tumbleweeds[weedIndex], (s32)self);
+                        ((DLL_227_Tumbleweed*)tumbleweeds[weedIndex]->dll)->vtbl->StorePlayer(tumbleweeds[weedIndex], self);
                     }
                 }
             }
@@ -307,7 +309,7 @@ s32 GPbonfire_KyteTarget_Func_A38(void){
 static void GPbonfire_func_A44(Object* self) {
     GPBonfire_Data* objdata;
     KyteTarget_Setup* setup;
-    void** dll;
+    DLL_IModgfx* dll;
     CurveSetup* curves;
 
     objdata = self->data;
@@ -323,8 +325,8 @@ static void GPbonfire_func_A44(Object* self) {
 
     //Create fire effect
     dll_modgfx->Func10(self);
-    dll = dllLoad(0x104B, 1); //modgfx #75?
-    ((DLL_Unknown*)dll)->vtbl->func[0].withSixArgs((s32)self, objdata->weedsDeposited, 0, 0x10004, -1, 0);
+    dll = dllLoad(DLL_ID_179, 1); //modgfx #75
+    dll->vtbl->Spawn(self, objdata->weedsDeposited, NULL, 0x10004, -1, NULL);
     dllFree(dll);
 
     //Add damaging collision?

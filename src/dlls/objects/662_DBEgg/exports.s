@@ -4,14 +4,14 @@
 _exports:
 
 # ctor/dtor
-.dword dll_662_ctor
-.dword dll_662_dtor
+.dword DBEgg_ctor
+.dword DBEgg_dtor
 
 # export table
-/*0*/ .dword dll_662_setup
-/*1*/ .dword dll_662_control
-/*2*/ .dword dll_662_update
-/*3*/ .dword dll_662_print
-/*4*/ .dword dll_662_free
-/*5*/ .dword dll_662_get_model_flags
-/*6*/ .dword dll_662_get_data_size
+/*0*/ .dword DBEgg_obj_Setup
+/*1*/ .dword DBEgg_obj_Control
+/*2*/ .dword DBEgg_obj_Update
+/*3*/ .dword DBEgg_obj_Print
+/*4*/ .dword DBEgg_obj_Free
+/*5*/ .dword DBEgg_obj_GetModelFlags
+/*6*/ .dword DBEgg_obj_GetDataSize

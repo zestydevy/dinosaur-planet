@@ -124,7 +124,7 @@ void fishingnet_get_transform(Object* self, SRT* oSrt) {
 }
 
 // offset: 0x338 | func: 10 | export: 10
-u8 fishingnet_catch(Object* self, s32 flags, Object* caught) {
+s32 fishingnet_catch(Object* self, s32 flags, Object* caught) {
     fishingnet_Data* objdata;
     Object* player;
     s32 temp;

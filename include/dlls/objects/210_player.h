@@ -231,7 +231,7 @@ typedef struct {
 /*858*/ Object *vehicle; // the object's DLL is DLL_IVehicle (or one of it's implementations)
 /*85C*/ Object *foodbag; // the object's DLL is DLL_IFoodbag (or one of it's implementations)
 /*860*/ Object *sidekickFoodbag;
-/*864*/ s32 unk864;
+/*864*/ Object* fishingnet;
 /*868*/ Object* unk868; //held object (baskets etc.)
 /*86C*/ f32 unk86C;
 /*870*/ u8 unk870;
@@ -461,7 +461,7 @@ DLL_INTERFACE(DLL_210_Player) {
     /*75*/ s32 (*func75)(Object* player, s32 arg1);
     /*76*/ void (*func76)(Object* player);
     /*77*/ s32 (*func77)(Object* player, s32* arg1, s32* arg2);
-    /*78*/ s32 (*func78)(Object* player);
+    /*78*/ Object* (*func78)(Object* player); // get fishingnet
     /*79*/ f32 (*func79)(Object* player);
 };
 

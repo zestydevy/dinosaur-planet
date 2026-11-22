@@ -113,7 +113,7 @@ u32 dll_734_get_data_size(Object *self, u32 offsetAddr) {
 }
 
 // offset: 0xC34 | func: 7 | export: 7
-f32 dll_734_func_C34(Object* self, s16* arg1, f32 arg2) {
+f32 dll_734_func_C34(Object* self, Object* arg1, f32 arg2) {
     DRPushCart_Data* objData;
     s32 pad;
     f32 sp24;
@@ -126,7 +126,7 @@ f32 dll_734_func_C34(Object* self, s16* arg1, f32 arg2) {
         sp24 = arg2 / objData->unk114;
     }
     
-    angle = self->srt.yaw - (*arg1 & 0xFFFF);
+    angle = self->srt.yaw - (arg1->srt.yaw & 0xFFFF);
     CIRCLE_WRAP(angle);
 
     if (-mathCosfInterp(angle) < 0.0f) {

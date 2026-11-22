@@ -2,7 +2,9 @@
 #include "dlls/engine/18_objfsa.h"
 #include "dlls/engine/53_movelib.h"
 #include "dlls/engine/6_amsfx.h"
+#include "dlls/objects/420_DFropenode.h"
 #include "dlls/objects/713_DRearthwalk.h"
+#include "dlls/objects/734_DR_PushCart.h"
 #include "game/gamebits.h"
 #include "game/gametexts.h"
 #include "game/objects/interaction_arrow.h"
@@ -480,7 +482,7 @@ void DRearthwalk_update(Object* self) {
             hitBy = temp_v1->unk140.unk0;
             if ((hitBy->id == OBJ_DR_PushCart) && (objdata->unkA60_5) && (self->curModAnimId == 0x14)) {
                 dll_amSfx->Play(self, _data_28[1], MAX_VOLUME, NULL, NULL, 0, NULL);
-                ((DLL_Unknown*)hitBy->dll)->vtbl->func[7].withThreeArgsCustom(hitBy, self, 190.f);
+                ((DLL_734_DR_PushCart*)hitBy->dll)->vtbl->Func7(hitBy, self, 190.f);
                 objdata->unkA60_5 = 0;
             }
             temp_v1->unk140.unk0 = NULL;
@@ -739,7 +741,7 @@ static int DRearthwalk_func_1EBC(Object* actor, Object* animObj, AnimObj_Data* a
     if (objdata->unkA60_1 && !objdata->unkA60_2) {
         objList = objGetAllOfType(OBJTYPE_RopeNode, &numObjs);
         for (i = 0; i < numObjs; i++) {
-            ((DLL_Unknown*)objList[i]->dll)->vtbl->func[15].withTwoArgsCustom2(objList[i], actor->srt.transl.y + 4.0f);
+            dll_DFropenode(objList[i])->func15(objList[i], actor->srt.transl.y + 4.0f);
         }
         objdata->unkA60_2 = 1;
     }

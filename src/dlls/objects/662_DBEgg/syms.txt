@@ -1,20 +1,19 @@
 .text = 0x0:
-dll_662_ctor = 0x0;
-dll_662_dtor = 0xC;
-dll_662_setup = 0x18;
-dll_662_control = 0x7C;
-dll_662_update = 0xD28;
-dll_662_print = 0xED0;
-dll_662_free = 0xF44;
-dll_662_get_model_flags = 0xF84;
-dll_662_get_data_size = 0xF94;
-dll_662_func_FA8 = 0xFA8;
-dll_662_func_1240 = 0x1240;
-dll_662_func_1670 = 0x1670;
-dll_662_func_1744 = 0x1744;
-dll_662_func_1954 = 0x1954;
+DBEgg_ctor = 0x0;
+DBEgg_dtor = 0xC;
+DBEgg_obj_Setup = 0x18;
+DBEgg_obj_Control = 0x7C;
+DBEgg_obj_Update = 0xD28;
+DBEgg_obj_Print = 0xED0;
+DBEgg_obj_Free = 0xF44;
+DBEgg_obj_GetModelFlags = 0xF84;
+DBEgg_obj_GetDataSize = 0xF94;
+DBEgg_getRiverflowInfluence = 0xFA8;
+DBEgg_depthCheck = 0x1240;
+DBEgg_collect = 0x1670;
+DBEgg_init = 0x1744;
+DBEgg_processObjMessages = 0x1954;
 
 .rodata = 0x1C08:
 
 .data = 0x1D18:
-_data_0 = 0x0; // absolute:0x1D18
