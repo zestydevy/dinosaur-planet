@@ -1,0 +1,17 @@
+.text = 0x0:
+DBwater_ctor = 0x0;
+DBwater_dtor = 0xC;
+DBwater_obj_Setup = 0x18;
+DBwater_obj_Control = 0x15C;
+DBwater_obj_Update = 0x744;
+DBwater_obj_Print = 0x750;
+DBwater_obj_Free = 0x7B8;
+DBwater_obj_GetModelFlags = 0x820;
+DBwater_obj_GetDataSize = 0x830;
+DBwater_func_844 = 0x844;
+DBwater_func_924 = 0x924;
+
+.rodata = 0xE9C:
+
+.data = 0xECC:
+data_0 = 0x0; // absolute:0xECC

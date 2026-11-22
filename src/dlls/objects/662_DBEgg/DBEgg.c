@@ -225,7 +225,7 @@ void DBEgg_obj_Control(Object* self) {
             break;
         }
         if (mathRnd(0, 10) == 0) {
-            gDLL_17_partfx->vtbl->spawn(self, PARTICLE_3BE, NULL, 0, -1, NULL);
+            dll_partfx->spawn(self, PARTICLE_3BE, NULL, 0, -1, NULL);
         }
         break;
     case DB_EGG_STATE_10:
