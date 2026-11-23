@@ -8,8 +8,8 @@ DBwater_obj_Print = 0x750;
 DBwater_obj_Free = 0x7B8;
 DBwater_obj_GetModelFlags = 0x820;
 DBwater_obj_GetDataSize = 0x830;
-DBwater_func_844 = 0x844;
-DBwater_func_924 = 0x924;
+DBwater_animateTexture = 0x844;
+DBwater_animateVertices = 0x924;
 
 .rodata = 0xE9C:
 

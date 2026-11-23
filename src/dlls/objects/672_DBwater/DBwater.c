@@ -9,23 +9,23 @@
 #include "dll.h"
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
-    u32 unk8;
-    u8 unkC;
-    u8 unkD;
-    s16 unkE;
+/*0*/ f32 modMinZ;
+/*4*/ f32 modMaxZ;
+/*8*/ u32 waterLoopHandle;
+/*C*/ u8 state;
+/*D*/ u8 unkD;
+/*E*/ s16 unkE;
 } DBwater_Data;
 
 typedef struct {
-    f32 unk0;
-    f32 unk4;
-    f32 unk8;
-    s16 unkC;
-    s16 unkE;
-    f32 unk10;
-    s32 unk14;
-    u8 unk18;
+/*00*/ f32 unk0;
+/*04*/ f32 unk4;
+/*08*/ f32 unk8;
+/*0C*/ s16 unkC;
+/*0E*/ s16 unkE;
+/*10*/ f32 unk10;
+/*14*/ s32 unk14;
+/*18*/ u8 unk18;
 } Data0;
 
 // SRT?
@@ -36,6 +36,15 @@ typedef struct {
     f32 unk14;
 } Func924Struct;
 
+enum DBwaterState {
+    DB_WATER_STATE_0 = 0,
+    DB_WATER_STATE_1 = 1,
+    DB_WATER_STATE_2 = 2,
+    DB_WATER_STATE_3 = 3,
+    DB_WATER_STATE_4 = 4,
+    DB_WATER_STATE_5 = 5
+};
+
 /*0x0*/ static Data0 data_0[] = {
     {20.0f, 20.0f, 10.0f, 0x03bd, 0x0000, -12.0f, 0x00000080, 0}, 
     {50.0f, 20.0f, 10.0f, 0x03c9, 0x0000,  95.0f, 0x00000028, 0}
@@ -43,8 +52,8 @@ typedef struct {
 
 /*0x0*/ static u32 data_38[] = {0xff0f002b, 0x79ff0000};
 
-static void DBwater_func_844(Object* self, DBwater_Data* arg1, s32 arg2);
-static void DBwater_func_924(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, Func924Struct* arg8);
+static void DBwater_animateTexture(Object* self, DBwater_Data* arg1, s32 arg2);
+static void DBwater_animateVertices(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, Func924Struct* arg8);
 
 // offset: 0x0 | ctor
 void DBwater_ctor(void* dll) { }
@@ -64,28 +73,28 @@ void DBwater_obj_Setup(Object* self, Generic_Setup* setup, s32 reset) {
 
     self->srt.yaw = setup->yaw << 8;
     self->srt.pitch = setup->genericB << 8;
-    objdata->unkC = 0;
+    objdata->state = DB_WATER_STATE_0;
     if (mainGetBits(setup->bitA) != 0) {
-        objdata->unkC = 5;
+        objdata->state = DB_WATER_STATE_5;
     }
     modelInst = self->modelInsts[self->modelInstIdx];
     model = modelInst->model;
-    objdata->unk4 = -100000.0f;
-    objdata->unk0 = 100000.0f;
+    objdata->modMaxZ = -100000.0f;
+    objdata->modMinZ = 100000.0f;
     for (i = 0; i < model->vertexCount; i++) {
         z = model->vertices[i].v.ob[2];
         zf = (f32) z;
-        if (objdata->unk4 < zf) {
-            objdata->unk4 = zf;
+        if (objdata->modMaxZ < zf) {
+            objdata->modMaxZ = zf;
         }
-        if (objdata->unk0 > zf) {
-            objdata->unk0 = zf;
+        if (objdata->modMinZ > zf) {
+            objdata->modMinZ = zf;
         }
     }
     if (setup->genericA == 0) {
-        tmp = objdata->unk4;
-        objdata->unk4 = objdata->unk0;
-        objdata->unk0 = tmp;
+        tmp = objdata->modMaxZ;
+        objdata->modMaxZ = objdata->modMinZ;
+        objdata->modMinZ = tmp;
     }
 }
 
@@ -103,10 +112,10 @@ void DBwater_obj_Control(Object* self) {
     sp44 = &data_0[setup->genericA];
     if (objdata->unkE <= 0) {
         objdata->unkE = sp44->unk14 + gUpdateRate;
-        if (objdata->unkC != 0) {
-            if (objdata->unkC < 4) {
-                objdata->unkC++;
-                if ((objdata->unkC == 2) && (setup->genericA == 0)) {
+        if (objdata->state != DB_WATER_STATE_0) {
+            if (objdata->state < DB_WATER_STATE_4) {
+                objdata->state++;
+                if ((objdata->state == DB_WATER_STATE_2) && (setup->genericA == 0)) {
                     mainSetBits(BIT_DB_Update_Flood_Level, 1);
                 }
             }
@@ -116,38 +125,38 @@ void DBwater_obj_Control(Object* self) {
     if (objdata->unkE < 0) {
         objdata->unkE = 0;
     }
-    DBwater_func_844(self, objdata, setup->genericA);
+    DBwater_animateTexture(self, objdata, setup->genericA);
     sp64 = sp44->unk14;
-    switch (objdata->unkC) {
-    case 0:
+    switch (objdata->state) {
+    case DB_WATER_STATE_0:
         if (mainGetBits(setup->bitB) != 0) {
-            objdata->unkC = 1;
+            objdata->state = DB_WATER_STATE_1;
             dll_amSfx->Play(self, SOUND_A45_DB_Water_Spray, MAX_VOLUME, NULL, NULL, 0, NULL);
             objdata->unkD = sp44->unk18;
             objdata->unkE = sp64;
-            DBwater_func_924(self, 
+            DBwater_animateVertices(self, 
                 (f32) objdata->unkE / (f32) sp64, 
-                objdata->unk0, objdata->unk4, -1.0f, 
+                objdata->modMinZ, objdata->modMaxZ, -1.0f, 
                 sp44->unk0, sp44->unk4, sp44->unk8, &sp48);
         }
         break;
-    case 1:
-        if (objdata->unk8 == 0) {
-            dll_amSfx->Play(self, SOUND_A44_DB_Water_Loop, MAX_VOLUME, &objdata->unk8, NULL, 0, NULL);
+    case DB_WATER_STATE_1:
+        if (objdata->waterLoopHandle == 0) {
+            dll_amSfx->Play(self, SOUND_A44_DB_Water_Loop, MAX_VOLUME, &objdata->waterLoopHandle, NULL, 0, NULL);
         }
         sp60 = (f32) objdata->unkE / (f32) sp64;
-        DBwater_func_924(self, sp60, 
-            objdata->unk0, objdata->unk4, -1.0f, 
+        DBwater_animateVertices(self, sp60, 
+            objdata->modMinZ, objdata->modMaxZ, -1.0f, 
             sp44->unk0, sp44->unk4, sp44->unk8, &sp48);
         if (setup->genericA != 0) {
             objdata->unkE += (s32) (SQ(sp60) * gUpdateRateF * 0.6f);
         }
         break;
-    case 2:
+    case DB_WATER_STATE_2:
         mainSetBits(setup->bitA, 1);
         sp60 = (f32) objdata->unkE / (f32) sp64;
-        DBwater_func_924(self, sp60, 
-            objdata->unk0, objdata->unk4, 0.0f, 
+        DBwater_animateVertices(self, sp60, 
+            objdata->modMinZ, objdata->modMaxZ, 0.0f, 
             sp44->unk0 * ((sp60 * 0.5f) + 0.5f), sp44->unk4, sp44->unk8, &sp48);
         if (objdata->unkE == 0) {
             if (objdata->unkD-- == 0) {
@@ -155,29 +164,29 @@ void DBwater_obj_Control(Object* self) {
             }
         }
         break;
-    case 3:
-        DBwater_func_924(self, 
+    case DB_WATER_STATE_3:
+        DBwater_animateVertices(self, 
             (f32) objdata->unkE / (f32) sp64, 
-            objdata->unk0, objdata->unk4, 1.0f, 
+            objdata->modMinZ, objdata->modMaxZ, 1.0f, 
             sp44->unk0 * 0.2f, sp44->unk4, sp44->unk8, &sp48);
-        if (objdata->unk8 != 0) {
-            dll_amSfx->SetVol(objdata->unk8, ((f32) objdata->unkE * 127.0f) / (f32) sp64);
+        if (objdata->waterLoopHandle != 0) {
+            dll_amSfx->SetVol(objdata->waterLoopHandle, ((f32) objdata->unkE * 127.0f) / (f32) sp64);
         }
         break;
-    case 4:
-        if (objdata->unk8 != 0) {
-            dll_amSfx->Stop(objdata->unk8);
-            objdata->unk8 = 0;
+    case DB_WATER_STATE_4:
+        if (objdata->waterLoopHandle != 0) {
+            dll_amSfx->Stop(objdata->waterLoopHandle);
+            objdata->waterLoopHandle = 0;
         }
         if (setup->genericA == 0) {
-            objdata->unkC = 5;
+            objdata->state = DB_WATER_STATE_5;
         } else {
             mainSetBits(setup->bitB, 0);
             mainSetBits(setup->bitA, 0);
-            objdata->unkC = 0;
+            objdata->state = DB_WATER_STATE_0;
         }
         break;
-    case 5:
+    case DB_WATER_STATE_5:
         self->opacity = 0;
         break;
     }
@@ -191,7 +200,7 @@ void DBwater_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** 
     DBwater_Data* objdata = self->data;
 
     if (visibility != 0) {
-        if ((objdata->unkC != 0) && (objdata->unkC < 4)) {
+        if ((objdata->state != 0) && (objdata->state < 4)) {
             objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
         }
     }
@@ -201,9 +210,9 @@ void DBwater_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** 
 void DBwater_obj_Free(Object* self, s32 onlySelf) {
     DBwater_Data* objdata = self->data;
     
-    if (objdata->unk8 != 0) {
-        dll_amSfx->Stop(objdata->unk8);
-        objdata->unk8 = 0;
+    if (objdata->waterLoopHandle != 0) {
+        dll_amSfx->Stop(objdata->waterLoopHandle);
+        objdata->waterLoopHandle = 0;
     }
 }
 
@@ -218,7 +227,7 @@ u32 DBwater_obj_GetDataSize(Object* self, u32 offsetAddr) {
 }
 
 // offset: 0x844 | func: 7
-static void DBwater_func_844(Object* self, DBwater_Data* objdata, s32 arg2) {
+static void DBwater_animateTexture(Object* self, DBwater_Data* objdata, s32 arg2) {
     TextureAnimator* texAnim = objExprGetTexAnimator(self, 0, 0);
     
     if (texAnim != NULL) {
@@ -245,7 +254,7 @@ static void DBwater_func_844(Object* self, DBwater_Data* objdata, s32 arg2) {
 }
 
 // offset: 0x924 | func: 8
-static void DBwater_func_924(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, Func924Struct* arg8) {
+static void DBwater_animateVertices(Object* self, f32 arg1, f32 arg2, f32 arg3, f32 arg4, f32 arg5, f32 arg6, f32 arg7, Func924Struct* arg8) {
     f32 temp_fs1;
     f32 temp_fv1;
     f32 var_fs0;
