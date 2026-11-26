@@ -15,14 +15,6 @@ typedef struct {
     Object* objCaught;
 } fishingnet_Data;
 
-typedef enum {
-    FishingNet_FLAG_0 = 0,
-    FishingNet_FLAG_1 = 1,
-    FishingNet_FLAG_2 = 2,
-    FishingNet_FLAG_4 = 4,
-    FishingNet_FLAG_8 = 8
-} fishingnet_Flags;
-
 // offset: 0x0 | ctor
 void fishingnet_ctor(void *dll) { }
 
@@ -30,7 +22,7 @@ void fishingnet_ctor(void *dll) { }
 void fishingnet_dtor(void *dll) { }
 
 // offset: 0x18 | func: 0 | export: 0
-void fishingnet_setup(Object* self, ObjSetup *setup, s32 reset) {
+void fishingnet_obj_Setup(Object* self, ObjSetup *setup, s32 reset) {
     fishingnet_Data *objdata = self->data;
 
     objdata->visible = FALSE;
@@ -45,35 +37,35 @@ void fishingnet_setup(Object* self, ObjSetup *setup, s32 reset) {
 }
 
 // offset: 0x5C | func: 1 | export: 1
-void fishingnet_control(Object* self) { }
+void fishingnet_obj_Control(Object* self) { }
 
 // offset: 0x68 | func: 2 | export: 2
-void fishingnet_update(Object* self) { }
+void fishingnet_obj_Update(Object* self) { }
 
 // offset: 0x74 | func: 3 | export: 3
-void fishingnet_print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
+void fishingnet_obj_Print(Object* self, Gfx **gdl, Mtx **mtxs, Vtx **vtxs, DLTri **pols, s8 visibility) { }
 
 // offset: 0x8C | func: 4 | export: 4
-void fishingnet_free(Object* self, s32 onlySelf) { }
+void fishingnet_obj_Free(Object* self, s32 onlySelf) { }
 
 // offset: 0x9C | func: 5 | export: 5
-u32 fishingnet_get_model_flags(Object* self) {
+u32 fishingnet_obj_GetModelFlags(Object* self) {
     return MODFLAGS_NONE;
 }
 
 // offset: 0xAC | func: 6 | export: 6
-u32 fishingnet_get_data_size(Object* self, u32 offsetAddr) {
+u32 fishingnet_obj_GetDataSize(Object* self, u32 offsetAddr) {
     return sizeof(fishingnet_Data);
 }
 
 // offset: 0xC0 | func: 7 | export: 7
-void fishingnet_set_visibility(Object* self, u8 enable) {
+void fishingnet_SetVisibility(Object* self, u8 visible) {
     fishingnet_Data *objdata = self->data;
-    objdata->visible = enable;
+    objdata->visible = visible;
 }
 
 // offset: 0xDC | func: 8 | export: 8
-void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Vec3f* heldPosition, Vec3f* endPosition) {
+void fishingnet_Draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** pols, Vec3f* heldPosition, Vec3f* lookatPosition) {
     fishingnet_Data* objdata;
     Object* caught;
     ObjectHitInfo* objhitInfo;
@@ -83,14 +75,14 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** po
     self->srt.transl.x = heldPosition->x;
     self->srt.transl.y = heldPosition->y - 0.25f;
     self->srt.transl.z = heldPosition->z;
-    endPosition->y += 0.25f;
+    lookatPosition->y += 0.25f;
 
     if (objdata->visible) {
         objAnimAdvance(self, 0.006f, gUpdateRateF, NULL);
         objprintDrawModel(self, gdl, mtxs, vtxs, pols, 1.0f);
 
-        self->srt.yaw = mathAtan2f(heldPosition->x - endPosition->x, heldPosition->z - endPosition->z) - M_90_DEGREES;
-        self->srt.roll = mathAtan2f(heldPosition->y - endPosition->y, sqrtf(SQ(heldPosition->z - endPosition->z) + SQ(heldPosition->x - endPosition->x)));
+        self->srt.yaw = mathAtan2f(heldPosition->x - lookatPosition->x, heldPosition->z - lookatPosition->z) - M_90_DEGREES;
+        self->srt.roll = mathAtan2f(heldPosition->y - lookatPosition->y, sqrtf(SQ(heldPosition->z - lookatPosition->z) + SQ(heldPosition->x - lookatPosition->x)));
         
         objhitInfo->unk40 = 16;
         objhitInfo->unk44 = 16;
@@ -101,9 +93,9 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** po
         if (objdata->objCaught != NULL) {
             caught = objdata->objCaught;
             objGetAttachPointWorldSpace(self, 0, &caught->srt.transl.x, &caught->srt.transl.y, &caught->srt.transl.z, 0);
-            caught->globalPosition.f[0] = caught->srt.transl.f[0];
-            caught->globalPosition.f[1] = caught->srt.transl.f[1];
-            caught->globalPosition.f[2] = caught->srt.transl.f[2];
+            caught->globalPosition.x = caught->srt.transl.x;
+            caught->globalPosition.y = caught->srt.transl.y;
+            caught->globalPosition.z = caught->srt.transl.z;
             caught->srt.yaw = self->srt.yaw;
             caught->srt.pitch = self->srt.roll;
             caught->srt.roll = 0;
@@ -113,7 +105,7 @@ void fishingnet_draw(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** po
 }
 
 // offset: 0x304 | func: 9 | export: 9
-void fishingnet_get_transform(Object* self, SRT* oSrt) {
+void fishingnet_GetTransform(Object* self, SRT* oSrt) {
     fishingnet_Data* objdata = self->data;
     
     oSrt->yaw = self->srt.yaw;
@@ -124,7 +116,7 @@ void fishingnet_get_transform(Object* self, SRT* oSrt) {
 }
 
 // offset: 0x338 | func: 10 | export: 10
-s32 fishingnet_catch(Object* self, s32 flags, Object* caught) {
+s32 fishingnet_State(Object* self, s32 flags, Object* caught) {
     fishingnet_Data* objdata;
     Object* player;
     s32 temp;
@@ -134,37 +126,37 @@ s32 fishingnet_catch(Object* self, s32 flags, Object* caught) {
     temp = ((DLL_210_Player*)player->dll)->vtbl->func32(player);
     
     switch (flags) {
-    case 0x1:
+    case FISHINGNET_FLAG_Unk1:
         objdata->objCaught = NULL;
         if (temp == 0) {
             objdata->visible = TRUE;
             ((DLL_210_Player*)player->dll)->vtbl->func31(player, 3);
         }
-        objdata->flags = FishingNet_FLAG_1;
+        objdata->flags = FISHINGNET_FLAG_Unk1;
         break;
-    case 0x2:
+    case FISHINGNET_FLAG_Unk2:
         if (caught != NULL) {
             objdata->objCaught = caught;
         }
         self->objhitInfo->unk58 &= ~1;
         /* fallthrough */
-    case 0x4:
+    case FISHINGNET_FLAG_Unk4:
         objdata->flags = flags;
         break;
-    case 0x8:
+    case FISHINGNET_FLAG_Unk8:
         objdata->objCaught = NULL;
         if (temp == 3) {
             objdata->visible = FALSE;
             ((DLL_210_Player*)player->dll)->vtbl->func31(player, 0);
         }
-        objdata->flags = FishingNet_FLAG_8;
+        objdata->flags = FISHINGNET_FLAG_Unk8;
         break;
-    case 0x20:
-        if (objdata->flags == FishingNet_FLAG_1) {
+    case FISHINGNET_FLAG_Unk20:
+        if (objdata->flags == FISHINGNET_FLAG_Unk1) {
             self->objhitInfo->unk58 |= 1;
         }
         break;
-    case 0x40:
+    case FISHINGNET_FLAG_Unk40:
         self->objhitInfo->unk58 &= ~1;
         break;
     }
@@ -173,14 +165,14 @@ s32 fishingnet_catch(Object* self, s32 flags, Object* caught) {
 }
 
 // offset: 0x4D4 | func: 11 | export: 11
-s32 fishingnet_func_4D4(Object* self, s32 arg1) {
-    fishingnet_Data *objdata = self->data;
+s32 fishingnet_Func4D4(Object* self, s32 arg1) {
+    fishingnet_Data* objdata = self->data;
     
     switch (arg1) {
     case 0:
-        return (objdata->flags & FishingNet_FLAG_2) == 0;
+        return (objdata->flags & FISHINGNET_FLAG_Unk2) == 0;
     case 1:
-        return objdata->flags & (FishingNet_FLAG_1 | FishingNet_FLAG_8);
+        return objdata->flags & (FISHINGNET_FLAG_Unk1 | FISHINGNET_FLAG_Unk8);
     default:
         return 0;
     }

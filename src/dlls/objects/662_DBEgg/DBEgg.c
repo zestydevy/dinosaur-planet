@@ -178,7 +178,7 @@ void DBEgg_obj_Control(Object* self) {
     case DB_EGG_STATE_4:
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         fishingnet = dll_player(player)->func78(player);
-        if (((DLL_319_fishingnet*)fishingnet->dll)->vtbl->catch(fishingnet, 0x10, 0) == 4) {
+        if (((DLL_319_fishingnet*)fishingnet->dll)->vtbl->State(fishingnet, FISHINGNET_GetFlags, NULL) == FISHINGNET_FLAG_Unk4) {
             objdata->state = DB_EGG_STATE_5;
             self->velocity.x = 0;
             self->velocity.z = 0;
@@ -293,9 +293,9 @@ void DBEgg_obj_Update(Object* self) {
     if ((damageType == Damage_Type_Fishing_Net) && (objData->state != DB_EGG_STATE_4)) {
         player = objGetPlayer();
         fishingnet = dll_player(player)->func78(player);
-        if (((DLL_319_fishingnet*)fishingnet->dll)->vtbl->catch(fishingnet, 0x10, NULL) != 2) {
+        if (((DLL_319_fishingnet*)fishingnet->dll)->vtbl->State(fishingnet, FISHINGNET_GetFlags, NULL) != FISHINGNET_FLAG_Unk2) {
             self->objhitInfo->unk58 &= ~ObjHitInfo_FLAG_1;
-            ((DLL_319_fishingnet*)fishingnet->dll)->vtbl->catch(fishingnet, 2, self);
+            ((DLL_319_fishingnet*)fishingnet->dll)->vtbl->State(fishingnet, FISHINGNET_FLAG_Unk2, self);
             objData->state = DB_EGG_STATE_4;
             STUBBED_PRINTF("Caught");
         }
