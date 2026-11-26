@@ -63,7 +63,7 @@ DLL_INTERFACE(DLL_227_Tumbleweed) {
 /*09*/ void (*Fall)(Object* self);
 /*10*/ void (*GravitateTowardsPoint)(Object* self, Vec3f* point);
 /*11*/ s32 (*IsGravitating)(Object* self);
-/*12*/ void (*StorePlayer)(Object* self, Object* player);
+/*12*/ void (*StorePlayer)(Object* self, Object* player); // TODO: not always player
 };
 
 #define dll_Tumbleweed(obj) (((DLL_227_Tumbleweed*)obj->dll)->vtbl)

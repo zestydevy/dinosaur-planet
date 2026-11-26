@@ -521,6 +521,7 @@
 667 = objects/667_DBMagicBridge
 668 = objects/668_DBdiamond
 670 = objects/670_DBExpbit
+672 = objects/672_DBwater
 673 = objects/673_DBbignest
 674 = objects/674_DBwaterplant
 676 = objects/676_DBplatform

@@ -10045,9 +10045,9 @@ u8 dll_210_func_1D1C0(Object* player) {
 }
 
 // offset: 0x1D1D0 | func: 179 | export: 78
-s32 dll_210_func_1D1D0(Object* player) {
+Object* dll_210_func_1D1D0(Object* player) {
     Player_Data* objdata = player->data;
-    return objdata->unk864;
+    return objdata->fishingnet;
 }
 
 // offset: 0x1D1E0 | func: 180 | export: 79

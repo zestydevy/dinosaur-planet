@@ -633,6 +633,11 @@ OBJ_SETUPS: dict[int, ObjSetup] = {
         ObjSetupField(0x1C, "flag1"),
         ObjSetupField(0x22, "flag2"),
     ]),
+    # DBwater
+    672: ObjSetup([
+        ObjSetupField(0x1E, "bitA"),
+        ObjSetupField(0x20, "bitB"),
+    ]),
     # DBbignest
     673: ObjSetup([
         ObjSetupField(0x18, "gamebitB"),

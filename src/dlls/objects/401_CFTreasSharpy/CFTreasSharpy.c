@@ -275,7 +275,7 @@ static s32 CFTreasSharpy_func_9E8(Object* self) {
         xDiff = objdata->chuckObj->srt.transl.x - player->srt.transl.x;
         zDiff = objdata->chuckObj->srt.transl.z - player->srt.transl.z;
         sp44 = mathAtan2f(xDiff, zDiff) & ((s16)0xFFFF);
-        if ((ABS_EXPR((objdata->unk138 - sp44)) < 0x400) && ((SQ(xDiff) + SQ(zDiff)) < distSq)) {
+        if ((M_ABS((objdata->unk138 - sp44)) < 0x400) && ((SQ(xDiff) + SQ(zDiff)) < distSq)) {
             objdata->chuckObj->srt.yaw = objdata->unk138;
             objAnimSet(self, 0x2B, 0.0f, 0);
         } else {

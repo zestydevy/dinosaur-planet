@@ -194,7 +194,7 @@ static f32 CFForceField_func_66C(Object* self) {
         smallestHeight = 10000.0f;
         for (i = 0; i < count; i++) {
             height = self->srt.transl.y - results[i]->y;
-            if (height > 0.0f && height < ABS_EXPR(smallestHeight)) {
+            if (height > 0.0f && height < M_ABS(smallestHeight)) {
                 smallestHeight = height;
             }
         }

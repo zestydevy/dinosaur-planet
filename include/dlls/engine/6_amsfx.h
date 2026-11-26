@@ -846,6 +846,9 @@ enum SoundID {
     SOUND_A3E_Vines_Rustle = 0xA3E, //WGbouncyVine
     SOUND_A3F_Boing = 0xA3F, //WGbouncyVine
 
+    SOUND_A44_DB_Water_Loop = 0xA44,
+    SOUND_A45_DB_Water_Spray = 0xA45,
+
     SOUND_A4E_Dinosaur_Grunt = 0xA4E, // used by PointBack
     SOUND_A4F_Dinosaur_Grunt = 0xA4F, // used by PointBack
     SOUND_A50_Dinosaur_Grunt = 0xA50, // used by PointBack

@@ -323,7 +323,7 @@ static void CFbarrel_doPhysics(Object* self) {
             for (resultIdx = 0; resultIdx < numResults; resultIdx++) {
                 height = self->srt.transl.y - results[resultIdx]->y;
                 if (
-                    (height > 0.0f && height < ABS_EXPR(bestHeight)) || 
+                    (height > 0.0f && height < M_ABS(bestHeight)) || 
                     (height <= 0.0f && height > -20.0f)
                 ) {
                     bestHeight = height;
@@ -445,7 +445,7 @@ static void CFbarrel_moveToAttractor(Object* self, s16 arg1, s16 arg2) {
     if (obj == NULL) {
         return;
     }
-    if (ABS_EXPR(obj->srt.transl.y - player->srt.transl.y) < 30.0f) {
+    if (M_ABS(obj->srt.transl.y - player->srt.transl.y) < 30.0f) {
         return;
     }
     xDist = obj->srt.transl.x - self->srt.transl.x;
