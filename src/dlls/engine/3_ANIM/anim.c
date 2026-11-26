@@ -301,9 +301,29 @@ typedef struct {
     -1
 };
 /*0x50*/ static u32 sObjMesgIDs[] = {
-    0x00050001, 0x00050002, 0x00050003, 0x00060001, 0x00060002, 0x000a0001, 0x000a0002, 0x000a0003, 
-    0x00000008, 0x00000009, 0x00030002, 0x00030003, 0x000a0004, 0x000a0005, 0x000a0006, 0x000f000b, 
-    0x000f000c, 0x000f000d, 0x000f000e, 0x000f000f, 0x000f0010, 0x00130001, 0x00130002
+    MSG_AnimMesg0, 
+    MSG_AnimMesg1, 
+    MSG_AnimMesg2, 
+    MSG_AnimMesg3, 
+    MSG_AnimMesg4, 
+    MSG_AnimMesg5, 
+    MSG_AnimMesg6, 
+    MSG_AnimMesg7, 
+    MSG_AnimMesg8, 
+    MSG_AnimMesg9, 
+    MSG_AnimMesg10, 
+    MSG_AnimMesg11, 
+    MSG_AnimMesg12, 
+    MSG_AnimMesg13, 
+    MSG_AnimMesg14, 
+    MSG_AnimMesg15, 
+    MSG_AnimMesg16, 
+    MSG_AnimMesg17, 
+    MSG_AnimMesg18, 
+    MSG_AnimMesg19, 
+    MSG_AnimMesg20, 
+    MSG_AnimMesg21, 
+    MSG_AnimMesg22
 };
 /*0xAC*/ static s8 _data_AC[] = {
     0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 

@@ -16,7 +16,7 @@ void AnimTest_setup(Object *self, ObjSetup *setup, s32 arg2) { }
 void AnimTest_control(Object *self) {
     dll_amSfx->WaterFallsControl();
     if (!objGetSidekick()) {
-        objSendMesgMany(OBJCONTROL_SideSetup, 0, self, 0x11, 0);
+        objSendMesgMany(OBJCONTROL_SideSetup, 0, self, MSG_11, 0);
     }
 }
 

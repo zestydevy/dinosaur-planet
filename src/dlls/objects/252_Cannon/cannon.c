@@ -147,7 +147,7 @@ dummy_label1: ;
             dll_amSfx->Play(NULL, SOUND_18, MAX_VOLUME, NULL, NULL, 0, NULL);
 
             //Send an object message, then destroy both the attacking object and the cannon
-            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
+            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, MSG_Clear_Target, self);
             objFreeObject(obj);
             objFreeObject(self);
             return;
@@ -229,7 +229,7 @@ dummy_label3: ;
             dObjectRef = obj;
 
             //Send an object message, then destroy both the attacking object and the cannon
-            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, 0xE0000, self);
+            objSendMesgMany(OBJCONTROL_Unk54, 0, 0, MSG_Clear_Target, self);
             objFreeObject(obj);
             objFreeObject(self);
             return;

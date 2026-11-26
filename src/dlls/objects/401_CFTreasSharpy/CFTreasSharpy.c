@@ -146,7 +146,7 @@ void CFTreasSharpy_obj_Update(Object* self) {
         gDLL_6_AMSFX->vtbl->Play(self, SOUND_23A_SharpClaw_Ugh_Snort, MAX_VOLUME, NULL, NULL, 0, NULL);
         objAnimSet(self, 0x101, 0.0f, 0);
         if (objdata->chuckObj != NULL) {
-            objSendMesg(objdata->chuckObj, 0x11, objdata->chuckObj, (void* ) (s32) objdata->unk8);
+            objSendMesg(objdata->chuckObj, MSG_11, objdata->chuckObj, (void* ) (s32) objdata->unk8);
         }
     }
 }
@@ -335,7 +335,7 @@ static s32 CFTreasSharpy_func_9E8(Object* self) {
             objdata->chuckObj->srt.transl.z = objdata->unkC.z;
         } else if (objdata->chuckObj != NULL) {
             mesgArg = (s32) objdata->unk8;
-            objSendMesg(objdata->chuckObj, 0x11, objGetPlayer(), (void* ) mesgArg);
+            objSendMesg(objdata->chuckObj, MSG_11, objGetPlayer(), (void* ) mesgArg);
             objdata->chuckObj = NULL;
         }
         if (objdata->unk13B != 0) {

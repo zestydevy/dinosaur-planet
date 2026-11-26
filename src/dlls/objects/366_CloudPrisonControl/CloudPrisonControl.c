@@ -4,7 +4,7 @@
 #include "macros.h"
 
 typedef struct {
-    u32 unk0;
+    u32 mesgID;
     Object* unk4;
     Object* unk8;
 } BSS8;
@@ -58,7 +58,7 @@ void CloudPrisonControl_obj_Control(Object* self) {
     data_4 = 0;
     while (objRecvMesg(self, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
-        case 0xF0004:
+        case MSG_F0004:
             if (sender->mapID == self->mapID) {
                 var_a1 = 0;
                 for (i = 0; i < data_8; i++) {
@@ -73,19 +73,19 @@ void CloudPrisonControl_obj_Control(Object* self) {
                     bss_90[data_8].unk4 = mesgArg;
                     data_8++;
                 }
-                objSendMesg(sender, 0xF0003, self, NULL);
+                objSendMesg(sender, MSG_F0003, self, NULL);
             }
             break;
-        case 0xF0007:
+        case MSG_F0007:
             STUBBED_PRINTF("Pause\n");
             break;
-        case 0xF0006:
+        case MSG_F0006:
             STUBBED_PRINTF("Continue\n");
             break;
-        case 0xF0005:
+        case MSG_F0005:
             STUBBED_PRINTF("Level sync\n");
             break;
-        case 0xF0008:
+        case MSG_F0008:
             i = 0;
             while (i < data_8 && sender != bss_90[i].unk0) {
                 i++;
@@ -101,7 +101,7 @@ void CloudPrisonControl_obj_Control(Object* self) {
             break;
         default:
             bss_8[data_4].unk4 = sender;
-            bss_8[data_4].unk0 = mesgID;
+            bss_8[data_4].mesgID = mesgID;
             bss_8[data_4].unk8 = (Object* )mesgArg;
             data_4 += 1;
             break;

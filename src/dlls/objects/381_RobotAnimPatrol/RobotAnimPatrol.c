@@ -972,11 +972,11 @@ void RobotAnimPatrol_processObjMessages(Object* self, AnimObj_Data* animObjData)
     objdata = self->data;
     while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
-        case 15:
+        case MSG_Enter_Windlift:
             objdata->unkAA = 2;
             animObjData->unk7A &= ~1;
             break;
-        case 16:
+        case MSG_Exit_Windlift:
             objdata->crashTick = 1;
             break;
         }

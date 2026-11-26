@@ -55,7 +55,7 @@ void DBdiamond_control(Object* self) {
             objFreeObjectType(self, OBJTYPE_39);
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             mainSetBits(setup->gamebitCollected, 1);
-            objSendMesg(player, 0x7000A, self, (void*)0x10000);
+            objSendMesg(player, MSG_Collect_Item, self, (ObjMesg)0x10000);
             objdata->unk0 = 1;
         }
     }

@@ -198,7 +198,7 @@ void DBEgg_obj_Control(Object* self) {
             break;
         }
         self->objhitInfo->unk58 &= ~ObjHitInfo_FLAG_1;
-        objSendMesg(player, 0x100008, self, (void* )0x38000);
+        objSendMesg(player, MSG_Carrying_Object, self, (ObjMesg)0x38000);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
         break;
     case DB_EGG_STATE_11:
@@ -469,7 +469,7 @@ static void DBEgg_collect(Object* self) {
     self->unkAF |= ARROW_FLAG_8_No_Targetting;
     mainSetBits(setup->gamebitCollected, 1);
 
-    objSendMesg(player, 0x7000A, self, (void* )0x10000);
+    objSendMesg(player, MSG_Collect_Item, self, (ObjMesg)0x10000);
 }
 
 // offset: 0x1744 | func: 10
@@ -549,7 +549,7 @@ static void DBEgg_processObjMessages(Object* self) {
 
     while (objRecvMesg(self, &messageID, &sender, (void*)&mesgArg)) {
         STUBBED_PRINTF(" Message Op State %i %i \n", messageID, mesgArg);
-        if (messageID == 0x11) {
+        if (messageID == MSG_11) {
             STUBBED_PRINTF(" Op State %i \n", mesgArg);
 
             switch (mesgArg) {

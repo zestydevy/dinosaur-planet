@@ -237,7 +237,7 @@ void smallbasket_control(Object* self) {
                     objData->unk0 = 0;
                     objSendMesg(
                         player, 
-                        0x100010,
+                        MSG_Carrying_Basket,
                         self, 
                         (void*)((objData->playerMessageHi << 0x10) | (objData->playerMessageLo & 0xFFFF))
                     );

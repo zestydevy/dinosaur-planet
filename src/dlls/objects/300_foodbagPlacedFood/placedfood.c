@@ -108,7 +108,7 @@ void PlacedFood_control(Object* self) {
     
     //Handle storing the food back into the foodbag when re-collected
     while (objRecvMesg(self, &outMessage, NULL, 0)) {
-        if (outMessage == 0x7000B) {
+        if (outMessage == MSG_Item_Collected) {
             switch (self->id) {
             case OBJ_foodbagGreenApp:                         
             case OBJ_foodbagRedApple:
@@ -218,7 +218,7 @@ void PlacedFood_control(Object* self) {
     
     //Handle re-collecting the food
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
-        objSendMesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+        objSendMesg(objGetPlayer(), MSG_Collect_Item, self, (ObjMesg)BIT_ALWAYS_1);
     }
 }
 

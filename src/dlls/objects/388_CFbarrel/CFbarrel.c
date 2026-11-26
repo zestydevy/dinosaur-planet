@@ -521,10 +521,10 @@ static void CFbarrel_processMesgLoop(Object* self) {
     
     while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
-        case 15:
+        case MSG_Enter_Windlift:
             CFbarrel_setWindLiftState(self, TRUE);
             break;
-        case 16:
+        case MSG_Exit_Windlift:
             CFbarrel_setWindLiftState(self, FALSE);
             break;
         }

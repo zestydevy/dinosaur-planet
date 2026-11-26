@@ -91,7 +91,7 @@ void CFTreasureChestKey_obj_Control(Object* self) {
             objdata->keyGiven = TRUE;
             mainSetBits(setup->gamebitCollected, 1);
             STUBBED_PRINTF(" Bit %i Set\n", setup->gamebitCollected);
-            objSendMesg(player, 0x7000A, self, (void* )0x10000);
+            objSendMesg(player, MSG_Collect_Item, self, (ObjMesg)0x10000);
         }
     }
     if (!objdata->freeKey && !objdata->guardClawAlive) {

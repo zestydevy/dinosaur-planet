@@ -71,7 +71,7 @@ void CannonBall_control(Object* self) {
             x = (x << 0x10) | (z & 0xFFFF);
 
             //Send an object message with the cannonball's last coordinates (in local mapSpace)
-            objSendMesgMany(OBJCONTROL_Baddie, 0, self, 0xD0004, (void*)x);
+            objSendMesgMany(OBJCONTROL_Baddie, 0, self, MSG_D0004, (ObjMesg)x);
         }
     }
     

@@ -471,10 +471,10 @@ static void GPSH_Shrine_handleMessages(Object* self) {
     mesg = NULL;
     while (objRecvMesg(self, &mesgID, &mesgSender, &mesg) != 0) {
         switch (mesgID) {
-        case 0x30005:
+        case MSG_30005:
             objdata->volumeASpeed = -3;
             break;
-        case 0x30006:
+        case MSG_30006:
             objdata->volumeASpeed = 0x10;
             break;
         }

@@ -385,10 +385,10 @@ static void MMshrine_func_1140(Object *self) {
 
     while (objRecvMesg(self, &message, &sp54, &outMesgArg)){
         switch (message) {
-            case 0x30005:
+            case MSG_30005:
                 objdata->unk6 = -3;
                 break;
-            case 0x30006:
+            case MSG_30006:
                 objdata->unk6 = 0x10;
                 break;
         }

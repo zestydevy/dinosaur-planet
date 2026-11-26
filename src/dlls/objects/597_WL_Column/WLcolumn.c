@@ -119,7 +119,7 @@ void WL_Column_obj_Control(Object* self) {
         
         //Send a message to the player while carried
         if (objData->sendPlayerMessage) {
-            objSendMesg(player, 0x100008, self, (void*)((objData->messageArgHi << 0x10) | (objData->messageArgLo & 0xFFFF)));
+            objSendMesg(player, MSG_Carrying_Object, self, (ObjMesg)((objData->messageArgHi << 0x10) | (objData->messageArgLo & 0xFFFF)));
         }
     }
 }

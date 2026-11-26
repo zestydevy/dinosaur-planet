@@ -69,14 +69,14 @@ void WL_podiumgem_obj_Control(Object* self) {
     if ((self->unkDC == FALSE) && (self->unkAF & ARROW_FLAG_1_Interacted)) {
         msgVal = 0x20000;
         gDLL_3_Animation->vtbl->set_variable_obj(OBJ_WL_AnimPodiumge, NULL, 0);
-        objSendMesg(player, 0x7000A, self, (void*)msgVal);
+        objSendMesg(player, MSG_Collect_Item, self, (ObjMesg)msgVal);
 
         if (objData && objData && objData) {} //fake
     }
 
     //Set gamebit after the item collection sequence 
     while (objRecvMesg(self, &msgVal, NULL, NULL)) {
-        if (msgVal == 0x7000B) {
+        if (msgVal == MSG_Item_Collected) {
             mainSetBits(objData->gamebitCollected, TRUE);
         }
     }

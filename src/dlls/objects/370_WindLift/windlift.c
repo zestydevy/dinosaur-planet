@@ -248,7 +248,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                         arg2->unk10 |= 0x40;
                         arg2->unk10 &= ~0x20;
                         temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
-                        objSendMesg(obj, 0xF, self, (void* ) (temp));
+                        objSendMesg(obj, MSG_Enter_Windlift, self, (void* ) (temp));
                         arg2->unk10 &= ~0x80;
                     } else {
                         arg2->unk10 |= 0x20;
@@ -318,7 +318,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                         arg2->unk11 = 0;
                         arg2->unkC = 0.0f;
                         temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
-                        objSendMesg(obj, 0x10, self, (void* ) (temp));
+                        objSendMesg(obj, MSG_Exit_Windlift, self, (void* ) (temp));
                         arg2->unk10 |= 0x80;
                         if (isPlayer) {
                             player->velocity.y = 0.0f;
@@ -337,7 +337,7 @@ static void WindLift_func_880(Object* self, Object* obj, WindLift_Data_1C* arg2,
                 }
                 if (!isPlayer && (xzDist < 113.0f)) {
                     temp = (((s32) (arg2->unk10 & 0xE0) >> 4) << 8) | windLiftID;
-                    objSendMesg(obj, 0x10, self, (void* ) (temp));
+                    objSendMesg(obj, MSG_Exit_Windlift, self, (void* ) (temp));
                     arg2->unk10 &= ~0xF1;
                     if (arg2->unk10 & 0xE) {
                         arg2->unk10 |= 2;

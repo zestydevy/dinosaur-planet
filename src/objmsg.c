@@ -5,8 +5,8 @@
 #include "sys/objmsg.h"
 #include "macros.h"
 
-void objInitMesgQueue(Object *obj, u32 count) {
-    ObjectMesgQueue *mesgQueue;
+void objInitMesgQueue(Object* obj, u32 count) {
+    ObjectMesgQueue* mesgQueue;
     s32 size;
     
     if (count != 0) {
@@ -25,9 +25,9 @@ void objInitMesgQueue(Object *obj, u32 count) {
     }
 }
 
-u32 objSendMesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
-    ObjectMesgQueue *mesgQueue;
-    u32 *temp_a2;
+u32 objSendMesg(Object* receiver, u32 mesgID, Object* sender, ObjMesg mesgArg) {
+    ObjectMesgQueue* mesgQueue;
+    u32* temp_a2;
     int new_var;
 
     if (receiver == NULL){
@@ -53,7 +53,7 @@ u32 objSendMesg(Object *receiver, u32 mesgID, Object *sender, void *mesgArg) {
     return 0;
 }
 
-void objSendMesgMany(s32 filter, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
+void objSendMesgMany(s32 filter, u16 flags, Object* sender, u32 mesgID, ObjMesg mesgArg) {
     Object** objects;
     s32 i;
     s32 numObjs;
@@ -79,9 +79,9 @@ void objSendMesgMany(s32 filter, u16 flags, Object *sender, u32 mesgID, void *me
     }
 }
 
-void objSendMesgManyNearby(s16 objId, f32 distance, u16 flags, Object *sender, u32 mesgID, void *mesgArg) {
-    Object *obj;
-    Object **objects;
+void objSendMesgManyNearby(s16 objId, f32 distance, u16 flags, Object* sender, u32 mesgID, ObjMesg mesgArg) {
+    Object* obj;
+    Object** objects;
     s32 i;
     s32 numObjs;
 
@@ -99,7 +99,7 @@ void objSendMesgManyNearby(s16 objId, f32 distance, u16 flags, Object *sender, u
     }
 }
 
-s32 objRecvMesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
+s32 objRecvMesg(Object* obj, u32* outMesgID, Object** outSender, ObjMesg* outMesgArg) {
     u32 i;
     ObjectMesgQueue* mesgQueue;
     
@@ -133,23 +133,23 @@ s32 objRecvMesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgA
     return FALSE;
 }
 
-s32 objPeekMesg(Object *obj, u32 *outMesgID, Object **outSender, void **outMesgArg) {
-    ObjectMesgQueue* temp_v0;
+s32 objPeekMesg(Object* obj, u32* outMesgID, Object** outSender, ObjMesg* outMesgArg) {
+    ObjectMesgQueue* mesgQueue;
 
     if (obj == NULL) {
         return FALSE;
     }
 
-    temp_v0 = obj->mesgQueue;
-    if (temp_v0 != NULL && temp_v0->count != 0) {
+    mesgQueue = obj->mesgQueue;
+    if (mesgQueue != NULL && mesgQueue->count != 0) {
         if (outMesgID != NULL) {
-            *outMesgID = temp_v0->queue[0].id;
+            *outMesgID = mesgQueue->queue[0].id;
         }
         if (outSender != NULL) {
-            *outSender = temp_v0->queue[0].sender;
+            *outSender = mesgQueue->queue[0].sender;
         }
         if (outMesgArg != NULL) {
-            *outMesgArg = temp_v0->queue[0].arg;
+            *outMesgArg = mesgQueue->queue[0].arg;
         }
 
         return TRUE;

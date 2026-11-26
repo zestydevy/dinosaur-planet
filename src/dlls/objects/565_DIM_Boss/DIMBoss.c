@@ -467,7 +467,7 @@ int dll_565_func_9E4(Object* self, Object* animObj, AnimObj_Data* animData, s8 p
                 objFreeObject(self);
             }
             
-            objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
+            objSendMesg(objGetPlayer(), MSG_Clear_Target, self, NULL);
             mainSetBits(baddie->unk39E, 0);
             mainSetBits(baddie->unk39C, 1);
             mainSetBits(0x210, 1);
@@ -707,7 +707,7 @@ void dll_565_func_14F8(Object* self, ObjFSA_Data* fsa) {
         baddie->unk3A8 = 0;
     }
     
-    objSendMesg(hitBy, 0xE0001, self, NULL);
+    objSendMesg(hitBy, MSG_E0001, self, NULL);
 }
 
 #endif
@@ -1340,7 +1340,7 @@ s32 dll_565_func_3D3C(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             objFreeObject(self);
         }
         
-        objSendMesg(objGetPlayer(), 0xE0000, self, 0);
+        objSendMesg(objGetPlayer(), MSG_Clear_Target, self, 0);
         mainSetBits(baddie->unk39E, 0);
         mainSetBits(baddie->unk39C, 1);
     }

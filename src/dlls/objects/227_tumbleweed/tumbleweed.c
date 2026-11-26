@@ -781,7 +781,7 @@ int Tumbleweed_handleCarryBehaviour(Object* self) {
     //Send message to player object while being carried
     if (objData->beingCarried) {
         messageArg = (objData->carryMessageArgHi << 0x10) | (objData->carryMessageArgLo & 0xFFFF);
-        objSendMesg(player, 0x100008, self, (void*)messageArg);
+        objSendMesg(player, MSG_Carrying_Object, self, (ObjMesg)messageArg);
     }
 
     return FALSE;

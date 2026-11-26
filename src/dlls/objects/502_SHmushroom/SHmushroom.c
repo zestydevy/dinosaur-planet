@@ -175,7 +175,7 @@ void SHmushroom_control(Object* self) {
 		   This can cause a softlock while saving Queen EarthWalker in SwapStone Hollow.
 		*/
 		while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
-			if (outMesgID == 0x7000B) {
+			if (outMesgID == MSG_Item_Collected) {
 				if (self->modelInstIdx == SHmushroom_MODEL_0_Blue_Mushroom) {
 					dinoFoodBag = ((DLL_210_Player*)player->dll)->vtbl->func66(player, 16);
 
@@ -611,9 +611,9 @@ static void SHmushroom_tick_state_machine(Object* self, SHmushroom_Data* objData
 		   @bug: can appear when collecting White Mushrooms before Blue Mushrooms (with no anim object set)
 		*/
 		objSendMesg(player,
-			0x7000A,
+			MSG_Collect_Item,
 			self,
-			(void*)BIT_Tutorial_Collected_Blue_Mushroom
+			(ObjMesg)BIT_Tutorial_Collected_Blue_Mushroom
 		);
 
 		//Set this mushroom's collection gamebit, so it won't reappear

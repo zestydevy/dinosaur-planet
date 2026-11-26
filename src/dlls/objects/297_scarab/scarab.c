@@ -102,7 +102,7 @@ void scarab_control(Object* self) {
     //Handle flags
     if (objData->flags & Scarab_FLAG_Wait_for_Message) {
         while (objRecvMesg(self, &messageID, 0, 0)){
-            if (messageID == 0x7000B) {
+            if (messageID == MSG_Item_Collected) {
                 scarab_collect(self, player, objData);
                 objData->flags &= ~Scarab_FLAG_Wait_for_Message;
             }
@@ -341,7 +341,7 @@ void scarab_control(Object* self) {
             if (!mainGetBits(BIT_Tutorial_Collected_Scarab)) {
                 gDLL_3_Animation->vtbl->set_variable_obj(dSequenceIDs[objData->scarabTypeIndex], 0, 0);
                 messageID = 0;
-                objSendMesg(player, 0x7000A, self, 0);
+                objSendMesg(player, MSG_Collect_Item, self, OBJMESG_NONE);
                 mainSetBits(BIT_Tutorial_Collected_Scarab, 1);
                 objData->flags |= 1;
             } else {
@@ -369,7 +369,7 @@ void scarab_control(Object* self) {
             if (vec3DistanceXZ(&player->globalPosition, &self->globalPosition) < 20.0f) {
                 //Hurt player (unless special Rainbow Scarab immunity gamebit is set!)
                 if (mainGetBits(BIT_Player_Immune_to_Rainbow_Scarabs) == 0) {
-                    objSendMesg(player, 0x60004, self, (void*)1);
+                    objSendMesg(player, MSG_Hurt_Player_Knock_Down_Reverse, self, /*damage*/(ObjMesg)1);
                 }
 
                 //Jolt backwards slightly

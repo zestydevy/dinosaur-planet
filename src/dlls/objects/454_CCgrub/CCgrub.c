@@ -107,7 +107,7 @@ void CCgrub_obj_Control(Object* self) {
     while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
         STUBBED_PRINTF("msg %d\n", outMesgID);
 
-        if (outMesgID == 0x7000B) {
+        if (outMesgID == MSG_Item_Collected) {
             STUBBED_PRINTF("grub has been collected\n");
 
             player = objGetPlayer();
@@ -246,7 +246,7 @@ void CCgrub_obj_Control(Object* self) {
 
     if (self->unkAF & ARROW_FLAG_1_Interacted) {
         // @bug: the gamebit used here is also used for disabling particles!
-        objSendMesg(objGetPlayer(), 0x7000A, self, (void* )BIT_5);
+        objSendMesg(objGetPlayer(), MSG_Collect_Item, self, (ObjMesg)BIT_5);
 
         if (self->curModAnimId != 0) {
             objAnimSet(self, 0, 0.0f, 0);

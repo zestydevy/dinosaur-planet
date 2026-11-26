@@ -155,7 +155,7 @@ void MagicDust_obj_Control(Object* self) {
     //Wait for the "You have picked up a… MAGIC GEM!" sequence to end (if it's active)
     if (objData->flags & MagicDust_FLAG_Tutorial_Sequence) {
         while (objRecvMesg(self, &outMesgID, NULL, NULL)) {
-            if (outMesgID == 0x7000B) {
+            if (outMesgID == MSG_Item_Collected) {
                 MagicDust_collect(self, player, objData);
                 objData->flags &= ~MagicDust_FLAG_Tutorial_Sequence;
             }
@@ -353,7 +353,7 @@ void MagicDust_obj_Control(Object* self) {
             if (mainGetBits(BIT_Tutorial_Magic_Crystal) == 0) {
                 gDLL_3_Animation->vtbl->set_variable_obj(objData->animObjectID, NULL, 0);
                 outMesgID = 0;
-                objSendMesg(player, 0x7000A, self, NULL);
+                objSendMesg(player, MSG_Collect_Item, self, OBJMESG_NONE);
                 mainSetBits(BIT_Tutorial_Magic_Crystal, 1);
                 objData->flags |= MagicDust_FLAG_Tutorial_Sequence;
             } else {

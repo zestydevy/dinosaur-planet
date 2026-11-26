@@ -212,7 +212,7 @@ void LaserBeam_obj_Control(Object* self) {
 
                         objData->playerKnockbackDir.transl.x = obj->srt.transl.x + (cos * distance);
                         objData->playerKnockbackDir.transl.z = obj->srt.transl.z + (sin * distance);
-                        objSendMesg(obj, 0x60003, (Object*)&objData->playerKnockbackDir, NULL);
+                        objSendMesg(obj, MSG_Hurt_Player_Knock_Down, (Object*)&objData->playerKnockbackDir, /*damage*/(ObjMesg)0);
                         objData->playerZapCooldown = 20;
                     }
                 }

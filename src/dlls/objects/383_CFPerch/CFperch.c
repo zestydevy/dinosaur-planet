@@ -36,7 +36,7 @@ void CFPerch_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs, DLTri** 
 
 // offset: 0x128 | func: 4 | export: 4
 void CFPerch_obj_Free(Object* self, s32 onlySelf) {
-    objSendMesgMany(OBJ_EnergyGem4, 0, self, 0x40001, 0);
+    objSendMesgMany(OBJ_EnergyGem4, 0, self, MSG_40001, 0);
 }
 
 // offset: 0x178 | func: 5 | export: 5

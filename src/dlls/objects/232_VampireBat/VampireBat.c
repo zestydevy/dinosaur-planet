@@ -484,7 +484,7 @@ static s32 VampireBat_logicState3Dying(Object* self, ObjFSA_Data* fsa, f32 updat
 
     //When hitting the floor: send a message, advance state, and free self
     if (objData->heightAboveFloor <= 0.0f) {
-        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_ALL | OBJMSG_SEND_IGNORE_SENDER, self, MSG_Clear_Target, self);
         objFreeObject(self);
         return FSA_NEXTSTATE_SYNC(VampireBat_LSTATE_4_Dead);
     }

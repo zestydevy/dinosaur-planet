@@ -265,7 +265,7 @@ void WCSunTempleLaser_obj_Control(Object* self) {
                         
                         if ((objData->unkPlayerMessage == 0) || (objData->unkPlayerMessage == 1)) {
                             //NOTE: casting an SRT* to an Object*, but the player code only reads the SRT portion when handling this message, so it's safe!
-                            objSendMesg(player, 0x60003, (Object*)&objData->playerKnockbackDir, NULL);
+                            objSendMesg(player, MSG_Hurt_Player_Knock_Down, (Object*)&objData->playerKnockbackDir, /*damage*/(ObjMesg)0);
                         }
                         
                         objData->playerZapCooldown = 20;

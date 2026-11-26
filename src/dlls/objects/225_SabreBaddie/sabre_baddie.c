@@ -827,7 +827,7 @@ s32 SabreBaddie_logicState4(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         self->objhitInfo->unk58 &= ~1;
         self->unkAF |= 8;
     } else if ((gUpdateRate * 4) >= self->opacity) {
-        objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
+        objSendMesg(objGetPlayer(), MSG_Clear_Target, self, NULL);
         return FSA_NEXTSTATE_SYNC(SabreBaddie_LSTATE_5);
     }
 

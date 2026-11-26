@@ -101,7 +101,7 @@ static int CFCage_animCallback(Object* actor, Object* animObj, AnimObj_Data* ani
         return 0;
     } else {
         while (objRecvMesg(actor, &mesgID, &sender, &mesgArg) != 0) {
-            if (mesgID == 0xA0005) {
+            if (mesgID == MSG_AnimMesg13) {
                 mainSetBits(setup->gamebit, 1);
             }
             if (1){} // @fake

@@ -657,7 +657,7 @@ static s32 CFGuardian_control(Object* self) {
     ((DLL_53_movelib*)gTempDLLInsts[1])->vtbl->func0(self, &objdata->movedata);
     while (objRecvMesg(self, &mesgID, NULL, &mesgArg) != 0) {
         switch (mesgID) {
-        case 15:
+        case MSG_Enter_Windlift:
             // enter windlift
             STUBBED_PRINTF(" Guardian In Elevatoe "); // guessed location
             objdata->state = CFGUARDIAN_STATE_InWindLift;
@@ -671,7 +671,7 @@ static s32 CFGuardian_control(Object* self) {
             objdata->talkState = CFGUARDIAN_TALK_Disabled;
             objdata->flags |= CFGUARDIAN_FLAG_1;
             break;
-        case 16:
+        case MSG_Exit_Windlift:
             // exit windlift
             STUBBED_PRINTF("Guardian Out of WindLIft "); // guessed location
             objAnimSet(self, CFGUARDIAN_MODANIM_Idle, 0, 0);

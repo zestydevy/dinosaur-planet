@@ -953,7 +953,7 @@ s32 DBStealerWorm_animState5Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) 
     if (fsa->enteredAnimState) {
         objData = baddie->objdata;
         if (objData->stolenEgg != NULL) {
-            objSendMesg(objData->stolenEgg, 0x11, self, (void*)0x10);
+            objSendMesg(objData->stolenEgg, MSG_11, self, (void*)0x10);
             objAddObjectType(objData->stolenEgg, OBJTYPE_38);
             objData->stolenEgg = NULL;
             objData->targetIdx = 1;
@@ -1141,7 +1141,7 @@ s32 DBStealerWorm_animState8PickUpEgg(Object* self, ObjFSA_Data* fsa, f32 update
     
     if (fsa->unk308 & 0x200) {
         objData->stolenEgg = fsa->target;
-        objSendMesg(objData->stolenEgg, 0x11, self, (void*)0x12);
+        objSendMesg(objData->stolenEgg, MSG_11, self, (void*)0x12);
         objFreeObjectType(objData->stolenEgg, OBJTYPE_38);
     }
     
@@ -1178,7 +1178,7 @@ s32 DBStealerWorm_animState9ThrowEgg(Object* self, ObjFSA_Data* fsa, f32 updateR
     objData->turnFlags |= DBStealerWorm_TURNFLAG_4;
     
     if (fsa->unk308 & 0x200) {
-        objSendMesg(objData->stolenEgg, 0x11, self, (void*)0x11);
+        objSendMesg(objData->stolenEgg, MSG_11, self, (void*)0x11);
         objAddObjectType(objData->stolenEgg, OBJTYPE_38);
         objData->stolenEgg = NULL;
     }
@@ -1262,7 +1262,7 @@ s32 DBStealerWorm_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRat
         gDLL_18_objfsa->vtbl->set_anim_state(self, fsa, DBStealerWorm_ASTATE_6_Dying);
         objData->targetIdx = 0;
     } else if (fsa->unk33A) {
-        objSendMesgMany(0, 3, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, MSG_Clear_Target, self);
         
         if (self->setup == NULL) {
             objFreeObject(self);

@@ -175,7 +175,7 @@ void CFCrystal_func_288(Object* self) {
     camUseShake();
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
-        case 0x110001:
+        case MSG_110001:
             objdata->unk0[0] = sender->srt.transl.x;
             objdata->unk10[0] = 1945.0f;
             objdata->unk20[0] = sender->srt.transl.z;
@@ -185,7 +185,7 @@ void CFCrystal_func_288(Object* self) {
             STUBBED_PRINTF("Setting  FY %f \n", &sender->srt.transl.y);
             STUBBED_PRINTF(" Cry action %d\n", objdata->unk30[1] + objdata->unk30[2] + objdata->unk30[3] + 0x7C);
             break;
-        case 0x110002:
+        case MSG_110002:
             objdata->unk0[1] = sender->srt.transl.x;
             objdata->unk10[1] = 1945.0f;
             objdata->unk20[1] = sender->srt.transl.z;
@@ -194,14 +194,14 @@ void CFCrystal_func_288(Object* self) {
             envfxAction(self, player, (objdata->unk30[1] + objdata->unk30[2] + objdata->unk30[3] + 0x7C), 0);
             STUBBED_PRINTF(" Cry action %d\n", objdata->unk30[1] + objdata->unk30[2] + objdata->unk30[3] + 0x7C);
             break;
-        case 0x110003:
+        case MSG_110003:
             objdata->unk0[2] = sender->srt.transl.x;
             objdata->unk10[2] = 1945.0f;
             objdata->unk20[2] = sender->srt.transl.z;
             objdata->unk30[2] = 1;
             envfxAction(self, player, 0x7F, 0);
             break;
-        case 0x110004:
+        case MSG_110004:
             objdata->unk0[3] = sender->srt.transl.x;
             objdata->unk10[3] = sender->srt.transl.y;
             objdata->unk20[3] = sender->srt.transl.z;
@@ -211,16 +211,16 @@ void CFCrystal_func_288(Object* self) {
     }
     var_fv0++; var_fv0--; // @fake
     if (objdata->unk30[3] == 0) {
-        objSendMesgMany(OBJ_CFMainCrystal, OBJMSG_SEND_FILTER_ID | OBJMSG_SEND_IGNORE_SENDER, self, 0x110004, NULL);
+        objSendMesgMany(OBJ_CFMainCrystal, OBJMSG_SEND_FILTER_ID | OBJMSG_SEND_IGNORE_SENDER, self, MSG_110004, NULL);
     }
     if ((mainGetBits(BIT_CRF_Red_PowerBase) != 0) && (objdata->unk30[0] == 0)) {
-        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110001, NULL);
+        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, MSG_110001, NULL);
     }
     if ((mainGetBits(BIT_CRF_Green_PowerBase) != 0) && (objdata->unk30[1] == 0)) {
-        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110002, NULL);
+        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, MSG_110002, NULL);
     }
     if ((mainGetBits(BIT_CRF_Blue_PowerBase) != 0) && (objdata->unk30[2] == 0)) {
-        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, 0x110003, NULL);
+        objSendMesgMany(OBJ_CFPowerBase, OBJMSG_SEND_FILTER_ID, self, MSG_110003, NULL);
     }
     for (i = 0; i < 10; i++) { objdata->unk38[i].unk1B = 0; }
     sp8C = 0;
@@ -407,8 +407,8 @@ void CFCrystal_func_11B8(Object* self) {
 
     mesgArg = NULL;
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
-        if (mesgID == 0x110004) {
-            objSendMesg(sender, 0x110004, self, NULL);
+        if (mesgID == MSG_110004) {
+            objSendMesg(sender, MSG_110004, self, NULL);
         }
     }
     bss_0 = self;

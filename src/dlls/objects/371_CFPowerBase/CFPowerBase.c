@@ -118,22 +118,22 @@ static int CFPowerBase_animCallback(Object* self, Object* animObj, AnimObj_Data*
     mesgArg = NULL;
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
-        case 0x110001:
+        case MSG_110001:
             if ((objdata->gamebit == BIT_CRF_Red_PowerBase) && (animObjData->time > 460)) {
-                objSendMesg(sender, 0x110001, self, NULL);
+                objSendMesg(sender, MSG_110001, self, NULL);
             }
             break;
-        case 0x110002:
+        case MSG_110002:
             if ((objdata->gamebit == BIT_CRF_Green_PowerBase) && (animObjData->time > 460)) {
-                objSendMesg(sender, 0x110002, self, NULL);
+                objSendMesg(sender, MSG_110002, self, NULL);
             }
             break;
-        case 0x110003:
+        case MSG_110003:
             if ((objdata->gamebit == BIT_CRF_Blue_PowerBase) && (animObjData->time > 460)) {
-                objSendMesg(sender, 0x110003, self, NULL);
+                objSendMesg(sender, MSG_110003, self, NULL);
             }
             break;
-        case 0xA0005:
+        case MSG_AnimMesg13:
             mainSetBits(objdata->gamebit, 1);
             break;
         }

@@ -385,7 +385,7 @@ static void RobotPatrol_moveAndShoot(Object* self, RobotPatrol_Data* objdata, Ro
     u32 mesgID;
     Object* mesgSender;
     Object* player;
-    void* mesgArg;
+    ObjMesg mesgArg;
     RobotPatrol_Data* objdata2;
     f32 playerDist;
     Vec3f vec;
@@ -396,10 +396,10 @@ static void RobotPatrol_moveAndShoot(Object* self, RobotPatrol_Data* objdata, Ro
     mesgArg = NULL;
     while (objRecvMesg(self, &mesgID, &mesgSender, &mesgArg) != 0) {
         switch (mesgID) {
-        case 0xF0003:
+        case MSG_F0003:
             objdata->unk74 = mesgSender;
             break;
-        case 0xF0002:
+        case MSG_RobotPatrol_SetCurve:
             objdata->prevCurveUID = objdata->destCurveUID;
             objdata->destCurveUID = (s32) mesgArg;
             objdata->destDist = 1000.0f;
@@ -430,7 +430,7 @@ static void RobotPatrol_moveAndShoot(Object* self, RobotPatrol_Data* objdata, Ro
             }
             break;
         case 1:
-            mesgArg = (void*)RobotPatrol_move(self, body, objdata, 1);
+            mesgArg = (ObjMesg)RobotPatrol_move(self, body, objdata, 1);
             if ((playerDist < 300.0f) && objdata->hasVoxLineOfSightToPlayer) {
                 objdata->combatState = 2;
                 objdata->alertTimer = 300;
@@ -445,7 +445,7 @@ static void RobotPatrol_moveAndShoot(Object* self, RobotPatrol_Data* objdata, Ro
             }
             break;
         case 2:
-            mesgArg = (void*)RobotPatrol_move(self, body, objdata, 1);
+            mesgArg = (ObjMesg)RobotPatrol_move(self, body, objdata, 1);
             if ((playerDist > 300.0f) || !objdata->hasVoxLineOfSightToPlayer) {
                 objdata->combatState = 1;
             }
@@ -470,8 +470,8 @@ static void RobotPatrol_moveAndShoot(Object* self, RobotPatrol_Data* objdata, Ro
                 objdata->getNextCurveDebounce -= 1;
             }
             if ((objdata->getNextCurveDebounce == 0) && (objdata->destDist < 3.0f)) {
-                mesgArg = (void* ) objdata->destCurveUID;
-                objSendMesg(objdata->unk74, 0xF0001, self, mesgArg);
+                mesgArg = (ObjMesg) objdata->destCurveUID;
+                objSendMesg(objdata->unk74, MSG_RobotPatrol_GetNextCurve, self, mesgArg);
                 objdata->getNextCurveDebounce = 0x78;
             }
         }

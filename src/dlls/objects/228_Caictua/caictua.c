@@ -780,7 +780,7 @@ s32 Caictua_logicState3Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
         objData->unk8 = 0.0f;
         fsa->animState = Caictua_ASTATE_3_Dying;
     } else if (fsa->unk33A) {
-        objSendMesgMany(0, 3, self, 0xE0000, self);
+        objSendMesgMany(0, 3, self, MSG_Clear_Target, self);
         
         //@bug?: freeing before reaching next state, so a collectable won't be dropped?
         if (self->setup == NULL) {

@@ -141,7 +141,7 @@ static int dll_368_animCallback(Object* self, Object* animObj, AnimObj_Data* ani
             self->unkE0 = 1;
         }
         while (objRecvMesg(self, &mesgID, &sender, NULL) != 0) {
-            if (mesgID == 0xA0005) {
+            if (mesgID == MSG_AnimMesg13) {
                 mainSetBits(BIT_Played_Seq_0041_Scales_Kills_The_Queen, 1);
                 lfxAction(self, self, 0x18, 0, 0, NULL);
             }

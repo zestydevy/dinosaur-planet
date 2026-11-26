@@ -303,9 +303,9 @@ void SHkillermushroom_control(Object* self) {
                 //Send message to player, displaying Red Mushroom's tutorial box
                 //@bug: should use unique Red Mushroom tutorial gamebit, not the Blue Mushroom gamebit?
                 objSendMesg(player,
-                    0x7000A,
+                    MSG_Collect_Item,
                     self,
-                    (void*)BIT_Tutorial_Collected_Blue_Mushroom
+                    (ObjMesg)BIT_Tutorial_Collected_Blue_Mushroom
                 );
 
                 objData->state = SHkillermushroom_STATE_10_Hidden;

@@ -731,7 +731,7 @@ s32 BaddieControl_check_hit(Object* obj, ObjFSA_Data* fsa, Unk80009024* arg2, s3
             *soundHandle = 0;
         }
 
-        objSendMesg(hitBy, 0xE0001, obj, NULL);
+        objSendMesg(hitBy, MSG_E0001, obj, OBJMESG_NONE);
     }
 
     return hitType;
@@ -746,24 +746,24 @@ s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s1
     mesgArg = NULL;
     while (objRecvMesg(obj, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
-            case 0x140001:
+            case MSG_140001:
                 dll_amSfx->Play(obj, SOUND_1E3_SharpClaw_Ah_Shuddup, MAX_VOLUME, NULL, NULL, 0, NULL);
                 break;
-            case 0x4:
-                objSendMesg(sender, 5, obj, NULL);
+            case MSG_4:
+                objSendMesg(sender, MSG_5, obj, OBJMESG_NONE);
                 break;
-            case 0xE0000:
+            case MSG_Clear_Target:
                 if (sender == fsa->target) {
                     fsa->logicState = nextlogicStateA;
                     fsa->target = NULL;
                     fsa->unk33D = 0;
                 }
                 break;
-            case 0xB:
+            case MSG_B:
                 fsa->unk342 = mesgArg;
                 break;
-            case 0x1:
-            case 0xA0001:
+            case MSG_1:
+            case MSG_AnimMesg5:
                 if (nextlogicStateB != fsa->logicState) {
                     BaddieControl_func_148C(obj, fsa, arg2, arg3, arg4, nextlogicStateA, arg7, 0, 1);
                     fsa->logicState = nextlogicStateB;
@@ -772,7 +772,7 @@ s32 BaddieControl_func_1D88(Object* obj, ObjFSA_Data* fsa, Unk80009024 *arg2, s1
                     return 1;
                 }
                 break;
-            case 0x3:
+            case MSG_3:
                 if (nextlogicStateB == fsa->logicState) {
                     fsa->unk33D = 0;
                     fsa->target = NULL;

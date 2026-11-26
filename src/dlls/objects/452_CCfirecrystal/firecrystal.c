@@ -90,7 +90,7 @@ void CCfirecrystal_control(Object* self) {
     case FireCrystal_State_3_Collected:
         while (objRecvMesg(self, &message, 0, 0)){
             switch (message) {
-            case 0x7000B:
+            case MSG_Item_Collected:
                 objData->state = FireCrystal_State_1_Finished;
                 CCfirecrystal_free(self, 0);
             default:
@@ -110,9 +110,9 @@ void CCfirecrystal_control(Object* self) {
             //Have the player scoop up the item, and play a tutorial cutscene if needed
             objSendMesg(
                 objGetPlayer(), 
-                0x7000A, 
+                MSG_Collect_Item, 
                 self, 
-                (void*)BIT_Tutorial_Fire_Crystal
+                (ObjMesg)BIT_Tutorial_Fire_Crystal
             );
         }
         break;

@@ -150,7 +150,7 @@ void SidekickToy_control(Object* self) {
     
     //Check for message from player DLL, sent when ball collected
     while (objRecvMesg(self, &receivedMessage, 0, 0)){
-        if (receivedMessage == 0x7000B) {
+        if (receivedMessage == MSG_Item_Collected) {
             objdata->timer = 0.0f;
             objdata->state = TOY_STATE_4_Vanish;
         }
@@ -175,7 +175,7 @@ void SidekickToy_control(Object* self) {
         }
         if (self->unkAF & ARROW_FLAG_1_Interacted) {
             ((DLL_Unknown*)gDLL_3_Animation)->vtbl->func[30].withThreeArgs(0x5BA, 0, 0);
-            objSendMesg(objGetPlayer(), 0x7000A, self, (void*)BIT_ALWAYS_1);
+            objSendMesg(objGetPlayer(), MSG_Collect_Item, self, (ObjMesg)BIT_ALWAYS_1);
             objdata->state = TOY_STATE_3_Collected;
         }
         break;

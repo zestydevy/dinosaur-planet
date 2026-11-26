@@ -379,10 +379,10 @@ static void CCSH_Shrine_process_obj_messages(Object* self) {
     mesgArg = NULL;
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg) != 0) {
         switch (mesgID) {
-        case 0x30005:
+        case MSG_30005:
             objdata->unk6 = -3;
             break;
-        case 0x30006:
+        case MSG_30006:
             objdata->unk6 = 0x10;
             break;
         }

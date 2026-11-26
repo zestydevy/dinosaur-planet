@@ -245,7 +245,7 @@ void DFP_LevelControl_handleAct1(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        objSendMesg(player, 0x60005, self, 0);
+        objSendMesg(player, MSG_Hurt_Player_DFP_FloorTile_Zap, self, /*damage*/(ObjMesg)0);
     }
     
     //Enable object groups
@@ -319,7 +319,7 @@ void DFP_LevelControl_handleAct2(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        objSendMesg(player, 0x60005, self, 0);
+        objSendMesg(player, MSG_Hurt_Player_DFP_FloorTile_Zap, self, /*damage*/(ObjMesg)0);
     }
     
     //Enable object groups
@@ -388,7 +388,7 @@ void DFP_LevelControl_handleAct3(Object* self) {
     //Zap player
     if (mainGetBits(BIT_DFPT_Zapped_by_Floor_Tiles)) {
         objData->zappedTimer = 300;
-        objSendMesg(player, 0x60005, self, 0);
+        objSendMesg(player, MSG_Hurt_Player_DFP_FloorTile_Zap, self, /*damage*/(ObjMesg)0);
     }
 
     //Enable object groups

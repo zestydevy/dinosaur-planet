@@ -827,7 +827,7 @@ s32 SnowWormSmall_logicState2Dying(Object* self, ObjFSA_Data* fsa, f32 updateRat
         func_800267A4(self);
         self->unkAF |= ARROW_FLAG_8_No_Targetting;
     } else if (fsa->unk33A) {
-        objSendMesgMany(0, 1 | 2, self, 0xE0000, self);
+        objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, self, MSG_Clear_Target, self);
 
         if (self->setup == NULL) {
             objFreeObject(self);

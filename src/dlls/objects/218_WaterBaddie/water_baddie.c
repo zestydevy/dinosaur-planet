@@ -675,7 +675,7 @@ s32 WaterBaddie_logicState0Hit(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
 // offset: 0x1E50 | func: 20
 s32 WaterBaddie_logicState1Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
     if (fsa->enteredLogicState) {
-        objSendMesg(objGetPlayer(), 0xE0000, self, NULL);
+        objSendMesg(objGetPlayer(), MSG_Clear_Target, self, NULL);
         fsa->target = NULL;
         fsa->unk4.mode = 0;
         fsa->unk33D = 0;

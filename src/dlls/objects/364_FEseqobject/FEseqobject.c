@@ -110,7 +110,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
     while (objRecvMesg(self, &mesgID, &mesgSender, &mesg)) {
         if (!(animObjData->unk9D & 0x80)) {
             switch (mesgID) {
-            case 0xF000B:
+            case MSG_AnimMesg15:
                 objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
@@ -120,10 +120,10 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    objSendMesg(receiver, 0x130001, self, NULL);
+                    objSendMesg(receiver, MSG_AnimMesg21, self, NULL);
                 }
                 break;
-            case 0xF000C:
+            case MSG_AnimMesg16:
                 objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
@@ -133,10 +133,10 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    objSendMesg(receiver, 0x130002, self, NULL);
+                    objSendMesg(receiver, MSG_AnimMesg22, self, NULL);
                 }
                 break;
-            case 0xF000D:
+            case MSG_AnimMesg17:
                 objects = objGetAllOfType(OBJTYPE_Baddie, &objCount);
                 for (i = 0; i < objCount; i++) {
                     obj = objects[i];
@@ -146,7 +146,7 @@ int FEseqobject_anim_callback(Object *self, Object *animObj, AnimObj_Data *animO
                     }
                 }
                 if (receiver) {
-                    objSendMesg(receiver, 0x130003, self, NULL);
+                    objSendMesg(receiver, MSG_130003, self, NULL);
                 }
                 break;
             }

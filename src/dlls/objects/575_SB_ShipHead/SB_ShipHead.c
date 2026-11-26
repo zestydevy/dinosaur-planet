@@ -89,17 +89,17 @@ void SB_ShipHead_control(Object *self) {
     }
     if (objRecvMesg(self, &outMesgID, &outSender, &outMesgArg)) {
         switch (outMesgID) {
-        case 0x130001:
+        case MSG_AnimMesg21:
             dll = dllLoad(DLL_ID_194, 1);
             ((DLL_194*)dll)->vtbl->base.func0(self, 0, NULL, 1, -1, 8, 0);
             if (dll != NULL) {
                 dllFree(dll);
             }
             break;
-        case 0x130002:
+        case MSG_AnimMesg22:
             sp3B = 1;
             break;
-        case 0x130003:
+        case MSG_130003:
             sp3B = 2;
             break;
         }

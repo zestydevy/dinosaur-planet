@@ -695,20 +695,20 @@ typedef struct {
 };
 
 /*0x8F0*/ static CmdmenuPage dCmdmenuPages[] = {
-    /*0*/  { dPage0ItemsKrystal,         0, 0x80001, R_CBUTTONS },  // Krystal items
-    /*1*/  { dPage1ItemsSabre,           0, 0x80001, R_CBUTTONS },  // Sabre items
-    /*2*/  { dPage2FoodActionsKrystal,   0, 0x80001, R_CBUTTONS },  // Foodbag actions (Krystal)
-    /*3*/  { dPage3FoodActionsSabre,     0, 0x80001, R_CBUTTONS },  // Foodbag actions (Sabre)
-    /*4*/  { dPage4FoodItemsKrystal,     0, 0x80001, R_CBUTTONS },  // Foodbag items (Krystal)
-    /*5*/  { dPage5FoodItemsSabre,       0, 0x80001, R_CBUTTONS },  // Foodbag items (Sabre)
-    /*6*/  { dPage6MagicSpells,          0, 0x80002, L_CBUTTONS },  // Magic spells
-    /*7*/  { dPage7CommandsTricky,       0, 0x80009, D_CBUTTONS },  // Sidekick commands (Tricky)
-    /*8*/  { sPage8CommandsKyte,         0, 0x80009, D_CBUTTONS },  // Sidekick commands (Kyte)
-    /*9*/  { dPage9FoodActionsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Krystal)
-    /*10*/ { dPage10FoodActionsTricky,  0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag actions (Sabre)
-    /*11*/ { dPage11FoodItemsKyte,      0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag items (Krystal)
-    /*12*/ { dPage12FoodItemsTricky,    0, 0x80001, R_CBUTTONS },  // Dinosaur foodbag items (Sabre)
-    /*13*/ { NULL,                      0, 0,       0 }
+    /*0*/  { dPage0ItemsKrystal,         0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Krystal items
+    /*1*/  { dPage1ItemsSabre,           0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Sabre items
+    /*2*/  { dPage2FoodActionsKrystal,   0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Foodbag actions (Krystal)
+    /*3*/  { dPage3FoodActionsSabre,     0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Foodbag actions (Sabre)
+    /*4*/  { dPage4FoodItemsKrystal,     0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Foodbag items (Krystal)
+    /*5*/  { dPage5FoodItemsSabre,       0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Foodbag items (Sabre)
+    /*6*/  { dPage6MagicSpells,          0, MSG_Cmdmenu_Spell,  L_CBUTTONS },  // Magic spells
+    /*7*/  { dPage7CommandsTricky,       0, MSG_Cmdmenu_Side,   D_CBUTTONS },  // Sidekick commands (Tricky)
+    /*8*/  { sPage8CommandsKyte,         0, MSG_Cmdmenu_Side,   D_CBUTTONS },  // Sidekick commands (Kyte)
+    /*9*/  { dPage9FoodActionsKyte,      0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Dinosaur foodbag actions (Krystal)
+    /*10*/ { dPage10FoodActionsTricky,   0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Dinosaur foodbag actions (Sabre)
+    /*11*/ { dPage11FoodItemsKyte,       0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Dinosaur foodbag items (Krystal)
+    /*12*/ { dPage12FoodItemsTricky,     0, MSG_Cmdmenu_Item,   R_CBUTTONS },  // Dinosaur foodbag items (Sabre)
+    /*13*/ { NULL,                       0, 0,       0 }
 };
 
 /*0x9D0*/ static s8 dPageCategory = 0; //Category of cmdmenu page currently open (see `CmdMenuPageCategories`)
@@ -1865,7 +1865,7 @@ static void cmdmenu_tick_inventory_page(void) {
             
             //Items/Spells
             if (isSidekickMenu == FALSE) {
-                objSendMesg(player, pageMsg, NULL, (void*)usedGamebit);
+                objSendMesg(player, pageMsg, NULL, (ObjMesg)usedGamebit);
                 
                 sUsedItemGamebitID = usedGamebit;
                 sUsedItemSoundType = sMenuItemUseSounds[sMenuSelectedItemIdx];

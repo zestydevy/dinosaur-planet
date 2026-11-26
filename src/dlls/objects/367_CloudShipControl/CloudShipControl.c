@@ -6,7 +6,7 @@
 #include "dll.h"
 
 typedef struct {
-    u32 unk0;
+    u32 mesgID;
     Object* unk4;
     Object* unk8;
 } BSS8;
@@ -94,7 +94,7 @@ void CloudShipControl_obj_Control(Object* self) {
     data_4 = 0;
     while (objRecvMesg(self, &mesgID, &sender, (void*)&mesgArg) != 0) {
         switch (mesgID) {
-        case 0xF0004:
+        case MSG_F0004:
             if (sender->mapID == self->mapID) {
                 var_a0 = 0;
                 for (i = 0; i < data_8; i++) {
@@ -109,26 +109,26 @@ void CloudShipControl_obj_Control(Object* self) {
                     bss_90[data_8].unk4 = mesgArg;
                     data_8++;
                 }
-                objSendMesg(sender, 0xF0003, self, NULL);
+                objSendMesg(sender, MSG_F0003, self, OBJMESG_NONE);
             }
             break;
-        case 0xF0007:
+        case MSG_F0007:
             for (i = 0; i < data_8; i++) {
                 if (mesgArg == bss_90[i].unk4) {
                     bss_90[i].unk6 = 0;
-                    objSendMesg(bss_90[i].unk0, 0xF0007, self, NULL);
+                    objSendMesg(bss_90[i].unk0, MSG_F0007, self, OBJMESG_NONE);
                 }
             }
             break;
-        case 0xF0006:
+        case MSG_F0006:
             for (i = 0; i < data_8; i++) {
                 if (mesgArg == bss_90[i].unk4) {
                     bss_90[i].unk6 = 0;
-                    objSendMesg(bss_90[i].unk0, 0xF0006, self, NULL);
+                    objSendMesg(bss_90[i].unk0, MSG_F0006, self, OBJMESG_NONE);
                 }
             }
             break;
-        case 0xF0005:
+        case MSG_F0005:
             k = 1;
             for (i = 0; i < data_8; i++) {
                 if (sender == bss_90[i].unk0) {
@@ -142,12 +142,12 @@ void CloudShipControl_obj_Control(Object* self) {
                 for (i = 0; i < data_8; i++) {
                     if (mesgArg == bss_90[i].unk4) {
                         bss_90[i].unk6 = 0;
-                        objSendMesg(bss_90[i].unk0, 0xF0006, self, NULL);
+                        objSendMesg(bss_90[i].unk0, MSG_F0006, self, OBJMESG_NONE);
                     }
                 }
             }
             break;
-        case 0xF0008:
+        case MSG_F0008:
             if (sender == data_C) {
                 data_C = NULL;
             } else {
@@ -165,18 +165,18 @@ void CloudShipControl_obj_Control(Object* self) {
                 }
             }
             break;
-        case 0xF0009:
+        case MSG_F0009:
             data_C = sender;
             break;
-        case 0xF000A:
+        case MSG_F000A:
             bss_138[0].unk0 = sender;
             bss_138[0].unk4 = mesgArg;
             bss_138[0].unk8 = -1;
             bss_138[0].unkC = 1;
-            objSendMesg(bss_138[0].unk0, 0xF0003, self, NULL);
+            objSendMesg(bss_138[0].unk0, MSG_F0003, self, OBJMESG_NONE);
             break;
         default:
-            bss_8[data_4].unk0 = mesgID;
+            bss_8[data_4].mesgID = mesgID;
             bss_8[data_4].unk4 = sender;
             bss_8[data_4].unk8 = (Object*)mesgArg;
             data_4++;
@@ -191,7 +191,7 @@ void CloudShipControl_obj_Control(Object* self) {
     }
     if (data_C == NULL) {
         // note: object ID 0xB1 does not exist in this build
-        objSendMesgMany(0xB1, OBJMSG_SEND_FILTER_ID, self, 0xF0009, NULL);
+        objSendMesgMany(0xB1, OBJMSG_SEND_FILTER_ID, self, MSG_F0009, OBJMESG_NONE);
     }
 }
 
@@ -207,7 +207,7 @@ void CloudShipControl_obj_Print(Object* self, Gfx** gdl, Mtx** mtxs, Vtx** vtxs,
 
 // offset: 0x6B4 | func: 4 | export: 4
 void CloudShipControl_obj_Free(Object* self, s32 onlySelf) {
-    objSendMesg(data_C, 0xF0008, self, NULL);
+    objSendMesg(data_C, MSG_F0008, self, OBJMESG_NONE);
 }
 
 // offset: 0x704 | func: 5 | export: 5
@@ -243,20 +243,20 @@ static void CloudShipControl_func_7F0(Object* self) {
         for (var_s2 = 0; var_s2 < bss_158; var_s2++) {
             if (bss_8[sp44].unk4 == bss_160[var_s2].unk0) {
                 ptr = &bss_160[var_s2];
-                switch (bss_8[sp44].unk0) {
-                case 0xC:
+                switch (bss_8[sp44].mesgID) {
+                case MSG_C:
                     ptr->unk0 = bss_8[sp44].unk8;
-                    objSendMesg(ptr->unk0, 0xF0003, self, NULL);
+                    objSendMesg(ptr->unk0, MSG_F0003, self, OBJMESG_NONE);
                     break;
-                case 0xD:
+                case MSG_D:
                     ptr->unk0 = bss_8[sp44].unk8;
-                    objSendMesg(ptr->unk0, 0xF0003, self, NULL);
+                    objSendMesg(ptr->unk0, MSG_F0003, self, OBJMESG_NONE);
                     break;
-                case 0xF0001:
+                case MSG_RobotPatrol_GetNextCurve:
                     CloudShipControl_func_D64(ptr, 0, ptr->unkC);
-                    objSendMesg(ptr->unk0, 0xF0002, self, (void* ) ptr->unk4);
+                    objSendMesg(ptr->unk0, MSG_RobotPatrol_SetCurve, self, (ObjMesg) ptr->unk4);
                     break;
-                case 0xE0000:
+                case MSG_Clear_Target:
                     ptr->unk0 = NULL;
                     break;
                 }
@@ -290,16 +290,16 @@ static void CloudShipControl_func_A3C(Object* self) {
             ptr = &bss_138[var_s4];
             if (ptr->unk0 == ptr2->unk4) {
                 temp_v1 = ptr2->unk4;
-                switch (ptr2->unk0) {
-                case 0xC:
+                switch (ptr2->mesgID) {
+                case MSG_C:
                     ptr->unk0 = ptr2->unk8;
-                    objSendMesg(ptr->unk0, 0xF0003, self, NULL);
+                    objSendMesg(ptr->unk0, MSG_F0003, self, OBJMESG_NONE);
                     break;
-                case 0xD:
+                case MSG_D:
                     ptr->unk0 = ptr2->unk8;
-                    objSendMesg(ptr->unk0, 0xF0003, self, NULL);
+                    objSendMesg(ptr->unk0, MSG_F0003, self, OBJMESG_NONE);
                     break;
-                case 0xF0001:
+                case MSG_RobotPatrol_GetNextCurve:
                     temp_v0_2 = gDLL_26_Curves->vtbl->FindByUID(ptr->unk4);
                     if ((temp_v0_2 != NULL) && (temp_v0_2->curveType == 0x16) && (ptr->unk8 != -1)) {
                         ptr->unk8 = ptr->unk4;
@@ -314,15 +314,15 @@ static void CloudShipControl_func_A3C(Object* self) {
                             sp68 = temp_v1->srt.transl.z;
                         }
                         ptr->unk4 = gDLL_26_Curves->vtbl->func_277C(sp70, sp6C, sp68, self->mapID);
-                        objSendMesg(ptr->unk0, 0xF0002, self, (void* ) ptr->unk4);
-                        objSendMesg(data_C, 0xF000A, ptr->unk0, (void* ) ptr->unk4);
+                        objSendMesg(ptr->unk0, MSG_RobotPatrol_SetCurve, self, (ObjMesg) ptr->unk4);
+                        objSendMesg(data_C, MSG_F000A, ptr->unk0, (ObjMesg) ptr->unk4);
                         ptr->unk0 = NULL;
                     } else {
                         CloudShipControl_func_D64(ptr, 0, ptr->unkC);
-                        objSendMesg(ptr->unk0, 0xF0002, self, (void* ) ptr->unk4);
+                        objSendMesg(ptr->unk0, MSG_RobotPatrol_SetCurve, self, (ObjMesg) ptr->unk4);
                     }
                     break;
-                case 0xE0000:
+                case MSG_Clear_Target:
                     ptr->unk0 = NULL;
                     gDLL_26_Curves->vtbl->FindByUID(bss_4);
                     break;

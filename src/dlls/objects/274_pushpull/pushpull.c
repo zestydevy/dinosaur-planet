@@ -272,15 +272,15 @@ static void dll_274_func_18C8(Object* self, s32 arg1) {
     outMesgArg = NULL;
     while (objRecvMesg(self, &outMessageID, &outSender, (void*)&outMesgArg)) {
         switch (outMessageID) {
-        case 0xF0003:
+        case MSG_F0003:
             objData->unk8C = outSender;
             break;
-        case 0xE:
+        case MSG_E:
             if ((self->id != OBJ_NWSH_colpush) && (self->id != OBJ_NWSH_colpushped)) {
                 objFreeObject(self);
             }
             break;
-        case 0x40001:
+        case MSG_40001:
             if (self->id == OBJ_NWSH_colpush) {
                 objData->unkC4 = *outMesgArg;
             }

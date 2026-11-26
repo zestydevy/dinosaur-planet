@@ -480,11 +480,11 @@ static void trigger_process_commands(Object *self, Object *activator, s8 dir, s3
                 break;
             case 7: {
                     s32 pad;
-                    s32 mesgID; // sp+50
+                    s32 mesgID;
                     if (dir == 1) {
-                        mesgID = 0x80;
+                        mesgID = MSG_80;
                     } else {
-                        mesgID = 0x81;
+                        mesgID = MSG_81;
                     }
                     objSendMesgManyNearby(OBJ_Swoop,           6000.0f, 0, self, mesgID, 0);
                     objSendMesgManyNearby(OBJ_GP_ChimneySwipe, 6000.0f, 0, self, mesgID, 0);

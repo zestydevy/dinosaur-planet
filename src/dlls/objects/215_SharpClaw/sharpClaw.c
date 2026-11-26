@@ -1859,7 +1859,7 @@ s32 SharpClaw_logicState9Dying(Object* self, ObjFSA_Data* fsa, f32 updateRate) {
             objFreeObject(self);
         }
 
-        objSendMesg(objGetPlayer(), 0xE0000, self, 0);
+        objSendMesg(objGetPlayer(), MSG_Clear_Target, self, 0);
         return FSA_NEXTSTATE_SYNC(SharpClaw_LSTATE_10_Dead);
     } else {
         return 0;

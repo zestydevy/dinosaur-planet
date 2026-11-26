@@ -396,12 +396,12 @@ void DBSHshrine_handle_messages(Object* self) {
     
     while (objRecvMesg(self, &message, &sender, (void*)&messageArg) != 0) {
         switch (message) {
-        case 0x30005:
+        case MSG_30005:
             if (vec3Distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = -3;
             }
             break;
-        case 0x30006:
+        case MSG_30006:
             if (vec3Distance(&self->globalPosition, &sender->globalPosition) < 200.0f) {
                 objData->unk6 = 0x10;
             }

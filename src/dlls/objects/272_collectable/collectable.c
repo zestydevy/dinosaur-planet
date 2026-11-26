@@ -250,7 +250,7 @@ void collectable_obj_Control(Object* self) {
 
     //Check for collection message
     while (objRecvMesg(self, &outMessage, &messageSender, 0)) {
-        if (outMessage == 0x7000B) {
+        if (outMessage == MSG_Item_Collected) {
             objdata->timerDestroy = 180.0f;
             collectable_collect(self);
         }
@@ -324,9 +324,9 @@ void collectable_obj_Control(Object* self) {
                 outMessage = 0;
                 objSendMesg(
                     player, 
-                    0x7000A, 
+                    MSG_Collect_Item, 
                     self, 
-                    0
+                    OBJMESG_NONE
                 );
                 mainSetBits(BIT_Tutorial_Collected_Energy_Egg, 1);
             } else {
@@ -349,9 +349,9 @@ void collectable_obj_Control(Object* self) {
                 gDLL_3_Animation->vtbl->set_variable_obj(collectableDef->seqObjectID, 0, 0);
                 objSendMesg(
                     player,
-                    0x7000A,
+                    MSG_Collect_Item,
                     self,
-                    (void*)messageArg
+                    (ObjMesg)messageArg
                 );
             }
             break;
@@ -641,10 +641,10 @@ void collectable_collect(Object* self) {
         }
         break;
     case Collectable_Type_SidekickA:
-        objSendMesg(sidekick, 0x70004, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, MSG_70004, self, (ObjMesg)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_SidekickB:
-        objSendMesg(sidekick, 0x70005, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, MSG_70005, self, (ObjMesg)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     case Collectable_Type_Magic:
         ((DLL_210_Player*)player->dll)->vtbl->add_magic(player, collectableDef->amountRestored);
@@ -652,7 +652,7 @@ void collectable_collect(Object* self) {
         dll_amSfx->Play(self, SOUND_8E_Magic_Chime, MAX_VOLUME, 0, 0, 0, 0);
         break;
     case Collectable_Type_Upgrade:
-        objSendMesg(sidekick, 0x70008, self, (void*)(collectableDef->amountRestored + objdata->sidekickArgBase));
+        objSendMesg(sidekick, MSG_70008, self, (ObjMesg)(collectableDef->amountRestored + objdata->sidekickArgBase));
         break;
     }
 

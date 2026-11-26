@@ -127,7 +127,7 @@ void SCcollectables_control(Object* self) {
     
     //Check for collection message (set gamebits and hide self)
     while (objRecvMesg(self, &outMessage, &messageSender, 0)){
-        if (outMessage == 0x7000B) {
+        if (outMessage == MSG_Item_Collected) {
             SCcollectables_collect(self);
         }
     }
@@ -177,7 +177,7 @@ void SCcollectables_control(Object* self) {
         if ((distance < objdata->interactionRadius) && (objdata->delayInteractionTimer == 0)) {
             outMessage = collectableDef->collectMessage << 0x10;
             if (self->unkAF & ARROW_FLAG_1_Interacted) {
-                objSendMesg(player, 0x7000A, self, (void*)outMessage);
+                objSendMesg(player, MSG_Collect_Item, self, (ObjMesg)outMessage);
             }
         }
         objdata->distanceToPlayer = distance;

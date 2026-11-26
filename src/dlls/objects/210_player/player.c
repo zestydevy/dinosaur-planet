@@ -949,7 +949,7 @@ void dll_210_func_1CA8(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
         return;
     }
     if (fsa->target != NULL) {
-        objSendMesg(fsa->target, 0xAU, player, NULL);
+        objSendMesg(fsa->target, MSG_A, player, NULL);
         arg1->unk8A9 = 0;
     }
     fsa->target = NULL;
@@ -971,9 +971,9 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
     s32 camDLLID;
 
     messageArgument = NULL;
-    while (objRecvMesg(player, &message, &sp8C, (void **)&messageArgument)) {
+    while (objRecvMesg(player, &message, &sp8C, (ObjMesg*)&messageArgument)) {
         switch (message) {
-        case 0x80002:
+        case MSG_Cmdmenu_Spell:
             if (messageArgument == BIT_Spell_Projectile) {
                 if (dll_210_func_24FC(player, fsa) != 0) {
                     camDLLID = gDLL_2_Camera->vtbl->get_dll_ID();
@@ -989,14 +989,14 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 dll_210_func_6DD8(player, arg1, messageArgument);
             }
             break;
-        case 0xE0000:
+        case MSG_Clear_Target:
             if (sp8C == fsa->target) {
                 fsa->target = 0;
                 fsa->unk33D = 0;
                 gDLL_2_Camera->vtbl->set_target_object(NULL);
             }
             break;
-        case 0x60003:
+        case MSG_Hurt_Player_Knock_Down:
             var_fs0 = sp8C->srt.transl.x - player->srt.transl.x;
             var_fs1 = sp8C->srt.transl.z - player->srt.transl.z;
             temp_fv0 = sqrtf(SQ(var_fs0) + SQ(var_fs1));
@@ -1014,7 +1014,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 arg1->unk868 = NULL;
             }
             break;
-        case 0x60004:
+        case MSG_Hurt_Player_Knock_Down_Reverse:
             var_fs0 = sp8C->srt.transl.x - player->srt.transl.x;
             var_fs1 = sp8C->srt.transl.z - player->srt.transl.z;
             temp_fv0 = sqrtf((var_fs0 * var_fs0) + (var_fs1 * var_fs1));
@@ -1032,7 +1032,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 arg1->unk868 = NULL;
             }
             break;
-        case 0x60005:
+        case MSG_Hurt_Player_DFP_FloorTile_Zap:
             var_fs0 = sp8C->srt.transl.x - player->srt.transl.x;
             var_fs1 = sp8C->srt.transl.z - player->srt.transl.z;
             temp_fv0 = sqrtf((var_fs0 * var_fs0) + (var_fs1 * var_fs1));
@@ -1052,16 +1052,16 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 arg1->unk868 = NULL;
             }
             break;
-        case 0x7000A:
+        case MSG_Collect_Item:
             if (messageArgument > 0) {
                 if (mainGetBits(messageArgument) != 0) {
                     // Not the first time this item was collected, skip sequence
-                    objSendMesg(sp8C, 0x7000BU, player, NULL);
+                    objSendMesg(sp8C, MSG_Item_Collected, player, OBJMESG_NONE);
                     if (fsa->animState != PLAYER_ASTATE_Collecting) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_Collecting);
                     }
                 } else {
-                    mainSetBits(messageArgument, 1U);
+                    mainSetBits(messageArgument, 1);
                     if (fsa->animState != PLAYER_ASTATE_42) {
                         gDLL_18_objfsa->vtbl->set_anim_state(player, fsa, PLAYER_ASTATE_42);
                     }
@@ -1076,7 +1076,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
             }
             arg1->unk8A9 = 1;
             break;
-        case 0x100008:
+        case MSG_Carrying_Object:
             arg1->unk870 = 1;
             if (arg1->unk868 == NULL) {
                 arg1->unk868 = sp8C;
@@ -1085,7 +1085,7 @@ void dll_210_func_1DDC(Object* player, Player_Data* arg1, ObjFSA_Data* fsa) {
                 arg1->unk8A9 = 1;
             }
             break;
-        case 0x100010:
+        case MSG_Carrying_Basket:
             arg1->unk870 = 1;
             if (arg1->unk868 == NULL) {
                 arg1->unk868 = sp8C;
@@ -2306,7 +2306,7 @@ int dll_210_func_4910(Object* arg0, Object* arg1, AnimObj_Data* arg2, s8 arg3) {
             }
             if (arg2->lastMessage == 1) {
                 gDLL_3_Animation->vtbl->set_camera_module(DLL_ID_CAMNORMAL, 3, 0, 0);
-                objSendMesg(objdata->unk708, 0x7000B, arg0, NULL);
+                objSendMesg(objdata->unk708, MSG_Item_Collected, arg0, OBJMESG_NONE);
                 objdata->unk708 = NULL;
             }
         }
@@ -2358,7 +2358,7 @@ static void dll_210_func_618C(Object* player, Player_Data* arg1, s32 arg2, f32 a
             } else {
                 gDLL_29_Gplay->vtbl->start_loaded_game();
             }
-            objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000U, player);
+            objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, MSG_Clear_Target, player);
         }
     }
     player->objhitInfo->unk5F = 0;
@@ -3838,7 +3838,7 @@ static void dll_210_func_9F1C(Object* player, s32 revivingNotAllowed) {
         func_800267A4(player);
         menuSet(MENU_GAME_OVER);
         menu_func_80010038(TRUE);
-        objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, 0xE0000, player);
+        objSendMesgMany(0, OBJMSG_SEND_IGNORE_SENDER | OBJMSG_SEND_ALL, player, MSG_Clear_Target, player);
     }
 }
 

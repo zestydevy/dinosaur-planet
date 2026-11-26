@@ -457,10 +457,10 @@ static void DFShrine_processObjMessages(Object* self) {
     mesgArg = NULL;
     while (objRecvMesg(self, &mesgID, &sender, &mesgArg)) {
         switch (mesgID) {
-        case 0x30005:
+        case MSG_30005:
             objdata->whisperVolumeRate = -3;
             break;
-        case 0x30006:
+        case MSG_30006:
             objdata->whisperVolumeRate = 0x10;
             break;
         }
