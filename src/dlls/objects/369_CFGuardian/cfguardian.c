@@ -475,7 +475,7 @@ static s32 CFGuardian_control(Object* self) {
                 }
                 self->velocity.y -= 0.12f;
             } else {
-                var_fa0 = ABS_EXPR(self->velocity.y * 400.0f);
+                var_fa0 = M_ABS(self->velocity.y * 400.0f);
                 self->srt.yaw += var_fa0;
                 objdata->animRate = 0.04f;
                 if (mainGetBits(BIT_CRF_Prison_Guardian_Exited_WindLift) != 0) {

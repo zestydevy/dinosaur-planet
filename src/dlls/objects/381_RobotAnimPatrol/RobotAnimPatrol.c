@@ -593,7 +593,7 @@ int RobotAnimPatrol_animCallback(Object* self, Object* animObj, AnimObj_Data* an
         animObjData->unk7A &= ~0x2;
         self->srt.pitch += (200.0f * self->velocity.y);
         self->srt.yaw -= (300.0f * self->velocity.y);
-        self->srt.roll += ABS_EXPR(400.0f * self->velocity.y);
+        self->srt.roll += M_ABS(400.0f * self->velocity.y);
     }
     return ret;
 }
@@ -1015,7 +1015,7 @@ static void RobotAnimPatrol_crashControl(Object* self, RobotAnimPatrol_Data* obj
     }
     self->srt.pitch += (10.0f * self->velocity.y);
     self->srt.yaw -= (30.0f * self->velocity.y);
-    self->srt.roll += ABS_EXPR(self->velocity.y * 40.0f);
+    self->srt.roll += M_ABS(self->velocity.y * 40.0f);
     self->velocity.y -= 0.07f;
     objdata->unkB4 += (objdata->unkAC - self->srt.transl.x) * 0.0625f;
     objdata->unkB8 += (objdata->unkB0 - self->srt.transl.z) * 0.0625f;

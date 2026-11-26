@@ -95,7 +95,7 @@ void DBEgg_obj_Control(Object* self) {
             objdata->state = DB_EGG_STATE_Floating;
             break;
         }
-        if (FABS_EXPR(depth) < 0.05f) {
+        if (M_FABS(depth) < 0.05f) {
             // On floor
             objdata->state = DB_EGG_STATE_1;
             self->velocity.x = 0;
@@ -150,7 +150,7 @@ void DBEgg_obj_Control(Object* self) {
         objMove(self, self->velocity.x, self->velocity.y, self->velocity.z);
         if (mathRnd(0, 10) == 0) {
             // @bug? what is this nonsense conditional?
-            if (ABS_EXPR(depth < 0.05f) != 0) {
+            if (M_ABS(depth < 0.05f) != 0) {
                 gDLL_24_Waterfx->vtbl->spawn_circular_ripple(
                     self->srt.transl.x, 
                     self->srt.transl.y - objdata->yOffset, 
@@ -207,7 +207,7 @@ void DBEgg_obj_Control(Object* self) {
         break;
     case DB_EGG_STATE_7:
         DBEgg_depthCheck(self, &depth, 0.0f, 0.0f, DB_EGG_CHECK_WATER);
-        if (FABS_EXPR(depth) < 0.05f) {
+        if (M_FABS(depth) < 0.05f) {
             objdata->state = DB_EGG_STATE_8;
             self->velocity.x = 0;
             self->velocity.z = 0;
@@ -271,7 +271,7 @@ void DBEgg_obj_Control(Object* self) {
             && (vec3DistanceXZ(&self->globalPosition, &player->globalPosition) < 25.0f)) {
         if (!(objdata->flags & DB_EGG_FLAG_UNK1)) {
             DBEgg_collect(self);
-        } else if (ABS_EXPR(self->srt.transl.y - player->srt.transl.y) < 12.0f) {
+        } else if (M_ABS(self->srt.transl.y - player->srt.transl.y) < 12.0f) {
             self->unkAF |= ARROW_FLAG_8_No_Targetting;
             objdata->state = DB_EGG_STATE_6;
             self->objhitInfo->unk58 &= ~ObjHitInfo_FLAG_1;
@@ -415,11 +415,11 @@ static s32 DBEgg_depthCheck(Object* self, f32* depth, f32 xOffset, f32 zOffset, 
             depthTmp = heights[i]->y - self->srt.transl.y;
             if (heights[i]->unk14 == 0xE) {
                 // Water
-                if (ABS_EXPR(depthTmp) < ABS_EXPR(waterDepth)) {
+                if (M_ABS(depthTmp) < M_ABS(waterDepth)) {
                     waterDepth = depthTmp;
                 }
             } else {
-                if (ABS_EXPR(depthTmp) < ABS_EXPR(floorDepth)) {
+                if (M_ABS(depthTmp) < M_ABS(floorDepth)) {
                     floorDepth = depthTmp;
                 }
             }
@@ -436,7 +436,7 @@ static s32 DBEgg_depthCheck(Object* self, f32* depth, f32 xOffset, f32 zOffset, 
             *depth = 1000.0f;
         } else { // DB_EGG_CHECK_FLOOR
             if (waterDepth != 10000.0f) {
-                if ((ABS_EXPR(waterDepth) <= ABS_EXPR(floorDepth)) || waterDepth > 0.0f) {
+                if ((M_ABS(waterDepth) <= M_ABS(floorDepth)) || waterDepth > 0.0f) {
                     *depth = waterDepth;
                     return FALSE;
                 } else {
